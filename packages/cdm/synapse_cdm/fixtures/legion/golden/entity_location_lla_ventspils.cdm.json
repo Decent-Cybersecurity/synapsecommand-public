@@ -80,7 +80,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
@@ -129,7 +129,7 @@
       "eb04b352-b5ff-53b2-9e58-278a86609560"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "legion",

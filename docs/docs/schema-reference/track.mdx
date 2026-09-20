@@ -15,9 +15,9 @@ description: "An entity's position history, in time order. The order is a contra
 | | |
 | --- | --- |
 | Source file | `schemas/track.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:2.1.0:track` |
-| CDM schema version | `2.1.0` |
-| SHA-256 of source | `c942a0f9024fa9ad8c761678000e65f0f56551196ddd1c21ef2b5537d7ec8d8d` |
+| `$id` | `urn:synapsecommand:cdm:3.0.0:track` |
+| CDM schema version | `3.0.0` |
+| SHA-256 of source | `90524189d6c3a7e496f7d1e429f127e314471abb95bcf7dcb26ddff5d91d406c` |
 
 An entity's position history, in time order. The order is a contract, not a hope.
 
@@ -39,7 +39,7 @@ rejecting it would refuse legitimate multi-source data.
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
 | `samples` | array&lt;[TrackSample](#tracksample)&gt; | **yes** | Time-ordered, non-decreasing. At least one. (min items 1) |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"3.0.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |

@@ -15,9 +15,9 @@ description: "What we push OUT: a drawing a commander's plan puts on someone els
 | | |
 | --- | --- |
 | Source file | `schemas/plan_object.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:2.1.0:plan_object` |
-| CDM schema version | `2.1.0` |
-| SHA-256 of source | `89feb8b864676d4b076f86fe2c4983047f3d16b3291858855252ec4940f2a2a9` |
+| `$id` | `urn:synapsecommand:cdm:3.0.0:plan_object` |
+| CDM schema version | `3.0.0` |
+| SHA-256 of source | `fec19733e1521067754ec1a1ec920698636c9133450c54b80b5d14fa0d832e94` |
 
 What we push OUT: a drawing a commander's plan puts on someone else's map.
 
@@ -41,7 +41,7 @@ outcomes, because everyone assumes it arrived.
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
 | `route` | [Route](#route) \| null | no | Ordered waypoints and legs, when this object IS a route (ObjectType.ROUTE). `geometry` above stays REQUIRED and stays the LineString projection of the waypoints, so every consumer written before routes existed still draws it. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"3.0.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |

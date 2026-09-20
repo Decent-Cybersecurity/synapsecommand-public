@@ -95,10 +95,22 @@ class MaturityLevel(str, enum.Enum):
 
 
 class ClaimStatus(str, enum.Enum):
-    """§3.4's six. A SEPARATE axis from maturity and never derived from it."""
+    """§3.4's six, and a seventh since 2026-09-20. A SEPARATE axis from maturity and never
+    derived from it.
+
+    `PROVISIONAL` (the 3.0.0 release commit, maintainer's ruling (B) of 2026-09-20 in
+    `docs/audit-remediation-report.md` §4; `MANIFEST_SCHEMA_VERSION` 2.0.0 -> 2.1.0): the mapping
+    passes this repository's public gates against a PROVISIONAL INTERNAL PROFILE — the element
+    names, namespace or bindings were chosen here rather than read from the standard's own
+    encoding (`WireBinding.PROVISIONAL_INTERNAL_PROFILE`). It sits between IMPLEMENTED and
+    VERIFIED: more than "code exists", less than VERIFIED, which is reserved for a mapping whose
+    gates ran against the standard's encoding or against normative or independent verification.
+    `AdapterMetadata` holds the two fields to each other in both directions.
+    """
 
     DOCUMENTED = "DOCUMENTED"
     IMPLEMENTED = "IMPLEMENTED"
+    PROVISIONAL = "PROVISIONAL"
     VERIFIED = "VERIFIED"
     EXERCISED = "EXERCISED"
     INTEGRATED = "INTEGRATED"
@@ -612,6 +624,30 @@ class AdapterMetadata(Strict):
                 "binding is provisional-internal-profile and no limitation says so. The element "
                 "names or namespace this adapter binds to were chosen here and not read from the "
                 "normative resource; a consumer has to be told that where the other caveats are"
+            )
+
+        # Ruling (B), 2026-09-20 (the 3.0.0 release commit; `docs/audit-remediation-report.md`
+        # §4): the claim and the binding are held to each other, both ways. A gate that passes
+        # against element names chosen in this repository verifies nothing about the standard,
+        # so a provisional binding may claim DOCUMENTED, IMPLEMENTED or PROVISIONAL and nothing
+        # above it; and PROVISIONAL is that binding's status and no other binding's.
+        provisional_may_claim = (ClaimStatus.DOCUMENTED, ClaimStatus.IMPLEMENTED,
+                                 ClaimStatus.PROVISIONAL)
+        if self.binding is WireBinding.PROVISIONAL_INTERNAL_PROFILE and \
+                self.claim_status not in provisional_may_claim:
+            raise ValueError(
+                f"claim_status {self.claim_status.value} beside binding "
+                "provisional-internal-profile. The public gates ran against a profile chosen "
+                "here, which verifies nothing about the standard's own encoding: claim "
+                "PROVISIONAL (or DOCUMENTED, IMPLEMENTED) until the binding is standard-encoding "
+                "or normative-verified"
+            )
+        if self.claim_status is ClaimStatus.PROVISIONAL and \
+                self.binding is not WireBinding.PROVISIONAL_INTERNAL_PROFILE:
+            raise ValueError(
+                f"claim_status PROVISIONAL beside binding {self.binding.value}. PROVISIONAL says "
+                "the gates ran against a provisional internal profile; an adapter bound to the "
+                "standard's own encoding claims VERIFIED or less, and says which"
             )
         return self
 

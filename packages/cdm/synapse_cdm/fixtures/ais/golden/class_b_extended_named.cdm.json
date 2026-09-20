@@ -71,7 +71,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "ais",
       "adapter_version": "1.0.0",
@@ -118,7 +118,7 @@
       "2ce71c31-04c6-522b-a51f-dcbe975bd028"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "ais",

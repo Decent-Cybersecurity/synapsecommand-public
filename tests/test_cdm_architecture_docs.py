@@ -215,7 +215,7 @@ COUNTED_SECTIONS = (
      rf"(?P<n>{_NUMBER_WORD}) classes are frozen"),
     (ARCHITECTURE, "### 3.3 Maturity model — seven levels",
      rf"Maturity model — (?P<n>{_NUMBER_WORD}) levels"),
-    (ARCHITECTURE, "### 3.4 Claim status — six statuses",
+    (ARCHITECTURE, "### 3.4 Claim status — seven statuses",
      rf"Claim status — (?P<n>{_NUMBER_WORD}) statuses"),
     (VERSIONING, "## 2. The axes",
      rf"the union is (?P<n>{_NUMBER_WORD})"),

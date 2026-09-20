@@ -133,7 +133,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -198,7 +198,7 @@
       "62650095-2e7e-522b-9e65-1a0aa64fc315"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",
@@ -323,7 +323,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -415,7 +415,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -530,7 +530,7 @@
       "ad358100-c4d8-5b86-adf7-7c9178a01c3a"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",
@@ -683,7 +683,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -741,7 +741,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -837,7 +837,7 @@
       "1757f4a8-f206-5ffe-abb2-dfea745a15c7"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",

@@ -20,20 +20,20 @@ Every row below is read off one adapter's `metadata` — the same declaration `m
 
 | adapter | format | edition | binding | direction | replayed forms | maturity | licence |
 |---|---|---|---|---|---|---|---|
-| `adsb` | ADS-B 1090ES Extended Squitter (Mode S DF17/DF18) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.adsb`, `.parsed.json` | `L4` | `LICENSED` |
-| `ais` | AIS (NMEA 0183 AIVDM/AIVDO) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.nmea`, `.parsed.json` | `L4` | `LICENSED` |
-| `cat021` | EUROCONTROL ASTERIX Category 021 — ADS-B Target Reports | Edition 2.6 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat021`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `cat023` | EUROCONTROL ASTERIX Category 023 — CNS/ATM Ground Station and Service Status Reports | Edition 1.3 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat023`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `cat034` | EUROCONTROL ASTERIX Category 034 — Monoradar Service Messages | Edition 1.29 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat034`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `cat048` | EUROCONTROL ASTERIX Category 048 — Monoradar Target Reports | Edition 1.32 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat048`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `cat062` | EUROCONTROL ASTERIX Category 062 — SDPS Track Messages | Edition 1.21 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat062`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `gmti` | STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format (GMTIF) | AEDP-4607 Edition A Version 1 | `standard-encoding` | `bidirectional` (ingest, egress) | `.gmti`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
+| `adsb` | ADS-B 1090ES Extended Squitter (Mode S DF17/DF18) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.adsb`, `.parsed.json` | `L3` | `LICENSED` |
+| `ais` | AIS (NMEA 0183 AIVDM/AIVDO) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.nmea`, `.parsed.json` | `L3` | `LICENSED` |
+| `cat021` | EUROCONTROL ASTERIX Category 021 — ADS-B Target Reports | Edition 2.6 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat021`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `cat023` | EUROCONTROL ASTERIX Category 023 — CNS/ATM Ground Station and Service Status Reports | Edition 1.3 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat023`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `cat034` | EUROCONTROL ASTERIX Category 034 — Monoradar Service Messages | Edition 1.29 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat034`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `cat048` | EUROCONTROL ASTERIX Category 048 — Monoradar Target Reports | Edition 1.32 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat048`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `cat062` | EUROCONTROL ASTERIX Category 062 — SDPS Track Messages | Edition 1.21 | `standard-encoding` | `bidirectional` (ingest, egress) | `.cat062`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `gmti` | STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format (GMTIF) | AEDP-4607 Edition A Version 1 | `standard-encoding` | `bidirectional` (ingest, egress) | `.gmti`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
 | `legion` | Picogrid Legion Platform API v3 | v3 | `standard-encoding` | `ingest` (ingest) | `.json` | `L3` | `LICENSED` |
 | `pntmap` | PNTMAP GNSS interference alert | not stated — see the limitations | `standard-encoding` | `ingest` (ingest) | `.json` | `L3` | `OPEN` |
 | `stanag4586` | STANAG 4586 — Standard Interfaces of UAV Control System (UCS), DLI telemetry | Edition 3 | `standard-encoding` | `ingest` (ingest) | `.parsed.json`, `.s4586` | `L3` | `PUBLIC_GOVERNMENT` |
-| `stanag4609` | STANAG 4609 / MISP-2019.1 — the UAS Datalink Local Set | MISP-2019.1 (STANAG 4609 Edition 5 wrapper) | `standard-encoding` | `bidirectional` (ingest, egress) | `.klv`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `stanag4676` | STANAG 4676 / AEDP-12 — NATO ISR Tracking Standard (NITS) | AEDP-12 Edition B Version 2 | `provisional-internal-profile` | `bidirectional` (ingest, egress) | `.nits.xml`, `.parsed.json` | `L4` | `PUBLIC_GOVERNMENT` |
-| `tak` | Cursor-on-Target (TAK) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.parsed.json`, `.xml` | `L4` | `PUBLIC_GOVERNMENT` |
+| `stanag4609` | STANAG 4609 / MISP-2019.1 — the UAS Datalink Local Set | MISP-2019.1 (STANAG 4609 Edition 5 wrapper) | `standard-encoding` | `bidirectional` (ingest, egress) | `.klv`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `stanag4676` | STANAG 4676 / AEDP-12 — NATO ISR Tracking Standard (NITS) | AEDP-12 Edition B Version 2 | `provisional-internal-profile` | `bidirectional` (ingest, egress) | `.nits.xml`, `.parsed.json` | `L3` | `PUBLIC_GOVERNMENT` |
+| `tak` | Cursor-on-Target (TAK) | not stated — see the limitations | `standard-encoding` | `bidirectional` (ingest, egress) | `.parsed.json`, `.xml` | `L3` | `PUBLIC_GOVERNMENT` |
 
 `direction` is the declared value with the directions the capability block says are exercised in brackets; the model refuses a disagreement between the two. `replayed forms` are the file suffixes in the adapter's packaged fixture directory — the wire form and, for binary and XML adapters, the parsed twin beside it. `maturity` is the declared rung, which the conformance suite computes independently and the manifests test holds to the evidence.
 

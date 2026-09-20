@@ -11,9 +11,10 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `2.2.0` and `SCHEMA_VERSION` is `2.1.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.0.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
-`version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red.)
+`version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level again at
+the 3.0.0 release of 2026-09-20 by two majors argued apart — see that section.)
 
 ## What each bump means
 
@@ -202,7 +203,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v2.2.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.0.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -371,7 +372,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v2.2.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.0.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -420,13 +421,104 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.0.0 — 2026-09-20 — the audit remediation: directional, evidence-based version compatibility; a path-bound preservation ledger; process-isolated parser deadlines; the published schema narrowed to what the models enforce; the STANAG 4676 binding declared provisional; resource limits that refuse where they cannot enforce; reproducible evidence in five categories; governance held to a derivation; the documentation re-derived — and the 3.0.0 CDM contract typed, published and frozen in this commit
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v2.2.0`, and `2.2.0` is what the index serves — `PUBLICATION.md` entry 20 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: 30 files** — `MIGRATIONS.md`, this section and the three
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.0.0` at this
+commit, in `version.py`, and the tag `v3.0.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release and that the newest
+release tag was `v2.2.0`, which is what the index serves (`PUBLICATION.md` entry 20) — the first
+clause stops being true at this commit and the second stays true until an upload changes it.
+
+**THE PACKAGE VERSION MOVED 2.2.0 -> 3.0.0 ON 2026-09-20, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v2.2.0` and derives MAJOR with nothing unruled once
+this section's `**Bump ruling.**` paragraphs are read. The floor comes from the shape signal —
+`lossless.unrepresented`, an importable name removed with no alias (F02, the old name was a claim
+of proof) — and from the ruled MAJOR units the S10 record below names; the 145 units the table
+cannot decide are every one ruled in this section, and the gate reads those rulings from this
+section from the moment the tag exists. Until the tag exists the gate looks for its rulings under
+the pending heading this commit rolled away, so at the release commit WITHOUT its tag the gate
+reports the 145 unruled and `tests/test_cdm_bump_derivation.py` and `tests/test_cdm_readiness.py`
+read red — the same transitional reading every release commit since 2.0.0 has recorded, and the
+reading the register (`docs/audit-remediation-report.md` §4) records for this one, with the
+at-tag reading re-derived by calling the gate's own `derive()` and `apply_rulings()` on this
+section's heading. So the floor and the number are one number and no Version ruling is needed or
+present.
+
+**THE SCHEMA VERSION MOVED 2.1.0 -> 3.0.0 IN THE SAME COMMIT, A MAJOR ON ITS OWN TABLE.** The S10
+record below carries the ruling of 2026-09-20 and the superseded MINOR reading it replaced; what
+this commit does is type the number (`SCHEMA_VERSION = "3.0.0"`), re-export `schemas/` (six files
+now carry `x-cdm-schema-version: 3.0.0`, and the four object schemas differ from
+`tests/frozen/cdm/2.1.0/` by F04's `pattern` constraints and `uniqueItems` and by nothing else),
+regenerate every golden — 538 files under `fixtures/*/golden/` and the eight reference-position
+goldens under `fixtures/adsb/local/`, each moving by its `schema_version` stamp alone (`git diff
+v2.2.0 -U0 -- synapse_cdm/fixtures` has no other changed line), the harness reading the same 538
+fixture verdicts, 0 failed, on every one of the fourteen
+— and freeze the four object schemas into `tests/frozen/cdm/3.0.0/` with their sha256 under
+provenance tag `v3.0.0`, commit `SELF`: a file cannot carry the hash of the commit that contains
+it, so `tests/test_cdm_version_matrix.py` proves a SELF freeze from the tag's own tree once the tag
+exists (the tagged `schemas/` and the tagged frozen copies are these bytes, and the tagged
+`version.py` claims the contract), which the register records as a contract change of that
+module. `version.KNOWN_CONTRACTS` reads `("2.0.0", "2.1.0", "3.0.0")`; `assess("2.1.0", "3.0.0")`
+and `assess("2.0.0", "3.0.0")` read REFUSED both ways by the different-major rule, and the
+narrowing that earned the major is shown on the frozen bytes: `"adapter_version": "banana"`
+validates under the frozen 2.1.0 schema and is refused by the frozen 3.0.0 one.
+
+**TWO MAINTAINER RULINGS OF 2026-09-20 CLOSE THE REGISTER'S §5 ITEMS 9 AND 10 IN THIS COMMIT.**
+(A) Preservation maturity: the eleven manifests whose `maturity.basis` cited the `lossless` check
+as evidence for their rungs — `adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`, `cat062`,
+`gmti`, `stanag4609`, `stanag4676` and `tak` — move L4 -> L3, because their `lossless` PASS rests
+on the value-presence heuristic and not on the path-bound ledger (no `MAPPINGS` declared), and
+"applicable information survives source -> CDM -> source" is the claim the heuristic cannot
+prove. Each basis sentence now says so; `tests/test_cdm_manifests.py` holds a bidirectional
+adapter to L3 where the report's `preservation.basis` reads `heuristic` and to L4 only where it
+reads `ledger`; an adapter regains L4 when its field mappings are declared and the ledger reports
+no loss. `maturity_eligible` still computes L5 from the verdicts (ARCHITECTURE.md §3.6's dated
+ruling) — the cap is on the declaration. (B) `manifests/stanag4676.json` claims `PROVISIONAL`, a
+seventh `ClaimStatus` this commit adds (`MANIFEST_SCHEMA_VERSION` 2.0.0 -> 2.1.0, an enum member
+added), because its `binding` is `provisional-internal-profile` and a gate that passes against
+element names chosen here verifies nothing about the standard; `manifest.AdapterMetadata` holds
+the two fields to each other in both directions (a provisional binding may claim DOCUMENTED,
+IMPLEMENTED or PROVISIONAL; PROVISIONAL may be claimed only beside a provisional binding), and
+ARCHITECTURE.md §3.4 reads seven statuses. Neither ruling moves a golden, a schema or a fixture;
+both move the fourteen manifests' envelope (`manifest_version` 2.1.0) and twelve manifests'
+`adapter` block, and the evidence records under `evidence/` (gitignored) are regenerated and read
+REPRODUCED with `cdm_version` 3.0.0, `package_version` 3.0.0 and `manifest_version` 2.1.0.
+
+**THE RELEASE TRANSITION ITSELF, 2026-09-20 — the release-state set.** `version.py`'s four moved
+constants (`PACKAGE_VERSION`, `SCHEMA_VERSION`, `MANIFEST_SCHEMA_VERSION`, `KNOWN_CONTRACTS`) and
+the live readings in its docstring; this section's heading and its opening paragraphs, the
+introduction's two-number sentence, and the two tag-command examples in the procedure and in the
+pipeline section; `RELEASE_NOTES.md`, rewritten for this release; `README.md`'s tag example;
+`VERSIONING.md`'s three table cells, a dated correction under §3.1 and a dated note under §4;
+`docs/docs/changelog.mdx`'s live pair of numbers; `docs/soif-part1-release-readiness.md`'s
+re-qualification; the fourteen examples under `examples/` (2.0.0 → 3.0.0 by their stamp alone)
+and the semantic corpus under `tests/semantic_corpus/` (2.1.0 → 3.0.0 likewise), because the
+conformance tool's structural dimension refuses a document of another major and both sets are
+documents of the CURRENT contract; the two version literals `tests/test_cdm_packaging.py` pins; the tenth
+`UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`, for `("v2.2.0", "v3.0.0")`
+at 145 units — the same 145 this section rules, compared set to set; and the regenerated
+`manifests/`, `schemas/`, `docs/docs/cdm/support-matrix.mdx` and `docs/docs/current-contracts.mdx`.
+Units under `synapse_cdm/`: `MIGRATIONS.md`, `version.py`, `manifest.py`, the twelve adapter
+modules the rulings move, and the 538 goldens — every one inside the count the paragraph after
+next states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened.
+
+**What moved inside the distribution: 576 files** — the 538 golden files under
+`fixtures/*/golden/` (every `.cdm.json` and `.parsed.cdm.json` the fourteen adapters' harness runs
+write, moved at this commit by their `schema_version` stamp alone, as the schema paragraph above
+derives), the eight reference-position goldens under `fixtures/adsb/local/` (written by the same
+rule from `tests/test_cdm_adsb_adapter.py`'s own construction, since the harness cannot write them;
+stamp-only by the same diff reading) and the thirty the arc's records moved before it: `MIGRATIONS.md`, this section and the three
 witness paragraphs in the release procedure being what moved in it; since the ruff record of
 2026-09-17 below, `pyproject.toml`, whose `[lint]` pin is that record's one line; since the
 audit remediation's F01 record of 2026-09-19 (at the end of this section), `version.py`,
@@ -1148,7 +1240,8 @@ goldens are regenerated from their sources.
 `synapse_cdm/lossless.py:<statement 3>` — PATCH: an import or an unnamed module-level statement renumbered by F02's ledger; the removal of `unrepresented` is the shape signal the gate reads on its own, and the ledger's names are the added surface.
 
 **Bump ruling.** Units of `synapse_cdm/manifest.py` in the arc since `v2.2.0` (S10, 2026-09-20):
-`synapse_cdm/manifest.py:AdapterMetadata` — MAJOR: `binding` is REQUIRED with no default (F05), so a metadata declaration without it is refused; `MANIFEST_SCHEMA_VERSION` moves 1.2.0 → 2.0.0 and `ADAPTER_API_VERSION` 2.1.0 → 3.0.0 for it.
+`synapse_cdm/manifest.py:AdapterMetadata` — MAJOR: `binding` is REQUIRED with no default (F05), so a metadata declaration without it is refused; `MANIFEST_SCHEMA_VERSION` moves 1.2.0 → 2.0.0 and `ADAPTER_API_VERSION` 2.1.0 → 3.0.0 for it. (The 3.0.0 release commit, 2026-09-20, adds the two claim-status-to-binding refusals of ruling (B) to the same validator; the unit is already MAJOR.)
+`synapse_cdm/manifest.py:ClaimStatus` — MINOR: a seventh member, `PROVISIONAL`, added and none removed (the 3.0.0 release commit, ruling (B) of 2026-09-20 — `manifests/stanag4676.json` claims it beside its provisional binding); `MANIFEST_SCHEMA_VERSION` moves 2.0.0 → 2.1.0 for it on the enum-member-added row.
 
 **Bump ruling.** Units of `synapse_cdm/models.py` in the arc since `v2.2.0` (S10, 2026-09-20):
 `synapse_cdm/models.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `SEMVER_PATTERN` and `parse_wire` imports.

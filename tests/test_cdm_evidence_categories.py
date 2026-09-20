@@ -296,7 +296,11 @@ def test_the_declared_rung_is_held_to_the_categories_it_requires(ingest_record,
     assert ingest.satisfied and ingest.local_complete
     assert ingest.eligible == ingest_record.conformance["maturity_eligible"]
     both = bidirectional_record.maturity_support
-    assert (both.declared, both.required) == ("L4", ["internal_fixture", "self_round_trip"])
+    # Ruling (A), 2026-09-20 (the 3.0.0 release commit): a bidirectional adapter with no
+    # declared `MAPPINGS` declares L3 — its `lossless` PASS rests on the value-presence
+    # heuristic — so the categories its rung requires are L3's. This line read L4 with
+    # `self_round_trip` until that day; the L4 shape is held on a synthetic reading below.
+    assert (both.declared, both.required) == ("L3", ["internal_fixture"])
     assert both.satisfied and both.local_complete
     assert both.external_outstanding == EXTERNAL
 

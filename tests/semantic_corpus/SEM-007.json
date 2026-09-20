@@ -5,7 +5,7 @@
     {
       "name": "open-ended",
       "document": {
-        "object_kind": "entity", "schema_version": "2.1.0",
+        "object_kind": "entity", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "E-7"}],
         "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f07",
@@ -17,7 +17,7 @@
     {
       "name": "valid_to precedes valid_from",
       "document": {
-        "object_kind": "entity", "schema_version": "2.1.0",
+        "object_kind": "entity", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "E-7"}],
         "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f07",

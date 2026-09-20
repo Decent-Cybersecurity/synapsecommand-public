@@ -87,11 +87,11 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.2.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `MANIFEST_SCHEMA_VERSION` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `MANIFEST_SCHEMA_VERSION` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `EVIDENCE_SCHEMA_VERSION` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
@@ -171,6 +171,17 @@ P8's and PR's business and not this round's. The paragraph above is kept exactly
 argued that the equality was a coincidence and not a rule, and an axis diverging is what that
 sentence was for. The table above carries the two numbers as they now stand.
 
+**Dated correction, 2026-09-20, the 3.0.0 release (every paragraph above is left standing).** The
+two numbers read the same again — `3.0.0` and `3.0.0` — and the equality is once more two
+separately argued changes landing on one number: the CDM schema took a MAJOR because audit
+finding F04 narrowed the PUBLISHED contract (`pattern` and `uniqueItems`: a narrowed type is the
+MAJOR row of the bump table in MIGRATIONS.md, ruled 2026-09-20 over an earlier MINOR reading that had measured the reference
+models' acceptance rather than the wire contract's), and the package took a MAJOR because
+`lossless.unrepresented` is removed without an alias and fourteen ruled units changed meaning.
+`MANIFEST_SCHEMA_VERSION` moved 2.0.0 → 2.1.0 in the same commit for one added enum member
+(`ClaimStatus.PROVISIONAL`), on §3's "new optional" row. Neither package nor schema number was
+derived from the other, and §3.2 is unaffected: no adapter was added.
+
 **They MUST NOT automatically share a number.** Anything that made one axis follow another would
 turn every one of the coincidences above into a false statement the moment the axes diverged, and
 the axes exist in order to be able to diverge.
@@ -246,6 +257,16 @@ row, and `gates/bump_derivation.py` derived MINOR over it with nothing unruled o
 schema did not move. Nothing above is edited: this paragraph is the one that says the campaign's
 sentence stopped being corrected because the number it was about had shipped.
 
+**Dated note, 2026-09-20: the release after 2.2.0 is `3.0.0`, and for the first time both of the
+first two axes moved a MAJOR in one commit.** The audit remediation arc since `v2.2.0` (findings
+F01–F09, `docs/audit-remediation-report.md`) removed `lossless.unrepresented` with no alias and
+changed the meaning of fourteen ruled units, so `gates/bump_derivation.py` derives MAJOR over it
+with nothing unruled once `MIGRATIONS.md`'s 3.0.0 section is read, and the release commit typed
+that floor and nothing above it. The CDM schema moved 2.1.0 → 3.0.0 on its own table for F04's
+narrowing of the published contract; the Adapter API 2.1.0 → 3.0.0 (required `binding`), the
+manifest schema 1.2.0 → 2.0.0 → 2.1.0 and the evidence schema 1.0.0 → 2.0.0 moved on §3's rows
+as the S10 record and the 3.0.0 section state. SC-OES, the ontology and the profiles did not move.
+
 ---
 
 ## 5. Main advancement
@@ -278,7 +299,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v2.2.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.0.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

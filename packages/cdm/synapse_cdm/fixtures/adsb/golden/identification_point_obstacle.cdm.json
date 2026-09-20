@@ -35,7 +35,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
@@ -84,7 +84,7 @@
       "dd5edb4d-3831-57be-a0f4-fa27306c4409"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "adsb",

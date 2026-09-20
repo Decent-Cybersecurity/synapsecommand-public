@@ -776,6 +776,13 @@ and does **not** contain this commit. The commit that carries this re-qualificat
 immediately after it, whose subject begins `Audit readiness`; the release transition is the one
 after that, and the tag that names 2.2.0 contains all three.
 
+**Re-qualification, 2026-09-20, the 3.0.0 release commit.** This report also describes the audit
+remediation's release commit on `remediation/audit-c3f70c5` — the commit that carries this
+paragraph, whose subject begins `Release 3.0.0` and whose parent is
+`5a345dd` (the F01–F09 remediation commit). Its hash is deliberately not written here, for the
+reason the paragraph above gives. The tag that names 3.0.0 is to be placed on it and contains it
+and every commit named above.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -862,6 +869,20 @@ paragraph of this date in section 18 names.
 
 What "ready" does not decide is unchanged: the maintainer's authorisation of the number, and the
 fast-forward of `main`, which is the release round's first act.
+
+**Re-qualification, 2026-09-20: the verdict is `ready for PR` (3.0.0), and this time the report
+is read on the release commit itself.** `docs/audit-remediation-report.md` is the register of the
+audit remediation (findings F01–F09) that this release carries; its §3 records the operator's full
+run over the staged tree (`full-20260920T062800Z`, every lane rc=0, 5866 passed, 79 skipped) and
+its §4 the version decision per axis. The release commit types `PACKAGE_VERSION` **3.0.0** and
+`SCHEMA_VERSION` **3.0.0** (both MAJOR, both derived: `gates/bump_derivation.py` reads MAJOR over
+the arc since `v2.2.0` with nothing unruled once `MIGRATIONS.md`'s 3.0.0 section is read — a
+reading that the gate can only take once the tag `v3.0.0` names the commit, because until then it
+looks for its rulings under the pending heading this commit rolled away), `ADAPTER_API_VERSION`
+3.0.0, `MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0, and freezes the 3.0.0
+schemas under `tests/frozen/cdm/3.0.0/`. The register's §5 lists what stays external: STANAG
+4676 normative verification, the three external evidence categories, the GitHub ruleset and the
+remote CI of the pushed branch. None of those is a §58 line, and none is a blocker of the release.
 
 ## 20. Blockers
 

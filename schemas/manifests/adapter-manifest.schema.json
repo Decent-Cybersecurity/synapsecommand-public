@@ -208,10 +208,11 @@
       "type": "object"
     },
     "ClaimStatus": {
-      "description": "\u00a73.4's six. A SEPARATE axis from maturity and never derived from it.",
+      "description": "\u00a73.4's six, and a seventh since 2026-09-20. A SEPARATE axis from maturity and never\nderived from it.\n\n`PROVISIONAL` (the 3.0.0 release commit, maintainer's ruling (B) of 2026-09-20 in\n`docs/audit-remediation-report.md` \u00a74; `MANIFEST_SCHEMA_VERSION` 2.0.0 -> 2.1.0): the mapping\npasses this repository's public gates against a PROVISIONAL INTERNAL PROFILE \u2014 the element\nnames, namespace or bindings were chosen here rather than read from the standard's own\nencoding (`WireBinding.PROVISIONAL_INTERNAL_PROFILE`). It sits between IMPLEMENTED and\nVERIFIED: more than \"code exists\", less than VERIFIED, which is reserved for a mapping whose\ngates ran against the standard's encoding or against normative or independent verification.\n`AdapterMetadata` holds the two fields to each other in both directions.",
       "enum": [
         "DOCUMENTED",
         "IMPLEMENTED",
+        "PROVISIONAL",
         "VERIFIED",
         "EXERCISED",
         "INTEGRATED",
@@ -561,7 +562,7 @@
       "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:manifest:2.0.0:adapter-manifest",
+  "$id": "urn:synapsecommand:manifest:2.1.0:adapter-manifest",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "The published document: \u00a713's semantics in this repository's canonical JSON (F1.3).\n\nThe envelope is separate from `AdapterMetadata` because the two are different facts. The\nmetadata is what the ADAPTER declares and is inspectable from the class; the envelope is what\nthe PUBLICATION declares \u2014 which manifest schema it was written to, which Adapter API it\nclaims, which CDM it emits \u2014 and none of those belong to one adapter.",
@@ -593,5 +594,5 @@
   ],
   "title": "AdapterManifest",
   "type": "object",
-  "x-manifest-schema-version": "2.0.0"
+  "x-manifest-schema-version": "2.1.0"
 }

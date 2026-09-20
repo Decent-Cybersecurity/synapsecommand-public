@@ -113,6 +113,25 @@ of them is edited after the fact. The wire contract took no part in the move and
 `PUBLICATION.md`'s ledger entry 20 is the measurement, taken after the upload rather than asserted
 before it, and it is also where the pipeline's own witness record is recorded as refused and the
 committed one as built by hand.
+
+**Updated 2026-09-20, the 3.0.0 release, and the two numbers are LEVEL again — by two majors
+argued apart.** On this tree the package is at `3.0.0` and the schema stays at `3.0.0` from this
+commit on. The wire contract took a MAJOR because the 2026-09-19 audit's finding F04 narrowed the
+PUBLISHED schema — a `pattern` on every `schema_version` and `adapter_version`, a `pattern` on
+`Entity.symbol`, `uniqueItems` on `Entity.ontology_types` — and the table above puts "a type
+narrowed" on the MAJOR row whatever the reference models already enforced: a document that
+validated under the published 2.1.0 schema with `"adapter_version": "banana"` is refused by
+3.0.0, so accepted documents do become invalid for a consumer validating with the schema alone.
+The package took a MAJOR on its own table: `lossless.unrepresented` is removed without an alias
+and fourteen ruled units changed meaning. No path was removed, no `required` list grew and no
+enum member went, and every golden in the package moved by its `schema_version` stamp alone. The
+fourteen examples under `examples/` — the witness of 2026-09-08 above, which declared `2.0.0`
+through two minors — now declare `3.0.0`, because a reader of one major is promised nothing
+about another and the conformance tool's structural dimension says so for a 2.0.0 document.
+`version.compatible("2.1.0", "3.0.0")` is `False` in both directions by the different-major rule,
+and the 2.1.0 contract stays frozen beside 3.0.0 under `tests/frozen/cdm/`. The paragraphs above
+are kept as written. **What the index serves is still a separate fact from what this tree says**
+— at the time of writing it is `2.2.0` — and `PUBLICATION.md`'s ledger is where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]
@@ -160,6 +179,7 @@ version.compatible(written_with="2.0.0", read_by="2.1.0")   # True  — new read
 version.compatible(written_with="2.1.0", read_by="2.0.0")   # False — old reader, new writer
 version.compatible(written_with="2.9.0", read_by="2.1.0")   # False — nobody has published 2.9.0
 version.compatible(written_with="2.0.0", read_by="1.0.0")   # False — a major apart
+version.compatible(written_with="2.1.0", read_by="3.0.0")   # False — a major apart, either way
 version.assess(written_with="2.1.0", read_by="2.0.0")       # REFUSED, WRITER_NEWER, and the evidence
 ```
 

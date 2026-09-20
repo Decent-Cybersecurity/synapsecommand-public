@@ -141,7 +141,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
@@ -200,7 +200,7 @@
       "7c517043-1ac5-53e1-8496-8188d887cfee"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",
@@ -365,7 +365,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
@@ -424,7 +424,7 @@
       "2a5401fc-7ca1-582c-a01e-7f642116b94c"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",

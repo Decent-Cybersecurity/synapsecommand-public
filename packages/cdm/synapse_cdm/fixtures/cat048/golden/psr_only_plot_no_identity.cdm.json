@@ -112,7 +112,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
@@ -169,7 +169,7 @@
       "164f32c9-259a-5888-9f12-2a41459b6e88"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat048",

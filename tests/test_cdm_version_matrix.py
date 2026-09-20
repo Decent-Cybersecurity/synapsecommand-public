@@ -29,12 +29,35 @@ WHAT IS PROVED, AND WHAT IS NOT
 
 Version eligibility is never a substitute for validating the payload: a SUPPORTED verdict says the
 frozen matrix accepted documents of that shape, not that THIS document is valid.
+
+THE 3.0.0 CONTRACT, FROZEN IN THE COMMIT THAT TYPED IT (2026-09-20)
+---------------------------------------------------------------------
+The current contract is a MAJOR away from the two above: F04 narrowed the PUBLISHED schema —
+`pattern` on every version field and on `Entity.symbol`, `uniqueItems` on `ontology_types` — and
+MIGRATIONS.md's table puts "a type narrowed" on the MAJOR row. So the within-major evidence is
+now stated on the frozen pair (2.0.0 → 2.1.0), the different-major rule is stated on the current
+one, and the narrowing that earned the MAJOR is shown: a document the frozen 2.1.0 schema accepts
+(`"adapter_version": "banana"`, F04's own counterexample) is refused by the frozen 3.0.0 schema
+and by the current one. A well-formed old document still PARSES under the current models — that
+is shape, not eligibility, and the helper says REFUSED for the pair because the promise is about
+every document of the contract.
+
+CONTRACT CHANGE OF THIS MODULE, 2026-09-20 — the `SELF` provenance. A contract frozen at a
+release commit is frozen IN the commit its tag names, and a file cannot carry the hash of the
+commit that contains it. The 2.0.0 and 2.1.0 freezes were taken from tags that already existed,
+so their provenance carries a commit; a freeze taken in the release commit records the tag and
+`SELF`. What replaces the `rev-list == commit` assertion for a SELF contract is stronger, not
+weaker: once the tag exists, the tagged tree's `schemas/<kind>.schema.json` AND its frozen copy
+must both be the frozen bytes, and the tagged `version.py` must claim the contract. `SELF` is
+admitted for the CURRENT contract only, under the tag `v{PACKAGE_VERSION}`. Without the tag,
+the digest test stands, as it always has.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 
@@ -53,6 +76,12 @@ FROZEN = REPO / "tests" / "frozen" / "cdm"
 MANIFEST = json.loads((FROZEN / "MANIFEST.json").read_text())
 CONTRACTS = tuple(sorted(MANIFEST["contracts"]))
 OLDEST, CURRENT = CONTRACTS[0], CONTRACTS[-1]
+#: The newest frozen contract of the OLDEST major: the within-major pair the READER_NEWER and
+#: WRITER_NEWER evidence is stated on now that CURRENT is a major away from both.
+PREVIOUS = max(c for c in CONTRACTS if c.split(".")[0] == OLDEST.split(".")[0])
+assert OLDEST < PREVIOUS < CURRENT, CONTRACTS
+#: A freeze taken in the release commit its tag names records this instead of a commit hash.
+SELF = "SELF"
 
 BUILDERS = {"entity": _entity, "event": _event, "track": _track, "plan_object": _plan_object}
 
@@ -114,7 +143,18 @@ def _old_document(kind: str) -> dict:
 def test_the_manifest_covers_the_four_kinds_for_every_contract():
     for contract, entry in MANIFEST["contracts"].items():
         assert set(entry["files"]) == set(KINDS), contract
-        assert entry["provenance"]["tag"] and len(entry["provenance"]["commit"]) == 40
+        tag, commit = entry["provenance"]["tag"], entry["provenance"]["commit"]
+        assert tag, contract
+        if commit == SELF:
+            assert contract == CURRENT, (
+                f"{contract} records provenance {SELF} and is not the current contract. A freeze "
+                "taken in a release commit is the current one by construction; an older contract "
+                "was frozen from a tag that existed and carries that tag's commit")
+            assert tag == f"v{version.PACKAGE_VERSION}", (
+                f"{contract} is frozen {SELF} under {tag}, and the release commit that types "
+                f"SCHEMA_VERSION {CURRENT} is the one v{version.PACKAGE_VERSION} names")
+        else:
+            assert re.fullmatch(r"[0-9a-f]{40}", commit), (contract, commit)
 
 
 @pytest.mark.parametrize("contract", CONTRACTS)
@@ -145,6 +185,19 @@ def test_every_frozen_schema_is_the_tagged_bytes(contract, kind):
     shown = subprocess.check_output(["git", "show", f"{tag}:{record['source']}"], cwd=REPO)
     assert hashlib.sha256(shown).hexdigest() == record["sha256"], (tag, record["source"])
     assert shown == (REPO / record["path"]).read_bytes()
+    if entry["provenance"]["commit"] == SELF:
+        # The freeze was taken IN the commit the tag names, so the tagged tree must carry it —
+        # the frozen copy at the tag is these bytes, and the tagged version.py claims the
+        # contract. That binds the freeze to the tag's tree, which is what a commit hash would
+        # have said and more.
+        frozen_at_tag = subprocess.check_output(["git", "show", f"{tag}:{record['path']}"], cwd=REPO)
+        assert frozen_at_tag == shown, (tag, record["path"])
+        version_at_tag = subprocess.check_output(
+            ["git", "show", f"{tag}:packages/cdm/synapse_cdm/version.py"], cwd=REPO, text=True)
+        assert f'SCHEMA_VERSION = "{contract}"' in version_at_tag, (
+            f"{tag} does not type SCHEMA_VERSION {contract}, so it is not the release commit the "
+            f"{SELF} provenance names")
+        return
     assert subprocess.check_output(["git", "rev-list", "-n1", tag], cwd=REPO,
                                    text=True).strip() == entry["provenance"]["commit"]
 
@@ -158,22 +211,62 @@ def test_the_helper_knows_exactly_the_contracts_that_are_frozen():
 
 # --- new reader, old writer: demonstrated ----------------------------------------------------
 
-def test_the_pasted_two_zero_zero_golden_is_read_by_the_current_contract():
+def test_the_pasted_two_zero_zero_golden_is_read_by_the_newer_contracts():
+    """Shape: the 2.0.0 golden validates under the frozen 2.1.0 schema (the within-major
+    evidence) and still parses under the current one. Eligibility is the helper's answer and
+    it is REFUSED across the major — see the narrowing test below for why."""
     assert not _refusals(_validator("2.0.0", "entity"), GOLDEN_AT_2_0_0)
+    assert not _refusals(_validator(PREVIOUS, "entity"), GOLDEN_AT_2_0_0)
     assert not _refusals(_current_validator("entity"), GOLDEN_AT_2_0_0)
     assert KINDS["entity"].model_validate(GOLDEN_AT_2_0_0).schema_version == "2.0.0"
+    assert version.assess("2.0.0", PREVIOUS).verdict is Verdict.SUPPORTED
+    assert version.assess("2.0.0", SCHEMA_VERSION).verdict is Verdict.REFUSED
 
 
 @pytest.mark.parametrize("kind", sorted(KINDS))
-def test_an_old_document_of_every_kind_is_accepted_by_the_current_reader(kind):
+def test_an_old_document_of_every_kind_is_accepted_by_the_newer_reader_of_its_major(kind):
+    """The READER_NEWER evidence, within major 2, on the frozen pair 2.0.0 → 2.1.0."""
+    old = _old_document(kind)
+    assert not _refusals(_validator(PREVIOUS, kind), old), kind
+    assert version.compatible(OLDEST, PREVIOUS) is True
+    result = version.assess(OLDEST, PREVIOUS)
+    assert result.verdict is Verdict.SUPPORTED and result.direction is Direction.READER_NEWER
+    assert "test_cdm_version_matrix" in result.basis
+
+
+@pytest.mark.parametrize("kind", sorted(KINDS))
+def test_an_old_document_is_shape_readable_by_the_current_models_and_still_not_eligible(kind):
+    """Since the 3.0.0 MAJOR (2026-09-20). A well-formed old document parses under the current
+    models and is not rewritten; the helper still REFUSES the pair by major, in the reader-newer
+    direction, because eligibility is a promise about EVERY document of the old contract and the
+    narrowing test below shows one the current schema refuses."""
     old = _old_document(kind)
     assert not _refusals(_current_validator(kind), old), kind
     revived = KINDS[kind].model_validate(old)
     assert revived.schema_version == OLDEST, "not rewritten to the current version"
-    assert version.compatible(OLDEST, SCHEMA_VERSION) is True
-    result = version.assess(OLDEST, SCHEMA_VERSION)
-    assert result.verdict is Verdict.SUPPORTED and result.direction is Direction.READER_NEWER
-    assert "test_cdm_version_matrix" in result.basis
+    for older in (OLDEST, PREVIOUS):
+        result = version.assess(older, SCHEMA_VERSION)
+        assert result.verdict is Verdict.REFUSED and result.direction is Direction.READER_NEWER
+        assert "major" in result.basis
+        assert version.compatible(older, SCHEMA_VERSION) is False
+
+
+@pytest.mark.parametrize("kind", sorted(KINDS))
+def test_the_narrowing_that_made_the_current_contract_a_major_is_shown_on_the_frozen_pair(kind):
+    """F04's counterexample, on the frozen bytes: `"adapter_version": "banana"` is accepted by
+    the frozen 2.1.0 schema (`minLength: 1` was its whole constraint) and refused by the frozen
+    3.0.0 schema and by the current one (`pattern`). That is MIGRATIONS.md's "a type narrowed"
+    row — a document accepted under the published older contract becomes invalid — and it is
+    why the pair is REFUSED rather than a WRITER_NEWER refinement."""
+    document = _document(kind)
+    document["schema_version"] = PREVIOUS
+    document["source"] = dict(document["source"], adapter_version="banana")
+    assert not _refusals(_validator(PREVIOUS, kind), document), \
+        f"the frozen {PREVIOUS} {kind} schema refused the counterexample; the narrowing is not shown"
+    for refuser in (_validator(CURRENT, kind), _current_validator(kind)):
+        refusals = _refusals(refuser, dict(document, schema_version=CURRENT))
+        assert any("source/adapter_version" in r and "does not match" in r for r in refusals), \
+            refusals
 
 
 # --- old reader, new writer: refused, and the helper says so ---------------------------------
@@ -205,19 +298,26 @@ def test_a_current_document_with_new_fields_explicitly_null_is_refused_by_the_ol
 
 
 def test_the_helper_does_not_promise_the_old_reader_the_new_document():
-    """The reproduction: this line was `True` before F01."""
-    assert version.compatible(CURRENT, OLDEST) is False
-    result = version.assess(CURRENT, OLDEST)
+    """The reproduction: the first line was `True` before F01 (then on `(CURRENT, OLDEST)`,
+    which was the within-major pair until 3.0.0)."""
+    assert version.compatible(PREVIOUS, OLDEST) is False
+    result = version.assess(PREVIOUS, OLDEST)
     assert result.verdict is Verdict.REFUSED and result.direction is Direction.WRITER_NEWER
     assert "additionalProperties" in result.basis
+    for older in (OLDEST, PREVIOUS):
+        assert version.compatible(CURRENT, older) is False
+        result = version.assess(CURRENT, older)
+        assert result.verdict is Verdict.REFUSED and result.direction is Direction.WRITER_NEWER
+        assert "major" in result.basis
 
 
 # --- the relationships nobody has evidence for ------------------------------------------------
 
 @pytest.mark.parametrize("written,read", [
-    ("2.9.0", SCHEMA_VERSION),     # a minor from the future, read by today
-    (SCHEMA_VERSION, "2.9.0"),     # today's document, read by a contract not yet published
-    ("2.9.0", "2.0.0"),
+    ("3.9.0", SCHEMA_VERSION),     # a minor from the future, read by today
+    (SCHEMA_VERSION, "3.9.0"),     # today's document, read by a contract not yet published
+    ("2.9.0", "2.0.0"),            # an unpublished minor of the frozen major
+    ("2.9.0", "2.1.0"),
 ])
 def test_an_unpublished_minor_of_this_major_is_unknown_not_safe(written, read):
     result = version.assess(written, read)
@@ -227,14 +327,16 @@ def test_an_unpublished_minor_of_this_major_is_unknown_not_safe(written, read):
 
 def test_the_same_minor_is_supported_whatever_the_patch():
     """A PATCH moves descriptions only (MIGRATIONS.md's table), so the shape is the same."""
-    for written, read in [("2.1.3", "2.1.0"), ("2.1.0", "2.1.3"), ("2.0.0", "2.0.0")]:
+    for written, read in [("2.1.3", "2.1.0"), ("2.1.0", "2.1.3"), ("2.0.0", "2.0.0"),
+                          ("3.0.4", "3.0.0"), ("3.0.0", "3.0.4")]:
         result = version.assess(written, read)
         assert result.verdict is Verdict.SUPPORTED and result.direction is Direction.SAME, (written, read)
         assert version.compatible(written, read) is True
 
 
 @pytest.mark.parametrize("written,read", [("1.0.0", "2.1.0"), ("2.1.0", "1.0.0"),
-                                          ("3.0.0", "2.1.0")])
+                                          ("3.0.0", "2.1.0"), ("2.1.0", "3.0.0"),
+                                          ("2.0.0", "3.0.0"), ("3.0.0", "2.0.0")])
 def test_a_different_major_is_refused_in_both_directions(written, read):
     result = version.assess(written, read)
     assert result.verdict is Verdict.REFUSED and "major" in result.basis

@@ -449,8 +449,10 @@ def test_K_does_not_judge_the_sources_own_identifier():
 
 def test_L_reads_the_objects_against_this_package_and_this_manifest(probe_fixtures):
     clock = times.frozen_clock()
+    # The supported range is this package's own major, derived: it read the literal "2.x" until
+    # the 3.0.0 release (2026-09-20) moved SCHEMA_VERSION a major and the literal went stale.
     good = suite.check_version(_Base(clock=clock), _payloads(probe_fixtures), clock=clock,
-                               supported="2.x")
+                               supported=f"{version.SCHEMA_VERSION.split('.')[0]}.x")
     assert good["verdict"] == suite.PASS
     outside = suite.check_version(_Base(clock=clock), _payloads(probe_fixtures), clock=clock,
                                   supported="9.x")

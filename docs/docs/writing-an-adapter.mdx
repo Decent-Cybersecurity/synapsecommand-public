@@ -197,7 +197,8 @@ printed or recorded as PASS.
 | --- | --- |
 | `DOCUMENTED` | the mapping is written down |
 | `IMPLEMENTED` | code exists that performs the mapping |
-| `VERIFIED` | the mapping passes this repository's public gates |
+| `PROVISIONAL` | the mapping passes this repository's public gates against a provisional internal profile (`binding: provisional-internal-profile`); the gates say nothing about the standard's own encoding. Added 2026-09-20; the only status a provisional binding may claim above IMPLEMENTED |
+| `VERIFIED` | the mapping passes this repository's public gates against the standard's own encoding (`binding: standard-encoding`) |
 | `EXERCISED` | it has been run against an independent implementation |
 | `INTEGRATED` | integration with a NAMED external system has actually occurred |
 | `DEPLOYED` | it is running in a named operational or exercise deployment |

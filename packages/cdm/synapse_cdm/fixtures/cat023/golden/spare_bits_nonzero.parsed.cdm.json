@@ -130,7 +130,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -222,7 +222,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -352,7 +352,7 @@
       "a88bfe94-8866-5d12-b7b5-a626ed666d31"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",

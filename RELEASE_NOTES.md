@@ -1,239 +1,196 @@
-# synapse-cdm 2.2.0
+# synapse-cdm 3.0.0
 
-**The audit release.** Between the 2.1.2 release of 2026-09-12 and this one, nothing was added to
-what the package translates: the same fourteen adapters, the same 538 fixture verdicts, the same
-six published CDM schemas at `schema_version` 2.1.0. What moved is what SOIF Part 1 — the Synapse
-Open Interoperability Framework's Foundation & Assurance part, a private specification whose
-section numbers this file cites as §N — exists to make checkable: two adapters that crashed on a
-valid document nested a thousand elements deep now refuse it at a declared bound, and four more
-declare the same bound; a maturity rung that eleven manifests typed is now computed by the
-harness; an evidence record generated on one machine now reproduces on another; CI runs the suite
-on every interpreter the package claims, lints, and runs the wheel gate on every push; the release
-pipeline's witness verifier re-derives the digests it used to check for shape; the two npm
-advisory exceptions are deleted on the trigger their own files named; no tracked file points a
-reader at a private document; and every sentence the audit found false is corrected where it
-stands. Nothing is removed, renamed or narrowed, so a 2.1.2 consumer keeps working without doing
-anything — with the three refusals listed below, each of which replaces a crash or a wrong
-exception on input no shipped fixture ever carried.
+**The audit remediation release.** Between the 2.2.0 release of 2026-09-17 and this one, the
+independent audit of 2026-09-19 raised nine findings against this package, F01 to F09, and every
+one of them is answered in the tree at this tag: version compatibility is directional and rests
+on frozen evidence rather than on major-number arithmetic; the lossless check's empty result is
+no longer treated as proof, and a path-bound preservation ledger replaces it wherever an adapter
+declares its field mappings; the conformance suite's parser deadline is a real, process-isolated
+one; the published JSON Schema now states every constraint the Python models enforce; the STANAG
+4676 adapter's wire binding is declared provisional in its manifest, its CLI row and its page;
+resource limits are enforced where the platform can enforce them and refused where it cannot,
+never claimed; evidence records carry five categories with the three external ones honestly
+ABSENT; governance is an auditable derivation with a runbook; and the documentation is derived
+from the tree and drift-checked. The register of all nine, with reproductions, tests, evidence
+paths and what stays external, is `docs/audit-remediation-report.md`. Two things are removed or
+narrowed, which is why this is a MAJOR on both of the first two axes — read the next two sections.
 
-**If you are upgrading from 2.1.2 — which is what the index serves — read this as the MINOR it
-is.** If you are upgrading from 2.0.0, read the 2.1.2 notes first: they are the body of the
-`v2.1.2` Release, and everything they describe is still here.
+**If you are upgrading from 2.2.0 — which is what the index serves — read this as the MAJOR it
+is on both numbers.** If you are upgrading from 2.1.2 or earlier, read the 2.2.0 notes first: they
+are the body of the `v2.2.0` Release, and everything they describe is still here.
 
-## Why the number is 2.2.0
+## Why the number is 3.0.0
 
-**The number is the derived floor, and for the first time since v2.1.0 it moved for content.**
-`gates/bump_derivation.py` reads the arc from `v2.1.2` and derives MINOR from importable names
-that did not exist at that tag, with nothing removed: `adapter.InputTooDeep`,
-`json_nesting_depth`, `container_depth`, `enforce_depth_bound`, `is_shipped` and `shipped`; the
-`ROUNDTRIP_TOLERANCE`, `ROUNDTRIP_TRANSFORMS` and `roundtrip_reference()` members of `Adapter`;
-`canonical.py`, a new module; `harness.select_fixtures` and `fixtures_required_message`;
-`version.SEMVER_RE` and `is_semver`; six `*_MAX_DEPTH` module constants; and a `[lint]` extra in
-`pyproject.toml`, which is the table's optional-dependency row. The eighty-three units the table
-cannot classify on its own — bodies that moved with no name added or removed, and import blocks
-the gate keys by position — are every one ruled in `MIGRATIONS.md`'s 2.2.0 section, and the gate
-reads those rulings and reports nothing unruled. The two correctives before this release each
-moved the number for a workflow's defect; this one moves it for what a consumer receives.
+**The number is the derived floor, and the floor is MAJOR for the first time since 2.0.0.**
+`gates/bump_derivation.py` reads the arc from `v2.2.0` and derives MAJOR from one shape signal —
+`lossless.unrepresented`, an importable name removed with no alias, because the old name was a
+claim of proof the function could not make — and from the units whose meaning changed and were
+ruled MAJOR in `MIGRATIONS.md`'s 3.0.0 section: `version.compatible` and `version.parse` (F01),
+`harness.run` and `evidence.badges` (F02), `suite.check_malformed` and
+`suite.check_parser_robustness` (F03), `conformance.assess_a`, `conformance._validator` and
+`models.Timestamp` (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter` and `parse_document`
+(F05), `harness.load_raw` (F06) and `evidence.EvidenceRecord` (F07). The units the table cannot
+classify on its own are every one ruled in that section, and the gate reads those rulings and
+reports nothing unruled.
 
-**Package version 2.2.0 · CDM `schema_version` 2.1.0 · Adapter API 2.1.0.** The first two are
-unequal by a MINOR now, and **that is the ordinary case and not a signal**: the package moved on
-`version.py`'s table for new importable names; the schema moved by nothing, because no field and
-no published schema changed, and no golden moved but the ten named below, by one citation string.
-`ADAPTER_API_VERSION` moved 2.0.0 -> 2.1.0 on
-`VERSIONING.md` §3's own row, for three additive members on the base class whose defaults are the
-behaviour they replaced. `synapse_cdm/version.py` states the nine version axes and their
-independence in one place, and `tests/test_cdm_packaging.py` sweeps the package for an assignment
-that would derive one number from another. A package at 2.2.0 does **not** mean SC-OES 2.2:
-`SC_OES_VERSION` is a third axis, still `0.1.0` and still a Draft.
+**Package version 3.0.0 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
+· evidence schema 2.0.0.** The first two are level again, and **that is a coincidence of two
+separately argued majors and not a derivation**: the package moved on `version.py`'s table for a
+removed name and ruled meaning changes; the schema moved on `MIGRATIONS.md`'s table because
+finding F04 NARROWED the published contract (next section). `ADAPTER_API_VERSION` moved
+2.1.0 -> 3.0.0 on `VERSIONING.md` §3's own row because `AdapterMetadata.binding` is required with
+no default; the manifest schema moved 1.2.0 -> 2.0.0 for that required field and 2.0.0 -> 2.1.0 for
+one added enum member; the evidence schema moved 1.0.0 -> 2.0.0 for three required fields. SC-OES,
+the Operational Ontology and the profile versions did not move: `SC_OES_VERSION` is still `0.1.0`
+and still a Draft. `synapse_cdm/version.py` states the nine version axes and their independence,
+and `tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive one number
+from another.
 
-## What changed on the wire, and what a 2.1.2 consumer must do
+## What changed on the wire, and what a 2.2.0 consumer must do
 
-**Nothing on the wire.** `schema_version` stays 2.1.0; `git diff v2.1.2..HEAD -- schemas/` is
-four files and five lines, every one a description string; and every golden file in the package
-is byte-identical to the 2.1.2 release except ten under `fixtures/klv/golden/` — the five VMTI
-fixtures' `.cdm.json` and `.parsed.cdm.json` — in which the one string that quoted a private
-round brief by path, the VMTI identity ruling every VMTI object carries in its attributes, now
-says the ruling's source is private; no other byte of any golden moved (`git diff v2.1.2..HEAD
---numstat -- packages/cdm/synapse_cdm/fixtures/klv/golden` is ten files, thirty-four lines each
-way, every line that string). A 2.1.2 reader reads a 2.2.0 object unchanged, and
-`python -m synapse_cdm.schemas --check --out schemas` reports `CURRENT: schemas vs models at
-2.1.0`.
+**The published schema is narrower, and that is the MAJOR.** The four object schemas under
+`schemas/` carry `pattern` on every `schema_version` and `adapter_version`, `pattern` on
+`Entity.symbol` and `uniqueItems` on `Entity.ontology_types`. Every one of those constraints
+restates what the Python models enforced already, so no document this package ever emitted becomes
+invalid — but a consumer validating with the published schema alone accepted
+`"adapter_version": "banana"` under 2.1.0 and is refused it under 3.0.0, and the bump table in
+`MIGRATIONS.md` puts a narrowed type on the MAJOR row for exactly that reader. No path was removed, no
+`required` list grew, no enum member went. The 2.1.0 contract stays frozen under
+`tests/frozen/cdm/2.1.0/` beside the 3.0.0 one under `tests/frozen/cdm/3.0.0/`, and
+`tests/test_cdm_version_matrix.py` shows the narrowing on the frozen bytes.
 
-Three things a producer could do before and cannot now, each on input no shipped fixture, golden
-or parsed twin ever carried:
+**Every golden moved by one stamp.** The 538 golden files under the package's `fixtures/*/golden/`
+and the eight reference-position goldens under `fixtures/adsb/local/` carry
+`schema_version: "3.0.0"` and differ from 2.2.0's by that line alone; the harness reads the same
+538 fixture verdicts, 0 failed, on every adapter. The fourteen examples under `examples/` declare
+`3.0.0` too (they declared `2.0.0` through two minors): `synapse conformance` reads a document's
+`schema_version` against this package's, and a document of another major is refused in its
+structural dimension rather than read on trust.
 
-* **A JSON document or dict nesting more than sixty-four containers is refused** by `adsb`, `ais`,
-  `legion`, `pntmap` and `tak` with `adapter.InputTooDeep` — a `ValueError` — before any decoder
-  runs, and an XML document nesting more than sixty-four elements is refused by `tak` and
-  `stanag4676` the moment the tree is built. Before this release `tak` and `stanag4676` raised
-  `RecursionError` on a valid document about 7 KB deep, which is one of the four crash classes the
-  conformance suite refuses to count as a refusal, and the four JSON adapters translated any depth
-  the interpreter survived. Each of the six manifests now declares the bound as `max_depth`, with
-  its basis; the other eight keep their declared reason for having none.
-* **`pntmap` refuses a JSON value that is not an object** — an array, a string, a number, `null` —
-  with one `ValueError`, where it surfaced an `AttributeError` from inside the decoder.
-* **Every version field is held to one spelling.** `schema_version`, `SourceRef.adapter_version`,
-  a manifest's `adapter_version` and `Event.oes.spec_version` accept `MAJOR.MINOR.PATCH` with no
-  leading zero, no prefix, no suffix and no surrounding whitespace — `version.SEMVER_RE` under
-  `fullmatch` — where three of the four accepted `01.0.0` or a trailing newline. Every value this
-  tree has ever written passes; the published schemas carry no new `pattern`, because a pattern on
-  a published type is the schema table's "a type narrowed" and a MAJOR.
+**What to change in a 2.2.0 consumer, in one place:**
 
-`packages/cdm/synapse_cdm/MIGRATIONS.md`'s 2.2.0 section carries the records, unit by unit, and
-the rulings the derivation rests on. There is no migration tooling, because there is nothing to
-migrate.
+* Rename `lossless.unrepresented` to `lossless.value_presence_heuristic`, and read its `{}` as
+  "nothing seen", not as proof.
+* Expect `version.compatible(written_with, read_by)` to answer `False` for any pair a major apart
+  (`("2.1.0", "3.0.0")` in either direction), `False` for a writer newer than the reader within a
+  major, `False` for a minor nobody has frozen, and to raise `ValueError` on a malformed string
+  (a trailing newline, a leading zero, a prefix, a sign). Use `version.assess()` for the verdict,
+  the direction and the evidence it rests on. `KNOWN_CONTRACTS` reads `("2.0.0", "2.1.0", "3.0.0")`.
+* Declare `binding=` on every adapter's metadata: `"standard-encoding"` where the wire form is the
+  cited document's own encoding, `"provisional-internal-profile"` with a limitation containing
+  "provisional" where the element names or namespace were chosen locally. A provisional binding
+  claims `PROVISIONAL` (new) and not `VERIFIED`.
+* Expect the harness's `lossless` column to FAIL on a ledger loss for an adapter that declares
+  `MAPPINGS`, and the `lossless-verified` badge to read `heuristic` for one that does not.
+* Expect the suite's H and N checks to carry outcome codes in `details`, and N's
+  `over_time_bound` strings to name a code rather than a duration; expect `--startup-timeout`,
+  `--diagnostics`, `--memory-limit-bytes` and `--cpu-limit-seconds` on the suite's CLI, the last
+  two refused with an explicit reason on a platform that cannot enforce them.
+* Expect the conformance tool to refuse a string boolean, a trailing newline in a version, a
+  malformed UUID and a timestamp outside the wire form on the JSON path.
+* Expect `--list-adapters` to print a `binding` column; expect an evidence record to carry
+  `snapshot`, `evidence_categories` and `maturity_support`, and a manifest to carry `binding`.
+* Nothing is migrated in place: manifests, schemas, evidence and goldens are regenerated from
+  their sources.
 
-## Parser safety: a declared depth bound
+## Two maintainer rulings, applied in this release
 
-The parser-safety policy — `docs/docs/security/parser-safety.mdx`, the page `SECURITY.md` names as
-its home — gains its fifth reading beside the four of the 2.1.0 arc, and the JSON reading of
-2026-09-17 in the prose beside them.
-libexpat builds a tree of any depth without recursing, and everything the two XML adapters did
-with the tree afterwards recursed once per level; on CPython 3.11 `json.loads` itself recurses
-once per container and fails a little under a thousand deep. So the bound sits in front of the
-decoder: the base class measures JSON text off its characters in one pass, decoded the way
-`json.loads` would decode it, and a dict or list off its containers, and refuses past the declared
-bound before any decoder runs; an XML tree stays the adapter's to measure, because only the
-adapter holds it. Sixty-four is an implementation cap and every manifest says so — every CoT
-fixture nests three elements deep, the deepest path AEDP-12's class model admits is eight
-elements, no shipped JSON document nests more than seven containers, and sixty-four keeps every
-walker under two hundred Python frames. Three `malformed/` directories gain the payload that
-exercises the change, so check H records the refusal on every run.
+**Preservation maturity is declared to what the evidence proves.** Eleven manifests declared L4
+ROUNDTRIP VERIFIED on a basis sentence that cited the `lossless` check as evidence — and since
+F02 that check, for an adapter with no declared field mappings, rests on the value-presence
+heuristic: a source value present somewhere in the output is not a value that reached its path.
+"Applicable information survives source -> CDM -> source" is precisely the claim the heuristic
+cannot prove, so `adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`, `cat062`, `gmti`,
+`stanag4609`, `stanag4676` and `tak` declare **L3** from this release, each basis sentence says why,
+and `tests/test_cdm_manifests.py` holds a bidirectional adapter to L3 wherever the report's
+`preservation.basis` reads `heuristic`. Their `roundtrip` columns still read PASS and the suite's
+`maturity_eligible` still computes L5 from the verdicts; what moved is the declaration, and an
+adapter regains L4 when its field mappings are declared and the ledger reports no loss. `pntmap`,
+the one adapter with a ledger, is ingest-only and stays at L3 for the reason it always gave.
 
-## The harness computes L4
+**A provisional binding claims PROVISIONAL.** `manifests/stanag4676.json` declared
+`claim_status: VERIFIED` beside `binding: provisional-internal-profile`. A gate that passes against
+element names chosen in this repository verifies nothing about the standard, so `ClaimStatus` gains
+a seventh member, `PROVISIONAL` (the manifest schema's 2.1.0), the adapter claims it, and
+`manifest.AdapterMetadata` refuses the two fields apart in both directions. `VERIFIED` returns
+with `standard-encoding` or `normative-verified` — the road to which is the register's §5 item 1.
 
-At 2.1.2 the harness's `roundtrip` column read SKIP for every adapter, because it compared JSON
-structurally and every shipped emitter returns bytes, so every L4 in a manifest rested on a
-per-adapter test the wheel does not carry — a typed rung, which §3.6's first sentence does not
-admit. The column now compares egress octets under a tolerance each adapter declares and the
-report prints: `bytes`, the default, means `from_cdm(to_cdm(raw))` must equal
-`roundtrip_reference(raw)` octet for octet; `values` means what was emitted is re-ingested and no
-source value may be missing, with the adapter's declared transforms excused — the tolerance XML
-needs, and the one `tak` and `stanag4676` declare. The readings: 16, 11, 20, 17, 17, 41, 28, 16
-and 63 byte fixtures octet-exact for `adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`,
-`cat062`, `gmti` and `stanag4609`; 6 and 17 parsed twins value-complete for `tak` and
-`stanag4676`; zero FAIL. Every adapter now computes `maturity_eligible: L5` and every adapter
-declares less — L3 for the three ingest-only adapters, L4 for the eleven emitters — and
-`tests/test_cdm_manifests.py` derives the rung from a suite run and requires declared ≤ eligible.
-A third word, an exemption under `bytes`, or a declaration on an ingest-only adapter is a
-`TypeError` at import.
+## The nine findings, and what each one left open
 
-## Evidence that reproduces elsewhere
-
-A 2.1.2 evidence record carried the runner's absolute fixture directory and its `source_commit`
-with a `-dirty` suffix, because the gate job wrote the conformance artefact into the checkout root
-before the evidence step ran there, so `synapse evidence verify` from any other checkout reported
-DIFFERS on three fields none of which says anything about the tree. A record now carries the
-packaged directory as `<packaged>/<directory>`, records the interpreter and platform as
-environment and never compares them, and `publish.yml` refuses a record whose `source_commit` is
-not the bare `HEAD`. The proof is in the suite: fourteen records generated from one tree and
-verified from a copy of the package at a different absolute path, every one REPRODUCED. Every
-manifest declares `evidence.available: true`, because the 2.1.2 records are attached to the
-`v2.1.2` Release and retrievable by anybody; the field says the records exist and where, and
-nothing about the wheel's contents, which still carry no record. Thirty-nine `PROVENANCE.json`
-records — one in every fixture directory a tracked test reads — say where the fixture data came
-from.
-
-## CI, and the release pipeline
-
-* `ci.yml` runs the suite on **3.11, 3.12, 3.13 and 3.14** — every interpreter the classifiers
-  declare, where it ran one — and gains a `lint` job and a `wheel` job on every push. The lint
-  stage is pinned once, `ruff==0.16.6` in a `[lint]` extra, and selects `E9,F821`: the previous set
-  was exactly one rule and had never caught the undefined name its comments promised. The docs job
-  runs the site's own gates rather than a bare build.
-* `publish.yml`'s `release` job reads the CodeQL and pip-audit verdicts off the gate rather than
-  restating them, the pip-audit verdict is read off the stream pip-audit writes it to, and
-  `rc-build.yml` takes its SBOMs over the clean install as `publish.yml` does.
-* `gates/witness_verify.py` re-derives the four non-PyPI assets and the Release's `SHA256SUMS`
-  offline with `--assets`, and with `--download` re-hashes the bytes the index and the Release
-  serve and the wheel's attestation bundle; at 2.1.2 it checked those digests for shape. The
-  `witness` job carries `actions: read` and `deployments: read`, takes the approval instant from
-  the `pypi` deployment's own status history rather than from a key the approvals endpoint never
-  sent, fetches the attestation store by the wheel's digest, and hands the verifier the assets
-  and a token. `releases/witness/2.1.2.json`, the first record in that directory, was committed
-  from the bytes the Release serves; the job that produced its predecessor failed at its own
-  verification step, and this release's tag push is the first execution of the repaired job.
-
-## Security, dependencies and the supply chain
-
-* `SECURITY.md`: the reporting path, and a parser-safety policy with declared limits on all
-  fourteen adapters and a declared depth bound on six.
-* Secret scanning on the platform, `.gitleaks.toml` in the tree, and a CI job over the full
-  history reachable from every push.
-* `pip-audit --strict` twice — over the environment and over the wheel's frozen closure — with
-  exactly one distribution excluded by name, `synapse-cdm` itself, and every third-party line
-  under `--strict`. Plus an npm audit at high over the documentation tree: `image-size` 2.0.4 is
-  pinned through `docs/package.json`'s `overrides`, the two advisory exceptions that named that
-  fix as their removal trigger are deleted, `security/exceptions/` holds no exception file, and
-  `npm audit --json` reads high 0, critical 0.
-* CodeQL, and a gate that refuses a blocking alert, selecting the analysis by commit.
-* An SBOM in both SPDX and CycloneDX, built by the release pipeline over the clean-install
-  environment, plus a second tool's cross-check.
-* Build provenance: Sigstore attestation over the built artefacts, verified in the same run that
-  produced them and again, by digest, by the witness verifier.
+* **F01 — version compatibility** is directional and evidence-based: `assess()` returns a verdict,
+  a direction and the frozen evidence; the 2.0.0 and 2.1.0 contracts are frozen from their tags
+  and 3.0.0 from this commit. Nothing external.
+* **F02 — preservation** rests on a path-bound ledger where `MAPPINGS` are declared (one shipped
+  adapter today) and on the heuristic, said so, everywhere else. Declaring mappings for the other
+  thirteen is queued work, one adapter per session.
+* **F03 — parser deadlines** are process-isolated (`multiprocessing` spawn over `os.pipe()`), with
+  a six-code outcome vocabulary and one refusal among them.
+* **F04 — schema and model alignment**: the published schema states what the models enforce, a
+  semantic-rules document and a 44-case corpus cover what a schema cannot say, and the wire path
+  refuses a string boolean, a trailing newline and a malformed UUID.
+* **F05 — STANAG 4676**: `binding` is a required field on every manifest, the 4676 adapter reads
+  `provisional-internal-profile`, an explicit normative mode exists and refuses with a five-step
+  procedure until an authorised XSD pair and a validator are supplied. The normative verification
+  itself is external and has not happened.
+* **F06 — resource limits**: input bounds on depth and bytes, memory and CPU limits enforced on
+  Linux and refused with a reason elsewhere; the Linux enforcement branch is first observed by
+  the remote CI of the pushed branch.
+* **F07 — evidence**: five categories per record, the three external ones ABSENT on every adapter,
+  a runner and a verifier for exercise reports. No partner, exercise or date is invented.
+* **F08 — governance**: one workflow defect closed, workflow properties tested, an audit gate that
+  says UNVERIFIED rather than guessing, two staged ruleset proposals and a runbook. Applying a
+  ruleset needs an administrator and has not been done.
+* **F09 — documentation**: a current-contracts page generated from the constants, a support matrix
+  generated from the declarations, symbol citations instead of line numbers, and a widened lint
+  gate with an explicit, shrink-only baseline.
 
 ## What else moved
 
-* **The public tree names no private document by path.** Every citation of the round apparatus —
-  a fixture spec record, a shipped `malformed/README.md`, a constant's source, a comment — either
-  names the symbol it means or says the document is private, and `SOIF` is expanded once in the
-  root `README.md` and on two pages of the documentation site.
-* **One serialiser, written once.** `canonical.py` holds §6.2's serialisation and the seven
-  sites that restated it call it; the fixture predicate is `harness.select_fixtures` and the two
-  modules that restated it call that; the shipped-adapter test is `adapter.is_shipped`. No
-  golden, manifest or evidence digest moves for it, because the bytes cannot differ.
-* **The unused imports are gone** — twenty-seven against the 2.1.2 tree, eight of them in the
-  distribution — and `ruff --select F401` reads 0.
-* **The package `README.md`** lists every module the package has carried since SC-OES and SOIF
-  Part 1, says the exporter writes eight JSON Schemas, and describes `geo.py` with its multi-
-  forms; the package's own docstring names the fourteenth adapter it enumerated as thirteen.
-* **No runtime dependency changed.** `pydantic` and `jsonschema`, as before; `rdflib` is a test
-  extra; `ruff` is a lint extra and nothing under `synapse_cdm/` imports it.
-* **No adapter was added or removed**, and no adapter's translation was changed to make a
-  conformance verdict come out differently: check E moved from SKIP to PASS because the harness
-  learned to compare, not because an adapter learned to emit.
+* **No runtime dependency changed.** `pydantic` and `jsonschema`, as before; `jsonschema` was
+  already a runtime dependency before F04 used it on the Python path.
+* **No adapter was added or removed**, and no adapter's translation changed: every golden moved by
+  its `schema_version` stamp and by nothing else.
+* **The release rehearsal gate** (`gates/release_ref_rehearsal.py`) replays every ref-dependent
+  release step against the local tag before it is pushed, as it has since 2.1.2; it is refused
+  without a tag, which is the reading the release commit records before the tag exists.
 
 ## Fourteen adapters, all harness-verified
 
-`python -m synapse_cdm.harness --adapter <name> --json`, run over the roster with no `--fixtures`.
-The table is the live registry, and
-`tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree — a table missing an adapter tells a reader the roster is smaller than it is.
-**The roster did not move this arc**, which is derived here rather than carried over: `discover()`
-and `roster()` each return fourteen, the same fourteen names in the same two directions as 2.1.2,
-and the totals below were summed from the harness on this tree.
+`python -m synapse_cdm.harness --adapter <name> --update-golden`, run over the roster with no
+`--fixtures` at this commit, and every verdict read from the run. The table is the live registry,
+and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
+directions to agree. **The roster did not move this arc**: `discover()` and `roster()` each return
+fourteen, the same fourteen names in the same two directions as 2.2.0.
 
-| Adapter | Direction | Fixture verdicts |
-|---|---|---|
-| `adsb` | bidirectional | 32 |
-| `ais` | bidirectional | 22 |
-| `cat021` | bidirectional | 40 |
-| `cat023` | bidirectional | 34 |
-| `cat034` | bidirectional | 34 |
-| `cat048` | bidirectional | 82 |
-| `cat062` | bidirectional | 56 |
-| `gmti` | bidirectional | 32 |
-| `legion` | ingest | 6 |
-| `pntmap` | ingest | 4 |
-| `stanag4586` | ingest | 24 |
-| `stanag4609` | bidirectional | 126 |
-| `stanag4676` | bidirectional | 34 |
-| `tak` | bidirectional | 12 |
+| Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
+|---|---|---|---|---|
+| `adsb` | bidirectional | 32 | L3 | VERIFIED |
+| `ais` | bidirectional | 22 | L3 | VERIFIED |
+| `cat021` | bidirectional | 40 | L3 | VERIFIED |
+| `cat023` | bidirectional | 34 | L3 | VERIFIED |
+| `cat034` | bidirectional | 34 | L3 | VERIFIED |
+| `cat048` | bidirectional | 82 | L3 | VERIFIED |
+| `cat062` | bidirectional | 56 | L3 | VERIFIED |
+| `gmti` | bidirectional | 32 | L3 | VERIFIED |
+| `legion` | ingest | 6 | L3 | VERIFIED |
+| `pntmap` | ingest | 4 | L3 | VERIFIED |
+| `stanag4586` | ingest | 24 | L3 | VERIFIED |
+| `stanag4609` | bidirectional | 126 | L3 | VERIFIED |
+| `stanag4676` | bidirectional | 34 | L3 | PROVISIONAL |
+| `tak` | bidirectional | 12 | L3 | VERIFIED |
 
-**538 fixture verdicts, 0 failed** across the fourteen adapters, against the published schemas —
-the same 538 as 2.1.2, and the `roundtrip` column that read SKIP for all of them now reads PASS
-for the eleven emitters and a declared SKIP for the three that emit nothing. `gates/wheel_install.py`
-reports **1076** over the same roster, which is these 538 run in each of two schema modes, from a
-wheel installed into a venv with nothing of this repository on its path.
+**538 fixture verdicts, 0 failed** across the fourteen adapters, against the published 3.0.0
+schemas — the same 538 as 2.2.0. The `roundtrip` column reads PASS for the eleven emitters and a
+declared SKIP for the three that emit nothing; the `lossless` column reads PASS on every one, on
+the ledger for `pntmap` and on the heuristic, said so, for the other thirteen.
 
-## Published by CI over OIDC, as 1.1.0 through 2.1.2 were
+## Published by CI over OIDC, as 1.1.0 through 2.2.0 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
 the tree's `PACKAGE_VERSION`, and uploads those same files through PyPI Trusted Publishing after a
 required reviewer approves the `pypi` environment. `PUBLICATION.md` ledger entry 6 records the
-configuration, and entry 19 records the 2.1.2 upload and the two tags before it that released
-nothing.
+configuration, and entry 20 records the 2.2.0 upload.
 
 ## Artefacts
 
@@ -254,6 +211,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==2.2.0
+pip install synapse-cdm==3.0.0
 python -m synapse_cdm.harness --list-adapters
 ```

@@ -637,8 +637,12 @@ def test_a_two_zero_zero_reader_does_not_accept_a_two_one_zero_object():
     `tests/test_cdm_version_matrix.py` runs that refusal on every kind. Deploying one node at a
     time is still possible: upgrade the readers first, which is the direction that IS shown.
     """
-    assert version.compatible("2.0.0", version.SCHEMA_VERSION) is True     # new reader, old writer
-    assert version.compatible(version.SCHEMA_VERSION, "2.0.0") is False    # old reader, new writer
+    # Since the 3.0.0 release (2026-09-20) the current contract is a major away from 2.0.0, so
+    # the within-major evidence is stated on the frozen pair and the major rule on the current one.
+    assert version.compatible("2.0.0", "2.1.0") is True                    # new reader, old writer
+    assert version.compatible("2.1.0", "2.0.0") is False                   # old reader, new writer
+    assert version.compatible("2.0.0", version.SCHEMA_VERSION) is False    # a major apart
+    assert version.compatible(version.SCHEMA_VERSION, "2.0.0") is False    # a major apart
     assert version.compatible("1.0.0", version.SCHEMA_VERSION) is False
 
 

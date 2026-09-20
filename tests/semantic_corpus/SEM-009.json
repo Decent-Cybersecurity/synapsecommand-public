@@ -5,7 +5,7 @@
     {
       "name": "unique sequences, legs resolve",
       "document": {
-        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "object_kind": "plan_object", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "P-9"}],
         "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",
@@ -24,7 +24,7 @@
     {
       "name": "two waypoints carry sequence 1",
       "document": {
-        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "object_kind": "plan_object", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "P-9"}],
         "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",
@@ -43,7 +43,7 @@
     {
       "name": "a leg names a sequence no waypoint carries",
       "document": {
-        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "object_kind": "plan_object", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "P-9"}],
         "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",

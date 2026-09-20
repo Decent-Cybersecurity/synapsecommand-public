@@ -15,9 +15,9 @@ description: "Anything that happens. The audit-bearing object: two timestamps an
 | | |
 | --- | --- |
 | Source file | `schemas/event.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:2.1.0:event` |
-| CDM schema version | `2.1.0` |
-| SHA-256 of source | `14f5ccb84ee3cd36114504449505807e0785b61555dd15972a5c236527fb403b` |
+| `$id` | `urn:synapsecommand:cdm:3.0.0:event` |
+| CDM schema version | `3.0.0` |
+| SHA-256 of source | `527f30670e991bb67df508137e130bba8a7bbf4d035ee5e9a0a8142fd94d7149` |
 
 Anything that happens. The audit-bearing object: two timestamps and a source, always.
 
@@ -37,7 +37,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `received_at` | string | **yes** | When WE took delivery. Never source time. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `related_entities` | array&lt;string (uuid)&gt; | no | entity_id values this event concerns. Empty when the event concerns no specific entity (a feed-level status change). |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"3.0.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `severity` | [Severity](#severity) | **yes** |  |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |

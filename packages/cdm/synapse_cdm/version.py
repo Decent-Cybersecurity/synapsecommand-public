@@ -47,10 +47,10 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        2.2.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
-    CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
+    CDM schema            3.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
                                   every serialised object, governed by ``MIGRATIONS.md``.
                                   (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
                                   only. The package did not follow it for two days and then did,
@@ -66,7 +66,13 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   PATCH and the wire contract still had no part in it. And on
                                   2026-09-17, at 2.2.0 against 2.1.0, for the ordinary reason at
                                   last: the audit arc added public names and moved the Adapter
-                                  API to 2.1.0, and no wire field, schema or golden moved.)
+                                  API to 2.1.0, and no wire field, schema or golden moved. And
+                                  on 2026-09-20, the 3.0.0 release, LEVEL again at 3.0.0 by
+                                  two separately argued MAJORs: the schema for F04's narrowing
+                                  of the published contract, the package for the audit
+                                  remediation arc's removed name and ruled meaning changes —
+                                  neither number derived from the other, as every equality in
+                                  this file's life has been.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -78,19 +84,26 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     Event semantic major  v1      a SEGMENT OF THE IDENTIFIER — ``sc.pnt.gnss_interference.v1``
                                   — so a consumer matching on the string cannot fail to notice
                                   a breaking change to one type's semantics.
-    Adapter API           2.1.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
+    Adapter API           3.0.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
                                   class is written against — what ``Adapter`` requires of a
                                   subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
                                   §1 and additive over v1; 2.1.0 added the round-trip tolerance
                                   declarations (2026-09-16) and, like v2, renamed nothing.
-    Manifest schema       1.2.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
+                                  (2.1.0 -> 3.0.0 on 2026-09-20, audit remediation S10: the
+                                  required, undefaulted ``binding`` — this line read 2.1.0
+                                  until the 3.0.0 release commit re-read it.)
+    Manifest schema       2.1.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
                                   published manifest, generated into
                                   ``schemas/manifests/adapter-manifest.schema.json`` and carried
                                   in every file under ``manifests/``. (1.0.0 -> 1.1.0 on
                                   2026-09-08, round P4: ``limitations`` widened to accept a
                                   structured ``Limitation`` beside the sentence it already
-                                  accepted. Additive, so a MINOR by this table's own rule.)
-    Evidence schema       1.0.0   this file, ``EVIDENCE_SCHEMA_VERSION``. The shape of the
+                                  accepted. Additive, so a MINOR by this table's own rule.
+                                  1.2.0 -> 2.0.0 on 2026-09-20, S10: ``binding`` required;
+                                  2.0.0 -> 2.1.0 the same day, the 3.0.0 release commit:
+                                  ``ClaimStatus.PROVISIONAL`` added. This line read 1.2.0
+                                  until that commit re-read it.)
+    Evidence schema       2.0.0   this file, ``EVIDENCE_SCHEMA_VERSION``. The shape of the
                                   generated evidence record, published into
                                   ``schemas/evidence/evidence.schema.json``. NOT derived from
                                   ``SCHEMA_VERSION``: a record carries the CDM version it
@@ -109,8 +122,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.2.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
-eighth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.0.0`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
+ninth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -138,7 +151,16 @@ tolerance members that moved ``ADAPTER_API_VERSION`` to 2.1.0, ``canonical.py``,
 ``harness.select_fixtures``, ``SEMVER_RE`` and ``is_semver`` in this file — and removed nothing,
 so ``gates/bump_derivation.py`` derived MINOR with nothing unruled; the schema moved by nothing,
 because no field, no published schema and no golden changed. The surface grew and the contract
-did not, which is what two numbers are FOR.)
+did not, which is what two numbers are FOR. **Corrected a sixth time 2026-09-20, the 3.0.0
+release, and the two are LEVEL for the fifth time in this file's life — by two majors argued
+apart**: the schema took a MAJOR because audit finding F04 narrowed the PUBLISHED contract
+(``pattern`` on every version field and on ``Entity.symbol``, ``uniqueItems`` on
+``Entity.ontology_types``), which is MIGRATIONS.md's "a type narrowed" row whatever the reference
+models already enforced; the package took a MAJOR because ``lossless.unrepresented`` is gone
+without an alias and fourteen ruled units changed meaning. Each number was derived on its own
+table and each would have moved without the other; that they met at 3.0.0 is the coincidence
+this section was written to be able to describe, and the release commit that typed both is
+`docs/audit-remediation-report.md` §4's.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -284,7 +306,18 @@ from typing import NamedTuple
 #: working and old data keeps validating. `compatible()` below is what makes that true in
 #: practice — a 2.0.0 reader accepts a 2.1.0 object, and the round proves it on a golden file
 #: written before the bump.
-SCHEMA_VERSION = "2.1.0"
+#: MOVED 2.1.0 -> 3.0.0 on 2026-09-20, a MAJOR, by the audit remediation's release commit (the
+#: ruling of 2026-09-20 in `docs/audit-remediation-report.md` §4 and MIGRATIONS.md's S10 record,
+#: superseding S10's earlier MINOR): finding F04 NARROWED the published schema — `pattern` on
+#: every `adapter_version` and `schema_version`, `pattern` on `Entity.symbol`, `uniqueItems` on
+#: `Entity.ontology_types` — and MIGRATIONS.md's table puts "a type narrowed" on the MAJOR row.
+#: A document that validated under the published 2.1.0 schema (`"adapter_version": "banana"`,
+#: F04's own counterexample) is refused by this one, so for a consumer validating with the
+#: published schema alone, accepted documents DO become invalid. No path was removed, no
+#: `required` list grew and no enum member went; `assess("2.1.0", "3.0.0")` reads REFUSED both
+#: ways by the different-major rule, and the 2.1.0 contract stays frozen under
+#: `tests/frozen/cdm/2.1.0/` beside this one under `tests/frozen/cdm/3.0.0/`.
+SCHEMA_VERSION = "3.0.0"
 
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
@@ -325,7 +358,19 @@ SCHEMA_VERSION = "2.1.0"
 #: `gates/bump_derivation.py` derives MINOR over that arc with nothing unruled once MIGRATIONS.md's
 #: eighty-three rulings in the 2.2.0 section are read, so the gate's floor and this number are one
 #: number. `SCHEMA_VERSION` stays at 2.1.0: no wire field, no published schema and no golden moved.
-PACKAGE_VERSION = "2.2.0"
+#: Moved 2.2.0 -> 3.0.0 on 2026-09-20, a MAJOR, and this one IS the derived floor: the audit
+#: remediation arc since `v2.2.0` (findings F01–F09, `docs/audit-remediation-report.md`) removes
+#: `lossless.unrepresented` with no alias — the shape signal — and MIGRATIONS.md's rulings in the
+#: 3.0.0 section carry the units whose MEANING moved: `version.compatible` and `parse` (F01),
+#: `harness.run` and `evidence.badges` (F02), `suite.check_malformed` and
+#: `check_parser_robustness` (F03), `conformance.assess_a`, `_validator` and `models.Timestamp`
+#: (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter` and `parse_document` (F05),
+#: `harness.load_raw` (F06) and `evidence.EvidenceRecord` (F07). `gates/bump_derivation.py`
+#: derives MAJOR over that arc with nothing unruled once the rulings are read, so the gate's
+#: floor and this number are one number and no Version ruling is needed. `SCHEMA_VERSION` moves
+#: to 3.0.0 in the same commit on ITS OWN table (above): two separately argued majors landing on
+#: one number, which is the coincidence this file's docstring has always said it would be.
+PACKAGE_VERSION = "3.0.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
@@ -396,7 +441,16 @@ ADAPTER_API_VERSION = "3.0.0"
 #: F05's reason stands, a default is a wire-level claim the author did not make. All fourteen
 #: manifests move in their envelope (this constant) and moved already in their `adapter` block
 #: (the declaration each adapter now carries).
-MANIFEST_SCHEMA_VERSION = "2.0.0"
+#:
+#: **2.0.0 -> 2.1.0, the 3.0.0 release commit, 2026-09-20.** `ClaimStatus` gained a seventh
+#: member, `PROVISIONAL` — the mapping passes this repository's public gates against a
+#: provisional internal profile (`binding: provisional-internal-profile`), which is not what
+#: `VERIFIED` asserts about an adapter bound to the standard's own encoding. An enum member
+#: added is MIGRATIONS.md's MINOR row and `VERSIONING.md` §3's "new optional" case: a manifest
+#: written against 2.0.0 still validates, and only `manifests/stanag4676.json` moves its value.
+#: The maintainer's ruling (B) of 2026-09-20 in `docs/audit-remediation-report.md` §4 is the
+#: reason, and `manifest.AdapterMetadata` holds the two fields to each other in both directions.
+MANIFEST_SCHEMA_VERSION = "2.1.0"
 
 #: The generated EVIDENCE RECORD's shape, and a SIXTH axis — the last one `VERSIONING.md` carried
 #: as owed. `1.0.0` because `schemas/evidence/evidence.schema.json` is the first evidence schema
@@ -467,13 +521,16 @@ class Compatibility(NamedTuple):
                 f"{self.read_by} ({self.direction.value}) — {self.reason}")
 
 
-#: The CDM contracts of the current major that have been PUBLISHED and FROZEN — every minor a
-#: reader can hold evidence about. `tests/frozen/cdm/MANIFEST.json` carries each one's schemas
-#: as the release tag shipped them (tag, commit, sha256), and `tests/test_cdm_version_matrix.py`
-#: holds this tuple equal to that manifest's keys: a contract may not be claimed here before it
-#: is frozen there, and a frozen one may not be forgotten here. A minor of this major that is
-#: not in this tuple is UNKNOWN to `assess()` — never presumed safe by arithmetic.
-KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0")
+#: The CDM contracts that have been PUBLISHED and FROZEN — every minor of every major a reader
+#: can hold evidence about. `tests/frozen/cdm/MANIFEST.json` carries each one's schemas as the
+#: release tag shipped them (tag, commit, sha256), and `tests/test_cdm_version_matrix.py` holds
+#: this tuple equal to that manifest's keys: a contract may not be claimed here before it is
+#: frozen there, and a frozen one may not be forgotten here. A minor of the reader's major that
+#: is not in this tuple is UNKNOWN to `assess()` — never presumed safe by arithmetic. Contracts
+#: of DIFFERENT majors are listed side by side and are still REFUSED for each other: the tuple
+#: is evidence within a major, and the major rule is decided before it is consulted. 3.0.0 joined
+#: on 2026-09-20, frozen in the release commit `v3.0.0` names (the manifest's `SELF` provenance).
+KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0", "3.0.0")
 
 _MATRIX = "tests/test_cdm_version_matrix.py"
 _FROZEN = "tests/frozen/cdm/MANIFEST.json"

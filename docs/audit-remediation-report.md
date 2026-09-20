@@ -30,14 +30,14 @@ BLOCKED_EXTERNAL_EVIDENCE · BLOCKED_ADMIN_ACTION. NOT_REPRODUCED is not a resol
 | ID  | Finding                                              | Disposition | Tests (files)        | Evidence (paths)     | External dependency |
 |-----|------------------------------------------------------|-------------|----------------------|----------------------|---------------------|
 | F01 | Directional, evidence-based version compatibility    | FIXED_AND_VERIFIED | tests/test_cdm_version_matrix.py (new, 40 cases); tests/test_cdm_models.py; tests/test_cdm_conformance.py; tests/test_cdm_suite.py | tests/frozen/cdm/MANIFEST.json + 2.0.0/, 2.1.0/ (frozen from tags v2.0.0 @a0cc896, v2.2.0 @5c53e75); .remediation/logs/quick-20260919T105011Z.log, quick-20260919T105141Z.log | none (local tags only, no network) |
-| F02 | Path-bound preservation checks replace value presence | FIXED_AND_VERIFIED for the MECHANISM only (ledger wired; 1 of 14 shipped adapters declares mappings, 13 recorded heuristic-only, see Disposition). OPEN, a maintainer decision not made by any session (§4, §5 item 9): whether a heuristic-basis check D may carry L1–L3, and what becomes of the 13 heuristic-only manifests' `maturity.basis` sentences — 11 of them (the L4 adapters) cite the `lossless` check as evidence for the rungs, e.g. `manifests/adsb.json:68`; legion's and stanag4586's cite `translate`/`schema`/`provenance` only and carry L3 on the same heuristic-basis D — those 13 basis sentences are NOT covered by this row's FIXED_AND_VERIFIED | tests/test_cdm_preservation.py (new, 41 cases: counterexample, the 14 listed regressions, 14 corrupted adapters through harness.run, reporting); tests/test_cdm_evidence.py (badge test added; rename); tests/test_cdm_lossless.py, tests/test_cdm_harness.py, tests/test_cdm_suite.py, tests/test_cdm_manifests.py, tests/test_cdm_architecture_docs.py, tests/test_cdm_bump_derivation.py, tests/test_cdm_release.py (re-run); five adapter test modules (rename only) | packages/cdm/synapse_cdm/lossless.py (`value_presence_heuristic`, `ledger`, `Mapping`, rules); harness.py (`lossless` column folds the ledger, `preservation` block, `DIAGNOSTIC_LIMIT`); suite.py (`checks.D.details.basis`, `loss_report.ledger`, `ledger_summary`); evidence.py (badge); adapter.py (`MAPPINGS`); adapters/pntmap.py (16 mappings); ARCHITECTURE.md §1.1 citations; docs/docs/cdm/evidence.mdx; MIGRATIONS.md F02 record; gates/wheel_install.py roster; .remediation/logs/quick-20260919T211708Z.log (red: ImportError at collection, the ledger absent), quick-20260919T212114Z.log (3 passed), quick-20260919T213256Z.log (1336 passed, 1 failed: the §1.1 citation gate, fixed; 213233Z is an earlier 1 failed / 37 passed of the blindness test under its first name), quick-20260919T213556Z.log (314 passed incl. test_cdm_release.py); full-20260919T213859Z (2 failed: SECURITY.md `load_adapter` citation moved by F02, re-derived to adapter.py:654 in SECURITY.md + tests/test_cdm_security_policy.py; version-floor closure red on the operator's `.remediation/bin/run.py`, apparatus, not F02) | none (no network, no new dependency) |
+| F02 | Path-bound preservation checks replace value presence | FIXED_AND_VERIFIED, and CLOSED on 2026-09-20 by the maintainer's ruling (A) applied in the 3.0.0 release commit (§4, §5 item 9): the ledger is wired; 1 of 14 shipped adapters declares mappings; the 11 manifests whose `maturity.basis` cited the `lossless` check as evidence for their rungs (`adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`, `cat062`, `gmti`, `stanag4609`, `stanag4676`, `tak`) are declared L3 with a basis that says the PASS rests on the value-presence heuristic and that no `MAPPINGS` are declared; `tests/test_cdm_manifests.py` holds a bidirectional adapter to L3 where the report's `preservation.basis` reads `heuristic` and to L4 only where it reads `ledger`; ARCHITECTURE.md §3.6 carries the dated ruling; `legion`, `stanag4586` and `pntmap` were inside the cap already. An adapter regains L4 when its field mappings are declared and the ledger reports no loss (queued, one adapter per session) | tests/test_cdm_preservation.py (new, 41 cases: counterexample, the 14 listed regressions, 14 corrupted adapters through harness.run, reporting); tests/test_cdm_evidence.py (badge test added; rename); tests/test_cdm_lossless.py, tests/test_cdm_harness.py, tests/test_cdm_suite.py, tests/test_cdm_manifests.py, tests/test_cdm_architecture_docs.py, tests/test_cdm_bump_derivation.py, tests/test_cdm_release.py (re-run); five adapter test modules (rename only) | packages/cdm/synapse_cdm/lossless.py (`value_presence_heuristic`, `ledger`, `Mapping`, rules); harness.py (`lossless` column folds the ledger, `preservation` block, `DIAGNOSTIC_LIMIT`); suite.py (`checks.D.details.basis`, `loss_report.ledger`, `ledger_summary`); evidence.py (badge); adapter.py (`MAPPINGS`); adapters/pntmap.py (16 mappings); ARCHITECTURE.md §1.1 citations; docs/docs/cdm/evidence.mdx; MIGRATIONS.md F02 record; gates/wheel_install.py roster; .remediation/logs/quick-20260919T211708Z.log (red: ImportError at collection, the ledger absent), quick-20260919T212114Z.log (3 passed), quick-20260919T213256Z.log (1336 passed, 1 failed: the §1.1 citation gate, fixed; 213233Z is an earlier 1 failed / 37 passed of the blindness test under its first name), quick-20260919T213556Z.log (314 passed incl. test_cdm_release.py); full-20260919T213859Z (2 failed: SECURITY.md `load_adapter` citation moved by F02, re-derived to adapter.py:654 in SECURITY.md + tests/test_cdm_security_policy.py; version-floor closure red on the operator's `.remediation/bin/run.py`, apparatus, not F02) | none (no network, no new dependency) |
 | F03 | Real (process-isolated) parser deadlines             | FIXED_AND_VERIFIED | tests/test_cdm_parser_isolation.py (new, 17 cases: 15 at first, the socket test, then S10's undecodable-reply case); tests/synthetic_parsers.py (new helper, 7 module-level doubles); tests/test_cdm_suite.py, tests/test_cdm_parser_safety.py, tests/test_cdm_input_bounds.py, tests/test_cdm_release.py (re-run, unchanged) | packages/cdm/synapse_cdm/suite.py (ParserWorker, outcome codes, H/N rewrite, `--startup-timeout`, `--diagnostics`); gates/wheel_install.py (roster row); MIGRATIONS.md F03 record; docs/docs/cdm/evidence.mdx; .remediation/logs/quick-20260919T204410Z.log (red: 1 failed), quick-20260919T204444Z.log (15 passed), quick-20260919T204502Z.log (214 passed); full-20260919T205002Z (2 failed: one F03-caused socket red, fixed; one apparatus red, not F03's), quick-20260919T205732Z.log (80 passed: isolation + no-network), quick-20260919T205532Z.log (170 passed: suite + evidence) | none (stdlib `multiprocessing` spawn over `os.pipe()`; no socket, no network; `resource.setrlimit` deliberately not used — F06) |
 | F04 | JSON Schema ↔ Python validation contract alignment   | FIXED_AND_VERIFIED (1 apparatus red outside F04, see Disposition) | tests/test_cdm_schema_alignment.py (new, 82 cases); tests/test_cdm_semantic_corpus.py (new, 44 cases); tests/test_cdm_models.py; tests/test_cdm_oes.py | docs/cdm-semantic-rules.md (new); tests/semantic_corpus/ (14 JSON files + README); schemas/*.schema.json regenerated; .remediation/logs/quick-20260919T201505Z.log, quick-20260919T201254Z.log, quick-20260919T201348Z.log | none (no network; jsonschema is already a runtime dependency) |
-| F05 | Adapter scope + STANAG 4676 status unambiguous       | FIXED_AND_VERIFIED for the mechanism (binding field on all 14, generated matrix + drift test, 4676 provisional in manifest/CLI/page, explicit normative mode, hardened XML path); the NORMATIVE VERIFICATION itself is BLOCKED_EXTERNAL_EVIDENCE, procedure in Disposition; ONE F05-caused red stands in the operator's full run: `test_cdm_packaging` on the two new untracked package modules — the only non-weakening fix is `git add`, which the sandbox denies this session (BLOCKED_ADMIN_ACTION, command in Disposition) | tests/test_cdm_stanag4676_binding.py (new, 25 functions / 32 collected cases: binding selection, every blocked step by name, the injected-validator success path both directions, profile/namespace refusals both directions, the parser); tests/test_cdm_support_matrix.py (new, 16 functions, 55 cases with parametrisation: page current, mutation, every cell, four sites agree, evidence scope, no count); tests/test_cdm_manifests.py (6 added: schema requires `binding`, no default, provisional needs a limitation, both directions, normative-verified held to a report, none today); tests/test_cdm_list_adapters.py (binding column + `--json` key); tests/__init__.py (probe doubles declare `standard-encoding`); re-run green: test_cdm_stanag4676_adapter, test_cdm_parser_safety, test_cdm_input_bounds, test_cdm_evidence, test_cdm_evidence_categories, test_cdm_format_coverage, test_cdm_suite, test_cdm_readiness, test_cdm_harness, test_cdm_adapter_contract, test_cdm_boundary, test_cdm_no_network, test_cdm_gate_rosters, test_cdm_prose_counts, test_cdm_architecture_docs, test_cdm_security_policy, test_cdm_changelog_claim, test_cdm_release | packages/cdm/synapse_cdm/manifest.py (`WireBinding`, required `binding`, provisional→limitation rule); adapters/stanag4676.py (`binding`/`environ`/`validator_factory`, `_parse_xml`, `NORMATIVE_PROCEDURE`, `NormativeResource`, `PROVISIONAL_MARKER`, namespace refusals); normative_binding.py (new: `resolve`, `NormativeBindingBlocked`, validators); support_matrix.py (new generator); harness.py (`binding` column/key); evidence.py (`EXTERNAL_ABSENT_BASIS`); the 13 other adapter modules (one `binding=` line each); manifests/*.json and schemas/manifests/adapter-manifest.schema.json regenerated (CURRENT); docs/docs/cdm/support-matrix.mdx (new, generated, CURRENT); README.md, INTEROPERABILITY.md Step 1, MIGRATIONS.md F05 record + count 14→28; gates/wheel_install.py (two roster rows); evidence/ regenerated (14 REPRODUCED); .remediation/logs/quick-20260919T233949Z.log (red, F05-caused, fixed), 234349Z, 234448Z, 235314Z + 235323Z (reds, own tests), 235500Z (red, F05-caused, fixed), 235521Z, 235526Z (red, release count, fixed), 235528Z (red, packaging: two untracked new files — operator), 235658Z, 235717Z (red, own test), 235814Z, quick-20260920T000021Z, 000120Z (manifests), 000149Z (red: prose gate on a "Thirteen adapters" phrase in the F05 record, reworded, no exemption added), final run quick-20260920T000422Z (866 passed, 10 skipped — the standing tag-conditional skips, none in F05's modules); operator's full-20260920T000616Z (5792 passed, 79 skipped, 2 failed: packaging on the two untracked F05 modules; the standing `.remediation/bin/run.py` version-floor red), reproduced alone in quick-20260920T001238Z and quick-20260920T001239Z; .remediation/f05_rewrite_block.py.txt (helper, deletable) | none for the mechanism (stdlib `pyexpat`; no network; no dependency added). Normative verification: BLOCKED_EXTERNAL_EVIDENCE — an authorised STANAG 4676 XSD pair from a NATO channel (Ed B §B.5 / AEDP-12.1 §D.1) with its record, and an XSD validator (`xmlschema`, MIT, or `lxml`, BSD-3-Clause — neither a dependency; adding one is the maintainer's ruling) |
+| F05 | Adapter scope + STANAG 4676 status unambiguous       | FIXED_AND_VERIFIED for the mechanism (binding field on all 14, generated matrix + drift test, 4676 provisional in manifest/CLI/page, explicit normative mode, hardened XML path), and the S7 review's `claim_status` question CLOSED on 2026-09-20 by the maintainer's ruling (B) applied in the 3.0.0 release commit (§4, §5 item 10): `ClaimStatus.PROVISIONAL` added (`MANIFEST_SCHEMA_VERSION` 2.0.0 → 2.1.0), `manifests/stanag4676.json` claims it, `manifest.AdapterMetadata` holds claim and binding to each other in both directions, ARCHITECTURE.md §3.4 reads seven statuses; the NORMATIVE VERIFICATION itself is BLOCKED_EXTERNAL_EVIDENCE, procedure in Disposition; the packaging red on the two untracked modules was closed by the maintainer's `git add` of 2026-09-20 (§5 item 4) | tests/test_cdm_stanag4676_binding.py (new, 25 functions / 32 collected cases: binding selection, every blocked step by name, the injected-validator success path both directions, profile/namespace refusals both directions, the parser); tests/test_cdm_support_matrix.py (new, 16 functions, 55 cases with parametrisation: page current, mutation, every cell, four sites agree, evidence scope, no count); tests/test_cdm_manifests.py (6 added: schema requires `binding`, no default, provisional needs a limitation, both directions, normative-verified held to a report, none today); tests/test_cdm_list_adapters.py (binding column + `--json` key); tests/__init__.py (probe doubles declare `standard-encoding`); re-run green: test_cdm_stanag4676_adapter, test_cdm_parser_safety, test_cdm_input_bounds, test_cdm_evidence, test_cdm_evidence_categories, test_cdm_format_coverage, test_cdm_suite, test_cdm_readiness, test_cdm_harness, test_cdm_adapter_contract, test_cdm_boundary, test_cdm_no_network, test_cdm_gate_rosters, test_cdm_prose_counts, test_cdm_architecture_docs, test_cdm_security_policy, test_cdm_changelog_claim, test_cdm_release | packages/cdm/synapse_cdm/manifest.py (`WireBinding`, required `binding`, provisional→limitation rule); adapters/stanag4676.py (`binding`/`environ`/`validator_factory`, `_parse_xml`, `NORMATIVE_PROCEDURE`, `NormativeResource`, `PROVISIONAL_MARKER`, namespace refusals); normative_binding.py (new: `resolve`, `NormativeBindingBlocked`, validators); support_matrix.py (new generator); harness.py (`binding` column/key); evidence.py (`EXTERNAL_ABSENT_BASIS`); the 13 other adapter modules (one `binding=` line each); manifests/*.json and schemas/manifests/adapter-manifest.schema.json regenerated (CURRENT); docs/docs/cdm/support-matrix.mdx (new, generated, CURRENT); README.md, INTEROPERABILITY.md Step 1, MIGRATIONS.md F05 record + count 14→28; gates/wheel_install.py (two roster rows); evidence/ regenerated (14 REPRODUCED); .remediation/logs/quick-20260919T233949Z.log (red, F05-caused, fixed), 234349Z, 234448Z, 235314Z + 235323Z (reds, own tests), 235500Z (red, F05-caused, fixed), 235521Z, 235526Z (red, release count, fixed), 235528Z (red, packaging: two untracked new files — operator), 235658Z, 235717Z (red, own test), 235814Z, quick-20260920T000021Z, 000120Z (manifests), 000149Z (red: prose gate on a "Thirteen adapters" phrase in the F05 record, reworded, no exemption added), final run quick-20260920T000422Z (866 passed, 10 skipped — the standing tag-conditional skips, none in F05's modules); operator's full-20260920T000616Z (5792 passed, 79 skipped, 2 failed: packaging on the two untracked F05 modules; the standing `.remediation/bin/run.py` version-floor red), reproduced alone in quick-20260920T001238Z and quick-20260920T001239Z; .remediation/f05_rewrite_block.py.txt (helper, deletable) | none for the mechanism (stdlib `pyexpat`; no network; no dependency added). Normative verification: BLOCKED_EXTERNAL_EVIDENCE — an authorised STANAG 4676 XSD pair from a NATO channel (Ed B §B.5 / AEDP-12.1 §D.1) with its record, and an XSD validator (`xmlschema`, MIT, or `lxml`, BSD-3-Clause — neither a dependency; adding one is the maintainer's ruling) |
 | F06 | Resource-limit and streaming claims                  | FIXED; the refusal branch VERIFIED on macOS; the Linux enforcement branch PENDING its first CI run (see Disposition — S10 corrected the CPU limit's soft/hard pair before that run, and the final review's follow-up of 2026-09-20 reads the pair back from a spawned worker on every platform that has `RLIMIT_CPU`: `test_the_cpu_limit_pair_the_worker_sets_is_soft_n_and_hard_n_plus_one`, green on macOS at (3, 4)) | tests/test_cdm_resource_envelope.py (new, 83 cases, then 84 with the pair reading — `.remediation/logs/quick-20260920T073027Z.log` 84 passed; `quick-20260920T073408Z.log` red on the prose-count gate over a "13 … adapters" phrase in §5 item 9, reworded, no exemption; `quick-20260920T073423Z.log` 376 passed over the eight modules the final review's follow-up named plus `test_cdm_parser_isolation`; `tests/synthetic_parsers.py::CpuLimitReporting` is its double: boundaries at/past every byte and depth bound, guard order, loader bounds, worker envelope refusal/enforcement, check M, integrity walk, envelope page, policy rows); tests/synthetic_parsers.py (`MemoryHog`, `Spinning`); tests/test_cdm_parser_safety.py, tests/test_cdm_input_bounds.py, tests/test_cdm_klv_framing.py, tests/test_cdm_boundary.py, tests/test_cdm_parser_isolation.py, tests/test_cdm_suite.py, tests/test_cdm_harness.py, tests/test_cdm_evidence.py, tests/test_cdm_security_policy.py, tests/test_cdm_prose_counts.py, tests/test_cdm_release.py (re-run) | packages/cdm/synapse_cdm/harness.py (`LOADER_MAX_DEPTH`, `LOADER_MAX_BYTES`, `FixtureTooLarge`, `FixtureTooDeep`, `load_raw` bounds); suite.py (`ResourceLimits`, `UnsupportedResourceLimit`, `resource_limit_support`, `--memory-limit-bytes`/`--cpu-limit-seconds`, `STREAMING_STATUS`); models.py (`integrity` description) + 5 regenerated object schemas; docs/docs/security/deployment-envelope.mdx (new); parser-safety.mdx §1/§5/§6; SECURITY.md (3 control rows); MIGRATIONS.md F06 record; gates/wheel_install.py roster; .remediation/logs/quick-20260919T221710Z.log, quick-20260919T221727Z.log (reds), quick-20260919T221737Z.log (83 passed), quick-20260919T221843Z.log (prose-gate red, reworded), quick-20260919T221931Z.log (812 passed, 3 standing skips); full-20260919T222457Z (1 failed: the standing `.remediation/bin/run.py` apparatus red against test_cdm_version_floor, not F06's; 5635 passed, 79 skipped), quick-20260919T222921Z.log (the same one file named alone); .remediation/f06_probe_rlimit.py.txt (macOS rlimit readings), f06_probe_twin_depth.py.txt | none (stdlib `resource`/`mmap`; no network) |
 | F07 | Reproducible independent interoperability evidence   | FIXED_AND_VERIFIED for the mechanism; every external evidence state left OPEN by design (no partner, no exercise, no date invented; `external_exercise` null on all 14) | tests/test_cdm_evidence_categories.py (new, 25 cases: the five categories derived, external ABSENT on every shipped adapter, the runner, verify's refusal of a missing/changed report, the self-peer refusal, computed verdicts, maturity support, the snapshot on a throwaway repo, both schemas, the document); tests/test_cdm_evidence.py (badge set 6→7, absent-not-red row); tests/test_cdm_readiness.py, tests/test_cdm_witness.py, tests/test_cdm_witness_builder.py, tests/test_cdm_release.py, tests/test_cdm_manifests.py, tests/test_cdm_schemas.py, tests/test_cdm_gate_rosters.py (re-run) | packages/cdm/synapse_cdm/evidence.py (`EvidenceCategory`, `CategoryReading`, `Snapshot`, `MaturitySupport`, `ExerciseReport`, `snapshot()`, `categories()`, `maturity_support()`, `exercise()`, `read_exercises()`, CLI `exercise`, `--exercises`); schemas.py (`EXERCISE_STEM`); schemas/evidence/evidence.schema.json (regenerated), schemas/evidence/exercise.schema.json (new); evidence/ regenerated (14 REPRODUCED, 105 badges); INTEROPERABILITY.md Step 4; MIGRATIONS.md F07 record; gates/wheel_install.py roster; .remediation/logs/quick-20260919T225841Z.log, quick-20260919T225904Z.log (reds, own test), quick-20260919T225922Z.log (151 passed), quick-20260919T230017Z.log (714 passed, 1 standing apparatus red), quick-20260919T230107Z.log (194 passed); full-20260919T230506Z (5662 passed, 79 skipped, 1 failed: the standing `.remediation/bin/run.py` red against test_cdm_version_floor, the operator's apparatus, not F07's; reproduced alone in quick-20260919T230942Z.log) | none for the mechanism; the three external categories need a legally usable independent implementation and its outputs — BLOCKED_EXTERNAL_EVIDENCE, procedure in INTEROPERABILITY.md Step 4 |
 | F08 | Enforceable governance without silent policy change  | FIXED_AND_VERIFIED for the local half (one workflow defect closed, workflow properties tested, audit gate with an honest UNVERIFIED, staged proposals held to the derivation, ADR 0011, runbook); remote enforcement BLOCKED_ADMIN_ACTION — no ruleset applied, no live setting read, procedure in Disposition and docs/governance/RUNBOOK.md | tests/test_cdm_governance.py (new, 46 cases: pull-request coverage and path-filter deadlock, fork safety, run-block injection both directions, action pins with version comments, derived check contexts, DOCUMENTED held to PUBLICATION.md, both proposals' shape, apply idempotency/readback/refusal, CLI UNVERIFIED as a subprocess with gh scrubbed from PATH, the documents); tests/test_cdm_security_policy.py, test_cdm_trusted_publishing.py, test_cdm_publication.py, test_cdm_deploy_workflow.py, test_cdm_commit_message.py, test_cdm_gate_rosters.py, test_cdm_release.py (re-run) | gates/governance_audit.py (new); .github/workflows/rc-build.yml (dispatch input carried through env:); docs/governance/rulesets/stage1-main-protection.json, stage2-main-protection-pull-request-only.json (new); docs/adr/0011-repository-governance-enforcement.md (new); docs/governance/RUNBOOK.md (new); gates/wheel_install.py (roster row); .remediation/logs/ (quick runs named in §F08) | an administrator credential (`gh auth login` as an admin, or a fine-grained token with Administration read/write) — absent this session by design; the apply verb was delivered and NOT run |
-| S10 | Versioning, integration, final verification (not a finding) | LOCAL_INTEGRATION_DONE; readiness in §6 (LOCAL_CHECKS_PASS: YES on 2026-09-20 — operator's full run `full-20260920T062800Z` over the staged tree, all lanes rc=0, 5866 passed, 79 skipped; earlier NO — three named reds — kept as the historical record; EXTERNAL_VALIDATION_PENDING; ADMIN_ENFORCEMENT_PENDING); two constants deliberately not typed (§S10, §4) | tests/test_cdm_parser_isolation.py (+1, undecodable reply); tests/test_cdm_lint_stage.py, tests/test_cdm_governance.py, tests/test_cdm_resource_envelope.py (prose/guard edits); tests/synthetic_parsers.py (two unused helpers removed); re-run green: 50 modules across three quick runs (814/5, 1507/53, and the 12 touched) incl. test_cdm_release, test_cdm_bump_derivation, test_cdm_prose_counts, test_cdm_changelog_claim, test_cdm_version_matrix, test_cdm_schemas, test_cdm_manifests | packages/cdm/synapse_cdm/version.py (ADAPTER_API 3.0.0, MANIFEST_SCHEMA 2.0.0, EVIDENCE_SCHEMA 2.0.0 + dated history); MIGRATIONS.md Unreleased (S10 record, 143 Bump rulings, two corrections); VERSIONING.md §2; suite.py (RLIMIT_CPU soft/hard, undecodable reply), schemas.py (DIALECT), adapters/stanag4676.py (f-string), support_matrix.py (header); pyproject.toml (baseline 32); docs/scripts/lib/schema-to-mdx.mjs; docs/docs/security/deployment-envelope.mdx; regenerated schemas/manifests/evidence/support-matrix/current-contracts; .remediation/s10_bump.json; logs quick-20260920T020956Z, 021100Z, 021603Z, 021709Z, dist-20260920T022157Z, full-20260920T0222 (§3) | none for the local half; §5 for the rest — the release commit (tag, rehearsal, goldens, freeze) is the maintainer's |
+| S10 | Versioning, integration, final verification (not a finding) | LOCAL_INTEGRATION_DONE; readiness in §6 (LOCAL_CHECKS_PASS: YES on 2026-09-20 — operator's full run `full-20260920T062800Z` over the staged tree, all lanes rc=0, 5866 passed, 79 skipped; earlier NO — three named reds — kept as the historical record; EXTERNAL_VALIDATION_PENDING; ADMIN_ENFORCEMENT_PENDING); the two constants S10 left untyped were typed by the 3.0.0 release commit of 2026-09-20 (§4) | tests/test_cdm_parser_isolation.py (+1, undecodable reply); tests/test_cdm_lint_stage.py, tests/test_cdm_governance.py, tests/test_cdm_resource_envelope.py (prose/guard edits); tests/synthetic_parsers.py (two unused helpers removed); re-run green: 50 modules across three quick runs (814/5, 1507/53, and the 12 touched) incl. test_cdm_release, test_cdm_bump_derivation, test_cdm_prose_counts, test_cdm_changelog_claim, test_cdm_version_matrix, test_cdm_schemas, test_cdm_manifests | packages/cdm/synapse_cdm/version.py (ADAPTER_API 3.0.0, MANIFEST_SCHEMA 2.0.0, EVIDENCE_SCHEMA 2.0.0 + dated history); MIGRATIONS.md Unreleased (S10 record, 143 Bump rulings, two corrections); VERSIONING.md §2; suite.py (RLIMIT_CPU soft/hard, undecodable reply), schemas.py (DIALECT), adapters/stanag4676.py (f-string), support_matrix.py (header); pyproject.toml (baseline 32); docs/scripts/lib/schema-to-mdx.mjs; docs/docs/security/deployment-envelope.mdx; regenerated schemas/manifests/evidence/support-matrix/current-contracts; .remediation/s10_bump.json; logs quick-20260920T020956Z, 021100Z, 021603Z, 021709Z, dist-20260920T022157Z, full-20260920T0222 (§3) | none for the local half; §5 for the rest — the release commit (tag, rehearsal, goldens, freeze) is the maintainer's |
 | F09 | Usable current documentation + maintenance controls  | FIXED_AND_VERIFIED for the entry page, the generated/drift-checked figures, the symbol citations, the corrected current claims, the widened lint gate with its explicit baseline and the installed-artefact reading; ONE lane stays red outside F09's changes — the docs site's `check:schemas` refuses the six generated schema-reference pages F04/F06 left stale, and their regeneration (`npm run gen:schemas`) was DECLINED this session, so `verify.sh full --docs` reads docs rc=1 (BLOCKED_ADMIN_ACTION, command in Disposition); the new page's MDX compilation is consequently unproven here | tests/test_cdm_current_contracts.py (new, 14 cases: sections, block current, every constant by name, platform independence, missing/markerless/stale refused and `--write` scoped to the block, CLI exit codes, every relative and root link resolves, no line citation, no adapter count, unique fractional sidebar position, MDX markers); tests/test_cdm_architecture_docs.py (two line-citation gates replaced by an AST member/kind gate with its non-vacuity check and a table-scoped six-constant reading gate; document-wide sweep kept at three by reason); tests/test_cdm_lint_stage.py (rule set `E9,F,E7,W`; baseline test: files exist, one basename glob, codes only, may only shrink); tests/test_cdm_conformance.py (closure canary re-anchored on a USED import); re-run green: test_cdm_prose_counts, test_cdm_pins, test_cdm_getting_started, test_cdm_landing_next, test_cdm_positioning, test_cdm_consumer_path, test_cdm_ordinals, test_cdm_changelog_claim, test_cdm_witness, test_cdm_security_policy, test_cdm_support_matrix, test_cdm_release, test_cdm_resource_envelope, test_cdm_format_coverage, test_cdm_boundary, test_cdm_no_network, test_cdm_parser_safety, test_cdm_deploy_workflow, test_cdm_harness, test_cdm_stanag4676_binding, test_cdm_stanag4676_adapter, test_cdm_evidence, test_cdm_schema_alignment, test_cdm_version_matrix, test_cdm_preservation, test_cdm_scripted_edits, test_cdm_bump_derivation, test_cdm_gate_rosters, test_cdm_packaging (minus F05's standing red) | docs/docs/current-contracts.mdx (new, position 1.5); gates/current_contracts.py (new, `--check`/`--write`); VERSIONING.md §2 (six symbol citations + dated correction); ARCHITECTURE.md §1.1 (kind citations + dated correction), §3.1 (`binding` row), §4.1 (F02 correction); docs/docs/intro.mdx, writing-an-adapter.mdx, cdm/conformance-suite.mdx (rows D/H/L/M/N/O), cdm/index.mdx, cdm/evidence.mdx, security/index.mdx, security/release-pipeline.mdx; docs/sidebars.ts; packages/cdm/pyproject.toml (`select`, per-file baseline); conformance.py, harness.py (dead `import jsonschema` removed), adapters/stanag4676.py (re-export marked), gates/bump_derivation.py (two f-strings); gates/wheel_install.py (roster row); MIGRATIONS.md F09 record; .remediation/bin/verify.sh (support-matrix and current-contracts drift lines); logs: .remediation/logs/quick-20260920T011642Z.log (red: empty block refused), 011702Z (14 passed), 012319Z (red: the widened sweep reading a dated 2026-09-08 correction as a claim — scoped, not rewritten), 012356Z (58 passed), 012419Z (1228 passed, 56 skipped), 012444Z (red: closure canary on the removed import — re-anchored), 012507Z (672 passed), 012614Z (180 passed, then F05's standing packaging red), 012627Z (packaging 12 passed, 1 deselected), 013312Z (49 passed); full-20260920T012635Z (3 failed: the two standing + scripted-edits refusing a `gates` key in the baseline — fixed at the source), full-20260920T013348Z (5858 passed, 79 skipped, 2 failed = the two standing reds; ruff/schemas/support-matrix/current-contracts rc=0; docs rc=1 on the stale generated pages), dist-20260920T013840Z.log (rc=0: wheel+sdist built, clean-venv install, four CLIs answer, 30 `.md` files under the package in the sdist listing, no audit/docs/gates artefact in either listing) | none for the mechanism (no network, no dependency); the operator's `npm run gen:schemas` in docs/ (declined this session) for the docs lane, and the maintainer's `git add` of gates/current_contracts.py, docs/docs/current-contracts.mdx and tests/test_cdm_current_contracts.py alongside F05's two untracked modules |
 
 ## F01 — Version compatibility
@@ -307,6 +307,19 @@ heuristic-basis D may carry L1–L3 is a ruling for S10 alongside the version de
 manifests' basis sentences and the "runs at full strength" comments in the nine adapter modules listed under Correction are the
 sites that ruling moves. Writing the thirteen `MAPPINGS` tables is one session per adapter
 (the ASTERIX and KLV adapters carry hundreds of item paths) and is queued, not skipped.
+
+**Closed 2026-09-20 by the maintainer's ruling (A), applied in the 3.0.0 release commit (S11).**
+The thirteen basis sentences this row excluded are settled: the eleven L4 manifests move to L3
+with a basis that says the `lossless` PASS rests on the value-presence heuristic, that no
+`MAPPINGS` are declared and that L4 is NOT declared for that reason (`.remediation/s11_downgrade_l4.py.txt`
+rewrote the eleven mechanically, keeping each tolerance clause and test citation verbatim, and
+asserted every extraction); `legion` and `stanag4586` cite the three path-bound checks and stay
+at L3; `pntmap` keeps its ledger-backed L3. `tests/test_cdm_manifests.py::test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support`
+reads the report's `checks.D.details.basis` and holds L3 to `heuristic` and L4 to `ledger`
+(replacement assertion, both branches; contract change: yes, rationale in §4); ARCHITECTURE.md
+§3.6 carries the dated ruling; manifests and evidence regenerated (`manifests --check` CURRENT,
+14 REPRODUCED). Runs: `.remediation/logs/quick-20260920T082627Z.log` (272 passed: matrix,
+schemas, manifests, packaging, models). The mechanism row's FIXED_AND_VERIFIED is now unqualified.
 
 ## F03 — Parser deadlines
 
@@ -924,6 +937,22 @@ the thirteen one-line adapter modules and the two new modules. Not exempted, not
 assertion loosened; the one existing test grammar changed (`ROW` in the listing test) gained a
 column and its assertion. The standing `.remediation/bin/run.py` red against
 `test_cdm_version_floor` is the operator's, unchanged.
+
+**The S7 review's `claim_status` question closed 2026-09-20 by the maintainer's ruling (B),
+applied in the 3.0.0 release commit (S11).** `ClaimStatus.PROVISIONAL` is added between
+IMPLEMENTED and VERIFIED (`manifest.py`, `**Bump ruling.**` MINOR in MIGRATIONS' 3.0.0 section;
+`MANIFEST_SCHEMA_VERSION` 2.0.0 → 2.1.0), `adapters/stanag4676.py` claims it, `AdapterMetadata`
+refuses VERIFIED/EXERCISED/INTEGRATED/DEPLOYED beside `provisional-internal-profile` and
+PROVISIONAL beside any other binding, ARCHITECTURE.md §3.4 reads seven statuses with a dated
+correction (the counted-section gate in `tests/test_cdm_architecture_docs.py` re-anchored to the
+new heading, count 7 = 7 rows), `docs/docs/writing-an-adapter.mdx` carries the row, and
+`tests/test_cdm_manifests.py::test_the_schema_publishes_the_seventh_claim_status_and_the_model_holds_it_to_the_binding`
+asserts the enum, both refusal directions, the three admitted statuses and the published
+manifest; the all-VERIFIED assertion is replaced by a per-adapter reading (PROVISIONAL where the
+binding is provisional, VERIFIED otherwise). The normative-verification BLOCKED_EXTERNAL_EVIDENCE
+is unchanged; VERIFIED returns to `stanag4676` with `standard-encoding` or `normative-verified`.
+Runs: `.remediation/logs/quick-20260920T082237Z.log` (red: the new test named the binding enum
+member wrongly, fixed in the test), `quick-20260920T082627Z.log` (272 passed).
 
 ## F06 — Resource limits and streaming
 
@@ -1895,30 +1924,42 @@ and the migration note are MIGRATIONS.md's S10 record under Unreleased):
 
 | axis | at c3f70c5 | decision | reason / migration note |
 |---|---|---|---|
-| Python package | 2.2.0 | **3.0.0 owed — not typed here** | gate: "derives MAJOR with 0 unruled, so the next release is at least 3.0.0". Shape signal: `lossless.unrepresented` removed, no alias (F02); ruled MAJOR units: `version.compatible`/`parse` (F01), `harness.run`, `evidence.badges` (F02), `suite.check_malformed`/`check_parser_robustness` (F03), `conformance.assess_a`/`_validator`, `models.Timestamp` (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter`, `parse_document` (F05), `harness.load_raw` (F06), `evidence.EvidenceRecord` (F07). Typed by the release commit per MIGRATIONS' procedure; no Version ruling needed (number = floor). Migration note: MIGRATIONS S10 record, "What a 2.2.0 consumer must do" |
-| CDM schema | 2.1.0 | **3.0.0 owed — MAJOR, ruled 2026-09-20 (final review), superseding S10's MINOR; contract change: yes; not typed here** | F04's `pattern`/`uniqueItems` additions narrow the PUBLISHED schema. MIGRATIONS.md's bump table puts "a type narrowed" on the MAJOR row (line 22) and admits only "validation relaxed" as MINOR (line 23); VERSIONING.md §3 (line 151) makes this axis the WIRE contract governed by that table. A document that was schema-valid under the published 2.1.0 schema (`"adapter_version": "banana"`, F04's own counterexample) is invalid for a consumer validating with the published schema alone, so accepted documents DO become invalid. *Superseded history — S10's MINOR reasoning, kept:* no path removed, no `required` grown, no enum member removed; every constraint restates what the models enforced, so no document THIS PACKAGE accepted becomes invalid; on that reading 2.2.0 was ruled and MAJOR recorded as the alternative not taken. That reading measured the package's acceptance, not the wire contract's, and is withdrawn; the table row is not amended. Geometry `type` requirement may ride this MAJOR or a later one. The NUMBER itself is typed at the release commit (§5 item 6) because `test_cdm_version_matrix.py` holds `SCHEMA_VERSION` to the frozen CURRENT contract and a freeze needs tag+commit provenance. Same text in MIGRATIONS.md's S10 record |
+| Python package | 2.2.0 | **3.0.0 — TYPED in the release commit of 2026-09-20** (the reading at that commit without its tag: `python3 gates/bump_derivation.py` refuses with the 145 units unruled, because the gate reads the pending heading until `v3.0.0` exists; the at-tag reading re-derived through the gate's own `derive()` + `apply_rulings(…, "3.0.0")` is MAJOR, 0 unruled, 145 rulings read — the one unit this commit added, `manifest.py:ClaimStatus`, is ruled MINOR) | gate: "derives MAJOR with 0 unruled, so the next release is at least 3.0.0". Shape signal: `lossless.unrepresented` removed, no alias (F02); ruled MAJOR units: `version.compatible`/`parse` (F01), `harness.run`, `evidence.badges` (F02), `suite.check_malformed`/`check_parser_robustness` (F03), `conformance.assess_a`/`_validator`, `models.Timestamp` (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter`, `parse_document` (F05), `harness.load_raw` (F06), `evidence.EvidenceRecord` (F07). Typed by the release commit per MIGRATIONS' procedure; no Version ruling needed (number = floor). Migration note: MIGRATIONS S10 record, "What a 2.2.0 consumer must do" |
+| CDM schema | 2.1.0 | **3.0.0 — MAJOR, ruled 2026-09-20 (final review), superseding S10's MINOR; contract change: yes; TYPED in the release commit of 2026-09-20** (`schemas/` re-exported, six files at `x-cdm-schema-version: 3.0.0`; the four object schemas frozen into `tests/frozen/cdm/3.0.0/` under tag `v3.0.0`, commit `SELF`; 538 goldens re-stamped, no other golden line moved; the narrowing shown on the frozen bytes by `test_the_narrowing_that_made_the_current_contract_a_major_is_shown_on_the_frozen_pair`) | F04's `pattern`/`uniqueItems` additions narrow the PUBLISHED schema. MIGRATIONS.md's bump table puts "a type narrowed" on the MAJOR row (line 22) and admits only "validation relaxed" as MINOR (line 23); VERSIONING.md §3 (line 151) makes this axis the WIRE contract governed by that table. A document that was schema-valid under the published 2.1.0 schema (`"adapter_version": "banana"`, F04's own counterexample) is invalid for a consumer validating with the published schema alone, so accepted documents DO become invalid. *Superseded history — S10's MINOR reasoning, kept:* no path removed, no `required` grown, no enum member removed; every constraint restates what the models enforced, so no document THIS PACKAGE accepted becomes invalid; on that reading 2.2.0 was ruled and MAJOR recorded as the alternative not taken. That reading measured the package's acceptance, not the wire contract's, and is withdrawn; the table row is not amended. Geometry `type` requirement may ride this MAJOR or a later one. The NUMBER itself is typed at the release commit (§5 item 6) because `test_cdm_version_matrix.py` holds `SCHEMA_VERSION` to the frozen CURRENT contract and a freeze needs tag+commit provenance. Same text in MIGRATIONS.md's S10 record |
 | Adapter API | 2.1.0 | **3.0.0 — moved** | `AdapterMetadata.binding` required, no default (F05): every subclass adds one line. `MAPPINGS` additive (F02). Migration: `binding="standard-encoding"` or `"provisional-internal-profile"` + a limitation containing "provisional" |
-| Manifest schema | 1.2.0 | **2.0.0 — moved** | newly required `binding`; both directions refuse under `additionalProperties: false`. Manifests regenerated, `--check` CURRENT |
+| Manifest schema | 1.2.0 | **2.0.0 — moved (S10); 2.1.0 — moved by the release commit of 2026-09-20** | newly required `binding` (2.0.0); `ClaimStatus.PROVISIONAL` added for ruling (B), an enum member, MINOR (2.1.0). Manifests regenerated, `--check` reads CURRENT at manifest schema 2.1.0; every evidence record carries `manifest_version: 2.1.0` |
 | Evidence schema | 1.0.0 | **2.0.0 — moved** | three required fields (`snapshot`, `evidence_categories`, `maturity_support`) + `exercise.schema.json` on the axis (F07). Records regenerated, never migrated |
 | SC-OES | 0.1.0 | unchanged | `spec/` untouched |
 | Operational Ontology | 0.1.0 | unchanged | `ontology/`, `registry/sc_oes/ontology_terms.json` untouched |
 | Profile versions | 0.1.0 | unchanged | `registry/sc_oes/profiles.json` and the profile documents untouched |
 
-**Compatibility decisions and unresolved limitations.** `KNOWN_CONTRACTS` stays `("2.0.0",
-"2.1.0")` until the release round freezes 3.0.0; `assess("2.1.0", "3.0.0")` reads REFUSED both
-ways by F01's different-major rule (read on 2026-09-20 from `version.assess`), before and after
-the freeze — the MAJOR ruling's consequence, so the WRITER_NEWER refinement S10 anticipated for a
-2.2.0 no longer arises. **The published `schemas/` are MISLABELLED until §5 item 6 executes**: the
-five object schemas under `schemas/` still carry `x-cdm-schema-version: 2.1.0` while differing from
-`tests/frozen/cdm/2.1.0/` (F04's `pattern` constraints and `uniqueItems`), and no gate holds the
-emitted set to the frozen bytes of the label it carries. **This branch must not be merged to
-`main` before the release commit that types the number**, because the docs site serves `main`'s
-tip and would publish a 2.1.0-labelled schema that is not 2.1.0. Every shipped adapter's
-losslessness claim but pntmap's still rests on the heuristic (F02; one session per adapter,
-queued).
+**Compatibility decisions and unresolved limitations (re-read at the release commit,
+2026-09-20).** `KNOWN_CONTRACTS` reads `("2.0.0", "2.1.0", "3.0.0")`; `assess("2.1.0", "3.0.0")`
+and `assess("2.0.0", "3.0.0")` read REFUSED both ways by F01's different-major rule — the MAJOR
+ruling's consequence, so the WRITER_NEWER refinement S10 anticipated for a 2.2.0 does not arise.
+`tests/test_cdm_version_matrix.py` now states the within-major evidence on the frozen pair
+(2.0.0 → 2.1.0 SUPPORTED reader-newer, REFUSED writer-newer on `additionalProperties`), the
+different-major refusal on the current contract, and the narrowing that earned the major on the
+frozen bytes (`"adapter_version": "banana"` accepted by the frozen 2.1.0 schema, refused by the
+frozen 3.0.0 one and by the current one). **The published `schemas/` are no longer mislabelled**:
+the six files carry `x-cdm-schema-version: 3.0.0` and the four object schemas are byte-identical
+to `tests/frozen/cdm/3.0.0/`, digest-held by the matrix test. **Contract change of
+`tests/test_cdm_version_matrix.py`: yes** — a freeze taken IN the release commit its tag names
+cannot record that commit's hash (a file cannot carry the hash of the commit that contains it),
+so the 3.0.0 provenance reads tag `v3.0.0`, commit `SELF`; the replaced assertion (`git rev-list
+-n1 <tag>` equals the recorded commit) is replaced, for a SELF contract only, by three stronger
+ones once the tag exists — the tagged `schemas/<kind>.schema.json` AND the tagged frozen copy are
+the frozen bytes, and the tagged `version.py` types the contract — and `SELF` is admitted only
+for the CURRENT contract under the tag `v{PACKAGE_VERSION}`; without the tag the digest test
+stands as before. Rationale: without it the release commit is unsatisfiable (the matrix test
+holds `SCHEMA_VERSION` to a frozen contract, and `publish.yml` runs `pytest -q` on the tagged
+tree, so a freeze that could only be recorded after the tag would red the release at the tag).
+Every shipped adapter's losslessness claim but pntmap's still rests on the heuristic and is now
+DECLARED as such (F02, ruling (A) below; one session per adapter, queued).
 
-**OPEN maintainer decisions — recorded, NOT ruled by any session** (the F02 row's
-FIXED_AND_VERIFIED covers the mechanism only; §5 items 9 and 10 carry the same two questions):
+**Maintainer decisions — RULED 2026-09-20 and APPLIED in the 3.0.0 release commit** (the two
+questions are kept below as they were recorded; the rulings and what they moved follow them; §5
+items 9 and 10 record the closure):
 
 1. *May a preservation check D whose `basis` is `heuristic` carry maturity levels L1–L3?* F02
    deferred this to S10 (§F02 Disposition) and S10 did not rule it. Today eligibility still
@@ -1940,6 +1981,44 @@ FIXED_AND_VERIFIED covers the mechanism only; §5 items 9 and 10 carry the same 
    `claim_status` beside a provisional binding. Files: `manifests/stanag4676.json`,
    `packages/cdm/synapse_cdm/adapters/stanag4676.py` (`metadata`), `manifest.py` if a rule is
    added, `tests/test_cdm_manifests.py`.
+
+**Ruling (A), 2026-09-20 — preservation maturity for the 11 manifests whose basis sentences cite
+the value-presence heuristic is downgraded to what the heuristic proves: heuristic-only, no
+path-bound ledger, per the manifest schema's own levels; an adapter regains a higher level only
+when its field mappings are declared.** Applied as: L4 → L3 for `adsb`, `ais`, `cat021`,
+`cat023`, `cat034`, `cat048`, `cat062`, `gmti`, `stanag4609`, `stanag4676` and `tak` (the rung
+ladder in ARCHITECTURE.md §3.6 rests L1–L3 on `translate`, `schema` and `provenance`, which are
+path-bound; L4's "applicable information survives source → CDM → source" is the claim the
+heuristic cannot prove), each basis rewritten to say the `lossless` PASS rests on the heuristic,
+that no `MAPPINGS` are declared, that L4 is NOT declared for that reason and is regained when the
+mappings are declared and the ledger reports no loss; the tolerance clause, the suite command and
+the single test citation kept verbatim (`.remediation/s11_downgrade_l4.py.txt` did the rewrite
+mechanically and asserted each). `tests/test_cdm_manifests.py`'s bidirectional branch now reads
+`checks.D.details.basis`: L3 exactly where it is `heuristic`, L4 exactly where it is `ledger`
+(the earlier "exactly L4 for every bidirectional adapter" assertion is replaced, not loosened —
+the new assertion is decided by the report and holds both branches). `maturity_eligible` still
+computes L5 from the verdicts; the cap is on the declaration and ARCHITECTURE.md §3.6 says so in a
+dated ruling. `legion` and `stanag4586` (L3 on the three path-bound checks) and `pntmap` (ledger,
+ingest-only, L3) were inside the cap already. The evidence badge `Conformance` reads amber for
+the eleven (its green set is L4–L6), which is derived and correct.
+
+**Ruling (B), 2026-09-20 — `manifests/stanag4676.json`'s `claim_status` must match its evidence:
+the manifest schema's provisional or self-verified value, added if absent with the manifest-schema
+axis bumped and a MIGRATIONS note; VERIFIED is reserved for normative or independent
+verification.** No such enum value existed (§3.4 had six: DOCUMENTED, IMPLEMENTED, VERIFIED,
+EXERCISED, INTEGRATED, DEPLOYED), so `ClaimStatus.PROVISIONAL` is added between IMPLEMENTED and
+VERIFIED — "the mapping passes this repository's public gates against a provisional internal
+profile" — `MANIFEST_SCHEMA_VERSION` moves 2.0.0 → 2.1.0 (an enum member added: MIGRATIONS.md's
+MINOR row, `VERSIONING.md` §3's "new optional" case; `**Bump ruling.**` for
+`synapse_cdm/manifest.py:ClaimStatus` — MINOR — recorded in the 3.0.0 section), the adapter's
+`metadata` claims it, `manifest.AdapterMetadata` refuses VERIFIED/EXERCISED/INTEGRATED/DEPLOYED
+beside `provisional-internal-profile` and PROVISIONAL beside any other binding, ARCHITECTURE.md
+§3.4 reads "seven statuses" with a dated correction (its counted-section gate re-anchored to the
+new heading), `docs/docs/writing-an-adapter.mdx`'s table carries the row, and
+`tests/test_cdm_manifests.py` asserts the schema enum, both refusal directions, the three
+admitted statuses and the published manifest. The reading that VERIFIED means "passes this
+repository's public gates" is kept for `standard-encoding` adapters, whose gates ran against the
+standard's own encoding.
 
 The F06 memory/CPU envelope is Linux-only and its enforcement branch is unobserved by any run
 (the soft/hard PAIR the worker sets is read back on macOS: `test_the_cpu_limit_pair_…`, 2026-09-20).
@@ -1977,7 +2056,26 @@ executed here (F05). The four review findings recorded and not done are listed i
    diff of the seven pages, then `npm run ci` (`check:schemas`, `typecheck`, `build`,
    `check:admonitions`) — the last two compile `current-contracts.mdx`, `support-matrix.mdx` and
    `deployment-envelope.mdx` for the first time.
-6. **The release round (maintainer)**, in this order, in one release commit: set
+6. **The release round — the release COMMIT is DONE (2026-09-20, S11); the tag, the rehearsal
+   and the push remain the maintainer's.** Done in the commit: `PACKAGE_VERSION` and
+   `SCHEMA_VERSION` typed 3.0.0, `MANIFEST_SCHEMA_VERSION` 2.1.0, `KNOWN_CONTRACTS` extended;
+   `schemas/`, `manifests/`, the 538 goldens (stamp-only, diff read), `evidence/`, the support
+   matrix and the current-contracts block regenerated through their generators;
+   `RELEASE_NOTES.md` rewritten; the two tag commands, `README.md`'s, `VERSIONING.md`'s cells
+   and notes, `docs/docs/changelog.mdx` and the readiness report moved; MIGRATIONS' pending
+   section rolled into `### 3.0.0 — 2026-09-20` with the migration notes; the freeze under
+   `tests/frozen/cdm/3.0.0/` with `MANIFEST.json` provenance tag `v3.0.0`, commit `SELF` (§4:
+   a file cannot carry its own commit's hash; the matrix test proves a SELF freeze from the tag's
+   tree); and the tenth `UNRULED_HISTORICAL_ARCS` row for `("v2.2.0", "v3.0.0")` at 145 units
+   written now from the gate's own reading, so NO re-tag is budgeted for it. **Remaining, in this
+   order:** `git tag -a v3.0.0` on the release commit; `python gates/release_ref_rehearsal.py`
+   (MANDATORY — at the untagged commit it exits non-zero: "no tag names HEAD", recorded in §6);
+   `verify.sh full` at the tag (the two transitional reds of §6 turn green with the tag); then
+   `git push --follow-tags` only on green. Optional after the tag: replace `SELF` with the tagged
+   commit's hash in `tests/frozen/cdm/MANIFEST.json` (tests/ only, no distribution file moves).
+   Also owed to the docs lane: `npm run gen:schemas` in `docs/` for the schema-reference pages
+   that quote `x-cdm-schema-version` (declined to sessions; item 5's procedure). *The item as it
+   stood at S10, kept:* in this order, in one release commit: set
    `PACKAGE_VERSION = "3.0.0"` and `SCHEMA_VERSION = "3.0.0"` in `version.py` with their dated
    history lines (the schema axis is MAJOR by the ruling of 2026-09-20, §4 — the number is typed
    HERE and nowhere earlier; until this commit the published `schemas/` are mislabelled 2.1.0 and
@@ -2005,7 +2103,10 @@ executed here (F05). The four review findings recorded and not done are listed i
    made by any session: delete or relocate
    `.remediation/bin/run.py`, or add `.remediation/` to `test_cdm_version_floor`'s `NOT_OURS` with a
    reason; also delete the seven `.remediation/*.py.txt` helpers if unwanted.
-9. **OPEN maintainer decision — heuristic-basis maturity (F02), not ruled by any session.** The
+9. **RULED 2026-09-20 (ruling A) and APPLIED in the 3.0.0 release commit — heuristic-basis
+   maturity (F02). CLOSED.** The ruling and what it moved are in §4; in one line: a heuristic-basis
+   D carries no rung above L3, the 11 manifests are declared L3 with basis sentences that say
+   why, and L4 returns with declared field mappings. *The question as it was recorded:* The
    exact question: *may a preservation check D whose `basis` is `heuristic` (no `MAPPINGS`
    declared) carry maturity levels L1–L3, and what becomes of the 13 manifests whose
    `maturity.basis` sentence still cites the `lossless` check as evidence for those rungs?* Example
@@ -2018,8 +2119,11 @@ executed here (F05). The four review findings recorded and not done are listed i
    synapse_cdm.manifests --out manifests`, `--check` CURRENT), `ARCHITECTURE.md` §3.6, and the
    maturity eligibility rule in `tests/test_cdm_manifests.py` if the answer is NO. Not invented
    here; the F02 row's FIXED_AND_VERIFIED excludes these 13 sentences (§2, §4).
-10. **OPEN maintainer decision — `claim_status: VERIFIED` beside a provisional binding (F05),
-    not ruled by any session.** The exact question: *may `manifests/stanag4676.json` declare
+10. **RULED 2026-09-20 (ruling B) and APPLIED in the 3.0.0 release commit — `claim_status`
+    beside a provisional binding (F05). CLOSED.** The ruling and what it moved are in §4; in one
+    line: no, `VERIFIED` may not stand beside a provisional binding; `ClaimStatus.PROVISIONAL` is
+    added (manifest schema 2.1.0), `stanag4676` claims it, and the model holds the two fields to
+    each other both ways. *The question as it was recorded:* The exact question: *may `manifests/stanag4676.json` declare
     `claim_status: VERIFIED` (line 44) while its `binding` is `provisional-internal-profile` (line
     4)?* Files: `manifests/stanag4676.json`, `packages/cdm/synapse_cdm/adapters/stanag4676.py`
     (`metadata`), `packages/cdm/synapse_cdm/manifest.py` and `tests/test_cdm_manifests.py` if a
@@ -2027,6 +2131,52 @@ executed here (F05). The four review findings recorded and not done are listed i
     page is to state the answer. Raised by the S7 review; not invented here.
 
 ## 6. Release readiness
+
+**The release commit (S11, 2026-09-20) — what was run at it, and the two transitional reds it
+carries by construction.** Targeted runs, none weakened (`.remediation/logs/`):
+`quick-20260920T083837Z.log` — the prompt's fifteen modules in one run, 792 passed, 8 skipped,
+7 deselected (the seven named next); `quick-20260920T082627Z.log` — matrix, schemas, manifests,
+packaging, models, 272 passed; `quick-20260920T082844Z.log` — version floor, release, release
+notes, changelog claim, support matrix, current contracts, evidence, prose counts, consumer path,
+architecture docs, 583 passed, 6 skipped (the tag-conditional skips); `quick-20260920T083428Z.log`
+— the fourteen adapter modules against the regenerated goldens, 2217 passed, 7 skipped;
+`quick-20260920T083455Z.log` (402 passed to the examples red) and `quick-20260920T083751Z.log`
+(647 passed to the OES pin) and `quick-20260920T083830Z.log` (OES + schemas, 134 passed) —
+suite, harness, preservation, evidence categories, list-adapters, 4676 binding, examples,
+conformance, alignment, semantic corpus, gate rosters, security policy, adapter contract,
+lossless, witness, OES; `python3 -m ruff check` over `packages/cdm gates tests`: all checks
+passed; `schemas --check`, `manifests --check`, `support_matrix --check`, `current_contracts.py
+--check`: CURRENT. Reds met and fixed at the source, never by weakening: a new manifests test
+named the binding enum member wrongly (`082237Z`); two new sentences cited a MIGRATIONS row by a
+quoted phrase the section-citation sweep reads as a heading (`082430Z`, reworded); a phrase that counted the heuristic-only adapters rather than their manifests tripped the
+prose-count gate (`082637Z`, reworded to count manifests); `test_cdm_suite`'s check-L case passed the literal `"2.x"` as the supported range
+(`082947Z`, now derived from `SCHEMA_VERSION`'s major); the eight adsb reference-position
+goldens under `fixtures/adsb/local/` are written by the adapter test's own construction, not by
+the harness, and were re-stamped by that construction (`083017Z`; diff stamp-only, moved set
+576); `test_cdm_evidence_categories` held the bidirectional record to L4 (`083236Z`, now L3
+per ruling A); the fourteen `examples/` (2.0.0) and the semantic corpus (2.1.0) are documents of
+the current contract and the conformance tool's structural dimension refuses another major, so
+both are re-stamped 3.0.0 by textual replacement of the stamp alone (`083455Z`); and
+`test_cdm_oes`'s deliberate literal pin was re-pinned 2.1.0 → 3.0.0 as its own docstring
+instructs (`083751Z`). **Eight tests are red at this commit WITHOUT its tag and green with it,
+by construction, the same transitional reading every release commit since 2.0.0 has recorded**:
+the six `measure()`-based tests of `tests/test_cdm_bump_derivation.py` (`082816Z`, `082932Z`,
+`083040Z`, `083115Z`; the other 18 pass, `083150Z`), the empty-blocked-list test of
+`tests/test_cdm_readiness.py` (`082724Z`; the other 24 pass) — the gate reads its rulings under
+the pending heading until a tag names the declared version, and the release commit rolls that
+heading away — and `test_every_check_in_the_plan_is_reachable_and_named_once` of
+`tests/test_cdm_release_ref_rehearsal.py` (maintainer's full run `full-20260920T085639Z`), whose
+plan derives the tag `v3.0.0` from the tree and whose "annotated tag" check reads the real tag
+object with `git cat-file`, absent until the annotated tag exists. The at-tag reading is re-derived here through the gate's own functions on the
+`3.0.0` heading: `derive(snapshot_at("v2.2.0"), snapshot_at(None))` + `apply_rulings(…,
+"3.0.0")` → floor MAJOR, 0 unruled, 145 rulings read, no stale ruling; the new
+`UNRULED_HISTORICAL_ARCS` row equals the derived set (145 = 145). Gate outputs recorded:
+`python3 gates/bump_derivation.py` → `FAIL UNRULED — 145 changed unit(s) between v2.2.0 and the
+working tree …`, exit 1 (the pre-tag reading above); `python3 gates/release_ref_rehearsal.py` →
+`REFUSED: git describe --exact-match --tags HEAD exited 128: fatal: no tag exactly matches
+5a345dd…`, exit 2 (the untagged HEAD is still the parent commit; the rehearsal is the
+maintainer's act after the tag, §5 item 6). The full run over the release commit is the
+operator's (`verify.sh full`), expected at the tag: 0 failed.
 
 **LOCAL_CHECKS_PASS: YES** (2026-09-20): the operator's full run over the staged tree, log
 `full-20260920T062800Z`, read every lane rc=0 (pytest, ruff, schemas, support-matrix,
@@ -2050,16 +2200,23 @@ Linux enforcement branch, Python 3.11–3.13 legs, Windows not in the matrix, th
 
 **ADMIN_ENFORCEMENT_PENDING**: GitHub ruleset stage 1 apply + readback (F08, §5.3); ~~`git add` of the
 26 untracked paths and the count-clause change (§5.4)~~ done; ~~`npm run gen:schemas` + `npm run ci` (§5.5)~~ done;
-the release commit that types `PACKAGE_VERSION` 3.0.0 and `SCHEMA_VERSION` 3.0.0 (MAJOR, ruled
-2026-09-20, §4) with the goldens, the freeze and the rehearsal (§5.6); ~~the apparatus file (§5.8)~~ done;
-the two OPEN maintainer decisions (§5.9 heuristic-basis maturity, §5.10 `claim_status` beside a
-provisional binding), which no session ruled.
+~~the release commit that types `PACKAGE_VERSION` 3.0.0 and `SCHEMA_VERSION` 3.0.0 (MAJOR, ruled
+2026-09-20, §4) with the goldens and the freeze~~ done 2026-09-20 (S11) — the tag `v3.0.0`, the
+rehearsal at the tag and the push remain (§5.6); ~~the apparatus file (§5.8)~~ done;
+~~the two OPEN maintainer decisions (§5.9 heuristic-basis maturity, §5.10 `claim_status` beside a
+provisional binding)~~ ruled 2026-09-20 and applied (§4).
 
-**MERGE HOLD.** Until §5.6 executes, the published `schemas/` carry `x-cdm-schema-version: 2.1.0`
-while differing from `tests/frozen/cdm/2.1.0/` (F04's patterns and `uniqueItems`): they are
-mislabelled, and LOCAL_CHECKS_PASS is green partly because no gate measures that. This branch must
-NOT be merged to `main` before the release commit types the number — the docs site serves
-`main`'s tip and would publish the mislabelled schema.
+**MERGE HOLD — LIFTED by the release commit of 2026-09-20.** The published `schemas/` now carry
+`x-cdm-schema-version: 3.0.0` and the four object schemas are byte-identical to
+`tests/frozen/cdm/3.0.0/`, digest-held by `tests/test_cdm_version_matrix.py`, so the mislabelling
+the hold guarded against is gone and the docs site serving `main`'s tip would publish a schema
+that is what its label says. The branch may merge to `main` in §5.6's order — tag, rehearsal
+green, push — and not before the rehearsal. *The hold as it stood:* Until §5.6 executes, the
+published `schemas/` carry `x-cdm-schema-version: 2.1.0` while differing from
+`tests/frozen/cdm/2.1.0/` (F04's patterns and `uniqueItems`): they are mislabelled, and
+LOCAL_CHECKS_PASS is green partly because no gate measures that. This branch must NOT be merged
+to `main` before the release commit types the number — the docs site serves `main`'s tip and
+would publish the mislabelled schema.
 
 Not declared: "all findings resolved". F05 (normative), F07 (external categories), F08 (remote
 enforcement) and F06 (Linux branch) carry outstanding evidence by their own rows.

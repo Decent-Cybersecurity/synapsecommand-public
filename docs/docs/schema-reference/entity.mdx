@@ -15,9 +15,9 @@ description: "Anything that exists on the map, at a stated time, with stated con
 | | |
 | --- | --- |
 | Source file | `schemas/entity.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:2.1.0:entity` |
-| CDM schema version | `2.1.0` |
-| SHA-256 of source | `907141e93084b46c99f793446aeaf2f4e583b5d9c6f84c408dd5c0c846dcd00d` |
+| `$id` | `urn:synapsecommand:cdm:3.0.0:entity` |
+| CDM schema version | `3.0.0` |
+| SHA-256 of source | `310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a` |
 
 Anything that exists on the map, at a stated time, with stated confidence.
 
@@ -37,7 +37,7 @@ Anything that exists on the map, at a stated time, with stated confidence.
 | `position` | [Position](#position) \| null | no | None = position unknown. NEVER a Position holding zeros. Default `null`. |
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"3.0.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |

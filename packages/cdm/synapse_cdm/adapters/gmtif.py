@@ -1085,20 +1085,27 @@ class GmtifAdapter(Adapter):
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(
-            level=MaturityLevel.L4,
-            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
-                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
-                  "`roundtrip` column is PASS as well: `from_cdm(to_cdm(raw))` reproduces every "
-                  "byte fixture octet for octet under the declared `bytes` tolerance "
-                  "(`ROUNDTRIP_TOLERANCE`), so `synapse conformance run --adapter gmti` computes "
-                  "E = PASS and L4 is the suite's own reading rather than this declaration's. The "
-                  "adapter's own statement of the same claim is "
+            level=MaturityLevel.L3,
+            basis="L3 PROVENANCE VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema` and `provenance` checks are PASS on every fixture of this "
+                  "adapter, which carries L1 to L3. Its `lossless` check is PASS on every fixture "
+                  "as well, but that PASS rests on the value-presence heuristic and not on the "
+                  "path-bound ledger, because this adapter declares no `MAPPINGS` (the report's "
+                  "`preservation.basis` reads `heuristic`). Since 2026-09-16 its `roundtrip` "
+                  "column is PASS: `from_cdm(to_cdm(raw))` reproduces every byte fixture octet for "
+                  "octet under the declared `bytes` tolerance (`ROUNDTRIP_TOLERANCE`), so `synapse "
+                  "conformance run --adapter gmti` computes E = PASS and `maturity_eligible` reads "
+                  "above this declaration. L4 is NOT declared (ruled 2026-09-20, audit remediation "
+                  "F02, register §4): 'applicable information survives source -> CDM -> source' is "
+                  "the claim the heuristic cannot prove, so the declaration stops at the last rung "
+                  "whose evidence is path-bound and regains L4 only when this adapter's field "
+                  "mappings are declared and the ledger reports no loss. The adapter's own "
+                  "statement of the round-trip claim is "
                   "tests/test_cdm_gmtif_adapter.py::test_every_fixture_round_trips_byte_for_byte. "
-                  "L5 is eligible and not declared: the rung above this one rests on `M` "
-                  "(streaming) being inapplicable to every adapter in this repository, and a rung "
-                  "passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the "
-                  "reading the ingest-only adapters apply to `E`).",
+                  "L5 is likewise not declared: the rung above L4 rests on `M` (streaming) being "
+                  "inapplicable to every adapter in this repository, and a rung passed vacuously "
+                  "is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the reading the "
+                  "ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
         claim_status=ClaimStatus.VERIFIED,

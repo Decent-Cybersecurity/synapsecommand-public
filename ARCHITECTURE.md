@@ -185,7 +185,7 @@ against a payload:
 | `direction` | MUST | one of §2's six values |
 | `licence_class` | MUST | one of §3.2's five classes |
 | `maturity` | MUST | one of §3.3's seven levels |
-| `claim` | MUST | one of §3.4's six statuses |
+| `claim` | MUST | one of §3.4's statuses — six when this row was written, seven since 2026-09-20 |
 | `profiles` | MAY | the SC-OES profiles this adapter claims to produce for |
 | `capabilities` | MUST | §3.5, including `limits` |
 | `limitations` | MUST | what this adapter does NOT do, stated positively and not as an empty list by default |
@@ -231,7 +231,7 @@ repository is able to generate. That is a property of the evidence and not a def
 and stating it here is what stops the top rung from being awarded by the party that also writes the
 gate.
 
-### 3.4 Claim status — six statuses
+### 3.4 Claim status — seven statuses
 
 Claim status is a **separate axis from maturity** and MUST NOT be derived from it:
 
@@ -239,7 +239,8 @@ Claim status is a **separate axis from maturity** and MUST NOT be derived from i
 |---|---|
 | DOCUMENTED | the mapping is written down |
 | IMPLEMENTED | code exists that performs the mapping |
-| VERIFIED | the mapping passes this repository's public gates |
+| PROVISIONAL | the mapping passes this repository's public gates against a PROVISIONAL INTERNAL PROFILE (`binding: provisional-internal-profile`, §3.1): the element names, namespace or bindings were chosen here, so the gates say nothing about the standard's own encoding |
+| VERIFIED | the mapping passes this repository's public gates against the standard's own encoding (`binding: standard-encoding`), or under normative or independent verification |
 | EXERCISED | it has been run against an independent implementation |
 | INTEGRATED | integration with a NAMED external system has actually occurred |
 | DEPLOYED | it is running in a named operational or exercise deployment |
@@ -249,6 +250,16 @@ integration with the named external system has actually occurred, and the name o
 part of the claim. The two axes are separate because one is about how thoroughly this repository
 has checked the translation and the other is about what has happened in the world, and the second
 cannot be earned by running a test.
+
+**Dated correction, 2026-09-20 (the 3.0.0 release commit; the heading read "six statuses" and the
+table had six rows until this day, and the paragraphs above are left as written).** The
+maintainer's ruling (B) of 2026-09-20 (`docs/audit-remediation-report.md` §4): `VERIFIED` may not
+stand beside `binding: provisional-internal-profile`, because a gate that passes against element
+names chosen in this repository verifies nothing about the standard. `PROVISIONAL` is the seventh
+status, `MANIFEST_SCHEMA_VERSION` moved 2.0.0 -> 2.1.0 for the added enum member, and
+`manifest.AdapterMetadata` refuses the two fields apart in both directions: a provisional binding
+may claim DOCUMENTED, IMPLEMENTED or PROVISIONAL and nothing above; PROVISIONAL may be claimed only
+beside a provisional binding. `stanag4676` is the one shipped adapter it moves.
 
 ### 3.5 Capabilities, and why `limits` lives here
 
@@ -294,6 +305,22 @@ Rule 4 and rule 5 together are the whole delicacy of this model. Collapsing them
 because the rung was not blocked — would make the report say the adapter round-trips when nothing
 round-tripped it. Keeping them apart means the report is readable as evidence and the eligibility
 is derivable from the report.
+
+**Dated ruling, 2026-09-20 (the 3.0.0 release commit; the algorithm above is left as written).**
+The maintainer's ruling (A) of 2026-09-20 (`docs/audit-remediation-report.md` §4, finding F02): a
+preservation check D whose `basis` is `heuristic` — no `MAPPINGS` declared, so the `lossless`
+column rests on `lossless.value_presence_heuristic()` and not on the path-bound ledger (§4.1's
+dated correction) — supports no rung above **L3**. L4's sentence, "applicable information survives
+source → CDM → source", is exactly the claim the heuristic cannot prove: a value present somewhere
+in the output is not a value that reached its path. The algorithm above still COMPUTES eligibility
+from the verdicts, so `maturity_eligible` reads L5 for these adapters; what the ruling caps is the
+DECLARATION, which `tests/test_cdm_manifests.py` holds to L3 wherever the report's
+`preservation.basis` reads `heuristic` and to L4 only where it reads `ledger`. Eleven manifests
+moved L4 -> L3 on this day (`adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`,
+`cat062`, `gmti`, `stanag4609`, `stanag4676`, `tak`); an adapter regains L4 only when its field
+mappings are declared and the ledger reports no loss. `legion` and `stanag4586` (ingest-only, L3
+on `translate`, `schema` and `provenance`) and `pntmap` (ingest-only, L3, ledger) were already
+inside the cap.
 
 ---
 

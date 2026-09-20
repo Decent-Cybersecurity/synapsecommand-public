@@ -126,14 +126,14 @@ Read off `synapse_cdm.version` by constant name; the reading beside each is the 
 
 | axis | constant | reading |
 |---|---|---|
-| Python package | `PACKAGE_VERSION` | `2.2.0` |
-| CDM schema (the specification's `CDM_SCHEMA_VERSION`) | `SCHEMA_VERSION` | `2.1.0` |
+| Python package | `PACKAGE_VERSION` | `3.0.0` |
+| CDM schema (the specification's `CDM_SCHEMA_VERSION`) | `SCHEMA_VERSION` | `3.0.0` |
 | SC-OES specification | `SC_OES_VERSION` | `0.1.0` |
 | Adapter API | `ADAPTER_API_VERSION` | `3.0.0` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `2.0.0` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `2.1.0` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `2.0.0` |
 
-Frozen CDM contracts the compatibility verdicts rest on (`KNOWN_CONTRACTS`): `2.0.0`, `2.1.0`. A minor of the current major outside this set is `UNKNOWN`, which `compatible()` reads as `False`.
+Frozen CDM contracts the compatibility verdicts rest on (`KNOWN_CONTRACTS`): `2.0.0`, `2.1.0`, `3.0.0`. A minor of the current major outside this set is `UNKNOWN`, which `compatible()` reads as `False`.
 
 ### Compatibility verdicts over the frozen contracts
 
@@ -143,8 +143,13 @@ Every pair `version.assess(written_with, read_by)` answers for, as it answers to
 |---|---|---|---|---|
 | `2.0.0` | `2.0.0` | `SUPPORTED` | `SAME` | same MAJOR.MINOR: a PATCH moves descriptions and error wording only (MIGRATIONS.md, 'What each bump means') |
 | `2.0.0` | `2.1.0` | `SUPPORTED` | `READER_NEWER` | tests/test_cdm_version_matrix.py: frozen 2.0.0 documents of every kind validate under the 2.1.0 models and schema |
+| `2.0.0` | `3.0.0` | `REFUSED` | `READER_NEWER` | different major: MIGRATIONS.md's table makes a MAJOR a removal, rename or narrowing, and no reader has been shown to accept the other major |
 | `2.1.0` | `2.0.0` | `REFUSED` | `WRITER_NEWER` | tests/test_cdm_version_matrix.py: the frozen 2.0.0 schemas carry additionalProperties: false and reject the properties 2.1.0 introduced, populated or null |
 | `2.1.0` | `2.1.0` | `SUPPORTED` | `SAME` | same MAJOR.MINOR: a PATCH moves descriptions and error wording only (MIGRATIONS.md, 'What each bump means') |
+| `2.1.0` | `3.0.0` | `REFUSED` | `READER_NEWER` | different major: MIGRATIONS.md's table makes a MAJOR a removal, rename or narrowing, and no reader has been shown to accept the other major |
+| `3.0.0` | `2.0.0` | `REFUSED` | `WRITER_NEWER` | different major: MIGRATIONS.md's table makes a MAJOR a removal, rename or narrowing, and no reader has been shown to accept the other major |
+| `3.0.0` | `2.1.0` | `REFUSED` | `WRITER_NEWER` | different major: MIGRATIONS.md's table makes a MAJOR a removal, rename or narrowing, and no reader has been shown to accept the other major |
+| `3.0.0` | `3.0.0` | `SUPPORTED` | `SAME` | same MAJOR.MINOR: a PATCH moves descriptions and error wording only (MIGRATIONS.md, 'What each bump means') |
 
 ### The conformance worker
 

@@ -124,7 +124,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "cat021",
       "adapter_version": "1.0.0",
@@ -171,7 +171,7 @@
       "038ab388-034d-5e38-816c-fc869985eab9"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat021",

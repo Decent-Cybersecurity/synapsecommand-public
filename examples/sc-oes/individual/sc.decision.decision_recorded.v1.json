@@ -14,7 +14,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.0.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
@@ -78,7 +78,7 @@
       "64bebfce-ab5d-56ba-8b12-f88b9f42bb87"
     ],
     "residual": null,
-    "schema_version": "2.0.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "sc-oes-examples",

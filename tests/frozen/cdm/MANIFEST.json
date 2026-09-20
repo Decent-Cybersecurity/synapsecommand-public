@@ -1,5 +1,5 @@
 {
-  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0. Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
+  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0, and 3.0.0 shipped CDM 3.0.0 in the same commit that froze it (commit SELF). Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
   "contracts": {
     "2.0.0": {
       "files": {
@@ -111,6 +111,35 @@
       "provenance": {
         "commit": "5c53e756b9aa31c2881bd4497b2e0b30b7730944",
         "tag": "v2.2.0"
+      }
+    },
+    "3.0.0": {
+      "files": {
+        "entity": {
+          "path": "tests/frozen/cdm/3.0.0/entity.schema.json",
+          "sha256": "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a",
+          "source": "schemas/entity.schema.json"
+        },
+        "event": {
+          "path": "tests/frozen/cdm/3.0.0/event.schema.json",
+          "sha256": "527f30670e991bb67df508137e130bba8a7bbf4d035ee5e9a0a8142fd94d7149",
+          "source": "schemas/event.schema.json"
+        },
+        "plan_object": {
+          "path": "tests/frozen/cdm/3.0.0/plan_object.schema.json",
+          "sha256": "fec19733e1521067754ec1a1ec920698636c9133450c54b80b5d14fa0d832e94",
+          "source": "schemas/plan_object.schema.json"
+        },
+        "track": {
+          "path": "tests/frozen/cdm/3.0.0/track.schema.json",
+          "sha256": "90524189d6c3a7e496f7d1e429f127e314471abb95bcf7dcb26ddff5d91d406c",
+          "source": "schemas/track.schema.json"
+        }
+      },
+      "provenance": {
+        "commit": "SELF",
+        "commit_note": "SELF: frozen IN the release commit that tag v3.0.0 names (2026-09-20), so the commit's own hash cannot be written here. tests/test_cdm_version_matrix.py proves a SELF contract from the tag's tree once the tag exists: the tagged schemas/ and the tagged frozen copies are these bytes. The witness half may replace SELF with the tagged commit's hash afterwards (tests/ only); it is not required to.",
+        "tag": "v3.0.0"
       }
     }
   }

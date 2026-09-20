@@ -351,14 +351,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.2.0", "2.1.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.0.0", "3.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "2.2.0 and 2.1.0. They are UNEQUAL by a MINOR — two release tags were refused by two steps "
-        "of this project's own release pipeline, each costing the package a PATCH the wire "
-        "contract had no part in, and the 2.2.0 release then took the audit arc's MINOR for "
-        "importable names the wire contract had no part in either. If you bumped one of them just "
-        "now: that is the expected event, and the fix is to update this assertion to the two "
-        "numbers you now mean, not to re-link them"
+        "3.0.0 and 3.0.0. They are LEVEL again (2026-09-20, the audit remediation's release "
+        "commit) by two MAJORs argued apart — the schema for F04's narrowing of the published "
+        "contract, the package for a removed name and fourteen ruled meaning changes — so the "
+        "sweep above is load-bearing once more: a derivation of either from the other would read "
+        "as correct today. If you bumped one of them just now: that is the expected event, and "
+        "the fix is to update this assertion to the two numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

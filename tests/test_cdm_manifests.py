@@ -229,11 +229,55 @@ def test_a_claim_of_integration_names_the_external_system():
     for status in (ClaimStatus.INTEGRATED, ClaimStatus.DEPLOYED):
         with pytest.raises(ValueError, match="no `claim_external_system`"):
             AdapterMetadata(**{**probe_metadata("x").model_dump(), "claim_status": status.value})
-    assert all(cls.metadata.claim_status is ClaimStatus.VERIFIED for cls in shipped().values()), (
-        "a shipped adapter claims something other than VERIFIED. Every one of them passes this "
-        "repository's public gates and none of them has been run against an independent "
-        "implementation, which is exactly what VERIFIED asserts and EXERCISED does not"
-    )
+    # Ruling (B), 2026-09-20: VERIFIED is what a standard-encoding adapter's green gates assert;
+    # a provisional binding's green gates assert PROVISIONAL. Every shipped adapter passes this
+    # repository's public gates and none has been run against an independent implementation,
+    # which is what neither status claims and EXERCISED does. Read per adapter, not assumed.
+    for name, cls in shipped().items():
+        expected = (ClaimStatus.PROVISIONAL
+                    if cls.metadata.binding is WireBinding.PROVISIONAL_INTERNAL_PROFILE
+                    else ClaimStatus.VERIFIED)
+        assert cls.metadata.claim_status is expected, (
+            f"{name} claims {cls.metadata.claim_status.value} beside binding "
+            f"{cls.metadata.binding.value}; its public gates are green and nothing external has "
+            f"run, which is exactly what {expected.value} asserts"
+        )
+
+
+def test_the_schema_publishes_the_seventh_claim_status_and_the_model_holds_it_to_the_binding():
+    """Ruling (B) of 2026-09-20 (`docs/audit-remediation-report.md` §4), in both directions.
+
+    `VERIFIED` beside `provisional-internal-profile` was the S7 review's question: the gates
+    passed against element names chosen here, which verifies nothing about the standard. The
+    seventh status is the one the enum had no word for; `MANIFEST_SCHEMA_VERSION` moved 2.0.0 ->
+    2.1.0 for it (an enum member added, MIGRATIONS.md's MINOR row).
+    """
+    schema = json.loads(MANIFEST_SCHEMA.read_text())
+    enum = schema["$defs"]["ClaimStatus"]["enum"]
+    assert enum == [s.value for s in ClaimStatus]
+    assert len(enum) == 7 and "PROVISIONAL" in enum
+
+    standard = probe_metadata("x").model_dump()
+    assert standard["binding"] == WireBinding.STANDARD.value
+    provisional = {**standard, "binding": WireBinding.PROVISIONAL_INTERNAL_PROFILE.value,
+                   "limitations": ["the element names are a PROVISIONAL profile chosen here"]}
+    world = (ClaimStatus.EXERCISED, ClaimStatus.INTEGRATED, ClaimStatus.DEPLOYED)
+    for status in (ClaimStatus.VERIFIED, *world):
+        payload = {**provisional, "claim_status": status.value,
+                   "claim_external_system": "an external system" if status in world else None}
+        with pytest.raises(ValueError, match="beside binding provisional-internal-profile"):
+            AdapterMetadata(**payload)
+    for status in (ClaimStatus.DOCUMENTED, ClaimStatus.IMPLEMENTED, ClaimStatus.PROVISIONAL):
+        assert AdapterMetadata(**{**provisional, "claim_status": status.value}).claim_status \
+            is status
+    with pytest.raises(ValueError, match="PROVISIONAL beside binding standard-encoding"):
+        AdapterMetadata(**{**standard, "claim_status": ClaimStatus.PROVISIONAL.value})
+
+    published = json.loads((PUBLISHED / "stanag4676.json").read_text())["adapter"]
+    assert published["binding"] == WireBinding.PROVISIONAL_INTERNAL_PROFILE.value
+    assert published["claim_status"] == ClaimStatus.PROVISIONAL.value, (
+        "the published stanag4676 manifest still claims something other than PROVISIONAL beside "
+        "its provisional binding; regenerate with `python -m synapse_cdm.manifests --out manifests`")
 
 
 def test_an_absent_limit_needs_a_reason_and_a_declared_one_may_not_have_one():
@@ -301,10 +345,20 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
     * ingest-only: `E` is a DECLARED SKIP and exactly L3 is declared. There is no egress
       direction for information to be lost in, so the roundtrip rung is passed vacuously — and
       a rung passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4).
-    * bidirectional: `E` is PASS, from the column, and exactly L4 is declared. L5 is eligible
-      for all fourteen and rests on `M` being inapplicable to every one of them — the same
-      vacuous-rung reading, one rung up. The basis names the tolerance the class declares and
-      cites exactly one test in `tests/` as the adapter's own statement of the claim.
+    * bidirectional: `E` is PASS, from the column, and the declared rung is decided by the
+      preservation check's OWN basis (`checks.D.details.basis`, F02): exactly L4 where the
+      `lossless` column rests on the path-bound ledger (`MAPPINGS` declared), exactly L3 where
+      it rests on the value-presence heuristic. RULING (A) OF 2026-09-20
+      (`docs/audit-remediation-report.md` §4; ARCHITECTURE.md §3.6's dated ruling): "applicable
+      information survives source → CDM → source" is the claim the heuristic cannot prove, so a
+      heuristic-basis D supports no rung above L3, whatever `maturity_eligible` computes from
+      the verdicts, and an adapter regains L4 only when its field mappings are declared. Until
+      2026-09-20 this branch asserted L4 for every bidirectional adapter; eleven declared it on
+      a basis sentence that cited the `lossless` check as evidence. L5 is eligible for all
+      fourteen and rests on `M` being inapplicable to every one of them — the same vacuous-rung
+      reading, one rung up. In both branches the basis names the tolerance the class declares,
+      the suite command, and cites exactly one test in `tests/` as the adapter's own statement
+      of the round-trip claim; in the heuristic branch it also says so in as many words.
     """
     schema_dir = REPO / "schemas"
     for name, cls in sorted(shipped().items()):
@@ -340,7 +394,23 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
             "compares egress for every emitter since 2026-09-16, and L4 rests on that column"
         )
         assert checks["E"]["details"]["fail"] == 0 and checks["E"]["details"]["pass"] >= 1, name
-        assert level is MaturityLevel.L4, f"{name} is bidirectional and declares {level.value}"
+        preservation = checks["D"]["details"]["basis"]
+        assert preservation in ("heuristic", "ledger"), (name, preservation)
+        if preservation == "heuristic":
+            assert level is MaturityLevel.L3, (
+                f"{name} is bidirectional, its `lossless` column rests on the value-presence "
+                f"heuristic (no `MAPPINGS`), and it declares {level.value}. Ruling (A), "
+                "2026-09-20: a heuristic-basis D supports no rung above L3 — L4's claim is the "
+                "one the heuristic cannot prove"
+            )
+            assert "heuristic" in basis and "`MAPPINGS`" in basis and "L4 is NOT declared" in basis, (
+                f"{name}: the basis must say that the `lossless` PASS rests on the heuristic, "
+                "that no `MAPPINGS` are declared, and that L4 is NOT declared for that reason"
+            )
+        else:
+            assert level is MaturityLevel.L4, (
+                f"{name} is bidirectional, its `lossless` column rests on the ledger, E is PASS, "
+                f"and it declares {level.value}: the rung the evidence supports is L4")
         assert TOLERANCE_CLAIM.findall(basis) == [cls.ROUNDTRIP_TOLERANCE], (
             f"{name}: the basis says {TOLERANCE_CLAIM.findall(basis)} where the class declares "
             f"ROUNDTRIP_TOLERANCE {cls.ROUNDTRIP_TOLERANCE!r} — exactly one clause, agreeing"
@@ -350,7 +420,7 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
         cited = [token.rstrip(".,;") for token in basis.split()
                  if token.startswith("tests/") and "::" in token]
         assert len(cited) == 1, (
-            f"{name} declares L4 and its `maturity.basis` cites {cited}. The adapter's OWN "
+            f"{name} is bidirectional and its `maturity.basis` cites {cited}. The adapter's OWN "
             "statement of the round-trip claim is one test, so the basis names exactly one and a "
             "reader can go and run it"
         )

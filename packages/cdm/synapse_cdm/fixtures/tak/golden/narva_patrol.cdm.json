@@ -54,7 +54,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
@@ -99,7 +99,7 @@
       "db0a297e-fd50-5e82-a169-6cb5ede76ae1"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",

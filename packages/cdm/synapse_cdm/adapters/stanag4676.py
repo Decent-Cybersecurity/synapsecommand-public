@@ -1681,27 +1681,37 @@ class Stanag4676Adapter(Adapter):
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(
-            level=MaturityLevel.L4,
-            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
-                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
-                  "`roundtrip` column is PASS as well: XML permits insignificant whitespace, "
-                  "attribute order and namespace prefix choice, so this adapter declares the "
-                  "`values` tolerance (`ROUNDTRIP_TOLERANCE`) and the harness re-ingests what "
-                  "`from_cdm` emitted and finds no source value missing from any parsed twin, the "
-                  "two values egress legitimately re-stamps being declared in "
-                  "`ROUNDTRIP_TRANSFORMS` and printed with the report, so `synapse conformance "
-                  "run --adapter stanag4676` computes E = PASS and L4 is the suite's own reading "
-                  "rather than this declaration's. The adapter's own statement of the same claim "
-                  "is "
+            level=MaturityLevel.L3,
+            basis="L3 PROVENANCE VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema` and `provenance` checks are PASS on every fixture of this "
+                  "adapter, which carries L1 to L3. Its `lossless` check is PASS on every fixture "
+                  "as well, but that PASS rests on the value-presence heuristic and not on the "
+                  "path-bound ledger, because this adapter declares no `MAPPINGS` (the report's "
+                  "`preservation.basis` reads `heuristic`). Since 2026-09-16 its `roundtrip` "
+                  "column is PASS: XML permits insignificant whitespace, attribute order and "
+                  "namespace prefix choice, so this adapter declares the `values` tolerance "
+                  "(`ROUNDTRIP_TOLERANCE`) and the harness re-ingests what `from_cdm` emitted and "
+                  "finds no source value missing from any parsed twin, the two values egress "
+                  "legitimately re-stamps being declared in `ROUNDTRIP_TRANSFORMS` and printed "
+                  "with the report, so `synapse conformance run --adapter stanag4676` computes E = "
+                  "PASS and `maturity_eligible` reads above this declaration. L4 is NOT declared "
+                  "(ruled 2026-09-20, audit remediation F02, register §4): 'applicable information "
+                  "survives source -> CDM -> source' is the claim the heuristic cannot prove, so "
+                  "the declaration stops at the last rung whose evidence is path-bound and regains "
+                  "L4 only when this adapter's field mappings are declared and the ledger reports "
+                  "no loss. The adapter's own statement of the round-trip claim is "
                   "tests/test_cdm_stanag4676_adapter.py::test_the_round_trip_changes_exactly_one_value. "
-                  "L5 is eligible and not declared: the rung above this one rests on `M` "
-                  "(streaming) being inapplicable to every adapter in this repository, and a rung "
-                  "passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the "
-                  "reading the ingest-only adapters apply to `E`).",
+                  "L5 is likewise not declared: the rung above L4 rests on `M` (streaming) being "
+                  "inapplicable to every adapter in this repository, and a rung passed vacuously "
+                  "is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the reading the "
+                  "ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
-        claim_status=ClaimStatus.VERIFIED,
+        # Ruling (B), 2026-09-20: the gates pass against the provisional internal profile this
+        # adapter's `binding` declares, which is PROVISIONAL and not VERIFIED (ARCHITECTURE.md
+        # §3.4's dated correction). VERIFIED returns with `standard-encoding` or
+        # `normative-verified`, which the register's §5 item 1 procedure is the road to.
+        claim_status=ClaimStatus.PROVISIONAL,
         claim_external_system=None,
         profiles=[],
         capabilities=Capabilities(

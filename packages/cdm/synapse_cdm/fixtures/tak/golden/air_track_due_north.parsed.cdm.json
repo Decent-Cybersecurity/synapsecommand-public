@@ -39,7 +39,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
@@ -84,7 +84,7 @@
       "dbffc473-afdd-5d98-b14a-50ba86c678df"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",

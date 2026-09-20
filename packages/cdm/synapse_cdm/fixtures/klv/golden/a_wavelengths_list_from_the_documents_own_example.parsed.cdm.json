@@ -670,7 +670,7 @@
     "position": null,
     "quality": null,
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
@@ -790,7 +790,7 @@
       "97a501bb-20a1-53b3-9ba7-1a697784bd42"
     ],
     "residual": null,
-    "schema_version": "2.1.0",
+    "schema_version": "3.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",

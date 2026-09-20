@@ -5,7 +5,7 @@
     {
       "name": "GNSS interference payload with a vendor key",
       "document": {
-        "object_kind": "event", "schema_version": "2.1.0",
+        "object_kind": "event", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "V-11"}],
         "event_id": "2f7e4f2a-8d1c-4e3b-9c5a-4b9d0e6f3a11",
@@ -18,7 +18,7 @@
     {
       "name": "GNSS interference payload without frequency_band",
       "document": {
-        "object_kind": "event", "schema_version": "2.1.0",
+        "object_kind": "event", "schema_version": "3.0.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "V-11"}],
         "event_id": "2f7e4f2a-8d1c-4e3b-9c5a-4b9d0e6f3a11",
