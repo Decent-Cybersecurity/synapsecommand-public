@@ -136,6 +136,12 @@ CLONE_ONLY_SITES = {
         "quotes `pip install -e \"packages/cdm[lint]\"` as the line it requires of two workflows "
         "(2026-09-16). The same standing as test_cdm_getting_started.py: a checker for a command "
         "that runs inside a clone on a CI runner, addressed to no consumer",
+    "tests/test_cdm_trusted_publishing.py":
+        "quotes `pip install -e \"packages/cdm[test]\"` as the ONE install the release workflow's "
+        "build job may make into the interpreter that runs condition 4's suite (2026-09-20, the "
+        "3.0.1 corrective: anything else installed there is imported by every parser worker the "
+        "suite spawns, which is what burned v3.0.0). The same standing as test_cdm_lint_stage.py: "
+        "a checker for a command that runs inside a clone on a CI runner, addressed to no consumer",
 }
 
 

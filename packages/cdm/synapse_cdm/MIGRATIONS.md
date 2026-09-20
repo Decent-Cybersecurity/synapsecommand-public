@@ -11,10 +11,11 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.0.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.0.1` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
-`version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level again at
-the 3.0.0 release of 2026-09-20 by two majors argued apart — see that section.)
+`version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
+3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
+corrective — a package PATCH the wire contract had no part in — see those two sections.)
 
 ## What each bump means
 
@@ -203,7 +204,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.0.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.0.1 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -220,6 +221,21 @@ burned. It exists because two tags were burned in two days by gates whose first 
 ref was also their last chance — `v2.1.0` at the dependency audit and `v2.1.1` at the CodeQL gate —
 and its last check refuses any ref-dependent use of `publish.yml` its own covered-uses table does
 not name, so the next step of that class fails here rather than on a pushed tag.
+
+**And a third tag was burned on 2026-09-20 by a class the rehearsal cannot reach either, which is
+why the sequence now says what the two workflow properties it added are for.** `v3.0.0` passed
+every ref-dependent check the rehearsal replays and every step of the gate job, and `Release` run
+35506445471 refused it in the BUILD job, at condition 4 — the second run of the suite, which that
+job made in an interpreter it had first loaded with `twine` and `cyclonedx-bom`. `cyclonedx-bom`
+brings `jsonschema[format]`, `jsonschema` imports those format libraries on import,
+`synapse_cdm.suite` reaches `jsonschema` through `harness` and `schemas`, and every spawned parser
+worker paid for it: the run took 1262 s where the gate's identical run had taken 811 s, and one
+wall-clock-budgeted isolation test crossed its bound. The step then piped pytest into `tail -1`,
+so the run recorded `1 failed` and no name. Neither defect is about the ref, so no rehearsal can
+replay it; both are about the environment a step judges the tree in, and the repair is in
+`publish.yml`: release tooling lives in a venv of its own (`${TOOLS}`), and condition 4 writes the
+suite's output to a file and prints the FAILED lines before it stops. The 3.0.1 section under
+History is the record, and `tests/test_cdm_trusted_publishing.py` holds both properties.
 
 The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
 `twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
@@ -372,7 +388,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.0.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.0.1 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -421,7 +437,111 @@ now true of it.
 
 ## History
 
+### 3.0.1 — 2026-09-20 — the corrective of the tagged-never-published 3.0.0: the release workflow's build job judges the tree in the documented environment again, and names the tests it fails on
+
+**This section is a release and no longer the pending arc, and no pending-arc heading preceded
+it**: the arc it records was made in the release commit itself, hours after `v3.0.0` was tagged,
+so there was no commit between the two for a pending section to accumulate under.
+`PACKAGE_VERSION` is `3.0.1` at this commit, in `version.py`, and the tag `v3.0.1` names it. What
+the index actually serves is a measured fact about an upload rather than about this tree, so it is
+recorded in `PUBLICATION.md`'s ledger by the round that watched the upload and is not asserted
+here before it has happened; at the time of writing the index serves `2.2.0` (`PUBLICATION.md`
+entry 20), because 3.0.0 was tagged and never published — the dated note on the next section says
+so from its side.
+
+**WHAT MOVED BETWEEN 3.0.0 AND 3.0.1 IS A WORKFLOW AND NOT THE DISTRIBUTION, FOR THE THIRD TIME
+IN THIS FILE'S LIFE.** A reader upgrading from 2.2.0 — which is still what the index serves — gets
+exactly the arc the 3.0.0 section below describes, MAJOR on both of the first two axes, and should
+read that section and the release notes as the description of this release; a reader comparing
+3.0.0 with 3.0.1 finds this file and `version.py` and nothing else, because 3.0.0 was never
+installable. `Release` run 35506445471 on `v3.0.0` (commit `ca445c6`) passed the whole gate job —
+condition 1's suite, `5895 passed, 86 skipped in 810.75s`, condition 3, the annotated-tag check,
+the schema and manifest drift checks, the conformance sweep, the evidence bundle, gitleaks,
+pip-audit and CodeQL — and failed in the build job at condition 4, whose second run of the same
+suite on the same commit read `1 failed, 5894 passed, 86 skipped in 1262.27s`. Nothing reached
+PyPI; no `pypi` hold was created and no GitHub Release exists.
+
+**THE CAUSE WAS THE ENVIRONMENT, NOT THE TREE, AND IT WAS RECONSTRUCTED RATHER THAN READ, BECAUSE
+THE STEP HAD DISCARDED THE NAME.** The build job's install step put `twine` and `cyclonedx-bom`
+into the interpreter that then ran condition 4's suite. `cyclonedx-bom` depends on
+`cyclonedx-python-lib[validation]`, that on `jsonschema[format]`, and `jsonschema` imports every
+format library it finds at import time — fqdn, idna, rfc3987-syntax (a Lark grammar built on
+import), rfc3339-validator, webcolors, jsonpointer, uri-template, isoduration with arrow.
+`synapse_cdm.suite` imports `harness`, `harness` imports `schemas`, `schemas` imports
+`jsonschema`, so every parser worker the isolation, envelope and conformance tests spawn paid the
+cost before its first byte of input. Measured on the maintainer's machine with the build job's
+exact additions: `import synapse_cdm.suite` 0.11 s -> 0.48 s, `jsonschema`'s share 17 ms -> 357
+ms, the three worker-spawning test modules 9.9 s -> 19.0 s; the gate's run of the suite took 811 s
+and the build job's 1262 s on the same commit. The tests with a wall-clock budget across worker
+start-ups — `tests/test_cdm_parser_isolation.py`, 10 s — run at 2.5 s on that machine with the
+additions, and the build runner ran the suite 4.3 times slower than it, which puts the two slowest
+of them past their bound; one crossed. The step's `python -m pytest -q -rs 2>&1 | tail -1` under
+`pipefail` failed correctly and kept only the summary line, so WHICH one is a reconstruction and
+is recorded as one. The tree was green in the documented environment before the tag and after it.
+
+**THE REPAIR IS TWO PROPERTIES OF `publish.yml`, AND BOTH ARE HELD BY TESTS.** The build job's
+interpreter receives the documented install — `pip`, `-e packages/cdm[test]` — and nothing else;
+`twine` and `cyclonedx-py` live in `/tmp/tools`, exported as `${TOOLS}` the way the clean venv is
+exported as `${CLEAN_VENV}`, and are called by path. Condition 4 writes the suite's output to a
+file and, on a red run, prints its `FAILED` and `ERROR` lines and its summary before it stops, so a
+failure there is a named test and never again a bare count. `tests/test_cdm_trusted_publishing.py`
+holds both. No budget in any test moved: the bounds were right, the environment was not the one
+they were written for, and widening them would have been the green-by-tolerance this repository
+refuses. One record moves with the version: the 3.0.0 freeze's provenance in
+`tests/frozen/cdm/MANIFEST.json`, written `SELF` in the release commit because a file cannot carry
+the hash of the commit that contains it, is resolved here to the commit `v3.0.0` names, `ca445c6`,
+whose `schemas/` and frozen copies are these bytes — the form every older contract's record has,
+and the resolution the manifest's own note said the tag's existence would allow.
+
+**THE PACKAGE VERSION MOVED 3.0.0 -> 3.0.1 ON 2026-09-20, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.0.0` and derives PATCH with nothing unruled: no
+importable name was added, removed or narrowed, and the shipped-document row is what carries this
+file. So the floor and the number are one number and no Version ruling is needed or present — the
+shape 2.1.1 and 2.1.2 had, for the same reason two releases later. `SCHEMA_VERSION` does not move
+and stays at `3.0.0`: the wire contract had no part in this corrective, and the two axes, level at
+the 3.0.0 release commit, are one PATCH apart again.
+
+**What moved inside the distribution: two files** — `MIGRATIONS.md` (this section, the dated note
+on the 3.0.0 section, the introduction's two numbers, the paragraph in the release sequence and
+the two tag-command examples) and `version.py` (the constant and its live readings). Everything
+else the corrective touched is repository-bound and ships in nothing: the release workflow, three
+test modules (the two new tests, the packaging pin, the consumer-path sweep's exemption row), the
+frozen-contract manifest's resolved provenance, the release notes, the root `README.md`,
+`VERSIONING.md`, the documentation site's changelog and current-contracts pages, the readiness
+report and the audit register.
+
+**THE RECOVERY, RECORDED WHERE A READER WILL FIND IT, AND IT IS NOW THREE TAGS.** `v3.0.0`
+remains permanently attached to commit `ca445c6`, as `v2.1.0` does to `b69a267` and `v2.1.1` to
+`4409115`. It is not moved, deleted or recreated, and history is not rewritten to pretend the run
+went otherwise. It was tagged and pushed on 2026-09-20 and its own release workflow refused
+publication below the gate; 3.0.1 is the corrective and, if its pipeline completes, the first
+published release of the audit remediation arc. The dated note on the next section says the same
+thing from the other side, and `PUBLICATION.md`'s ledger is where the upload that does happen is
+measured.
+
+**AND THE CLASS OF DEFECT IS DIFFERENT FROM THE ONE THE REHEARSAL CLOSED, WHICH IS WHY IT REACHED
+A TAG.** `v2.1.0` and `v2.1.1` died at steps whose behaviour depended on the ref, and
+`gates/release_ref_rehearsal.py` replays every such step against the tag while it is still local.
+`v3.0.0` died at a step whose behaviour depended on the ENVIRONMENT the job had built around the
+suite — nothing about the ref, so the rehearsal was right to pass it and could not have caught it.
+What would have caught it is the property the tests now hold: a step that judges the tree runs in
+the environment the tree documents. The other half — a step that fails must name what failed — is
+the smaller repair and the one that turns a night's reconstruction into a line a reader can copy.
+
 ### 3.0.0 — 2026-09-20 — the audit remediation: directional, evidence-based version compatibility; a path-bound preservation ledger; process-isolated parser deadlines; the published schema narrowed to what the models enforce; the STANAG 4676 binding declared provisional; resource limits that refuse where they cannot enforce; reproducible evidence in five categories; governance held to a derivation; the documentation re-derived — and the 3.0.0 CDM contract typed, published and frozen in this commit
+
+**DATED NOTE, 2026-09-20, appended and not an edit: this release was tagged and never published.**
+`v3.0.0` was tagged on `ca445c6` and pushed on 2026-09-20. `Release` run 35506445471 passed every
+step of the gate job — condition 1's suite included, `5895 passed, 86 skipped` — and failed in the
+build job at condition 4, the second run of the same suite, in an interpreter that job had first
+loaded with `twine` and `cyclonedx-bom`: `1 failed, 5894 passed, 86 skipped`, and no name, because
+the step piped pytest into `tail -1`. Nothing reached PyPI, no `pypi` hold was created and no
+GitHub Release exists. The tag stays where it is, permanently, as `v2.1.0` and `v2.1.1` do: three
+release tags now name commits that released nothing. The number that carries this work to the
+index is **3.0.1**, the section immediately above this one, which is the release that carries the
+repair — the build job's tooling in a venv of its own, and a condition 4 that names what it fails
+on. Everything this section says about the arc since 2.2.0 stands: 3.0.1 ships exactly these bytes
+plus this file and `version.py`.
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 

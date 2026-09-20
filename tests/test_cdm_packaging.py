@@ -332,6 +332,15 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     numbers are `2.2.0` and `2.1.0`. It is the parting `version.py`'s two tables describe as the
     normal case, and the first since v2.1.0 that was argued from the diff rather than done by a
     workflow.
+
+    **AND ON 2026-09-20 IT PARTED AGAIN WITHIN HOURS OF THE FIFTH LEVEL, FOR THE THIRD TIME BY A
+    WORKFLOW.** The audit remediation's release commit made the numbers `3.0.0` and `3.0.0` by two
+    MAJORs argued apart, `v3.0.0` was tagged in turn, and the release pipeline's build job refused
+    it at condition 4 — the suite run a second time in an interpreter the job had first loaded with
+    release tooling, whose import closure every parser worker then paid for until one wall-clock
+    budget was crossed — so the corrective 3.0.1 moved the package one PATCH the schema again had
+    no part in: the numbers are `3.0.1` and `3.0.0`. Three of the partings this docstring tracks
+    are now release-pipeline defects, and this one is the first below the gate job.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -351,14 +360,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.0.0", "3.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.0.1", "3.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "3.0.0 and 3.0.0. They are LEVEL again (2026-09-20, the audit remediation's release "
-        "commit) by two MAJORs argued apart — the schema for F04's narrowing of the published "
-        "contract, the package for a removed name and fourteen ruled meaning changes — so the "
-        "sweep above is load-bearing once more: a derivation of either from the other would read "
-        "as correct today. If you bumped one of them just now: that is the expected event, and "
-        "the fix is to update this assertion to the two numbers you now mean, not to re-link them"
+        "3.0.1 and 3.0.0. They parted again on 2026-09-20 by the 3.0.1 corrective — a package "
+        "PATCH for a release workflow's refusal of v3.0.0, the wire contract untouched — hours "
+        "after the audit remediation's release commit had made them LEVEL by two MAJORs argued "
+        "apart, so the sweep above is quiet again and kept for the day a schema change closes the "
+        "gap. If you bumped one of them just now: that is the expected event, and the fix is to "
+        "update this assertion to the two numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

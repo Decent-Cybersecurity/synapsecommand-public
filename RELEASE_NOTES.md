@@ -1,4 +1,16 @@
-# synapse-cdm 3.0.0
+# synapse-cdm 3.0.1
+
+**The corrective of the tagged-never-published 3.0.0, and the first published release of the audit
+remediation arc.** `v3.0.0` was tagged on 2026-09-20 and its own release run (35506445471) refused
+it in the build job: the gate job had run the suite green on the same commit, and the build job's
+second run of it — in an interpreter that job had first loaded with `twine` and `cyclonedx-bom`,
+whose dependency closure made every spawned parser worker import a Lark grammar and seven format
+libraries before its first byte of input — crossed a wall-clock budget in one isolation test and
+stopped, recording a count and no name. Nothing reached PyPI. What moved between 3.0.0 and 3.0.1
+is the release workflow (the tooling now lives in a venv of its own, and condition 4 names the
+tests it fails on), `MIGRATIONS.md` and `version.py`; the distribution is otherwise byte-for-byte
+the tree `v3.0.0` named, so everything below describes this release. `MIGRATIONS.md`'s 3.0.1
+section is the record, and no test budget moved to get here.
 
 **The audit remediation release.** Between the 2.2.0 release of 2026-09-17 and this one, the
 independent audit of 2026-09-19 raised nine findings against this package, F01 to F09, and every
@@ -19,10 +31,13 @@ narrowed, which is why this is a MAJOR on both of the first two axes — read th
 is on both numbers.** If you are upgrading from 2.1.2 or earlier, read the 2.2.0 notes first: they
 are the body of the `v2.2.0` Release, and everything they describe is still here.
 
-## Why the number is 3.0.0
+## Why the number is 3.0.1
 
-**The number is the derived floor, and the floor is MAJOR for the first time since 2.0.0.**
-`gates/bump_derivation.py` reads the arc from `v2.2.0` and derives MAJOR from one shape signal —
+**The number is the derived floor twice over: a PATCH from `v3.0.0` for the corrective — an arc of
+the release workflow, `MIGRATIONS.md` and `version.py`, which `gates/bump_derivation.py` derives
+as PATCH with nothing unruled — on top of the MAJOR the 3.0.0 release commit typed over `v2.2.0`,
+the first MAJOR since 2.0.0.** For that arc, `gates/bump_derivation.py` reads from `v2.2.0` and
+derives MAJOR from one shape signal —
 `lossless.unrepresented`, an importable name removed with no alias, because the old name was a
 claim of proof the function could not make — and from the units whose meaning changed and were
 ruled MAJOR in `MIGRATIONS.md`'s 3.0.0 section: `version.compatible` and `version.parse` (F01),
@@ -33,9 +48,10 @@ ruled MAJOR in `MIGRATIONS.md`'s 3.0.0 section: `version.compatible` and `versio
 classify on its own are every one ruled in that section, and the gate reads those rulings and
 reports nothing unruled.
 
-**Package version 3.0.0 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
-· evidence schema 2.0.0.** The first two are level again, and **that is a coincidence of two
-separately argued majors and not a derivation**: the package moved on `version.py`'s table for a
+**Package version 3.0.1 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
+· evidence schema 2.0.0.** The first two were level at the 3.0.0 release commit and are one PATCH
+apart at this one, and **the equality was a coincidence of two separately argued majors and not a
+derivation**: the package moved on `version.py`'s table for a
 removed name and ruled meaning changes; the schema moved on `MIGRATIONS.md`'s table because
 finding F04 NARROWED the published contract (next section). `ADAPTER_API_VERSION` moved
 2.1.0 -> 3.0.0 on `VERSIONING.md` §3's own row because `AdapterMetadata.binding` is required with
@@ -153,6 +169,11 @@ with `standard-encoding` or `normative-verified` — the road to which is the re
 * **The release rehearsal gate** (`gates/release_ref_rehearsal.py`) replays every ref-dependent
   release step against the local tag before it is pushed, as it has since 2.1.2; it is refused
   without a tag, which is the reading the release commit records before the tag exists.
+* **The release workflow moved, and it is the reason this is 3.0.1 and not 3.0.0.** The build
+  job's `twine` and `cyclonedx-py` live in a venv of their own, so the interpreter that runs
+  condition 4's suite receives the documented install and nothing else, and condition 4 writes the
+  suite's output to a file and prints the failing tests before it stops. Nothing about the ref was
+  involved, which is why the rehearsal gate passed `v3.0.0` and was right to.
 
 ## Fourteen adapters, all harness-verified
 
@@ -211,6 +232,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==3.0.0
+pip install synapse-cdm==3.0.1
 python -m synapse_cdm.harness --list-adapters
 ```

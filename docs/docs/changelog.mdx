@@ -132,6 +132,18 @@ about another and the conformance tool's structural dimension says so for a 2.0.
 and the 2.1.0 contract stays frozen beside 3.0.0 under `tests/frozen/cdm/`. The paragraphs above
 are kept as written. **What the index serves is still a separate fact from what this tree says**
 — at the time of writing it is `2.2.0` — and `PUBLICATION.md`'s ledger is where it is measured.
+
+**Updated 2026-09-20, the 3.0.1 corrective release, and the two numbers are UNEQUAL again after
+the hours between a tag and its release run.** `v3.0.0` was tagged and its own release workflow
+refused it in the build job, at a second run of the suite in an interpreter that job had first
+loaded with release tooling — the gate job's run of the same suite on the same commit was green —
+so the package takes a corrective PATCH the wire contract has no part in: on this tree the
+package is at `3.0.1` and the schema stays at `3.0.0`. Nothing installable changed between the
+two: the arc is the release workflow, `MIGRATIONS.md` and `version.py`, and `MIGRATIONS.md`'s
+3.0.1 section is the record. Three of the six partings this note has recorded are now
+release-pipeline defects rather than contract decisions. **What the index serves is still a
+separate fact from what this tree says** — at the time of writing it is `2.2.0` — and
+`PUBLICATION.md`'s ledger is where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

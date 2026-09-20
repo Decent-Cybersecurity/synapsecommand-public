@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.0.1   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -72,7 +72,12 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   of the published contract, the package for the audit
                                   remediation arc's removed name and ruled meaning changes —
                                   neither number derived from the other, as every equality in
-                                  this file's life has been.)
+                                  this file's life has been. And apart again the same day, at
+                                  3.0.1 against 3.0.0: ``v3.0.0`` was tagged and its release
+                                  run's build job refused it — the environment that job built
+                                  around its second run of the suite, not the tree — so the
+                                  package took a corrective PATCH and the wire contract, for
+                                  the third time, had no part in the move.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -122,8 +127,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.0.0`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
-ninth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.0.1`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
+tenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -160,7 +165,18 @@ models already enforced; the package took a MAJOR because ``lossless.unrepresent
 without an alias and fourteen ruled units changed meaning. Each number was derived on its own
 table and each would have moved without the other; that they met at 3.0.0 is the coincidence
 this section was written to be able to describe, and the release commit that typed both is
-`docs/audit-remediation-report.md` §4's.)
+`docs/audit-remediation-report.md` §4's. **Corrected a seventh time 2026-09-20, the 3.0.1
+corrective release, and the level lasted the hours between a tag and its release run**:
+``v3.0.0`` was tagged on ``ca445c6`` and pushed, and the release run's build job refused it at
+condition 4 — not the gate, which had run the same suite green on the same commit minutes earlier,
+but a second run of the suite in an interpreter the job had first loaded with release tooling,
+whose dependency closure made every spawned parser worker import a Lark grammar and seven format
+libraries before its first byte of input, until one wall-clock-budgeted test crossed its bound.
+The package took a third corrective PATCH the wire contract had no part in, and the two numbers
+read 3.0.1 and 3.0.0. Three of the six partings in this file's life are now release-pipeline
+defects, and this one is the first that no rehearsal of ref-dependent steps could have reached:
+nothing about it depended on the ref, and everything about it depended on the environment a step
+judged the tree in. MIGRATIONS.md's 3.0.1 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -370,7 +386,16 @@ SCHEMA_VERSION = "3.0.0"
 #: floor and this number are one number and no Version ruling is needed. `SCHEMA_VERSION` moves
 #: to 3.0.0 in the same commit on ITS OWN table (above): two separately argued majors landing on
 #: one number, which is the coincidence this file's docstring has always said it would be.
-PACKAGE_VERSION = "3.0.0"
+#: Moved 3.0.0 -> 3.0.1 on 2026-09-20, a PATCH, and this one IS the derived floor: `v3.0.0` was
+#: tagged on `ca445c6` and pushed, and `Release` run 35506445471 refused it in the build job at
+#: condition 4 — a second run of the suite, in an interpreter that job had first loaded with
+#: `twine` and `cyclonedx-bom` — while the gate job's run of the same suite on the same commit was
+#: green. The arc from `v3.0.0` moves MIGRATIONS.md (the corrective's section and the third
+#: burned-tag note) and this file's readings and nothing importable, so the gate derives PATCH
+#: with nothing unruled; the wire contract did not move and `SCHEMA_VERSION` stays at 3.0.0. The
+#: repair is `publish.yml`'s: the tooling now lives in a venv of its own, and condition 4 names
+#: the tests it fails on. Neither 2.1.0, 2.1.1 nor 3.0.0 reached the index; all three tags stay.
+PACKAGE_VERSION = "3.0.1"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

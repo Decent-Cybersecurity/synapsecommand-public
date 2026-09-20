@@ -1168,3 +1168,98 @@ def test_the_typed_verdict_pattern_sees_the_constants_it_exists_to_refuse():
     assert TYPED_VERDICT.search('--pip-audit "0 findings, strict, in this run" \\')
     assert not TYPED_VERDICT.search('--codeql "${{ needs.gate.outputs.codeql }}" \\')
     assert not TYPED_VERDICT.search('--pip-audit "${{ needs.gate.outputs.pip_audit }}" \\')
+
+
+# ------------------------------------ the interpreter that judges the tree, and a red that is named
+#
+# `v3.0.0` (run 35506445471, 2026-09-20) is the third tag this repository burned and the first
+# burned below the gate job. The gate ran the suite green on the tagged commit — condition 1,
+# `5895 passed, 86 skipped in 810.75s` — and the build job ran the same suite on the same commit
+# at condition 4 and read `1 failed, 5894 passed, 86 skipped in 1262.27s`. Two defects, one in each
+# of the tests below.
+#
+# The first: the build job's install step put `twine` and `cyclonedx-bom` into the interpreter
+# that then ran the suite. cyclonedx-bom depends on cyclonedx-python-lib[validation], that on
+# jsonschema[format], and jsonschema imports every format library it finds at import time —
+# rfc3987-syntax builds a Lark grammar on import — while `synapse_cdm.suite` reaches jsonschema
+# through `harness` and `schemas`. Every spawned parser worker paid for it before its first byte
+# of input (0.11 s -> 0.48 s per import, measured with exactly those additions), the run took 451 s
+# longer than the gate's, and one wall-clock-budgeted isolation test crossed its bound. The tree
+# was green in the documented environment before the tag and after it.
+#
+# The second: the step piped pytest into `tail -1` under `pipefail`, so the run recorded a count
+# and no name, and the failing test is a reconstruction rather than a reading. MIGRATIONS.md's
+# 3.0.1 section is the record of both.
+
+DOCUMENTED_INSTALL = ("python -m pip install --upgrade pip",
+                      'python -m pip install -e "packages/cdm[test]"')
+
+
+def _build_step(workflow: str, name: str) -> str:
+    """One step's executable lines, from its `- name:` to the next step's."""
+    build = _executable(job_block(workflow, "build"))
+    marker = f"- name: {name}"
+    assert build.count(marker) == 1, f"{marker!r} appears {build.count(marker)} times in the build job"
+    after = build.split(marker, 1)[1]
+    return after.split("\n      - name: ", 1)[0]
+
+
+def test_the_build_jobs_interpreter_receives_the_documented_install_and_nothing_else(workflow):
+    """The suite is judged in the environment CONTRIBUTING.md documents, or it judges nothing.
+
+    Held as three properties of the executable lines: every `pip install` into the job's own
+    interpreter is one of the two documented lines; the release tooling is installed into
+    `/tmp/tools` and exported as `${TOOLS}` before anything uses it; and twine and cyclonedx-py are
+    only ever invoked through that path. The last one is what stops the next round from typing
+    `twine` and having PATH find nothing — or find the wrong one.
+    """
+    build = _executable(job_block(workflow, "build"))
+    own = [line.strip() for line in build.splitlines()
+           if re.match(r"\s*python -m pip install\b", line)]
+    assert own == list(DOCUMENTED_INSTALL), (
+        f"the build job's interpreter receives {own}; the documented install is exactly "
+        f"{list(DOCUMENTED_INSTALL)}. Anything else installed here is imported by every parser "
+        "worker the suite spawns at condition 4, and that is what burned v3.0.0")
+    venv = build.find("python -m venv /tmp/tools")
+    assert venv != -1, "the release tooling has no venv of its own"
+    assert "/tmp/tools/bin/python -m pip install twine cyclonedx-bom" in build, (
+        "twine and cyclonedx-bom are not installed into /tmp/tools")
+    exported = build.find('echo "TOOLS=/tmp/tools/bin" >> "${GITHUB_ENV}"')
+    assert exported != -1, "the tooling venv is not exported as TOOLS, so later steps would name a path of their own"
+    first_use = build.find("${TOOLS}/")
+    assert venv < exported < first_use, (
+        "the tooling venv is used before it is created and exported: the order of the steps is "
+        "part of the property")
+    assert '${TOOLS}/twine check --strict "${WHEEL}" "${SDIST}"' in build, (
+        "twine check does not run from the tooling venv")
+    assert '${TOOLS}/cyclonedx-py environment "${CLEAN_VENV}/bin/python"' in build, (
+        "the SBOM cross-check does not run cyclonedx-py from the tooling venv")
+    bare = [line.strip() for line in build.splitlines()
+            if re.match(r"\s*(python -m twine\b|twine\b|cyclonedx-py\b)", line)]
+    assert not bare, (
+        f"these lines invoke release tooling by bare name and would resolve through PATH — the "
+        f"suite's interpreter or nothing: {bare}")
+
+
+def test_condition_4_names_the_tests_it_fails_on(workflow):
+    """A red condition 4 is a list of test names, never a count alone.
+
+    The suite's output goes to a file, a failing run prints that file's FAILED and ERROR lines and
+    its summary before the step stops, and the derivation block reads the summary from the same
+    file. The forbidden shape is the one that ran on `v3.0.0`: pytest piped into `tail -1`.
+    """
+    step = _build_step(workflow,
+                       "Condition 4 — the derivations, for notes that are derived and not remembered")
+    assert re.search(r"if ! python -m pytest -q -rs\w* > /tmp/condition-4-suite\.log 2>&1; then", step), (
+        "condition 4 does not run the suite into /tmp/condition-4-suite.log under a test of its "
+        "own exit status")
+    assert "grep -E '^(FAILED|ERROR) ' /tmp/condition-4-suite.log" in step, (
+        "a red condition 4 does not print the FAILED and ERROR lines, so the failure would again "
+        "be a count with no name")
+    assert step.count("tail -1 /tmp/condition-4-suite.log") == 2, (
+        "the summary line is not read from the file on both paths (the red one and the derivation "
+        "block); a second pytest run here would be a third environment")
+    assert not re.search(r"pytest[^\n]*\|\s*tail", step), (
+        "pytest is piped into tail again, which is exactly how run 35506445471 lost the name of "
+        "the test that failed")
+    assert "exit 1" in step, "a red suite run at condition 4 does not stop the job"

@@ -588,10 +588,37 @@ jobs:
           set -euo pipefail
           python -m pip install --upgrade pip
           python -m pip install -e "packages/cdm[test]"
-          # `twine` for the --strict metadata check below. `build` is deliberately NOT installed:
-          # the gate provisions it into a venv of its own, and a second copy alongside would leave
-          # which one built the published artefact depending on PATH.
-          python -m pip install twine cyclonedx-bom
+          # `build` is deliberately NOT installed: the gate provisions it into a venv of its own,
+          # and a second copy alongside would leave which one built the published artefact
+          # depending on PATH. Nothing else is installed into this interpreter either, since
+          # 2026-09-20 — the next step says why, and `tests/test_cdm_trusted_publishing.py` holds it.
+
+      - name: Release tooling, in a venv of its own — nothing enters the interpreter that judges the tree
+        # UNTIL 2026-09-20 THIS STEP DID NOT EXIST: `twine` and `cyclonedx-bom` were installed into
+        # the interpreter above, beside the suite, and that is what burned `v3.0.0` (run
+        # 35506445471 — the third tag this repository has burned, and the first burned below the
+        # gate job). cyclonedx-bom depends on cyclonedx-python-lib[validation], which depends on
+        # jsonschema[format], and jsonschema imports every one of those format libraries at import
+        # time whenever it finds them — fqdn, idna, rfc3987-syntax (a Lark grammar built on
+        # import), rfc3339-validator, webcolors, jsonpointer, uri-template, isoduration with arrow.
+        # `synapse_cdm.suite` imports `harness`, `harness` imports `schemas` and `schemas` imports
+        # `jsonschema`, so every spawned parser worker of the isolation and conformance tests paid
+        # for it before its first byte of input: measured on the maintainer's machine with exactly
+        # these additions, `import synapse_cdm.suite` went from 0.11 s to 0.48 s and `jsonschema`'s
+        # share of it from 17 ms to 357 ms. Condition 4's suite run below took 1262 s where
+        # condition 1's identical run — same commit, same interpreter version, no tooling
+        # installed — took 811 s, and one wall-clock-budgeted isolation test crossed its 10 s
+        # bound. The tree was green; the environment it was judged in was not the documented one.
+        # So the two tools live here, in a venv the suite never imports from, and are called by
+        # path. `${TOOLS}` is exported the way `${CLEAN_VENV}` is, and the pinned tests read it.
+        run: |
+          set -euo pipefail
+          python -m venv /tmp/tools
+          /tmp/tools/bin/python -m pip install --upgrade pip
+          /tmp/tools/bin/python -m pip install twine cyclonedx-bom
+          echo "TOOLS=/tmp/tools/bin" >> "${GITHUB_ENV}"
+          /tmp/tools/bin/twine --version
+          /tmp/tools/bin/cyclonedx-py --version
 
       - name: Condition 2 — the gate, including the mutation check
         run: |
@@ -642,7 +669,7 @@ jobs:
         run: |
           set -euo pipefail
           ls -l dist
-          python -m twine check --strict "${WHEEL}" "${SDIST}"
+          ${TOOLS}/twine check --strict "${WHEEL}" "${SDIST}"
 
       - name: Clean install from the built package, in a venv of its own
         # §50's `clean install from built package`, as a PIPELINE stage rather than only as
@@ -721,7 +748,7 @@ jobs:
         # application components, which `cyclonedx-py` has no notion of.
         run: |
           set -euo pipefail
-          cyclonedx-py environment "${CLEAN_VENV}/bin/python" \
+          ${TOOLS}/cyclonedx-py environment "${CLEAN_VENV}/bin/python" \
             --output-format JSON --output-file /tmp/environment.cdx.json
           python - sbom/synapse_cdm.cdx.json /tmp/environment.cdx.json <<'PY'
           import json
@@ -833,6 +860,21 @@ jobs:
         # person's, and the workflow still only makes the derivation free.
         run: |
           set -euo pipefail
+          # THE SUITE RUNS HERE A SECOND TIME, IN THIS JOB'S ENVIRONMENT, AND UNTIL 2026-09-20 ITS
+          # OUTPUT WENT INTO `tail -1` UNDER `pipefail`: the step failed correctly when the suite
+          # did and discarded the one thing the failure was — the test's name. Run 35506445471
+          # (`v3.0.0`) ended exactly there, with `1 failed, 5894 passed, 86 skipped` and nothing
+          # else to read; the cause had to be reconstructed from the two jobs' timings and an import
+          # measurement (the tooling step above says what it was). The suite now writes to a file;
+          # a red run prints its FAILED and ERROR lines and its summary and stops, and a green run
+          # hands the summary to the derivation block below. `-rs` is kept for the reason condition
+          # 1 gives; `f` and `E` are what make a red run legible from a terminal.
+          if ! python -m pytest -q -rsfE > /tmp/condition-4-suite.log 2>&1; then
+            grep -E '^(FAILED|ERROR) ' /tmp/condition-4-suite.log || true
+            tail -1 /tmp/condition-4-suite.log
+            echo "::error::condition 4's suite run is red where condition 1's was green on the same commit. The failing tests are named above, and the difference between the two runs is this job's environment." >&2
+            exit 1
+          fi
           {
             echo '## Derived facts for the release notes'
             echo
@@ -865,7 +907,7 @@ jobs:
             echo 'the "Condition 1" step'"'"'s log, printed with `-rs`.'
             echo
             echo '```'
-            python -m pytest -q -rs 2>&1 | tail -1
+            tail -1 /tmp/condition-4-suite.log
             echo '```'
           } | tee -a "${GITHUB_STEP_SUMMARY}"
 

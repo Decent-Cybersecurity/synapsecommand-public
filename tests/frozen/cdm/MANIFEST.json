@@ -1,5 +1,5 @@
 {
-  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0, and 3.0.0 shipped CDM 3.0.0 in the same commit that froze it (commit SELF). Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
+  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0, and package 3.0.0 typed CDM 3.0.0 in the same commit that froze it (written SELF there, resolved to the tagged commit once v3.0.0 existed; v3.0.0 released nothing and 3.0.1 ships the bytes). Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
   "contracts": {
     "2.0.0": {
       "files": {
@@ -137,8 +137,8 @@
         }
       },
       "provenance": {
-        "commit": "SELF",
-        "commit_note": "SELF: frozen IN the release commit that tag v3.0.0 names (2026-09-20), so the commit's own hash cannot be written here. tests/test_cdm_version_matrix.py proves a SELF contract from the tag's tree once the tag exists: the tagged schemas/ and the tagged frozen copies are these bytes. The witness half may replace SELF with the tagged commit's hash afterwards (tests/ only); it is not required to.",
+        "commit": "ca445c6cc2c77bbf3c99df4c16943ba715c1cfbd",
+        "commit_note": "Frozen IN the release commit (3aea039) as SELF, because a file cannot carry the hash of the commit that contains it; resolved 2026-09-20 by the 3.0.1 corrective to the commit tag v3.0.0 names, ca445c6 (the CodeQL fix on top of the release commit; schemas/ and tests/frozen/ are byte-identical between the two), the form every older contract's record has. The tag exists and released nothing: its Release run was refused in the build job, and 3.0.1 is what ships these bytes. tests/test_cdm_version_matrix.py re-derives every digest from `git show v3.0.0:<path>`.",
         "tag": "v3.0.0"
       }
     }

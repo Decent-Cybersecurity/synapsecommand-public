@@ -783,6 +783,14 @@ paragraph, whose subject begins `Release 3.0.0` and whose parent is
 reason the paragraph above gives. The tag that names 3.0.0 is to be placed on it and contains it
 and every commit named above.
 
+**Re-qualification, 2026-09-20, the 3.0.1 corrective release commit.** `v3.0.0` was placed on
+`ca445c6` — the CodeQL fix on `main`, which contains the release commit above — and pushed, and
+its `Release` run refused it in the build job at condition 4: the environment that job built
+around its second run of the suite, not the tree; `MIGRATIONS.md`'s 3.0.1 section is the record.
+This report also describes the corrective release commit on `main`, whose subject begins
+`Release 3.0.1`; its hash is deliberately not written here, for the reason the paragraph above
+gives. The tag that names 3.0.1 is to be placed on it and contains every commit named above.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -883,6 +891,15 @@ looks for its rulings under the pending heading this commit rolled away), `ADAPT
 schemas under `tests/frozen/cdm/3.0.0/`. The register's §5 lists what stays external: STANAG
 4676 normative verification, the three external evidence categories, the GitHub ruleset and the
 remote CI of the pushed branch. None of those is a §58 line, and none is a blocker of the release.
+
+**Re-qualification, 2026-09-20, the 3.0.1 corrective: the verdict is `ready for PR` (3.0.1), and
+nothing in §56 moved.** The corrective release commit types `PACKAGE_VERSION` **3.0.1** (PATCH,
+derived: `gates/bump_derivation.py` reads PATCH over the arc since `v3.0.0` with nothing unruled —
+the arc is the release workflow, `MIGRATIONS.md` and `version.py`) and leaves `SCHEMA_VERSION`
+**3.0.0** and every other axis where the 3.0.0 release commit put them. The suite that qualified
+3.0.0 qualified this tree in the documented environment before the tag and after it; what the
+corrective changes is the environment the release workflow's build job judges the tree in, and
+whether a red there is named. No §58 line and no blocker.
 
 ## 20. Blockers
 
