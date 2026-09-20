@@ -231,15 +231,21 @@ def test_reconcile_refuses_an_id_the_project_does_not_list(gate):
     resolves.
     """
     known = sorted(gate.recorded_rows() | gate.recorded_coverage())
-    # Two dropped, not one: the record names more deployments than wrangler's window holds, so a
-    # list one short of the record is a FULL window and reads as such (the test below); a list
-    # short of the window is the whole history and a missing id is the refusal this test is for.
-    short = [_deployment(gate, s) for s in known[2:]]
+    # Enough dropped to leave a list SHORTER than the window, never a fixed number: the record names
+    # more deployments than wrangler's window holds, so a list one short of the record is a FULL
+    # window and reads as such (the test below), and a list short of the window is the whole history,
+    # where a missing id is the refusal this test is for. Until 2026-09-20 this dropped two, which
+    # left twenty-four of twenty-six; the twenty-seventh deployment (the 3.0.1 docs act) made two
+    # dropped exactly the window's length, a full window and not the shape under test — so the
+    # number dropped now follows the record's size, at least two, and every dropped id must be named.
+    dropped = known[:max(2, len(known) - gate.WRANGLER_WINDOW + 1)]
+    short = [_deployment(gate, s) for s in known[len(dropped):]]
     assert len(short) < gate.WRANGLER_WINDOW, "the fixture must be shorter than the window"
     with pytest.raises(gate.Finding) as raised:
         gate.reconcile(short)
-    assert known[0] in str(raised.value) and known[1] in str(raised.value), (
-        f"the refusal does not name the ids that failed to resolve:\n{raised.value}"
+    missing = [s for s in dropped if s not in str(raised.value)]
+    assert not missing, (
+        f"the refusal does not name the ids that failed to resolve: {missing}\n{raised.value}"
     )
     assert "does not list" in str(raised.value)
 
