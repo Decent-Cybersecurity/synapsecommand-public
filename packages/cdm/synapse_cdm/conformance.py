@@ -85,11 +85,11 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 import sys
 import traceback
 from typing import Any, NamedTuple
 
-import jsonschema
 from pydantic import ValidationError
 
 from synapse_cdm.models import KINDS
@@ -111,8 +111,9 @@ from synapse_cdm.oes_registry import (
     get_profile,
     get_profile_event_types,
 )
-from synapse_cdm.schemas import generate
-from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION, SC_OES_VERSION, compatible
+from synapse_cdm.schemas import generate, validator_for
+from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION, SC_OES_VERSION
+from synapse_cdm.version import assess as assess_version   # `assess` below is the document one
 
 #: The three verdicts, §34's. Identical to `harness.PASS/FAIL/SKIP` by test rather than by import
 #: — see the module docstring on why the import is the expensive spelling of the same fact.
@@ -206,7 +207,10 @@ def _validator(kind: str) -> Any:
     objects would otherwise pay for it five hundred times.
     """
     if kind not in _VALIDATORS:
-        _VALIDATORS[kind] = jsonschema.Draft202012Validator(generate()[kind])
+        # `schemas.validator_for`, since 2026-09-19 (audit F04): `format` asserted and `pattern`
+        # read as ECMA-262 reads it, so "banana" is not an identifier and "1.2.3\n" is not a
+        # version here any more than in a consumer's validator.
+        _VALIDATORS[kind] = validator_for(generate()[kind])
     return _VALIDATORS[kind]
 
 
@@ -216,6 +220,44 @@ def _errors(exc: ValidationError, prefix: str) -> list[str]:
         where = "/".join(str(p) for p in err["loc"]) or "(root)"
         out.append(f"{prefix}: {where}: {err['msg']}")
     return out
+
+
+#: A semantic rule's identifier, as `docs/cdm-semantic-rules.md` assigns them and the model validators
+#: spell them at the head of their messages. A finding that carries one is a SEMANTIC finding;
+#: every other model or schema finding is STRUCTURAL. The prefix each class carries in the
+#: findings list is the contract a consumer keys on: `structural:` and `semantic:`.
+SEMANTIC_RULE_ID = re.compile(r"\bSEM-\d{3}\b")
+STRUCTURAL, SEMANTIC = "structural", "semantic"
+
+#: pydantic's error type when a discriminated union cannot find its tag. On a geometry it is
+#: SEM-001 — the JSON Schema publishes the union as `oneOf` plus an OpenAPI `discriminator`
+#: that JSON Schema validators ignore, so the schema cannot state that `type` is required
+#: without growing a `required` list on a published object (a MAJOR by MIGRATIONS.md's table).
+_UNION_TAG_MISSING = "union_tag_not_found"
+
+
+def _classified(exc: ValidationError) -> tuple[list[str], list[str]]:
+    """Model findings split into (structural, semantic), each with its class as the prefix."""
+    structural: list[str] = []
+    semantic: list[str] = []
+    for err in exc.errors():
+        where = "/".join(str(p) for p in err["loc"]) or "(root)"
+        msg = err["msg"]
+        if err["type"] == _UNION_TAG_MISSING and "geometry" in err["loc"]:
+            semantic.append(f"{SEMANTIC}: {where}: SEM-001: {msg}")
+        elif SEMANTIC_RULE_ID.search(msg):
+            semantic.append(f"{SEMANTIC}: {where}: {msg}")
+        else:
+            structural.append(f"{STRUCTURAL}: model: {where}: {msg}")
+    return structural, semantic
+
+
+def split_findings(findings: tuple[str, ...] | list[str]) -> dict[str, list[str]]:
+    """Dimension A's findings by class, from the prefixes `assess_a` writes."""
+    return {
+        STRUCTURAL: [f for f in findings if not f.startswith(f"{SEMANTIC}: ")],
+        SEMANTIC: [f for f in findings if f.startswith(f"{SEMANTIC}: ")],
+    }
 
 
 def _identifier(obj: Any) -> str:
@@ -260,27 +302,46 @@ def assess_a(obj: Any) -> Verdict:
                         "it was written against cannot be checked against one")
     else:
         try:
-            supported = compatible(written, SCHEMA_VERSION)
+            assessed = assess_version(written, SCHEMA_VERSION)
         except ValueError as e:
             findings.append(f"schema_version: {e}")
         else:
-            if not supported:
+            if not assessed:
                 findings.append(
                     f"schema_version: {written} is not compatible with this package's CDM "
-                    f"{SCHEMA_VERSION} — version.compatible() is False, the two are a major "
-                    "apart, and MIGRATIONS.md states what a reader must do about it")
+                    f"{SCHEMA_VERSION} — version.assess() is {assessed.verdict.value} "
+                    f"({assessed.direction.value}): {assessed.reason}; basis: {assessed.basis}")
 
+    # STRUCTURAL and SEMANTIC are kept apart from here on (audit F04, 2026-09-19). Structural:
+    # what the published JSON Schema can say and what pydantic's types say — shape, required,
+    # unknown keys, enums, bounds, patterns. Semantic: the cross-field and content rules only
+    # the model validators carry, each with its `SEM-nnn` identifier from
+    # `docs/cdm-semantic-rules.md`.
+    # Both classes FAIL the dimension; a complete CDM conformance claim needs both to be run,
+    # and renaming a mismatch to the other class does not conceal it — the corpus under
+    # `tests/semantic_corpus/` holds every rule to the class this function reports.
+    findings = [f"{STRUCTURAL}: {f}" for f in findings]
     candidate = {k: v for k, v in obj.items() if not (kind == "event" and k == OES_FIELD)}
+    semantic: list[str] = []
     try:
-        model.model_validate(candidate)
+        # The JSON path, not `model_validate(dict)`: the document IS wire bytes, and the model's
+        # wire rules (the timestamp form, `models._timestamp_in`) apply on this path only.
+        # `strict=True` because pydantic's lax JSON mode coerces the STRING "true" to a boolean
+        # and "0.5" to a number, which the published schema's `type` refuses — the wire is
+        # typed, and the Python answer must be the schema's.
+        model.model_validate_json(json.dumps(candidate), strict=True)
     except ValidationError as e:
-        findings += _errors(e, "model")
+        structural, semantic = _classified(e)
+        findings += structural
     for error in sorted(_validator(kind).iter_errors(candidate), key=str):
         where = "/".join(str(p) for p in error.absolute_path) or "(root)"
-        findings.append(f"schema: {where}: {error.message}")
+        findings.append(f"{STRUCTURAL}: schema: {where}: {error.message}")
+    findings += semantic
 
     if findings:
-        return Verdict(FAIL, f"{len(findings)} CDM finding(s)", tuple(findings))
+        return Verdict(FAIL, f"{len(findings)} CDM finding(s): "
+                             f"{len(findings) - len(semantic)} structural, "
+                             f"{len(semantic)} semantic", tuple(findings))
     stripped = " (assessed with the oes block removed, per 13-conformance.md)" \
         if kind == "event" and OES_FIELD in obj else ""
     return Verdict(PASS, f"valid {kind} at CDM {written}{stripped}")
@@ -707,7 +768,7 @@ def assess(obj: Any, *, profile: str | None = None) -> dict:
         "D": assess_d(obj, profile),
         "E": assess_e(obj, profile),
     }
-    return {
+    report = {
         "object_kind": obj.get("object_kind") if isinstance(obj, dict) else None,
         "identifier": _identifier(obj),
         "dimensions": {
@@ -716,6 +777,10 @@ def assess(obj: Any, *, profile: str | None = None) -> dict:
             for (key, name), v in ((d, verdicts[d.key]) for d in DIMENSIONS)
         },
     }
+    # Dimension A's findings, by class, beside the unchanged list (audit F04). The other four
+    # dimensions are SC-OES's and are classified by the specification, not here.
+    report["dimensions"]["A"].update(split_findings(verdicts["A"].findings))
+    return report
 
 
 def assess_document(payload: Any, *, profile: str | None = None,

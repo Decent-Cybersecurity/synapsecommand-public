@@ -8,6 +8,9 @@
           "title": "Adapter Version",
           "type": "string"
         },
+        "binding": {
+          "$ref": "#/$defs/WireBinding"
+        },
         "capabilities": {
           "$ref": "#/$defs/Capabilities"
         },
@@ -107,6 +110,7 @@
         "name",
         "adapter_version",
         "format",
+        "binding",
         "direction",
         "license_class",
         "maturity",
@@ -545,9 +549,19 @@
       ],
       "title": "UnknownFields",
       "type": "string"
+    },
+    "WireBinding": {
+      "description": "What the adapter's WIRE FORM is bound to \u2014 the audit remediation's F05 field (2026-09-20).\n\n`format` names the standard and its edition; this says whether the bytes this adapter reads\nand writes are that standard's own encoding or a profile chosen here. The distinction the\naudit found blurred is the STANAG 4676 one: the adapter reads and writes XML whose element\nnames are the AEDP-12 data model's UML attribute names bound through one table\n(`stanag4676.ELEMENT_NAMES`), because the normative XSD is not held \u2014 reader/writer agreement\nthrough one shared table is not independent validation, and a manifest that said only\n`format.version` let a consumer read \"AEDP-12 Edition B Version 2\" as a wire-level claim.\n\n  standard-encoding             the wire form is the encoding the cited format document itself\n                                defines (ASTERIX octets under the FSPEC, NMEA sentences, KLV\n                                local-set keys, CoT's published element names, a JSON API's\n                                own field names), and this repository's fixtures and tests are\n                                checked against that document's own rules. Verified by this\n                                package's own evidence \u2014 not by an independent implementation\n                                or a normative schema, which are F07's external categories.\n  provisional-internal-profile  the element names, namespace or bindings were chosen in this\n                                repository from the standard's data model because the\n                                normative binding resource is not held; a document that\n                                round-trips here proves the profile is self-consistent and\n                                nothing more. MUST be accompanied by a limitation saying so.\n  normative-verified            the wire form has been validated against the AUTHORISED\n                                normative schema through the adapter's documented\n                                local-resource hook, with the resource's edition, provenance,\n                                usage rights and checksum recorded. No shipped adapter\n                                declares it (2026-09-20); `tests/test_cdm_manifests.py` holds\n                                the value to an exercise report of F07's `normative_schema`\n                                category, so it cannot be typed ahead of the evidence.",
+      "enum": [
+        "standard-encoding",
+        "provisional-internal-profile",
+        "normative-verified"
+      ],
+      "title": "WireBinding",
+      "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:manifest:1.2.0:adapter-manifest",
+  "$id": "urn:synapsecommand:manifest:2.0.0:adapter-manifest",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "The published document: \u00a713's semantics in this repository's canonical JSON (F1.3).\n\nThe envelope is separate from `AdapterMetadata` because the two are different facts. The\nmetadata is what the ADAPTER declares and is inspectable from the class; the envelope is what\nthe PUBLICATION declares \u2014 which manifest schema it was written to, which Adapter API it\nclaims, which CDM it emits \u2014 and none of those belong to one adapter.",
@@ -579,5 +593,5 @@
   ],
   "title": "AdapterManifest",
   "type": "object",
-  "x-manifest-schema-version": "1.2.0"
+  "x-manifest-schema-version": "2.0.0"
 }

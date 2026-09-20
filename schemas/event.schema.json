@@ -813,8 +813,9 @@
           "type": "string"
         },
         "adapter_version": {
-          "description": "Adapter semver.",
+          "description": "Adapter semver: MAJOR.MINOR.PATCH, no leading zeroes, nothing else.",
           "minLength": 1,
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
           "title": "Adapter Version",
           "type": "string"
         },
@@ -1005,7 +1006,7 @@
         }
       ],
       "default": null,
-      "description": "PQC signature block \u2014 designed, not yet populated."
+      "description": "PQC signature block \u2014 designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it."
     },
     "object_kind": {
       "const": "event",
@@ -1079,6 +1080,7 @@
     "schema_version": {
       "default": "2.1.0",
       "description": "Semver of the CDM this object was written against.",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
       "title": "Schema Version",
       "type": "string"
     },

@@ -1,0 +1,34 @@
+{
+  "rule": "SEM-004",
+  "title": "alt_m is the HAE-metres projection of vertical and may not disagree with it; for any other datum alt_m is absent",
+  "cases": [
+    {
+      "name": "alt_m equals vertical in metres HAE",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-4"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f04",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS", "alt_m": 100.0,
+                     "vertical": {"value": 100.0, "unit": "m", "reference": "HAE"}}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "alt_m disagrees with vertical",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-4"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f04",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS", "alt_m": 101.0,
+                     "vertical": {"value": 100.0, "unit": "m", "reference": "HAE"}}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-004"}
+    }
+  ]
+}

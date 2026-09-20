@@ -60,7 +60,8 @@ from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, SourceId
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT048"
@@ -1347,6 +1348,7 @@ class AsterixCat048Adapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="EUROCONTROL ASTERIX Category 048 — Monoradar Target Reports",
                          version="Edition 1.32"),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

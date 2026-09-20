@@ -307,13 +307,22 @@ jobs:
           PY
 
       - name: Hashes — §48's "hash", over every artefact this run produced
+        # `inputs.reason` reaches the shell through `env:` and never through `${{ }}` inside
+        # `run:`. An expression expanded into a script is spliced into the script's TEXT before
+        # bash reads it, so a dispatch input of `"; curl …` would run — a dispatch input is free
+        # text typed by whoever holds write, and the whole point of least privilege is that "who
+        # holds write" is not the last line of defence. An environment variable is data to bash.
+        # Found and closed by audit remediation F08 (2026-09-20); `tests/test_cdm_governance.py`
+        # holds every `run:` block in every workflow to the same rule.
+        env:
+          REASON: ${{ inputs.reason }}
         run: |
           set -euo pipefail
           {
             echo '## RC build — artefacts and digests'
             echo
             echo "Ref \`${GITHUB_REF}\` at commit \`${GITHUB_SHA}\`."
-            echo "Reason: ${{ inputs.reason }}"
+            echo "Reason: ${REASON}"
             echo
             echo '```'
             sha256sum dist/* sbom/*

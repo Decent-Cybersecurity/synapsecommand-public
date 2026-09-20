@@ -99,7 +99,10 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_asterix_cat034_adapter.py", "test_cdm_asterix_cat048_adapter.py",
     "test_cdm_asterix_cat062_adapter.py", "test_cdm_gmtif_adapter.py", "test_cdm_gmtif_codec.py",
     "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_list_adapters.py",
-    "test_cdm_lossless.py", "test_cdm_models.py",
+    "test_cdm_lossless.py", "test_cdm_models.py", "test_cdm_preservation.py",
+    # Audit remediation F05: the binding modes, the hardened parser and the local-resource hook
+    # run against the package alone — the hook's directory is a tmp_path the test builds.
+    "test_cdm_stanag4676_binding.py",
     # `test_cdm_oes.py` is package-only, and the classification is the same one
     # `test_cdm_models.py` earns: every path it touches is an importable name under
     # `synapse_cdm`, it reads no file at all, and the SC-OES block it exercises ships in the
@@ -122,6 +125,11 @@ PACKAGE_ONLY_TESTS = (
     # about the interpreter an installed distribution is running on, so it is more meaningful
     # against the wheel than against the tree, not less.
     "test_cdm_parser_safety.py",
+    # `test_cdm_parser_isolation.py` (audit remediation F03) is package-only on the same reading:
+    # its subject is `suite.ParserWorker` and the H/N checks, its adapters are the module-level
+    # doubles in `tests/synthetic_parsers.py` (a helper, not a test module — the spawned worker
+    # imports it by name), and its fixtures are written under `tmp_path`.
+    "test_cdm_parser_isolation.py",
     # `test_cdm_registry.py` is package-only, and the boundary is the same one `test_cdm_oes.py`
     # is on the other side of nothing: both registries it reads — `registry/sc_oes/*.json` — ship
     # in the wheel and are reached through `importlib.resources.files("synapse_cdm")`, so against
@@ -193,12 +201,23 @@ PACKAGE_ONLY_TESTS = (
 #: is what stops a module drifting in here because it was easier than making it installable.
 REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
+    "test_cdm_current_contracts.py": "audit remediation F09: the block is rendered from the installed package, but the module holds the rendered page docs/docs/current-contracts.mdx and the gate gates/current_contracts.py to it, and neither ships in the wheel",
+    "test_cdm_resource_envelope.py": "audit remediation F06: the byte/depth boundary cases and the worker's resource-limit refusals run against the package, but the module also reads docs/docs/security/deployment-envelope.mdx, SECURITY.md and schemas/cdm_object.schema.json at the repository root to hold the published envelope to the code, and none of those ships in the wheel",
     "test_cdm_security_policy.py": "SECURITY.md, security/README.md, .gitleaks.toml, ci.yml and the parser-safety page against the tree — every path it reads is at the repository root or under .github/, and not one of them ships in the wheel",
     "test_cdm_security_exceptions.py": "security/exceptions/ at the repository root — the schema, the README and every exception file, plus .github/workflows/ci.yml and dependency-review.yml read as text to prove no allowlist is typed into either. None of those paths is inside the wheel, and an installed wheel has no exceptions directory for this module to be right about",
     "test_cdm_codeql_gate.py": "gates/codeql_gate.py, which the wheel does not carry — the same reason test_cdm_parks_table.py and test_cdm_pin_paths.py are here. It also reads security/exceptions/ live and .github/workflows/, both outside the distribution",
     "test_cdm_release_ref_rehearsal.py": "gates/release_ref_rehearsal.py, .github/workflows/publish.yml and this repository's own tags — the same reason test_cdm_codeql_gate.py is here. The module it tests replays the release workflow's ref-dependent steps against a tag before it is pushed; none of the three things it reads is inside the wheel, and an installed wheel has no workflow file for it to be right about",
     "test_cdm_bump_derivation.py": "gates/bump_derivation.py, release tags and git blobs",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
+    "test_cdm_version_matrix.py": "tests/frozen/cdm/ — the historical CDM schemas as the release "
+                                  "tags shipped them, re-derived from `git show <tag>:…` and held "
+                                  "to MANIFEST.json's digests; the wheel carries neither",
+    "test_cdm_schema_alignment.py": "schemas/ at the repository root — the published files are "
+                                    "read beside the generator's output, and the wheel does not "
+                                    "carry the published directory",
+    "test_cdm_semantic_corpus.py": "tests/semantic_corpus/ and docs/cdm-semantic-rules.md — the "
+                                   "language-neutral corpus and the rule table live in the "
+                                   "repository, not in the wheel",
     "test_cdm_conformance_spec.py": "spec/sc-oes/13-conformance.md, 00-conventions.md, the seven profile documents and docs/adr/0009 — the normative tree the conformance module implements, none of which ships in the wheel",
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
@@ -206,6 +225,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_profiles.py": "spec/sc-oes/profiles/ — the seven normative profile documents against the packaged registry they describe; the documents are at the repository root and none of them ships",
     "test_cdm_deploy_record.py": "gates/deploy_record.py and the deployment ledger",
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
+    "test_cdm_governance.py": "audit remediation F08: gates/governance_audit.py, the five workflow files under .github/, the proposals under docs/governance/rulesets/ and docs/adr/0011 — the gate, the workflows and the proposals are all repository files and none ships in the wheel",
     "test_cdm_lint_stage.py": ".github/workflows/ci.yml and publish.yml read as text, and packages/cdm/pyproject.toml's [lint] extra and [tool.ruff.lint] table — the lint stage's one pin and the two workflows that install it; none of the three is inside the wheel, and an installed wheel has no workflow for the module to hold to the pin",
     "test_cdm_witness.py": "gates/witness_verify.py and releases/witness/ — the verifier is not in the distribution and neither is the directory of records it reads, so an installed wheel has no witness for this module to be right about",
     "test_cdm_witness_builder.py": "the release pipeline's own .github/scripts/build_witness.py, compiled from the repository's copy, plus gates/witness_verify.py; neither path ships",
@@ -232,6 +252,8 @@ REPO_BOUND_TESTS = {
     "test_cdm_trusted_publishing.py": ".github/workflows against PUBLICATION.md entry 6",
     "test_cdm_version_floor.py": "every Python file in the repository, gates included",
     "test_cdm_architecture_docs.py": "ARCHITECTURE.md, VERSIONING.md and INTEROPERABILITY.md at the repository root against version.py, the registry, the harness and, since 2026-09-16, the workflow files under .github/ — the three documents are the framework's contracts and none of them ships in the wheel, so an installed wheel has nothing for this module to read",
+    "test_cdm_support_matrix.py": "audit remediation F05: the matrix is rendered from the package's declarations, but the module holds the rendered page docs/docs/cdm/support-matrix.mdx, manifests/<id>.json and the CLI listing to one another, and neither the page nor the manifests ship in the wheel",
+    "test_cdm_evidence_categories.py": "audit remediation F07: the categories, the exercise runner and the snapshot run against the package, but the module reads schemas/evidence/*.schema.json and INTEROPERABILITY.md at the repository root and builds a throwaway git checkout to tell two dirty states apart, none of which a wheel carries",
     "test_cdm_evidence.py": "schemas/evidence/evidence.schema.json and manifests/<id>.json at the repository root — an evidence record embeds the PUBLISHED manifest and validates against the PUBLISHED schema, and neither publication is inside the wheel (the same reason test_cdm_manifests.py is here). The provenance half is package-bound and would run against a wheel, but a module is decided as a whole and its repository half cannot",
     "test_cdm_manifests.py": "manifests/ and schemas/manifests/ at the repository root — both are PUBLICATIONS of what the package declares and neither is inside the wheel (M's ruling F1.4: manifests are framework-level interoperability artefacts and the wheel carries the generator, not a second copy of the payload), so against an installed wheel this module would have no files to compare the declarations with",
 }

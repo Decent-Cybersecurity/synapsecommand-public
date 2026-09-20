@@ -65,7 +65,8 @@ from synapse_cdm.enums import Affiliation, EntityType, EventType, Severity
 from synapse_cdm.models import CDMBase, Entity, Event, SourceId
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT023"
@@ -794,6 +795,7 @@ class AsterixCat023Adapter(Adapter):
         format=FormatRef(name="EUROCONTROL ASTERIX Category 023 — CNS/ATM Ground Station and Service "
                      "Status Reports",
                          version="Edition 1.3"),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

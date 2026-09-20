@@ -1,0 +1,63 @@
+{
+  "rule": "SEM-009",
+  "title": "Waypoint sequences are unique within a route and every leg names sequences the route carries",
+  "cases": [
+    {
+      "name": "unique sequences, legs resolve",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-9"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",
+        "object_type": "ROUTE",
+        "geometry": {"type": "LineString", "coordinates": [[21.0, 57.0], [22.0, 58.0]]},
+        "route": {
+          "waypoints": [
+            {"sequence": 0, "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+            {"sequence": 1, "position": {"lat": 58.0, "lon": 22.0, "position_source": "GNSS"}}
+          ],
+          "legs": [{"from_seq": 0, "to_seq": 1}]
+        }
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "two waypoints carry sequence 1",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-9"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",
+        "object_type": "ROUTE",
+        "geometry": {"type": "LineString", "coordinates": [[21.0, 57.0], [22.0, 58.0]]},
+        "route": {
+          "waypoints": [
+            {"sequence": 1, "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+            {"sequence": 1, "position": {"lat": 58.0, "lon": 22.0, "position_source": "GNSS"}}
+          ],
+          "legs": []
+        }
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-009"}
+    },
+    {
+      "name": "a leg names a sequence no waypoint carries",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-9"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e09",
+        "object_type": "ROUTE",
+        "geometry": {"type": "LineString", "coordinates": [[21.0, 57.0], [22.0, 58.0]]},
+        "route": {
+          "waypoints": [
+            {"sequence": 0, "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+            {"sequence": 1, "position": {"lat": 58.0, "lon": 22.0, "position_source": "GNSS"}}
+          ],
+          "legs": [{"from_seq": 0, "to_seq": 7}]
+        }
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-009"}
+    }
+  ]
+}

@@ -1284,7 +1284,7 @@ def test_every_fixture_is_synthetic_and_says_so_on_every_object():
 
 def test_the_adapter_declares_no_transforms_and_therefore_excuses_nothing():
     """An empty TRANSFORMS is a CLAIM: every wire value is parked verbatim as well as converted,
-    so `lossless.unrepresented()` runs at full strength over every fixture with nothing exempted."""
+    so `lossless.value_presence_heuristic()` runs at full strength over every fixture with nothing exempted."""
     assert AsterixCat034Adapter.TRANSFORMS == {}
     entity = entity_of("system_status_all_four_subfields")
     # The three parks that make the claim true, on one object.

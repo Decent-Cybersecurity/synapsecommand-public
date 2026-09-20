@@ -19,8 +19,11 @@ from __future__ import annotations
 
 import argparse
 import pathlib
+import re
 import sys
+from typing import Any
 
+import jsonschema
 from pydantic import BaseModel, TypeAdapter
 
 from synapse_cdm import canonical
@@ -68,9 +71,64 @@ from synapse_cdm.version import MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
 BASE_ID = "urn:synapsecommand:cdm"
 
 
+#: JSON Schema's dialect, as every published file declares it.
+DIALECT = "https://json-schema.org/draft/2020-12/schema"
+
+
+def _ecma_end_anchors(pattern: str) -> str:
+    """`$` outside a character class and not escaped -> `\\Z`, so Python reads it as ECMA does.
+
+    JSON Schema regexes are ECMA-262 (draft 2020-12 §6.4), where `$` without the multiline
+    flag matches only at the end of input. Python's `re` also lets `$` match BEFORE a final
+    newline, and the `jsonschema` package implements `pattern` with `re.search` — so a vanilla
+    Python validator accepts `"1.2.3\\n"` against `^…$` while a JavaScript, Go or Rust validator
+    refuses it (audit F04, 2026-09-19). `\\Z` is Python's end-of-input-only anchor.
+    """
+    out: list[str] = []
+    in_class = False
+    i = 0
+    while i < len(pattern):
+        ch = pattern[i]
+        if ch == "\\" and i + 1 < len(pattern):
+            out.append(pattern[i:i + 2])
+            i += 2
+            continue
+        if in_class:
+            in_class = ch != "]"
+        elif ch == "[":
+            in_class = True
+        elif ch == "$":
+            ch = r"\Z"
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+def _pattern_as_ecma(validator, pattern, instance, schema):
+    if validator.is_type(instance, "string") \
+            and re.search(_ecma_end_anchors(pattern), instance) is None:
+        yield jsonschema.ValidationError(f"{instance!r} does not match {pattern!r}")
+
+
+#: `Draft202012Validator` with `pattern` read as ECMA-262 reads it. Everything in this package
+#: that validates a document against a published schema — `conformance`, `harness`, the tests —
+#: builds its validator through `validator_for()` below, so the Python answer is the answer a
+#: consumer in another language gets. The only difference from the stock class is the anchor
+#: rule above; every other keyword is the library's.
+EcmaPatternValidator = jsonschema.validators.extend(
+    jsonschema.Draft202012Validator, {"pattern": _pattern_as_ecma})
+
+
+def validator_for(schema: dict) -> Any:
+    """The validator this package uses for a published schema: 2020-12, ECMA-262 `pattern`,
+    and `format` ASSERTED (`FormatChecker()`), because `format` is an annotation otherwise and
+    the published `uuid` format would accept "banana" as an identifier the models refuse."""
+    return EcmaPatternValidator(schema, format_checker=jsonschema.FormatChecker())
+
+
 def _schema(model: type[BaseModel], name: str) -> dict:
     schema = model.model_json_schema(mode="serialization")
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$schema"] = DIALECT
     # Colon-delimited throughout and no file extension: a URN names the SCHEMA, not a file,
     # and `urn:...cdm/1.0.0/entity.schema.json` would read as a half-converted URL — the
     # locate-shaped thing the ruling above rejected, wearing a urn: prefix.
@@ -91,12 +149,13 @@ def generate() -> dict[str, dict]:
         stem = f"payload_{event_type.value.lower()}"
         out[stem] = _schema(model, stem)
     union = TypeAdapter(CDMObject).json_schema(mode="serialization")
-    union["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    union["$schema"] = DIALECT
     union["$id"] = f"{BASE_ID}:{SCHEMA_VERSION}:cdm_object"
     union["x-cdm-schema-version"] = SCHEMA_VERSION
     out["cdm_object"] = union
     out[MANIFEST_STEM] = manifest_schema()
     out[EVIDENCE_STEM] = evidence_schema()
+    out[EXERCISE_STEM] = exercise_schema()
     return out
 
 
@@ -118,7 +177,7 @@ def manifest_schema() -> dict:
     validate. `AdapterMetadata` is in here, as the `adapter` property's `$def`.
     """
     schema = AdapterManifest.model_json_schema(mode="serialization")
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$schema"] = DIALECT
     schema["$id"] = f"urn:synapsecommand:manifest:{MANIFEST_SCHEMA_VERSION}:adapter-manifest"
     schema["x-manifest-schema-version"] = MANIFEST_SCHEMA_VERSION
     return schema
@@ -146,8 +205,29 @@ def evidence_schema() -> dict:
     from synapse_cdm.version import EVIDENCE_SCHEMA_VERSION
 
     schema = EvidenceRecord.model_json_schema(mode="serialization")
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$schema"] = DIALECT
     schema["$id"] = f"urn:synapsecommand:evidence:{EVIDENCE_SCHEMA_VERSION}:evidence"
+    schema["x-evidence-schema-version"] = EVIDENCE_SCHEMA_VERSION
+    return schema
+
+
+#: The exercise report's stem (audit remediation F07, 2026-09-20), beside the record's under
+#: `schemas/evidence/` and on the same axis: a report is what makes an external category of the
+#: record PRESENT, so its shape moves with the record's and carries the record's version.
+EXERCISE_STEM = "evidence/exercise"
+
+
+def exercise_schema() -> dict:
+    """The published shape of `evidence/<adapter>/<version>/exercises/<slug>.json` (F07).
+
+    The same deferred import as `evidence_schema`, for the same cycle.
+    """
+    from synapse_cdm.evidence import ExerciseReport
+    from synapse_cdm.version import EVIDENCE_SCHEMA_VERSION
+
+    schema = ExerciseReport.model_json_schema(mode="serialization")
+    schema["$schema"] = DIALECT
+    schema["$id"] = f"urn:synapsecommand:evidence:{EVIDENCE_SCHEMA_VERSION}:exercise"
     schema["x-evidence-schema-version"] = EVIDENCE_SCHEMA_VERSION
     return schema
 

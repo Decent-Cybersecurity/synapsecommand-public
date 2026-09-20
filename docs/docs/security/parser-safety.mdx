@@ -41,6 +41,13 @@ hardened against a figure the report does not print.
 > actually says so. Nine of the fourteen adapters declare an implementation cap and say so in the
 > enum and in the prose.
 
+Which bound runs before which allocation — size before the depth scan, the depth scan before
+`json.loads`, the XML tree measured only after expat has built it — and what the conformance
+worker and the hosting application each add on top is the subject of
+`docs/docs/security/deployment-envelope.mdx` (audit finding F06). The boundary cases — a payload
+*at* each bound and one octet or one level past it, in every octet form — are
+`tests/test_cdm_resource_envelope.py`.
+
 ### What is enforced today
 
 `max_input_bytes` is declared and enforced on **all fourteen**. `max_depth` is declared and enforced
@@ -215,17 +222,23 @@ No shipped adapter opens a database: the same sweep for `sqlite3` returns nothin
 > **MUST** declare the bound or the reason it has none.
 
 None of the fourteen enforces one today, and each says so in its own `absent_because`. The
-conformance suite's checks **H** and **N** already measure the related property — that a malformed
-or truncated payload is refused *quickly* rather than hanging — with a per-payload timeout, so a
-parser that goes quadratic on a bad input is caught even where no wall-clock bound is declared.
+conformance suite's checks **H** and **N** hold the related property — that a malformed or
+truncated payload is refused *quickly* rather than hanging — with a per-case deadline that is
+**enforced**: since audit finding F03 (2026-09-19) each case runs in a spawned worker process
+that is terminated and killed when the deadline passes, and the case is `PARSER_TIMEOUT`, so a
+parser that goes quadratic or never returns on a bad input is caught, and the sweep finishes,
+even where no wall-clock bound is declared. A memory or CPU envelope for that worker is
+Linux-only and is refused where it cannot be enforced — `docs/docs/security/deployment-envelope.mdx`
+§2 has the platform table.
 
 ## 6. What the conformance suite verifies
 
 | check | what it asserts |
 |---|---|
-| **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside the timeout |
-| **N** — parser robustness | a truncated payload at many offsets is refused, inside the timeout |
-| **O** — resource limits | one octet more than the declared `max_input_bytes` is refused |
+| **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside an enforced deadline in a killable worker; a `.json` payload past the loader's depth bound is refused by the loader, and the layer is recorded |
+| **M** — streaming | `SKIP`, declared inapplicable, for all fourteen — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
+| **N** — parser robustness | a truncated payload at many offsets is refused, inside the same enforced deadline |
+| **O** — resource limits | one octet more than the declared `max_input_bytes` is refused; the payload *at* the bound is not refused by the size guard (`tests/test_cdm_resource_envelope.py`) |
 
 **O is required in CI for all fourteen.** It was a SKIP for all fourteen until round P5, because
 no adapter declared a bound to check; it is now in the required set for every adapter in the

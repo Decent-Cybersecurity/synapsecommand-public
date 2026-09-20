@@ -21,6 +21,14 @@ What this section holds is the **engineering policy** the adapters are held to:
 - [Supply chain](./supply-chain.mdx) — the provenance chain from a commit to an attested
   artefact, the job that realises each arrow, what each of the six scanners is blind to, and the
   exception mechanism that is the one way past a blocking finding.
+- [Release pipeline](./release-pipeline.mdx) — the jobs a tag push runs, the five conditions a
+  release must meet, the lint stage's rule set, and what the pipeline does not cover.
+- [Deployment envelope](./deployment-envelope.mdx) — what bounds untrusted input in the library,
+  what the conformance worker isolates and on which platforms, what stays the hosting
+  application's job, and the two things this package does not do: stream, and verify integrity.
+
+The figures those pages rest on — the worker's deadlines, the declared bounds, the version axes —
+are rendered on the [Current contracts](../current-contracts.mdx) page from the package itself.
 
 ## Two things stated here so they are not inferred
 

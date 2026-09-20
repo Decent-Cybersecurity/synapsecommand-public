@@ -1074,7 +1074,7 @@ def test_egress_loses_no_source_value(path):
     document = json.loads(path.read_text())
     emitted = adapter().to_cdm(adapter().from_cdm(adapter().to_cdm(document)))
     dumped = [o.model_dump(mode="json") for o in emitted]
-    missing = lossless.unrepresented(document, dumped, Stanag4676Adapter.TRANSFORMS)
+    missing = lossless.value_presence_heuristic(document, dumped, Stanag4676Adapter.TRANSFORMS)
     # msgCreatedTime is re-stamped by design; profile becomes STANDALONE on the way out.
     missing = {k: v for k, v in missing.items()
                if not k.endswith("msgCreatedTime") and not k.startswith("profile")}

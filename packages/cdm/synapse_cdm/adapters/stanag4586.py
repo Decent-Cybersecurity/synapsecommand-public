@@ -100,7 +100,8 @@ from synapse_cdm.models import (
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "STANAG4586"
 
@@ -134,6 +135,7 @@ class Stanag4586Adapter(Adapter):
         format=FormatRef(name="STANAG 4586 — Standard Interfaces of UAV Control System (UCS), DLI "
                      "telemetry",
                          version="Edition 3"),
+        binding=WireBinding.STANDARD,
         direction=Direction.INGEST,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

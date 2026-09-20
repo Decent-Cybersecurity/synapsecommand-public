@@ -1875,6 +1875,28 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ("packages/cdm/synapse_cdm/MIGRATIONS.md",
      "left unset by \"eleven of the twelve shipped adapters — `stanag4676` … is the only one",
      "verbatim quotation of pre-repair bytes in `adapter.py`; see TREE_PRE_REPAIR"),
+    # --- the audit remediation register (tracked 2026-09-20): past-tense narrative of THIS gate's
+    # own refusals, and the verbatim text of the fresh-context reviews in its Appendix B. Each
+    # quotes a phrase that was repaired where it stood, or a reviewer's words, which the record
+    # may not rewrite; none states the roster. Added by S10 with the maintainer's `git add`.
+    ("docs/audit-remediation-report.md",
+     "prose gate on a \"Thirteen adapters\" phrase in the F05 record",
+     "past-tense narrative: the F05 session's log entry quoting the phrase this gate refused, "
+     "which was reworded in MIGRATIONS.md and no longer exists there"),
+    ("docs/audit-remediation-report.md",
+     "refused \"Thirteen adapters declare\" in the F05 MIGRATIONS",
+     "the same refusal, narrated in F05's commands subsection"),
+    ("docs/audit-remediation-report.md",
+     "refused \"six adapters\" in the F06 record",
+     "past-tense narrative: the F06 session's log entry quoting the phrase this gate refused, "
+     "reworded in MIGRATIONS.md, the harness comment and the envelope page"),
+    ("docs/audit-remediation-report.md",
+     "PARTIAL (claims: 13 adapters queued)",
+     "verbatim text of the S4 review in Appendix B — a named subset (the shipped adapters "
+     "without `MAPPINGS`), and a record that may not be rewritten"),
+    ("docs/audit-remediation-report.md",
+     "park it for the 13 adapters' declaration rounds",
+     "verbatim text of the S4 review in Appendix B, the same subset"),
 )
 
 #: Pre-repair bytes quoted somewhere in the tree, and the file each was repaired in. Same

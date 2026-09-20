@@ -1,0 +1,28 @@
+{
+  "proposal": {
+    "stage": 1,
+    "status": "proposed",
+    "requires_ruling_reversal": false,
+    "adr": "docs/adr/0011-repository-governance-enforcement.md",
+    "summary": "The documented `main-protection` ruleset (deletion, non_fast_forward) plus required_linear_history. Compatible with direct pushes to main and with PUBLICATION.md ledger entry 1: no pull_request rule, no required_status_checks rule, bypass_actors stays empty. The history this proposal was derived against has zero merge commits, so the added rule refuses nothing the documented workflow does.",
+    "not_a_reading": "This file describes a proposal. It is not proof that main is protected; only an administrator's apply and a readback (docs/governance/RUNBOOK.md) are.",
+    "apply": "python gates/governance_audit.py apply --proposal docs/governance/rulesets/stage1-main-protection.json --confirm 'APPLY main-protection'"
+  },
+  "ruleset": {
+    "name": "main-protection",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "conditions": {
+      "ref_name": {
+        "include": ["~DEFAULT_BRANCH"],
+        "exclude": []
+      }
+    },
+    "rules": [
+      {"type": "deletion"},
+      {"type": "non_fast_forward"},
+      {"type": "required_linear_history"}
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 {
   "adapter": {
     "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
     "capabilities": {
       "directions_exercised": [
         "ingest",
@@ -66,12 +67,12 @@
     "residual": "legacy"
   },
   "api": {
-    "version": "2"
+    "version": "3"
   },
   "cdm": {
     "schema_version": "2.1.0",
     "supported": "2.x"
   },
-  "manifest_schema_version": "1.2.0",
+  "manifest_schema_version": "2.0.0",
   "schema_id": "synapse.adapter-manifest/v1"
 }

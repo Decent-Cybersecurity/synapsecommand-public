@@ -1,6 +1,7 @@
 {
   "adapter": {
     "adapter_version": "1.0.0",
+    "binding": "provisional-internal-profile",
     "capabilities": {
       "directions_exercised": [
         "ingest",
@@ -58,7 +59,8 @@
       "leftovers are parked in `Entity.attributes` / `Event.payload` under `source_extras` (`lossless.residual()`), not in the origin-identifying container ARCHITECTURE.md \u00a75 gives to P3 \u2014 the Part 1 stance that section rules for the adapters already shipped",
       "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run and the release pipeline attaches it to the GitHub Release. `evidence.available` is true because the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a third party, and it says nothing about what the wheel contains",
       "of \u00a73.5's five resource limits this adapter enforces TWO \u2014 `max_input_bytes`, declared in `capabilities.limits` with its basis beside it and refused before decode by the base class (round P5), and `max_depth`, declared the same way and refused by `parse_document` immediately after the XML parse and before either reader recurses into the tree (2026-09-16). The other three are still absent, each with its own reason in `capabilities.limits.absent_because`; an object-count, decompression or wall-clock bound is not enforced here today",
-      "XML is parsed with the standard library's `xml.etree.ElementTree` and NOT with `defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round P5). An EXTERNAL entity is not resolved and an external DTD is not fetched \u2014 the parser never reads the external subset \u2014 but an INTERNAL entity IS expanded, and what stops an entity bomb is libexpat's own input-amplification limit rather than anything in this package. That protection belongs to the RUNTIME's expat build (2.4.0 and later, on by default), so a deployment on an older expat loses it without this package changing; `max_input_bytes` bounds the document either way. tests/test_cdm_parser_safety.py reads the linked version and takes every one of these readings rather than asserting them"
+      "XML is parsed with the standard library's expat (`pyexpat` into an `xml.etree.ElementTree` tree, `parse_document`'s `_parse_xml`) and NOT with `defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round P5). Since F05 (2026-09-20) an EXTERNAL entity reference FAILS the parse at the reference and parameter-entity parsing is off, so an external DTD subset is never requested \u2014 both set on the parser rather than read off its defaults \u2014 but an INTERNAL entity IS expanded, and what stops an entity bomb is libexpat's own input-amplification limit rather than anything in this package. That protection belongs to the RUNTIME's expat build (2.4.0 and later, on by default), so a deployment on an older expat loses it without this package changing; `max_input_bytes` bounds the document either way. tests/test_cdm_parser_safety.py reads the linked version and takes every one of these readings rather than asserting them",
+      "the XML element names this adapter reads and writes are a PROVISIONAL internal profile (`binding: provisional-internal-profile`): AEDP-12's UML attribute names bound through one table (`ELEMENT_NAMES`) in no namespace, because the normative XSD is distributed through NATO national representatives (Ed B \u00a7B.5) and is not held here. Reader and writer agreeing through that table proves the profile is self-consistent, not that it is the standard's binding; FORMAT_COVERAGE.md marks every NITS row `\u00b7 provisional` for the same reason. The verified normative binding is a separate, explicit mode (`SYNAPSE_CDM_NITS_BINDING=normative`) that validates every document read or emitted against the authorised schema through the local-resource hook `SYNAPSE_CDM_NITS_XSD_DIR` and FAILS BLOCKED_EXTERNAL_EVIDENCE without it \u2014 it never falls back to the profile, and no shipped fixture, golden or evidence record was produced under it"
     ],
     "limitations_empty_reason": null,
     "maturity": {
@@ -72,12 +74,12 @@
     "residual": "legacy"
   },
   "api": {
-    "version": "2"
+    "version": "3"
   },
   "cdm": {
     "schema_version": "2.1.0",
     "supported": "2.x"
   },
-  "manifest_schema_version": "1.2.0",
+  "manifest_schema_version": "2.0.0",
   "schema_id": "synapse.adapter-manifest/v1"
 }

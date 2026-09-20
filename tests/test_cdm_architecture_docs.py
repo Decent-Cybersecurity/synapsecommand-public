@@ -19,6 +19,7 @@ It does not judge the documents' ARGUMENTS. Whether the residual policy is right
 directions are the correct six, whether a rule is enforced where the document says it is enforced —
 those are a reviewer's, and the review is where they were settled. This module holds the figures.
 """
+import ast
 import pathlib
 import re
 
@@ -110,9 +111,22 @@ def test_each_document_points_at_the_other_two(rel):
 #: The linking word is required — without it, every semver written within forty characters of a
 #: constant's name would be read as a claim about it, and the documents legitimately discuss
 #: numbers that are not readings (a version this campaign expects to land, a historical release).
+#: The six constants `version.py` declares as axes, every one a row of VERSIONING.md §2's table.
+VERSION_CONSTANTS = ("SCHEMA_VERSION", "PACKAGE_VERSION", "SC_OES_VERSION",
+                     "ADAPTER_API_VERSION", "MANIFEST_SCHEMA_VERSION", "EVIDENCE_SCHEMA_VERSION")
+
+#: The three the DOCUMENT-WIDE sweep below reads. Not the six: VERSIONING.md §2's dated corrections
+#: legitimately say "`MANIFEST_SCHEMA_VERSION` reads `1.1.0`" about the day they were written and
+#: are left standing by rule, so a sweep over those three names would read history as a stale
+#: claim. The six are held where they are stated as current — the axis table — by the
+#: table-scoped `TABLE_CLAIM` test further down (audit remediation F09, 2026-09-20).
 VERSION_CLAIM = re.compile(
     r"`(?P<const>SCHEMA_VERSION|PACKAGE_VERSION|SC_OES_VERSION)`\s*"
     r"(?:is|reads|=|at)\s*`(?P<value>\d+\.\d+\.\d+)`"
+)
+
+TABLE_CLAIM = re.compile(
+    r"`(?P<const>" + "|".join(VERSION_CONSTANTS) + r")`\s*is\s*`(?P<value>\d+\.\d+\.\d+)`"
 )
 
 
@@ -125,7 +139,8 @@ def test_the_version_sweep_bound_something():
     """Before the comparison: a sweep that matches nothing passes for the wrong reason.
 
     Three constants, and the version model has to state all three somewhere or it is not a
-    statement of this package's version axes.
+    statement of this package's version axes. (The other three are held in the axis table alone;
+    see `VERSION_CLAIM`'s comment.)
     """
     found = {const for _rel, const, _value in version_claims()}
     assert found == {"SCHEMA_VERSION", "PACKAGE_VERSION", "SC_OES_VERSION"}, (
@@ -353,50 +368,110 @@ def test_both_documents_forbid_the_bare_letter():
 # --------------------------------------------------------------------------- the line citations
 
 
-def test_every_adapter_py_line_the_api_section_cites_holds_what_it_says_it_holds():
-    """§1.1's table, against `adapter.py` itself.
+def adapter_members() -> dict[str, str]:
+    """Every member the `Adapter` class body declares, by name, as `attribute` or `method`.
 
-    A `file:line` citation is the figure that goes stale silently: the code moves, the number does
-    not, and nothing reads either. Each row names an element and a line, so each row is checkable —
-    the cited line has to mention the element.
+    Read with `ast` rather than `dir(adapter.Adapter)` so that an inherited name (`ABC`'s, or
+    `object`'s) cannot satisfy a row that claims the member is this class's own.
     """
-    source = (REPO / "packages" / "cdm" / "synapse_cdm" / "adapter.py").read_text().splitlines()
+    tree = ast.parse((REPO / "packages" / "cdm" / "synapse_cdm" / "adapter.py").read_text())
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name == "Adapter":
+            members = {}
+            for item in node.body:
+                if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    members[item.name] = "method"
+                elif isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+                    members[item.target.id] = "attribute"
+                elif isinstance(item, ast.Assign):
+                    for target in item.targets:
+                        if isinstance(target, ast.Name):
+                            members[target.id] = "attribute"
+            return members
+    raise AssertionError("adapter.py no longer declares a top-level class named Adapter")
+
+
+def test_every_element_the_api_section_lists_is_a_member_of_adapter_of_the_kind_it_states():
+    """§1.1's table, against the `Adapter` class body itself.
+
+    Until audit remediation F09 (2026-09-20) each row cited an `adapter.py` LINE, and every
+    insertion above a cited member moved every number below it — twice in the document's own dated
+    corrections and once more in F02. A line is a figure that goes stale when nothing about the
+    member changed. What a row has to say is WHERE the member is in a form that survives the file
+    being edited: the class it belongs to and whether it is a class attribute or a method. Both are
+    derived here from the AST, so a renamed or removed member reds this test and a moved one does
+    not. No row may cite a line any more.
+    """
+    members = adapter_members()
     rows = table_rows(section(ARCHITECTURE, "## 1. Adapter API v2"))
-    checked = 0
+    assert rows, "§1.1's table is gone"
     wrong = []
     for row in rows:
         element = row[0].strip("`")
-        cite = re.search(r"`adapter\.py:(\d+)`", row[1])
-        if not cite:
+        where = row[1]
+        if re.search(r"adapter\.py:\d+", where):
+            wrong.append(f"{element}: the `where` cell cites a line ({where!r}); cite the kind")
             continue
-        checked += 1
-        number = int(cite.group(1))
-        if not (1 <= number <= len(source)) or element not in source[number - 1]:
-            actual = source[number - 1] if 1 <= number <= len(source) else "<past end of file>"
-            wrong.append(f"{element}: cited at adapter.py:{number}, which reads {actual.strip()!r}")
-    assert checked == len(rows), (
-        f"§1.1's table has {len(rows)} rows and {checked} of them cite an `adapter.py` line. "
-        "Every row names one element of the v1 surface and has to say where it is"
-    )
-    assert not wrong, "these citations no longer point at what they name:\n  " + "\n  ".join(wrong)
+        if "`adapter.py`" not in where or "`Adapter`" not in where:
+            wrong.append(f"{element}: the `where` cell {where!r} names neither the file nor the class")
+            continue
+        stated_kind = ("method" if "method" in where
+                       else "attribute" if "class attribute" in where else None)
+        if stated_kind is None:
+            wrong.append(f"{element}: the `where` cell {where!r} states neither kind")
+        elif element not in members:
+            wrong.append(f"{element}: not a member the Adapter class body declares "
+                         f"(it declares {sorted(members)})")
+        elif members[element] != stated_kind:
+            wrong.append(f"{element}: the table says {stated_kind}, adapter.py declares a "
+                         f"{members[element]}")
+    assert not wrong, "§1.1's table disagrees with adapter.py:\n  " + "\n  ".join(wrong)
 
 
-def test_the_axis_table_cites_the_line_version_py_declares_each_constant_on():
-    """The three Python-constant axes, against `version.py`'s own line numbers."""
+def test_the_api_section_gate_can_fail():
+    """The AST reader sees what the gate compares against, or the gate above passes vacuously."""
+    members = adapter_members()
+    assert members.get("to_cdm") == "method" and members.get("name") == "attribute", members
+    assert "not_a_member_of_adapter" not in members
+
+
+def test_the_axis_table_cites_version_py_by_constant_and_every_constant_is_declared_there():
+    """The six Python-constant axes, against `version.py`'s own top-level assignments.
+
+    Until audit remediation F09 (2026-09-20) each row cited a `version.py` LINE and this test held
+    the number; the numbers moved at every insertion above them — the document's own dated note
+    records four readings for one constant in four days — and a release had to re-point them. A
+    row now cites the file and names the constant's top-level assignment; the constant must be
+    assigned at the top level of `version.py` (a rename reds this), the row may cite no line, and
+    the reading in the row's `version today` cell must be the constant's value — for all six,
+    table-scoped, so that a dated correction elsewhere in the document is not read as a claim.
+    """
     rows = table_rows(section(VERSIONING, "## 2. The axes"))
     seen = {}
+    wrong = []
     for row in rows:
-        cite = re.search(r"`packages/cdm/synapse_cdm/version\.py:(\d+)`", row[-1])
-        claim = VERSION_CLAIM.search(row[3])
-        if not (cite and claim):
+        claim = TABLE_CLAIM.search(row[3])
+        if not claim:
             continue
-        seen[claim.group("const")] = int(cite.group(1))
-    assert set(seen) == {"SCHEMA_VERSION", "PACKAGE_VERSION", "SC_OES_VERSION"}, (
-        f"the axis table gives a version.py line for {sorted(seen)}; all three constants have rows"
+        const = claim.group("const")
+        seen[const] = row[-1]
+        if claim.group("value") != getattr(version, const):
+            wrong.append(f"{const}: the table says {claim.group('value')!r}, version.py says "
+                         f"{getattr(version, const)!r}")
+        if re.search(r"version\.py:\d+", row[-1]):
+            wrong.append(f"{const}: the `authored in` cell cites a line ({row[-1]!r})")
+        elif "`packages/cdm/synapse_cdm/version.py`" not in row[-1] or f"`{const}`" not in row[-1]:
+            wrong.append(f"{const}: the `authored in` cell {row[-1]!r} names neither the file "
+                         "nor the constant")
+        else:
+            try:
+                version_py_line(const)
+            except AssertionError as failure:
+                wrong.append(str(failure))
+    assert set(seen) == set(VERSION_CONSTANTS), (
+        f"the axis table states a reading for {sorted(seen)}; all six constants have rows"
     )
-    wrong = [f"{const}: table says line {line}, version.py assigns it on {version_py_line(const)}"
-             for const, line in seen.items() if line != version_py_line(const)]
-    assert not wrong, "\n  ".join(["the axis table's line citations are stale:"] + wrong)
+    assert not wrong, "\n  ".join(["the axis table's citations are wrong:"] + wrong)
 
 
 def test_the_axis_table_lists_every_axis_the_version_model_carries():

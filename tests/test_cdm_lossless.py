@@ -4,39 +4,39 @@ from synapse_cdm import lossless
 
 def test_a_dropped_value_is_reported():
     raw = {"kept": "alpha", "dropped": "bravo"}
-    missing = lossless.unrepresented(raw, [{"field": "alpha"}])
+    missing = lossless.value_presence_heuristic(raw, [{"field": "alpha"}])
     assert missing == {"dropped": "bravo"}
 
 
 def test_a_renamed_key_is_not_a_drop():
     """Renaming is what translation IS — comparing keys would flag every correct adapter."""
-    assert lossless.unrepresented({"band": "L1"}, [{"frequency_band": "L1"}]) == {}
+    assert lossless.value_presence_heuristic({"band": "L1"}, [{"frequency_band": "L1"}]) == {}
 
 
 def test_numeric_forms_of_the_same_measurement_match():
     for value, rendered in ((71.5, "71.50"), (2500, 2500.0), (4, "4"), (1e3, 1000.0)):
-        assert lossless.unrepresented({"v": value}, [{"v": rendered}]) == {}
+        assert lossless.value_presence_heuristic({"v": value}, [{"v": rendered}]) == {}
 
 
 def test_booleans_are_not_treated_as_uninteresting():
     """A dropped `"estimated": true` is exactly the loss this check exists to catch."""
-    assert lossless.unrepresented({"estimated": True}, [{"other": 1}]) == {"estimated": True}
-    assert lossless.unrepresented({"estimated": True}, [{"flag": "true"}]) == {}
+    assert lossless.value_presence_heuristic({"estimated": True}, [{"other": 1}]) == {"estimated": True}
+    assert lossless.value_presence_heuristic({"estimated": True}, [{"flag": "true"}]) == {}
 
 
 def test_absent_values_are_not_losses():
-    assert lossless.unrepresented({"a": None, "b": "", "c": [], "d": {}}, [{}]) == {}
+    assert lossless.value_presence_heuristic({"a": None, "b": "", "c": [], "d": {}}, [{}]) == {}
 
 
 def test_a_declared_transform_exempts_a_subtree():
     raw = {"vendor": {"firmware": "2.11.4", "nested": {"deep": 7}}}
-    assert lossless.unrepresented(raw, [{}]) != {}
-    assert lossless.unrepresented(raw, [{}], {"vendor": "handled elsewhere"}) == {}
+    assert lossless.value_presence_heuristic(raw, [{}]) != {}
+    assert lossless.value_presence_heuristic(raw, [{}], {"vendor": "handled elsewhere"}) == {}
 
 
 def test_a_parked_key_name_counts_as_presence():
     """`attributes.receiver_count: 3` keeps the NAME as evidence even for a common number."""
-    assert lossless.unrepresented({"receiver_count": 3},
+    assert lossless.value_presence_heuristic({"receiver_count": 3},
                                   [{"attributes": {"receiver_count": 3}}]) == {}
 
 

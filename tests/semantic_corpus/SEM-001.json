@@ -1,0 +1,30 @@
+{
+  "rule": "SEM-001",
+  "title": "A geometry carries its GeoJSON type tag",
+  "cases": [
+    {
+      "name": "tagged point",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-1"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e01",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Point", "coordinates": [21.0, 57.0]}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "point-shaped geometry with no type",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-1"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e01",
+        "object_type": "ROUTE",
+        "geometry": {"coordinates": [21.0, 57.0]}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-001"}
+    }
+  ]
+}

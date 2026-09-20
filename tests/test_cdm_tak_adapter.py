@@ -6,7 +6,7 @@ Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter t
 and said so out loud: it compared structures, `from_cdm()` here returns CoT bytes, and a check
 it cannot run must report SKIP rather than PASS. The README's instruction for that case was that
 the adapter ships its own round-trip test — so the two directions were exercised here, with the
-same value-presence comparison (`lossless.unrepresented`) and the same TRANSFORMS exemptions the
+same value-presence comparison (`lossless.value_presence_heuristic`) and the same TRANSFORMS exemptions the
 harness would have used. Byte equality is neither achievable nor the point: attribute order is
 arbitrary, an omitted optional field comes back explicit, and a re-rendered timestamp is a
 different string for the same instant — which is why the class declares the `values` tolerance,
@@ -614,7 +614,7 @@ def test_ingest_round_trip_loses_no_source_value(path):
     adapter = _adapter()
     emitted = tak._parse_cot(adapter.from_cdm(adapter.to_cdm(path.read_bytes())).decode("utf-8"))
 
-    missing = lossless.unrepresented(original, [emitted], TakAdapter.TRANSFORMS)
+    missing = lossless.value_presence_heuristic(original, [emitted], TakAdapter.TRANSFORMS)
     assert not missing, "\n".join(
         f"{p} = {v!r} was in the CoT source and is absent from what from_cdm() emitted"
         for p, v in sorted(missing.items()))
@@ -671,7 +671,7 @@ def test_egress_round_trip_loses_no_plan_object_value(path):
     for bookkeeping in EGRESS_BOOKKEEPING:
         carried.pop(bookkeeping, None)
 
-    missing = lossless.unrepresented(carried, [emitted])
+    missing = lossless.value_presence_heuristic(carried, [emitted])
     assert not missing, "\n".join(
         f"{p} = {v!r} was on the PlanObject and is absent from the emitted CoT"
         for p, v in sorted(missing.items()))
@@ -717,7 +717,7 @@ def test_the_egress_round_trip_would_notice_each_kind_of_loss(dropped, expected_
     for bookkeeping in EGRESS_BOOKKEEPING:
         carried.pop(bookkeeping, None)
 
-    missing = lossless.unrepresented(carried, [lossy])
+    missing = lossless.value_presence_heuristic(carried, [lossy])
     assert expected_loss in missing, (
         f"removing <{dropped}> should have lost {expected_loss}; the check reported {missing}")
 

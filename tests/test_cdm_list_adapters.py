@@ -11,8 +11,10 @@ sentence is about that day — had two routes to them, and both were failures:
 * a bare invocation — argparse's usage line, which names the FLAG and not one value it takes.
 
 A verification tool whose whole job is to be the gate an adapter passes should be able to say
-which adapters it knows. `--list-adapters` prints the name, version, direction, fixture directory
-and system, and exits `0`.
+which adapters it knows. `--list-adapters` prints the name, version, direction, fixture directory,
+system and — since the audit remediation's F05 (2026-09-20) — the wire binding, and exits `0`.
+The binding column is there so `stanag4676`'s `provisional-internal-profile` is read in the same
+table as its name rather than found in a manifest field a reader may never open.
 
 THE FIXTURE DIRECTORY IS IN THE TABLE ON PURPOSE
 ------------------------------------------------
@@ -54,7 +56,7 @@ from tests import probe_metadata
 
 #: The names in the rendered table: every line after the rule, first column.
 ROW = re.compile(r"^(?P<name>\S+)\s+(?P<version>\S+)\s+(?P<direction>\S+)\s+"
-                 r"(?P<fixtures>\S+)\s+(?P<system>\S+)$")
+                 r"(?P<fixtures>\S+)\s+(?P<system>\S+)\s+(?P<binding>\S+)$")
 
 #: The roster as `load_adapter` states it when a lookup fails.
 REFUSAL = re.compile(r"registered: (?P<names>[^.]+)\.")
@@ -108,6 +110,11 @@ def test_every_row_states_the_adapter_s_own_declarations():
             f"{name}: listed fixture directory {row['fixtures']}, declares "
             f"{cls.fixture_dir or cls.name}. This column exists because that relation was "
             "folklore once, and folklore is what made a vacuous run look green"
+        )
+        assert row["binding"] == cls.metadata.binding.value, (
+            f"{name}: listed binding {row['binding']}, the metadata declares "
+            f"{cls.metadata.binding.value}. F05: the listing, the manifest and the support "
+            "matrix state one binding, read from one declaration"
         )
 
 
@@ -238,7 +245,8 @@ def test_the_json_form_carries_the_same_set(capsys):
     for name, cls in adapter.roster().items():
         assert parsed[name] == {"version": cls.version, "direction": cls.direction,
                                 "system": cls.system,
-                                "fixtures": cls.fixture_dir or cls.name}, parsed[name]
+                                "fixtures": cls.fixture_dir or cls.name,
+                                "binding": cls.metadata.binding.value}, parsed[name]
 
 
 def test_a_bare_invocation_still_refuses_and_now_says_where_to_look(capsys):

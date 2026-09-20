@@ -1,0 +1,32 @@
+{
+  "rule": "SEM-011",
+  "title": "An Event's payload matches the model registered for its event_type; extra keys survive",
+  "cases": [
+    {
+      "name": "GNSS interference payload with a vendor key",
+      "document": {
+        "object_kind": "event", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "V-11"}],
+        "event_id": "2f7e4f2a-8d1c-4e3b-9c5a-4b9d0e6f3a11",
+        "event_type": "GNSS_INTERFERENCE", "severity": "WARNING",
+        "observed_at": "2026-04-29T06:00:00.000Z", "received_at": "2026-04-29T06:00:00.000Z",
+        "payload": {"frequency_band": "L1", "interference_type": "JAMMING", "vendor_field": 7}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "GNSS interference payload without frequency_band",
+      "document": {
+        "object_kind": "event", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "V-11"}],
+        "event_id": "2f7e4f2a-8d1c-4e3b-9c5a-4b9d0e6f3a11",
+        "event_type": "GNSS_INTERFERENCE", "severity": "WARNING",
+        "observed_at": "2026-04-29T06:00:00.000Z", "received_at": "2026-04-29T06:00:00.000Z",
+        "payload": {"interference_type": "JAMMING"}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-011"}
+    }
+  ]
+}

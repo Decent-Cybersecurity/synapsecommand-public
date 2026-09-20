@@ -38,6 +38,8 @@ from pydantic import (
     ConfigDict,
     Field,
     PlainSerializer,
+    ValidationError,
+    ValidationInfo,
     WithJsonSchema,
     field_validator,
     model_validator,
@@ -63,13 +65,36 @@ from synapse_cdm.geo import (
     VerticalExtent,
     VerticalPosition,
 )
-from synapse_cdm.version import SCHEMA_VERSION, is_semver
+from synapse_cdm.version import SCHEMA_VERSION, SEMVER_PATTERN, is_semver
 
 STRICT = ConfigDict(extra="forbid", use_enum_values=False, validate_assignment=True)
 
+def _timestamp_in(value: object, info: ValidationInfo) -> _dt.datetime:
+    """The wire form on the JSON path; the adapter's parser on the Python path (audit F04).
+
+    Two validation paths, two contracts, and until 2026-09-19 they were one function:
+
+    * `model_validate_json` — the WIRE. A string here is a JSON document's, and it is held to
+      `times.TIMESTAMP_RE` in full, the same `pattern` the published schema carries, so the
+      Python JSON path and the JSON Schema validator refuse the same bytes. Before this, the
+      model took "2026-04-29T06:12:44Z", "+02:00" and a naive string through `times.parse`
+      while the schema's pattern refused all three — two validators, two languages.
+    * `model_validate` / the constructor — Python-object coercion. Every adapter in this tree
+      hands the model its source's own timestamp string and declares in its TRANSFORMS that the
+      model re-renders it (the reference adapter's `valid_until: re-rendered into the CDM's
+      fixed three-decimal form`). That is the adapter's contract with the model, not the wire's,
+      and it is unchanged: `times.parse` still takes what sources send.
+
+    `conformance.assess_a` validates on the JSON path. A consumer that parses JSON itself and
+    calls `model_validate` on the dict is on the Python path and gets the coercion; the
+    conformance tool exists so that a wire claim is never made from that path.
+    """
+    return times.parse_wire(value) if info.mode == "json" else times.parse(value)
+
+
 Timestamp = Annotated[
     _dt.datetime,
-    BeforeValidator(times.parse),
+    BeforeValidator(_timestamp_in),
     PlainSerializer(times.render, return_type=str),
     WithJsonSchema({
         "type": "string",
@@ -142,7 +167,10 @@ class SourceRef(BaseModel):
     model_config = STRICT
     system: str = Field(min_length=1, description="The external system this came from.")
     adapter: str = Field(min_length=1, description="Adapter name, e.g. pntmap.")
-    adapter_version: str = Field(min_length=1, description="Adapter semver.")
+    adapter_version: str = Field(
+        min_length=1, pattern=SEMVER_PATTERN,
+        description="Adapter semver: MAJOR.MINOR.PATCH, no leading zeroes, nothing else.",
+    )
     synthetic: bool = Field(description="true for anything not from a real source (TR-12).")
     # ------------------------------------------------------------------ Rule 5, completed in P3
     #
@@ -196,10 +224,11 @@ class SourceRef(BaseModel):
     def _semver(cls, v: str) -> str:
         # The same shape `schema_version` and a manifest's `adapter_version` are held to. Until
         # 2026-09-16 this field carried `min_length=1` and nothing else, so the version stamped
-        # on every object on the wire was the one version field the package did not check. A
-        # validator and not a schema `pattern`: the JSON Schema is unchanged, because narrowing
-        # a published type is a MAJOR by MIGRATIONS.md's table and every value the tree has
-        # ever written here already passes.
+        # on every object on the wire was the one version field the package did not check.
+        # Since 2026-09-19 (audit F04) the field ALSO carries `pattern=SEMVER_PATTERN`, so the
+        # published schema refuses what this validator refuses — "banana", "01.2.3" and
+        # "1.2.3\n" were valid on the wire and refused here. The validator stays for the
+        # message, and because `fullmatch` is the guarantee `pattern` gives only in ECMA-262.
         if not is_semver(v):
             raise ValueError(f"adapter_version must be semver MAJOR.MINOR.PATCH with no leading "
                              f"zeroes, got {v!r}")
@@ -287,12 +316,12 @@ class Position(BaseModel):
         if is_hae_metres:
             if self.alt_m is not None and self.alt_m != self.vertical.value:
                 raise ValueError(
-                    f"alt_m {self.alt_m} disagrees with vertical {self.vertical.value} m HAE. "
+                    f"SEM-004: alt_m {self.alt_m} disagrees with vertical {self.vertical.value} m HAE. "
                     "alt_m is the canonical projection of the same height, not a second reading"
                 )
         elif self.alt_m is not None:
             raise ValueError(
-                f"alt_m is {self.alt_m} while vertical states {self.vertical.value} "
+                f"SEM-004: alt_m is {self.alt_m} while vertical states {self.vertical.value} "
                 f"{self.vertical.unit.value} {self.vertical.reference.value}. alt_m means metres "
                 "HAE and nothing else; converting from that datum needs a model this package "
                 "does not have, so alt_m stays None and `vertical` carries what the source said"
@@ -335,7 +364,7 @@ class Period(BaseModel):
     def _forwards(self) -> "Period":
         if self.end is not None and self.end < self.start:
             raise ValueError(
-                f"end {times.render(self.end)} precedes start {times.render(self.start)} — an "
+                f"SEM-005: end {times.render(self.end)} precedes start {times.render(self.start)} — an "
                 "interval that runs backwards is a translation defect, not data"
             )
         return self
@@ -390,7 +419,7 @@ class TemporalValidity(BaseModel):
         if (self.valid_from is not None and self.valid_to is not None
                 and self.valid_to < self.valid_from):
             raise ValueError(
-                f"valid_to {times.render(self.valid_to)} precedes valid_from "
+                f"SEM-006: valid_to {times.render(self.valid_to)} precedes valid_from "
                 f"{times.render(self.valid_from)} — an interval that runs backwards is a "
                 "translation defect, not data"
             )
@@ -456,7 +485,7 @@ class RouteLeg(BaseModel):
     def _not_a_loop(self) -> "RouteLeg":
         if self.from_seq == self.to_seq:
             raise ValueError(
-                f"leg runs from sequence {self.from_seq} to itself. A leg joins two waypoints; a "
+                f"SEM-008: leg runs from sequence {self.from_seq} to itself. A leg joins two waypoints; a "
                 "hold or an orbit at one waypoint is a property of that waypoint, not a segment"
             )
         return self
@@ -497,7 +526,7 @@ class Route(BaseModel):
         for index, waypoint in enumerate(self.waypoints):
             if waypoint.sequence in seen:
                 raise ValueError(
-                    f"waypoints {seen[waypoint.sequence]} and {index} both carry sequence "
+                    f"SEM-009: waypoints {seen[waypoint.sequence]} and {index} both carry sequence "
                     f"{waypoint.sequence}. `sequence` is the route's order of record and a "
                     "duplicate makes that order unrecoverable"
                 )
@@ -506,7 +535,7 @@ class Route(BaseModel):
             for end, value in (("from_seq", leg.from_seq), ("to_seq", leg.to_seq)):
                 if value not in seen:
                     raise ValueError(
-                        f"leg {index}'s {end} is {value}, which no waypoint carries. Known "
+                        f"SEM-009: leg {index}'s {end} is {value}, which no waypoint carries. Known "
                         f"sequences: {sorted(seen)}"
                     )
         return self
@@ -670,7 +699,7 @@ class CDMBase(BaseModel):
     """
     model_config = STRICT
     schema_version: str = Field(
-        default=SCHEMA_VERSION,
+        default=SCHEMA_VERSION, pattern=SEMVER_PATTERN,
         description="Semver of the CDM this object was written against.",
     )
     source: SourceRef = Field(
@@ -682,7 +711,12 @@ class CDMBase(BaseModel):
                     "EVERY kind — see the class docstring.",
     )
     integrity: Integrity | None = Field(
-        default=None, description="PQC signature block — designed, not yet populated."
+        default=None,
+        description="PQC signature block — designed, not yet populated. A DATA CONTAINER and "
+                    "nothing more: this package makes no signature and verifies none, no "
+                    "conformance check, harness column or evidence field reads it, and its "
+                    "presence on an object proves nothing about the object. A record carrying "
+                    "one is unverified until something outside this package verifies it.",
     )
     quality: Quality | None = Field(
         default=None,
@@ -724,7 +758,7 @@ class Entity(CDMBase):
     entity_type: EntityType
     affiliation: Affiliation
     symbol: str | None = Field(
-        default=None,
+        default=None, pattern=r"^[0-9]{20}$",
         description="MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — "
                     "see symbology.sidc_from_affiliation() for deriving one.",
     )
@@ -739,7 +773,7 @@ class Entity(CDMBase):
                     "park data here rather than discarding it.",
     )
     ontology_types: list[str] = Field(
-        default_factory=list,
+        default_factory=list, json_schema_extra={"uniqueItems": True},
         description="Optional SC-OES semantic types — absolute ontology identifiers saying what "
                     "this thing IS in operational terms. Empty = the producer asserted none. "
                     "Never derived from entity_type, and entity_type is never derived from it.",
@@ -786,10 +820,13 @@ class Entity(CDMBase):
         """
         seen: set[str] = set()
         for term in v:
-            validate_ontology_identifier(term)
+            try:
+                validate_ontology_identifier(term)
+            except ValueError as e:
+                raise ValueError(f"SEM-010: {e}") from e
             if term in seen:
                 raise ValueError(
-                    f"duplicate ontology type {term!r}: identifiers are rejected rather than "
+                    f"SEM-010: duplicate ontology type {term!r}: identifiers are rejected rather than "
                     "deduplicated, because a set silently repaired is a defect never reported"
                 )
             seen.add(term)
@@ -799,7 +836,7 @@ class Entity(CDMBase):
     def _interval(self) -> "Entity":
         if self.valid_to is not None and self.valid_to < self.valid_from:
             raise ValueError(
-                f"valid_to {times.render(self.valid_to)} precedes valid_from "
+                f"SEM-007: valid_to {times.render(self.valid_to)} precedes valid_from "
                 f"{times.render(self.valid_from)} — an interval that runs backwards is a "
                 "translation defect, not data"
             )
@@ -880,7 +917,18 @@ class Event(CDMBase):
         """
         model = PAYLOAD_MODELS.get(self.event_type)
         if model is not None:
-            model.model_validate(self.payload)
+            try:
+                model.model_validate(self.payload)
+            except ValidationError as e:
+                # One rule, one finding (SEM-011), with the payload model's own errors quoted:
+                # the JSON Schema publishes `payload` as a bare object because which shape it
+                # takes depends on `event_type`, a cross-field relation the schema cannot state.
+                raise ValueError(
+                    f"SEM-011: payload does not match the registered model for event_type "
+                    f"{self.event_type.value}: " + "; ".join(
+                        "/".join(str(p) for p in err["loc"]) + f": {err['msg']}"
+                        for err in e.errors())
+                ) from e
         return self
 
     @model_validator(mode="after")
@@ -959,7 +1007,7 @@ class Track(CDMBase):
         for earlier, later in zip(stamps, stamps[1:]):
             if later < earlier:
                 raise ValueError(
-                    f"samples are not in time order: {times.render(later)} follows "
+                    f"SEM-012: samples are not in time order: {times.render(later)} follows "
                     f"{times.render(earlier)}. Sort at the adapter — a track that runs "
                     "backwards yields a negative speed downstream"
                 )
@@ -1029,7 +1077,7 @@ class PlanObject(CDMBase):
             return self
         if self.expires_at != self.validity.valid_to:
             raise ValueError(
-                f"expires_at {times.render(self.expires_at)} disagrees with validity.valid_to "
+                f"SEM-013: expires_at {times.render(self.expires_at)} disagrees with validity.valid_to "
                 f"{times.render(self.validity.valid_to)}. expires_at is the projection of "
                 "valid_to, not a second deadline"
             )

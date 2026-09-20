@@ -41,9 +41,12 @@ two-space indent, UTF-8, trailing newline.
 | `evidence_schema_version` | this record's own shape, on its own axis |
 | `test_run` | `command`, `exit`, `passed` / `failed` / `skipped`, `duration_s`, `python`, `platform` — the envelope around the run |
 | `conformance` | the Conformance Suite's own JSON report, with one field made portable: `conformance.adapter.fixtures` reads `<packaged>/<directory>` — the label the `--all` sweep writes — and never the absolute path the run read |
-| `loss_report` | the six categories, below |
+| `loss_report` | the six categories, below, and under `loss_report.ledger` the path-bound preservation ledger's reading — `basis` (`ledger` where the adapter declares `MAPPINGS`, `heuristic` where it does not), counts per category and per loss kind, and diagnostics that name paths, rules and types and never a value |
 | `fixture_hashes` | `{path, sha256, bytes}` for every file the suite read, including `malformed/` and the goldens. Paths are relative to the packaged fixture root, never absolute |
 | `fixture_provenance` | the summary the *Synthetic Fixtures* badge is grounded in |
+| `snapshot` | which tree the run measured, exactly: the commit, whether it was dirty, a digest of the tracked diff, every untracked file with its digest and size, and one digest over the two — `null` when clean. `source_commit` is read off it. Added by the audit's F07 (2026-09-19) |
+| `evidence_categories` | one reading per kind of evidence — `internal_fixture`, `self_round_trip`, `independent_expected`, `normative_schema`, `independent_endpoint` — each `PRESENT`, `ABSENT` or `NOT_APPLICABLE` with a basis sentence and the hashed exercise reports it rests on. Derived, never typed; the three external kinds are `PRESENT` only from a validated exercise report by an independent implementation, and none exists today |
+| `maturity_support` | the DECLARED rung held to the categories it needs, `local_complete` reported apart from `external_outstanding`, so a rung the internal evidence supports and a rung only an outside party can supply are never one word |
 | `artifact_hashes` | empty, for a reason of order: the release pipeline generates the records before it builds the wheel and sdist, and `verify` re-derives a record from the tree, so a digest of an artefact that is not in the tree could never reproduce. The artefact digests are published in `SHA256SUMS` and in the witness record instead |
 | `generated_at`, `generator` | the instant, and what produced the record |
 
@@ -92,7 +95,12 @@ BYTES, unmasked, so the mask made `verify` reproducible while leaving the publis
 function of machine load. On M's ruling of 2026-09-08 the field was removed from the report
 instead: check H still measures the elapsed time and still enforces §21's five-second bound, and
 what it publishes is `over_time_bound`, a boolean, beside the declared `timeout_s`. Deterministic
-output should not depend on a consumer knowing which fields to ignore.
+output should not depend on a consumer knowing which fields to ignore. Since the audit
+remediation's F03 (2026-09-19) the bound is enforced by a kill rather than a comparison: checks H
+and N run every adversarial payload in a spawned worker process, a case unanswered within
+`timeout_s` is killed and recorded as `PARSER_TIMEOUT` (a FAIL, never a refusal), and the
+volatile record — pids, exit codes, durations — goes to `synapse conformance run --diagnostics
+PATH`, not into the report.
 
 A test sweeps every leaf of a record for a key that names a duration and fails on any that is
 neither masked nor a declared bound, so a timing field added by a later round cannot quietly make
@@ -191,9 +199,10 @@ rule would select the record and skip the fixtures.
 synapse badges --from evidence/ --out evidence/badges/
 ```
 
-Six [shields.io endpoint](https://shields.io/badges/endpoint-badge) files per adapter, and one
-repository-level set that takes the **worst** reading of each — a repository badge reporting its
-best adapter would be a badge that says nothing.
+Seven [shields.io endpoint](https://shields.io/badges/endpoint-badge) files per adapter (six until
+the audit's F07 added the seventh on 2026-09-19), and one repository-level set that takes the
+**worst** reading of each — a repository badge reporting its best adapter would be a badge that
+says nothing.
 
 | Badge | Grounded in |
 | --- | --- |
@@ -201,8 +210,9 @@ best adapter would be a badge that says nothing.
 | Conformance L*n* | `conformance.maturity_eligible` |
 | Roundtrip Verified | `conformance.checks.E.verdict` |
 | Deterministic | `conformance.checks.G.verdict` |
-| Lossless Verified | `conformance.checks.D.verdict` and `loss_report.counts.DROPPED` |
+| Lossless Verified | `conformance.checks.D.verdict`, `loss_report.counts.DROPPED` and `loss_report.ledger` — `yes` only when the ledger ran with nothing LOST; `heuristic` (amber) when check D rests on value presence alone; `no` on a measured failure |
 | Synthetic Fixtures | `fixture_provenance.fixtures` and `.synthetic` |
+| Independent Evidence | `evidence_categories` — the external categories that are `PRESENT`, by name (green), or `none` (amber); absent from the output when the field is absent from the record |
 
 **No badge is hand-assigned, and no badge outlives its evidence.** `badges()` takes one argument —
 the record — so there is nothing a caller can say to influence what it renders. And a badge whose

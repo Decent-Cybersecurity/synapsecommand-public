@@ -1,0 +1,176 @@
+---
+title: Deployment envelope
+sidebar_label: Deployment envelope
+sidebar_position: 5
+description: What bounds untrusted input in the library, what the conformance worker isolates and on which platforms, what stays the hosting application's job, and the two things this package does not do — stream, and verify integrity.
+---
+
+# Deployment envelope
+
+`docs/docs/security/parser-safety.mdx` is the policy the parsers are held to: the five bounds and
+where each lives. This page is the other half of the same question — **what protects a process
+that hands this package untrusted bytes**, layer by layer, with the platform caveats written down
+rather than assumed. It was written for audit finding F06 (2026-09-20), and every sentence that
+claims an enforcement names the test that exercises it: `tests/test_cdm_resource_envelope.py`,
+`tests/test_cdm_input_bounds.py`, `tests/test_cdm_parser_safety.py` and
+`tests/test_cdm_parser_isolation.py`.
+
+Three layers, and the rule for reading the page: a protection belongs to the **lowest** layer that
+can provide it portably, and a protection that is platform-specific is recorded as such and is
+refused where it is unavailable. Nothing below is counted as covered because it was requested.
+
+## 1. The library
+
+The library bounds **one payload handed to one adapter's `to_cdm`**. Which of the five bounds runs
+before which allocation is the fact that matters, because a bound applied after the decoder has
+allocated is a bound the decoder can fail before.
+
+| bound | enforced | when it runs | what it stands in front of |
+|---|---|---|---|
+| `max_input_bytes` | all fourteen, in the base class | **before anything**: `len()` of the octets, no allocation, no decode | every parser's memory and time — the one bound everything else is derived from |
+| `max_depth`, JSON text | the JSON-decoding adapters | before `json.loads`, off the characters in one pass (`json_nesting_depth`) | `RecursionError` in the decoder itself (CPython 3.11) and in every walk after it |
+| `max_depth`, parsed twin | the same five, plus `stanag4676` | before the adapter walks the dict, off the containers with a stack | the walk — **not** the parse that produced the dict, which has already happened |
+| `max_depth`, XML | `tak`, `stanag4676`, in the adapter | **after** `ET.fromstring` returns and before anything walks the tree | the walk; expat builds any depth without recursing |
+| `max_objects` | none | — | see below: bounded by `max_input_bytes` linearly, no unbounded path found |
+| `max_decompressed_bytes` | none | — | no shipped adapter opens an archive; the rules are in parser-safety §3 |
+| `max_parse_seconds` | none in the library | — | wall time; the conformance worker's deadline is the executable form (§2) |
+
+**The order is size, then depth, then the decoder**, and the tests prove it rather than the
+docstring: a document that is both oversized and too deep is refused for its size, so the depth
+scan never decodes more than `max_input_bytes` of text. The size guard is inclusive — a payload
+*at* the bound is not refused by it — and counts every octet form the same way: bytes, a
+`bytearray`, a `memoryview`, and text as the UTF-8 octets it would have been on the wire, so a
+string of `bound` characters whose last one is two octets long is one octet over.
+
+**The XML depth bound cannot run before the loader allocates**, because only the adapter holds the
+tree and expat builds it without recursing. What bounds that allocation is the size guard in front
+of it, and libexpat's own amplification limit behind it (2.4.0 and later, read at runtime by
+`tests/test_cdm_parser_safety.py`): a document inside `max_input_bytes` can still expand its
+internal entities, by up to the factor libexpat's default permits, before the tree exists. That
+is a property of the expat the deployment links and is recorded as a limitation on both XML
+adapters, not as a property of this package.
+
+**The fixture loader is the one place this package parses JSON before any adapter's bound can
+apply.** `harness.load_raw` hands a `.json` twin to an adapter already parsed, and the base class
+measures the dict only after `json.loads` has already recursed. Since 2026-09-20 the loader
+measures the text first and refuses past `harness.LOADER_MAX_DEPTH` (64, the figure every
+declared `max_depth` uses; the deepest of the 941 shipped `.json` files nests 15), and it can refuse a
+file on its `stat()` size before reading it — `harness.LOADER_MAX_BYTES`, which reads `None` until
+a hosting application sets it, because no document states a figure and the twin of a 14-octet
+ADS-B squitter is over 400 octets. Both are parameters of `load_raw` as well. A twin refused by
+the loader reaches the conformance worker as `PARSER_REJECTED` in the loader layer, which is the
+true fact about the pipeline and is what check H records.
+
+**Objects and output.** No `max_objects` is enforced, and none was added, because no unbounded
+path was found: every CDM object an adapter emits is built from at least one record, and every
+record from at least one octet, so the object count of one payload is linear in `max_input_bytes`
+(at most a few hundred thousand for a mebibyte of two-octet JSON array elements, a few thousand
+for a 65 535-octet ASTERIX block). Serialised output is linear in the same figure. A
+`max_objects` declared with a basis would be enforced in the base class beside the other two;
+the field exists and every adapter records why it is absent.
+
+**What a refusal carries.** `InputTooLarge`, `InputTooDeep`, `FixtureTooLarge` and
+`FixtureTooDeep` are `ValueError`s naming the adapter or file, both numbers and where the
+declaration lives — never a byte of the payload. An adapter's *own* refusal may quote its input in
+its message, and `harness.run` records `to_cdm`'s traceback per fixture; a hosting application
+that reports harness output to a less trusted party should treat it as it treats the input.
+
+## 2. The conformance worker
+
+Checks **H** (malformed payloads) and **N** (truncation at many offsets) are the adversarial ones,
+and since audit finding F03 they run in a **spawned subprocess** with a per-case deadline that is
+enforced, not measured afterwards: no answer within `timeout_s` and the worker is terminated,
+killed after `KILL_GRACE_S`, and restarted for the next case, with `PARSER_TIMEOUT` as the case's
+code. Replies are JSON, capped at `OUTPUT_CAP_BYTES`, never unpickled. That is the portable part
+of the envelope, and it is the same on Linux, macOS and Windows — `spawn` is the one start method
+the three share.
+
+The **memory and CPU envelope of that worker is not portable**, and the package says so instead
+of pretending. `suite.ResourceLimits(memory_bytes=…, cpu_seconds=…)` asks for `RLIMIT_AS` and
+`RLIMIT_CPU`, applied in the child before the adapter is imported; the CLI spells them
+`--memory-limit-bytes` and `--cpu-limit-seconds`. `suite.resource_limit_support()` answers, per
+field, what **this** platform enforces, and **an explicit request for a limit the platform cannot
+enforce is refused** — `UnsupportedResourceLimit` from `ParserWorker` before any process exists,
+exit 2 from the CLI — rather than applied as a best effort that reads as protection in the report.
+
+| platform | `memory_bytes` (`RLIMIT_AS`) | `cpu_seconds` (`RLIMIT_CPU`) | how it was established |
+|---|---|---|---|
+| Linux | **enforced**: an allocation past the limit fails with `ENOMEM`, the interpreter raises `MemoryError`, the case is `PARSER_CRASH` | **enforced**: `SIGXCPU` at the soft limit ends the worker (the hard limit is set one second above it, since a hard limit equal to the soft one makes Linux send `SIGKILL` instead — corrected 2026-09-20, S10), the case is `PARSER_CRASH` with the signal as its exit code | the kernel's documented behaviour, asserted by `test_a_memory_limit_ends_a_hog…` and `test_a_cpu_limit_ends_a_spinning_parser…` on CI's Linux legs |
+| macOS | **not enforced**: `setrlimit` refuses every finite value with `EINVAL` while the limit reads back as infinite; a request is refused up front | **not enforced**: the limit is accepted and read back, and a child spent 4 s of CPU under a 1 s limit and exited 0; a request is refused up front | measured 2026-09-20 on macOS 26.5.2 / CPython 3.14.7 in a spawned child; the same two tests assert the refusal |
+| Windows | **unavailable**: no `resource` module; a request is refused up front | the same | the standard library; not exercised by this repository's CI |
+
+A limit that was requested is written into the check's canonical `details` as `resource_limits`;
+a run that requested none writes no such key, so a default run's evidence bytes do not move and
+the absence of the key is the statement that no envelope was applied. The diagnostics file
+(`--diagnostics`) always carries both the request and the platform's answer.
+
+What the worker does **not** do, so that nobody reads it as a sandbox: no seccomp, no namespace
+or job object, no filesystem or network restriction. The no-network property of the roster is
+asserted by `tests/test_cdm_no_network.py`, which removes `socket.socket` and runs the sweep — it
+is a test about the code, not a wall around it. And the non-adversarial checks (A–G, I–O, and
+`harness.run` over an adapter's own fixtures) stay in-process by design (F03): an adapter that
+hangs on its own shipped fixture is a broken adapter, not a robustness finding.
+
+## 3. The hosting application
+
+Everything the two layers above cannot provide portably is the hosting application's, and this is
+the list rather than an implication:
+
+- **A memory and CPU ceiling on the process** — a container or cgroup limit, a job object, a VM —
+  on every platform, and on Linux as well where the worker's own limit is not requested. The
+  library bounds one payload; it does not bound how many payloads a caller decodes at once.
+- **Concurrency and backpressure.** Nothing in this package reads from a source, so nothing in
+  it can slow one down; a caller that decodes in parallel decides how many workers, and a caller
+  that reads a socket or file in pieces does the framing and hands over one complete payload
+  inside `max_input_bytes` (§4).
+- **The trust decision on adapters and fixture directories.** `load_adapter` imports the
+  `module:ClassName` it is given and `--fixtures` reads the directory it is given; both are the
+  operator's, as `SECURITY.md`'s scope says. `LOADER_MAX_BYTES` is the knob for a fixture
+  directory the application does not fully trust.
+- **Safe error reporting.** The library's refusals carry numbers and names; adapters' own
+  refusals and the harness's per-fixture tracebacks may carry input. Decide what crosses a trust
+  boundary before forwarding either.
+- **Rejecting what the library declares absent.** A deployment that needs a per-decode wall-clock
+  bound in-process, a decompression bound, or an object count bound is asking for something no
+  adapter declares; the manifests' `absent_because` say so per adapter, and the honest answer is
+  to run the decode in the conformance worker's shape (a subprocess with a deadline) rather than
+  to assume a bound the report does not print.
+
+## 4. Streaming
+
+There is no streaming contract, none is advertised, and check **M** says so in the report rather
+than passing. The verdict model (ADR 0009) has `PASS`, `FAIL` and `SKIP` and no fourth word, so
+"not applicable" is spelled `SKIP` with `declared_inapplicable: true`, and `--require M` makes the
+invocation unsuccessful without rewriting the verdict. The four properties a streaming contract
+would consist of, each with its status as `suite.STREAMING_STATUS` prints it:
+
+| property | status |
+|---|---|
+| `chunk_framing` | not implemented — `to_cdm` takes one complete payload; the caller frames |
+| `partial_messages` | not implemented — a truncated payload is refused, never buffered; check N exercises exactly this |
+| `reassembly` | not implemented — no adapter holds state between two `to_cdm` calls |
+| `backpressure` | not applicable — nothing here reads from a source, so nothing can slow one |
+
+The KLV **framing layer** (`stanag4609`, `tests/test_cdm_klv_framing.py`) is the grammar of one
+packet's key, tag and length — how a length is written, which forms are refused — and not a
+stream reader; it is named here so the word "framing" in that module is not read as this table's
+first row.
+
+## 5. Integrity
+
+`integrity` on every CDM object is a **data container** — the field the PQC signature will occupy,
+designed so that turning signing on is a value change rather than a schema change (ADR 0006).
+This package makes no signature and verifies none; no conformance check, harness column or
+evidence field reads the field; and `tests/test_cdm_resource_envelope.py` walks the package's
+syntax trees to assert that nothing outside `models.py` reads or sets it. A record carrying a
+block is exactly as verified as one carrying none, until something outside this package verifies
+it — and a block with a signature and no algorithm is refused at the model, because an
+unverifiable block that looks present reads as assurance to everything downstream that does not
+check.
+
+Two things that *are* computed are recorded as data too, and are not this field: the KLV
+checksum an ST 0601 packet carries (`attributes.integrity_basis` on `stanag4609`'s objects, and
+the `integrity` block of its parsed twin, which records the stored and the computed sum) and the
+ASTERIX adapters' `attributes.integrity_basis`, which say what the transport did and did not
+protect. They are the emitter's statement and the codec's arithmetic, descriptive on the object,
+and no verdict anywhere turns on them.

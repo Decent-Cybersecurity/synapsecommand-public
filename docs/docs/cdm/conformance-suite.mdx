@@ -31,18 +31,18 @@ rather not depend on a name being on `PATH`.
 | A | translate | every fixture decodes into CDM objects | never |
 | B | schema | every object validates against the published JSON Schema | never |
 | C | provenance | every object carries the source, adapter and identifiers §4.5 requires | never |
-| D | lossless | no scalar in the source payload is absent from the output and undeclared | a bytes fixture has no leaf structure to compare |
+| D | lossless | with `MAPPINGS` declared, no declared source leaf is LOST under the path-bound preservation ledger (`details.basis: ledger`); without them, no scalar in the source payload is absent from the output and undeclared (`details.basis: heuristic`, which is not proof) | a bytes fixture has no leaf structure to compare |
 | E | roundtrip | source → CDM → source reproduces the source under the tolerance the adapter declares: octet for octet (`bytes`, the default), or no value lost after re-ingest (`values`, for XML) | the adapter is ingest-only |
 | F | golden | the output is byte-identical to the committed golden file | no golden file exists yet |
 | G | deterministic | three decodes of one payload under one frozen clock hash equal | never |
-| H | malformed-input | every payload under `malformed/` is refused, safely, in time | the adapter declares no `malformed/` set |
+| H | malformed-input | every payload under `malformed/` is refused, safely, in time — each case parsed in a spawned worker process under a real deadline, and every outcome but `PARSER_REJECTED` (`PARSER_ACCEPTED`, `PARSER_TIMEOUT`, `PARSER_CRASH`, `WORKER_INIT_FAILED`, `HARNESS_ERROR`) FAILS | the adapter declares no `malformed/` set |
 | I | unknown-preservation | an injected unknown field survives into the output | the adapter declares `unknown_fields: none` |
 | J | temporal | timestamps are RFC 3339 UTC, are not the epoch, and a time taken from `now()` says so | the adapter emits no timestamp |
 | K | identity | identifiers are equal across two decodes and are `uuid5`, not drawn | the adapter emits no identifier |
-| L | version | every object's `schema_version` is this package's and inside the manifest's `cdm.supported` | the adapter emits no object |
-| M | streaming | a payload fed in two chunks produces the output the whole one does | no adapter declares the capability today |
-| N | parser robustness | a payload truncated at every offset raises rather than crashes | the adapter ships no byte fixture |
-| O | resource limits | one byte over `max_input_bytes` is refused before decode | no bound is declared (each manifest says why) |
+| L | version | every object's `schema_version` is assessed against this package's by `version.assess()` — the verdict, direction and basis are reported, a malformed version is a finding and not a crash — and is inside the manifest's `cdm.supported` | the adapter emits no object |
+| M | streaming | a payload fed in two chunks produces the output the whole one does; the `SKIP` carries `details.streaming`, the four statuses (chunk framing, partial messages, reassembly, backpressure) that say what is not implemented and what is not applicable | no adapter declares the capability today |
+| N | parser robustness | a payload truncated at every offset raises rather than crashes — in the same spawned worker as H, with the same outcome codes; a deadline that fires is `PARSER_TIMEOUT`, never a duration | the adapter ships no byte fixture |
+| O | resource limits | one byte over `max_input_bytes` is refused before decode; every shipped manifest declares the bound with its basis in `declared_because` | no bound is declared (the manifest's `absent_because` says why) |
 
 `G` hashes the serialisation this framework fixed once: `json.dumps(obj, sort_keys=True,
 indent=2)`, UTF-8, trailing newline, sha256 over those bytes. `N` truncates at every offset for a

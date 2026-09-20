@@ -1,0 +1,42 @@
+{
+  "rule": "SEM-002",
+  "title": "A polygon's rings are closed and have at least four positions; a MultiPolygon part has at least one ring",
+  "cases": [
+    {
+      "name": "closed ring",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-2"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e02",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Polygon", "coordinates": [[[21.0, 57.0], [22.0, 57.0], [22.0, 58.0], [21.0, 57.0]]]}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "ring of three positions, not closed",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-2"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e02",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Polygon", "coordinates": [[[21.0, 57.0], [22.0, 57.0], [22.0, 58.0]]]}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-002"}
+    },
+    {
+      "name": "four positions, first differs from last",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-2"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e02",
+        "object_type": "ROUTE",
+        "geometry": {"type": "MultiPolygon", "coordinates": [[[[21.0, 57.0], [22.0, 57.0], [22.0, 58.0], [21.0, 58.0]]]]}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-002"}
+    }
+  ]
+}

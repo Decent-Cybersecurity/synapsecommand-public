@@ -74,13 +74,13 @@ STRICT = ConfigDict(extra="forbid")
 
 def _check_lonlat(pair: list[float]) -> list[float]:
     if not 2 <= len(pair) <= 3:
-        raise ValueError("a GeoJSON coordinate is [lon, lat] or [lon, lat, alt]")
+        raise ValueError("SEM-003: a GeoJSON coordinate is [lon, lat] or [lon, lat, alt]")
     lon, lat = float(pair[0]), float(pair[1])
     if not -180.0 <= lon <= 180.0:
-        raise ValueError(f"longitude {lon} outside [-180, 180]")
+        raise ValueError(f"SEM-003: longitude {lon} outside [-180, 180]")
     if not -90.0 <= lat <= 90.0:
         raise ValueError(
-            f"latitude {lat} outside [-90, 90] — the usual cause is [lat, lon] order; "
+            f"SEM-003: latitude {lat} outside [-90, 90] — the usual cause is [lat, lon] order; "
             "GeoJSON is [lon, lat] (RFC 7946)"
         )
     return [lon, lat] + list(pair[2:])
@@ -137,12 +137,12 @@ class Polygon(BaseModel):
         for index, ring in enumerate(self.coordinates):
             if len(ring) < 4:
                 raise ValueError(
-                    f"ring {index} has {len(ring)} positions; a closed linear ring needs "
+                    f"SEM-002: ring {index} has {len(ring)} positions; a closed linear ring needs "
                     "at least 4 (RFC 7946)"
                 )
             if ring[0] != ring[-1]:
                 raise ValueError(
-                    f"ring {index} is not closed: first position {ring[0]} != last {ring[-1]}"
+                    f"SEM-002: ring {index} is not closed: first position {ring[0]} != last {ring[-1]}"
                 )
         return self
 
@@ -186,7 +186,7 @@ class MultiLineString(BaseModel):
         for index, line in enumerate(self.coordinates):
             if len(line) < 2:
                 raise ValueError(
-                    f"part {index} has {len(line)} position(s); a LineString needs at least 2 "
+                    f"SEM-003: part {index} has {len(line)} position(s); a LineString needs at least 2 "
                     "(RFC 7946 §3.1.4)"
                 )
         return self
@@ -212,16 +212,16 @@ class MultiPolygon(BaseModel):
     def _closed(self) -> "MultiPolygon":
         for part, polygon in enumerate(self.coordinates):
             if not polygon:
-                raise ValueError(f"part {part} has no rings; a Polygon needs at least 1")
+                raise ValueError(f"SEM-002: part {part} has no rings; a Polygon needs at least 1")
             for index, ring in enumerate(polygon):
                 if len(ring) < 4:
                     raise ValueError(
-                        f"part {part} ring {index} has {len(ring)} positions; a closed linear "
+                        f"SEM-002: part {part} ring {index} has {len(ring)} positions; a closed linear "
                         "ring needs at least 4 (RFC 7946)"
                     )
                 if ring[0] != ring[-1]:
                     raise ValueError(
-                        f"part {part} ring {index} is not closed: first position {ring[0]} != "
+                        f"SEM-002: part {part} ring {index} is not closed: first position {ring[0]} != "
                         f"last {ring[-1]}"
                     )
         return self

@@ -1,0 +1,34 @@
+{
+  "rule": "SEM-013",
+  "title": "A PlanObject's expires_at equals validity.valid_to when both are stated",
+  "cases": [
+    {
+      "name": "the projection agrees",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-13"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e13",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Point", "coordinates": [21.0, 57.0]},
+        "expires_at": "2026-04-29T07:00:00.000Z",
+        "validity": {"valid_to": "2026-04-29T07:00:00.000Z"}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "two different deadlines",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-13"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e13",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Point", "coordinates": [21.0, 57.0]},
+        "expires_at": "2026-04-29T08:00:00.000Z",
+        "validity": {"valid_to": "2026-04-29T07:00:00.000Z"}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-013"}
+    }
+  ]
+}

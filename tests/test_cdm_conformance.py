@@ -1020,8 +1020,16 @@ def test_the_one_allowed_reach_is_still_exactly_one_and_is_still_there():
 
 
 def test_the_closure_walk_would_catch_a_forbidden_import():
-    """A negative test that cannot fail is worse than none — so this one proves it can."""
-    assert _closure("harness") & {"jsonschema"}, "the walk does not see third-party imports"
+    """A negative test that cannot fail is worse than none — so this one proves it can.
+
+    The canary is `pydantic`, which `harness` reaches through `synapse_cdm.models` and uses. Until
+    audit remediation F09 (2026-09-20) it was `jsonschema`, which `harness` imported and — since
+    F04 moved validator construction to `schemas.validator_for` — no longer used; the widened lint
+    set found the dead import, removing it reddened this canary, and a canary that rests on an
+    unused import is a canary that a lint fix removes. A used, transitive third-party import is
+    what the walk exists to see.
+    """
+    assert _closure("harness") & {"pydantic"}, "the walk does not see third-party imports"
     assert FORBIDDEN_ROOTS & {"socket"}
     # And the allowance is a PAIR: the same root reached from any other module is still caught.
     assert ("hashlib", "harness") not in CLOSURE_ALLOWANCE

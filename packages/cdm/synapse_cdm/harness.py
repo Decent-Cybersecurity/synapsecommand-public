@@ -3,8 +3,8 @@
     python -m synapse_cdm.harness --adapter pntmap
     python -m synapse_cdm.harness --list-adapters      # and this is how you learn the names
 
-`--list-adapters` prints the registry — name, version, direction, fixture directory, system —
-and exits 0. Until it existed the roster was reachable only through a failure: `--adapter typo`
+`--list-adapters` prints the registry — name, version, direction, fixture directory, system,
+wire binding — and exits 0. Until it existed the roster was reachable only through a failure: `--adapter typo`
 put it in a `LookupError`, and a bare invocation got argparse's usage line, which names the flag
 and not one value it takes. A tool that had to be misused before its inventory could be read.
 `load_adapter`'s refusal and this listing both read `adapter.roster()`, so they cannot name
@@ -46,7 +46,13 @@ count is derived by `tests/test_cdm_harness.py` now, at every site that states i
                timestamps. Provenance is the platform's whole audit story — an object that
                cannot say where it came from is inadmissible regardless of how well-formed it
                is.
-4. lossless    no source value vanished. See lossless.py. Declared transforms are printed.
+4. lossless    every source leaf is accounted for. Two readings, one column (F02, 2026-09-19):
+               the value-presence HEURISTIC (`lossless.value_presence_heuristic`) runs on every
+               JSON fixture and catches a value that vanished outright; where the adapter
+               declares `MAPPINGS`, the path-bound LEDGER (`lossless.ledger`) runs as well and
+               a LOST leaf fails the column. The report says which basis the verdict rests on
+               — `basis: ledger` or `basis: heuristic` — and a heuristic PASS is not proof of
+               preservation. Declared transforms and mappings are printed.
 5. roundtrip   for an egress or bidirectional adapter: raw -> CDM -> raw reproduces the
                source under the tolerance the class DECLARES — octet for octet by default, or
                no VALUE lost after re-ingest where the format (XML) cannot promise octets. See
@@ -73,14 +79,27 @@ import sys
 import traceback
 from typing import Any
 
-import jsonschema
-
 from synapse_cdm import canonical, lossless, schemas, times
-from synapse_cdm.adapter import Adapter, is_shipped, load_adapter, packaged_fixtures, roster
+from synapse_cdm.adapter import (Adapter, is_shipped, json_nesting_depth, load_adapter,
+                                 packaged_fixtures, roster)
 from synapse_cdm.models import CDMBase
 
 GOLDEN_DIR = "golden"
 PASS, FAIL, SKIP = "PASS", "FAIL", "SKIP"
+
+#: How many ledger diagnostics one fixture's entry carries (F02). The COUNTS are always
+#: complete; only the per-leaf lines are capped, so a report over a wide payload stays readable
+#: and the entry says how many lines it left out.
+DIAGNOSTIC_LIMIT = 20
+
+
+def _unsupported_paths(adapter: Adapter) -> tuple[str, ...]:
+    """The paths a structured Limitation declares, for the ledger's DECLARED_LIMITATION."""
+    from synapse_cdm import manifest              # local: manifest imports nothing from here
+    metadata = getattr(type(adapter), "metadata", None)
+    if metadata is None:
+        return ()
+    return manifest.unsupported_paths(metadata.limitations)
 
 #: The name of the per-directory provenance record (§33, M's pre-ruled default 3). Excluded by
 #: NAME rather than by extension, because a fixture directory legitimately holds `.json`
@@ -154,15 +173,65 @@ class NoFixturesFound(RuntimeError):
     """
 
 
-def load_raw(path: pathlib.Path) -> Any:
+#: F06 (2026-09-20): the fixture LOADER's own depth bound. `load_raw` is the one place in this
+#: package that runs `json.loads` BEFORE any adapter's declared `max_depth` can apply — a `.json`
+#: twin is parsed here and handed over as a dict, and the base class measures the dict only after
+#: this parse has already recursed. On CPython 3.11 `json.loads` raises `RecursionError` a little
+#: under a thousand containers deep (`adapter.InputTooDeep` carries the readings), so a twin that
+#: deep crashed the harness in-process and reached the conformance worker as `PARSER_CRASH` in the
+#: loader layer. The text is measured with `adapter.json_nesting_depth` first, and the figure is
+#: the same 64 every declared `max_depth` uses: the deepest of the 941 `.json` files under the
+#: fourteen fixture directories, goldens included, nests fifteen containers (read 2026-09-20).
+#: A bound on octets is deliberately NOT defaulted: the twin of a 14-octet ADS-B
+#: squitter is over 400 octets, no document states a figure, and the file is one the operator
+#: named — `LOADER_MAX_BYTES` is a hosting application's knob and reads `None` until one sets it.
+LOADER_MAX_DEPTH = 64
+LOADER_MAX_BYTES: int | None = None
+
+
+class FixtureTooLarge(ValueError):
+    """A fixture file over the loader's byte bound, refused on `stat()` before it is read."""
+
+
+class FixtureTooDeep(ValueError):
+    """A `.json` fixture nesting past the loader's depth bound, refused before `json.loads`."""
+
+
+def load_raw(path: pathlib.Path, *, max_bytes: int | None = None,
+             max_depth: int | None = None) -> Any:
     """Fixtures are JSON on disk; adapters may take bytes or dict.
 
     A `.bin`/`.txt`/`.xml` fixture is handed over as raw bytes untouched — a STANAG or CoT XML
     adapter must be replayable from the bytes it will really receive, and pre-parsing it here
     would test a parser the adapter does not use in production.
+
+    `max_bytes` (default `LOADER_MAX_BYTES`, i.e. none) is checked on the file's size BEFORE the
+    file is read, and `max_depth` (default `LOADER_MAX_DEPTH`) on the characters BEFORE
+    `json.loads` sees them — the two points where a bound still protects the allocation or the
+    recursion it is about. Pass `0` or a negative number to switch either off explicitly.
     """
+    max_bytes = LOADER_MAX_BYTES if max_bytes is None else max_bytes
+    max_depth = LOADER_MAX_DEPTH if max_depth is None else max_depth
+    if max_bytes is not None and max_bytes > 0:
+        size = path.stat().st_size
+        if size > max_bytes:
+            raise FixtureTooLarge(
+                f"{path.name} is {size} octets on disk and the fixture loader's max_bytes is "
+                f"{max_bytes}. Refused before the file was read: `harness.LOADER_MAX_BYTES` is the "
+                f"hosting application's bound on what one fixture may make this process allocate"
+            )
     if path.suffix.lower() == ".json":
-        return json.loads(path.read_text())
+        text = path.read_text()
+        if max_depth is not None and max_depth > 0:
+            depth = json_nesting_depth(text)
+            if depth > max_depth:
+                raise FixtureTooDeep(
+                    f"{path.name} nests {depth} containers deep and the fixture loader's "
+                    f"max_depth is {max_depth}. Refused before json.loads: the decoder itself "
+                    f"recurses once per container on CPython 3.11, so a twin measured after the "
+                    f"parse is a twin the parse can fail on first (`harness.LOADER_MAX_DEPTH`)"
+                )
+        return json.loads(text)
     return path.read_bytes()
 
 
@@ -289,7 +358,7 @@ def _check_roundtrip(adapter: Adapter, objects: list[CDMBase], raw: Any,
     if raw is None or not isinstance(emitted, (dict, list)):
         return SKIP, ["roundtrip: SKIPPED — no comparable structure on one side"]
 
-    missing = lossless.unrepresented(raw, [emitted], type(adapter).TRANSFORMS)
+    missing = lossless.value_presence_heuristic(raw, [emitted], type(adapter).TRANSFORMS)
     return (FAIL if missing else PASS), [
         f"roundtrip: value at {path_} = {value!r} was in the source payload but is absent "
         "from what from_cdm() emitted"
@@ -327,7 +396,7 @@ def _compare_emitted(adapter: Adapter, emitted: bytes | bytearray | str, raw: An
         return FAIL, [f"roundtrip: re-ingesting what from_cdm emitted raised "  # translate
                       f"{type(e).__name__}: {e}"]
     declared = {**type(adapter).TRANSFORMS, **type(adapter).ROUNDTRIP_TRANSFORMS}
-    missing = lossless.unrepresented(raw, again, declared)
+    missing = lossless.value_presence_heuristic(raw, again, declared)
     return (FAIL if missing else PASS), [
         f"roundtrip: value at {path_} = {value!r} was in the source payload and is absent "
         "after egress and re-ingest"
@@ -412,7 +481,9 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         published = schemas.generate()
         source_of_schemas = "generated in-process from the models"
     validators = {
-        kind: jsonschema.Draft202012Validator(published[kind])
+        # `schemas.validator_for` (audit F04): ECMA-262 `pattern`, `format` asserted — the
+        # answer a consumer in another language gets, not Python `re`'s.
+        kind: schemas.validator_for(published[kind])
         for kind in ("entity", "event", "track", "plan_object") if kind in published
     }
 
@@ -471,14 +542,29 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
                 "an XML/binary adapter should also ship a parsed-form fixture"
             )
         else:
-            missing = lossless.unrepresented(raw_for_lossless, dumped,
-                                             type(adapter).TRANSFORMS)
+            missing = lossless.value_presence_heuristic(raw_for_lossless, dumped,
+                                                        type(adapter).TRANSFORMS)
             entry["checks"]["lossless"] = FAIL if missing else PASS
             entry["problems"] += [
                 f"lossless: source value at {path_} = {value!r} appears nowhere in the CDM "
                 "output — park it in attributes/payload or declare it in TRANSFORMS"
                 for path_, value in sorted(missing.items())
             ]
+            # F02: the path-bound ledger, wherever the adapter declares MAPPINGS. Its verdict
+            # is folded into the SAME column — a LOST leaf fails `lossless` — and the entry
+            # records which basis the verdict rests on. Without MAPPINGS the column is the
+            # heuristic alone, and says so; a heuristic PASS is not proof of preservation.
+            mappings = getattr(type(adapter), "MAPPINGS", None) or {}
+            if mappings:
+                book = lossless.ledger(raw_for_lossless, dumped, mappings,
+                                       unsupported=_unsupported_paths(adapter))
+                entry["preservation"] = book.as_dict(limit=DIAGNOSTIC_LIMIT)
+                if book.lost:
+                    entry["checks"]["lossless"] = FAIL
+                entry["problems"] += [f"lossless: {line}"
+                                      for line in book.problem_lines()[:DIAGNOSTIC_LIMIT]]
+            else:
+                entry["preservation"] = {"basis": "heuristic", "declared_mappings": 0}
 
         raw_bytes = bytes(raw) if isinstance(raw, (bytes, bytearray)) else None
         entry["checks"]["roundtrip"], roundtrip_problems = _check_roundtrip(
@@ -514,6 +600,14 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
                     "class": f"{type(adapter).__module__}.{type(adapter).__qualname__}"},
         "schemas": source_of_schemas,
         "transforms": dict(type(adapter).TRANSFORMS),
+        # F02, 2026-09-19: which basis the `lossless` column rests on for this adapter, and the
+        # declared mappings, published so a heuristic-only verdict is visible in every report.
+        "preservation": {
+            "basis": "ledger" if getattr(type(adapter), "MAPPINGS", None) else "heuristic",
+            "declared_mappings": len(getattr(type(adapter), "MAPPINGS", None) or {}),
+            "mappings": {path: [m.to for m in (v if isinstance(v, (tuple, list)) else (v,))]
+                         for path, v in (getattr(type(adapter), "MAPPINGS", None) or {}).items()},
+        },
         # 2026-09-16: the round-trip declarations, published for the reason `transforms` is —
         # an exemption the report does not print is an exemption nobody can see. A second
         # ADDED key beside `check_letters`; nothing else in this report moves.
@@ -562,13 +656,17 @@ def render_roster(adapters: dict[str, type[Adapter]]) -> str:
         f"`--adapter <name>` and no `--fixtures`: the fixtures came with the package.",
         "",
         f"{'name'.ljust(width)}  {'version'.ljust(7)}  {'direction'.ljust(13)}  "
-        f"{'fixtures'.ljust(11)}  system",
-        "-" * (width + 2 + 7 + 2 + 13 + 2 + 11 + 2 + 6),
+        f"{'fixtures'.ljust(11)}  {'system'.ljust(10)}  binding",
+        "-" * (width + 2 + 7 + 2 + 13 + 2 + 11 + 2 + 10 + 2 + 28),
     ]
     for name, cls in adapters.items():
+        # F05 (2026-09-20): the wire binding, so `stanag4676`'s `provisional-internal-profile`
+        # is read in the same table as its name — a reader choosing an adapter from this listing
+        # would otherwise take every row for the standard's own encoding.
         lines.append(f"{name.ljust(width)}  {cls.version.ljust(7)}  "
                      f"{cls.direction.ljust(13)}  "
-                     f"{(cls.fixture_dir or cls.name).ljust(11)}  {cls.system}")
+                     f"{(cls.fixture_dir or cls.name).ljust(11)}  {cls.system.ljust(10)}  "
+                     f"{cls.metadata.binding.value}")
     return "\n".join(lines)
 
 
@@ -599,9 +697,20 @@ def render_report(report: dict) -> str:
         lines.append(f"{result['fixture'].ljust(width)}  {result['objects']:>3}  {cells}  "
                      f"{result['verdict']}")
     if report["transforms"]:
-        lines += ["", "declared transforms (exempt from the lossless check, printed every run "
-                      "so the exemption is visible):"]
+        lines += ["", "declared transforms (exempt from the lossless HEURISTIC, printed every run "
+                      "so the exemption is visible; they exempt nothing from the ledger):"]
         lines += [f"  {path}: {reason}" for path, reason in sorted(report["transforms"].items())]
+    preservation = report.get("preservation") or {}
+    if preservation.get("basis") == "ledger":
+        lines += ["", f"lossless basis: LEDGER — {preservation['declared_mappings']} declared "
+                      "mapping(s); every source leaf is bound to a destination and a rule, and a "
+                      "LOST leaf fails the column"]
+        lines += [f"  {path} -> {', '.join(dests)}"
+                  for path, dests in sorted(preservation.get("mappings", {}).items())]
+    else:
+        lines += ["", "lossless basis: HEURISTIC — the adapter declares no MAPPINGS, so the column "
+                      "is value presence only (one surviving value satisfies every field holding "
+                      "it) and a PASS here is NOT proof of preservation"]
     roundtrip = report.get("roundtrip")
     if roundtrip and adapter["direction"] != "ingest":
         lines += ["", f"roundtrip tolerance: {roundtrip['tolerance']} (the comparison the "
@@ -659,7 +768,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.json:
             print(json.dumps({name: {"version": cls.version, "direction": cls.direction,
                                      "system": cls.system,
-                                     "fixtures": cls.fixture_dir or cls.name}
+                                     "fixtures": cls.fixture_dir or cls.name,
+                                     "binding": cls.metadata.binding.value}
                               for name, cls in known.items()}, indent=2))
         else:
             print(render_roster(known))

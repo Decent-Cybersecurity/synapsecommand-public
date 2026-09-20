@@ -125,7 +125,8 @@ from synapse_cdm.models import (CDMBase, Entity, Event, Kinematics, Position, So
                                 TrackSample)
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "GMTIF"
 
@@ -1080,6 +1081,7 @@ class GmtifAdapter(Adapter):
         format=FormatRef(name="STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format "
                      "(GMTIF)",
                          version="AEDP-4607 Edition A Version 1"),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

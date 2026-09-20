@@ -1467,8 +1467,8 @@ def summary_check() -> int:
             print(f"FAIL      expected {needle!r} in the pending line, got {line!r}: {name}",
                   file=sys.stderr)
     if failed:
-        print(f"FAIL  the human summary did not state the unruled count as measured, so the "
-              f"console reading of a pending arc proves nothing", file=sys.stderr)
+        print("FAIL  the human summary did not state the unruled count as measured, so the "
+              "console reading of a pending arc proves nothing", file=sys.stderr)
     return 1 if failed else 0
 
 

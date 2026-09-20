@@ -30,15 +30,16 @@ schemas drift from the models, and `npm run check:schemas` fails if these pages 
 the schemas — so a field renamed in Python cannot reach a reader through a stale page.
 
 **CDM schema version: `2.1.0`.** Compatibility is decided by
-`version.compatible()`, not by string equality: a 1.0.0 reader accepts anything 1.x, because
-MINOR additions are optional by definition and a fleet that stops ingesting the moment one
-adapter is upgraded is a self-inflicted outage.
+`version.compatible()`, not by string equality, and it is directional: a newer reader accepts an
+older object because the frozen historical schemas show it validating, while an older reader
+refuses a newer object that carries a property it does not know, populated or null. A minor
+nobody has published is unknown, not safe — see the [Changelog](../changelog.mdx).
 
 | Page | Source file | SHA-256 |
 | --- | --- | --- |
-| [CDMObject (the union)](./cdm-object.mdx) | `schemas/cdm_object.schema.json` | `cee828660af9…` |
-| [Entity](./entity.mdx) | `schemas/entity.schema.json` | `dc1833baa340…` |
-| [Event](./event.mdx) | `schemas/event.schema.json` | `bf0b167707df…` |
-| [Track](./track.mdx) | `schemas/track.schema.json` | `fe82609596a6…` |
-| [PlanObject](./plan-object.mdx) | `schemas/plan_object.schema.json` | `a452c4769124…` |
+| [CDMObject (the union)](./cdm-object.mdx) | `schemas/cdm_object.schema.json` | `28b5083ef581…` |
+| [Entity](./entity.mdx) | `schemas/entity.schema.json` | `907141e93084…` |
+| [Event](./event.mdx) | `schemas/event.schema.json` | `14f5ccb84ee3…` |
+| [Track](./track.mdx) | `schemas/track.schema.json` | `c942a0f9024f…` |
+| [PlanObject](./plan-object.mdx) | `schemas/plan_object.schema.json` | `89feb8b86467…` |
 | [GnssInterferencePayload](./payload-gnss-interference.mdx) | `schemas/payload_gnss_interference.schema.json` | `ace9f947cc8d…` |

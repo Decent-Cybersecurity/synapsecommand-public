@@ -110,13 +110,17 @@ never-drop rule is satisfied by PRESENCE rather than by a declared exemption, an
 """
 from __future__ import annotations
 
+import dataclasses
 import datetime as _dt
 import math
+import os
+import pathlib
+import pyexpat
 import re
 import xml.etree.ElementTree as ET
-from typing import Any, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
-from synapse_cdm import ids, times
+from synapse_cdm import ids, normative_binding, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.enums import (
     Affiliation,
@@ -127,10 +131,14 @@ from synapse_cdm.enums import (
 )
 from synapse_cdm.geo import LineString, Point, Polygon
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track, TrackSample
+# `NormativeBindingBlocked` is re-exported: the binding tests and a caller catching the normative
+# mode's refusal import it from this adapter, so the unused-import rule is answered, not silenced.
+from synapse_cdm.normative_binding import LocalSchemaResource, NormativeBindingBlocked  # noqa: F401
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "NITS"
 
@@ -660,6 +668,207 @@ UML_NAMES = {xml: uml for uml, xml in ELEMENT_NAMES.items()}
 _XSI_TYPE = "{http://www.w3.org/2001/XMLSchema-instance}type"
 
 
+# ============================================================== the wire binding (F05)
+#
+# Two bindings, chosen explicitly and never inferred (audit remediation F05, 2026-09-20):
+#
+#   provisional-internal-profile   the default, and everything this adapter did before F05: XML
+#                                  whose element names are the AEDP-12 UML attribute names bound
+#                                  through `ELEMENT_NAMES`, in NO namespace, with the STANAG 4774
+#                                  label in its own. Reader and writer agree through one table,
+#                                  which proves the profile is self-consistent and nothing more —
+#                                  it is what `manifests/stanag4676.json` declares as `binding`.
+#   normative                      the document is validated against the AUTHORISED normative XSD
+#                                  before anything reads it, and an emitted document is validated
+#                                  before anything receives it. The XSD is NOT in this repository
+#                                  or its wheel (Ed B §B.5: distributed through national
+#                                  representatives; keep restricted resources out of Git), so the
+#                                  mode needs the local-resource hook below and FAILS BLOCKED
+#                                  without it. It never falls back to the provisional codec: a
+#                                  caller who asked for verified normative support and got the
+#                                  profile would hold a document nothing verified.
+#
+# THE HOOK. `SYNAPSE_CDM_NITS_XSD_DIR` names a directory outside the checkout holding the two
+# schema files the FORMAT_COVERAGE.md exit condition names and `xsd_pin.json`, the record the
+# same condition asks for: the schema's own revision number and date from inside the file (guide
+# §D.1.1 — a hash alone under-identifies a document that versions itself), the edition, the
+# channel it was obtained through, the usage rights, and the SHA-256 of each file. Every field
+# is checked and every hash recomputed on every construction by `normative_binding.resolve`; a
+# missing or disagreeing one is a `NormativeBindingBlocked` naming the step. Validation itself is
+# done by `xmlschema` or `lxml`, neither of which is a dependency of this package — the mode
+# reports step `validator` BLOCKED when neither imports.
+
+BINDING_PROVISIONAL = "provisional-internal-profile"
+BINDING_NORMATIVE = "normative"
+BINDINGS = (BINDING_PROVISIONAL, BINDING_NORMATIVE)
+#: The environment variable that selects the binding when the constructor is not told one. An
+#: explicit request either way; unset means the provisional profile, as before F05.
+BINDING_ENV = "SYNAPSE_CDM_NITS_BINDING"
+#: The local-resource hook: a directory OUTSIDE the repository holding `XSD_FILES` and the record.
+XSD_DIR_ENV = "SYNAPSE_CDM_NITS_XSD_DIR"
+XSD_RECORD_NAME = "xsd_pin.json"
+#: Both files, because Ed B Annex B.2 makes the 4774 label mandatory on the root and its schema
+#: "must sit in the same directory as the 4676 XSD" (FORMAT_COVERAGE.md, the label settlement).
+XSD_FILES = ("stanag4676.xsd", "stanag4774_confidentialitymetadatalabel.xsd")
+#: What `xsd_pin.json` must record, each non-empty. `files` maps each of `XSD_FILES` to its
+#: lowercase hex SHA-256.
+XSD_RECORD_FIELDS = ("edition", "schema_revision", "schema_revision_date", "target_namespace",
+                     "provenance", "usage_rights", "obtained_on", "files")
+#: The value `binding_report["binding"]` carries after a successful normative verification — the
+#: manifest enum's third value (`manifest.WireBinding.NORMATIVE_VERIFIED`), spelled once here.
+NORMATIVE_VERIFIED = "normative-verified"
+
+#: The acceptance procedure, keyed on `normative_binding.STEPS` in their order. Data rather than
+#: prose so the support matrix, the register and the refusal's message all derive from one
+#: statement; `tests/test_cdm_stanag4676_binding.py` holds the keys to `STEPS`.
+NORMATIVE_PROCEDURE: tuple[tuple[str, str], ...] = (
+    ("hook", f"set {XSD_DIR_ENV} to a directory outside the repository and outside any "
+             "published package"),
+    ("directory", "that directory exists and is readable"),
+    ("record", f"it holds {XSD_RECORD_NAME} recording, non-empty, "
+               f"{', '.join(XSD_RECORD_FIELDS)} — the edition, the schema's own revision "
+               "number and date read from inside the XSD (AEDP-12.1 guide §D.1.1), the "
+               "target namespace, the channel it was obtained through (DiWEB via a national "
+               "representative, Ed B §B.5, or the APAN 4676 Community, guide §D.1), the usage "
+               "rights that permit this use, and the date"),
+    ("files", f"both {' and '.join(XSD_FILES)} are present beside the record and named in "
+              "its `files`"),
+    ("checksum", "each file's SHA-256, recomputed, equals the recorded one"),
+    ("validator", "an XSD validator imports: `xmlschema` (MIT) or `lxml` (BSD-3-Clause); "
+                  "neither is a dependency of this package and the mode adds none"),
+    ("validate", "the document's root is <NITSRoot> in the recorded target namespace and "
+                 "the document validates against stanag4676.xsd with external entities, DTD "
+                 "loading and network access disabled in the validator"),
+)
+
+
+class NormativeValidationFailed(NitsError):
+    """The resource is present and verified, and the DOCUMENT does not validate against it."""
+
+
+def _refuse_external_entity(context, base, system_id, public_id) -> int:
+    """expat's `ExternalEntityRefHandler`: returning 0 makes the parse fail at the reference."""
+    del context, base, system_id, public_id
+    return 0
+
+
+def _parse_xml(payload: bytes | str) -> ET.Element:
+    """One document -> an element tree, with external entities and the external subset REFUSED.
+
+    The standard library's `ET.XMLParser` does not expose its expat object, so the hardening
+    cannot be set on it and the tree is built here from `pyexpat` directly, into ElementTree's
+    own `TreeBuilder` — the same tree `ET.fromstring` would build, minus two things: an external
+    entity reference (`<!ENTITY x SYSTEM "file:///…">`) fails the parse at the reference rather
+    than being left undefined, and parameter-entity parsing is off so an external DTD subset is
+    never requested, whatever `ExternalEntityRefHandler` would have said. INTERNAL entities are
+    still expanded, as they were: the contract `tests/test_cdm_parser_safety.py` reads — a small
+    one expands and an amplification bomb is refused by libexpat's own limit — is unchanged.
+    """
+    parser = pyexpat.ParserCreate(None, "}")
+    parser.buffer_text = True
+    parser.SetParamEntityParsing(pyexpat.XML_PARAM_ENTITY_PARSING_NEVER)
+    parser.ExternalEntityRefHandler = _refuse_external_entity
+    builder = ET.TreeBuilder()
+
+    def qualified(name: str) -> str:
+        return "{" + name if "}" in name else name
+
+    def start(name: str, attributes: dict) -> None:
+        builder.start(qualified(name), {qualified(k): v for k, v in attributes.items()})
+
+    def skipped(name: str, is_parameter_entity: bool) -> None:
+        del is_parameter_entity
+        raise NitsError(f"not well-formed XML: undefined entity &{name};")
+
+    parser.StartElementHandler = start
+    parser.EndElementHandler = lambda name: builder.end(qualified(name))
+    parser.CharacterDataHandler = builder.data
+    parser.SkippedEntityHandler = skipped
+    data = payload.encode("utf-8") if isinstance(payload, str) else bytes(payload)
+    try:
+        parser.Parse(data, True)
+    except pyexpat.ExpatError as e:
+        raise NitsError(f"not well-formed XML: {e}") from e
+    root = builder.close()
+    if root is None:
+        raise NitsError("not well-formed XML: no root element")
+    return root
+
+
+def _namespace(tag: str) -> str:
+    return tag[1:].split("}", 1)[0] if tag.startswith("{") else ""
+
+
+@dataclasses.dataclass(frozen=True)
+class NormativeResource:
+    """The verified local resource (`normative_binding.LocalSchemaResource`) with the two things
+    only this adapter knows: which namespace <NITSRoot> must be in, and how to judge a document.
+    Constructed by `normative_resource()` only."""
+
+    resource: LocalSchemaResource
+
+    @property
+    def record(self) -> dict:
+        return self.resource.record
+
+    @property
+    def checksums(self) -> dict[str, str]:
+        return self.resource.checksums
+
+    @property
+    def validator(self) -> Any:
+        return self.resource.validator
+
+    @property
+    def target_namespace(self) -> str:
+        return str(self.record["target_namespace"])
+
+    def verify(self, document: bytes) -> dict:
+        """Validate one document; the report a caller may cite, or a refusal. Never a fallback."""
+        root = _parse_xml(document)
+        if _local(root.tag) != "NITSRoot" or _namespace(root.tag) != self.target_namespace:
+            raise NormativeValidationFailed(
+                f"the root element is <{_local(root.tag)}> in namespace "
+                f"{_namespace(root.tag)!r}; the recorded normative binding is <NITSRoot> in "
+                f"{self.target_namespace!r} ({XSD_RECORD_NAME}, target_namespace)"
+            )
+        try:
+            self.validator.validate(document)
+        except NitsError:
+            raise
+        except Exception as e:
+            raise NormativeValidationFailed(
+                f"the document does not validate against {XSD_FILES[0]} (schema revision "
+                f"{self.record['schema_revision']}, {self.validator.name}): {e}") from e
+        return {
+            "binding": NORMATIVE_VERIFIED,
+            "validator": self.validator.name,
+            "record": {field: self.record[field] for field in XSD_RECORD_FIELDS
+                       if field != "files"},
+            "files": dict(self.checksums),
+        }
+
+
+def normative_resource(environ: Mapping[str, str] | None = None,
+                       validator_factory: Callable[[pathlib.Path], Any] | None = None,
+                       ) -> NormativeResource:
+    """Resolve the hook, verify the record and every checksum, build the validator — or raise
+    `NormativeBindingBlocked` at the first step of `NORMATIVE_PROCEDURE` that does not hold."""
+    return NormativeResource(normative_binding.resolve(
+        env_var=XSD_DIR_ENV, record_name=XSD_RECORD_NAME, files=XSD_FILES,
+        fields=XSD_RECORD_FIELDS, environ=environ, validator_factory=validator_factory,
+        procedure=NORMATIVE_PROCEDURE))
+
+
+#: The one-line statement an emitted provisional document carries after its XML declaration, so
+#: the document says what its element names are bound to without a reader opening the manifest.
+#: A comment: the parser drops it on re-ingest, the values tolerance never sees it, and it names
+#: nothing a downstream XSD would have to know.
+PROVISIONAL_MARKER = (f"<!-- synapse-cdm stanag4676: binding {BINDING_PROVISIONAL} — element "
+                      "names bound through ELEMENT_NAMES, not validated against the normative "
+                      "XSD; see manifests/stanag4676.json -->")
+
+
 def _local(tag: str) -> str:
     return tag.rsplit("}", 1)[-1] if "}" in tag else tag
 
@@ -779,12 +988,41 @@ _LABEL_RE = {
 }
 
 
-def parse_document(payload: bytes | str) -> dict:
-    """One NITS XML instance document -> the parsed-dict form the row set is written against."""
-    try:
-        root = ET.fromstring(payload)
-    except ET.ParseError as e:
-        raise NitsError(f"not well-formed XML: {e}") from e
+#: Every element name the reader interprets against `MODEL`: the classes' attribute names, the
+#: XML names `ELEMENT_NAMES` binds them to, and the root. An element with one of these names in
+#: a namespace other than the binding's is the binding being MIXED, and is refused rather than
+#: read by its local name as if the namespace were not there (F05).
+MODELLED_NAMES = frozenset(
+    {"NITSRoot", *ELEMENT_NAMES.values(), *(name for fields in MODEL.values() for name in fields)})
+
+
+def _foreign_modelled(root: ET.Element, namespace: str) -> dict[str, list[str]]:
+    """Namespace -> the modelled element names found in it, for every namespace other than the
+    binding's own and the STANAG 4774 label's. Walked with a stack, like `_tree_depth`."""
+    foreign: dict[str, list[str]] = {}
+    pending = [root]
+    while pending:
+        element = pending.pop()
+        found = _namespace(element.tag)
+        if found not in (namespace, LABEL_NAMESPACE) and _local(element.tag) in MODELLED_NAMES:
+            names = foreign.setdefault(found, [])
+            if _local(element.tag) not in names:
+                names.append(_local(element.tag))
+        pending.extend(element)
+    return foreign
+
+
+def parse_document(payload: bytes | str, *, namespace: str = "") -> dict:
+    """One NITS XML instance document -> the parsed-dict form the row set is written against.
+
+    `namespace` is the namespace the binding puts NITS elements in: `""` for the provisional
+    internal profile (the default, and every fixture in this package), the recorded target
+    namespace under the normative mode. A document whose root is in any OTHER namespace is a
+    different binding and is refused by name — before F05 the reader stripped every namespace and
+    read the local names, so a document claiming a namespace this adapter had never seen was
+    silently read as the profile.
+    """
+    root = _parse_xml(payload)
     # Measured BEFORE either walker runs, because the walkers are what recurse: expat has
     # already built the whole tree without recursing, however deep it is (NITS_MAX_DEPTH).
     depth = _tree_depth(root)
@@ -800,6 +1038,25 @@ def parse_document(payload: bytes | str) -> dict:
             f"root element is <{_local(root.tag)}>, and Ed B §B.1 requires <NITSRoot>. An "
             "Edition A document has <TrackMessage> at the root and is a different adapter — "
             "see the edition settlement in FORMAT_COVERAGE.md"
+        )
+    if _namespace(root.tag) != namespace:
+        expected = (f"the provisional internal profile, which binds unqualified element names "
+                    f"(binding {BINDING_PROVISIONAL!r}, manifests/stanag4676.json)"
+                    if namespace == "" else f"the recorded normative target namespace "
+                    f"{namespace!r}")
+        raise NitsError(
+            f"root element <NITSRoot> is in namespace {_namespace(root.tag)!r}, and this adapter "
+            f"is reading {expected}. A namespaced document is a claim of a binding this adapter "
+            f"has not verified and is not read as the profile by dropping its namespace; to read "
+            f"it against the authorised schema, request the normative mode "
+            f"({BINDING_ENV}={BINDING_NORMATIVE}, hook {XSD_DIR_ENV})"
+        )
+    foreign = _foreign_modelled(root, namespace)
+    if foreign:
+        raise NitsError(
+            "modelled elements appear in a namespace other than the binding's: "
+            + "; ".join(f"{ns!r} carries {names}" for ns, names in sorted(foreign.items()))
+            + ". One document, one binding: a mixed document is not read by local name"
         )
     document = _read_element(root, "NITSRoot")
     source = payload.decode("utf-8") if isinstance(payload, (bytes, bytearray)) else payload
@@ -1420,6 +1677,7 @@ class Stanag4676Adapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="STANAG 4676 / AEDP-12 — NATO ISR Tracking Standard (NITS)",
                          version="AEDP-12 Edition B Version 2"),
+        binding=WireBinding.PROVISIONAL_INTERNAL_PROFILE,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(
@@ -1543,16 +1801,31 @@ class Stanag4676Adapter(Adapter):
             "reader recurses into the tree (2026-09-16). The other three are still absent, "
             "each with its own reason in `capabilities.limits.absent_because`; an "
             "object-count, decompression or wall-clock bound is not enforced here today",
-            "XML is parsed with the standard library's `xml.etree.ElementTree` and NOT with "
+            "XML is parsed with the standard library's expat (`pyexpat` into an "
+            "`xml.etree.ElementTree` tree, `parse_document`'s `_parse_xml`) and NOT with "
             "`defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round "
-            "P5). An EXTERNAL entity is not resolved and an external DTD is not fetched — the "
-            "parser never reads the external subset — but an INTERNAL entity IS expanded, and "
-            "what stops an entity bomb is libexpat's own input-amplification limit rather than "
-            "anything in this package. That protection belongs to the RUNTIME's expat build "
-            "(2.4.0 and later, on by default), so a deployment on an older expat loses it "
-            "without this package changing; `max_input_bytes` bounds the document either way. "
-            "tests/test_cdm_parser_safety.py reads the linked version and takes every one of "
-            "these readings rather than asserting them",
+            "P5). Since F05 (2026-09-20) an EXTERNAL entity reference FAILS the parse at the "
+            "reference and parameter-entity parsing is off, so an external DTD subset is never "
+            "requested — both set on the parser rather than read off its defaults — but an "
+            "INTERNAL entity IS expanded, and what stops an entity bomb is libexpat's own "
+            "input-amplification limit rather than anything in this package. That protection "
+            "belongs to the RUNTIME's expat build (2.4.0 and later, on by default), so a "
+            "deployment on an older expat loses it without this package changing; "
+            "`max_input_bytes` bounds the document either way. tests/test_cdm_parser_safety.py "
+            "reads the linked version and takes every one of these readings rather than "
+            "asserting them",
+            "the XML element names this adapter reads and writes are a PROVISIONAL internal "
+            "profile (`binding: provisional-internal-profile`): AEDP-12's UML attribute names "
+            "bound through one table (`ELEMENT_NAMES`) in no namespace, because the normative "
+            "XSD is distributed through NATO national representatives (Ed B §B.5) and is not "
+            "held here. Reader and writer agreeing through that table proves the profile is "
+            "self-consistent, not that it is the standard's binding; FORMAT_COVERAGE.md marks "
+            "every NITS row `· provisional` for the same reason. The verified normative binding "
+            "is a separate, explicit mode (`SYNAPSE_CDM_NITS_BINDING=normative`) that validates "
+            "every document read or emitted against the authorised schema through the "
+            "local-resource hook `SYNAPSE_CDM_NITS_XSD_DIR` and FAILS BLOCKED_EXTERNAL_EVIDENCE "
+            "without it — it never falls back to the profile, and no shipped fixture, golden or "
+            "evidence record was produced under it",
         ],
         limitations_empty_reason=None,
         residual=Residual.LEGACY,
@@ -1590,21 +1863,59 @@ class Stanag4676Adapter(Adapter):
     }
 
     def __init__(self, clock: times.Clock | None = None, *, synthetic: bool = True,
-                 confidentiality_label: str | None = None) -> None:
+                 confidentiality_label: str | None = None, binding: str | None = None,
+                 environ: Mapping[str, str] | None = None,
+                 validator_factory: Callable[[pathlib.Path], Any] | None = None) -> None:
         """`confidentiality_label` is a DEPLOYMENT DECLARATION, in `source.synthetic`'s category.
 
         It is the second of the three egress label paths and the only one that is not read from
         a source: a CDM-native track — from AIS, ADS-B, CAT021, Legion or CoT — has no parked
         4774 label, and Ed B Annex B.2 makes one mandatory on the root element. Supplying it here
         is explicit and logged; defaulting it would be inventing a marking nobody applied.
+
+        `binding` (F05) is `BINDING_PROVISIONAL` or `BINDING_NORMATIVE`; `None` reads
+        `BINDING_ENV` and falls back to the provisional profile, which is every caller before
+        F05. The normative mode resolves the local-resource hook HERE, so constructing the
+        adapter is what raises `NormativeBindingBlocked` when the environment cannot honour the
+        request — the harness's `--adapter stanag4676` under `SYNAPSE_CDM_NITS_BINDING=normative`
+        fails before it reads a fixture, and never reports the profile's verdicts as the
+        normative binding's. `environ` and `validator_factory` are the resolver's test seams.
         """
         super().__init__(clock, synthetic=synthetic)
         self._label = confidentiality_label
+        env = os.environ if environ is None else environ
+        requested = binding if binding is not None else env.get(BINDING_ENV, BINDING_PROVISIONAL)
+        if requested not in BINDINGS:
+            raise NitsError(f"binding {requested!r} is not one of {list(BINDINGS)}; the value came "
+                            f"from {'the constructor' if binding is not None else BINDING_ENV}")
+        #: Which binding this instance reads and writes. Public, so a report can print it.
+        self.binding: str = requested
+        #: The verified resource under the normative mode; `None` under the profile.
+        self.normative: NormativeResource | None = (
+            normative_resource(environ, validator_factory)
+            if requested == BINDING_NORMATIVE else None)
+        #: The last normative verification's report (`NormativeResource.verify`), for a caller
+        #: writing an F07 exercise report of the `normative_schema` category. `None` under the
+        #: profile, and after a refusal.
+        self.binding_report: dict | None = None
 
     # ------------------------------------------------------------------ ingest
 
     def to_cdm(self, raw: bytes | dict) -> list[CDMBase]:
-        document = parse_document(raw) if isinstance(raw, (bytes, bytearray, str)) else raw
+        if self.normative is not None:
+            # Validated as BYTES against the authorised schema before anything reads it. A parsed
+            # twin has no wire form to validate, so under this mode it is refused rather than
+            # translated: the caller asked for the verified binding and a dict cannot carry one.
+            if not isinstance(raw, (bytes, bytearray, str)):
+                raise NormativeValidationFailed(
+                    f"the normative mode validates an XML document and was handed a "
+                    f"{type(raw).__name__}; the parsed twin has no wire form to validate")
+            payload = raw.encode("utf-8") if isinstance(raw, str) else bytes(raw)
+            self.binding_report = None
+            self.binding_report = self.normative.verify(payload)
+            document = parse_document(payload, namespace=self.normative.target_namespace)
+        else:
+            document = parse_document(raw) if isinstance(raw, (bytes, bytearray, str)) else raw
         if not isinstance(document, dict):
             raise NitsError(f"expected a NITSRoot document, got {type(document).__name__}")
         return self._translate(document)
@@ -2353,7 +2664,18 @@ class Stanag4676Adapter(Adapter):
         message = self._egress_message(entities, tracks, events)
         document["message"] = [message]
         self._refuse_dangling(document)
-        return _serialise(document)
+        if self.normative is None:
+            # The provisional profile: unqualified element names, and the document says so in
+            # its first line (`PROVISIONAL_MARKER`) so a receiver is not left to infer it.
+            return _serialise(document)
+        # The normative mode: written under the recorded target namespace and VALIDATED against
+        # the authorised schema before it is handed over. If the schema binds a name differently
+        # from `ELEMENT_NAMES`, validation fails and nothing is emitted — the writer is the same
+        # table-driven one, and this is where the table is held to the schema (F05).
+        emitted = _serialise(document, namespace=self.normative.target_namespace)
+        self.binding_report = None
+        self.binding_report = self.normative.verify(emitted)
+        return emitted
 
     def _egress_root(self, entities: list[Entity], events: list[Event]) -> dict:
         parked_roots = []
@@ -2569,6 +2891,9 @@ def _write_class(element: ET.Element, block: dict, class_name: str) -> None:
             _write(element, name, value, class_name)
     for tag, fragments in (block.get("_unmodelled") or {}).items():
         for fragment in fragments:
+            # A fragment is `_verbatim`'s own serialisation of an element the hardened parser
+            # already built (`_parse_xml`): no DOCTYPE, no entity declaration can be in it, so
+            # re-reading it with the standard parser is a re-read of this module's own output.
             element.append(ET.fromstring(fragment))
 
 
@@ -2577,7 +2902,7 @@ def _write_class(element: ET.Element, block: dict, class_name: str) -> None:
 _LABEL_PLACEHOLDER = "nits-confidentiality-label-placeholder"
 
 
-def _serialise(document: dict, *, pretty: bool = False) -> bytes:
+def _serialise(document: dict, *, pretty: bool = False, namespace: str = "") -> bytes:
     """The document as XML, with every confidentiality label byte-for-byte as it arrived.
 
     The labels do NOT go through the element tree. Appending a parsed label and re-serialising
@@ -2585,8 +2910,14 @@ def _serialise(document: dict, *, pretty: bool = False) -> bytes:
     then re-indents its content, so what egress emitted would be a different fragment from what
     ingest read. That is the one thing the classification settlement says must not happen, so the
     labels are held out as placeholders and substituted into the finished text.
+
+    `namespace` (F05): empty writes the provisional internal profile — unqualified names, and
+    `PROVISIONAL_MARKER` on the line after the declaration; a namespace writes it as the default
+    namespace on the root, which is the normative mode's form and is validated by the caller.
     """
     root = ET.Element("NITSRoot")
+    if namespace:
+        root.set("xmlns", namespace)
     present = [name for name in LABEL_ELEMENTS if document.get(name)]
     for index, _name in enumerate(present):
         ET.SubElement(root, _LABEL_PLACEHOLDER, {"n": str(index)})
@@ -2600,4 +2931,5 @@ def _serialise(document: dict, *, pretty: bool = False) -> bytes:
         for form in (f'<{_LABEL_PLACEHOLDER} n="{index}" />',
                      f'<{_LABEL_PLACEHOLDER} n="{index}"/>'):
             text = text.replace(form, document[name])
-    return ('<?xml version="1.0" encoding="utf-8"?>\n' + text).encode("utf-8")
+    marker = "" if namespace else PROVISIONAL_MARKER + "\n"
+    return ('<?xml version="1.0" encoding="utf-8"?>\n' + marker + text).encode("utf-8")

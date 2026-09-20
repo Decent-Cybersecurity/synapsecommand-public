@@ -1,0 +1,30 @@
+{
+  "rule": "SEM-007",
+  "title": "An Entity's valid_to is not before its valid_from",
+  "cases": [
+    {
+      "name": "open-ended",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-7"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f07",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z", "valid_to": null
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "valid_to precedes valid_from",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-7"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f07",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T07:00:00.000Z", "valid_to": "2026-04-29T06:00:00.000Z"
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-007"}
+    }
+  ]
+}

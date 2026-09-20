@@ -45,8 +45,8 @@ from synapse_cdm.oes import (
 
 SOURCE = SourceRef(system="TEST", adapter="test", adapter_version="1.0.0", synthetic=True)
 IDS = [SourceId(system="TEST", external_id="X-1")]
-T0 = "2026-04-29T06:00:00Z"
-T1 = "2026-04-29T12:00:00Z"
+T0 = "2026-04-29T06:00:00.000Z"    # the wire form, since audit F04 (test_cdm_models.py says why)
+T1 = "2026-04-29T12:00:00.000Z"
 
 RUNWAY = "tag:synapsecommand.com,2026-09-06:ontology:air:Runway"
 AFFECTS = "tag:synapsecommand.com,2026-09-06:ontology:core:Affects"

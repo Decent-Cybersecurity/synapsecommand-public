@@ -1,0 +1,32 @@
+{
+  "rule": "SEM-006",
+  "title": "A TemporalValidity's valid_to is not before its valid_from",
+  "cases": [
+    {
+      "name": "forwards",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-6"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e06",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Point", "coordinates": [21.0, 57.0]},
+        "validity": {"valid_from": "2026-04-29T06:00:00.000Z", "valid_to": "2026-04-29T07:00:00.000Z"}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "valid_to precedes valid_from",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-6"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e06",
+        "object_type": "ROUTE",
+        "geometry": {"type": "Point", "coordinates": [21.0, 57.0]},
+        "validity": {"valid_from": "2026-04-29T07:00:00.000Z", "valid_to": "2026-04-29T06:00:00.000Z"}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-006"}
+    }
+  ]
+}

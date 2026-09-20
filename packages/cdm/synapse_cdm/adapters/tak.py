@@ -92,7 +92,8 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, PlanObject, P
 from synapse_cdm.symbology import affiliation_from_cot, sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "TAK"
 
@@ -200,6 +201,7 @@ class TakAdapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="Cursor-on-Target (TAK)",
                          version=None),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

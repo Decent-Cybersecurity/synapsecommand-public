@@ -1,0 +1,36 @@
+{
+  "rule": "SEM-012",
+  "title": "A Track's samples are in non-decreasing time order",
+  "cases": [
+    {
+      "name": "two samples, in order",
+      "document": {
+        "object_kind": "track", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "T-12"}],
+        "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b12",
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f12",
+        "samples": [
+          {"observed_at": "2026-04-29T06:00:00.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+          {"observed_at": "2026-04-29T06:00:01.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}}
+        ]
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "the second sample precedes the first",
+      "document": {
+        "object_kind": "track", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "T-12"}],
+        "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b12",
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f12",
+        "samples": [
+          {"observed_at": "2026-04-29T06:00:01.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+          {"observed_at": "2026-04-29T06:00:00.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}}
+        ]
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-012"}
+    }
+  ]
+}

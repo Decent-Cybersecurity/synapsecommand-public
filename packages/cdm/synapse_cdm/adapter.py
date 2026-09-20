@@ -75,8 +75,21 @@ class Adapter(ABC):
     metadata: ClassVar[AdapterMetadata | None] = None
 
     #: Source paths whose values legitimately change in translation, mapped to the REASON.
-    #: Printed by the harness on every run; see lossless.py for why the escape is loud.
+    #: Printed by the harness on every run; see lossless.py for why the escape is loud. It
+    #: exempts a path from the value-presence HEURISTIC only; the ledger below is exempted by
+    #: nothing but a declared rule.
     TRANSFORMS: ClassVar[dict[str, str]] = {}
+
+    #: The path-bound preservation declarations (audit remediation F02, 2026-09-19): source
+    #: path (dotted, `[i]` or `[*]` for array elements, a key holding a separator JSON-quoted)
+    #: -> `lossless.Mapping` or a tuple of them. Each names a destination object and path and
+    #: a rule with an id and a tolerance — `identity`, `number`, `scale`, `round`, `enum_map`,
+    #: `casefold`, `text`, `instant`, `absent_if` — or `kind="residual"` for a subtree parked
+    #: with its structure intact under a declared destination. The harness runs
+    #: `lossless.ledger` over every JSON fixture of an adapter that declares this and fails the
+    #: `lossless` column on a LOST leaf; an adapter that declares nothing is judged by the
+    #: heuristic alone and its report says `basis: heuristic`. An empty map is not a claim.
+    MAPPINGS: ClassVar[dict[str, Any]] = {}
 
     #: How egress is compared on the way back — ARCHITECTURE.md §3.3's L4, "within DECLARED
     #: tolerances" (added 2026-09-16; the harness's `roundtrip` check reads it).
@@ -84,7 +97,7 @@ class Adapter(ABC):
     #:   "bytes"   `from_cdm(to_cdm(raw))` must equal `roundtrip_reference(raw)` octet for octet.
     #:             The default, and the claim every binary and line-oriented emitter here makes.
     #:   "values"  the emitted document is re-ingested and no source value may be missing
-    #:             (`lossless.unrepresented` over the parsed twin, with `TRANSFORMS` and
+    #:             (`lossless.value_presence_heuristic` over the parsed twin, with `TRANSFORMS` and
     #:             `ROUNDTRIP_TRANSFORMS` excused). The tolerance every XML emitter needs: XML
     #:             permits insignificant whitespace, attribute order and namespace prefix choice,
     #:             so octet equality is not a property the format lets an emitter promise.

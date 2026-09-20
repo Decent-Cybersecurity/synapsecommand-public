@@ -213,7 +213,8 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Tra
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "ADSB"
 
@@ -1208,6 +1209,7 @@ class AdsbAdapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="ADS-B 1090ES Extended Squitter (Mode S DF17/DF18)",
                          version=None),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.LICENSED,
         maturity=Maturity(

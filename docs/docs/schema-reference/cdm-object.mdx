@@ -17,7 +17,7 @@ description: "JSON Schema reference for CDMObject (the union)."
 | Source file | `schemas/cdm_object.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:2.1.0:cdm_object` |
 | CDM schema version | `2.1.0` |
-| SHA-256 of source | `cee828660af920e63d88615fbc4a40b225bf58fe4a3904d675015e7018d13504` |
+| SHA-256 of source | `28b5083ef581e6ae6e21d402b4ce7c258e7efcbdba57dcf558ab9cf90b2b3e5c` |
 
 ## The union
 
@@ -118,18 +118,18 @@ Anything that exists on the map, at a stated time, with stated confidence.
 | `confidence` | number \| null | no | 0..1. None = unknown; 0 means certainty-that-not, which is a claim. Default `null`. (≥ 0; ≤ 1) |
 | `entity_id` | string (uuid) | **yes** | Stable across updates — derived, see ids.derive(). Never drawn at random. |
 | `entity_type` | [EntityType](#entitytype) | **yes** |  |
-| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `kinematics` | [Kinematics](#kinematics) \| null | no | Default `null`. |
 | `object_kind` | `"entity"` | no |  |
 | `ontology_types` | array&lt;string&gt; | no | Optional SC-OES semantic types — absolute ontology identifiers saying what this thing IS in operational terms. Empty = the producer asserted none. Never derived from entity_type, and entity_type is never derived from it. |
 | `position` | [Position](#position) \| null | no | None = position unknown. NEVER a Position holding zeros. Default `null`. |
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
-| `symbol` | string \| null | no | MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — see symbology.sidc_from_affiliation() for deriving one. Default `null`. |
+| `symbol` | string \| null | no | MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — see symbology.sidc_from_affiliation() for deriving one. Default `null`. (pattern `^[0-9]{20}$`) |
 | `valid_from` | string | **yes** | When this state began. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `valid_to` | string \| null | no | When it ceased. None = still current / open-ended. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 
@@ -178,7 +178,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `event_id` | string (uuid) | **yes** |  |
 | `event_type` | [EventType](#eventtype) | **yes** |  |
 | `geometry` | [Point](#point) \| [LineString](#linestring) \| [Polygon](#polygon) \| [MultiPoint](#multipoint) \| [MultiLineString](#multilinestring) \| [MultiPolygon](#multipolygon) \| null | no | GeoJSON, WGS84, [lon, lat] order — e.g. a jamming footprint. Default `null`. |
-| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `object_kind` | `"event"` | no |  |
 | `observed_at` | string | **yes** | When the SOURCE saw it. Never receipt time. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `oes` | [OesMetadata](#oesmetadata) \| null | no | The SC-OES wire-semantic block. None = the producer made no SC-OES assertion, which is NOT the producer asserting defaults. Optional so that every object written before SC-OES existed stays structurally valid and every producer that knows nothing about SC-OES keeps emitting objects these models accept. Default `null`. |
@@ -187,7 +187,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `received_at` | string | **yes** | When WE took delivery. Never source time. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `related_entities` | array&lt;string (uuid)&gt; | no | entity_id values this event concerns. Empty when the event concerns no specific entity (a feed-level status change). |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `severity` | [Severity](#severity) | **yes** |  |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
@@ -541,7 +541,7 @@ outcomes, because everyone assumes it arrived.
 | `area` | [Area](#area) \| null | no | Lateral geometry with vertical limits and time validity, when this object is a region. `geometry` above stays the required projection of its lateral extent. Default `null`. |
 | `expires_at` | string \| null | no | When the drawing should disappear. None = until explicitly removed — which for a stale COA sketch on a live map is a decision, so state it. KEPT beside `validity` below, of which it is the projection: a receiving client that only knows how to expire an overlay reads this one field. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `geometry` | [Point](#point) \| [LineString](#linestring) \| [Polygon](#polygon) \| [MultiPoint](#multipoint) \| [MultiLineString](#multilinestring) \| [MultiPolygon](#multipolygon) | **yes** | GeoJSON, WGS84, [lon, lat] order. Required. |
-| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `label` | string \| null | no | What a client shows next to the drawing. None = unlabelled; never an empty string, which renders as a blank callout. Default `null`. (min length 1) |
 | `object_id` | string (uuid) | **yes** |  |
 | `object_kind` | `"plan_object"` | no |  |
@@ -549,7 +549,7 @@ outcomes, because everyone assumes it arrived.
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
 | `route` | [Route](#route) \| null | no | Ordered waypoints and legs, when this object IS a route (ObjectType.ROUTE). `geometry` above stays REQUIRED and stays the LineString projection of the waypoints, so every consumer written before routes existed still draws it. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
@@ -826,7 +826,7 @@ data and hide it from an operator. There is no safe default, so there is no defa
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `adapter` | string | **yes** | Adapter name, e.g. pntmap. (min length 1) |
-| `adapter_version` | string | **yes** | Adapter semver. (min length 1) |
+| `adapter_version` | string | **yes** | Adapter semver: MAJOR.MINOR.PATCH, no leading zeroes, nothing else. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`; min length 1) |
 | `format_name` | string \| null | no | The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own declared metadata.format; None only for an adapter that declares none. Default `null`. |
 | `format_version` | string \| null | no | The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document in this tree states which edition the adapter targets — a reading, never a gap filled in. Default `null`. |
 | `observed_at` | string \| null | no | The instant the SOURCE RECORD states for itself, when it states one and no canonical field already carries it. Event.observed_at stays the event's own time; this is the record's. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
@@ -896,12 +896,12 @@ rejecting it would refuse legitimate multi-source data.
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `entity_id` | string (uuid) | **yes** | The Entity this history belongs to. |
-| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `object_kind` | `"track"` | no |  |
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
 | `samples` | array&lt;[TrackSample](#tracksample)&gt; | **yes** | Time-ordered, non-decreasing. At least one. (min items 1) |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |

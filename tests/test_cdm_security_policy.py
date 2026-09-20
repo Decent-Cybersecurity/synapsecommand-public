@@ -95,9 +95,12 @@ def test_the_out_of_scope_list_cites_the_operator_s_trust_decision():
     """The `load_adapter` row. An out-of-scope item with no reason is a refusal to look."""
     body = POLICY.read_text()
     assert "load_adapter" in body
-    assert "adapter.py:641" in body, "the citation has moved; re-derive it rather than dropping it"
+    # Re-derived 2026-09-19 (F02): `Adapter.MAPPINGS` and its comment entered `adapter.py` above
+    # this function, moving it from 641 to 654. The number is pinned here on purpose, so a move
+    # is a red and not a silent drift; the line below proves the new number names the function.
+    assert "adapter.py:654" in body, "the citation has moved; re-derive it rather than dropping it"
     source = (REPO / "packages" / "cdm" / "synapse_cdm" / "adapter.py").read_text().splitlines()
-    assert "def load_adapter" in source[640], source[640]
+    assert "def load_adapter" in source[653], source[653]
 
 
 def test_every_control_row_is_active_or_says_what_it_is_not():

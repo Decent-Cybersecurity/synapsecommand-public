@@ -28,7 +28,11 @@ from synapse_cdm.symbology import affiliation_from_cot, sidc_from_affiliation, s
 
 SOURCE = SourceRef(system="TEST", adapter="test", adapter_version="1.0.0", synthetic=True)
 IDS = [SourceId(system="TEST", external_id="X-1")]
-T0 = "2026-04-29T06:00:00Z"
+#: The WIRE form, since audit F04 (2026-09-19). On the JSON path a string is held to the same
+#: pattern the published schema carries (`times.parse_wire`), so "2026-04-29T06:00:00Z" — what
+#: this constant read before — is refused there as it always was by the schema; the constructor
+#: path these tests use still coerces it, and the constant moved so the two read the same.
+T0 = "2026-04-29T06:00:00.000Z"
 
 
 def _entity(**overrides):
@@ -112,7 +116,11 @@ def test_schema_version_is_stamped_and_semver_checked():
     assert _entity().schema_version == version.SCHEMA_VERSION
     with pytest.raises(ValidationError):
         _entity(schema_version="1.0")
-    assert version.compatible("1.2.0", "1.0.0"), "a MINOR from the future must still be read"
+    # Until audit F01 (2026-09-19) this asserted `compatible("1.2.0", "1.0.0")`: "a MINOR from
+    # the future must still be read". No 1.x contract is frozen, so nothing is demonstrated
+    # for it and the helper says UNKNOWN — which `compatible()` reads as False, not as safe.
+    assert version.assess("1.2.0", "1.0.0").verdict is version.Verdict.UNKNOWN
+    assert not version.compatible("1.2.0", "1.0.0")
     assert not version.compatible("2.0.0", "1.0.0")
 
 
@@ -139,6 +147,22 @@ def test_timestamps_render_to_one_form_only():
     assert times.TIMESTAMP_RE.match(times.render(times.FROZEN_NOW))
 
 
+def test_the_json_path_takes_only_the_wire_form_and_the_python_path_still_coerces():
+    """Audit F04 (2026-09-19). Until then `Timestamp` ran `times.parse` on both paths, so the
+    JSON path accepted "…44Z" and "+02:00" that the published schema's `pattern` refused: two
+    validators, two languages. The constructor path — what every adapter uses with its source's
+    own string — is unchanged; `tests/test_cdm_schema_alignment.py` states the two contracts."""
+    for written in ("2026-04-29T06:12:44Z", "2026-04-29T08:12:44+02:00", "2026-04-29T06:12:44"):
+        assert _entity(valid_from=written).valid_from == times.parse(written)
+        wire = _entity(valid_from=written).model_dump(mode="json")
+        wire["valid_from"] = written
+        with pytest.raises(ValidationError, match="RFC 3339 UTC with exactly three decimal"):
+            Entity.model_validate_json(json.dumps(wire))
+    good = _entity(valid_from="2026-04-29T06:12:44.000Z").model_dump(mode="json")
+    assert Entity.model_validate_json(json.dumps(good)).valid_from \
+        == times.parse("2026-04-29T06:12:44Z")
+
+
 def test_render_truncates_rather_than_rounds():
     """Rounding 23:59:59.9995 forward moves an event into the next day's audit slice."""
     stamp = _dt.datetime(2026, 4, 29, 23, 59, 59, 999500, tzinfo=_dt.timezone.utc)
@@ -147,7 +171,7 @@ def test_render_truncates_rather_than_rounds():
 
 def test_interval_may_not_run_backwards():
     with pytest.raises(ValidationError):
-        _entity(valid_from="2026-04-29T07:00:00Z", valid_to="2026-04-29T06:00:00Z")
+        _entity(valid_from="2026-04-29T07:00:00.000Z", valid_to="2026-04-29T06:00:00.000Z")
 
 
 def test_serialised_timestamps_are_strings_in_the_pinned_form():
@@ -227,7 +251,7 @@ def _sample(when, lat=57.0):
 
 
 def test_track_samples_must_be_in_time_order():
-    ordered = [_sample("2026-04-29T06:00:00Z"), _sample("2026-04-29T06:01:00Z")]
+    ordered = [_sample("2026-04-29T06:00:00.000Z"), _sample("2026-04-29T06:01:00.000Z")]
     assert Track(source=SOURCE, source_ids=IDS, track_id=uuid.uuid4(),
                  entity_id=uuid.uuid4(), samples=ordered)
     with pytest.raises(ValidationError):
@@ -237,7 +261,7 @@ def test_track_samples_must_be_in_time_order():
 
 def test_equal_sample_timestamps_are_allowed():
     """Two sensors reporting the same instant is real data, not a defect."""
-    same = [_sample("2026-04-29T06:00:00Z"), _sample("2026-04-29T06:00:00Z", lat=57.1)]
+    same = [_sample("2026-04-29T06:00:00.000Z"), _sample("2026-04-29T06:00:00.000Z", lat=57.1)]
     assert len(Track(source=SOURCE, source_ids=IDS, track_id=uuid.uuid4(),
                      entity_id=uuid.uuid4(), samples=same).samples) == 2
 
@@ -429,16 +453,16 @@ def test_the_four_times_are_separable_and_all_four_are_optional():
     empty = TemporalValidity()
     assert empty.model_dump(mode="json") == {"observed_at": None, "valid_from": None,
                                              "valid_to": None, "effective": None}
-    full = TemporalValidity(observed_at=T0, valid_from=T0, valid_to="2026-04-29T07:00:00Z",
-                            effective=Period(start="2026-04-29T06:30:00Z"))
+    full = TemporalValidity(observed_at=T0, valid_from=T0, valid_to="2026-04-29T07:00:00.000Z",
+                            effective=Period(start="2026-04-29T06:30:00.000Z"))
     assert full.effective.end is None
 
 
 def test_an_interval_that_runs_backwards_is_refused_in_both_models():
     with pytest.raises(ValidationError, match=r"precedes start"):
-        Period(start="2026-04-29T07:00:00Z", end=T0)
+        Period(start="2026-04-29T07:00:00.000Z", end=T0)
     with pytest.raises(ValidationError, match=r"precedes valid_from"):
-        TemporalValidity(valid_from="2026-04-29T07:00:00Z", valid_to=T0)
+        TemporalValidity(valid_from="2026-04-29T07:00:00.000Z", valid_to=T0)
 
 
 def test_the_epoch_sentinel_is_a_real_instant_and_is_not_refused_by_the_type():
@@ -448,7 +472,7 @@ def test_the_epoch_sentinel_is_a_real_instant_and_is_not_refused_by_the_type():
     legitimately carry. The rule "unknown time MUST NOT become 1970-01-01" binds the ADAPTER,
     and refusing the instant here would refuse real data to catch a defect one layer up.
     """
-    entity = _entity(valid_from="1970-01-01T00:00:00Z")
+    entity = _entity(valid_from="1970-01-01T00:00:00.000Z")
     assert times.render(entity.valid_from) == "1970-01-01T00:00:00.000Z"
 
 
@@ -538,10 +562,10 @@ def test_plan_object_geometry_stays_required_beside_route_and_area():
 
 
 def test_expires_at_is_the_projection_of_valid_to_and_may_not_disagree():
-    end = "2026-04-29T07:00:00Z"
+    end = "2026-04-29T07:00:00.000Z"
     _plan_object(expires_at=end, validity=TemporalValidity(valid_to=end))
     with pytest.raises(ValidationError, match=r"expires_at .* disagrees with validity.valid_to"):
-        _plan_object(expires_at=end, validity=TemporalValidity(valid_to="2026-04-29T08:00:00Z"))
+        _plan_object(expires_at=end, validity=TemporalValidity(valid_to="2026-04-29T08:00:00.000Z"))
 
 
 # --- Rule 5: the provenance fields ------------------------------------------------------------
@@ -603,10 +627,18 @@ def test_a_two_zero_zero_object_still_validates_against_the_two_one_zero_models(
     assert revived.source.format_name is None         # the new provenance fields default absent
 
 
-def test_a_two_zero_zero_reader_accepts_a_two_one_zero_object():
-    """The other direction, which is what makes the additions safe to deploy one node at a time."""
-    assert version.compatible(version.SCHEMA_VERSION, "2.0.0") is True
-    assert version.compatible("2.0.0", version.SCHEMA_VERSION) is True
+def test_a_two_zero_zero_reader_does_not_accept_a_two_one_zero_object():
+    """The other direction is NOT safe, and the helper no longer says it is.
+
+    This test asserted `compatible(SCHEMA_VERSION, "2.0.0") is True` until audit F01
+    (2026-09-19): "what makes the additions safe to deploy one node at a time". The frozen
+    2.0.0 schemas (`tests/frozen/cdm/2.0.0/`) carry `additionalProperties: false` and refuse a
+    document that carries `quality`, `status` or `residual`, populated or null —
+    `tests/test_cdm_version_matrix.py` runs that refusal on every kind. Deploying one node at a
+    time is still possible: upgrade the readers first, which is the direction that IS shown.
+    """
+    assert version.compatible("2.0.0", version.SCHEMA_VERSION) is True     # new reader, old writer
+    assert version.compatible(version.SCHEMA_VERSION, "2.0.0") is False    # old reader, new writer
     assert version.compatible("1.0.0", version.SCHEMA_VERSION) is False
 
 

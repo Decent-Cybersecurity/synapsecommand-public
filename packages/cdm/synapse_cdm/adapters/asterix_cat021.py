@@ -146,7 +146,8 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Tra
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "ASTERIX_CAT021"
 
@@ -2229,6 +2230,7 @@ class AsterixCat021Adapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="EUROCONTROL ASTERIX Category 021 — ADS-B Target Reports",
                          version="Edition 2.6"),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

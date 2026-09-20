@@ -152,7 +152,8 @@ from synapse_cdm.models import (
 from synapse_cdm.geo import Point
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 #: `SourceRef.system` — the covering standard, which is what this adapter is named for.
 SYSTEM = "STANAG4609"
@@ -765,6 +766,7 @@ class Stanag4609Adapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="STANAG 4609 / MISP-2019.1 — the UAS Datalink Local Set",
                          version="MISP-2019.1 (STANAG 4609 Edition 5 wrapper)"),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.PUBLIC_GOVERNMENT,
         maturity=Maturity(

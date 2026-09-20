@@ -552,7 +552,7 @@ def test_every_fixture_is_lossless_over_its_parsed_form_with_nothing_excused(pat
     """
     assert Stanag4609Adapter.TRANSFORMS == {}
     parsed = json.loads((FIXTURES / f"{path.stem}.parsed.json").read_text())
-    missing = lossless.unrepresented(parsed, dumped(adapter().to_cdm(parsed)),
+    missing = lossless.value_presence_heuristic(parsed, dumped(adapter().to_cdm(parsed)),
                                      Stanag4609Adapter.TRANSFORMS)
     assert missing == {}, f"{path.stem}: {missing}"
 

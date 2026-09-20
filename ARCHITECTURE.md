@@ -33,17 +33,18 @@ The v1 surface is `packages/cdm/synapse_cdm/adapter.py`. It is a class contract 
 
 | element | where | what it is |
 |---|---|---|
-| `name` | `adapter.py:56` | the registry key; how a `SourceRef` identifies its translator |
-| `version` | `adapter.py:57` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
-| `direction` | `adapter.py:58` | one of the three wire spellings; see §2 |
-| `system` | `adapter.py:61` | the external system the adapter speaks for, into `SourceRef.system` |
-| `TRANSFORMS` | `adapter.py:79` | source paths whose value legitimately changes, mapped to the REASON |
-| `fixture_dir` | `adapter.py:139` | the fixture directory when it is not the adapter's own name |
-| `to_cdm` | `adapter.py:232` | abstract; one source payload in, a list of canonical objects out |
-| `from_cdm` | `adapter.py:244` | overridden by an emitting adapter; the base raises the refusal |
-| `source_ref` | `adapter.py:204` | the provenance stamp every emitted object carries |
-| `now` | `adapter.py:200` | receipt time, from the injected clock and never `datetime.now()` |
-| `__init_subclass__` | `adapter.py:141` | the enforcement: the checks below run when the class is defined |
+| `name` | `adapter.py`, a class attribute of `Adapter` | the registry key; how a `SourceRef` identifies its translator |
+| `version` | `adapter.py`, a class attribute of `Adapter` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
+| `direction` | `adapter.py`, a class attribute of `Adapter` | one of the three wire spellings; see §2 |
+| `system` | `adapter.py`, a class attribute of `Adapter` | the external system the adapter speaks for, into `SourceRef.system` |
+| `TRANSFORMS` | `adapter.py`, a class attribute of `Adapter` | source paths whose value legitimately changes, mapped to the REASON — an exemption from the value-presence heuristic only |
+| `MAPPINGS` | `adapter.py`, a class attribute of `Adapter` | source path to `lossless.Mapping`: destination object and path, rule and tolerance; the path-bound preservation ledger recomputes each one (F02, 2026-09-19) |
+| `fixture_dir` | `adapter.py`, a class attribute of `Adapter` | the fixture directory when it is not the adapter's own name |
+| `to_cdm` | `adapter.py`, a method of `Adapter` | abstract; one source payload in, a list of canonical objects out |
+| `from_cdm` | `adapter.py`, a method of `Adapter` | overridden by an emitting adapter; the base raises the refusal |
+| `source_ref` | `adapter.py`, a method of `Adapter` | the provenance stamp every emitted object carries |
+| `now` | `adapter.py`, a method of `Adapter` | receipt time, from the injected clock and never `datetime.now()` |
+| `__init_subclass__` | `adapter.py`, a method of `Adapter` | the enforcement: the checks below run when the class is defined |
 
 `__init_subclass__` refuses, at import: a missing `name`, `version`, `direction` or `system`; a
 `direction` outside the three literals; a declared `egress`/`bidirectional` adapter that does not
@@ -72,6 +73,15 @@ inside `__init_subclass__` to the refusal that checks them, so every citation fr
 down is further along the file than it was; the four above `TRANSFORMS` and `TRANSFORMS` itself
 did not move. The table carries the re-derived numbers and the same test holds them. The three
 new members are §1.2's, under 2.1.0.
+
+**Dated correction, 2026-09-20 (audit remediation F09; the two corrections above are left standing
+as written). The `where` column no longer carries a line number.** Both corrections above are the
+same event — an insertion moved every citation below it, and the citations were re-derived — and
+F09 named that as the brittle figure to replace. Each row now says which kind of member of the
+`Adapter` class it is, and `tests/test_cdm_architecture_docs.py` reads the class with `ast` on every
+run: every row's element must be a class attribute or a method of `Adapter`, of the kind the row
+states, and the table may cite no line. A member that is renamed or removed reds the gate; a
+member that moves does not, which is the difference between a citation and a figure.
 
 ### 1.2 What v2 adds
 
@@ -179,6 +189,7 @@ against a payload:
 | `profiles` | MAY | the SC-OES profiles this adapter claims to produce for |
 | `capabilities` | MUST | §3.5, including `limits` |
 | `limitations` | MUST | what this adapter does NOT do, stated positively and not as an empty list by default |
+| `binding` | MUST | the wire binding, one of `manifest.WireBinding`'s three values, never defaulted: `standard-encoding`, `provisional-internal-profile` (which the model refuses unless a limitation says "provisional"), `normative-verified` (held to an exercise report of the normative-schema category). Required since audit remediation F05, 2026-09-20; `tests/test_cdm_manifests.py` |
 
 `limitations` is required and MUST NOT be defaulted to empty. Every adapter in this repository has
 limitations — a format edition it does not implement, a message type it declines, a field with no
@@ -306,6 +317,17 @@ the adapter to park. Values that legitimately change are declared in `TRANSFORMS
 are PRINTED on every run — an exemption is a visible line in the report, not a silent skip. The
 harness's fourth check (`lossless`) is where an adapter meets this rule.
 
+**Dated correction, 2026-09-19/20 (audit remediation F02, recorded by F09; the paragraph above is
+left standing as written).** `lossless.unrepresented()` no longer exists under that name: it is
+`lossless.value_presence_heuristic()`, renamed because an empty result is not proof — a source
+value that also occurs elsewhere in the output, or that a transform re-renders, is "present" to
+the heuristic whether or not it reached the right path. What enforces the rule today is the
+path-bound preservation ledger (`lossless.ledger`): where an adapter declares `MAPPINGS`, every
+source leaf is MAPPED, RESIDUAL, a DECLARED_LIMITATION or LOST, a LOST leaf FAILS the `lossless`
+column, and the report's `preservation.basis` reads `ledger`; where it declares none, the column
+rests on the heuristic alone and the basis says `heuristic`. `tests/test_cdm_preservation.py`
+carries the counterexample and the fourteen regressions.
+
 **The gap.** The residual today is parked in `Entity.attributes` or `Event.payload`, which is a
 free-form dictionary; the source-identifying container of §5 is P3's addition.
 
@@ -351,7 +373,7 @@ machine-verifiable per adapter rather than a consequence of the golden files.
 For identical input, adapter version, schema version and configuration, the canonical output MUST
 be deterministic.
 
-**Enforced today.** The clock is INJECTED, never read: `adapter.py:189–200` takes a `Clock` in the
+**Enforced today.** The clock is INJECTED, never read: `adapter.py:202–213` takes a `Clock` in the
 constructor and `now()` is the only receipt-time source; `times.py:39` fixes the frozen instant the
 harness uses and `times.py:46` builds the frozen clock. The golden check compares byte for byte
 under that frozen clock. Serialisation is the goldens' own form (§6).

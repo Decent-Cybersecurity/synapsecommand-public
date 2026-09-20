@@ -1,0 +1,32 @@
+{
+  "rule": "SEM-010",
+  "title": "Every ontology_types entry is a valid absolute identifier (governed grammar or third-party) and none repeats",
+  "cases": [
+    {
+      "name": "one third-party identifier",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-10"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f10",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "ontology_types": ["https://ontology.example.org/terms/Runway"]
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "an identifier with whitespace",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-10"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f10",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "ontology_types": ["https://ontology.example.org/terms/Run way"]
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-010"}
+    }
+  ]
+}

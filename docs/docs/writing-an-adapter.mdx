@@ -321,7 +321,7 @@ nobody tested must not acquire a green tick.
 | `translate` | `to_cdm()` raised. One bad fixture never stops the run; the rest are still judged |
 | `schema` | an object violates the **published** JSON Schema in `/schemas` — not the model, which would be testing the model against itself |
 | `provenance` | `source.*` incomplete, `synthetic` unstated, `source_ids` empty, an event missing a timestamp |
-| `lossless` | a source value appears nowhere in the output and is not a declared transform |
+| `lossless` | with `MAPPINGS` declared, a declared source leaf is LOST — missing, mismatched in value or type, or on the wrong object — under the path-bound preservation ledger; without them, a source value appears nowhere in the output and is not a declared transform (the value-presence heuristic, whose empty result is not proof; the report's `preservation.basis` says which ran) |
 | `roundtrip` | for an `egress`/`bidirectional` adapter, a source value is absent from what `from_cdm()` emitted. `SKIP` for ingest-only |
 | `golden` | the output differs from the recorded expectation, reported path by path |
 

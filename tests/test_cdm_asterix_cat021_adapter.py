@@ -902,7 +902,7 @@ def test_transforms_is_empty_and_the_lossless_check_therefore_runs_at_full_stren
     for path in PARSED_FIXTURES:
         parsed = json.loads(path.read_text())
         dumped = [o.model_dump(mode="json") for o in _adapter().to_cdm(parsed)]
-        assert lossless.unrepresented(parsed, dumped, {}) == {}, path.stem
+        assert lossless.value_presence_heuristic(parsed, dumped, {}) == {}, path.stem
 
 
 def test_the_two_absence_lists_stay_two_facts():

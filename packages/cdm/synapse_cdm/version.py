@@ -266,7 +266,9 @@ For ``SC_OES_VERSION`` — semver over the wire-semantic contract in ``spec/sc-o
 object written by 1.2.0 is readable by a 1.0.0 consumer and refusing it would be a
 self-inflicted outage. ``PACKAGE_VERSION`` needs no such helper: ``pip`` resolves it.
 """
+import enum
 import re
+from typing import NamedTuple
 
 #: The wire contract. Governed by MIGRATIONS.md. Carried in every serialised object.
 #: Moved 1.0.0 -> 2.0.0 on 2026-09-06, a MAJOR: `Event` gained `oes` and `Entity` gained
@@ -340,7 +342,17 @@ SC_OES_VERSION = "0.1.0"
 #: every default is the old behaviour, so a MINOR by VERSIONING.md §3's own row. NOT derived from
 #: PACKAGE_VERSION: `pip install synapse-cdm==2.0.0` resolves a distribution whose Adapter API is
 #: v1, because this constant did not exist at that tag, and 2.1.x ships this 2.1.0 contract.
-ADAPTER_API_VERSION = "2.1.0"
+#: 2.1.0 -> 3.0.0 on 2026-09-20, the audit remediation's S10 ruling: `AdapterMetadata.binding`
+#: (F05) is REQUIRED and has no default — a default would be the framework making a wire-level
+#: claim the author did not, which is the reason F05 refused one — so every subclass written
+#: against 2.1.0 fails to construct its metadata until it declares one of the three
+#: `manifest.WireBinding` values. A new demand on the subclass is what made v2 a major and it is
+#: what makes this one; `Adapter.MAPPINGS` (F02) is additive beside it and would have been a
+#: MINOR on its own. The migration is one line per adapter class — `binding="standard-encoding"`
+#: where the wire form is the cited document's own encoding, or
+#: `binding="provisional-internal-profile"` with a limitation that contains the word
+#: "provisional" — and MIGRATIONS.md's S10 record under Unreleased carries the full note.
+ADAPTER_API_VERSION = "3.0.0"
 
 #: The published manifest's shape, and a FIFTH axis. It moves when the MANIFEST's shape moves — a
 #: required field added, a field's meaning changed — and not when an adapter's metadata VALUES
@@ -375,7 +387,16 @@ ADAPTER_API_VERSION = "2.1.0"
 #: existing field changed shape or meaning. All fourteen manifests move, and this time they move
 #: in their `adapter` block as well as their envelope: every one of the fourteen now declares
 #: `max_input_bytes`, so every one loses an `absent_because` entry and gains a basis.
-MANIFEST_SCHEMA_VERSION = "1.2.0"
+#:
+#: **1.2.0 -> 2.0.0, audit remediation S10, 2026-09-20.** `AdapterMetadata.binding` (F05) is a
+#: newly REQUIRED field with no default, and `VERSIONING.md`'s row is the whole ruling: "a newly
+#: required field is a MAJOR, because every existing manifest becomes invalid". Both directions
+#: refuse: a 1.2.0 manifest lacks `binding` under the 2.0.0 schema, and a 2.0.0 manifest carries
+#: a key the 1.2.0 schema's `additionalProperties: false` does not know. No default was ruled —
+#: F05's reason stands, a default is a wire-level claim the author did not make. All fourteen
+#: manifests move in their envelope (this constant) and moved already in their `adapter` block
+#: (the declaration each adapter now carries).
+MANIFEST_SCHEMA_VERSION = "2.0.0"
 
 #: The generated EVIDENCE RECORD's shape, and a SIXTH axis — the last one `VERSIONING.md` carried
 #: as owed. `1.0.0` because `schemas/evidence/evidence.schema.json` is the first evidence schema
@@ -389,28 +410,159 @@ MANIFEST_SCHEMA_VERSION = "1.2.0"
 #: without one field of the record changing, and a consumer's schema check would break on a
 #: number that describes somebody else's contract. It moves when the RECORD's fields move, on
 #: `VERSIONING.md`'s "Same rule as the manifest".
-EVIDENCE_SCHEMA_VERSION = "1.0.0"
+#:
+#: **1.0.0 -> 2.0.0, audit remediation S10, 2026-09-20.** The record gained three REQUIRED fields
+#: under F07 — `snapshot`, `evidence_categories`, `maturity_support` — and a second schema file,
+#: `schemas/evidence/exercise.schema.json`, joined the axis. A 1.0.0 record no longer validates
+#: against the regenerated schema and a 2.0.0 record carries keys a 1.0.0 validator refuses, so
+#: the manifest's own rule applies unchanged: a newly required field is a MAJOR. Records are
+#: regenerated, never migrated by hand: `python -m synapse_cdm.evidence generate --all --out
+#: evidence` writes every one under this number.
+EVIDENCE_SCHEMA_VERSION = "2.0.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:
+    """`MAJOR.MINOR.PATCH` as three integers, or `ValueError`.
+
+    Held to `SEMVER_RE` under `fullmatch` BEFORE the split, since 2026-09-19 (audit F01). The
+    split-and-`int()` this replaced took "2.1.0\n", " 2.1.0", "01.0.0" and "-1.0.0" as versions
+    — `int()` strips whitespace, tolerates a leading zero and reads a sign — so a string the
+    wire field refuses was a version the compatibility question answered.
+    """
+    if not isinstance(version, str) or SEMVER_RE.fullmatch(version) is None:
+        raise ValueError(f"not a CDM version: {version!r} is not MAJOR.MINOR.PATCH with no "
+                         f"prefix, suffix, sign, leading zero, whitespace or trailing newline")
     major, minor, patch = (int(part) for part in version.split("."))
     return major, minor, patch
 
 
-def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:
-    """May a reader at `read_by` accept an object written at `written_with`?
+class Verdict(enum.Enum):
+    """What the evidence says about one writer-by-reader relationship."""
+    SUPPORTED = "SUPPORTED"   #: documents of the writer's shape were accepted by the reader's contract
+    REFUSED = "REFUSED"       #: the reader's contract rejects documents of the writer's shape
+    UNKNOWN = "UNKNOWN"       #: no frozen contract on one side — nothing has been demonstrated
 
-    Same major, and the reader is not asked to understand a version from the future beyond
-    its own minor — a 1.0.0 reader accepts 1.0.x and refuses 2.0.0. A minor from the future
-    is ACCEPTED (1.0.0 reads 1.2.0): the additions are optional by definition of MINOR, and
-    the alternative is a fleet that stops ingesting the moment one adapter is upgraded.
+
+class Direction(enum.Enum):
+    """Which side is older. The question is asymmetric and the answer has to say which way."""
+    SAME = "SAME"                    #: same MAJOR.MINOR; a PATCH moves descriptions only
+    READER_NEWER = "READER_NEWER"    #: new reader, old writer — the additive direction
+    WRITER_NEWER = "WRITER_NEWER"    #: old reader, new writer — where strict readers refuse
+
+
+class Compatibility(NamedTuple):
+    """The answer `assess()` gives, with the direction and the evidence it rests on."""
+    written_with: str
+    read_by: str
+    verdict: Verdict
+    direction: Direction
+    basis: str    #: where the evidence for this verdict lives, or why there is none
+    reason: str   #: one sentence for a CLI or a conformance finding
+
+    def __bool__(self) -> bool:
+        return self.verdict is Verdict.SUPPORTED
+
+    def __str__(self) -> str:
+        return (f"{self.verdict.value}: written with {self.written_with}, read by "
+                f"{self.read_by} ({self.direction.value}) — {self.reason}")
+
+
+#: The CDM contracts of the current major that have been PUBLISHED and FROZEN — every minor a
+#: reader can hold evidence about. `tests/frozen/cdm/MANIFEST.json` carries each one's schemas
+#: as the release tag shipped them (tag, commit, sha256), and `tests/test_cdm_version_matrix.py`
+#: holds this tuple equal to that manifest's keys: a contract may not be claimed here before it
+#: is frozen there, and a frozen one may not be forgotten here. A minor of this major that is
+#: not in this tuple is UNKNOWN to `assess()` — never presumed safe by arithmetic.
+KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0")
+
+_MATRIX = "tests/test_cdm_version_matrix.py"
+_FROZEN = "tests/frozen/cdm/MANIFEST.json"
+
+
+def assess(written_with: str, read_by: str = SCHEMA_VERSION) -> Compatibility:
+    """May a reader at `read_by` accept an object written at `written_with`? Answered by
+    direction and by evidence, never by major-number arithmetic alone.
+
+    The rules, in the order they apply:
+
+    * either string outside `SEMVER_RE` under `fullmatch` — `ValueError`, from `parse()`;
+    * different MAJOR — REFUSED both ways. MIGRATIONS.md's table: a MAJOR removes, renames or
+      narrows, and no reader of one major has been shown to accept the other;
+    * same MAJOR.MINOR — SUPPORTED, in either direction. A PATCH moves descriptions and error
+      wording only, so the two contracts have one shape;
+    * READER_NEWER, both contracts in `KNOWN_CONTRACTS` — SUPPORTED. The frozen older
+      documents validate under the newer models and schema; the matrix test is the evidence,
+      re-run on every suite;
+    * WRITER_NEWER, both contracts known — REFUSED. Every published CDM schema carries
+      `additionalProperties: false`, so a document carrying a property the older contract does
+      not know — populated OR explicitly null — is rejected by it. The old helper promised the
+      opposite ("a 1.0.0 reader accepts a 1.2.0 object") and the frozen 2.0.0 schemas refute it;
+    * a MINOR of this major that is not in `KNOWN_CONTRACTS`, on either side — UNKNOWN. Nothing
+      has been frozen, nothing has been demonstrated, and `compatible()` reads it as False.
+
+    A SUPPORTED verdict is version ELIGIBILITY: documents of that contract's shape have been
+    shown to pass. It says nothing about the document in hand, which is validated on its own —
+    `conformance.py` does both and reports both. No verdict rewrites `schema_version`, discards
+    a field or invents a downgrade; a REFUSED document stays exactly what it is.
 
     This is about SCHEMA_VERSION only. Asking it about PACKAGE_VERSION is a category error:
     two distributions are not "compatible", one of them is installed.
     """
-    w_major, _, _ = parse(written_with)
-    r_major, _, _ = parse(read_by)
-    return w_major == r_major
+    w_major, w_minor, _ = parse(written_with)
+    r_major, r_minor, _ = parse(read_by)
+
+    if w_major != r_major:
+        return Compatibility(
+            written_with, read_by, Verdict.REFUSED,
+            Direction.WRITER_NEWER if (w_major, w_minor) > (r_major, r_minor)
+            else Direction.READER_NEWER,
+            basis="different major: MIGRATIONS.md's table makes a MAJOR a removal, rename or "
+                  "narrowing, and no reader has been shown to accept the other major",
+            reason=f"{written_with} and {read_by} are a major apart; MIGRATIONS.md states what "
+                   f"a reader must do about it")
+    if w_minor == r_minor:
+        return Compatibility(
+            written_with, read_by, Verdict.SUPPORTED, Direction.SAME,
+            basis="same MAJOR.MINOR: a PATCH moves descriptions and error wording only "
+                  "(MIGRATIONS.md, 'What each bump means')",
+            reason=f"{written_with} and {read_by} share one contract shape")
+
+    direction = Direction.WRITER_NEWER if w_minor > r_minor else Direction.READER_NEWER
+    w_contract, r_contract = f"{w_major}.{w_minor}.0", f"{r_major}.{r_minor}.0"
+    unknown = [c for c in (w_contract, r_contract) if c not in KNOWN_CONTRACTS]
+    if unknown:
+        return Compatibility(
+            written_with, read_by, Verdict.UNKNOWN, direction,
+            basis=f"no frozen contract for {', '.join(unknown)} in {_FROZEN}; nothing has "
+                  f"been demonstrated for this relationship",
+            reason=f"{written_with} read by {read_by} is an unpublished minor of this major: "
+                   f"not presumed safe")
+    if direction is Direction.READER_NEWER:
+        return Compatibility(
+            written_with, read_by, Verdict.SUPPORTED, direction,
+            basis=f"{_MATRIX}: frozen {w_contract} documents of every kind validate under the "
+                  f"{r_contract} models and schema",
+            reason=f"a {read_by} reader accepts {written_with} documents: the additions since "
+                   f"{w_contract} are optional and the frozen matrix shows it")
+    return Compatibility(
+        written_with, read_by, Verdict.REFUSED, direction,
+        basis=f"{_MATRIX}: the frozen {r_contract} schemas carry additionalProperties: false "
+              f"and reject the properties {w_contract} introduced, populated or null",
+        reason=f"a {read_by} reader refuses {written_with} documents that carry any property "
+               f"introduced since {r_contract}; the document is not rewritten or downgraded")
+
+
+def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:
+    """`assess(written_with, read_by).verdict is Verdict.SUPPORTED`, as a plain bool.
+
+    The name and signature are the ones every caller and document has used since 1.0.0; what
+    changed on 2026-09-19 (audit F01) is the answer. It was `major == major`, which said True
+    for a 2.0.0 reader handed a 2.1.0 object (the frozen 2.0.0 schema refuses it), for a minor
+    nobody has published, and for "2.1.0\n". It is now False for all three: an UNKNOWN verdict
+    is not a safe one, and a malformed string is a `ValueError` rather than an answer. A caller
+    that needs the direction or the evidence reads `assess()`; this is the yes/no view of it.
+    """
+    return assess(written_with, read_by).verdict is Verdict.SUPPORTED
 
 
 #: Semver as it is spelled on the wire — `MAJOR.MINOR.PATCH`, no leading zeroes, no prefix, no
@@ -423,6 +575,19 @@ def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:
 #: version already imports it, and it imports nothing of theirs. `oes.py`, which had this
 #: pattern, re-exports it under the same name for `oes_registry`.
 SEMVER_RE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+
+#: The same grammar as a JSON Schema `pattern`, since 2026-09-19 (audit F04). One string feeds
+#: both sides of the contract: `models.py` passes it to `Field(pattern=...)` on
+#: `SourceRef.adapter_version` and `CDMBase.schema_version`, so the published schema carries it,
+#: and pydantic holds the same fields to it before the `_semver` validators run. Anchored with
+#: `^`/`$` here and matched with `fullmatch` above, because `$` means different things in
+#: different engines: ECMA-262 (what JSON Schema specifies) and pydantic-core's Rust engine end
+#: the input there; Python's `re` also matches before a trailing newline, and the Python
+#: `jsonschema` package uses `re.search` — so `"1.2.3\n"` is a version to a vanilla Python
+#: schema validator and to nothing else. `schemas.validator_for()` is this package's answer
+#: (it reads `$` as ECMA does), and `tests/test_cdm_schema_alignment.py` runs every engine on
+#: the same bytes.
+SEMVER_PATTERN = f"^{SEMVER_RE.pattern}$"
 
 
 def is_semver(value: str) -> bool:

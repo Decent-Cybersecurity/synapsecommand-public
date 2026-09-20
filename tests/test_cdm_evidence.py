@@ -8,7 +8,7 @@ and the mutation has to be reported.
 
 The loss report's failure mode is a classifier whose categories overlap, so that a dropped
 field lands somewhere reassuring. One synthetic adapter exercises all six categories at once,
-and the arithmetic that ties DROPPED to the harness's own `unrepresented()` is asserted per
+and the arithmetic that ties DROPPED to the harness's own `value_presence_heuristic()` is asserted per
 adapter rather than argued in a docstring.
 
 Fixture provenance's failure mode is a check that skips when the record is missing. §33's "once
@@ -338,7 +338,7 @@ def test_dropped_is_exactly_the_harness_check_d_set_minus_the_declared_exception
             continue
         objects = [obj.model_dump(mode="json") for obj in adapter.to_cdm(raw)]
         report = lossless.classify(raw, objects, cls.TRANSFORMS, declared)
-        missing = set(lossless.unrepresented(raw, objects, cls.TRANSFORMS))
+        missing = set(lossless.value_presence_heuristic(raw, objects, cls.TRANSFORMS))
         assert set(report.DROPPED) == missing - set(report.UNSUPPORTED)
         checked += 1
     assert checked or name in ("adsb", "ais"), f"{name}: nothing was classified"
@@ -733,10 +733,12 @@ def _badge_record() -> dict:
     return evidence.generate("pntmap").model_dump(mode="json")
 
 
-def test_the_six_badges_are_the_six_and_each_is_a_shields_endpoint():
+def test_the_seven_badges_are_the_seven_and_each_is_a_shields_endpoint():
+    """Six until F07 (2026-09-20) added `independent-evidence`, read from the categories."""
     made = evidence.badges(_badge_record())
     assert set(made) == {"sc-cdm-compatible", "conformance-level", "roundtrip-verified",
-                         "deterministic", "lossless-verified", "synthetic-fixtures"}
+                         "deterministic", "lossless-verified", "synthetic-fixtures",
+                         "independent-evidence"}
     for slug, badge in made.items():
         assert set(badge) == {"schemaVersion", "label", "message", "color"}, slug
         assert badge["schemaVersion"] == 1
@@ -749,6 +751,7 @@ def test_the_six_badges_are_the_six_and_each_is_a_shields_endpoint():
     ("deterministic", ("conformance", "checks", "G")),
     ("lossless-verified", ("loss_report", "counts")),
     ("synthetic-fixtures", ("fixture_provenance", "synthetic")),
+    ("independent-evidence", ("evidence_categories",)),
 ])
 def test_a_badge_whose_grounding_field_is_absent_is_absent_and_not_red(slug, field):
     """§35's rule, per badge. ABSENT — not red, not grey, not "unknown".
@@ -764,6 +767,33 @@ def test_a_badge_whose_grounding_field_is_absent_is_absent_and_not_red(slug, fie
         node = node[key]
     del node[field[-1]]
     assert slug not in evidence.badges(payload), f"{slug} survived the removal of {field}"
+
+
+def test_the_lossless_badge_says_yes_only_on_the_ledger_and_heuristic_on_value_presence():
+    """F02: a clean reading that rests on the value-presence heuristic is measured, not proven,
+    and the badge says so in amber. `yes` needs `loss_report.ledger` with nothing LOST."""
+    proven = _badge_record()
+    assert proven["loss_report"]["ledger"]["basis"] == "ledger", "pntmap declares MAPPINGS"
+    assert evidence.badges(proven)["lossless-verified"]["message"] == "yes"
+
+    heuristic = json.loads(json.dumps(proven))
+    heuristic["loss_report"]["ledger"] = {"basis": "heuristic", "declared_mappings": 0}
+    badge = evidence.badges(heuristic)["lossless-verified"]
+    assert badge["message"] == "heuristic" and badge["color"] == "orange"
+
+    absent = json.loads(json.dumps(proven))
+    del absent["loss_report"]["ledger"]
+    assert evidence.badges(absent)["lossless-verified"]["message"] == "heuristic", \
+        "a record with no ledger block was never proven, whatever its DROPPED count says"
+
+    lost = json.loads(json.dumps(proven))
+    lost["loss_report"]["ledger"]["counts"]["LOST"] = 1
+    assert evidence.badges(lost)["lossless-verified"]["message"] == "heuristic", \
+        "a ledger with a LOST leaf and a green check D is contradictory; it is not 'yes'"
+
+    failed = json.loads(json.dumps(proven))
+    failed["conformance"]["checks"]["D"]["verdict"] = "FAIL"
+    assert evidence.badges(failed)["lossless-verified"]["message"] == "no"
 
 
 def test_no_badge_can_be_hand_set_because_none_of_them_takes_a_message():

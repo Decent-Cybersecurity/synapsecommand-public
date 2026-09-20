@@ -107,13 +107,21 @@ convention.
 ### Step 1 — Describe yourself: metadata
 
 Declare the metadata block of `ARCHITECTURE.md` §3: identity, the source standard and its version,
-the direction, the licence class, the maturity level, the claim status, the capabilities including
-`limits`, and the limitations. It MUST be inspectable programmatically from the class.
+the wire binding, the direction, the licence class, the maturity level, the claim status, the
+capabilities including `limits`, and the limitations. It MUST be inspectable programmatically from
+the class.
 
-Two of those fields are the ones implementers get wrong, so they are called out here. **Direction**
+Three of those fields are the ones implementers get wrong, so they are called out here. **Direction**
 is a declaration checked at class-definition time and not inferred from which methods exist.
 **Limitations** MUST NOT be empty: every adapter has a format edition it does not implement or a
 field with no canonical home, and an adapter declaring none is an adapter nobody has audited.
+**Binding** (`standard-encoding`, `provisional-internal-profile` or `normative-verified`) says
+what the bytes are bound to — the cited document's own encoding, a profile chosen in this
+repository because the normative resource is not held, or a wire form validated against the
+authorised normative schema. A provisional binding MUST be stated as a limitation as well, and
+`normative-verified` may not be declared ahead of an exercise report of the `normative_schema`
+category (Step 4). The generated support matrix (`docs/docs/cdm/support-matrix.mdx`) and
+`--list-adapters` print the binding beside the name.
 
 ### Step 2 — Publish that declaration: the manifest
 
@@ -142,6 +150,40 @@ repository is synthetic, and the record says so rather than leaving a reader to 
 
 Because the evidence is deterministic, a third party can regenerate it and compare. That is the
 whole point of the mechanism: a badge that cannot be recomputed is a decoration.
+
+**What kind of evidence it is.** A record also says which of five kinds of evidence it holds,
+because they are different kinds and not interchangeable labels: `internal_fixture` (the suite
+over the packaged synthetic set), `self_round_trip` (check E, this package encoding and decoding
+on both legs, which is not independence), `independent_expected` (an expected result derived by
+another implementation), `normative_schema` (validation against the source format's authoritative
+schema) and `independent_endpoint` (an exchange with an independently implemented endpoint). The
+first two the suite produces; the other three read ABSENT for every adapter here today, each with
+its reason, and only an exercise report can make one PRESENT. A second process running this
+package's own encoder and decoder, or an expected output written by the code under test, is the
+internal kind and is recorded as such. The record holds the declared maturity rung to the kinds it
+requires and reports local completion separately from outstanding external validation. It also
+names the exact source state it measured — the commit and, when the tree was dirty, a digest of the
+diff — and never its own final commit.
+
+**Recording an exchange with an independent implementation — the acceptance procedure.** No
+partner exchange has taken place and none is invented: every manifest's `external_exercise` is
+`null`, and the top rung is not awardable from this repository's own evidence. When one does take
+place, the record of it is made like this, offline, with nothing fetched:
+
+1. Obtain the inputs and the peer's outputs under a licence that permits their use, and keep them
+   beside a specification file: the category, the peer's implementation and version (this package
+   under any of its names is refused), the format edition and profile, every input with its
+   provenance and who authorised it, the directions exercised, and per direction the command that
+   was run and the paths of the expected and the observed output.
+2. Run `python -m synapse_cdm.evidence exercise --adapter <name> --spec <file> --slug <name>`.
+   The runner derives every digest, each verdict from its two digests, this side's version, the
+   environment and the snapshot, and writes `evidence/<adapter>/<version>/exercises/<slug>.json`
+   in the published shape (`schemas/evidence/exercise.schema.json`). A report of a failed exchange
+   is a valid report.
+3. Run `python -m synapse_cdm.evidence generate --adapter <name>`; the record reads the report,
+   turns the category PRESENT with the report's hash as its source, and `verify` refuses the
+   record from then on whenever the report is missing or changed. Until step 2 has happened the
+   category stays ABSENT, and nothing in ordinary development needs it to be otherwise.
 
 ### Step 5 — Ship it: the release path
 

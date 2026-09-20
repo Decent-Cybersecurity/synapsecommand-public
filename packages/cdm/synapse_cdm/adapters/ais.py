@@ -116,7 +116,8 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Tra
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "AIS"
 
@@ -802,6 +803,7 @@ class AisAdapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="AIS (NMEA 0183 AIVDM/AIVDO)",
                          version=None),
+        binding=WireBinding.STANDARD,
         direction=Direction.BIDIRECTIONAL,
         license_class=LicenseClass.LICENSED,
         maturity=Maturity(

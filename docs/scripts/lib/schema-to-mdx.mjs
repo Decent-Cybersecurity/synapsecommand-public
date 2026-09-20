@@ -366,9 +366,10 @@ schemas drift from the models, and \`npm run check:schemas\` fails if these page
 the schemas — so a field renamed in Python cannot reach a reader through a stale page.
 
 **CDM schema version: \`${schemaVersion}\`.** Compatibility is decided by
-\`version.compatible()\`, not by string equality: a 1.0.0 reader accepts anything 1.x, because
-MINOR additions are optional by definition and a fleet that stops ingesting the moment one
-adapter is upgraded is a self-inflicted outage.
+\`version.compatible()\`, not by string equality, and it is directional: a newer reader accepts an
+older object because the frozen historical schemas show it validating, while an older reader
+refuses a newer object that carries a property it does not know, populated or null. A minor
+nobody has published is unknown, not safe — see the [Changelog](../changelog.mdx).
 
 | Page | Source file | SHA-256 |
 | --- | --- | --- |

@@ -17,7 +17,7 @@ description: "Anything that exists on the map, at a stated time, with stated con
 | Source file | `schemas/entity.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:2.1.0:entity` |
 | CDM schema version | `2.1.0` |
-| SHA-256 of source | `dc1833baa340de864f5ecfa35d25ac8ae743218914f18558d002eb730396f6cf` |
+| SHA-256 of source | `907141e93084b46c99f793446aeaf2f4e583b5d9c6f84c408dd5c0c846dcd00d` |
 
 Anything that exists on the map, at a stated time, with stated confidence.
 
@@ -30,18 +30,18 @@ Anything that exists on the map, at a stated time, with stated confidence.
 | `confidence` | number \| null | no | 0..1. None = unknown; 0 means certainty-that-not, which is a claim. Default `null`. (≥ 0; ≤ 1) |
 | `entity_id` | string (uuid) | **yes** | Stable across updates — derived, see ids.derive(). Never drawn at random. |
 | `entity_type` | [EntityType](#entitytype) | **yes** |  |
-| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `kinematics` | [Kinematics](#kinematics) \| null | no | Default `null`. |
 | `object_kind` | `"entity"` | no |  |
 | `ontology_types` | array&lt;string&gt; | no | Optional SC-OES semantic types — absolute ontology identifiers saying what this thing IS in operational terms. Empty = the producer asserted none. Never derived from entity_type, and entity_type is never derived from it. |
 | `position` | [Position](#position) \| null | no | None = position unknown. NEVER a Position holding zeros. Default `null`. |
 | `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
 | `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`) |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
-| `symbol` | string \| null | no | MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — see symbology.sidc_from_affiliation() for deriving one. Default `null`. |
+| `symbol` | string \| null | no | MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — see symbology.sidc_from_affiliation() for deriving one. Default `null`. (pattern `^[0-9]{20}$`) |
 | `valid_from` | string | **yes** | When this state began. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `valid_to` | string \| null | no | When it ceased. None = still current / open-ended. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 
@@ -325,7 +325,7 @@ data and hide it from an operator. There is no safe default, so there is no defa
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `adapter` | string | **yes** | Adapter name, e.g. pntmap. (min length 1) |
-| `adapter_version` | string | **yes** | Adapter semver. (min length 1) |
+| `adapter_version` | string | **yes** | Adapter semver: MAJOR.MINOR.PATCH, no leading zeroes, nothing else. (pattern `^(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)\.(0\|[1-9][0-9]*)$`; min length 1) |
 | `format_name` | string \| null | no | The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own declared metadata.format; None only for an adapter that declares none. Default `null`. |
 | `format_version` | string \| null | no | The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document in this tree states which edition the adapter targets — a reading, never a gap filled in. Default `null`. |
 | `observed_at` | string \| null | no | The instant the SOURCE RECORD states for itself, when it states one and no canonical field already carries it. Event.observed_at stays the event's own time; this is the record's. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |

@@ -1,0 +1,93 @@
+{
+  "rule": "STRUCTURAL",
+  "title": "The other class, for contrast: what the published JSON Schema refuses on its own, with no semantic finding",
+  "cases": [
+    {
+      "name": "the baseline entity, valid at both levels",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "symbol": "10260000000000000000"
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "adapter_version banana",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "banana", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "adapter_version"}
+    },
+    {
+      "name": "adapter_version with a leading zero",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "01.2.3", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "adapter_version"}
+    },
+    {
+      "name": "adapter_version with a trailing newline",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.2.3\n", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "adapter_version"}
+    },
+    {
+      "name": "timestamp without the three decimals",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00Z"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "valid_from"}
+    },
+    {
+      "name": "an unknown top-level field",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "vessel_flag": "LV"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "vessel_flag"}
+    },
+    {
+      "name": "a symbol that is not twenty digits",
+      "document": {
+        "object_kind": "entity", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "E-0"}],
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f00",
+        "entity_type": "UNIT", "affiliation": "UNKNOWN",
+        "valid_from": "2026-04-29T06:00:00.000Z",
+        "symbol": "SFGPUCI----D"
+      },
+      "expected": {"structural": "FAIL", "semantic": "PASS", "finding_contains": "symbol"}
+    }
+  ]
+}

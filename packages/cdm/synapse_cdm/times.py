@@ -67,6 +67,30 @@ def parse(value: str | _dt.datetime) -> _dt.datetime:
     return stamp.astimezone(_dt.timezone.utc)
 
 
+def parse_wire(value: str | _dt.datetime) -> _dt.datetime:
+    """What a model accepts as a timestamp ON THE WIRE: the one serialised form, or a datetime.
+
+    `parse()` above is the adapter's parser and takes what sources send. This is the JSON
+    path's, since 2026-09-19 (audit F04) — `models.Timestamp` routes `model_validate_json`
+    here and everything else to `parse()` — and it takes only what `render()` writes: a string
+    must match `TIMESTAMP_RE` in full, the same pattern the published JSON Schema carries, so a
+    document the schema refuses is not a document the Python JSON path accepts. Before this the
+    JSON path took "2026-04-29T06:12:44Z", "+02:00" and a naive string through `parse()`, and
+    the same bytes failed the schema's `pattern`: two validators, two languages. A `datetime`
+    object is accepted and normalised to UTC, because that is Python-object coercion, not the
+    wire contract.
+    """
+    if isinstance(value, _dt.datetime):
+        return parse(value)
+    if isinstance(value, str) and TIMESTAMP_RE.fullmatch(value) is not None:
+        return parse(value)
+    raise ValueError(
+        f"a timestamp on the wire is RFC 3339 UTC with exactly three decimal places and Z, "
+        f"e.g. 2026-04-29T06:12:44.000Z; got {value!r}. A source's own form is parsed with "
+        "times.parse() at the adapter, and the model receives the datetime"
+    )
+
+
 def render(stamp: _dt.datetime) -> str:
     """The one serialised form. Truncates, never rounds.
 

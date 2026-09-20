@@ -6,7 +6,7 @@ Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter t
 something it cannot parse structurally, and said so out loud: `from_cdm()` here returns NMEA
 sentences, and a check it cannot run must report SKIP rather than PASS. The README's instruction
 for that case was that the adapter ships its own round-trip test — so both directions were
-exercised here, with the same value-presence comparison (`lossless.unrepresented`) the harness
+exercised here, with the same value-presence comparison (`lossless.value_presence_heuristic`) the harness
 would have used. The harness now compares the sentences octet for octet itself, against
 `roundtrip_reference(raw)`; the tests here remain the adapter's own statement of the claim.
 
@@ -794,7 +794,7 @@ def test_the_ingest_round_trip_loses_no_source_value(path):
     adapter = _adapter()
     emitted = ais._parse_nmea(adapter.from_cdm(adapter.to_cdm(path.read_bytes())))
 
-    missing = lossless.unrepresented(original, [emitted],
+    missing = lossless.value_presence_heuristic(original, [emitted],
                                      {**AisAdapter.TRANSFORMS, **NOT_RETRANSMITTED})
     assert not missing, "\n".join(
         f"{p} = {v!r} was in the AIS source and is absent from what from_cdm() emitted"
@@ -870,7 +870,7 @@ def test_the_egress_round_trip_loses_no_object_value(path):
     emitted = _parse_all(_adapter().from_cdm([subject]))
     carried = _prune(subject.model_dump(mode="json"), set(EGRESS_NO_AIS_FIELD))
 
-    missing = lossless.unrepresented(carried, emitted)
+    missing = lossless.value_presence_heuristic(carried, emitted)
     assert not missing, "\n".join(
         f"{p} = {v!r} was on the {subject.object_kind} and is absent from the emitted AIS"
         for p, v in sorted(missing.items()))
@@ -907,7 +907,7 @@ def test_the_egress_round_trip_would_notice_each_kind_of_loss(fixture, dropped, 
     del lossy[0]["message"][dropped]
 
     carried = _prune(subject.model_dump(mode="json"), set(EGRESS_NO_AIS_FIELD))
-    missing = lossless.unrepresented(carried, lossy)
+    missing = lossless.value_presence_heuristic(carried, lossy)
     assert expected_loss in missing, (
         f"removing {dropped!r} should have lost {expected_loss}; the check reported {missing}")
 

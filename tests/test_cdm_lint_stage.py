@@ -13,7 +13,8 @@ off.
 And the rule set did not do what its comments said. Under ruff 0.16.6, `select = ["E9"]` enables
 exactly one rule — `io-error` (E902) — a syntax error is reported regardless of selection, and an
 undefined name is pyflakes' F821, which `E9` never included; three sentences in three files said
-"syntax errors and undefined names". The set is now `E9,F821`, and this module holds the four
+"syntax errors and undefined names". The set became `E9,F821` that day and `E9,F,E7,W` on
+2026-09-20 (audit remediation F09, `RULE_SET` below), and this module holds the four
 things that were fixed together so that none of them drifts back alone:
 
 1. the ruff version is pinned ONCE, in the `[lint]` extra, as `ruff==<version>`;
@@ -46,8 +47,11 @@ LINT_COMMAND = "ruff check --config packages/cdm/pyproject.toml packages/cdm gat
 
 #: The rule set, as a second copy on purpose — the same reason `tests/test_cdm_trusted_publishing.py`
 #: states the environment name as a third copy: a test that derived this from pyproject.toml would
-#: move with it and check nothing. Widening it is a ruling and an edit to both files.
-RULE_SET = ["E9", "F821"]
+#: move with it and check nothing. Widening it is a ruling and an edit to both files — done once,
+#: 2026-09-20 (audit remediation F09): `E9,F821` became `E9,F,E7,W` over an explicit per-file
+#: legacy baseline, and the test below holds that baseline to files that exist and to one list per
+#: file so that it can only shrink.
+RULE_SET = ["E9", "F", "E7", "W"]
 
 #: How the extra installs the linter: the version pinned exactly, never floored, because the rule
 #: set above was measured against one version and a newer ruff can change what a rule sees.
@@ -78,13 +82,44 @@ def test_the_lint_extra_pins_ruff_exactly_once():
 
 
 def test_the_rule_set_is_the_documented_one():
-    """`E9,F821`, and not `E9` alone — the set that catches what the comments promise."""
+    """`E9,F,E7,W` — the set the release-pipeline page and pyproject.toml's comment describe."""
     select = _pyproject()["tool"]["ruff"]["lint"]["select"]
     assert select == RULE_SET, (
-        f"[tool.ruff.lint] selects {select} and the documented set is {RULE_SET}. Under ruff "
-        "0.16.6 `E9` alone is only E902 (io-error); F821 is the undefined-name rule the lint "
-        "comments in pyproject.toml, publish.yml and the release-pipeline page describe. Change "
+        f"[tool.ruff.lint] selects {select} and the documented set is {RULE_SET}. The lint "
+        "comments in pyproject.toml and the release-pipeline page describe this set; change "
         "the set and the sentences in the same commit")
+    assert "F821" in select or "F" in select, "the undefined-name rule left the set"
+
+
+def test_the_legacy_baseline_names_files_that_exist_and_carries_no_blanket_entry():
+    """The per-file baseline the 2026-09-20 widening was added green under.
+
+    A baseline is only honest while every entry is a real file with a short list of rules: a glob,
+    a directory, or an `ALL` entry would be the blanket suppression the finding forbids, and an
+    entry for a file that no longer exists is a suppression waiting for a new file of that name.
+    """
+    baseline = _pyproject()["tool"]["ruff"]["lint"].get("per-file-ignores", {})
+    assert baseline, "the baseline is gone; if every legacy finding was repaired, delete this test"
+    for pattern, rules in baseline.items():
+        if pattern.startswith("**/"):
+            # The one shape a glob may take: a bare basename, because the file's directory is a
+            # word `tests/test_cdm_scripted_edits.py` refuses in any directive of pyproject.toml.
+            # It is still one file: the basename must resolve to exactly one file in the tree.
+            basename = pattern[3:]
+            assert "*" not in basename and "/" not in basename, f"{pattern!r} is a glob, not a file"
+            matches = [p for p in REPO.rglob(basename)
+                       if ".venv" not in p.parts and "node_modules" not in p.parts]
+            assert len(matches) == 1, f"{pattern!r} names {len(matches)} files: {matches}"
+        else:
+            assert "*" not in pattern, f"{pattern!r} is a glob, not a file"
+            # Repository-root relative, because that is the working directory of the one
+            # documented invocation (`LINT_COMMAND`, run from the root) and ruff resolves a
+            # `--config` file's globs against the working directory.
+            assert (REPO / pattern).is_file(), f"{pattern!r} is not a file under the repository root"
+        assert rules and all(re.fullmatch(r"[A-Z]+\d+", rule) for rule in rules), (
+            f"{pattern!r} ignores {rules}; every entry names specific rule codes, never a prefix")
+    assert len(baseline) <= 13, (
+        f"the baseline has {len(baseline)} entries and was written with 13; it may only shrink")
 
 
 # ------------------------------------------------------------- the workflows read the pin, never type it

@@ -1,0 +1,44 @@
+{
+  "rule": "SEM-008",
+  "title": "A route leg joins two different waypoints",
+  "cases": [
+    {
+      "name": "leg 0 -> 1",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-8"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e08",
+        "object_type": "ROUTE",
+        "geometry": {"type": "LineString", "coordinates": [[21.0, 57.0], [22.0, 58.0]]},
+        "route": {
+          "waypoints": [
+            {"sequence": 0, "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+            {"sequence": 1, "position": {"lat": 58.0, "lon": 22.0, "position_source": "GNSS"}}
+          ],
+          "legs": [{"from_seq": 0, "to_seq": 1}]
+        }
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "leg from a waypoint to itself",
+      "document": {
+        "object_kind": "plan_object", "schema_version": "2.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "P-8"}],
+        "object_id": "0d5c2d0e-6b9a-4c1f-9a3e-2f7b8c4d1e08",
+        "object_type": "ROUTE",
+        "geometry": {"type": "LineString", "coordinates": [[21.0, 57.0], [22.0, 58.0]]},
+        "route": {
+          "waypoints": [
+            {"sequence": 0, "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+            {"sequence": 1, "position": {"lat": 58.0, "lon": 22.0, "position_source": "GNSS"}}
+          ],
+          "legs": [{"from_seq": 0, "to_seq": 0}]
+        }
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-008"}
+    }
+  ]
+}

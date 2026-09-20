@@ -130,6 +130,43 @@ class UnknownFields(str, enum.Enum):
     NONE = "none"
 
 
+class WireBinding(str, enum.Enum):
+    """What the adapter's WIRE FORM is bound to — the audit remediation's F05 field (2026-09-20).
+
+    `format` names the standard and its edition; this says whether the bytes this adapter reads
+    and writes are that standard's own encoding or a profile chosen here. The distinction the
+    audit found blurred is the STANAG 4676 one: the adapter reads and writes XML whose element
+    names are the AEDP-12 data model's UML attribute names bound through one table
+    (`stanag4676.ELEMENT_NAMES`), because the normative XSD is not held — reader/writer agreement
+    through one shared table is not independent validation, and a manifest that said only
+    `format.version` let a consumer read "AEDP-12 Edition B Version 2" as a wire-level claim.
+
+      standard-encoding             the wire form is the encoding the cited format document itself
+                                    defines (ASTERIX octets under the FSPEC, NMEA sentences, KLV
+                                    local-set keys, CoT's published element names, a JSON API's
+                                    own field names), and this repository's fixtures and tests are
+                                    checked against that document's own rules. Verified by this
+                                    package's own evidence — not by an independent implementation
+                                    or a normative schema, which are F07's external categories.
+      provisional-internal-profile  the element names, namespace or bindings were chosen in this
+                                    repository from the standard's data model because the
+                                    normative binding resource is not held; a document that
+                                    round-trips here proves the profile is self-consistent and
+                                    nothing more. MUST be accompanied by a limitation saying so.
+      normative-verified            the wire form has been validated against the AUTHORISED
+                                    normative schema through the adapter's documented
+                                    local-resource hook, with the resource's edition, provenance,
+                                    usage rights and checksum recorded. No shipped adapter
+                                    declares it (2026-09-20); `tests/test_cdm_manifests.py` holds
+                                    the value to an exercise report of F07's `normative_schema`
+                                    category, so it cannot be typed ahead of the evidence.
+    """
+
+    STANDARD = "standard-encoding"
+    PROVISIONAL_INTERNAL_PROFILE = "provisional-internal-profile"
+    NORMATIVE_VERIFIED = "normative-verified"
+
+
 class FormatRef(Strict):
     """The source standard this adapter is written against.
 
@@ -456,6 +493,10 @@ class AdapterMetadata(Strict):
     name: str
     adapter_version: str
     format: FormatRef
+    #: F05 (2026-09-20): what the wire form is bound to. REQUIRED and undefaulted, for F1.1's
+    #: reason — a default of `standard-encoding` would be the framework making a wire-level claim
+    #: for an adapter whose author made none.
+    binding: WireBinding
     direction: Direction
     license_class: LicenseClass
     maturity: Maturity
@@ -560,6 +601,17 @@ class AdapterMetadata(Strict):
                 "format.version is null and no limitation says so. A null edition is a reading — "
                 "no document in this tree states which edition the adapter targets — and a "
                 "reading a consumer cannot find is indistinguishable from a field somebody forgot"
+            )
+
+        # F05: a provisional binding is a caveat a consumer choosing an adapter has to be able to
+        # find in the limitations, where every other caveat lives — the enum value alone is a
+        # word in a field a reader may never open. The same half-rule as the null edition above.
+        if self.binding is WireBinding.PROVISIONAL_INTERNAL_PROFILE and not any(
+                "provisional" in limitation_text(line).lower() for line in self.limitations):
+            raise ValueError(
+                "binding is provisional-internal-profile and no limitation says so. The element "
+                "names or namespace this adapter binds to were chosen here and not read from the "
+                "normative resource; a consumer has to be told that where the other caveats are"
             )
         return self
 

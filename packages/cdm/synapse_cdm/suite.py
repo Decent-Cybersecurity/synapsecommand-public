@@ -49,6 +49,7 @@ import copy
 import dataclasses
 import datetime as _dt
 import json
+import multiprocessing
 import pathlib
 import sys
 import time
@@ -78,9 +79,153 @@ EXIT_INTERNAL = 3
 MALFORMED_DIR = "malformed"
 
 #: §21's bound on one refusal. A malformed payload that has not been refused in five seconds has
-#: not been refused; the check measures wall clock around the call and does not kill the thread,
-#: because a parser that hangs is a finding to report and not a process to police.
+#: not been refused. Since the audit remediation's F03 (2026-09-19) the bound is ENFORCED: H and
+#: N hand every adversarial payload to a spawned worker process (`ParserWorker`) and a case that
+#: has not answered within this many seconds is killed — `terminate()`, `KILL_GRACE_S`, then
+#: `kill()` — and recorded as `PARSER_TIMEOUT`, which is a FAIL and never a refusal. Until then
+#: the check measured the wall clock after `to_cdm` returned, which reads a slow parser and
+#: cannot read one that never returns: the sweep hung before any verdict existed.
 DEFAULT_TIMEOUT_S = 5.0
+
+#: F03's bound on the worker's own start-up: spawning the interpreter, importing the package,
+#: resolving the adapter and constructing it once. A worker that has not said `ready` by then is
+#: killed and every case it would have run is `WORKER_INIT_FAILED`.
+DEFAULT_STARTUP_TIMEOUT_S = 30.0
+
+#: How long `terminate()` is given before `kill()`. A parser that ignores SIGTERM meets SIGKILL
+#: this many seconds later; the documented worst case for one case is therefore
+#: `timeout_s + KILL_GRACE_S` plus the reap.
+KILL_GRACE_S = 1.0
+
+#: After this many killed or dead workers in one check the remaining cases are not run and are
+#: counted in `cases_not_run`. The check has FAILED by then regardless; the cap keeps a sweep
+#: over a parser that hangs on every offset from costing `offsets × timeout_s`.
+DEFAULT_MAX_WORKER_RESTARTS = 8
+
+#: The most bytes one message across the worker pipe may carry, either direction. The worker
+#: never sends objects — a count, class names and a clipped message — and the parent reads with
+#: `recv_bytes(maxlength=...)`, so an adapter that raises with a megabyte in its message cannot
+#: make the harness hold it.
+OUTPUT_CAP_BYTES = 4096
+
+#: What the canonical evidence names as the isolation mechanism. `spawn` and not `fork`: fork is
+#: unsafe after threads and `spawn` is the one start method macOS, Linux and Windows share.
+ISOLATION = "spawn-subprocess"
+
+
+class UnsupportedResourceLimit(ValueError):
+    """A memory or CPU limit was REQUESTED and this platform cannot enforce it (F06).
+
+    Raised before any worker is spawned, so a caller who asked for a guarantee is told plainly
+    that they are not getting one — never a silent best effort, never a limit that reads as set
+    in the report and holds nothing. The reasons are `resource_limit_support()`'s, per field.
+    """
+
+
+@dataclasses.dataclass(frozen=True)
+class ResourceLimits:
+    """The envelope a caller may ask the parser worker to run inside (F06, 2026-09-20).
+
+    `memory_bytes` is applied as `RLIMIT_AS` (soft == hard) and `cpu_seconds` as `RLIMIT_CPU`
+    with the hard limit ONE SECOND above the soft one, in the child before the adapter is
+    imported. The gap is deliberate (S10, 2026-09-20): Linux's `check_process_timers` tests the
+    hard CPU limit first and sends `SIGKILL`, and only a soft limit BELOW the hard one delivers
+    `SIGXCPU`, so `(value, value)` would end the worker with -9 and the evidence would name the
+    wrong signal; `(value, value + 1)` is SIGXCPU at the soft limit with SIGKILL one second later
+    as the backstop. Neither is portable, and the package does
+    not pretend otherwise: `resource_limit_support()` says what THIS platform enforces, and a
+    request the platform cannot honour is refused by `ParserWorker` with
+    `UnsupportedResourceLimit`. The default is no limit at all, which is what the report shows
+    when none was requested — a limit that was not asked for is not written into the evidence.
+    """
+
+    memory_bytes: int | None = None
+    cpu_seconds: int | None = None
+
+    def requested(self) -> dict[str, int]:
+        """The fields a caller actually set, in the report's key order."""
+        return {name: value for name, value in (("memory_bytes", self.memory_bytes),
+                                                ("cpu_seconds", self.cpu_seconds))
+                if value is not None}
+
+    def validate(self) -> None:
+        """Refuse, clearly, any requested field this platform cannot enforce."""
+        support = resource_limit_support()
+        for name, value in self.requested().items():
+            if value <= 0:
+                raise UnsupportedResourceLimit(f"{name}={value}: a limit is a positive number")
+            enforced, reason = support[name]
+            if not enforced:
+                raise UnsupportedResourceLimit(
+                    f"{name}={value} was requested and this platform ({sys.platform}) cannot "
+                    f"enforce it: {reason}. Refused rather than applied as a best effort — the "
+                    f"conformance worker's isolation is `{ISOLATION}` with a per-case deadline on "
+                    f"every platform, and the memory/CPU envelope is the hosting application's "
+                    f"here (a container or cgroup limit, a job object, a VM)")
+
+
+def resource_limit_support() -> dict[str, tuple[bool, str]]:
+    """What this platform can enforce of `ResourceLimits`, per field: `(enforced, reason)`.
+
+    Decided from the platform and not from a probe, because the probe that would settle it —
+    reserve past the limit and see — costs address space at every worker start. The readings
+    that decided the two `False` rows for macOS were taken on 2026-09-20 (macOS 26.5.2, CPython
+    3.14.7, a spawned child): `setrlimit(RLIMIT_AS)` and `setrlimit(RLIMIT_DATA)` raised
+    `ValueError: current limit exceeds maximum limit` for 64 MiB, 512 MiB and 2 GiB alike while
+    the limit read back as infinite, and a 4 GiB reservation succeeded afterwards; `RLIMIT_CPU`
+    was accepted, read back as `(1, 1)`, and a child then spent 4 s of CPU under it and exited
+    0. Linux is the platform whose kernel documents both — `mmap` past `RLIMIT_AS` fails with
+    `ENOMEM`, which the interpreter raises as `MemoryError`; `RLIMIT_CPU` delivers `SIGXCPU` at
+    the soft limit when the hard limit sits above it, and `SIGKILL` at the hard one — and `tests/test_cdm_resource_envelope.py` asserts the enforcement on that
+    platform and the refusal on every other. Windows has no `resource` module at all.
+    """
+    try:
+        import resource  # noqa: F401 - the probe is the import
+    except ImportError:
+        reason = "no `resource` module on this platform: `setrlimit` does not exist here"
+        return {"memory_bytes": (False, reason), "cpu_seconds": (False, reason)}
+    if sys.platform.startswith("linux"):
+        return {"memory_bytes": (True, "RLIMIT_AS: an allocation past the limit fails with "
+                                       "ENOMEM and the interpreter raises MemoryError"),
+                "cpu_seconds": (True, "RLIMIT_CPU: SIGXCPU at the soft limit ends the worker "
+                                      "(hard limit one second above it, SIGKILL as the backstop)")}
+    if sys.platform == "darwin":
+        return {"memory_bytes": (False, "macOS refuses a finite RLIMIT_AS/RLIMIT_DATA with EINVAL "
+                                        "(read 2026-09-20 on 26.5.2 / CPython 3.14.7)"),
+                "cpu_seconds": (False, "macOS accepts RLIMIT_CPU and does not enforce it (read "
+                                       "2026-09-20: 4 s of CPU spent under a 1 s limit)")}
+    reason = f"{sys.platform}: rlimit enforcement not measured, so none is claimed"
+    return {"memory_bytes": (False, reason), "cpu_seconds": (False, reason)}
+
+
+def _apply_resource_limits(limits: dict[str, int]) -> None:
+    """In the child, before the adapter is imported. A refusal here is the worker's init error."""
+    if not limits:
+        return
+    import resource
+    if "memory_bytes" in limits:
+        value = limits["memory_bytes"]
+        resource.setrlimit(resource.RLIMIT_AS, (value, value))
+    if "cpu_seconds" in limits:
+        value = limits["cpu_seconds"]
+        # soft < hard, or Linux sends SIGKILL at the hard limit and never SIGXCPU (docstring of
+        # `ResourceLimits`; S10 2026-09-20).
+        resource.setrlimit(resource.RLIMIT_CPU, (value, value + 1))
+
+#: F03's outcome codes: one per case, stable across machines, and the ONLY vocabulary the
+#: canonical evidence uses for what happened to a case. `PARSER_REJECTED` is the controlled
+#: refusal the checks want. Everything else fails the case, and a timeout is a failed robustness
+#: test and not a successful rejection — the parser did not refuse anything, the harness stopped
+#: waiting for it.
+PARSER_REJECTED = "PARSER_REJECTED"
+PARSER_ACCEPTED = "PARSER_ACCEPTED"
+PARSER_TIMEOUT = "PARSER_TIMEOUT"
+PARSER_CRASH = "PARSER_CRASH"
+WORKER_INIT_FAILED = "WORKER_INIT_FAILED"
+HARNESS_ERROR = "HARNESS_ERROR"
+OUTCOME_CODES = (PARSER_REJECTED, PARSER_ACCEPTED, PARSER_TIMEOUT, PARSER_CRASH,
+                 WORKER_INIT_FAILED, HARNESS_ERROR)
+FAILING_OUTCOMES = frozenset(OUTCOME_CODES) - {PARSER_REJECTED}
 
 #: F2.5. Every offset for a fixture under this size, evenly spaced up to this many for anything
 #: larger. Stated in the report — a truncation sweep whose density is invisible is a number
@@ -315,8 +460,315 @@ def check_deterministic(adapter: Adapter, payloads: list[tuple[str, Any]], *,
     return _verdict(PASS, **details)
 
 
+# --- F03: the parser worker ---------------------------------------------------------------------
+#
+# H and N feed a parser input that is malformed on purpose, so they are the two places where the
+# parser may hang, and a hang in the same process as the harness is a hang of the harness. Both
+# checks now run every case through one `ParserWorker`: a `spawn`ed interpreter that resolves the
+# adapter by reference, constructs it once to prove it can, and then answers one case at a time
+# over a pipe. The parent waits `timeout_s` for each answer and no longer. The worker sends a
+# count, class names and a clipped message; it never sends a CDM object and the parent never
+# unpickles anything from it — every message is JSON under `OUTPUT_CAP_BYTES`.
+
+
+def _qualified(exc: BaseException) -> str:
+    return f"{type(exc).__module__}.{type(exc).__name__}"
+
+
+def _clip(text: str, cap: int) -> str:
+    return text if len(text) <= cap else text[:cap] + "…"
+
+
+def adapter_reference(adapter: Adapter) -> str:
+    """How the adapter travels to the worker: a registry name where the package ships it, and a
+    `module:ClassName` import reference otherwise (a partner's adapter, a test double). Never a
+    pickled instance — the worker builds its own under its own frozen clock."""
+    cls = type(adapter)
+    if is_shipped(cls) and roster().get(cls.name) is cls:
+        return cls.name
+    return f"{cls.__module__}:{cls.__qualname__}"
+
+
+def _send(conn, message: dict, cap: int) -> None:
+    encoded = json.dumps(message, sort_keys=True).encode()
+    if len(encoded) > cap:
+        # Clip the one free-text field and try once more; the fixed fields are small by design.
+        message = dict(message, detail=None)
+        encoded = json.dumps(message, sort_keys=True).encode()
+    conn.send_bytes(encoded[:cap])
+
+
+def _worker_main(inbox, outbox, reference: str, frozen_iso: str, synthetic: bool,
+                 cap: int, limits: dict[str, int] | None = None) -> None:
+    """The worker's whole life. Module-level so `spawn` can import it by name.
+
+    Two simplex connections and not one duplex one: `Pipe(duplex=True)` is `socket.socketpair()`
+    on Unix, and §41's no-network gate (`tests/test_cdm_no_network.py`) takes `socket.socket`
+    away and runs the whole roster — a worker built on a socket pair failed it on the first full
+    run. `Pipe(duplex=False)` is `os.pipe()`, which is what a harness that makes no network call
+    should be built on anyway.
+    """
+    detail_cap = cap // 4
+    try:
+        _apply_resource_limits(limits or {})    # F06: the envelope, before anything is imported
+        cls = load_adapter(reference)
+        clock = times.frozen_clock(_dt.datetime.fromisoformat(frozen_iso))
+        cls(clock=clock, synthetic=synthetic)
+    except BaseException as e:                                # noqa: BLE001 - reported, then exit
+        _send(outbox, {"init_error": _qualified(e), "detail": _clip(str(e), detail_cap)}, cap)
+        return
+    _send(outbox, {"ready": True}, cap)
+    cached: tuple[pathlib.Path, bytes] | None = None
+    while True:
+        try:
+            request = json.loads(inbox.recv_bytes(cap))
+        except (EOFError, OSError):
+            return
+        if request.get("stop"):
+            return
+        path, offset = pathlib.Path(request["path"]), request.get("offset")
+        reply: dict[str, Any] = {"outcome": None, "layer": "adapter", "exception": None,
+                                 "objects": None, "detail": None}
+        try:
+            if offset is None:
+                raw: Any = harness.load_raw(path)
+            else:
+                if cached is None or cached[0] != path:
+                    cached = (path, path.read_bytes())
+                raw = cached[1][:offset]
+        except CRASH_CLASSES as e:
+            reply.update(outcome=PARSER_CRASH, layer="loader", exception=_qualified(e))
+        except Exception as e:                                 # noqa: BLE001 - the loader refused
+            reply.update(outcome=PARSER_REJECTED, layer="loader", exception=_qualified(e),
+                         detail=_clip(str(e), detail_cap))
+        if reply["outcome"] is None:
+            try:
+                objects = cls(clock=clock, synthetic=synthetic).to_cdm(raw)
+            except CRASH_CLASSES as e:
+                reply.update(outcome=PARSER_CRASH, exception=_qualified(e))
+            except Exception as e:                             # noqa: BLE001 - the refusal itself
+                reply.update(outcome=PARSER_REJECTED, exception=_qualified(e),
+                             detail=_clip(str(e), detail_cap))
+            else:
+                reply.update(outcome=PARSER_ACCEPTED, objects=len(objects))
+        _send(outbox, reply, cap)
+
+
+class ParserWorker:
+    """One adapter's killable parser, reused across the cases of a check (and across H and N when
+    `run()` hands both the same instance), restarted after every kill or death.
+
+    `diagnostics` is where the VOLATILE facts go — pids, exit codes, durations, whether the kill
+    escalated — so the canonical `details` can carry codes and bounds only and stay byte-identical
+    between two runs of one tree. Nothing here hides a timeout: the code reaches the verdict, the
+    seconds reach the diagnostics.
+    """
+
+    def __init__(self, adapter: Adapter, *, clock: times.Clock,
+                 timeout_s: float = DEFAULT_TIMEOUT_S,
+                 startup_timeout_s: float = DEFAULT_STARTUP_TIMEOUT_S,
+                 max_restarts: int = DEFAULT_MAX_WORKER_RESTARTS,
+                 output_cap: int = OUTPUT_CAP_BYTES, diagnostics: dict | None = None,
+                 limits: ResourceLimits | None = None) -> None:
+        self.reference = adapter_reference(adapter)
+        self.frozen_iso = clock().isoformat()
+        self.synthetic = adapter._synthetic
+        self.timeout_s = timeout_s
+        self.startup_timeout_s = startup_timeout_s
+        self.max_restarts = max_restarts
+        self.output_cap = output_cap
+        self.limits = limits or ResourceLimits()
+        self.limits.validate()      # F06: an unavailable guarantee is refused here, before a spawn
+        self.diagnostics = diagnostics if diagnostics is not None else {}
+        self.diagnostics.update({"isolation": ISOLATION, "reference": self.reference,
+                                 "workers": [], "cases": [], "restarts": 0, "init_failure": None,
+                                 "resource_limits": self.limits.requested(),
+                                 "resource_limit_support": {
+                                     name: {"enforced": enforced, "reason": reason}
+                                     for name, (enforced, reason)
+                                     in resource_limit_support().items()}})
+        self._ctx = multiprocessing.get_context("spawn")
+        self._proc = None
+        self._reader = None      # replies from the worker
+        self._writer = None      # requests to the worker
+        self._record: dict | None = None
+        self._started_at = 0.0
+        self.init_failure: str | None = None    # once set, no further start is attempted
+
+    # -- lifecycle ------------------------------------------------------------------------------
+
+    def __enter__(self) -> "ParserWorker":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()
+
+    def _start(self) -> bool:
+        # Two `os.pipe()`-backed simplex connections; see `_worker_main` for why not one duplex.
+        inbox_r, inbox_w = self._ctx.Pipe(duplex=False)      # parent writes, worker reads
+        outbox_r, outbox_w = self._ctx.Pipe(duplex=False)    # worker writes, parent reads
+        proc = self._ctx.Process(target=_worker_main, name=f"parser-worker:{self.reference}",
+                                 args=(inbox_r, outbox_w, self.reference, self.frozen_iso,
+                                       self.synthetic, self.output_cap,
+                                       self.limits.requested()), daemon=True)
+        self._started_at = time.monotonic()
+        try:
+            proc.start()
+        except Exception as e:                                 # noqa: BLE001 - infrastructure
+            self.init_failure = f"{HARNESS_ERROR}: the worker could not be started: {_qualified(e)}"
+            self.diagnostics["init_failure"] = self.init_failure
+            for end in (inbox_r, inbox_w, outbox_r, outbox_w):
+                end.close()
+            return False
+        inbox_r.close()
+        outbox_w.close()
+        self._proc, self._reader, self._writer = proc, outbox_r, inbox_w
+        self._record = {"pid": proc.pid, "exit_code": None, "duration_s": None,
+                        "terminated": False, "killed": False, "ended_by": None}
+        self.diagnostics["workers"].append(self._record)
+        try:
+            handshake = self._receive(self.startup_timeout_s)
+        except EOFError:
+            handshake = {"init_error": "the worker exited before its handshake"}
+        except OSError as e:
+            handshake = {"harness_error": _qualified(e)}
+        if handshake is None:
+            self._stop("startup-timeout")
+            self.init_failure = (f"{WORKER_INIT_FAILED}: no handshake within "
+                                 f"{self.startup_timeout_s}s")
+        elif "init_error" in handshake:
+            self._stop("init-error")
+            self.init_failure = (f"{WORKER_INIT_FAILED}: {handshake['init_error']}: "
+                                 f"{handshake.get('detail') or ''}".rstrip(": "))
+        elif handshake.get("ready") is not True:
+            self._stop("bad-handshake")
+            self.init_failure = (f"{HARNESS_ERROR}: "
+                                 f"{handshake.get('harness_error') or f'unexpected handshake {handshake!r}'}")
+        if self.init_failure:
+            self.diagnostics["init_failure"] = self.init_failure
+            return False
+        return True
+
+    def _receive(self, timeout: float) -> dict | None:
+        """One message, or None on timeout. Raises EOFError when the worker is gone, OSError
+        when it sent more than the cap and ValueError when what it sent is not JSON — all three
+        are the CALLER's to classify."""
+        assert self._reader is not None
+        if not self._reader.poll(timeout):
+            return None
+        return json.loads(self._reader.recv_bytes(self.output_cap))
+
+    def _stop(self, reason: str) -> None:
+        """join → terminate → kill → join, then reap and record. Idempotent."""
+        proc, record = self._proc, self._record
+        if proc is None:
+            return
+        try:
+            if proc.is_alive():
+                proc.terminate()
+                record["terminated"] = True
+                proc.join(KILL_GRACE_S)
+            if proc.is_alive():
+                proc.kill()
+                record["killed"] = True
+                proc.join()
+        finally:
+            proc.join(0)   # reaps a process that exited on its own between the checks above
+            record.update(exit_code=proc.exitcode, ended_by=reason,
+                          duration_s=round(time.monotonic() - self._started_at, 3))
+            for end in (self._reader, self._writer):
+                if end is not None:
+                    end.close()
+            proc.close()
+            self._proc = self._reader = self._writer = self._record = None
+
+    def close(self) -> None:
+        if self._proc is not None and self._writer is not None:
+            try:
+                self._writer.send_bytes(b'{"stop": true}')
+                self._proc.join(KILL_GRACE_S)
+            except (OSError, ValueError):
+                pass
+        self._stop("closed")
+
+    # -- one case ---------------------------------------------------------------------------------
+
+    def run_case(self, case: str, path: pathlib.Path, offset: int | None = None) -> dict:
+        """`{"outcome", "layer", "exception", "objects", "detail"}` for one payload, always."""
+        started = time.monotonic()
+        result = self._run_case(path, offset)
+        self.diagnostics["cases"].append(
+            {"case": case, "outcome": result["outcome"],
+             "duration_s": round(time.monotonic() - started, 3)})
+        return result
+
+    def _run_case(self, path: pathlib.Path, offset: int | None) -> dict:
+        blank = {"layer": None, "exception": None, "objects": None, "detail": None, "ran": True}
+        if self.init_failure:
+            code = HARNESS_ERROR if self.init_failure.startswith(HARNESS_ERROR) else WORKER_INIT_FAILED
+            return {**blank, "outcome": code, "detail": self.init_failure, "ran": False}
+        if self._proc is None:
+            if self.diagnostics["restarts"] >= self.max_restarts:
+                return {**blank, "outcome": HARNESS_ERROR, "ran": False,
+                        "detail": f"max_worker_restarts={self.max_restarts} exhausted"}
+            if not self._start():
+                return self._run_case(path, offset)
+        try:
+            request = {"path": str(path), "offset": offset}
+            self._writer.send_bytes(json.dumps(request).encode())
+            reply = self._receive(self.timeout_s)
+        except EOFError:
+            reply = False
+        except OSError as e:
+            self._stop("oversize-or-broken-pipe")
+            self.diagnostics["restarts"] += 1
+            return {**blank, "outcome": HARNESS_ERROR, "detail": _qualified(e)}
+        except ValueError as e:
+            # A reply under the cap that is not JSON (S10, 2026-09-20: `_send`'s last resort clips
+            # the encoded reply to the cap, and a clipped document does not decode). The case is
+            # the harness's, not the parser's, and the worker is restarted like any bad reply.
+            self._stop("undecodable-reply")
+            self.diagnostics["restarts"] += 1
+            return {**blank, "outcome": HARNESS_ERROR,
+                    "detail": f"undecodable worker reply: {_qualified(e)}"}
+        if reply is None:
+            self._stop("timeout")
+            self.diagnostics["restarts"] += 1
+            return {**blank, "outcome": PARSER_TIMEOUT,
+                    "detail": f"no answer within {self.timeout_s}s; worker killed"}
+        if reply is False:
+            self._stop("died")
+            self.diagnostics["restarts"] += 1
+            return {**blank, "outcome": PARSER_CRASH,
+                    "detail": "the worker process exited during the case"}
+        if reply.get("outcome") not in OUTCOME_CODES:
+            self._stop("bad-reply")
+            self.diagnostics["restarts"] += 1
+            return {**blank, "outcome": HARNESS_ERROR, "detail": "unrecognised worker reply"}
+        return {**blank, **reply}
+
+
+def _outcome_counts(cases: list[dict]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for case in cases:
+        counts[case["outcome"]] = counts.get(case["outcome"], 0) + 1
+    return dict(sorted(counts.items()))
+
+
+def _worker_bounds(worker: ParserWorker) -> dict:
+    bounds = {"timeout_s": worker.timeout_s, "startup_timeout_s": worker.startup_timeout_s,
+              "max_worker_restarts": worker.max_restarts, "isolation": ISOLATION}
+    # F06: only a limit that WAS requested is written into the canonical details — the key's
+    # absence is the statement that the run applied none, and a default run's bytes do not move.
+    if worker.limits.requested():
+        bounds["resource_limits"] = worker.limits.requested()
+    return bounds
+
+
 def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock,
-                    timeout_s: float = DEFAULT_TIMEOUT_S) -> dict:
+                    timeout_s: float = DEFAULT_TIMEOUT_S,
+                    startup_timeout_s: float = DEFAULT_STARTUP_TIMEOUT_S,
+                    worker: ParserWorker | None = None, diagnostics: dict | None = None) -> dict:
     """H, §21: every payload under `malformed/` must be REFUSED, and refused safely.
 
     "Safely" is F2.2: any exception except the four crash classes, inside the time bound, with no
@@ -336,6 +788,16 @@ def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Cl
     `--format json` is evidence whose digest is written into `SHA256SUMS` and read back by
     `gates/witness_verify.py`, and a machine-load-dependent byte makes that digest a number
     nobody can re-derive.
+
+    AND SINCE F03 (2026-09-19) IT IS ENFORCED BY A KILL, NOT A COMPARISON. Every payload — the
+    loader included — runs in `ParserWorker`'s spawned process; a case that has not answered in
+    `timeout_s` is killed and recorded as `PARSER_TIMEOUT`, which is a FAIL. `details["cases"]`
+    carries every case's outcome code in order; `details["refusals"]` keeps round PB's row shape
+    and holds the `PARSER_REJECTED` cases only, so a timeout can no longer sit in it (its
+    `over_time_bound` is therefore always false now, and stays for the shape). The bounds the
+    run was given are in `details`; the seconds, pids and exit codes are in `diagnostics`. The
+    elapsed reading that decided the old boolean is gone with the comparison: what reaches the
+    report is the code, and the code is decided by the kill.
     """
     directory = fixtures / MALFORMED_DIR
     if not directory.is_dir():
@@ -347,45 +809,43 @@ def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Cl
         return _verdict(FAIL, reason=f"{directory} exists and is empty; a declared malformed set "
                                      "with nothing in it reads as a passed check over an empty "
                                      "set", directory=str(directory))
-    refusals, accepted, crashed, slow = [], [], [], []
-    for path in payloads:
-        started = time.monotonic()
-        layer, outcome = "adapter", None
-        try:
-            raw = harness.load_raw(path)
-        except CRASH_CLASSES:
-            raise
-        except Exception as e:                                 # noqa: BLE001 - recorded, not raised
-            layer, outcome = "loader", f"{type(e).__module__}.{type(e).__name__}"
-        if outcome is None:
-            try:
-                objects = _fresh(adapter, clock).to_cdm(raw)
-            except CRASH_CLASSES as e:
-                crashed.append(f"{path.name}: {type(e).__name__}")
-                continue
-            except Exception as e:                             # noqa: BLE001 - the refusal itself
-                outcome = f"{type(e).__module__}.{type(e).__name__}"
-            else:
-                accepted.append(f"{path.name}: returned {len(objects)} object(s)")
-                continue
-        # THE ELAPSED TIME IS MEASURED AND NOT REPORTED, and the asymmetry is the point (round
-        # PB, 2026-09-08). The bound is enforced here, in the comparison below; what reaches the
-        # report is the OUTCOME of that comparison and never the reading behind it. A wall-clock
-        # value in `--format json` makes the artefact's bytes a function of machine load: the
-        # field this replaced read `round(elapsed, 4)`, every one of the 28 refusals sat at 0.0,
-        # and a single refusal taking 50 microseconds flipped one to 0.0001 — which reddened
-        # `test_two_sweeps_of_one_tree_are_byte_identical` on two runners out of two and, through
-        # `SHA256SUMS`, made `conformance-<version>.json`'s digest unre-derivable.
-        over_time_bound = (time.monotonic() - started) > timeout_s
-        if over_time_bound:
+    own = worker is None
+    if own:
+        worker = ParserWorker(adapter, clock=clock, timeout_s=timeout_s,
+                              startup_timeout_s=startup_timeout_s, diagnostics=diagnostics)
+    try:
+        cases = [(path, worker.run_case(path.name, path)) for path in payloads]
+    finally:
+        if own:
+            worker.close()
+    refusals, accepted, crashed, slow, broken, not_run = [], [], [], [], [], 0
+    for path, result in cases:
+        code = result["outcome"]
+        if not result["ran"]:
+            not_run += 1
+        if code == PARSER_REJECTED:
+            refusals.append({"fixture": path.name, "refused_by": result["layer"],
+                             "exception": result["exception"], "over_time_bound": False})
+        elif code == PARSER_ACCEPTED:
+            accepted.append(f"{path.name}: returned {result['objects']} object(s)")
+        elif code == PARSER_CRASH:
+            crashed.append(f"{path.name}: {result['exception'] or PARSER_CRASH}")
+        elif code == PARSER_TIMEOUT:
             slow.append(path.name)
-        refusals.append({"fixture": path.name, "refused_by": layer, "exception": outcome,
-                         "over_time_bound": over_time_bound})
+        else:
+            broken.append(f"{path.name}: {code}: {result['detail']}")
     by_adapter = [r for r in refusals if r["refused_by"] == "adapter"]
     details = {"payloads": len(payloads), "refusals": refusals, "accepted": accepted,
-               "crashed": crashed, "over_time_bound": slow, "timeout_s": timeout_s,
+               "crashed": crashed, "over_time_bound": slow,
+               "cases": [{"fixture": path.name, "outcome": result["outcome"]}
+                         for path, result in cases],
+               "outcomes": _outcome_counts([result for _, result in cases]),
+               "cases_not_run": not_run, **_worker_bounds(worker),
                "refused_by_adapter": len(by_adapter),
                "exception_classes": sorted({r["exception"] for r in refusals})}
+    if broken:
+        return _verdict(FAIL, reason=f"the parser could not be exercised: {broken[0]}",
+                        **details)
     if accepted:
         return _verdict(FAIL, reason=f"{len(accepted)} malformed payload(s) were ACCEPTED: "
                                      f"{accepted[0]}", **details)
@@ -393,8 +853,9 @@ def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Cl
         return _verdict(FAIL, reason=f"a malformed payload raised a crash class: {crashed[0]}",
                         **details)
     if slow:
-        return _verdict(FAIL, reason=f"a refusal took longer than {timeout_s}s: {slow[0]}",
-                        **details)
+        return _verdict(FAIL, reason=f"{PARSER_TIMEOUT}: {slow[0]} was not answered within "
+                                     f"{timeout_s}s and the worker was killed; a timeout is a "
+                                     "failed robustness test, not a rejection", **details)
     if not by_adapter:
         return _verdict(FAIL, reason="every malformed payload was refused by the fixture loader "
                                      "and none reached the adapter, so the parser was never "
@@ -607,9 +1068,15 @@ def check_version(adapter: Adapter, payloads: list[tuple[str, Any]], *, clock: t
             if written != SCHEMA_VERSION:
                 wrong.append(f"{name}: schema_version {written!r} is not this package's "
                              f"{SCHEMA_VERSION!r}")
-            if not version.compatible(written, SCHEMA_VERSION):
-                incompatible.append(f"{name}: version.compatible({written!r}, "
-                                    f"{SCHEMA_VERSION!r}) is false")
+            try:
+                assessed = version.assess(written, SCHEMA_VERSION)
+            except ValueError as e:                            # the model refuses these; L says why
+                incompatible.append(f"{name}: schema_version {e}")
+                continue
+            if not assessed:
+                incompatible.append(f"{name}: version.assess({written!r}, {SCHEMA_VERSION!r}) "
+                                    f"is {assessed.verdict.value} ({assessed.direction.value}): "
+                                    f"{assessed.reason} — basis: {assessed.basis}")
             if written.split(".", 1)[0] != major:
                 outside.append(f"{name}: schema_version {written!r} is outside the manifest's "
                                f"declared `cdm.supported` {supported!r}")
@@ -622,23 +1089,46 @@ def check_version(adapter: Adapter, payloads: list[tuple[str, Any]], *, clock: t
     return _verdict(PASS, **details)
 
 
+#: F06 (2026-09-20): the four properties a streaming contract would consist of, each with the
+#: status this package can honestly state. None is implemented, none is advertised, and check M
+#: prints the four so that "SKIP" reads as a statement of what is absent and not as an omission.
+#: `to_cdm` is handed ONE complete payload; a caller that reads a socket or a file in pieces does
+#: the framing, the reassembly of a partial message and the backpressure itself, and hands over a
+#: whole message inside `max_input_bytes`. KLV's framing layer (`stanag4609`) is the grammar of
+#: one packet's key, tag and length, not a stream reader — `tests/test_cdm_klv_framing.py`.
+STREAMING_STATUS: dict[str, str] = {
+    "chunk_framing": "not implemented: `to_cdm` takes one complete payload; the caller frames",
+    "partial_messages": "not implemented: a truncated payload is REFUSED, never buffered "
+                        "(check N exercises exactly this)",
+    "reassembly": "not implemented: no adapter holds state between two `to_cdm` calls",
+    "backpressure": "not applicable: nothing here reads from a source, so nothing can slow one",
+}
+
+
 def check_streaming(adapter: Adapter) -> dict:
-    """M: SKIP unless the adapter declares a streaming capability.
+    """M: SKIP unless the adapter declares a streaming capability — and today none can.
 
     No adapter in this repository declares one and `Capabilities` has no field for it at manifest
     schema 1.0.0, so the absence is a closed model's declaration rather than an omission — which
-    is why this is a DECLARED inapplicability and does not block a rung.
+    is why this is a DECLARED inapplicability and does not block a rung. The verdict model (ADR
+    0009) has `PASS`/`FAIL`/`SKIP` and no fourth word, so "not applicable" is spelled `SKIP` with
+    `declared_inapplicable: true` and the four statuses in `STREAMING_STATUS` beside it; it is
+    never `PASS`, because nothing was fed in two chunks and nothing could be.
     """
     return _verdict(SKIP, reason="the adapter declares no streaming capability; `Capabilities` "
                                  "carries no `streaming` field at manifest schema "
                                  f"{version.MANIFEST_SCHEMA_VERSION}, so no adapter can declare "
                                  "one and the check has nothing to feed in two chunks",
-                    declared=True, declaration="capabilities (no streaming field)")
+                    declared=True, declaration="capabilities (no streaming field)",
+                    streaming=dict(STREAMING_STATUS))
 
 
 def check_parser_robustness(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock,
                             offset_cap: int = DEFAULT_OFFSET_CAP,
-                            timeout_s: float = DEFAULT_TIMEOUT_S) -> dict:
+                            timeout_s: float = DEFAULT_TIMEOUT_S,
+                            startup_timeout_s: float = DEFAULT_STARTUP_TIMEOUT_S,
+                            worker: ParserWorker | None = None,
+                            diagnostics: dict | None = None) -> dict:
     """N, F2.5: truncate a byte fixture at every offset (evenly spaced above the cap) and require
     raise-not-crash.
 
@@ -646,47 +1136,69 @@ def check_parser_robustness(adapter: Adapter, fixtures: pathlib.Path, *, clock: 
     prefix of a valid payload is a valid shorter payload; requiring a refusal would be requiring
     a parser to reject something well-formed. What must not happen is a crash class or a hang,
     and those are what this measures.
+
+    Since F03 (2026-09-19) every offset is one case in `ParserWorker`'s spawned process: the
+    parent sends the path and the offset, the worker slices the bytes it read once, and a case
+    that has not answered within `timeout_s` is killed and recorded as `PARSER_TIMEOUT`. The
+    offset generation, `offsets_tried`, `offset_cap_per_fixture` and `decoded_without_raising`
+    are what they were; `over_time_bound` names the offset and the code, and no longer the
+    seconds it took — a reading that reached canonical evidence whenever the check failed.
     """
     byte_fixtures = [p for p in _fixtures(fixtures) if p.suffix.lower() != ".json"]
     if not byte_fixtures:
         return _verdict(SKIP, reason="not a byte stream: every fixture this adapter ships is a "
                                      "parsed dict, so there is nothing to truncate",
                         declared=True, declaration="the adapter's fixture set")
-    crashed, slow = [], []
-    attempts = 0
-    decoded = 0
-    for path in byte_fixtures:
-        payload = path.read_bytes()
-        size = len(payload)
-        if size < 2:
-            continue
-        if size - 1 <= offset_cap:
-            offsets = range(1, size)
-        else:
-            step = (size - 1) / offset_cap
-            offsets = sorted({max(1, int(1 + index * step)) for index in range(offset_cap)})
-        for offset in offsets:
-            attempts += 1
-            started = time.monotonic()
-            try:
-                _fresh(adapter, clock).to_cdm(payload[:offset])
-                decoded += 1
-            except CRASH_CLASSES as e:
-                crashed.append(f"{path.name}[:{offset}]: {type(e).__name__}")
-            except Exception:                                  # noqa: BLE001 - the refusal itself
-                pass
-            elapsed = time.monotonic() - started
-            if elapsed > timeout_s:
-                slow.append(f"{path.name}[:{offset}]: {elapsed:.3f}s")
+    own = worker is None
+    if own:
+        worker = ParserWorker(adapter, clock=clock, timeout_s=timeout_s,
+                              startup_timeout_s=startup_timeout_s, diagnostics=diagnostics)
+    crashed, slow, broken, results = [], [], [], []
+    attempts = decoded = not_run = 0
+    try:
+        for path in byte_fixtures:
+            size = path.stat().st_size
+            if size < 2:
+                continue
+            if size - 1 <= offset_cap:
+                offsets: Any = range(1, size)
+            else:
+                step = (size - 1) / offset_cap
+                offsets = sorted({max(1, int(1 + index * step)) for index in range(offset_cap)})
+            for offset in offsets:
+                attempts += 1
+                case = f"{path.name}[:{offset}]"
+                result = worker.run_case(case, path, offset)
+                results.append(result)
+                code = result["outcome"]
+                if not result["ran"]:
+                    not_run += 1
+                if code == PARSER_ACCEPTED:
+                    decoded += 1
+                elif code == PARSER_CRASH:
+                    crashed.append(f"{case}: {result['exception'] or PARSER_CRASH}")
+                elif code == PARSER_TIMEOUT:
+                    slow.append(f"{case}: {PARSER_TIMEOUT}")
+                elif code != PARSER_REJECTED:
+                    broken.append(f"{case}: {code}: {result['detail']}")
+    finally:
+        if own:
+            worker.close()
     details = {"byte_fixtures": len(byte_fixtures), "offsets_tried": attempts,
                "offset_cap_per_fixture": offset_cap, "decoded_without_raising": decoded,
-               "crashed": crashed[:8], "over_time_bound": slow[:8], "timeout_s": timeout_s}
+               "crashed": crashed[:8], "over_time_bound": slow[:8],
+               "outcomes": _outcome_counts(results), "cases_not_run": not_run,
+               **_worker_bounds(worker)}
+    if broken:
+        return _verdict(FAIL, reason=f"the parser could not be exercised: {broken[0]}",
+                        **details)
     if crashed:
         return _verdict(FAIL, reason=f"a truncated payload raised a crash class: {crashed[0]}",
                         **details)
     if slow:
-        return _verdict(FAIL, reason=f"a truncated payload took longer than {timeout_s}s to "
-                                     f"refuse: {slow[0]}", **details)
+        return _verdict(FAIL, reason=f"{PARSER_TIMEOUT}: {slow[0]} was not answered within "
+                                     f"{timeout_s}s and the worker was killed; a timeout is a "
+                                     "failed robustness test, not a rejection", **details)
     return _verdict(PASS, **details)
 
 
@@ -746,8 +1258,44 @@ LOSS_SEVERITY: tuple[str, ...] = ("DROPPED", "UNSUPPORTED", "RESIDUAL", "DERIVED
                                   "PRESERVED")
 
 
-def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]]) -> dict:
-    """§34's six categories over every classifiable fixture, aggregated per source path.
+def ledger_summary(base: dict | None) -> dict:
+    """F02: the path-bound ledger's reading over every fixture the harness ran it on.
+
+    Counts are summed per category and per loss kind across fixtures; the diagnostics are the
+    union of LOST lines, de-duplicated on (source path, loss kind) and capped, and never carry a
+    value. `basis` is the harness's own reading — `ledger` where the adapter declares
+    `MAPPINGS`, `heuristic` otherwise — so a consumer cannot mistake an absence of ledger
+    findings for a ledger that found nothing.
+    """
+    preservation = (base or {}).get("preservation") or {}
+    counts = {name: 0 for name in lossless.LEDGER_CATEGORIES}
+    losses = {kind: 0 for kind in lossless.LOSS_KINDS}
+    seen: dict[tuple[str, str | None], dict] = {}
+    fixtures = 0
+    for result in (base or {}).get("results", []):
+        book = result.get("preservation") or {}
+        if book.get("basis") != "ledger":
+            continue
+        fixtures += 1
+        for name, n in book.get("counts", {}).items():
+            counts[name] = counts.get(name, 0) + n
+        for kind, n in book.get("losses", {}).items():
+            losses[kind] = losses.get(kind, 0) + n
+        for diagnostic in book.get("diagnostics", []):
+            if diagnostic["category"] == "LOST":
+                seen.setdefault((diagnostic["source_path"], diagnostic["loss"]), diagnostic)
+    return {"basis": preservation.get("basis", "heuristic"),
+            "declared_mappings": preservation.get("declared_mappings", 0),
+            "fixtures": fixtures, "counts": counts, "losses": losses,
+            "diagnostics": list(seen.values())[:harness.DIAGNOSTIC_LIMIT],
+            "diagnostics_truncated": max(0, len(seen) - harness.DIAGNOSTIC_LIMIT)}
+
+
+def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]],
+                base: dict | None = None) -> dict:
+    """§34's six categories over every classifiable fixture, aggregated per source path, and —
+    since F02 — the ledger's reading under `ledger` (`ledger_summary`), from the harness report
+    `base` when the caller has one.
 
     THE GUARD IS `harness.run`'s LOSSLESS SKIP AND NOT A NEW ONE. The lossless comparison needs a leaf
     structure, so a non-JSON payload has nothing to classify — the harness SKIPs check D for
@@ -788,7 +1336,8 @@ def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]]) -> dict:
                          "skipped_because": "a non-JSON payload has no comparable leaf structure "
                                             "(harness.run's lossless SKIP, the same guard check D "
                                             "uses)"},
-            "unsupported_declared": list(declared)}
+            "unsupported_declared": list(declared),
+            "ledger": ledger_summary(base)}
 
 
 def loss_lines(report: dict) -> list[str]:
@@ -824,13 +1373,33 @@ def eligible_level(checks: dict[str, dict]) -> str:
 
 def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None = None,
         frozen_at: _dt.datetime | None = None, schema_dir: pathlib.Path | None = None,
-        offset_cap: int = DEFAULT_OFFSET_CAP, timeout_s: float = DEFAULT_TIMEOUT_S) -> dict:
-    """Every check, once, over one adapter. Raises `harness.NoFixturesFound` on a bad invocation."""
+        offset_cap: int = DEFAULT_OFFSET_CAP, timeout_s: float = DEFAULT_TIMEOUT_S,
+        startup_timeout_s: float = DEFAULT_STARTUP_TIMEOUT_S,
+        diagnostics: dict | None = None, limits: ResourceLimits | None = None) -> dict:
+    """Every check, once, over one adapter. Raises `harness.NoFixturesFound` on a bad invocation.
+
+    H and N share ONE `ParserWorker` (F03): one spawn per adapter rather than two, the same
+    per-case deadline and the same clean per-case instance either way. `diagnostics`, when the
+    caller passes a dict, receives the worker's volatile record — pids, exit codes, durations —
+    which the report itself never carries. `limits` (F06) is the memory/CPU envelope for that
+    worker; `UnsupportedResourceLimit` is raised before anything runs where the platform cannot
+    enforce a requested field.
+    """
     frozen_at = frozen_at or times.FROZEN_NOW
     clock = clock or times.frozen_clock(frozen_at)
     base = harness.run(adapter, fixtures, schema_dir=schema_dir)
     payloads = [(path.name, harness.load_raw(path)) for path in _fixtures(fixtures)]
 
+    with ParserWorker(adapter, clock=clock, timeout_s=timeout_s,
+                      startup_timeout_s=startup_timeout_s, diagnostics=diagnostics,
+                      limits=limits) as worker:
+        return _run_checks(adapter, fixtures, payloads=payloads, base=base, clock=clock,
+                           frozen_at=frozen_at, offset_cap=offset_cap, timeout_s=timeout_s,
+                           worker=worker)
+
+
+def _run_checks(adapter: Adapter, fixtures: pathlib.Path, *, payloads, base, clock, frozen_at,
+                offset_cap, timeout_s, worker: ParserWorker) -> dict:
     checks: dict[str, dict] = {}
     for check in CHECKS:
         if check.harness_key is not None:
@@ -840,9 +1409,17 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None =
                 entry["declared_inapplicable"] = declared
                 entry["reason"] = reason or entry.get(
                     "reason", "the harness could not compare the emitted form structurally")
+            if check.letter == "D":
+                # F02: which basis the verdict rests on. The harness folded the ledger into
+                # the same column, so a LOST leaf is already a FAIL here; what this adds is
+                # the reading a consumer needs to weigh a PASS — proof or heuristic. Under
+                # `details`, because §18 fixes the entry's own keys.
+                entry["details"]["basis"] = (base.get("preservation") or {}).get(
+                    "basis", "heuristic")
             checks[check.letter] = entry
     checks["G"] = check_deterministic(adapter, payloads, clock=clock)
-    checks["H"] = check_malformed(adapter, fixtures, clock=clock, timeout_s=timeout_s)
+    checks["H"] = check_malformed(adapter, fixtures, clock=clock, timeout_s=timeout_s,
+                                  worker=worker)
     checks["I"] = check_unknown_fields(adapter, fixtures, clock=clock)
     checks["J"] = check_temporal(adapter, payloads, clock=clock, frozen_at=frozen_at)
     checks["K"] = check_identity(adapter, payloads, clock=clock)
@@ -850,12 +1427,12 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None =
                                 supported=f"{version.parse(SCHEMA_VERSION)[0]}.x")
     checks["M"] = check_streaming(adapter)
     checks["N"] = check_parser_robustness(adapter, fixtures, clock=clock, offset_cap=offset_cap,
-                                          timeout_s=timeout_s)
+                                          timeout_s=timeout_s, worker=worker)
     checks["O"] = check_resource_limits(adapter, payloads, clock=clock)
 
     failed = [letter for letter in CHECK_LETTERS if checks[letter]["verdict"] == FAIL]
     return {
-        "loss_report": loss_report(adapter, payloads),
+        "loss_report": loss_report(adapter, payloads, base),
         "adapter": {"id": adapter.metadata.id, "name": adapter.name,
                     "adapter_version": adapter.metadata.adapter_version,
                     "direction": adapter.direction, "system": adapter.system,
@@ -917,6 +1494,22 @@ def render_report(report: dict) -> str:
         if loss["fixtures"]["skipped"]:
             lines.append(f"  ({loss['fixtures']['skipped']} fixture(s) not classified: "
                          f"{loss['fixtures']['skipped_because']})")
+        book = loss.get("ledger") or {}
+        if book.get("basis") == "ledger":
+            lines += ["", f"PRESERVATION LEDGER (F02), {book['declared_mappings']} declared "
+                          f"mapping(s) over {book['fixtures']} fixture(s), source leaves by "
+                          "category:"]
+            width = max(len(name) for name in lossless.LEDGER_CATEGORIES)
+            lines += [f"  {name.ljust(width)}  {book['counts'][name]}"
+                      for name in lossless.LEDGER_CATEGORIES]
+            lines += [f"  {d['source_path']}: {d['loss']} — expected {d['expected']['destination']}"
+                      f" by rule {d['expected']['rule']}; observed "
+                      f"{d['observed']['destination'] or 'nothing'} ({d['observed']['type']})"
+                      for d in book.get("diagnostics", [])]
+        else:
+            lines += ["", "PRESERVATION LEDGER (F02): not run — the adapter declares no MAPPINGS; "
+                          "check D above is the value-presence heuristic and is not proof of "
+                          "preservation"]
     reasons = [(c, report["checks"][c.letter]) for c in CHECKS
                if report["checks"][c.letter]["verdict"] != PASS]
     if reasons:
@@ -1002,7 +1595,23 @@ def build_parser() -> argparse.ArgumentParser:
                             help=f"check N's truncation offsets per fixture (default "
                                  f"{DEFAULT_OFFSET_CAP}, F2.5)")
     run_parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT_S,
-                            help=f"seconds one refusal may take (default {DEFAULT_TIMEOUT_S})")
+                            help="seconds one adversarial case may take before its worker is "
+                                 f"killed and the case is PARSER_TIMEOUT (default "
+                                 f"{DEFAULT_TIMEOUT_S})")
+    run_parser.add_argument("--startup-timeout", type=float, default=DEFAULT_STARTUP_TIMEOUT_S,
+                            help="seconds the parser worker may take to start and construct the "
+                                 f"adapter (default {DEFAULT_STARTUP_TIMEOUT_S})")
+    run_parser.add_argument("--diagnostics", type=pathlib.Path, default=None,
+                            help="write the parser workers' volatile record (pids, exit codes, "
+                                 "durations) to this JSON file; it never enters the report")
+    run_parser.add_argument("--memory-limit-bytes", type=int, default=None,
+                            help="RLIMIT_AS for each parser worker (F06); refused with exit "
+                                 f"{EXIT_USAGE} where this platform cannot enforce it — Linux "
+                                 "enforces it, macOS and Windows do not")
+    run_parser.add_argument("--cpu-limit-seconds", type=int, default=None,
+                            help="RLIMIT_CPU for each parser worker (F06); refused with exit "
+                                 f"{EXIT_USAGE} where this platform cannot enforce it — Linux "
+                                 "enforces it, macOS and Windows do not")
 
     actions.add_parser("list", help="the registered adapters, with declared maturity")
 
@@ -1059,7 +1668,21 @@ def portable(report: dict, label: str) -> dict:
     return report
 
 
-def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
+def _write_diagnostics(target: pathlib.Path | None, diagnostics: dict[str, dict]) -> None:
+    """The parser workers' volatile record, to the file the caller asked for and NOT to stdout:
+    stdout is the evidence, and a pid or a duration in it would make its digest a function of
+    the machine. A restart — a killed or dead worker — is announced on stderr regardless, one
+    line per adapter, because it is the one fact here a person running the sweep should see."""
+    for name, record in diagnostics.items():
+        if record.get("restarts"):
+            print(f"synapse conformance: {name}: parser worker restarted "
+                  f"{record['restarts']} time(s) — see the H/N outcome codes", file=sys.stderr)
+    if target is not None:
+        target.write_text(json.dumps(diagnostics, indent=2, sort_keys=True) + "\n")
+
+
+def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen,
+           limits: ResourceLimits | None = None) -> int:
     """`--all`: every shipped adapter, one document, one exit code.
 
     THE FIXTURES PATH IS RELATIVISED HERE AND IN `evidence.generate`, THROUGH `portable`. `run()`
@@ -1070,15 +1693,18 @@ def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
     changed, so `cdm-harness`'s and `synapse conformance run --adapter`'s output does not move.
     """
     reports: dict[str, dict] = {}
+    diagnostics: dict[str, dict] = {}
     worst = EXIT_OK
     for name, adapter_class in sorted(shipped_adapters().items()):
         adapter = adapter_class(clock=times.frozen_clock(frozen),
                                 synthetic=args.synthetic == "true")
+        diagnostics[name] = {}
         try:
             report = run(adapter, packaged_fixtures(adapter_class),
                          clock=times.frozen_clock(frozen), frozen_at=frozen,
                          schema_dir=args.schemas, offset_cap=args.offset_cap,
-                         timeout_s=args.timeout)
+                         timeout_s=args.timeout, startup_timeout_s=args.startup_timeout,
+                         diagnostics=diagnostics[name], limits=limits)
         except (harness.NoFixturesFound, harness.NoSchemasFound) as e:
             print(f"synapse conformance: {name}: {e}", file=sys.stderr)
             return EXIT_USAGE
@@ -1095,6 +1721,7 @@ def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
         "adapters": reports,
         "conformant": sorted(n for n, r in reports.items() if r.get("result") == "CONFORMANT"),
     }
+    _write_diagnostics(args.diagnostics, diagnostics)
     if args.format == "json":
         print(json.dumps(document, indent=2, sort_keys=True))
     else:
@@ -1138,9 +1765,16 @@ def main(argv: list[str] | None = None) -> int:
     # "the caller did not say" looks like, which is why the flag's default is not `False`.
     strict = ("D" in required) if args.strict is None else args.strict
     frozen = times.parse(args.now) if args.now else times.FROZEN_NOW
+    limits = ResourceLimits(memory_bytes=args.memory_limit_bytes,
+                            cpu_seconds=args.cpu_limit_seconds)
+    try:
+        limits.validate()       # F06: before any adapter is loaded or any worker spawned
+    except UnsupportedResourceLimit as e:
+        print(f"synapse conformance: {e}", file=sys.stderr)
+        return EXIT_USAGE
 
     if args.all:
-        return _sweep(args, required, strict=strict, frozen=frozen)
+        return _sweep(args, required, strict=strict, frozen=frozen, limits=limits)
 
     try:
         adapter_class = load_adapter(args.adapter)
@@ -1158,13 +1792,16 @@ def main(argv: list[str] | None = None) -> int:
             return EXIT_USAGE
         fixtures = packaged_fixtures(adapter_class)
 
+    diagnostics: dict[str, dict] = {args.adapter: {}}
     try:
         report = run(adapter, fixtures, clock=times.frozen_clock(frozen), frozen_at=frozen,
                      schema_dir=args.schemas, offset_cap=args.offset_cap,
-                     timeout_s=args.timeout)
+                     timeout_s=args.timeout, startup_timeout_s=args.startup_timeout,
+                     diagnostics=diagnostics[args.adapter], limits=limits)
     except (harness.NoFixturesFound, harness.NoSchemasFound) as e:
         print(f"synapse conformance: {e}", file=sys.stderr)
         return EXIT_USAGE
+    _write_diagnostics(args.diagnostics, diagnostics)
     print(json.dumps(report, indent=2, sort_keys=True) if args.format == "json"
           else render_report(report))
     return exit_status(report, required, strict=strict)

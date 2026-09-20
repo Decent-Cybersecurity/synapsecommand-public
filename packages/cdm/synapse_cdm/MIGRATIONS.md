@@ -23,10 +23,29 @@ release, by coincidence of two first releases, and they parted at the 1.1.0 rele
 | **MINOR** | an optional field added; an enum member added; a payload model registered; validation relaxed | old readers keep working, old data keeps validating |
 | **PATCH** | descriptions, error-message wording, docs | none |
 
-`version.compatible(written_with, read_by)` accepts the same major, **including a minor from
-the future** — a 1.0.0 reader accepts a 1.2.0 object, because MINOR additions are optional by
-definition and the alternative is a fleet that stops ingesting the moment one adapter is
-upgraded. It refuses a different major outright.
+`version.compatible(written_with, read_by)` is **directional and evidence-based** (corrected by
+the 2026-09-19 audit, finding F01; it read "accepts the same major, including a minor from the
+future" before, and the frozen 2.0.0 schemas refute that). `version.assess()` returns the full
+answer — a verdict, the direction and the evidence it rests on — and `compatible()` is its
+yes/no view:
+
+* a **different major** is REFUSED, both ways;
+* the **same MAJOR.MINOR** is SUPPORTED whatever the PATCH — a PATCH moves descriptions only;
+* a **newer reader, older writer** (a 2.1.0 reader, a 2.0.0 object) is SUPPORTED when both
+  contracts are frozen under `tests/frozen/cdm/` and `tests/test_cdm_version_matrix.py` shows the
+  older documents validating under the newer models and schema. Demonstrated, not assumed;
+* an **older reader, newer writer** (a 2.0.0 reader, a 2.1.0 object) is REFUSED: every published
+  schema carries `additionalProperties: false`, so a property the old reader does not know —
+  populated **or explicitly null** — is rejected. The row above says "old readers keep working",
+  and it means readers of old DATA keep working; it never meant an old reader accepts new data;
+* a **minor nobody has published** — on either side — is UNKNOWN, and `compatible()` is False
+  for it. A future minor is not presumed safe by arithmetic.
+
+A SUPPORTED verdict is version eligibility, not validation: the document in hand is still
+validated on its own. No verdict rewrites `schema_version`, drops a field or downgrades an
+object. Deploying additions one node at a time is done by upgrading readers before writers, which
+is the direction that is shown. A malformed version — a prefix, a suffix, a sign, a leading zero,
+whitespace or a trailing newline — is a `ValueError`, never an answer.
 
 Renaming a field is two releases, never one: add the new name in a MINOR, populate both, then
 remove the old one in the next MAJOR. One release that renames is an outage for every consumer
@@ -407,9 +426,24 @@ now true of it.
 release tag is `v2.2.0`, and `2.2.0` is what the index serves — `PUBLICATION.md` entry 20 is the
 measurement.
 
-**What moved inside the distribution: two files** — `MIGRATIONS.md`, this section and the three
-witness paragraphs in the release procedure being what moved in it, and, since the ruff record of
-2026-09-17 below, `pyproject.toml`, whose `[lint]` pin is that record's one line. Everything else
+**What moved inside the distribution: 30 files** — `MIGRATIONS.md`, this section and the three
+witness paragraphs in the release procedure being what moved in it; since the ruff record of
+2026-09-17 below, `pyproject.toml`, whose `[lint]` pin is that record's one line; since the
+audit remediation's F01 record of 2026-09-19 (at the end of this section), `version.py`,
+`conformance.py` and `suite.py`; since its F04 record of the same day, `models.py`, `geo.py`,
+`times.py`, `schemas.py` and `harness.py`; since its F02 record of the same day,
+`lossless.py`, `evidence.py`, `adapter.py` and `adapters/pntmap.py`; and since its F05 record
+of 2026-09-20, `manifest.py`, `adapters/stanag4676.py` (which moves substantively: the binding
+modes, the `pyexpat` reader and the namespace refusals) and the other adapter modules —
+`adapters/adsb.py`, `adapters/ais.py`, `adapters/asterix_cat021.py`, `adapters/asterix_cat023.py`,
+`adapters/asterix_cat034.py`, `adapters/asterix_cat048.py`, `adapters/asterix_cat062.py`,
+`adapters/gmtif.py`, `adapters/legion.py`, `adapters/stanag4586.py`, `adapters/stanag4609.py`
+and `adapters/tak.py` — each of which gains only the one `binding` line its declaration now
+requires (corrected 2026-09-20, S10: the earlier wording counted `stanag4676.py` among the
+one-line modules). The F05 record also adds two files that ship for the FIRST time,
+`support_matrix.py` and `normative_binding.py`; they were untracked when the F05 record was
+written and the count then read 28 — the maintainer's `git add` of 2026-09-20 made the pair part
+of git's reading of the tree, and the count above moved to thirty with it (S10). Everything else
 the witness round touched ships in nothing: the ledger, the witness record and its README, the
 documentation page, the security policy, the witness builder the release workflow runs and the
 three test modules. The audit's npm record of 2026-09-17, second in this section, moves this
@@ -563,6 +597,619 @@ docstring, one assertion message and the comment-filter self-test that quotes th
 line. The live sentences — CONTRIBUTING.md's "the one version `pyproject.toml` pins" and the
 release-pipeline page's "at the version the package's `[lint]` extra pins" — name no number and
 move with the pin.
+
+**THE AUDIT REMEDIATION'S F01 RECORD, 2026-09-19 — version compatibility becomes directional and
+evidence-based.** Three distribution files moved. `version.py`: `parse()` holds its argument to
+`SEMVER_RE` under `fullmatch` before splitting and raises `ValueError` otherwise; a new
+`assess(written_with, read_by)` returns a `Compatibility` carrying a `Verdict` (SUPPORTED, REFUSED,
+UNKNOWN), a `Direction` (SAME, READER_NEWER, WRITER_NEWER), the basis and the reason; new
+`KNOWN_CONTRACTS = ("2.0.0", "2.1.0")` is held equal to the frozen manifest under `tests/frozen/cdm/`;
+`compatible()` keeps its name and signature and now answers `False` for a newer writer within
+major 2 and for any unpublished minor, where it answered `True`. `conformance.py`: dimension A
+reports the verdict, direction, reason and basis, and a malformed `schema_version` is a finding
+rather than a crash; the helper is imported as `assess_version` because the module's own
+document-level `assess()` shadowed the name. `suite.py`: `check_version` (dimension L) reports the
+same four fields. The "What each bump means" paragraph above was rewritten the same day. The
+bump rulings for these units are S10's, with the version decision, and are not written here yet.
+
+**THE AUDIT REMEDIATION'S F04 RECORD, 2026-09-19 — the published JSON Schema and the Python
+validators refuse the same bytes, and what only Python can check has a number.** Reproduced
+first, on the unmodified tree: `SourceRef.adapter_version` was `minLength: 1` on the wire and
+semver in Python, so `"banana"`, `"01.2.3"` and `"1.2.3\n"` were valid documents the model
+refused; `schema_version` had no schema constraint at all; a geometry without `type` passed the
+schema when one `oneOf` branch fit (the OpenAPI `discriminator` is not JSON Schema) and failed
+pydantic; a timestamp string reached the model through `times.parse`, which takes `"…44Z"` and
+`"+02:00"`, while the schema's pattern takes only `"…44.000Z"`; pydantic's lax JSON mode read the
+string `"true"` as a boolean; the stock Python `jsonschema` package reads `$` as Python's `re`
+does and accepted `"1.2.3\n"` against an ECMA-correct pattern; and `format: uuid` was an
+annotation nobody had told the validator to assert.
+
+**THE SCHEMA LANGUAGE IS NARROWED — a contract change, not documentation.** Five published
+files moved (`entity`, `event`, `track`, `plan_object`, `cdm_object`), by addition only: the
+semver `pattern` on `adapter_version` (all kinds) and on `schema_version` (all kinds), the
+twenty-digit `pattern` on `Entity.symbol`, and `uniqueItems` on `Entity.ontology_types`. No path
+was removed and no `required` list grew. One string feeds both sides: `version.SEMVER_PATTERN`
+is passed to `Field(pattern=)` and so lands in the generated schema; the `_semver` validators
+stay for the message and the `fullmatch` guarantee. `SCHEMA_VERSION` is NOT moved here: the
+version consequence of narrowing an accepted language is S10's, and the "What each bump means"
+table's reading (a type narrowed is a MAJOR) is the one S10 rules on.
+
+**THE PYTHON WIRE PATH IS NARROWED TOO.** `models.Timestamp` routes `model_validate_json` to
+`times.parse_wire` — the one serialised form, in full — and everything else to `times.parse`,
+which every adapter relies on for its source's own string (the reference adapter's TRANSFORMS
+say so). `conformance.assess_a` validates the document as JSON bytes in strict mode, so a
+string is never a boolean or a number there, and builds its schema validator through the new
+`schemas.validator_for()`: draft 2020-12, `format` asserted, and `pattern` read as ECMA-262
+reads it (`$` is end-of-input only). `harness.py` builds its validators the same way. A consumer
+that parses JSON itself and calls `model_validate` on the dict is on the Python path and gets
+the adapter's coercions; the conformance tool is the path a wire claim is made from.
+
+**WHAT ONLY PYTHON CAN CHECK HAS A NUMBER.** `docs/cdm-semantic-rules.md` (new; in the
+repository beside the ADRs, not in the wheel — the SC-OES specification the conformance module
+cites is outside the wheel the same way) states thirteen
+rules, SEM-001 to SEM-013, with why each is outside JSON Schema; every validator that carries one
+now spells the identifier at the head of its message (`models.py`, `geo.py`), and dimension A of
+the conformance report keeps `structural` and `semantic` findings apart, in two lists beside the
+unchanged `findings`, with both counts in the detail line. SEM-001 (the geometry `type` tag) is
+the one rule the schema COULD state — by growing a `required` list on a published object, which
+the table above classes as MAJOR — so it is a numbered rule this edition and a recorded option
+for the next major. The corpus is `tests/semantic_corpus/`, plain JSON with expected verdicts
+per class, and `tests/test_cdm_semantic_corpus.py` replays it and holds the three registers
+(table, corpus, messages) to one set. `tests/test_cdm_schema_alignment.py` runs both validators
+on the same bytes for every case above. The bump rulings for these units are S10's, with the
+version decision.
+
+**THE AUDIT REMEDIATION'S F03 RECORD, 2026-09-19 — the conformance suite's parser deadline is
+enforced by a kill, in a spawned process, and a timeout is a failed check.** Reproduced first,
+on the unmodified tree: checks H (`suite.check_malformed`) and N (`suite.check_parser_robustness`)
+called the adapter's `to_cdm` in the harness's own process and compared the wall clock AFTER it
+returned. That read a slow parser and could never read one that does not return — a synthetic
+adapter that loops on one malformed payload hung the check, the sweep and the test session, and
+no verdict existed. `DEFAULT_TIMEOUT_S`'s own comment said so ("does not kill the thread").
+
+**ONE FILE MOVED FOR IT, `suite.py`, ALREADY IN THE TEN ABOVE.** Every adversarial case — the
+fixture loader included — now runs in `suite.ParserWorker`: a `multiprocessing` `spawn` child
+(the start method all three platforms share; `fork` is unsafe after threads) that resolves the
+adapter by reference — its registry name when this package ships it, `module:ClassName`
+otherwise, never a pickled instance — constructs it once under the run's frozen clock as its
+handshake, and answers one `{path, offset}` request at a time over two `os.pipe()`-backed
+simplex connections (not a duplex `Pipe`, which is a `socket.socketpair()` on Unix and failed
+§41's no-network sweep on the first full run). Each answer is JSON
+under `OUTPUT_CAP_BYTES` (a count, class names, a clipped message; never an object; the parent
+reads with `recv_bytes(maxlength=…)` and unpickles nothing). A case unanswered within
+`timeout_s` is `terminate()`d, given `KILL_GRACE_S`, then `kill()`ed and joined; the worker is
+restarted for the next case, at most `DEFAULT_MAX_WORKER_RESTARTS` times per check, and every
+case after that cap is `cases_not_run`. Start-up has its own bound, `DEFAULT_STARTUP_TIMEOUT_S`.
+`run()` gives H and N one worker per adapter; both checks still take `worker=None` and build
+their own. The CLI gains `--startup-timeout` and `--diagnostics PATH`.
+
+**THE OUTCOME VOCABULARY IS SIX CODES AND ONLY ONE OF THEM IS A REFUSAL.** `PARSER_REJECTED`
+(an ordinary exception, the controlled refusal H and N want), `PARSER_ACCEPTED` (objects came
+back), `PARSER_TIMEOUT` (killed by the deadline), `PARSER_CRASH` (a crash class caught in the
+worker, or the worker process died), `WORKER_INIT_FAILED` (the adapter could not be resolved or
+constructed, or never said ready), `HARNESS_ERROR` (the harness itself could not run the case).
+A timeout is a FAIL and is never counted in `refused_by_adapter` — the parser did not refuse
+anything, the harness stopped waiting for it. Both checks' `details` gain `outcomes` (a count
+per code), `cases_not_run`, the configured bounds (`timeout_s`, `startup_timeout_s`,
+`max_worker_restarts`) and `isolation: "spawn-subprocess"`; H's gains `cases`, every fixture's
+code in order. H's `refusals` rows keep round PB's exact shape and now hold `PARSER_REJECTED`
+cases only, so `over_time_bound` in a row is always false (a timeout is no longer a row);
+N's `over_time_bound` strings name the offset and the code where they used to carry the elapsed
+seconds — a machine-load reading that had reached canonical evidence whenever N failed. Pids,
+exit codes, durations and whether the kill escalated go to the run diagnostics — the dict a
+caller passes to `run()`, or the `--diagnostics` file — and never into the report, so the
+byte-identity of two sweeps of one tree and the digest in `SHA256SUMS` are untouched. The
+truncation sweep is what it was: the same offsets, `offsets_tried`, `offset_cap_per_fixture`,
+`decoded_without_raising`. Bump rulings for `suite.py` are S10's.
+
+**THE AUDIT REMEDIATION'S F02 RECORD, 2026-09-19 — the lossless check's empty result stops being
+proof: a path-bound preservation ledger replaces value presence wherever an adapter declares its
+mappings, and the value-presence helper is named for what it is.** Reproduced first, on the
+unmodified tree: `lossless.unrepresented({"speed": 12, "heading": 12}, [{"speed": 12}])` returned
+`{}`. The helper compares a SET of normalised scalars, so one surviving value satisfied every
+source field holding it; it could not see a swapped pair, a dropped duplicate, a reordered list,
+`false` written as `0`, or a residual flattened to dotted keys. The harness's `lossless` column,
+check D, the `--strict` DROPPED count and the *Lossless Verified* badge all rested on it.
+
+**FOUR FILES MOVED FOR IT — `lossless.py`, `evidence.py`, `adapter.py` and `adapters/pntmap.py`
+— and two already in the set above, `harness.py` and `suite.py`.** `lossless.unrepresented()` is
+renamed `lossless.value_presence_heuristic()` with no alias: a caller that reads its `{}` as
+"lossless" now has to write the word heuristic. Beside it, `lossless.ledger()` takes the raw
+payload, the dumped objects, the adapter's `MAPPINGS` and the manifest's `unsupported_paths`,
+and files every source LEAF — array indices kept, duplicates counted, empty containers and
+`null` and `""` and `false` each a leaf with a type — in exactly one of MAPPED (a declared
+destination object and path, the observed value satisfying a declared rule within its
+tolerance), RESIDUAL (the same relative path, value and type under a parked subtree, or under the
+destination a residual-kind mapping declares for a subtree), DECLARED_LIMITATION (a structured
+Limitation's path, surfaced as a loss the adapter wrote down) or LOST with a kind: MISSING,
+VALUE_MISMATCH, TYPE_MISMATCH, MULTIPLICITY, ORDER, WRONG_OBJECT, TRANSFORM_MISMATCH or
+UNDECLARED_RESIDUAL. The rules are a closed table — `identity`, `number`, `scale`, `round`,
+`enum_map`, `casefold`, `text`, `instant`, `absent_if` — each recomputed against the output; a
+free-text `TRANSFORMS` reason exempts a path from the heuristic and from nothing else. Keys that
+hold a separator are JSON-quoted in a path and matched as tokens. Diagnostics carry the source
+path, the expected destination and rule, the observed destination and its TYPE, and never a
+value.
+
+**`Adapter.MAPPINGS` is a new class attribute, default `{}`, and an empty map is not a claim.**
+The harness runs the ledger over every JSON fixture of an adapter that declares it and folds a
+LOST leaf into the SAME `lossless` column — no seventh column, so `_COLUMNS` and the count six
+documents state are unmoved — and every report says which basis the column rests on:
+`preservation.basis` on the harness report and per fixture, `checks.D.details.basis` in the
+suite, `loss_report.ledger` (counts per category and per loss kind, de-duplicated diagnostics,
+capped at `harness.DIAGNOSTIC_LIMIT`) in the suite and in the evidence record. The *Lossless
+Verified* badge reads `yes` only from a ledger with nothing LOST; a clean reading on the
+heuristic alone is `heuristic`, amber; a measured failure stays `no`. `pntmap` declares sixteen
+mappings and is the one shipped adapter reassessed under the ledger in this record (46 MAPPED, 22
+RESIDUAL, 0 LOST over its four fixtures); the other thirteen declare nothing yet, their check D
+reads `basis: heuristic`, and their badge reads `heuristic` — the register
+(`docs/audit-remediation-report.md`, F02) records that per adapter rather than exempting any.
+`tests/test_cdm_preservation.py` holds the counterexample, the fourteen regression cases the
+audit listed, one deliberately corrupted adapter per loss kind run through `harness.run`, and
+the reporting. Bump rulings for these units are S10's.
+
+**Audit remediation F06 (2026-09-20): the resource-limit and streaming claims are held to
+tests, the fixture loader gains the one bound that had to run before `json.loads`, the parser
+worker gains a memory/CPU envelope that is refused where the platform cannot enforce it, and
+`integrity` is described as the container it is.** Three of the fourteen files already in this
+section move — `harness.py`, `suite.py` and `models.py` — and no new file ships.
+
+`harness.load_raw` was the one place this package parsed JSON before any adapter's declared
+`max_depth` could apply: a `.json` twin was handed over already parsed, and on CPython 3.11
+`json.loads` recurses once per container and raises `RecursionError` a little under a thousand
+deep, so a twin that deep crashed `harness.run` in-process and reached the conformance worker as
+`PARSER_CRASH` in the loader layer. The loader now measures the text with
+`adapter.json_nesting_depth` first and refuses past `harness.LOADER_MAX_DEPTH` (64 — the figure
+every declared `max_depth` uses; the deepest of the 941 shipped `.json` files nests 15) with `FixtureTooDeep`,
+a `ValueError`, and can refuse a file on its `stat()` size before reading it with
+`FixtureTooLarge` — `harness.LOADER_MAX_BYTES`, which reads `None` until a hosting application
+sets it, because no document states a figure and the twin of a 14-octet ADS-B squitter is over
+400 octets. Both are keyword parameters of `load_raw` too; `0` switches either off.
+
+`suite.ResourceLimits(memory_bytes, cpu_seconds)` asks the parser worker (F03) to run under
+`RLIMIT_AS` / `RLIMIT_CPU`, applied in the child before the adapter is imported; `run()` and
+`ParserWorker` take `limits=`, and the CLI spells them `--memory-limit-bytes` and
+`--cpu-limit-seconds`. `suite.resource_limit_support()` answers per field what THIS platform
+enforces — Linux both, macOS neither (measured 2026-09-20: `setrlimit(RLIMIT_AS)` refuses every
+finite value with `EINVAL`, `RLIMIT_CPU` is accepted and not enforced), Windows neither (no
+`resource` module) — and a request the platform cannot honour raises
+`suite.UnsupportedResourceLimit` from `ParserWorker` before any process exists and returns
+`EXIT_USAGE` from the CLI, never a silent best effort. A limit that fires is a crash class
+(`MemoryError` → `PARSER_CRASH`; `SIGXCPU` → `PARSER_CRASH` with the signal as the exit code in
+the diagnostics; the CPU hard limit is set one second above the soft one since 2026-09-20, S10,
+because Linux sends `SIGKILL` and never `SIGXCPU` when the two are equal). **Contract, additive and conditional:** H's and N's canonical `details` carry a
+`resource_limits` key ONLY when a limit was requested — a default run's report bytes do not move
+— and the diagnostics always carry `resource_limits` and `resource_limit_support`. Check M's
+`details` gain `streaming`, the four properties a streaming contract would consist of
+(`suite.STREAMING_STATUS`: `chunk_framing`, `partial_messages`, `reassembly`, `backpressure`),
+each "not implemented" or "not applicable"; M stays `SKIP` with `declared_inapplicable: true`
+for all fourteen and is never `PASS`. `CDMBase.integrity`'s description now says in words that
+the field is a data container this package neither fills nor verifies, which moves the five
+generated object schemas' description text and nothing structural. No default-run evidence byte
+moves; the schema change is descriptive. `docs/docs/security/deployment-envelope.mdx` is the
+layer-by-layer statement (library / conformance worker / hosting application, with the platform
+table), `SECURITY.md` gains three control rows, and `tests/test_cdm_resource_envelope.py` holds
+the boundary cases at and past every declared byte and depth bound, the loader's bounds, the
+envelope's enforcement on Linux and its refusal elsewhere, check M, and the integrity walk.
+Bump rulings for these units are S10's.
+
+**Audit remediation F07 (2026-09-20): an evidence record says what KIND of evidence it holds,
+names the exact source state it measured, and holds the declared rung to the categories that
+back it; a runner records an exchange with an independent implementation when one happens, and
+no such record exists today.** Two of the fourteen files already in this section move —
+`evidence.py` and `schemas.py` — and no new file ships.
+
+`evidence.EvidenceCategory` is the brief's five, as an enum: `internal_fixture` and
+`self_round_trip`, which the suite produces (checks A/B/C over the synthetic packaged set; check
+E, which is this package encoding and decoding on both legs and says so); `independent_expected`,
+`normative_schema` and `independent_endpoint`, which only an exercise report can make PRESENT.
+Every record carries `evidence_categories` — one reading per category, `PRESENT`, `ABSENT` or
+`NOT_APPLICABLE`, with a basis sentence and the hashed reports it rests on — and every external
+category reads ABSENT for every shipped adapter, each with the reason: the goldens were written
+by the code under test, check B validates the CDM's own schema, and no exchange with an
+independent endpoint has been recorded. `maturity_support` holds the DECLARED rung to
+`evidence.RUNG_CATEGORIES` (L1–L3 the internal fixture run; L4 and L5 add the self round trip;
+L6 needs the independent endpoint), a requirement satisfied by PRESENT only, and reports
+`local_complete` apart from `external_outstanding`; `suite.eligible_level` is not touched.
+`snapshot` is the exact tested state: HEAD, whether the tree was dirty, a SHA-256 over
+`git diff HEAD`, every untracked non-ignored file with its hash, and one digest over those two
+— never the record's own final commit, which no untracked record can hold; `source_commit` is
+read off it. `verify` compares the snapshot (a dirty `source_commit` stays masked, because the
+snapshot now says which dirty) and refuses a record whose cited report is missing or changed.
+`synapse evidence exercise --adapter <name> --spec <json> --slug <name>` is the runner: from an
+operator's specification it derives every digest, each verdict from its two digests, this side's
+implementation and version, the environment and the snapshot, and writes
+`evidence/<adapter>/<version>/exercises/<slug>.json` in the shape `schemas/evidence/exercise.schema.json`
+publishes (`schemas.EXERCISE_STEM`); `generate` reads that directory when it exists and refuses
+a report for another adapter or an invalid one whole. A peer named as this package is refused
+as not independence; an internal category cannot be claimed by a report. A seventh badge,
+`independent-evidence`, reads `none` in amber. **Contract change: yes, additive** — three
+required fields on the record (`snapshot`, `evidence_categories`, `maturity_support`) and a
+second schema file on the evidence axis, so `EVIDENCE_SCHEMA_VERSION` must move; the ruling is
+S10's. Offline generation, `verify`, CI and the release pipeline need nothing new: with no
+report present nothing changes but the three fields. `external_exercise` stays null on every
+manifest and L6 stays unawardable from this repository's evidence.
+
+**Audit remediation F05 (2026-09-20): every adapter declares what its wire form is BOUND to, the
+support boundary is one generated page drift-checked against the declarations, and STANAG 4676's
+XML naming is a provisional internal profile in the manifest, the listing and the page — with a
+separate, explicit normative mode that validates against the authorised schema through a
+documented local-resource hook and fails BLOCKED without it.** Fifteen files already in this
+section or newly named in its count move — `manifest.py`, `harness.py`, `evidence.py` and the
+twelve adapter modules other than `pntmap.py` and `stanag4676.py`, each by one declaration line
+— `adapters/stanag4676.py` moves substantively, and two files ship for the first time,
+`support_matrix.py` and `normative_binding.py`.
+
+`manifest.WireBinding` is the new REQUIRED, undefaulted field `AdapterMetadata.binding`:
+`standard-encoding` (the bytes are the cited document's own encoding, checked by this repository's
+fixtures and tests — verified by this package's own evidence, not by an independent implementation
+or a normative schema), `provisional-internal-profile` (element names or namespace chosen here
+because the normative resource is not held; the model refuses it unless a limitation says
+"provisional"), and `normative-verified` (validated against the authorised schema through the
+hook; no shipped adapter declares it, and `tests/test_cdm_manifests.py` holds the value to an
+exercise report of F07's `normative_schema` category). Every shipped adapter but one declares
+`standard-encoding`; `stanag4676` declares `provisional-internal-profile` and a new limitation
+says what that means. **Manifest schema changed: yes** — a required field, so a manifest written
+against 1.2.0 no longer validates against the regenerated `schemas/manifests/adapter-manifest.schema.json`;
+`MANIFEST_SCHEMA_VERSION` must move and the ruling (MAJOR by `VERSIONING.md`'s own row for a
+required field, unless S10 rules a default) is S10's, not made here. All fourteen `manifests/*.json`
+regenerate with the one added key. `--list-adapters` gains a `binding` column and `--json` a
+`binding` key — additive; the five existing columns and keys are unchanged.
+
+`synapse_cdm.support_matrix` is the third generator beside `manifests.py` and `schemas.py`:
+`python -m synapse_cdm.support_matrix --out docs/docs/cdm/support-matrix.mdx` renders, from the
+declarations and the packaged fixture directories alone, one page with the edition, binding,
+directions, replayed forms (the harness's own `select_fixtures` over each fixture directory),
+maturity, licence class, message families, every limitation verbatim, and F07's five evidence
+categories per adapter (the internal two the suite produces; the external three ABSENT with
+`evidence.EXTERNAL_ABSENT_BASIS`, the record's own basis, now a module-level constant so the page
+and the record are one statement); `--check` fails when the page and the declarations disagree,
+and `tests/test_cdm_support_matrix.py` holds the page, the manifests, the listing and the classes
+to one binding per adapter. The page states no adapter count. (2026-09-20, the final review: the
+generated banner said the page is "drift-checked in CI"; no CI step runs `--check`, the suite's
+`tests/test_cdm_support_matrix.py` is the drift check, and the banner now says so — the page
+regenerated, `--check` CURRENT. A wording change in generated prose; no key, column or exit code moved.)
+
+`adapters/stanag4676.py`: the constructor takes `binding` (`BINDING_PROVISIONAL`, the default and
+everything the adapter did before; or `BINDING_NORMATIVE`), read from `SYNAPSE_CDM_NITS_BINDING`
+when not given. The normative mode resolves the hook AT CONSTRUCTION — `SYNAPSE_CDM_NITS_XSD_DIR`
+names a directory outside the repository holding `stanag4676.xsd`,
+`stanag4774_confidentialitymetadatalabel.xsd` and `xsd_pin.json` (edition, the schema's own
+revision number and date, target namespace, provenance, usage rights, date obtained, and each
+file's SHA-256, every one checked and every hash recomputed) — and raises
+`normative_binding.NormativeBindingBlocked` (`BLOCKED_EXTERNAL_EVIDENCE`, naming the first unmet
+step of `NORMATIVE_PROCEDURE`) otherwise; it never falls back to the profile. Under it every
+document read is validated against the schema before anything interprets it and must have
+`<NITSRoot>` in the recorded target namespace; every document emitted is written under that
+namespace and validated before it is returned; `binding_report` records what was validated
+against. Validation is `xmlschema` or `lxml`, sandboxed (no network, no entity resolution, no DTD
+loading); neither is a dependency of this package and the mode reports step `validator` BLOCKED
+when neither imports. `normative_binding.py` is the generic resolver (hook, directory, record,
+files, checksum, validator), outside `adapters/` because it decodes the JSON record and the
+parser-safety gate derives the JSON-payload adapters from that call.
+
+**Contract change: yes, in the provisional profile too, and it is a tightening.** (1) The reader
+no longer strips namespaces: a document whose `<NITSRoot>` is in ANY namespace is refused by name
+under the profile (before F05 it was silently read as the profile), and a modelled element in a
+namespace other than the binding's is refused as a mixed document; an unmodelled extension element
+in its own namespace is still parked. No shipped fixture, golden or evidence record carried a
+namespace on a NITS element (the fixtures declare only `xmlns:slab` and `xmlns:xsi`), so none
+moves. (2) An emitted provisional document carries one XML comment after its declaration
+(`PROVISIONAL_MARKER`) naming the binding; the parser drops it on re-ingest and the `values`
+tolerance never sees it. (3) The XML is parsed by `pyexpat` into an `ElementTree` tree
+(`_parse_xml`) with the external-entity handler refusing and parameter-entity parsing off: an
+external entity reference now FAILS the parse at the reference (it was left undefined before) and
+the external DTD subset is never requested; internal entities expand as before and libexpat's
+amplification limit still refuses a bomb. Rationale: F05's item 6 (profile/namespace distinction
+in both directions) and item 5 (no unintended external-entity access); replacement assertions in
+`tests/test_cdm_stanag4676_binding.py`. Version: `adapters/stanag4676.py` and `manifest.py` bump
+rulings are S10's.
+
+**THE AUDIT REMEDIATION'S F09 RECORD, 2026-09-20 — current documentation and maintenance
+controls; the moved set is unchanged at the count above.** Three shipped files move and none of
+them changes what the package does: `conformance.py` and `harness.py` each lose an `import
+jsonschema` that F04's move to `schemas.validator_for` had left unused, and
+`adapters/stanag4676.py` marks its `NormativeBindingBlocked` import as the re-export it is (the
+binding tests import the name from the adapter) with a one-line `noqa`. All three were already in
+the moved set, so the count above does not move. `pyproject.toml`, also already in the set, widens
+the lint gate from `E9,F821` to `E9,F,E7,W` over an explicit per-file legacy baseline — 32
+legacy findings in 13 files (the F09 record first said 33: the 33rd, an F541 in
+`adapters/stanag4676.py`, was written by the remediation itself and S10 repaired it at the
+source on 2026-09-20 rather than carry it as legacy), each listed by file and rule, held by `tests/test_cdm_lint_stage.py` to
+files that exist and to a list that can only shrink; the three unused-import findings the
+remediation itself had introduced, and the bump gate's two placeholder-less f-strings, were
+repaired rather than baselined. Outside the distribution:
+a new documentation entry page, `docs/docs/current-contracts.mdx`, routes to the version policy,
+the validation levels and semantic corpus, the parser limits and deployment envelope, the evidence
+definitions, the support matrix and the governance record, and carries a block that
+`gates/current_contracts.py` renders from this package's own constants and `--check`s for drift
+(`tests/test_cdm_current_contracts.py`); `VERSIONING.md` §2's axis table and `ARCHITECTURE.md`
+§1.1's surface table stop citing `version.py` and `adapter.py` LINE numbers and cite the constant's
+assignment and the member's kind instead, with `tests/test_cdm_architecture_docs.py` re-anchored
+to hold a name and a kind rather than a number; and the current claims the earlier findings had
+overtaken — the harness's lossless check as value presence (F02), a 2.0.0 reader reading a
+2.1.0 object (F01), check O's "no bound is declared" and check M's bare skip (F06), the
+six-badge evidence record without its categories and snapshot (F07), the STANAG 4676 binding
+absent from the metadata table (F05), the ruff rule set — are corrected on the pages that stated
+them, each as a dated correction beside the sentence it corrects. No dated record was rewritten.
+Version: not bumped; the three source edits are lint repairs and S10's package ruling covers them
+with the files' other changes.
+
+**THE AUDIT REMEDIATION'S S10 RECORD, 2026-09-20 — the version decision on every axis, the migration
+note a 2.2.0 consumer needs, and the rulings that make the arc since `v2.2.0` derivable.** Each
+axis was decided from the diff and from `gates/bump_derivation.py`'s reading of it, independently
+of the others; the register (`docs/audit-remediation-report.md` §4) carries the same table.
+
+- **Python package: 3.0.0 is owed, and the number is the derived floor.** With the rulings below
+  read, the gate derives MAJOR over the arc since `v2.2.0` with nothing unruled: the shape signal
+  is `lossless.unrepresented`, an importable name removed with no alias (F02, the old name was a
+  claim of proof), and the ruled MAJOR units are `version.compatible` and `version.parse` (F01),
+  `harness.run` and `evidence.badges` (F02), `suite.check_malformed` and
+  `suite.check_parser_robustness` (F03), `conformance.assess_a`, `conformance._validator` and
+  `models.Timestamp` (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter` and `parse_document`
+  (F05), `harness.load_raw` (F06) and `evidence.EvidenceRecord` (F07). `PACKAGE_VERSION` is NOT
+  typed in this tree: this file's release procedure makes the release commit the act that types
+  the number ("the release that types the number is the one that writes the ruling"), and a
+  number equal to the floor needs no `**Version ruling.**` paragraph. The 3.0.0 release notes are
+  the release round's to write from this record.
+- **CDM schema: 3.0.0 is owed — a MAJOR, ruled here on 2026-09-20 by the final review,
+  superseding the MINOR ruled earlier that day. Contract change: yes.** F04 narrowed the
+  PUBLISHED schema: `pattern` on `adapter_version` and `schema_version` of every kind, `pattern`
+  on `Entity.symbol`, `uniqueItems` on `Entity.ontology_types`; F06 moved description text. The
+  table at the top of this file decides the bump: "a type narrowed" is on the MAJOR row, the
+  MINOR row admits "validation relaxed" and nothing tightened, and `VERSIONING.md` §3 makes this
+  axis the WIRE contract, governed by that table and not by what the reference models enforce.
+  A document that validated under the published 2.1.0 schema — `"adapter_version": "banana"`,
+  F04's own counterexample — is refused by the narrowed schema, so for a consumer validating
+  with the published schema alone (who the axis exists for) accepted documents DO become invalid.
+  The table row is not amended; no rationale exists to amend it. Requiring the geometry `type`
+  key, F04's parked option, may ride this MAJOR or a later one — the release round's choice.
+  *Superseded history (the MINOR ruling, S10, 2026-09-20, kept as the record of what was ruled
+  and why):* no path was removed or renamed, no `required` list grew, no enum member was removed
+  (`tests/test_cdm_schemas.py`'s drift gates say so), and every added constraint restates what
+  the reference models enforced since the field existed, so no document this package accepted
+  becomes invalid — on that reading 2.2.0 was ruled owed and the table's literal MAJOR recorded
+  as the alternative not taken. That reading measured the package's acceptance, not the wire
+  contract's; it is withdrawn. **The constant is not moved in this tree — the NUMBER is typed at
+  the release commit (the register's §5 item 6) — and the reason is the repository's own gate**:
+  `tests/test_cdm_version_matrix.py` holds `SCHEMA_VERSION` to the frozen CURRENT contract ("the
+  current contract must be frozen before it is claimed"), and a frozen copy under
+  `tests/frozen/cdm/` carries the release tag and its commit as provenance — which no uncommitted
+  tree can supply. Until that commit the files under `schemas/` carry `x-cdm-schema-version:
+  2.1.0` and differ from `tests/frozen/cdm/2.1.0/` by F04's patterns and `uniqueItems`: they are
+  MISLABELLED, and this branch must not merge to `main` before the release commit, because the
+  docs site serves `main`'s tip. The release commit that moves it must, in one act: set the
+  constant to `3.0.0`; `python -m synapse_cdm.schemas --out schemas`; `python -m
+  synapse_cdm.manifests --out manifests`; re-run every shipped adapter's goldens with `python -m
+  synapse_cdm.harness --adapter <name> --update-golden` and READ the diffs (every golden and
+  parsed twin carries `schema_version`); `python -m synapse_cdm.evidence generate --all --out
+  evidence`; then freeze the 3.0.0 schemas into `tests/frozen/cdm/3.0.0/` with the tag and commit
+  in `MANIFEST.json` and extend `version.KNOWN_CONTRACTS`. `version.assess("2.1.0", "3.0.0")`
+  reads REFUSED both ways by F01's different-major rule, before and after the freeze — the
+  ruling's consequence, not an over-refusal to refine: a 2.1.0 reader is not promised a 3.0.0
+  document, and the (2.2.0 → 2.1.0) WRITER_NEWER refinement the MINOR ruling anticipated no longer
+  arises.
+- **Adapter API: 2.1.0 → 3.0.0, moved here.** `AdapterMetadata.binding` (F05) is required and has
+  no default, so every subclass written against 2.1.0 must add one line. `Adapter.MAPPINGS` (F02)
+  is additive beside it. The comment above `ADAPTER_API_VERSION` in `version.py` carries the
+  ruling; `VERSIONING.md` §2 reads the constant.
+- **Manifest schema: 1.2.0 → 2.0.0, moved here.** A newly required field is a MAJOR by
+  `VERSIONING.md`'s own row; every manifest under `manifests/` regenerated
+  (`python -m synapse_cdm.manifests --out manifests`) and `--check` reads CURRENT.
+- **Evidence schema: 1.0.0 → 2.0.0, moved here.** Three required fields and a second schema file
+  (F07); `schemas/evidence/*.schema.json` regenerated and every record under `evidence/`
+  (gitignored) regenerated and REPRODUCED.
+- **SC-OES 0.1.0, the Operational Ontology 0.1.0 and the profile versions: unchanged.** `spec/`,
+  `ontology/` and `registry/sc_oes/` are untouched by the arc.
+
+**What a 2.2.0 consumer must do (the migration note, in one place).** Rename
+`lossless.unrepresented` to `lossless.value_presence_heuristic`, and read its `{}` as "nothing
+seen", not as proof. Expect `version.compatible()` to answer `False` for a writer newer than the
+reader within major 2 and for any minor of the major that is not frozen, and to raise
+`ValueError` on a malformed string; use `version.assess()` for the verdict, direction and basis.
+Declare `binding=` on every adapter's metadata. Expect the harness's `lossless` column to FAIL
+on a ledger loss for an adapter that declares `MAPPINGS`, and the `lossless-verified` badge to
+read `heuristic` for one that does not. Expect H's and N's `details` to carry outcome codes, and
+N's `over_time_bound` strings to name a code rather than a duration. Expect the conformance tool
+to refuse a string boolean, a trailing newline in a version, a malformed UUID and a timestamp
+outside the wire form on the JSON path. Expect `--list-adapters` to print a `binding` column.
+Expect an evidence record to carry `snapshot`, `evidence_categories` and `maturity_support`, and
+a manifest to carry `binding`. Nothing is migrated in place: manifests, schemas, evidence and
+goldens are regenerated from their sources.
+
+**Bump ruling.** Units of `synapse_cdm/adapter.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapter.py:Adapter` — MINOR: the class gains `MAPPINGS`, a `ClassVar` defaulting to `{}` (F02); every existing subclass keeps working and the ledger runs only where a table is declared.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/adsb.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/adsb.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/adsb.py:AdsbAdapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/ais.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/ais.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/ais.py:AisAdapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/asterix_cat021.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/asterix_cat021.py:<statement 8>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/asterix_cat021.py:AsterixCat021Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/asterix_cat023.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/asterix_cat023.py:<statement 8>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/asterix_cat023.py:AsterixCat023Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/asterix_cat034.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/asterix_cat034.py:<statement 8>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/asterix_cat034.py:AsterixCat034Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/asterix_cat048.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/asterix_cat048.py:<statement 8>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/asterix_cat062.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/asterix_cat062.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/asterix_cat062.py:AsterixCat062Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/gmtif.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/gmtif.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/gmtif.py:GmtifAdapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/legion.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/legion.py:<statement 10>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/legion.py:LegionAdapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/pntmap.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/pntmap.py:<statement 10>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/pntmap.py:PntmapAdapter` — MINOR: declares `MAPPINGS` (sixteen path-bound mappings, F02) so the preservation ledger runs over its fixtures, and `binding=WireBinding.STANDARD` (F05); both are additions to a declaration.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/stanag4586.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/stanag4586.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/stanag4586.py:Stanag4586Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/stanag4609.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/stanag4609.py:<statement 17>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/adapters/stanag4676.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/stanag4676.py:<statement 10>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 11>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 12>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 1>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 2>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 3>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 5>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 6>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 7>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:<statement 9>` — PATCH: an import or an unnamed module-level statement renumbered by the F05 insertions (the `pyexpat` import, the binding-mode constants and the procedure text); the surface they serve is ruled on `Stanag4676Adapter` and `parse_document`.
+`synapse_cdm/adapters/stanag4676.py:Stanag4676Adapter` — MAJOR: the provisional profile now REFUSES a `<NITSRoot>` carrying any namespace and a document whose modelled elements sit in a foreign namespace, both of which the 2.2.0 reader read by local name, and its egress carries `PROVISIONAL_MARKER`; a document that was accepted is refused, which is the meaning row. The constructor's `binding=`, `environ` and `validator_factory` and the normative mode are additive beside it (F05).
+`synapse_cdm/adapters/stanag4676.py:_serialise` — MINOR: writes the provisional marker, or the target namespace under the normative binding, and validates before returning under that binding; the profile's element names are unchanged (F05).
+`synapse_cdm/adapters/stanag4676.py:parse_document` — MAJOR: the same refusal at the reader: `_parse_xml` over `pyexpat` fails an external entity reference at the reference and never requests the external subset, and a namespaced root is refused by name (F05).
+
+**Bump ruling.** Units of `synapse_cdm/adapters/tak.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/adapters/tak.py:<statement 9>` — PATCH: the `from ..manifest import` statement gains `WireBinding` (F05); an import, no surface of its own.
+`synapse_cdm/adapters/tak.py:TakAdapter` — PATCH: the metadata declaration gains `binding=WireBinding.STANDARD`, a declared fact stated where F05 requires one; no behaviour and no importable name moved.
+
+**Bump ruling.** Units of `synapse_cdm/conformance.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/conformance.py:<statement 12>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 13>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 14>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 5>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 6>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:<statement 7>` — PATCH: an import or an unnamed module-level statement renumbered by F01's `assess_version` import and F04's `SEMANTIC_RULE_ID`, `STRUCTURAL`, `SEMANTIC` constants; the named surfaces are separate units.
+`synapse_cdm/conformance.py:_validator` — MAJOR: built through `schemas.validator_for`: draft 2020-12 with a `FormatChecker` and the dollar-anchor rewrite, which refuses what the stock validator accepted (F04).
+`synapse_cdm/conformance.py:assess` — MINOR: dimension A's report gains `structural` and `semantic` lists beside the unchanged `findings`, and dimension L reports the version verdict, direction, basis and reason (F01, F04); no key removed.
+`synapse_cdm/conformance.py:assess_a` — MAJOR: validates the document as JSON bytes with `strict=True` and through `schemas.validator_for` (ECMA-262 `pattern`, `FormatChecker`), so a string boolean, a trailing newline in a version and a malformed UUID are refused where the 2.2.0 tool passed them (F04); a malformed `schema_version` is a finding rather than a crash (F01).
+
+**Bump ruling.** Units of `synapse_cdm/evidence.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/evidence.py:<statement 10>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 11>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 12>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 13>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 14>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 15>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 16>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 17>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 18>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 5>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 6>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 7>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:<statement 9>` — PATCH: an import or an unnamed module-level statement renumbered by F07's category, snapshot and exercise definitions and F05's `EXTERNAL_ABSENT_BASIS`; the named surfaces are separate units.
+`synapse_cdm/evidence.py:EvidenceRecord` — MAJOR: three REQUIRED fields — `snapshot`, `evidence_categories`, `maturity_support` (F07) — so a 1.0.0 record no longer validates and a 2.0.0 record carries keys a 1.0.0 validator refuses; `EVIDENCE_SCHEMA_VERSION` moves 1.0.0 → 2.0.0 for it.
+`synapse_cdm/evidence.py:badges` — MAJOR: the `lossless-verified` badge reads `heuristic` (amber) where it read `yes` for an adapter without `MAPPINGS` (F02), so the same tree yields a different badge; the seventh badge, `independent-evidence`, is additive (F07).
+`synapse_cdm/evidence.py:build_parser` — MINOR: the `exercise` verb and `--exercises` (F07); every existing verb and flag keeps its meaning.
+`synapse_cdm/evidence.py:generate` — MINOR: reads exercise reports beside the record, derives the categories, the snapshot and the maturity support, and writes the three new fields (F07); everything it wrote before it still writes.
+`synapse_cdm/evidence.py:main` — MINOR: dispatches the `exercise` verb (F07).
+`synapse_cdm/evidence.py:reproduce` — MINOR: re-reads every cited exercise report and compares the snapshot in full (F07); the checks it made before are unchanged and a 1.0.0 record is refused by the schema before this function reaches it.
+`synapse_cdm/evidence.py:source_commit` — PATCH: read off `snapshot()` (F07); the value is the one it returned before.
+
+**Bump ruling.** Units of `synapse_cdm/geo.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/geo.py:MultiLineString` — PATCH: the validator's message gains its `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/geo.py:MultiPolygon` — PATCH: the validator's message gains its `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/geo.py:Polygon` — PATCH: the validator's message gains its `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/geo.py:_check_lonlat` — PATCH: the validator's message gains its `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+
+**Bump ruling.** Units of `synapse_cdm/harness.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/harness.py:<statement 10>` — PATCH: an import or an unnamed module-level statement renumbered by F06's loader bounds and F02's `DIAGNOSTIC_LIMIT`; the named surfaces are separate units.
+`synapse_cdm/harness.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by F06's loader bounds and F02's `DIAGNOSTIC_LIMIT`; the named surfaces are separate units.
+`synapse_cdm/harness.py:<statement 9>` — PATCH: an import or an unnamed module-level statement renumbered by F06's loader bounds and F02's `DIAGNOSTIC_LIMIT`; the named surfaces are separate units.
+`synapse_cdm/harness.py:_check_roundtrip` — PATCH: calls `lossless.value_presence_heuristic` under its new name (F02); the comparison is the one it made before.
+`synapse_cdm/harness.py:_compare_emitted` — PATCH: calls `lossless.value_presence_heuristic` under its new name (F02); the comparison is the one it made before.
+`synapse_cdm/harness.py:load_raw` — MAJOR: gains `max_bytes` and `max_depth` and refuses a `.json` fixture nested past `LOADER_MAX_DEPTH` (64) BEFORE `json.loads`, with `FixtureTooDeep`/`FixtureTooLarge` (F06); a fixture the 2.2.0 loader decoded can now be refused, which is the meaning row, even though the deepest shipped fixture nests fifteen.
+`synapse_cdm/harness.py:main` — MINOR: `--list-adapters` gains a `binding` column and `--json` a `binding` key (F05).
+`synapse_cdm/harness.py:render_report` — MINOR: prints the preservation basis and the declared mappings (F02).
+`synapse_cdm/harness.py:render_roster` — MINOR: the binding column (F05).
+`synapse_cdm/harness.py:run` — MAJOR: the `lossless` column FAILs on a LOST leaf of the preservation ledger for an adapter that declares `MAPPINGS`, and its entries and the report carry `preservation` (F02); a verdict the 2.2.0 harness gave from value presence can flip, which is the meaning row.
+
+**Bump ruling.** Units of `synapse_cdm/lossless.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/lossless.py:<statement 1>` — PATCH: an import or an unnamed module-level statement renumbered by F02's ledger; the removal of `unrepresented` is the shape signal the gate reads on its own, and the ledger's names are the added surface.
+`synapse_cdm/lossless.py:<statement 2>` — PATCH: an import or an unnamed module-level statement renumbered by F02's ledger; the removal of `unrepresented` is the shape signal the gate reads on its own, and the ledger's names are the added surface.
+`synapse_cdm/lossless.py:<statement 3>` — PATCH: an import or an unnamed module-level statement renumbered by F02's ledger; the removal of `unrepresented` is the shape signal the gate reads on its own, and the ledger's names are the added surface.
+
+**Bump ruling.** Units of `synapse_cdm/manifest.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/manifest.py:AdapterMetadata` — MAJOR: `binding` is REQUIRED with no default (F05), so a metadata declaration without it is refused; `MANIFEST_SCHEMA_VERSION` moves 1.2.0 → 2.0.0 and `ADAPTER_API_VERSION` 2.1.0 → 3.0.0 for it.
+
+**Bump ruling.** Units of `synapse_cdm/models.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/models.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `SEMVER_PATTERN` and `parse_wire` imports.
+`synapse_cdm/models.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `SEMVER_PATTERN` and `parse_wire` imports.
+`synapse_cdm/models.py:CDMBase` — PATCH: `schema_version` carries `Field(pattern=SEMVER_PATTERN)` so the PUBLISHED schema states what the `_semver` validator already refused, and the `integrity` description says the block is neither filled nor verified (F04, F06); no value the model accepted is refused.
+`synapse_cdm/models.py:Entity` — PATCH: `symbol`'s `pattern` and `ontology_types`'s `uniqueItems` restate the existing validators for the published schema, and the messages gain `SEM-nnn:` identifiers (F04).
+`synapse_cdm/models.py:Event` — PATCH: `_payload_shape` raises one SEM-011 `ValueError` quoting the payload model's errors instead of letting a nested `ValidationError` escape (F04); the document is refused either way.
+`synapse_cdm/models.py:Period` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:PlanObject` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:Position` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:Route` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:RouteLeg` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:SourceRef` — PATCH: `adapter_version` carries the same `pattern` for the published schema (F04); the validator already refused the same strings.
+`synapse_cdm/models.py:TemporalValidity` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+`synapse_cdm/models.py:Timestamp` — MAJOR: on the JSON path (`model_validate_json`) a timestamp outside `TIMESTAMP_RE`'s wire form — a `Z` without milliseconds, an offset, a naive string — is refused through `times.parse_wire` where `times.parse` accepted it (F04); the Python-object path is unchanged.
+`synapse_cdm/models.py:Track` — PATCH: validator messages gain their `SEM-nnn:` identifier (F04); no shape, no acceptance change.
+
+**Bump ruling.** Units of `synapse_cdm/schemas.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/schemas.py:<statement 3>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:<statement 4>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:<statement 5>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:<statement 6>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:<statement 7>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by F04's `DIALECT` and F07's `EXERCISE_STEM`; both names are added surface the gate reads on its own.
+`synapse_cdm/schemas.py:_schema` — PATCH: reads `$schema` from `DIALECT` (S10, the S2 review's finding); the bytes it writes are the ones it wrote.
+`synapse_cdm/schemas.py:evidence_schema` — PATCH: the same `DIALECT` read; the evidence record's schema is generated from `EvidenceRecord`, whose change is ruled there.
+`synapse_cdm/schemas.py:generate` — MINOR: publishes `schemas/evidence/exercise.schema.json` beside the evidence schema (F07); every file it published before it still publishes.
+`synapse_cdm/schemas.py:manifest_schema` — PATCH: the same `DIALECT` read; the manifest's schema is generated from `AdapterMetadata`, whose change is ruled there.
+
+**Bump ruling.** Units of `synapse_cdm/suite.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/suite.py:<statement 10>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 11>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 12>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 13>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 14>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 15>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 16>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 6>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 7>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 8>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:<statement 9>` — PATCH: an import or an unnamed module-level statement renumbered by F03's worker, its outcome codes and F06's `ResourceLimits`; the named surfaces are separate units.
+`synapse_cdm/suite.py:_sweep` — MINOR: passes the startup timeout, the diagnostics sink and the resource limits through to `run` (F03, F06).
+`synapse_cdm/suite.py:build_parser` — MINOR: `--startup-timeout`, `--diagnostics` (F03), `--memory-limit-bytes`, `--cpu-limit-seconds` (F06); no flag removed.
+`synapse_cdm/suite.py:check_malformed` — MAJOR: runs each case in the spawned `ParserWorker`: a non-returning parser is `PARSER_TIMEOUT` and the check FAILs where it never returned; `refusals` rows hold `PARSER_REJECTED` cases only and their `over_time_bound` is always false; `crashed` entries carry the qualified class name; a loader crash is a `PARSER_CRASH` case rather than an exception out of the check (F03). The report's `details` mean something different for the same input, which is the meaning row.
+`synapse_cdm/suite.py:check_parser_robustness` — MAJOR: the same worker; `over_time_bound` entries read `name[:offset]: PARSER_TIMEOUT` where they read a seconds figure (F03).
+`synapse_cdm/suite.py:check_streaming` — MINOR: M's `details` carry `STREAMING_STATUS` (F06); the verdict is the `SKIP` it was.
+`synapse_cdm/suite.py:check_version` — MINOR: L reports `version.assess`'s verdict, direction, basis and reason, and a malformed version is a finding rather than a crash (F01).
+`synapse_cdm/suite.py:loss_report` — MINOR: gains `ledger` from `ledger_summary` (F02); the heuristic's keys are unchanged.
+`synapse_cdm/suite.py:main` — MINOR: an unenforceable resource limit exits `EXIT_USAGE` before any adapter loads (F06) and `--diagnostics` writes the volatile readings to a file (F03).
+`synapse_cdm/suite.py:render_report` — MINOR: prints the ledger summary under the §34 block (F02).
+`synapse_cdm/suite.py:run` — MINOR: `limits=` (F06); one worker per adapter shared by H and N (F03); `checks.D.details.basis` (F02); every key it wrote before it still writes.
+
+**Bump ruling.** Units of `synapse_cdm/version.py` in the arc since `v2.2.0` (S10, 2026-09-20):
+`synapse_cdm/version.py:<statement 0>` — PATCH: the `enum` and `NamedTuple` imports F01's `Compatibility`, `Verdict` and `Direction` need.
+`synapse_cdm/version.py:compatible` — MAJOR: answers `False` where it answered `True` for a newer writer within major 2 and for any minor of the major that is not frozen, and raises `ValueError` where it answered for a malformed string (F01).
+`synapse_cdm/version.py:parse` — MAJOR: requires `SEMVER_RE.fullmatch` before the split and raises `ValueError` where it returned a tuple for a trailing newline, a leading space, a leading zero and a sign (F01).
+
+**Bump ruling.** The three axis constants S10 moved in `synapse_cdm/version.py` (2026-09-20), each on its own axis's row and each a package MAJOR by the same reading the constant's comment states:
+`synapse_cdm/version.py:ADAPTER_API_VERSION` — MAJOR: 2.1.0 → 3.0.0, `AdapterMetadata.binding` required with no default, a new demand on every subclass (F05).
+`synapse_cdm/version.py:MANIFEST_SCHEMA_VERSION` — MAJOR: 1.2.0 → 2.0.0, a newly required manifest field, every 1.2.0 manifest invalid under the 2.0.0 schema and every 2.0.0 manifest refused by the 1.2.0 one (F05).
+`synapse_cdm/version.py:EVIDENCE_SCHEMA_VERSION` — MAJOR: 1.0.0 → 2.0.0, three newly required record fields and a second schema file on the axis (F07).
 
 ### 2.2.0 — 2026-09-17 — the audit arc: a declared depth bound on six of the fourteen, a computed L4, evidence that reproduces on another machine, an interpreter matrix and a lint stage in CI, a witness verifier that re-derives the assets, and every sentence the audit found false corrected
 

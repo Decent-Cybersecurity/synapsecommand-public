@@ -79,9 +79,13 @@ None of these is a convention. Each is checked by something that fails a build.
 ### 1. Adapters never drop data
 
 A field with no canonical home goes into `Entity.attributes` or `Event.payload`, parked under
-`source_extras`. **Enforced:** the harness harvests every scalar in the source payload,
-harvests every scalar in the CDM output, and fails the adapter on a value that appears
-nowhere.
+`source_extras`. **Enforced:** where an adapter declares `MAPPINGS`, the harness recomputes every
+declared source-path-to-destination mapping and fails the adapter on a leaf that is LOST — missing,
+mismatched in value or type, or on the wrong object; where it declares none, the harness falls
+back to harvesting every scalar in the source payload and every scalar in the output and fails on
+a value that appears nowhere, and the report's `basis` says `heuristic`, because an empty result
+on value presence alone is not proof (a value that also occurs elsewhere in the output is
+"present" whether or not it reached the right path — corrected 2026-09-19 by the audit's F02).
 
 Values that legitimately change — a unit conversion, a re-rendered timestamp — are declared in
 the adapter's `TRANSFORMS` with a reason, and the harness **prints every declaration on every
@@ -144,6 +148,10 @@ hashes: `...:44Z`, `...:44.0Z` and `...:44.000000Z` are one instant and three st
 
 ## Where to go next
 
+- **[Current contracts](./current-contracts.mdx)** — the entry page for an implementer: version
+  policy, validation levels and the semantic corpus, parser limits and the deployment envelope,
+  evidence definitions and the support matrix, each routed to its normative text and its gate,
+  with the figures rendered from the package.
 - **[The four objects](./cdm/index.mdx)** — one page each, with the reasoning behind the
   fields that look odd.
 - **[JSON Schema Reference](./schema-reference/index.mdx)** — generated from the published

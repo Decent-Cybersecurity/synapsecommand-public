@@ -20,7 +20,13 @@ integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak
 binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
 "a contact" — ninety-one and fourteen as of today; with one, an adapter is a thin translator and
-nothing else.
+nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
+forms, message families, exclusions and evidence scope — is the generated
+[support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
+One boundary deserves stating here: `stanag4676` reads and writes a **provisional internal XML
+profile** (element names bound in this repository, `binding: provisional-internal-profile`),
+not a verified normative binding; the verified binding is an explicit mode that needs the
+authorised XSD through a documented local hook and fails BLOCKED without it.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
@@ -263,6 +269,7 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 |---|---|
 | [`packages/cdm/synapse_cdm/README.md`](packages/cdm/synapse_cdm/README.md) | the four objects, the seven rules and where each is enforced, and how to write the next adapter |
 | [`packages/cdm/synapse_cdm/FORMAT_COVERAGE.md`](packages/cdm/synapse_cdm/FORMAT_COVERAGE.md) | field-by-field CoT / STANAG 4676 / GeoJSON mappings and the named gaps |
+| [`docs/docs/cdm/support-matrix.mdx`](docs/docs/cdm/support-matrix.mdx) | the GENERATED support matrix: per adapter the edition, wire binding, directions, replayed forms, message families, exclusions and evidence scope, plus STANAG 4676's provisional profile beside its normative mode and that mode's acceptance procedure |
 | [`packages/cdm/synapse_cdm/MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md) | what MAJOR/MINOR/PATCH mean for `schema_version`, the procedure for changing the schema, and what a release requires |
 | [`PUBLICATION.md`](PUBLICATION.md) | what became true when this repository went public, and the open ledger — including what still has to be configured on PyPI before the publish workflow can upload anything |
 | [`spec/sc-oes/README.md`](spec/sc-oes/README.md) | SC-OES: the sixteen normative documents, what the specification is and is not, and the profiles |

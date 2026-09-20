@@ -126,7 +126,8 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Tra
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "LEGION"
 
@@ -455,6 +456,7 @@ class LegionAdapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="Picogrid Legion Platform API v3",
                          version="v3"),
+        binding=WireBinding.STANDARD,
         direction=Direction.INGEST,
         license_class=LicenseClass.LICENSED,
         maturity=Maturity(

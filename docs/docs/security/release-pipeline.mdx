@@ -30,7 +30,7 @@ gate ──► build ──► attest ──► publish ──► release ──
 
 | job | what it does | what it refuses |
 | --- | --- | --- |
-| `gate` | ruff `E9,F821`; the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate — and it exports the two scan verdicts, read off what the two steps printed, for the `release` job's notes | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
+| `gate` | ruff `E9,F,E7,W` over an explicit per-file legacy baseline (see §6); the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate — and it exports the two scan verdicts, read off what the two steps printed, for the `release` job's notes | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
 | `build` | `gates/wheel_install.py --mutation-check --export-dist` (**condition 2**, and the ONE build); `twine check --strict`; a clean install from the built wheel into a fresh venv; a package test run from that install; SPDX and CycloneDX SBOMs over that install; one `SHA256SUMS`; **condition 4**'s derivations | a wheel that fails its own gate, metadata `twine` rejects, an installed wheel whose adapters are not conformant, a `dist/` that does not hold exactly the two expected artefacts, an SBOM with no components or one that does not name `synapse-cdm` at `PACKAGE_VERSION` |
 | `attest` | Sigstore build provenance over the wheel, the sdist, both SBOMs and the evidence bundle, then `gh attestation verify` on each | a digest that changed in the hand-off between jobs; an attestation that does not verify |
 | `publish` | the `pypi` environment's hold, then an OIDC upload with no credential in the file | everything, until a person approves |
@@ -228,12 +228,16 @@ symptom, and it is the one this refusal exists for.
   reads source rather than dependencies. Dependabot alerts cover it and no job in this pipeline
   fails on one — see [Supply chain](./supply-chain.mdx) §2.
 * **Type checking.** There is no mypy configuration in this package and none is run. The lint stage
-  is ruff with `E9` and `F821` — syntax errors (which ruff reports whatever is selected), E902
-  unreadable files, and F821 undefined names — and the narrowing is documented in
-  `packages/cdm/pyproject.toml` beside the config, with the readings that decided it. (Until
-  2026-09-16 the set was `E9` alone, which under ruff 0.16.6 selects only E902 and never caught an
-  undefined name; the sentence here said otherwise.) The same command runs on every push in
-  `ci.yml`'s `lint` job, at the version the package's `[lint]` extra pins.
+  is ruff with `E9`, `F`, `E7` and `W` — syntax errors (which ruff reports whatever is selected),
+  E902 unreadable files, the whole of pyflakes (undefined names, unused imports and variables,
+  f-strings with no placeholder), the E7 statement rules and the whitespace warnings — over an
+  **explicit legacy baseline**: `[tool.ruff.lint.per-file-ignores]` in `packages/cdm/pyproject.toml`
+  names each file that carried a finding when the set was widened on 2026-09-20 (audit
+  remediation F09) and the one rule it carried, so every other file and every other rule is held
+  to the full set and the baseline can only shrink. (Until 2026-09-16 the set was `E9` alone,
+  which under ruff 0.16.6 selects only E902 and never caught an undefined name; from then until
+  2026-09-20 it was `E9,F821`.) The same command runs on every push in `ci.yml`'s `lint` job, at
+  the version the package's `[lint]` extra pins.
 * **A refused upload.** It has never happened, so the recovery path is unexercised. The fix is on
   pypi.org, per `PUBLICATION.md` entry 6, and never a token pasted into the workflow.
 * **A `witness` job that has succeeded on a tag push — as of 2026-09-17, after two executions.**

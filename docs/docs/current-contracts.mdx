@@ -1,0 +1,219 @@
+---
+title: Current contracts
+sidebar_label: Current contracts
+sidebar_position: 1.5
+description: The one page that routes to every contract in force today — version policy, validation levels and the semantic corpus, parser limits and the deployment envelope, evidence definitions, the support matrix and governance — with its figures rendered from the package rather than typed.
+---
+
+# Current contracts
+
+This page is the entry point for an implementer who needs **what is in force today** and not how
+it came to be. Each section names the contract, says where its normative text lives, and names the
+test or gate that holds the text to the code. The figures in the generated block further down are
+rendered from the installed package by `gates/current_contracts.py` and drift-checked by
+`tests/test_cdm_current_contracts.py`, so nothing here is a number somebody typed.
+
+The history — every dated ruling, every round report, every release's record — is preserved where
+it was written and is routed to at the end of this page. It is not repeated here.
+
+:::note[How to read a claim on these pages]
+A sentence that claims an enforcement names the test that exercises it. A sentence that states a
+figure is either rendered (this page, the [support matrix](./cdm/support-matrix.mdx), the
+[JSON Schema reference](./schema-reference/index.mdx)) or held by a test to the constant it names.
+A claim with neither is a claim to treat as prose.
+:::
+
+## Version policy
+
+- **Which number means what.** Nine axes move independently, six of them Python constants; a
+  package release does not move the wire contract and a wire-contract change is not a package
+  release. The rule that decides where an axis lives, the axis table and what moves each axis are
+  [`VERSIONING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/VERSIONING.md)
+  §1–§3; the readings are rendered below, by constant name.
+- **Compatibility is directional and evidence-based.** `version.assess(written_with, read_by)`
+  returns a verdict, a direction and the evidence it rests on; `compatible()` is `True` only for
+  `SUPPORTED`. A newer reader accepts an older frozen contract because the frozen schemas show it
+  validating; an older reader refuses a newer object because every published schema carries
+  `additionalProperties: false`; an unpublished minor is unknown, not safe. The worked example is
+  on the [changelog page](./changelog.mdx#compatibility-is-not-equality); the frozen schemas are
+  `tests/frozen/cdm/` and the matrix is `tests/test_cdm_version_matrix.py`.
+- **What a bump means** is the table on the [changelog page](./changelog.mdx#what-each-bump-means),
+  and the package's own `MIGRATIONS.md` is its source. A narrowed type is a MAJOR by that table; an
+  addition to the schema language (a `pattern`, a `uniqueItems`) is recorded there with both
+  readings when the drift gates read it as an addition.
+
+## Validation levels and the semantic corpus
+
+- **Two validation paths, two contracts.** The published JSON Schema (draft 2020-12, `pattern`
+  read as ECMA-262 reads it, `format` checked) is what a non-Python consumer validates against:
+  the [JSON Schema reference](./schema-reference/index.mdx) is generated from it and
+  `python -m synapse_cdm.schemas --check --out schemas` holds the published files to the models.
+  The Python wire path (`model_validate_json`, strict scalars, the full-match timestamp form) is the
+  conformance tool's path. `tests/test_cdm_schema_alignment.py` pins both answers side by side.
+- **What JSON Schema cannot say** is the semantic rule set SEM-001 … SEM-013, each with the reason
+  it is outside the schema, in the repository's
+  [`docs/cdm-semantic-rules.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/docs/cdm-semantic-rules.md),
+  with its corpus of documents under `tests/semantic_corpus/` and the test
+  `tests/test_cdm_semantic_corpus.py`. Every validator that carries a rule spells its identifier at
+  the head of its message.
+- **Structural and semantic findings are reported apart.** The conformance tool's dimension A
+  prefixes each finding with `structural:` or `semantic:` and the report carries both lists beside
+  the unchanged `findings`; the [SC-OES conformance page](./sc-oes/index.mdx) states the five
+  dimensions.
+
+## Parser limits and the deployment envelope
+
+- **The five bounds, one declaration each** — `max_input_bytes`, `max_depth`, `max_objects`,
+  `max_decompressed_bytes`, `max_parse_seconds` — live in every manifest's `capabilities.limits`,
+  each as a number with its basis or as absent with its reason. The policy is
+  [Parser safety](./security/parser-safety.mdx) §1; the refusals are asserted by
+  `tests/test_cdm_input_bounds.py` and `tests/test_cdm_parser_safety.py`.
+- **Adversarial checks run in a spawned worker with a real deadline.** Checks H and N of the
+  [conformance suite](./cdm/conformance-suite.mdx) parse each case in a child process the suite
+  terminates and restarts when the deadline passes; the outcome is a code, never a duration. The
+  worker figures are rendered below; the tests are `tests/test_cdm_parser_isolation.py`.
+- **What protects the process, layer by layer** — library, worker, hosting application — with the
+  platform table that says where a memory or CPU limit is enforced and where it is refused, is the
+  [Deployment envelope](./security/deployment-envelope.mdx). Streaming is not provided and the
+  `integrity` block is neither filled nor verified; both are stated there and rendered below.
+- **XML is parsed with external entities refused** and parameter-entity parsing off, on both XML
+  adapters; [Parser safety](./security/parser-safety.mdx) §2 states the rules and §7 audits every
+  parser call.
+
+## Evidence definitions
+
+- **A record, not a badge, is the evidence.** What an evidence record carries, how `verify`
+  re-derives one from the tree, the loss report's categories and the path-bound preservation
+  ledger's reading are on the [Evidence records](./cdm/evidence.mdx) page. Every badge is grounded
+  in a record field and disappears with it.
+- **Five categories of evidence, three of them external.** Each record reads every category as
+  `PRESENT`, `ABSENT` or `NOT_APPLICABLE` with a basis, and a maturity rung is held to the
+  categories it needs; the table is rendered below. The three external categories can only be made
+  `PRESENT` by an exercise report from an independent implementation — the acceptance procedure is
+  [`INTEROPERABILITY.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/INTEROPERABILITY.md)
+  §4 and the schema is `schemas/evidence/exercise.schema.json`. No such report exists today, and
+  the [support matrix](./cdm/support-matrix.mdx#evidence-scope) says so per adapter.
+- **Lossless means the ledger, not value presence.** The harness's `lossless` column reads the
+  path-bound ledger where an adapter declares `MAPPINGS` and falls back to the value-presence
+  heuristic where it does not, and the record's `basis` says which; `tests/test_cdm_preservation.py`
+  holds the counterexample that made the distinction necessary.
+
+## Support matrix
+
+- The [support matrix](./cdm/support-matrix.mdx) is generated from the adapters' declarations and
+  the packaged fixture directories — edition, wire binding, direction, replayed forms, maturity,
+  licence, the evidence scope per adapter, every message family and every limitation — and
+  `python -m synapse_cdm.support_matrix --check` refuses a page that disagrees with the
+  declarations. The STANAG 4676 binding is provisional and the normative mode is documented there,
+  with the procedure that unblocks it.
+
+## Governance
+
+- What is enforced on the repository, what is proposed and what is only documented are three
+  columns `gates/governance_audit.py` never blurs; the proposals, the decision record and the
+  operator runbook are under
+  [`docs/governance/`](https://github.com/Decent-Cybersecurity/synapsecommand-public/tree/main/docs/governance)
+  and [ADR 0011](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/docs/adr/0011-repository-governance-enforcement.md).
+  The release pipeline itself is [Release pipeline](./security/release-pipeline.mdx).
+
+## The figures, rendered
+
+{/* BEGIN GENERATED — rendered by gates/current_contracts.py; edit nothing until END */}
+
+### Version axes in force
+
+Read off `synapse_cdm.version` by constant name; the reading beside each is the one the installed package answers with today.
+
+| axis | constant | reading |
+|---|---|---|
+| Python package | `PACKAGE_VERSION` | `2.2.0` |
+| CDM schema (the specification's `CDM_SCHEMA_VERSION`) | `SCHEMA_VERSION` | `2.1.0` |
+| SC-OES specification | `SC_OES_VERSION` | `0.1.0` |
+| Adapter API | `ADAPTER_API_VERSION` | `3.0.0` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `2.0.0` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `2.0.0` |
+
+Frozen CDM contracts the compatibility verdicts rest on (`KNOWN_CONTRACTS`): `2.0.0`, `2.1.0`. A minor of the current major outside this set is `UNKNOWN`, which `compatible()` reads as `False`.
+
+### Compatibility verdicts over the frozen contracts
+
+Every pair `version.assess(written_with, read_by)` answers for, as it answers today. The basis names the frozen-schema matrix test or the `additionalProperties: false` rule the verdict rests on.
+
+| written with | read by | verdict | direction | basis |
+|---|---|---|---|---|
+| `2.0.0` | `2.0.0` | `SUPPORTED` | `SAME` | same MAJOR.MINOR: a PATCH moves descriptions and error wording only (MIGRATIONS.md, 'What each bump means') |
+| `2.0.0` | `2.1.0` | `SUPPORTED` | `READER_NEWER` | tests/test_cdm_version_matrix.py: frozen 2.0.0 documents of every kind validate under the 2.1.0 models and schema |
+| `2.1.0` | `2.0.0` | `REFUSED` | `WRITER_NEWER` | tests/test_cdm_version_matrix.py: the frozen 2.0.0 schemas carry additionalProperties: false and reject the properties 2.1.0 introduced, populated or null |
+| `2.1.0` | `2.1.0` | `SUPPORTED` | `SAME` | same MAJOR.MINOR: a PATCH moves descriptions and error wording only (MIGRATIONS.md, 'What each bump means') |
+
+### The conformance worker
+
+Checks H (malformed input) and N (parser robustness) run every adversarial case in a spawned worker process; the figures are `synapse_cdm.suite`'s defaults, each overridable on the command line.
+
+| figure | constant | default |
+|---|---|---|
+| per-case parser deadline | `DEFAULT_TIMEOUT_S` | 5.0 seconds |
+| worker start-up deadline | `DEFAULT_STARTUP_TIMEOUT_S` | 30.0 seconds |
+| grace between `terminate()` and `kill()` | `KILL_GRACE_S` | 1.0 seconds |
+| worker restarts per check before the rest is `cases_not_run` | `DEFAULT_MAX_WORKER_RESTARTS` | 8 restarts |
+| largest answer a worker may send | `OUTPUT_CAP_BYTES` | 4096 octets |
+
+Per-case outcome codes: `HARNESS_ERROR`, `PARSER_ACCEPTED`, `PARSER_CRASH`, `PARSER_REJECTED`, `PARSER_TIMEOUT`, `WORKER_INIT_FAILED`. Every code but `PARSER_REJECTED` FAILS the check: `HARNESS_ERROR`, `PARSER_ACCEPTED`, `PARSER_CRASH`, `PARSER_TIMEOUT`, `WORKER_INIT_FAILED`. A deadline that fires is reported as the code, never as a duration.
+
+| exit code | value |
+|---|---|
+| `EXIT_OK` | 0 |
+| `EXIT_FAILED` | 1 |
+| `EXIT_USAGE` | 2 |
+| `EXIT_INTERNAL` | 3 |
+
+### Bounds on what a fixture loader and an adapter accept
+
+| bound | constant | reading |
+|---|---|---|
+| harness fixture loader, nesting | `LOADER_MAX_DEPTH` | 64 |
+| harness fixture loader, size | `LOADER_MAX_BYTES` | unset — the hosting application's figure, passed as `max_bytes`; `0` switches the guard off |
+| preservation diagnostics per fixture entry | `DIAGNOSTIC_LIMIT` | 20 |
+
+Every adapter declares each of these `capabilities.limits` fields, as a number with its basis in `declared_because` or as absent with its reason in `absent_because`: `max_input_bytes`, `max_depth`, `max_objects`, `max_decompressed_bytes`, `max_parse_seconds`.
+
+Wire binding, required on every manifest and never defaulted: `standard-encoding`, `provisional-internal-profile`, `normative-verified`.
+
+### Streaming
+
+| aspect | status |
+|---|---|
+| `chunk_framing` | not implemented: `to_cdm` takes one complete payload; the caller frames |
+| `partial_messages` | not implemented: a truncated payload is REFUSED, never buffered (check N exercises exactly this) |
+| `reassembly` | not implemented: no adapter holds state between two `to_cdm` calls |
+| `backpressure` | not applicable: nothing here reads from a source, so nothing can slow one |
+
+### Evidence categories and what each maturity rung needs
+
+The five kinds of evidence a record reads (`evidence_categories`, each `PRESENT`, `ABSENT` or `NOT_APPLICABLE`): `internal_fixture`, `self_round_trip`, `independent_expected`, `normative_schema`, `independent_endpoint`. The first two this repository produces itself; the last three only an exercise report from an outside party can make `PRESENT`.
+
+| rung | categories that must be `PRESENT` (or `NOT_APPLICABLE`) |
+|---|---|
+| `L0` | — |
+| `L1` | `internal_fixture` |
+| `L2` | `internal_fixture` |
+| `L3` | `internal_fixture` |
+| `L4` | `internal_fixture`, `self_round_trip` |
+| `L5` | `internal_fixture`, `self_round_trip` |
+| `L6` | `internal_fixture`, `self_round_trip`, `independent_endpoint` |
+
+{/* END GENERATED */}
+
+## Where the history lives
+
+Nothing above rewrites a dated record. When a figure here disagrees with an older document, the
+older document is a record of what was true when it was written, and the tests named above decide
+what is true now.
+
+| Record | Where | What it holds |
+| --- | --- | --- |
+| Release history and every migration record | [`MIGRATIONS.md` § History](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/MIGRATIONS.md#history), curated on the [changelog page](./changelog.mdx#history) | one entry per release, the Unreleased section for what has moved since |
+| Publication ledger | [`PUBLICATION.md` § Open ledger](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/PUBLICATION.md#open-ledger) | every upload measured after the fact; what is gated and what is witnessed is its last section |
+| Dated corrections to the architecture documents | [`ARCHITECTURE.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/ARCHITECTURE.md), [`VERSIONING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/VERSIONING.md) §4–§5 | each correction is dated and left standing above the text it corrects |
+| Architecture decision records | [`docs/adr/`](https://github.com/Decent-Cybersecurity/synapsecommand-public/tree/main/docs/adr) | one file per decision, status in its header |
+| Readiness and audit reports | [`docs/`](https://github.com/Decent-Cybersecurity/synapsecommand-public/tree/main/docs) | the release-readiness report and the audit remediation register, each dated |

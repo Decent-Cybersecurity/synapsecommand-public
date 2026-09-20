@@ -1,0 +1,68 @@
+{
+  "proposal": {
+    "stage": 2,
+    "status": "proposed — NOT applicable while PUBLICATION.md ledger entry 1 stands",
+    "requires_ruling_reversal": true,
+    "adr": "docs/adr/0011-repository-governance-enforcement.md",
+    "summary": "The pull-request-only shape: every change to main arrives by pull request, every status check the pull-request workflows report is required (including the DCO app's check, which only ever runs on pull requests), linear history, and one logged emergency bypass for the repository admin role. This reverses the ruling that keeps direct pushes legal, so `gates/governance_audit.py apply` refuses it for as long as CONTRIBUTING.md and PUBLICATION.md carry that ruling; entry 1 names the sequence for reversing it.",
+    "not_a_reading": "This file describes a proposal. It is not proof that main is protected; only an administrator's apply and a readback (docs/governance/RUNBOOK.md) are.",
+    "required_contexts_derived_from": "gates/governance_audit.py check_contexts(): the `name:` of every job in every workflow with a pull_request trigger, matrix expanded; tests/test_cdm_governance.py holds this list to that derivation, so a renamed job reds the suite until this file is regenerated.",
+    "single_maintainer": "required_approving_review_count is 0 because a pull request cannot be approved by its own author and this repository has one maintainer; review is the status checks, the DCO check and the maintainer's own read. No CODEOWNERS file and no team are invented.",
+    "emergency_bypass": "bypass_actors names the repository admin role (actor_id 5) with bypass_mode always. Every use writes a `bypass` event to the repository's audit log; the runbook's readback step lists them. With one maintainer who is also the admin, any ruleset is self-imposed — the bypass turns an emergency direct push into a logged event instead of a settings edit that leaves the ruleset changed.",
+    "apply": "python gates/governance_audit.py apply --proposal docs/governance/rulesets/stage2-main-protection-pull-request-only.json --confirm 'APPLY main-protection'"
+  },
+  "ruleset": {
+    "name": "main-protection",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [
+      {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always"}
+    ],
+    "conditions": {
+      "ref_name": {
+        "include": ["~DEFAULT_BRANCH"],
+        "exclude": []
+      }
+    },
+    "rules": [
+      {"type": "deletion"},
+      {"type": "non_fast_forward"},
+      {"type": "required_linear_history"},
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": true,
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true,
+          "allowed_merge_methods": ["squash", "rebase"]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": false,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {"context": "Suite, gates and manifests (Python 3.11)", "integration_id": 15368},
+            {"context": "Suite, gates and manifests (Python 3.12)", "integration_id": 15368},
+            {"context": "Suite, gates and manifests (Python 3.13)", "integration_id": 15368},
+            {"context": "Suite, gates and manifests (Python 3.14)", "integration_id": 15368},
+            {"context": "Lint — ruff, the release gate's rule set, on every push", "integration_id": 15368},
+            {"context": "The installed package is the tested package (gates/wheel_install.py)", "integration_id": 15368},
+            {"context": "Conformance Suite v2, every shipped adapter", "integration_id": 15368},
+            {"context": "Evidence records, provenance and badges", "integration_id": 15368},
+            {"context": "gitleaks, over the full history reachable from this push", "integration_id": 15368},
+            {"context": "pip-audit, over the environment and over the wheel's frozen closure", "integration_id": 15368},
+            {"context": "npm audit over docs/, at high, with the exceptions derived from security/exceptions/", "integration_id": 15368},
+            {"context": "Analyse python", "integration_id": 15368},
+            {"context": "Analyse javascript-typescript", "integration_id": 15368},
+            {"context": "Newly introduced vulnerable dependencies", "integration_id": 15368},
+            {"context": "DCO", "integration_id": 1861}
+          ]
+        }
+      }
+    ]
+  }
+}

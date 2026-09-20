@@ -29,7 +29,8 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
     """
     from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
                                       Evidence, FormatRef, LicenseClass, LimitBasis, LimitKind,
-                                      Limits, Maturity, MaturityLevel, Residual, UnknownFields)
+                                      Limits, Maturity, MaturityLevel, Residual, UnknownFields,
+                                      WireBinding)
 
     exercised = {"ingest": ["ingest"], "egress": ["egress"],
                  "bidirectional": ["ingest", "egress"]}.get(direction, [])
@@ -38,6 +39,8 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
         name=f"probe {name}",
         adapter_version=version,
         format=FormatRef(name="a test double's format", version="0"),
+        # F05: a double's bytes are its own format's, which is what `standard-encoding` says.
+        binding=WireBinding.STANDARD,
         direction=Direction(direction),
         license_class=LicenseClass.OPEN,
         maturity=Maturity(level=MaturityLevel.L0, basis="a test double; no rung is claimed",

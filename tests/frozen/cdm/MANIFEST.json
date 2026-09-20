@@ -1,0 +1,117 @@
+{
+  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0. Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
+  "contracts": {
+    "2.0.0": {
+      "files": {
+        "entity": {
+          "path": "tests/frozen/cdm/2.0.0/entity.schema.json",
+          "sha256": "a891c9c81a08ca21e326cd30af74d418d749cb9a4abf8fe9bbd88fd8d1c098e9",
+          "source": "schemas/entity.schema.json"
+        },
+        "event": {
+          "path": "tests/frozen/cdm/2.0.0/event.schema.json",
+          "sha256": "08b7e6d6fc999651da4b711ef97c1dec30512988876c0af5756f3e928651cc4f",
+          "source": "schemas/event.schema.json"
+        },
+        "plan_object": {
+          "path": "tests/frozen/cdm/2.0.0/plan_object.schema.json",
+          "sha256": "39f17bae5ad8a98edb083a7d6d06ecdb4fa758cd2dd63c51d8735c32f63e519f",
+          "source": "schemas/plan_object.schema.json"
+        },
+        "track": {
+          "path": "tests/frozen/cdm/2.0.0/track.schema.json",
+          "sha256": "673c3119a9385bf9d37364a3853f372dac6eee35d1534353ad2ae354ec1d4fb1",
+          "source": "schemas/track.schema.json"
+        }
+      },
+      "provenance": {
+        "commit": "a0cc8967b72978a29f8cfb8ff9785c6ede3c827d",
+        "tag": "v2.0.0"
+      }
+    },
+    "2.1.0": {
+      "files": {
+        "entity": {
+          "also_published_at": [
+            {
+              "commit": "b69a267e3ac7636c25cf878ef2b3cd5163b1b42a",
+              "differs_by": "descriptions only",
+              "sha256": "979629b7a53e009f531ee7d33d658d6d16b7f9263b7a14040f90b073c1bd4d87",
+              "tag": "v2.1.0"
+            },
+            {
+              "commit": "5ab80f5fa93895722e587f755e7de446b71feb5b",
+              "differs_by": "descriptions only",
+              "sha256": "979629b7a53e009f531ee7d33d658d6d16b7f9263b7a14040f90b073c1bd4d87",
+              "tag": "v2.1.2"
+            }
+          ],
+          "path": "tests/frozen/cdm/2.1.0/entity.schema.json",
+          "sha256": "dc1833baa340de864f5ecfa35d25ac8ae743218914f18558d002eb730396f6cf",
+          "source": "schemas/entity.schema.json"
+        },
+        "event": {
+          "also_published_at": [
+            {
+              "commit": "b69a267e3ac7636c25cf878ef2b3cd5163b1b42a",
+              "differs_by": "descriptions only",
+              "sha256": "79a9a1ad9a688c6df15bee88efda95f463f39bbcad6e2d40cdb1734ae09d8859",
+              "tag": "v2.1.0"
+            },
+            {
+              "commit": "5ab80f5fa93895722e587f755e7de446b71feb5b",
+              "differs_by": "descriptions only",
+              "sha256": "79a9a1ad9a688c6df15bee88efda95f463f39bbcad6e2d40cdb1734ae09d8859",
+              "tag": "v2.1.2"
+            }
+          ],
+          "path": "tests/frozen/cdm/2.1.0/event.schema.json",
+          "sha256": "bf0b167707df1b6262efb2c12fd922aa1cb07dc4887e0d7b870f8d6715b0354c",
+          "source": "schemas/event.schema.json"
+        },
+        "plan_object": {
+          "also_published_at": [
+            {
+              "commit": "b69a267e3ac7636c25cf878ef2b3cd5163b1b42a",
+              "differs_by": "identical",
+              "sha256": "a452c4769124e789afc735e576e9ef2041a15e6293b1983f492f878df595f762",
+              "tag": "v2.1.0"
+            },
+            {
+              "commit": "5ab80f5fa93895722e587f755e7de446b71feb5b",
+              "differs_by": "identical",
+              "sha256": "a452c4769124e789afc735e576e9ef2041a15e6293b1983f492f878df595f762",
+              "tag": "v2.1.2"
+            }
+          ],
+          "path": "tests/frozen/cdm/2.1.0/plan_object.schema.json",
+          "sha256": "a452c4769124e789afc735e576e9ef2041a15e6293b1983f492f878df595f762",
+          "source": "schemas/plan_object.schema.json"
+        },
+        "track": {
+          "also_published_at": [
+            {
+              "commit": "b69a267e3ac7636c25cf878ef2b3cd5163b1b42a",
+              "differs_by": "identical",
+              "sha256": "fe82609596a65292be9a382c71bf750f1e572195afc3309e5b2991101c10a43c",
+              "tag": "v2.1.0"
+            },
+            {
+              "commit": "5ab80f5fa93895722e587f755e7de446b71feb5b",
+              "differs_by": "identical",
+              "sha256": "fe82609596a65292be9a382c71bf750f1e572195afc3309e5b2991101c10a43c",
+              "tag": "v2.1.2"
+            }
+          ],
+          "path": "tests/frozen/cdm/2.1.0/track.schema.json",
+          "sha256": "fe82609596a65292be9a382c71bf750f1e572195afc3309e5b2991101c10a43c",
+          "source": "schemas/track.schema.json"
+        }
+      },
+      "provenance": {
+        "commit": "5c53e756b9aa31c2881bd4497b2e0b30b7730944",
+        "tag": "v2.2.0"
+      }
+    }
+  }
+}

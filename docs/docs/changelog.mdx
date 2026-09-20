@@ -156,14 +156,21 @@ page, and it does. When the two disagree, the file in the package wins: it sits 
 ## Compatibility is not equality
 
 ```python
-version.compatible(written_with="1.2.0", read_by="1.0.0")   # True
-version.compatible(written_with="2.0.0", read_by="1.0.0")   # False
+version.compatible(written_with="2.0.0", read_by="2.1.0")   # True  — new reader, old writer
+version.compatible(written_with="2.1.0", read_by="2.0.0")   # False — old reader, new writer
+version.compatible(written_with="2.9.0", read_by="2.1.0")   # False — nobody has published 2.9.0
+version.compatible(written_with="2.0.0", read_by="1.0.0")   # False — a major apart
+version.assess(written_with="2.1.0", read_by="2.0.0")       # REFUSED, WRITER_NEWER, and the evidence
 ```
 
-`compatible()` accepts the same major **including a minor from the future**: a 1.0.0 reader
-accepts a 1.2.0 object, because MINOR additions are optional by definition and the alternative
-is a fleet that stops ingesting the moment one adapter is upgraded. A different major is refused
-outright.
+`compatible()` is **directional and evidence-based** (corrected by the 2026-09-19 audit; it read
+"accepts the same major including a minor from the future" before). A newer reader accepts an
+older object because the frozen historical schemas show it validating. An older reader does NOT
+accept a newer object: every published schema carries `additionalProperties: false`, so a
+property it does not know — populated or explicitly null — is refused. A minor nobody has
+published is unknown, not safe. A different major is refused outright. `version.assess()` returns
+the verdict, the direction and the evidence it rests on; a supported verdict is version
+eligibility, and the document is still validated on its own.
 
 Renaming a field is **two releases, never one**: add the new name in a MINOR, populate both,
 then remove the old one in the next MAJOR. One release that renames is an outage for every

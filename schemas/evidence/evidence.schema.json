@@ -1,5 +1,41 @@
 {
   "$defs": {
+    "CategoryReading": {
+      "additionalProperties": false,
+      "description": "One category's status, the reading it rests on, and the reports \u2014 relative to the record's\ndirectory and hashed \u2014 that made it PRESENT. `sources` is empty unless it is.",
+      "properties": {
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/FileHash"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CategoryStatus"
+        }
+      },
+      "required": [
+        "status",
+        "basis",
+        "sources"
+      ],
+      "title": "CategoryReading",
+      "type": "object"
+    },
+    "CategoryStatus": {
+      "enum": [
+        "PRESENT",
+        "ABSENT",
+        "NOT_APPLICABLE"
+      ],
+      "title": "CategoryStatus",
+      "type": "string"
+    },
     "FileHash": {
       "additionalProperties": false,
       "description": "One file, by content. `path` is relative to the FIXTURE ROOT and never absolute.\n\nAn absolute path would make every record machine-specific and \u00a736's reproducibility check\nwould fail on the one difference that says nothing about the tree.",
@@ -45,6 +81,52 @@
       "title": "Generator",
       "type": "object"
     },
+    "MaturitySupport": {
+      "additionalProperties": false,
+      "description": "The declared rung held to the categories that back it, with local code completion and\noutstanding external validation reported SEPARATELY (F07's acceptance).\n\n`eligible_level` stays the suite's \u2014 it computes a rung from check verdicts and is not\ntouched here. This block asks a different question: of the categories the DECLARED rung\nrequires, which are PRESENT. `local_complete` is true when everything this repository can\nproduce on its own is PRESENT or NOT_APPLICABLE and the run is CONFORMANT;\n`external_outstanding` names every external category still ABSENT, so a reader never has\nto infer from a green local reading that the outside validation happened.",
+      "properties": {
+        "declared": {
+          "title": "Declared",
+          "type": "string"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "string"
+        },
+        "external_outstanding": {
+          "items": {
+            "type": "string"
+          },
+          "title": "External Outstanding",
+          "type": "array"
+        },
+        "local_complete": {
+          "title": "Local Complete",
+          "type": "boolean"
+        },
+        "required": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required",
+          "type": "array"
+        },
+        "satisfied": {
+          "title": "Satisfied",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "declared",
+        "eligible",
+        "required",
+        "satisfied",
+        "local_complete",
+        "external_outstanding"
+      ],
+      "title": "MaturitySupport",
+      "type": "object"
+    },
     "ProvenanceSummary": {
       "additionalProperties": false,
       "description": "See `provenance_summary()` for why this field exists although \u00a732 does not list it.",
@@ -79,6 +161,58 @@
         "classifications"
       ],
       "title": "ProvenanceSummary",
+      "type": "object"
+    },
+    "Snapshot": {
+      "additionalProperties": false,
+      "description": "The exact source state a record measured (audit remediation F07, 2026-09-20).\n\n`commit` is HEAD at generation and `unknown` outside a checkout. `dirty` says whether the\ntree differed from that commit; when it did, `tracked_diff_sha256` is SHA-256 over\n`git diff HEAD` (every staged and unstaged change to a tracked file) and `untracked` hashes\nevery file git lists as untracked and not ignored, so two dirty states can be told apart \u2014\n`source_commit`'s `-dirty` suffix could only say that one was dirty. `digest` is one SHA-256\nover the canonical serialisation of those two readings, the figure a report quotes; `null`\non a clean tree, where the commit is the whole description.\n\nNOT THE RECORD'S OWN FINAL COMMIT. Records are not tracked (module docstring), so the\ncommit that will eventually carry a release's records is never inside them, and no circle\nexists between a record and the commit it lands in. A file named `evidence.json` is left\nout of `untracked` for the same reason: it is the output, not the state.",
+      "properties": {
+        "commit": {
+          "title": "Commit",
+          "type": "string"
+        },
+        "digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Digest"
+        },
+        "dirty": {
+          "title": "Dirty",
+          "type": "boolean"
+        },
+        "tracked_diff_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tracked Diff Sha256"
+        },
+        "untracked": {
+          "items": {
+            "$ref": "#/$defs/FileHash"
+          },
+          "title": "Untracked",
+          "type": "array"
+        }
+      },
+      "required": [
+        "commit",
+        "dirty",
+        "tracked_diff_sha256",
+        "untracked",
+        "digest"
+      ],
+      "title": "Snapshot",
       "type": "object"
     },
     "TestRun": {
@@ -132,7 +266,7 @@
       "type": "object"
     }
   },
-  "$id": "urn:synapsecommand:evidence:1.0.0:evidence",
+  "$id": "urn:synapsecommand:evidence:2.0.0:evidence",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "\u00a732's record. STRICT, like every model in `manifest.py` and for the same reason.\n\n`adapter` is the MANIFEST embedded whole rather than the adapter's id: a record that named\nthe manifest would be a record whose subject could change under it, and the one thing this\ndocument exists to do is fix what was measured.\n\n`source_commit` carries a `-dirty` suffix when the working tree had uncommitted changes at\ngeneration. That keeps \u00a732's field list exactly as written while still recording the fact\n`verify` needs in order to say \u2014 as the brief requires \u2014 WHICH state it is comparing.",
@@ -160,6 +294,13 @@
     "conformance": {
       "additionalProperties": true,
       "title": "Conformance",
+      "type": "object"
+    },
+    "evidence_categories": {
+      "additionalProperties": {
+        "$ref": "#/$defs/CategoryReading"
+      },
+      "title": "Evidence Categories",
       "type": "object"
     },
     "evidence_schema_version": {
@@ -192,6 +333,9 @@
       "title": "Manifest Version",
       "type": "string"
     },
+    "maturity_support": {
+      "$ref": "#/$defs/MaturitySupport"
+    },
     "package_version": {
       "title": "Package Version",
       "type": "string"
@@ -199,6 +343,9 @@
     "sc_oes_version": {
       "title": "Sc Oes Version",
       "type": "string"
+    },
+    "snapshot": {
+      "$ref": "#/$defs/Snapshot"
     },
     "source_commit": {
       "title": "Source Commit",
@@ -224,9 +371,12 @@
     "loss_report",
     "fixture_hashes",
     "fixture_provenance",
-    "artifact_hashes"
+    "artifact_hashes",
+    "snapshot",
+    "evidence_categories",
+    "maturity_support"
   ],
   "title": "EvidenceRecord",
   "type": "object",
-  "x-evidence-schema-version": "1.0.0"
+  "x-evidence-schema-version": "2.0.0"
 }

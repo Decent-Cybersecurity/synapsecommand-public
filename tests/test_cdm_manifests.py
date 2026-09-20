@@ -30,7 +30,7 @@ import pytest
 
 from synapse_cdm import adapter, manifests, schemas, suite, times
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
-                                  MaturityLevel)
+                                  MaturityLevel, WireBinding, limitation_text)
 from synapse_cdm.version import ADAPTER_API_VERSION, MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
 
 from tests import probe_metadata
@@ -378,3 +378,78 @@ def test_a_manifests_adapter_version_is_held_to_the_packages_one_semver_pattern(
         with pytest.raises(pydantic.ValidationError):
             probe_metadata("probe", version=bad)
     assert probe_metadata("probe", version="9.9.9").adapter_version == "9.9.9"
+
+
+# ------------------------------------------------- the wire binding is declared, never defaulted
+
+
+def test_the_schema_requires_a_binding_and_names_the_three_values():
+    """F05 (2026-09-20): `binding` is REQUIRED in the published schema — a manifest without one
+    is a manifest written against 1.2.0, and the schema says so rather than defaulting it."""
+    schema = json.loads(MANIFEST_SCHEMA.read_text())
+    adapter_schema = schema["$defs"]["AdapterMetadata"]
+    assert "binding" in adapter_schema["required"]
+    enum = schema["$defs"]["WireBinding"]["enum"]
+    assert enum == [b.value for b in WireBinding]
+    assert set(enum) == {"standard-encoding", "provisional-internal-profile", "normative-verified"}
+    good = json.loads((PUBLISHED / "stanag4676.json").read_text())
+    without = json.loads(json.dumps(good))
+    without["adapter"].pop("binding")
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.Draft202012Validator(schema).validate(without)
+
+
+def test_the_model_refuses_a_missing_binding_rather_than_defaulting_it():
+    payload = probe_metadata("x").model_dump()
+    payload.pop("binding")
+    with pytest.raises(ValueError, match="binding"):
+        AdapterMetadata(**payload)
+
+
+def test_a_provisional_binding_must_be_stated_as_a_limitation():
+    """The same half-rule as the null edition: a caveat a consumer has to be able to find."""
+    payload = probe_metadata("x").model_dump()
+    payload["binding"] = WireBinding.PROVISIONAL_INTERNAL_PROFILE.value
+    with pytest.raises(ValueError, match="provisional-internal-profile and no limitation says so"):
+        AdapterMetadata(**payload)
+    payload["limitations"] = ["the element names are a PROVISIONAL profile chosen here"]
+    assert AdapterMetadata(**payload).binding is WireBinding.PROVISIONAL_INTERNAL_PROFILE
+
+
+@pytest.mark.parametrize("path", sorted(PUBLISHED.glob("*.json")), ids=lambda p: p.name)
+def test_a_published_binding_agrees_with_the_limitations_in_both_directions(path):
+    """Provisional in the field ⇔ "provisional" in a limitation. The model enforces ⇒; this is ⇐,
+    so a limitation describing a provisional binding cannot sit beside `standard-encoding`."""
+    meta = json.loads(path.read_text())["adapter"]
+    says = any("provisional" in limitation_text(line).lower() for line in meta["limitations"])
+    declares = meta["binding"] == WireBinding.PROVISIONAL_INTERNAL_PROFILE.value
+    assert says == declares, (
+        f"{path.name}: binding {meta['binding']!r} and the limitations "
+        f"{'mention' if says else 'never mention'} a provisional binding")
+
+
+@pytest.mark.parametrize("path", sorted(PUBLISHED.glob("*.json")), ids=lambda p: p.name)
+def test_normative_verified_is_held_to_an_exercise_report_of_the_normative_schema_category(path):
+    """The third value is a claim about evidence from OUTSIDE this repository, so it may only be
+    declared when F07's runner has recorded it: `evidence/<id>/<version>/exercises/*.json` with
+    `category: normative_schema`. Vacuous today for every adapter, and asserted so."""
+    meta = json.loads(path.read_text())["adapter"]
+    if meta["binding"] != WireBinding.NORMATIVE_VERIFIED.value:
+        return
+    reports = sorted((REPO / "evidence" / meta["id"] / meta["adapter_version"] / "exercises")
+                     .glob("*.json"))
+    categories = [json.loads(r.read_text()).get("category") for r in reports]
+    assert "normative_schema" in categories, (
+        f"{path.name} declares normative-verified and no exercise report of the normative_schema "
+        f"category exists beside its evidence record ({categories}); the declaration is ahead of "
+        "the evidence")
+
+
+def test_no_shipped_adapter_declares_normative_verified_today():
+    """Read, not assumed: the F05 register records BLOCKED_EXTERNAL_EVIDENCE for the normative
+    binding, and this is the reading that record rests on. When the procedure has run and a
+    report exists, this test moves with the declaration."""
+    declared = {name: cls.metadata.binding for name, cls in adapter.shipped().items()}
+    verified = [name for name, b in declared.items() if b is WireBinding.NORMATIVE_VERIFIED]
+    assert not verified, f"{verified} declare normative-verified; re-read the F05 register"
+    assert declared["stanag4676"] is WireBinding.PROVISIONAL_INTERNAL_PROFILE

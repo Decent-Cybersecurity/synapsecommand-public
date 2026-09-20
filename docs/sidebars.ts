@@ -9,6 +9,9 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  * and appears in no navigation. Ordering therefore lives next to the content it orders:
  *
  *   1  intro.mdx
+ *   1.5  current-contracts.mdx (audit remediation F09, 2026-09-20: the entry page for what is in
+ *                               force today; a fractional position so that no existing page or
+ *                               category below had to renumber to make room for it)
  *   2  cdm/                    (_category_.json, hand-written)
  *   3  schema-reference/       (_category_.json, GENERATED — its index.mdx is the category
  *                               page by Docusaurus's category-index convention)

@@ -27,6 +27,13 @@ Every canonical object inherits `CDMBase`, and none of these fields is decoratio
 an object written against 2.0.0 is still a valid object and a 2.0.0 reader still reads a
 2.1.0 one. What each of them means, and the rule that keeps `residual` from being trusted,
 are on the [CDM Policies](./policies.mdx) page.
+
+**Corrected 2026-09-19 by the audit's F01 (the sentence above is left as written).** The first
+half holds and the second does not: a 2.0.0 reader does NOT read a 2.1.0 object, because every
+published schema carries `additionalProperties: false` and refuses the three properties 2.1.0
+introduced, populated or null. `version.assess("2.1.0", read_by="2.0.0")` answers `REFUSED`,
+`WRITER_NEWER`, and the frozen 2.0.0 schemas under `tests/frozen/cdm/` are the evidence. See
+[Compatibility is not equality](../changelog.mdx#compatibility-is-not-equality).
 :::
 
 ### `schema_version`

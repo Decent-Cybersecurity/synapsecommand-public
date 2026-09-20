@@ -107,7 +107,8 @@ from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.version import SC_OES_VERSION
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
                                    FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
-                                   Maturity, MaturityLevel, Residual, UnknownFields)
+                                   Maturity, MaturityLevel, Residual, UnknownFields,
+                                   WireBinding)
 
 SYSTEM = "PNTMAP"
 
@@ -183,6 +184,7 @@ class PntmapAdapter(Adapter):
         adapter_version="1.0.0",
         format=FormatRef(name="PNTMAP GNSS interference alert",
                          version=None),
+        binding=WireBinding.STANDARD,
         direction=Direction.INGEST,
         license_class=LicenseClass.OPEN,
         maturity=Maturity(
@@ -311,6 +313,47 @@ class PntmapAdapter(Adapter):
         "emitter.geolocation_method": "mapped to the PositionSource enum; the source's own "
                                       "word is kept at attributes.source_extras."
                                       "geolocation_method",
+    }
+
+    # The path-bound preservation declarations (F02, 2026-09-19): where each consumed source
+    # path goes, by which rule. The harness's ledger recomputes every rule against the output on
+    # every fixture, so a line here is a checked claim and not a comment. `interference` and
+    # `affected_area` are parked SUBTREES with their prefix replaced; everything undeclared is
+    # looked for at its own relative path under `attributes.source_extras`, which is where
+    # `lossless.residual()` puts it.
+    MAPPINGS = {
+        "alert_id": lossless.Mapping("event:source_ids[0].external_id", "text"),
+        "alert_time": (lossless.Mapping("entity:valid_from", "instant"),
+                       lossless.Mapping("event:observed_at", "instant")),
+        "valid_until": lossless.Mapping("entity:valid_to", "instant"),
+        "severity": lossless.Mapping("event:severity", "enum_map", params={
+            "table": {k: v.value for k, v in SEVERITY.items()}, "fold_case": True}),
+        "interference.type": (
+            lossless.Mapping("entity:attributes.interference_type", "casefold"),
+            lossless.Mapping("event:payload.interference_type", "enum_map", params={
+                "table": {k: v.value for k, v in INTERFERENCE.items()}, "fold_case": True,
+                "default": InterferenceType.UNKNOWN.value}),
+        ),
+        "interference.band": lossless.Mapping("event:payload.frequency_band"),
+        "interference.signal_strength_dbm": lossless.Mapping(
+            "event:payload.signal_strength_dbm", "number"),
+        "interference.confidence": lossless.Mapping("entity:confidence", "number"),
+        "interference": lossless.Mapping("event:payload.source_extras", kind="residual"),
+        "emitter.emitter_id": lossless.Mapping("entity:source_ids[0].external_id", "text"),
+        "emitter.lat": lossless.Mapping("entity:position.lat", "number"),
+        "emitter.lon": lossless.Mapping("entity:position.lon", "number"),
+        "emitter.accuracy_m": lossless.Mapping("entity:position.accuracy_m", "number"),
+        # Kept verbatim beside the enum projection (`position.position_source`, absent when the
+        # source geolocated nothing), so the verbatim copy is what preservation is bound to.
+        "emitter.geolocation_method": lossless.Mapping(
+            "entity:attributes.source_extras.emitter.geolocation_method"),
+        "emitter.attribution": (
+            lossless.Mapping("entity:attributes.source_extras.emitter.attribution"),
+            lossless.Mapping("entity:affiliation", "enum_map", params={
+                "table": {k: v.value for k, v in ATTRIBUTION.items()}, "fold_case": True,
+                "default": Affiliation.UNKNOWN.value}),
+        ),
+        "affected_area": lossless.Mapping("event:geometry", kind="residual"),
     }
 
     # Dotted paths this adapter maps to canonical fields. Everything else is collected by
