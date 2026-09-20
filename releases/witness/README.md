@@ -15,7 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json --offline  # every record here
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -33,7 +33,9 @@ The release pipeline's `witness` job produces the record **after** the upload, f
 PyPI's JSON API and the Release API — the two sources that can only be read once the release
 exists. It uploads it as the Release asset `witness-<version>.json`.
 
-**As of 2026-09-17 that job has never produced a committed record, and it has executed twice.**
+**As of 2026-09-17 that job had never produced a committed record, and it had executed twice; on
+2026-09-20 its third execution produced this directory's first pipeline-built record, `3.0.1.json`,
+and the paragraph after this history says how.**
 On the `v2.1.2` run it failed at its own verification step because the builder read an instant
 off a key the approvals endpoint does not carry; the repair (round PW) was not an ancestor of
 that tag, and `2.1.2.json` in this directory was built by hand with the repaired builder over
@@ -51,8 +53,28 @@ carries no `witness-2.2.0.json`. `2.2.0.json` here was built by hand with the sa
 that run's own inputs, plus the one argument the next section describes, and `PUBLICATION.md`
 entry 20 records the ruling. The release procedure in `MIGRATIONS.md` says to confirm the job
 succeeded before the witness round commits anything, and since 2026-09-17 also says what the
-approval comment must carry so that it can. `tests/test_cdm_witness.py` holds this paragraph to
-the directory: a third record here makes it red until the paragraph says what that run did.
+approval comment must carry so that it can — and on `v3.0.1` it did. `tests/test_cdm_witness.py`
+holds this paragraph to the directory: it went red the day the third record landed, was rewritten
+to say what that run did, and goes red again on a fourth.
+
+**`3.0.1.json` is the pipeline's own record, 2026-09-20.** On the `v3.0.1` run
+([35514833652](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/35514833652))
+the `witness` job succeeded end to end, its third execution on a tag push. Its build step read the
+run's one approval — given at 14:43:10Z with a comment naming the readiness report at the release
+commit, so `review_file` is derived from the comment and designated by nobody — and the `pypi`
+deployment's status history (`waiting` 14:19:09Z, `queued` 14:43:10Z, `in_progress` 14:43:12Z,
+`success` 14:43:39Z), under the `actions: read` and `deployments: read` grants; fetched the
+attestation store by the wheel's digest and handed the builder `--attestation-bundles`; and wrote
+`witness-3.0.1.json for v3.0.1 (2 files, 1 approval(s))`. Its verify step, `--download --assets
+assets` with a token, read `VERIFIED witness-3.0.1.json (3.0.1, against the index and Release and
+the assets under assets)`. Its attach step uploaded the file to the Release, where it is the ninth
+asset, 2 188 bytes, sha256 `32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd`.
+`3.0.1.json` here is that asset byte for byte — the same digest, which `tests/test_cdm_witness.py`
+holds — downloaded by the witness round and verified again, offline against the Release download
+and online with `--download`, before it was committed. `PUBLICATION.md` entry 21 is the ledger's
+account, and the run before it, 35200069387, is the refusal this success is measured against.
+This is the first release whose committed record is the pipeline's own; the two before it say in
+the paragraph above why theirs are not.
 
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
@@ -113,6 +135,13 @@ comment names a different one, and never passed by `publish.yml` — the pipelin
 approval's own words or nothing. `PUBLICATION.md` entry 20 states the designation, states that
 the comment was empty, and gives both digests: the refused shape's and the committed one's, which
 differ in that one line.
+
+**What `review_file` means for 3.0.1 — derived, as the design intends (2026-09-20).** The `pypi`
+approval of the `v3.0.1` run carried the comment *Approved on the readiness report at the release
+commit:* followed by the report's URL at `89d2c707`, so the builder lifted that URL into
+`review_file` from the approval's own words; `--review-file` was not passed, `publish.yml` never
+passes it, and the record's `comment` and `review_file` name the same document. It is the first
+record in this directory whose `review_file` was derived rather than designated or private.
 
 ## What the verifier does not do
 

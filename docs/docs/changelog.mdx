@@ -144,6 +144,12 @@ two: the arc is the release workflow, `MIGRATIONS.md` and `version.py`, and `MIG
 release-pipeline defects rather than contract decisions. **What the index serves is still a
 separate fact from what this tree says** — at the time of writing it is `2.2.0` — and
 `PUBLICATION.md`'s ledger is where it is measured.
+
+**Measured 2026-09-20 after the upload: the index serves `3.0.1`.** `PUBLICATION.md` entry 21 is the
+measurement — the wheel and sdist digests read off the index agree with the gate's, the served bytes
+re-hash to them, and the pipeline's own witness record is committed for the first time as
+`releases/witness/3.0.1.json`. The sentence above about what the index serves stopped being true at
+14:43:35Z that day and is kept as written.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

@@ -178,7 +178,7 @@ python gates/witness_verify.py releases/witness/2.2.0.json            # index an
 python gates/witness_verify.py releases/witness/2.2.0.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.2.0.json --download # re-hash the served bytes
 python gates/witness_verify.py releases/witness/2.2.0.json --offline --assets <dir>  # re-hash a download
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json --offline  # both records
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json --offline  # every record
 ```
 
 - **Offline**: the record's shape, the agreement between the gate's digests and the index's, the
@@ -198,15 +198,18 @@ and the verifier compares them. A release where those disagree uploaded bytes no
 
 `releases/witness/README.md` documents every field. The record is produced by CI after the upload
 and **committed by a person afterwards** — a workflow does not commit here, which is why the
-directory is filled by the witness round rather than by the run. That is the design; as of
-2026-09-17 no committed record was produced by it. The `witness` job has executed twice on a tag
-push: on `v2.1.2` it failed at its own verification step on a missing instant, and on `v2.2.0`
+directory is filled by the witness round rather than by the run. That is the design; until
+2026-09-20 no committed record had been produced by it. The `witness` job executed twice on a tag
+push before it succeeded: on `v2.1.2` it failed at its own verification step on a missing instant, and on `v2.2.0`
 (run 35200069387) the repaired job built the record and failed at the same step because the
 `pypi` approval comment was empty. `releases/witness/2.1.2.json` and `releases/witness/2.2.0.json`
 were both built by hand with the repaired builder over their runs' inputs — the second with a
 `review_file` the maintainer designated, which `PUBLICATION.md` entry 20 states — and §6 says
 what that run did. `MIGRATIONS.md`'s release procedure says to confirm the job succeeded before
-the witness round commits, and what the approval comment must carry so that it can.
+the witness round commits, and what the approval comment must carry so that it can. On `v3.0.1`
+(run 35514833652, 2026-09-20) it did: the job succeeded end to end, attached `witness-3.0.1.json`
+to the Release, and `releases/witness/3.0.1.json` is that asset byte for byte — `PUBLICATION.md`
+entry 21.
 
 ## 5. The release notes
 
@@ -240,7 +243,8 @@ symptom, and it is the one this refusal exists for.
   the version the package's `[lint]` extra pins.
 * **A refused upload.** It has never happened, so the recovery path is unexercised. The fix is on
   pypi.org, per `PUBLICATION.md` entry 6, and never a token pasted into the workflow.
-* **A `witness` job that has succeeded on a tag push — as of 2026-09-17, after two executions.**
+* **A `witness` job that has succeeded on a tag push — it has, on its third execution: `v3.0.1`,
+  run 35514833652, 2026-09-20. The two before it are why this bullet exists.**
   On `v2.1.2` it failed at its own verification step because the builder read an instant off a
   key the approvals endpoint does not carry, and `releases/witness/2.1.2.json` was built outside
   the pipeline with the repaired builder, under a ruling `PUBLICATION.md` entry 19 records. On
@@ -249,11 +253,15 @@ symptom, and it is the one this refusal exists for.
   the wheel's digest, `--attestation-bundles`, and the verifier's `--assets` and token. The build
   step succeeded and wrote the record, instant and bundle digest included; the verify step refused
   it because the `pypi` approval had been given with an empty comment, which is the rule of
-  2026-09-16 working on a human input; the attach step was skipped. So the additions are proven
-  and the job is not: `releases/witness/2.2.0.json` was built outside the pipeline with the same
+  2026-09-16 working on a human input; the attach step was skipped. So the additions were proven
+  before the job was: `releases/witness/2.2.0.json` was built outside the pipeline with the same
   builder over that run's inputs and a `--review-file` the maintainer designated, and none of the
   job's inputs can be reached by `gates/release_ref_rehearsal.py`, because they do not exist
   before the tag. `MIGRATIONS.md`'s release procedure says to confirm the job succeeded before the
   witness round commits, says what the approval comment must carry, and `tests/test_cdm_witness.py`
-  holds this bullet to the directory: a third committed record makes it red until it says what
-  that run did.
+  holds this bullet to the directory. On `v3.0.1` the comment named the readiness report at the
+  release commit, the build step wrote the record with `review_file` derived from it, the verify
+  step read `VERIFIED` with `--download --assets assets` and a token, and the attach step put
+  `witness-3.0.1.json` on the Release: the third committed record, `releases/witness/3.0.1.json`, is
+  the pipeline's own, byte for byte, held by digest. A fourth makes this bullet red again until it
+  says what that run did.

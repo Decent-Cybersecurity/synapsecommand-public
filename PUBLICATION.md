@@ -148,8 +148,8 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Twenty entries, and the set does not move — entries change **state**, they are not deleted. Seventeen
-are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 and 20 are closed by acts, entry 7
+Twenty-one entries, and the set does not move — entries change **state**, they are not deleted. Eighteen
+are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 and 21 are closed by acts, entry 7
 is a disposition, entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
@@ -194,7 +194,7 @@ and the first this package has made with an **empty parks table**: the last two 
 profile delegates to that were not held closed inside its arc, so its subject is what an empty
 table does and does not say — every delegated document is held and pinned, which is a fact about
 acquisition and not about mapping — and its second subject is the second upload approved on a
-verdict rather than on somebody's attention, where entry 16's is the first. Entry 18 is the 2.0.0 release, the eleventh closed by an act and the first this package has made that a 1.x reader is meant to **refuse**: SC-OES ships, `Event.oes` and `Entity.ontology_types` appear on the wire, and the canonical objects reject an object carrying either rather than ignoring it — so its subject is what a version number can and cannot say, since the bump gate derived a MINOR floor and a person's ruling put the number above it, which is the first release to exercise that mechanism. Its second subject is a reading two witness rounds did not take: five rows of the sweep table below had stood at 1.6.0 and `5a908754` across two releases, and this round strikes them rather than adding a sixth silent one. Entry 19 is the 2.1.2 release, the twelfth closed by an act and the first this package has made after two of its own tags were **refused by its own gates**: `v2.1.0` fell to a `pip-audit --strict` step that resolves the candidate it is gating against an index the candidate is not on yet, `v2.1.1` to a CodeQL step that asked a tag ref for an analysis no tag ref in this repository carries, and both tags stay permanently over commits PyPI has never seen — so its subject is what a refused release costs and what it does not, since nothing was moved or rewritten to recover and the third tag published unchanged content. Its second subject is a record built **outside** the pipeline under a ruling, because the job that should have written it is the one job of that run that failed, and its third is a gap this entry states rather than closes: the release evidence is attached and retrievable while the fourteen adapter manifests still declare it unavailable. Entry 20 is the 2.2.0 release, the thirteenth closed by an act and the first since 2.1.0 whose number moved for what the distribution carries rather than for what a workflow refused — one tag, no refusal, a MINOR derived over eighty-three ruled units — so its first subject is that there is nothing to recover from; its second is the pipeline's `witness` job executing the repaired builder on a tag for the first time, building the record, and being refused by its own verifier because the `pypi` approval was given with an empty comment, so that the committed record is the second built by hand and carries a reference the maintainer designated afterwards, which the entry says in as many words; and its third is a closure rather than a gap, since the fourteen manifests entry 19 left saying `available: false` say `true` in this distribution. Entries 2, 3 and 4 are open. None blocks
+verdict rather than on somebody's attention, where entry 16's is the first. Entry 18 is the 2.0.0 release, the eleventh closed by an act and the first this package has made that a 1.x reader is meant to **refuse**: SC-OES ships, `Event.oes` and `Entity.ontology_types` appear on the wire, and the canonical objects reject an object carrying either rather than ignoring it — so its subject is what a version number can and cannot say, since the bump gate derived a MINOR floor and a person's ruling put the number above it, which is the first release to exercise that mechanism. Its second subject is a reading two witness rounds did not take: five rows of the sweep table below had stood at 1.6.0 and `5a908754` across two releases, and this round strikes them rather than adding a sixth silent one. Entry 19 is the 2.1.2 release, the twelfth closed by an act and the first this package has made after two of its own tags were **refused by its own gates**: `v2.1.0` fell to a `pip-audit --strict` step that resolves the candidate it is gating against an index the candidate is not on yet, `v2.1.1` to a CodeQL step that asked a tag ref for an analysis no tag ref in this repository carries, and both tags stay permanently over commits PyPI has never seen — so its subject is what a refused release costs and what it does not, since nothing was moved or rewritten to recover and the third tag published unchanged content. Its second subject is a record built **outside** the pipeline under a ruling, because the job that should have written it is the one job of that run that failed, and its third is a gap this entry states rather than closes: the release evidence is attached and retrievable while the fourteen adapter manifests still declare it unavailable. Entry 20 is the 2.2.0 release, the thirteenth closed by an act and the first since 2.1.0 whose number moved for what the distribution carries rather than for what a workflow refused — one tag, no refusal, a MINOR derived over eighty-three ruled units — so its first subject is that there is nothing to recover from; its second is the pipeline's `witness` job executing the repaired builder on a tag for the first time, building the record, and being refused by its own verifier because the `pypi` approval was given with an empty comment, so that the committed record is the second built by hand and carries a reference the maintainer designated afterwards, which the entry says in as many words; and its third is a closure rather than a gap, since the fourteen manifests entry 19 left saying `available: false` say `true` in this distribution. Entry 21 is the 3.0.1 release, the fourteenth closed by an act and the first of the audit remediation arc to reach the index — a corrective of `v3.0.0`, which was tagged the same day and refused by its own release run below the gate, so its first subject is the third burned tag and the class of defect that burned it, an environment a job built around the suite rather than anything about the ref; its second is the pipeline's `witness` job succeeding end to end for the first time, on its third execution, so that the committed record is the pipeline's own rather than a third built by hand; and its third is a PATCH derived over an arc that moved nothing installable, MAJOR on both first axes over what the index served before it. Entries 2, 3 and 4 are open. None blocks
 anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -3535,6 +3535,151 @@ but 2.2.0 and 2.1.2 today. And it does not claim that the hold was a hold on a v
 through 19 could say so because their approval comments named one, and this one named nothing — the
 six hours, twenty minutes and thirty-one seconds this entry measures are a hold released by an approval
 whose comment is empty, and the record says so rather than borrowing the earlier entries' sentence.
+
+### 21. `synapse-cdm` 3.0.1 is on the index — CLOSED, and it is the first release of the audit remediation arc, the corrective of a tag burned the same day below the gate, and the first whose witness record the pipeline produced
+
+**Published 2026-09-20** by
+[run 35514833652](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/35514833652),
+triggered by the `v3.0.1` tag at `89d2c707` — tag object `fa11e55e`, annotated, tagger Matej Michalko,
+created **13:47:50Z**. The run was created at 13:53:41Z by the push, five minutes and fifty-one seconds
+after the tag object was written, and that gap is the release procedure: the tag was made locally after
+`main` had been pushed alone and the commit's two CodeQL analyses had been waited for, the ref rehearsal
+was run against them — seven checks, none failed — and the six quick-run modules the tag turns green were
+run at the tag, and only then was the tag pushed. The gate job ran 13:53:44–14:01:41Z, the build job
+14:01:45–14:18:42Z and the attestation job 14:18:46–14:19:08Z; the `pypi` environment then held the
+upload for **twenty-four minutes and one second** until it was approved at **14:43:10Z**, and the publish
+job ran 14:43:11–14:43:38Z, twenty-seven seconds. Deployment `6553754047` carries the sequence: `waiting`
+at 14:19:09Z, `queued` at 14:43:10Z, `in_progress` at 14:43:12Z, `success` at 14:43:39Z. **The second act,
+tag push to `success`, took forty-nine minutes and fifty-eight seconds**, of which the hold was
+twenty-four minutes and one. The `release` job ran 14:43:41–14:44:05Z and published the Release at
+14:44:02Z, and the `witness` job ran 14:44:08–14:44:27Z; the pipeline has six jobs and **all six
+succeeded**, which no tag push had produced before.
+
+**THIS IS A CORRECTIVE, AND ITS FIRST SUBJECT IS THE TAG IT CORRECTS.** `v3.0.0` was tagged on
+`ca445c6` earlier the same day and pushed, and [run 35506445471](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/35506445471)
+refused it — not in the gate job, where `v2.1.0` and `v2.1.1` died, but in the build job at condition 4,
+the second run of the suite. The gate had run the same suite on the same commit and read `5895 passed,
+86 skipped in 810.75s`; the build job's run read `1 failed, 5894 passed, 86 skipped in 1262.27s`, and the
+step piped pytest into `tail -1`, so the run recorded a count and no name. The cause was reconstructed
+rather than read: the build job's install step had put `twine` and `cyclonedx-bom` into the interpreter
+that then ran the suite, `cyclonedx-bom` brings `jsonschema[format]`, `jsonschema` imports those eight
+format libraries at import time — `rfc3987-syntax` builds a Lark grammar on import — and
+`synapse_cdm.suite` reaches `jsonschema` through `harness` and `schemas`, so every parser worker the
+isolation, envelope and conformance tests spawn paid for it before its first byte of input. Measured on
+the maintainer's machine with exactly those additions, `import synapse_cdm.suite` went from 0.11 s to
+0.48 s and the three worker-spawning test modules from 9.9 s to 19.0 s; the wall-clock-budgeted
+isolation tests run at 2.5 s there against a 10 s bound, and the build runner ran the suite 4.3 times
+slower than that machine. Nothing about the ref was involved, so `gates/release_ref_rehearsal.py`
+passed `v3.0.0` and was right to. `MIGRATIONS.md`'s 3.0.1 section is the record: the release tooling now
+lives in a venv of its own (`${TOOLS}`), condition 4 writes the suite's output to a file and prints its
+`FAILED` and `ERROR` lines before it stops, `tests/test_cdm_trusted_publishing.py` holds both, and no test
+budget moved. `v3.0.0` stays where it is, permanently, the third tag in this repository's history that
+names a commit the index has never seen; nothing reached PyPI from it, no `pypi` hold was created and
+no GitHub Release exists for it.
+
+**THE NUMBER IS THE DERIVED FLOOR, TWICE OVER.** `gates/bump_derivation.py` over the arc `v3.0.0 ->
+v3.0.1` derives **PATCH** from one signal, `synapse_cdm/MIGRATIONS.md` on the shipped-document row, with
+nothing unruled and no version ruling; the arc moved the release workflow, three test modules, the
+frozen-contract manifest's provenance, the release notes and the version sites, and nothing importable.
+Over what the index served before this upload — 2.2.0 — the release is the MAJOR the 3.0.0 release
+commit typed on both first axes, and the 3.0.0 section and release notes describe it; a reader upgrading
+from 2.2.0 gets that arc and this corrective together, because 3.0.0 was never installable. Read out of
+the downloaded wheel rather than out of this tree, `synapse_cdm/version.py` line 398 reads
+`PACKAGE_VERSION = "3.0.1"`, line 336 `SCHEMA_VERSION = "3.0.0"`, line 425 `ADAPTER_API_VERSION = "3.0.0"`,
+line 478 `MANIFEST_SCHEMA_VERSION = "2.1.0"`, line 500 `EVIDENCE_SCHEMA_VERSION = "2.0.0"` and line 404
+`SC_OES_VERSION = "0.1.0"`: the package is one PATCH past the wire contract, for a workflow's refusal and
+not for a contract decision, which is the third time in this file's ledger that has been the reason.
+
+**The digests, and all six were reachable from the Release alone.** `SHA256SUMS` names
+`cc70c59ec6ed97f470c5b9140d7b37d81633ca06cc6750802d504e0ec29f486a` for the wheel,
+`a8aa0a0e75d0065f7bdcda4ab04885610e1aabd856e4732186e2029856e719c4` for the sdist,
+`2cfb30882f4ea75cbffdd30af86e526286be1f0dce45ecc0eb8eec3f67ef27ea` and
+`6cee32b1f15f90b9deb3d833215d1e75ab9ef94ffbaecae64eea42f6e0124214` for the CycloneDX and SPDX SBOMs,
+`717d377905212240308d7676a841a4cfa76549cadc69cb39d465baa45deee6d8` for the conformance sweep and
+`05f6adb9de249d5842a4305fdd4f245e5f7d1d51e500f59556ad26be7253c0e9` for the evidence bundle; the
+Release API reports the same six digests on the same six assets, at 7 313 809, 5 268 719, 69 254,
+110 994, 290 231 and 160 349 bytes. **The index agrees about the two that reach it**:
+`GET /pypi/synapse-cdm/3.0.1/json` returns the same wheel and sdist digests, with sizes 7 313 809 and
+5 268 719 bytes and upload times **14:43:33.200516Z** and **14:43:35.275539Z** — two seconds and
+seventy-five milliseconds apart, and the second of them is the instant this release became a thing a
+stranger could install. Both files were downloaded from the index at 15:04:00Z, their archive magic
+checked first (`PK\x03\x04`, `\x1f\x8b`), and re-hashed to exactly those digests at those sizes. The
+Release body is byte-identical to the `release-notes-3.0.1.md` asset,
+`5725b6ed0a2ea4a0099ed446d31210014f5f5157ccfa5cca6bd8c07c98d124bc` over 45 384 bytes on both, once the
+one trailing newline the API's JSON rendering appends is set aside.
+
+**THE PyPI PROVENANCE TRAP, TWELFTH READING, AND IT READS AS THE FIFTH THROUGH ELEVENTH DID.** Read
+2026-09-20 in the witness round, the two per-file objects for 3.0.1 in `GET /pypi/synapse-cdm/3.0.1/json`
+carry no `provenance` key at all — sixteen keys each, probed for the KEY and not for a value. **The
+attestations are on the simple index, and they witness the publisher from PyPI's own side.**
+`GET /simple/synapse-cdm/` with `Accept: application/vnd.pypi.simple.v1+json` lists fifteen versions and
+thirty files, the last two 3.0.1's, and gives each of them a `provenance` URL under
+`https://pypi.org/integrity/synapse-cdm/3.0.1/<filename>/provenance`; both answer with one bundle holding
+one attestation. The bundle at the wheel's names `kind` **GitHub**, `repository`
+**Decent-Cybersecurity/synapsecommand-public**, `workflow` **publish.yml**, `environment` **pypi**, and its
+in-toto statement's `predicateType` is `https://docs.pypi.org/attestations/publish/v1` with
+`subject[0].digest.sha256` `cc70c59e…9f486a`, the wheel's own digest; the sdist's bundle reads the same
+four values with `a8aa0a0e…e719c4`. Four values this repository configured and two artefacts it built,
+read back out of the index rather than asserted from inside the run that uploaded them. The
+repository's own attestation job had verified the wheel, the sdist, both SBOMs and the evidence bundle
+at 14:18:50–14:19:07Z, before the hold, and the witness record carries that instant and the bundle's
+canonical digest, `921e2fd10f80509bd17c89f2cd553bb5ef41526c605d67c98383e2160f7d124c`.
+
+**THE WITNESS JOB SUCCEEDED END TO END FOR THE FIRST TIME, AND THIS IS THE FIRST ENTRY WHOSE COMMITTED
+RECORD IS THE PIPELINE'S.** The `witness` job of run 35514833652 ran 14:44:08–14:44:27Z. Its build step
+read the run's one approval under `actions: read` — approver `decentcybersecurity`, 14:43:10Z, comment
+*Approved on the readiness report at the release commit:* followed by the report's URL at `89d2c707`,
+so the builder lifted that URL into `review_file` from the approval's own words and nobody designated
+anything — read deployment `6553754047`'s four statuses under `deployments: read`, fetched the
+attestation store by the wheel's digest, was handed `--attestation-bundles`, and at 14:44:17Z wrote
+`witness-3.0.1.json for v3.0.1 (2 files, 1 approval(s))`. Its verify step, `gates/witness_verify.py
+witness-3.0.1.json --download --assets assets` with a token, read `VERIFIED witness-3.0.1.json (3.0.1,
+against the index and Release and the assets under assets)` — `1 witness record(s), 0 disagreeing` —
+where run 35200069387's read `DISAGREES` on an empty comment and `v2.1.2`'s failed on a missing instant.
+Its attach step uploaded the record to the Release at 14:44:23Z as the ninth asset, 2 188 bytes, sha256
+`32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd`. The witness round downloaded the
+nine assets, verified that record offline against them and online with `--download` — both read
+`VERIFIED`, `0 disagreeing` — and committed it as `releases/witness/3.0.1.json`, the same bytes;
+`tests/test_cdm_witness.py` holds the file to that digest and the three dated paragraphs of 2026-09-17
+to what this run did. The rule of 2026-09-17 — a non-empty approval comment naming what the approval
+was taken on — was followed and is what made the pipeline's own record acceptable to its own verifier;
+the record's `comment` and `review_file` name the same document.
+
+**THE CONDITION 4 RUN, IN THE DOCUMENTED ENVIRONMENT, AND WHAT THE NUMBERS DO AND DO NOT SHOW.** The
+gate's condition 1 ran 13:53:59–14:00:45Z, six minutes and forty-six seconds, and the build job's
+condition 4 ran 14:05:07–14:18:37Z, thirteen minutes and thirty seconds — both in the documented
+environment now, on two runners. The `v3.0.0` run's pair read 811 s and 1262 s. So the spread between
+the two jobs' suite runs did not close with the corrective, and the honest reading is that a shared
+runner accounts for a factor of two on its own between two executions of one suite an hour apart; the
+451 s the 3.0.1 section attributes to the import closure is the part the measurement isolates — a
+0.37 s cost paid by every worker start, reproduced on one machine — and not the whole of the difference.
+A wall-clock budget of 10 s across three worker start-ups therefore has a thinner margin on a runner than
+its module assumed, and that is a fact about the budget rather than about the environment, recorded
+here for the round that next touches `tests/test_cdm_parser_isolation.py`; no budget moved in this arc.
+
+**This round writes nine files**, and the tenth is the test module that states the ledger count.
+`releases/witness/3.0.1.json` is new; `PUBLICATION.md` gains this entry; `docs/docs/changelog.mdx` gains a
+dated measurement beside the 3.0.1 paragraph whose present-tense sentence about what the index serves
+stopped being true at 14:43:35Z; `packages/cdm/synapse_cdm/MIGRATIONS.md` records the act, opens the
+pending section this one-file change makes necessary, and rewrites its dated witness paragraphs to say
+what run 35514833652 did; `releases/witness/README.md` and `docs/docs/security/release-pipeline.mdx` are
+rewritten the same way, and the README says what `review_file` means for 3.0.1; `SECURITY.md`'s SBOM row
+gains the v3.0.1 asset sizes; `docs/audit-remediation-report.md`'s release note records the upload;
+`tests/test_cdm_witness.py` moves the assertion that held the directory to two hand-built records to two
+and the pipeline's first, by digest. `tests/test_cdm_publication.py` moves its docstring and its number
+vocabulary, which ended at twenty. **Nothing under `packages/cdm/synapse_cdm/` moved except
+`MIGRATIONS.md`**, and `PACKAGE_VERSION` still reads `3.0.1`.
+
+**What this entry does not claim.** It does not claim to know which test failed at `v3.0.0`'s condition
+4: the step discarded the name, the identity is a reconstruction from timings and an import measurement,
+the 3.0.1 section says so, and the repaired step is what stops the next one from being a reconstruction.
+It does not claim the corrective made the build job's suite run as fast as the gate's — the paragraph
+above gives both numbers. It does not claim the documentation site is deployed or gated: the deployment
+record's next row is the next round's, and `docs.synapsecommand.com` at the time of writing serves what
+entry 20's second deploy put there. It does not claim the simple index's lag has a length. It does not
+claim PyPI's `provenance` key is absent on any release but those this ledger has read. And it does not
+claim the witness job will succeed on the next tag: it claims that it succeeded on this one, with the
+inputs this one had, and that the record it produced is the record this repository holds.
 
 ## The deployment was not affected
 

@@ -612,19 +612,30 @@ def test_every_witness_path_the_documents_quote_exists():
 # names the additions it once called unexercised, and the workflow's witness job carries every one
 # of them. The day a third record is committed this goes red again, and the sentences are
 # rewritten to say what that run did.
+#
+# 2026-09-20: THE THIRD RECORD LANDED, AND IT IS THE PIPELINE'S. Run 35514833652 (`v3.0.1`) was
+# the job's third execution on a tag push and its first success end to end: the build step wrote
+# `witness-3.0.1.json for v3.0.1 (2 files, 1 approval(s))` off an approval whose comment named the
+# readiness report at the release commit, the verify step read `VERIFIED` with `--download --assets
+# assets` and a token, and the attach step put the record on the Release as its ninth asset. The
+# witness round downloaded that asset, verified it again offline and online, and committed it as
+# `releases/witness/3.0.1.json` — the same bytes, held below by digest. So this section went red as
+# designed and was rewritten: the directory is two hand-built records and the pipeline's first, and
+# the three paragraphs say what that run did. A fourth record makes it red again.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
-#: a phrase it carries and nothing else in the file does.
-NEVER_SUCCEEDED_SITES = {
-    "packages/cdm/synapse_cdm/MIGRATIONS.md": "the `v2.2.0` push was the FIRST execution of the repaired job",
-    "releases/witness/README.md": "that job has never produced a committed record",
-    "docs/docs/security/release-pipeline.mdx": "A `witness` job that has succeeded on a tag push",
+#: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
+#: 35514833652 did — the job's first success on a tag push — rather than that no run has succeeded.
+SUCCEEDED_SITES = {
+    "packages/cdm/synapse_cdm/MIGRATIONS.md": "the first committed record the pipeline produced",
+    "releases/witness/README.md": "This is the first release whose committed record is the pipeline's own",
+    "docs/docs/security/release-pipeline.mdx": "the third committed record, `releases/witness/3.0.1.json`, is the pipeline's own",
 }
 
 #: What the witness job gained on 2026-09-16, as the workflow spells it. Until 2026-09-17 this was
 #: `UNEXERCISED_ON_A_TAG`; run 35200069387 exercised every one of them — the build step succeeded,
 #: so the reads under the two grants and the attestation fetch worked, and the verify step ran the
-#: last of them with a token — and the name says so now.
+#: last of them with a token — and run 35514833652 carried every one of them to a success.
 EXERCISED_ON_V2_2_0 = (
     "actions: read",
     "deployments: read",
@@ -641,45 +652,68 @@ ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bun
 #: The records the three paragraphs describe as hand-built, and the reading each rests on.
 HAND_BUILT = ["2.1.2.json", "2.2.0.json"]
 
+#: The record the paragraphs describe as the pipeline's own, by the digest of the Release asset
+#: run 35514833652 attached — so a re-built or edited file under this name is refused, and the
+#: word "pipeline's" in three documents is a claim about bytes and not about intent.
+PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd"}
+
+#: The run whose witness job succeeded first, and the one it was refused on before it.
+FIRST_SUCCESS_RUN = "35514833652"
+REFUSED_RUN = "35200069387"
+
 
 def _witness_job() -> str:
     workflow = (REPO / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
     return workflow[workflow.index("\n  witness:\n"):]
 
 
-def test_the_never_succeeded_statements_hold_while_both_records_are_the_hand_built_ones():
+def test_the_witness_statements_hold_while_the_directory_is_two_hand_built_records_and_the_pipelines_first():
     records = sorted(path.name for path in WITNESS_DIR.glob("*.json"))
-    assert records == HAND_BUILT, (
-        f"releases/witness/ holds {records}. The three paragraphs in {sorted(NEVER_SUCCEEDED_SITES)} "
-        "say, dated 2026-09-17, that the pipeline's `witness` job has never produced a committed "
-        "record: it executed on `v2.1.2` (run 34687815710) and was refused on a missing instant, "
-        "and on `v2.2.0` (run 35200069387) and was refused on an empty approval comment — `gh run "
-        "view 35200069387 --json jobs` reads the witness job `failure`, its 'Verify it' step "
-        "`failure` and its 'Attach it to the Release' step `skipped` — so both records were built "
-        "by hand. A third record is either the job's first success or a third hand-built one, and "
-        "either way the paragraphs are rewritten to say which rather than left or deleted")
-    for site, phrase in NEVER_SUCCEEDED_SITES.items():
+    assert records == sorted(HAND_BUILT + list(PIPELINE_BUILT)), (
+        f"releases/witness/ holds {records}. The three paragraphs in {sorted(SUCCEEDED_SITES)} say, "
+        "dated 2026-09-20, that the pipeline's `witness` job was refused on `v2.1.2` (run "
+        "34687815710, a missing instant) and on `v2.2.0` (run 35200069387, an empty approval "
+        "comment), so those two records were built by hand, and that it succeeded end to end on "
+        "`v3.0.1` (run 35514833652), so that record is the pipeline's own. A fourth record is "
+        "either another success or another hand-built one, and either way the paragraphs are "
+        "rewritten to say which rather than left or deleted")
+    for name, digest in PIPELINE_BUILT.items():
+        actual = hashlib.sha256((WITNESS_DIR / name).read_bytes()).hexdigest()
+        assert actual == digest, (
+            f"{name} hashes to {actual}, and the Release asset run {FIRST_SUCCESS_RUN} attached "
+            f"hashes to {digest}. The three paragraphs call this record the pipeline's own, which is "
+            "a claim about these bytes; a record rebuilt or edited under this name is a different "
+            "claim and needs different sentences")
+    for site, phrase in SUCCEEDED_SITES.items():
         flat = " ".join((REPO / site).read_text(encoding="utf-8").split())
         assert phrase in flat, (
-            f"{site} no longer says {phrase!r}; the statement that the witness job has never "
-            "produced a committed record is dated and this test holds it, so it moves with a "
-            "rewrite here and not by deletion")
+            f"{site} no longer says {phrase!r}; the statement about which records the pipeline "
+            "produced is dated and this test holds it, so it moves with a rewrite here and not by "
+            "deletion")
         for addition in ADDITIONS_NAMED:
             assert addition in flat, (
                 f"{site} does not name {addition} among what the `v2.2.0` push first executed; "
-                "the job that ran was not the job v2.1.2 ran plus the round-PW repair")
-        assert "35200069387" in flat, (
-            f"{site} does not name run 35200069387, the reading its rewritten paragraph rests on")
+                "the job that succeeded was that job, and the paragraph says how it got there")
+        assert REFUSED_RUN in flat, (
+            f"{site} does not name run {REFUSED_RUN}, the refusal its success is measured against")
+        assert FIRST_SUCCESS_RUN in flat, (
+            f"{site} does not name run {FIRST_SUCCESS_RUN}, the reading its rewritten paragraph "
+            "rests on")
+    readme = " ".join((REPO / "releases/witness/README.md").read_text(encoding="utf-8").split())
+    for digest in PIPELINE_BUILT.values():
+        assert digest in readme, (
+            "releases/witness/README.md does not carry the digest of the Release asset the "
+            "committed 3.0.1 record is; a reader holding the record has nothing to compare it to")
     job = "\n".join(line for line in _witness_job().splitlines() if not line.lstrip().startswith("#"))
     for text in EXERCISED_ON_V2_2_0:
         assert text in job, (
             f"the witness job no longer carries {text!r}, which the three paragraphs name as an "
-            "addition of 2026-09-16 that the `v2.2.0` push executed; either it moved, and they say "
-            "where, or it went, and they stop naming it")
+            "addition of 2026-09-16 that the `v2.2.0` push executed and the `v3.0.1` push carried "
+            "to a success; either it moved, and they say where, or it went, and they stop naming it")
 
 
-def test_the_never_succeeded_phrases_are_each_in_one_place_in_their_file():
+def test_the_witness_phrases_are_each_in_one_place_in_their_file():
     """A phrase that occurs twice would let a stale copy satisfy the test above."""
-    for site, phrase in NEVER_SUCCEEDED_SITES.items():
+    for site, phrase in SUCCEEDED_SITES.items():
         flat = " ".join((REPO / site).read_text(encoding="utf-8").split())
         assert flat.count(phrase) == 1, f"{site} carries {phrase!r} {flat.count(phrase)} times"

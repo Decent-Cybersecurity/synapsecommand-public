@@ -258,8 +258,9 @@ entry 20 says in as many words.
 **After the run: confirm the `witness` job succeeded, and only then let the witness round commit
 — added 2026-09-16, and rewritten 2026-09-17 for what the next tag push did.** `gh run view <run
 id> --json jobs` must show every job of the run `success`, the `witness` job included, before
-`releases/witness/<v>.json` is committed. The job has executed twice on a tag push and succeeded
-on neither. On `v2.1.2` it failed at its own verification step because the builder read an
+`releases/witness/<v>.json` is committed. By 2026-09-17 the job had executed twice on a tag push
+and succeeded on neither; its third execution, 2026-09-20, is the paragraph after this one. On
+`v2.1.2` it failed at its own verification step because the builder read an
 instant off a key the approvals endpoint does not carry; the repair (round PW) was not an ancestor
 of that tag, and the `v2.2.0` push was the FIRST execution of the repaired job — run 35200069387,
 2026-09-17 — the same "first executed on a tag" class that burned `v2.1.0` at the dependency audit
@@ -280,6 +281,26 @@ the live API, and every one has now run on a tag. The same test module holds thi
 `releases/witness/README.md`'s and the release-pipeline page's to the tree: the day
 `releases/witness/` holds a third record they go red, and are rewritten to say what that run did
 rather than deleted.
+
+**And on 2026-09-20 the third execution succeeded end to end: the `v3.0.1` push, run 35514833652.**
+Every job of the run reads `success`, the `witness` job included, which is the reading the
+sentence above asks for before a witness round commits anything. Its build step, under the
+`actions: read` and `deployments: read` grants, read the run's one approval — given at 14:43:10Z
+with a comment naming the readiness report at the release commit, so `review_file` is derived
+from the approval's own words and designated by nobody — and the `pypi` deployment's status
+history, fetched the attestation store by the wheel's digest, was handed `--attestation-bundles`,
+and wrote `witness-3.0.1.json for v3.0.1 (2 files, 1 approval(s))`; its verify step, handed
+`--download --assets assets` and a token, read `VERIFIED`; its attach step put the record on the
+Release as its ninth asset. The witness round downloaded that asset, verified it again offline
+against the Release download and online with `--download`, and committed it as
+`releases/witness/3.0.1.json` — the same bytes, sha256 `32cd277e…`, held by digest in
+`tests/test_cdm_witness.py` — which makes it the first committed record the pipeline produced,
+where run 35200069387's was refused on an empty comment and `v2.1.2`'s on a missing instant.
+`PUBLICATION.md` entry 21 is the ledger's account. The class this paragraph was written for — a job
+whose inputs exist only after the tag — has now run to a success once, which is one more time
+than a rehearsal can manage; the test module that held the directory to two hand-built records
+holds it to those two and the pipeline's first, and goes red on a fourth until these paragraphs
+say what that run did.
 
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
@@ -425,6 +446,12 @@ run's inputs with the maintainer's designated `--review-file`, under the ruling 
 entry 20 records. The release procedure above says what the approval comment must carry so that
 the next execution can succeed.
 
+**Also 2026-09-20: the next execution did succeed.** The `v3.0.1` push, run 35514833652, built,
+verified and attached `witness-3.0.1.json`, its approval comment naming the readiness report at
+the release commit, and `releases/witness/3.0.1.json` is that asset byte for byte. The directory
+now holds three records: two built by hand, for the reasons above, and one by the pipeline.
+`PUBLICATION.md` entry 21 is the measurement.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -437,6 +464,27 @@ now true of it.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.0.1`, and `3.0.1` is what the index serves — `PUBLICATION.md` entry 21 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+two dated witness paragraphs in the release procedure and the index note in the 3.0.1 section
+being what moved in it. Everything else the round touched ships in nothing: the ledger, the
+witness record and its README, the release-pipeline and changelog pages, the security policy, the
+audit register and two test modules.
+
+**THE 3.0.1 WITNESS ROUND's RECORD, 2026-09-20 — the record is the pipeline's, for the first time.**
+Run 35514833652's `witness` job succeeded end to end — built, verified with `--download --assets
+assets` and a token, attached — and `releases/witness/3.0.1.json` is the Release asset it wrote,
+byte for byte, verified again by the round offline and online before it was committed. Ledger
+entry 21 records the upload and the readings behind it; the three paragraphs that said the job had
+never produced a committed record say what this run did; `tests/test_cdm_witness.py` holds the
+directory to two hand-built records and this one, by digest. Nothing in the distribution moved
+except this file, and `PACKAGE_VERSION` still reads `3.0.1`.
+
 ### 3.0.1 — 2026-09-20 — the corrective of the tagged-never-published 3.0.0: the release workflow's build job judges the tree in the documented environment again, and names the tests it fails on
 
 **This section is a release and no longer the pending arc, and no pending-arc heading preceded
@@ -447,7 +495,8 @@ the index actually serves is a measured fact about an upload rather than about t
 recorded in `PUBLICATION.md`'s ledger by the round that watched the upload and is not asserted
 here before it has happened; at the time of writing the index serves `2.2.0` (`PUBLICATION.md`
 entry 20), because 3.0.0 was tagged and never published — the dated note on the next section says
-so from its side.
+so from its side. **Measured after the upload, 2026-09-20:** `3.0.1` is what the index serves, and
+`PUBLICATION.md` entry 21 is the measurement.
 
 **WHAT MOVED BETWEEN 3.0.0 AND 3.0.1 IS A WORKFLOW AND NOT THE DISTRIBUTION, FOR THE THIRD TIME
 IN THIS FILE'S LIFE.** A reader upgrading from 2.2.0 — which is still what the index serves — gets
