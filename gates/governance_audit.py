@@ -196,12 +196,37 @@ def check_contexts(workflows_dir: pathlib.Path = WORKFLOWS) -> list[dict[str, st
     return out
 
 
+def _on_block(workflow_text: str) -> str | None:
+    """The text under the first `on:` line that is closed by a top-level key, else None.
+
+    This was the regex `^on:\\n((?:(?:  .*|\\s*)\\n)+?)(?=^\\S)` until CodeQL's py/redos read it
+    on 2026-09-20: `\\s*` and the group's own `\\n` could each take a blank line, so an `on:`
+    followed by many blank lines and then a line the lookahead rejects backtracked
+    exponentially. The walker below accepts the same language — a line of `on:` alone, then
+    at least one line that is two-space indented or whitespace-only, ended by a line whose
+    first character is not whitespace — in one pass, and `tests/test_cdm_governance.py`
+    holds it to that language edge by edge.
+    """
+    lines = workflow_text.split("\n")
+    tail = len(lines) - 1  # the last element is the text after the final newline: no `\n`
+    for start in range(tail):
+        if lines[start] != "on:":
+            continue
+        end = start + 1
+        while end < tail and (lines[end].startswith("  ") or not lines[end].strip()):
+            end += 1
+        closing = lines[end][:1]
+        if end == start + 1 or not closing or closing.isspace():
+            continue
+        return "\n".join(lines[start + 1:end]) + "\n"
+    return None
+
+
 def triggers_of(workflow_text: str) -> dict[str, str]:
     """The `on:` block's event names mapped to each event's own text (filters included)."""
-    match = re.search(r"^on:\n((?:(?:  .*|\s*)\n)+?)(?=^\S)", workflow_text, re.MULTILINE)
-    if not match:
+    block = _on_block(workflow_text)
+    if block is None:
         return {}
-    block = match.group(1)
     events: dict[str, str] = {}
     current = None
     for line in live_lines(block):

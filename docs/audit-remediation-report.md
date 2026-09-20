@@ -1902,6 +1902,32 @@ session added a skip statement", was wrong about the F08 guard and is corrected.
 - the goldens re-run under `SCHEMA_VERSION` 3.0.0 (MAJOR, ruled 2026-09-20; belongs to the release commit, §5.6);
 - `npm run gen:schemas` (declined to every session; the operator's).
 
+**CodeQL on `main` at the 3.0.0 release commit, 2026-09-20 — the first of the remote lanes above
+to run, and it was red.** The Python analysis's gate (`gates/codeql_gate.py`, HIGH and CRITICAL
+block) exited 1 on one blocking alert and nothing else (`results 1 · blocking 1 · excepted 0 ·
+reported 0 · unclassified 0`; `.remediation/codeql-fail.log`, `.remediation/codeql-alerts.txt`):
+
+| alert | where | cause | fix |
+|---|---|---|---|
+| `py/redos`, security-severity 7.5 (HIGH), precision high | `gates/governance_audit.py:201`, the `on:` block regex in `triggers_of`: `^on:\n((?:(?:  .*\|\s*)\n)+?)(?=^\S)` | `\s*` matches newlines, so a run of blank lines after `on:` splits between the `\s*` alternative and the group's own `\n` in exponentially many ways, and every split is tried whenever the `(?=^\S)` lookahead never holds — an `on:` followed by blank lines and then a line that begins with one space, or the end of the text. Measured on the regex before the fix: 14, 16, 18, 20 blank lines took 1, 4, 15, 48 ms (×3.3 per two lines); 400 lines did not answer in 10 s. A true positive on input the gate reads (workflow text), so no exception was written and `security/exceptions/` is untouched | the regex is replaced by a single-pass line walker, `_on_block`: a line of `on:` alone, then at least one line that is two-space indented or whitespace-only, closed by a line whose first character is not whitespace, else the next `on:` line is tried; `triggers_of` reads the block it returns exactly as before |
+
+Tests, `tests/test_cdm_governance.py`: `test_the_trigger_reader_is_linear_on_a_run_of_blank_lines_after_on`
+(400 blank lines in a subprocess with a 10 s timeout — red on the regex, `TimeoutExpired`, in
+`.remediation/logs/quick-20260920T101321Z.log`) and the 13-row
+`test_the_trigger_reader_keeps_the_regex_language_on_the_block_edges`, whose rows all passed
+against the regex in that same red run, so they pin the language the walker is held to (blank and
+whitespace-only lines inside the block, a comment line, inline event text, an unterminated closing
+line, `on:` with nothing under it, a block that runs to the end of the text, a one-space line that
+ends a block without closing it, and the flagged shape itself). Green after the fix:
+`quick-20260920T101353Z.log` — 154 passed, 9 skipped (five are the release module's "package tree
+identical to the tag / nothing unreleased" branches) over `test_cdm_governance`,
+`test_cdm_security_policy`, `test_cdm_security_exceptions`, `test_cdm_release`,
+`test_cdm_bump_derivation`; `ruff check` over the two changed files rc=0. No file under
+`packages/cdm/synapse_cdm/` changed: `gates/bump_derivation.py` reads the arc since 3.0.0 as NONE
+with 0 unruled, so no Bump ruling, no `RELEASE_NOTES.md` entry and no version movement. The gate's
+green on CodeQL itself is a remote reading and stays pending until the fix is pushed; the commit
+message is drafted at `.remediation/codeql-fix-msg.txt` and nothing is committed or tagged.
+
 ## 4. Installed-artifact and conformance results; compatibility and version decisions; unresolved limitations
 
 **Installed artefact** (`verify.sh dist`, `dist-20260920T022157Z.log`, rc=0): `synapse_cdm-2.2.0`

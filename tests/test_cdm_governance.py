@@ -84,6 +84,57 @@ def test_a_pull_request_branch_filter_where_present_includes_the_default_branch(
             f"{name} filters pull_request by branch and the list omits main: {body!r}")
 
 
+def test_the_trigger_reader_is_linear_on_a_run_of_blank_lines_after_on():
+    """CodeQL py/redos on the `on:` block regex (2026-09-20): `\\s*` and the outer `\\n` both
+    absorbed blank lines, so an `on:` followed by many blank lines and then a line no `^\\S`
+    lookahead accepts backtracked exponentially (~3.3x per two lines; 20 lines took 48 ms, 40
+    would take hours). The reader is now a line walker. This runs it in a subprocess so a
+    regression is a clean timeout, not a hung suite; 400 lines must answer within 10 s."""
+    script = ("from gates import governance_audit as ga\n"
+              "text = 'on:\\n' + '\\n' * 400 + ' x'\n"
+              "assert ga.triggers_of(text) == {}\n"
+              "print('ok')\n")
+    done = subprocess.run([sys.executable, "-c", script], cwd=REPO, capture_output=True,
+                          text=True, timeout=10, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+    assert done.returncode == 0 and done.stdout.strip() == "ok", done.stderr
+
+
+@pytest.mark.parametrize("text, expected", [
+    # the ordinary block: two-space keys with their filters, ended by the next top-level key
+    ("name: x\non:\n  push:\n    branches: [main]\n  pull_request:\njobs:\n  a:\n",
+     {"push": "\n    branches: [main]\n", "pull_request": "\n"}),
+    # blank and whitespace-only lines inside the block belong to the event above them
+    ("on:\n  push:\n\n    paths: [a]\n  \n  pull_request:\n    branches: [main]\npermissions:\n",
+     {"push": "\n\n    paths: [a]\n  \n", "pull_request": "\n    branches: [main]\n"}),
+    # a comment line inside the block is not an event and not part of one
+    ("on:\n  push:\n  # pull_request:\n  workflow_dispatch:\njobs:\n",
+     {"push": "\n", "workflow_dispatch": "\n"}),
+    # inline event text on the head line is kept
+    ("on:\n  workflow_dispatch: {}\njobs:\n", {"workflow_dispatch": "{}\n"}),
+    # the block may end at a final unterminated top-level line
+    ("on:\n  push:\njobs:", {"push": "\n"}),
+    # no `on:` at a line start at all
+    ("name: x\njobs:\n  a:\n    on: 1\n", {}),
+    # an `on:` with nothing indented under it before the next key is not a block
+    ("on:\njobs:\n  a:\n", {}),
+    # a block that runs to the end of the text has no `^\\S` after it and never matched
+    ("on:\n  push:\n", {}),
+    ("on:\n  push:\n  pull_request:", {}),
+    # a one-space line ends the block without being a top-level key: no match here...
+    ("on:\n  push:\n x\njobs:\n", {}),
+    # ...but a later `on:` line that does close properly still matches
+    ("on:\n  push:\n x\non:\n  pull_request:\njobs:\n", {"pull_request": "\n"}),
+    # the flagged shape itself: blank lines then a one-space line
+    ("on:\n" + "\n" * 8 + " x\n", {}),
+    ("on:\n" + "\n" * 8 + "jobs:\n", {}),
+])
+def test_the_trigger_reader_keeps_the_regex_language_on_the_block_edges(text, expected):
+    """The line walker accepts exactly what the regex `^on:\\n((?:(?:  .*|\\s*)\\n)+?)(?=^\\S)`
+    accepted: two-space or whitespace-only lines, at least one, ended by a line that begins
+    with a non-space character. Each row is a decided edge; together they pin the language."""
+    assert ga.triggers_of(text) == expected
+
+
 def test_no_workflow_uses_pull_request_target_or_references_a_secret():
     """Fork safety in two lines: no privileged trigger, no secret to leak to a fork's code."""
     offenders = []
