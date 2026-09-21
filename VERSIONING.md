@@ -87,7 +87,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.0.1` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
@@ -282,6 +282,17 @@ the gate — the build job's second run of the suite, in an interpreter loaded w
 `MIGRATIONS.md`, `version.py`; nothing importable) with nothing unruled, and the corrective
 release commit types that floor. No other axis moves.
 
+**Dated note, 2026-09-21: the release after 3.0.1 is `3.1.0`, a MINOR for the ordinary reason.**
+The adapter expansion since `v3.0.1` (`docs/adapter-expansion-implementation.md`, phases 0 to 7)
+added five `Adapter` subclasses — `geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, the
+roster fourteen → nineteen — with their codecs, three shared modules, five fixture sets and the
+`validate` optional extra, and removed nothing; `gates/bump_derivation.py` derives MINOR over the
+arc with nothing unruled once `MIGRATIONS.md`'s nine rulings in the 3.1.0 section are read, and
+the release commit types that floor. The CDM schema stays 3.0.0 (no model, enum or published
+schema moved; `schemas --check` CURRENT), the Adapter API stays 3.0.0 (no member of the contract
+moved; the new adapters implement it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0.
+SC-OES, the ontology and the profiles did not move.
+
 ---
 
 ## 5. Main advancement
@@ -314,7 +325,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.0.1 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.1.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

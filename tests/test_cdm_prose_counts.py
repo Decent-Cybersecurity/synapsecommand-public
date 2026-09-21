@@ -1963,12 +1963,13 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('PUBLICATION.md',
      'unmoved, and `cdm-harness --list-adapters` reports **14 adapters**, three ingest and eleven bidirectional',
      'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
-    ('RELEASE_NOTES.md',
-     'rehearsal gate passed `v3.0.0` and was right to. # Fourteen adapters at 3.0.1, all harness-verified',
-     'named subset — the roster OF 3.0.1, the release these notes describe; the five that ship in the tree since are the rows marked post-3.0.1 in the same table, and the section at the top of the notes says they are in no release'),
-    ('RELEASE_NOTES.md',
-     '| **538 fixture verdicts, 0 failed** across the fourteen adapters 3.0.1 shipped, against the published',
-     "named subset — the 3.0.1 artefact's own verdict count. The shape the 1.3.0 row retired above had, re-created on 2026-09-21 because the notes again describe an artefact smaller than the tree; retire it with the next release's notes"),
+    # RETIRED IN THE 3.1.0 RELEASE COMMIT (2026-09-21), the 1.4.0 retirement's shape again. Two rows
+    # here exempted RELEASE_NOTES.md's roster heading and verdict sentence while the notes described
+    # the 3.0.1 artefact (a roster of fourteen, 538 verdicts) beside five rows marked as postdating
+    # it. The 3.1.0 notes describe an artefact that IS the tree — nineteen rows, 580 verdicts, no
+    # row marked as postdating the release — so the sentences state the roster, are checked by
+    # comparison, and need no row; the guard above went red on the leftover rows the moment the
+    # notes were rewritten, which is its job. The retired bytes are not quoted here.
     ('docs/audit-remediation-report.md',
      'commit (§4, §5 item 9): the ledger is wired; 1 of 14 shipped adapters declares mappings; the 11 manifests',
      "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),

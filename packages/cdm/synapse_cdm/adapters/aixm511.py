@@ -1110,9 +1110,11 @@ class Aixm511Adapter(AixmAdapterBase):
             "`vertical` (its uom kept, reference MSL by the model's own definition of `elevation`) "
             "and `alt_m` None because MSL is not height above the ellipsoid",
             "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
-            "untracked and unpackaged. `evidence.available` is false because no published "
-            "Release carries this adapter's records yet; it becomes true at the first release "
-            "that attaches them",
+            "untracked and unpackaged. `evidence.available` is true because 3.1.0 is the first "
+            "release carrying this adapter and its pipeline generates the records for every "
+            "shipped adapter and attaches them to the `v3.1.0` Release as "
+            "`evidence-3.1.0.tar.gz`, retrievable by a third party; it says nothing about what "
+            "the wheel contains, and a tag that released nothing carries this sentence to nobody",
             "of §3.5's five resource limits this adapter enforces THREE — `max_input_bytes` by "
             "the base class before decode and again by `secure_xml` before a parser exists, "
             "`max_depth` and `max_objects` in this module before any object is built — plus an "
@@ -1131,7 +1133,7 @@ class Aixm511Adapter(AixmAdapterBase):
         residual=Residual.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     MAPPINGS = _build_mappings(PROFILE_511)

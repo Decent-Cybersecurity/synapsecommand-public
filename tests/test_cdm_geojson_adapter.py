@@ -748,7 +748,9 @@ def test_the_manifest_is_generator_output_and_declares_the_structured_residual()
     generated = manifests.generate()["geojson"]
     assert generated["adapter"]["id"] == "geojson"
     assert generated["adapter"]["residual"] == "structured"
-    assert generated["adapter"]["evidence"]["available"] is False
+    # `evidence.available` moved false -> true in the 3.1.0 release commit (2026-09-21): the first
+    # release carrying this adapter attaches its records; `tests/test_cdm_evidence.py` holds the value.
+    assert generated["adapter"]["evidence"]["available"] is True
     assert generated["adapter"]["maturity"]["level"] == "L4"
     assert generated["adapter"]["capabilities"]["limits"]["max_objects"] == GEOJSON_MAX_FEATURES
 

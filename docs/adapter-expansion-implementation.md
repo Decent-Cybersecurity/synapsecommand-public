@@ -2203,6 +2203,227 @@ document with room — the deepest XML nests 15 elements and the deepest JSON tw
   `secure_xml` reader, §6 and §7's roster words.
 
 
+### D68 — Phase 8: the release commit's tree is prepared by the 2.2.0 / 3.0.1 shape, and the number is typed only after the pre-step read `unruled: []`
+
+- **What.** The tree of the `Release 3.1.0` commit, uncommitted on `soif/release-3.1.0`, with
+  `PACKAGE_VERSION = "3.1.0"` and every current-claim site moved; the pending section of
+  `MIGRATIONS.md` rolled under `### 3.1.0 — 2026-09-21 — …` with the opening paragraphs every
+  roll writes (the elided-token paragraph, "this section is a release", the derived-floor
+  paragraph, the release-transition set, what the release does NOT assert), the nine
+  `**Bump ruling.**` units and the arc's account kept verbatim, and the `What moved inside the
+  distribution: 351 files` listing kept (the release commit adds no file to the set:
+  `MIGRATIONS.md` and `version.py` were already in it). No fresh, empty pending section is
+  written under the rolled one: the file's convention since 2.2.0 is that a stub describing
+  nothing is a false statement (`tests/test_cdm_release.py` refuses one on a tree identical to its
+  tag), and the stub returns with the next package change.
+- **Why.** The order is the procedure's: `python gates/bump_derivation.py --json` was run FIRST
+  and read `{"kind": "MINOR", "number": "3.1.0", "unruled": []}` (Validation), so no rulings round
+  was needed; then the number, then the sites. `3.1.0` is the gate's own `pending.number`, never a
+  remembered figure.
+- **Alternatives.** A `### Unreleased` stub under the rolled section (refused by the 2.2.0
+  precedent and by the gate on a tag-identical tree); typing the number before the pre-step
+  (the 1.6.0 STOP the procedure was amended for).
+- **Compatibility evidence.** `git diff v3.0.1 --name-only -- packages/cdm | wc -l` is 351 before
+  and after the phase; the raw derivation `derive(snapshot_at("v3.0.1"), snapshot_at(None))` reads
+  the same nine ambiguities before and after (Validation), and `version.py` left the SIGNAL set
+  when its constant moved (582 signals / 27 files → 581 / 26), the shape the 1.6.0 round recorded.
+- **Covering tests.** `tests/test_cdm_release.py` (heading token exactly one occurrence — zero,
+  since no pending section exists — the tag-command sweep, the notes' version and roster gates),
+  `tests/test_cdm_packaging.py`'s two-literal pin, `tests/test_cdm_changelog_claim.py`,
+  `tests/test_cdm_architecture_docs.py`'s version-figure sweep — all green on this tree.
+
+### D69 — The tag-conditional set is NINE tests, named, and the at-tag reading is taken in a throwaway clone rather than by a local tag
+
+- **What.** At the release commit without its tag, exactly nine tests are red and every one
+  reads the tag: six in `tests/test_cdm_bump_derivation.py`
+  (`test_this_trees_package_version_is_the_bump_its_own_diff_requires`,
+  `test_the_rulings_this_tree_records_are_the_rulings_its_arcs_need`,
+  `test_the_gate_runs_clean_from_the_command_line_with_its_mutation_check`,
+  `test_the_human_summary_states_the_pending_arcs_unruled_count`,
+  `test_the_mutation_check_witnesses_a_non_zero_unruled_count_in_the_summary`,
+  `test_the_json_measurement_is_what_a_round_would_quote`), because
+  `gates/bump_derivation.py` reads its rulings under `declared if released else "Unreleased"` and
+  this commit rolled that heading away, so the nine units read UNRULED until `v3.1.0` exists;
+  `tests/test_cdm_readiness.py::test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_was_released`,
+  which is in pre-release mode until a tag names `PACKAGE_VERSION` and in that mode asserts the
+  version has NOT moved; and
+  `tests/test_cdm_release_ref_rehearsal.py::test_every_check_in_the_plan_is_reachable_and_named_once`,
+  which rehearses `v3.1.0` and expects the annotated-tag check to pass — the same eight the 2.2.0
+  release commit named (its message: "exactly eight tests are red and every one reads the tag") —
+  and, ninth and new to this release,
+  `tests/test_cdm_evidence.py::test_evidence_available_is_true_on_every_shipped_adapter`, which
+  reads `git ls-tree` of the NEWEST `v*` tag (`v3.0.1`, which does not carry the five) and so
+  expects `false` on the five until `v3.1.0` exists, where it expects and reads `true` (D75).
+- **Why the reading is taken in a clone.** The phase forbids a tag in this repository, and the
+  gate's `1 check, 0 failed` cannot be read here until one exists. So the at-tag reading is taken
+  twice: in-tree by the gate's own functions — `apply_rulings(derive(v3.0.1, tree), "3.1.0")` reads
+  floor MINOR, 0 ambiguities, 9 ruled, and `rulings("Unreleased")` reads 0 — and in a throwaway
+  `git clone --no-local` under `/tmp` with this tree applied, committed with the drafted message and
+  tagged `v3.1.0` there (never here), where `python gates/bump_derivation.py --mutation-check`
+  reads `1 check, 0 failed` and the suite reads `0 failed`. The clone is deleted afterwards.
+- **Alternatives.** A local tag in the worktree (forbidden by the phase; also the one re-tag the
+  `UNRULED_HISTORICAL_ARCS` row would otherwise cost — D70 removes that cost); reading the
+  console form's `pending` line as a verdict (it is not one; the refusal runs on the judged arc).
+- **Compatibility evidence.** The 2.0.0, 2.2.0, 3.0.0 and 3.0.1 release commits record the same
+  transitional reading; `MIGRATIONS.md`'s pre-check paragraph says the reading is
+  `0 failed outside the tag-conditional set`.
+- **Covering tests.** The nine themselves, green at the tag in the clone (Validation).
+
+### D70 — The eleventh `UNRULED_HISTORICAL_ARCS` row is written in the release commit, from the gate's raw derivation, so the tag needs no re-tag
+
+- **What.** `("v3.0.1", "v3.1.0")` in `tests/test_cdm_bump_derivation.py` names the nine units
+  the raw derivation from `v3.0.1` to this tree leaves unruled — the eight `lossless.py` bodies
+  and `suite.check_temporal` — read off `derive(snapshot_at("v3.0.1"), snapshot_at(None))` on this
+  tree, never typed.
+- **Why.** `test_every_released_arc_derives_the_number_it_shipped` derives every tagged arc RAW
+  (it never calls `apply_rulings`) and compares against the row; without one it goes red the
+  moment `v3.1.0` exists, which the 1.7.0 through 2.1.0 rounds paid for with a local re-tag each.
+  The 2.2.0 and 3.0.0 release commits wrote the row before the tag, on the ground the row's
+  comment repeats: the release commit adds no unit, because its `version.py` edit is the
+  assignment the gate excludes plus docstring and comment lines the functional AST does not see,
+  and `MIGRATIONS.md` is the shipped-document row. This is not a test edited to pass — it is the
+  test's own documented mechanism for recording what an arc's raw derivation leaves undecided.
+- **Alternatives.** Leaving the row to the maintainer (a re-tag the phase is meant to leave
+  nothing for); omitting it (a red test at the tag that publication's condition 1 would refuse).
+- **Compatibility evidence.** The row's set equals `rulings("3.1.0")`'s key set (nine, compared
+  set to set in Validation); the clone tagged `v3.1.0` reads the test green.
+- **Covering tests.** `test_every_released_arc_derives_the_number_it_shipped` (skips without the
+  tag here; green at the tag in the clone).
+
+### D71 — Every number in the release notes is quoted from a command in this phase's Validation table
+
+- **What.** `RELEASE_NOTES.md` opens `# synapse-cdm 3.1.0`; the roster (nineteen) from
+  `python -m synapse_cdm.harness --list-adapters` and `adapter.discover()` / `roster()`; the
+  per-adapter verdict counts, the `roundtrip` and `lossless` columns and the 580 / 0 total from
+  `python -m synapse_cdm.harness --adapter <name> --schemas schemas --json` over the roster; the
+  installed-wheel figures (`19 adapters, 599 fixture files`; `19 adapters x 2 schema modes, 1160
+  fixture verdicts, 0 failed`) from `gates/wheel_install.py`; the nine schema files from
+  `python -m synapse_cdm.schemas`; maturity, claim status, binding and `evidence.available` from
+  `manifests/<name>.json`; the CURRENT readings from `schemas --check` and `manifests --check`;
+  the pre-step's JSON from `gates/bump_derivation.py --json`. The evidence categories per new
+  adapter are stated as Phase 7's measurement of 2026-09-21 with the record cited, because the
+  records are gitignored and not in the tree; what IS in the tree — `evidence.available: false` on
+  the five manifests — is stated from the manifests.
+- **Why.** Condition 4 is a person's; the notes are copied off runs, not recalled. The honest
+  boundary the phase requires is kept in its own section: external interoperability NOT claimed,
+  `independent_endpoint` ABSENT on all five, `independent_expected` only where GDAL read the
+  format, Digital NOTAM read on the draft, the `validate` extra optional, `publish.yml`'s changed
+  gate step run only in rehearsal until this tag.
+- **Alternatives.** Carrying the 3.0.1 notes' body forward with edits (the failure the notes
+  gate names); regenerating evidence here without the exercise reports (would read ABSENT for
+  categories Phase 7 measured PRESENT — a worse reading, not a truer one).
+- **Compatibility evidence.** `tests/test_cdm_release.py`'s four notes gates and the prose-count
+  sweep are green; the two `TREE_EXEMPT` rows that covered the 3.0.1 notes' named subset are
+  retired (the notes now describe an artefact that IS the tree), which is the 1.4.0 retirement's
+  shape and is recorded in place without quoting the retired bytes.
+- **Covering tests.** `test_the_release_notes_describe_this_version`,
+  `test_the_release_notes_roster_table_is_the_registry`,
+  `test_the_release_notes_name_the_mechanism_that_published_them`,
+  `test_the_release_notes_keep_an_artefacts_section_that_says_where_the_digests_are`,
+  `test_no_tracked_file_states_an_adapter_count_that_is_neither_the_roster_nor_ruled`,
+  `test_every_tree_exemption_still_points_at_prose_that_is_there`.
+
+### D72 — The changelog page carries the 3.1.0 entry as a dated paragraph in its version note and NOT as adapter bullets, because the page is a strict subset of `MIGRATIONS.md`'s no-schema-change section
+
+- **What.** `docs/docs/changelog.mdx` gains the dated 2026-09-21 paragraph with `package is at
+  \`3.1.0\`` and `the schema stays at \`3.0.0\`` on one line each (the gate reads raw text), the
+  "what the index serves" sentence stating `3.0.1` at the time of writing, and no new bullet under
+  "Adapters that landed with no schema change".
+- **Why.** A first draft added one bullet naming the five modules there;
+  `tests/test_cdm_prose_counts.py::test_the_page_extraction_agrees_that_the_page_is_a_curated_subset`
+  holds the page's bullet set STRICTLY below `MIGRATIONS.md`'s section of the same name, whose
+  entries are the thirteen historical ones — the new adapters' account lives in the 3.1.0 release
+  section, as `stanag4586`'s lived in 1.4.0's. Adding matching entries to the historical section
+  would move a counted, gated section for a release that has its own. The 2.2.0 and 3.0.1
+  precedents put the release entry in the version note, which is what this does.
+- **Alternatives.** The bullet (refused by the subset gate); moving the historical section (out of
+  scope and a false shape).
+- **Compatibility evidence.** `tests/test_cdm_changelog_claim.py` green; the built page's last
+  `package is at <code>…</code>` reads `3.1.0`.
+- **Covering tests.** `test_the_page_states_the_two_live_version_numbers_this_tree_actually_has`,
+  `test_the_page_extraction_agrees_that_the_page_is_a_curated_subset`.
+
+### D73 — The readiness statement is a re-qualification of `docs/soif-part1-release-readiness.md` (sections 18, 19, 20), and the approval comment names that file at the release commit
+
+- **What.** Three dated paragraphs: §18 names the arc's commits (`3c359f7`, `c4caab5…` in full,
+  with `CI` run 35591088608 green on all eleven jobs) and says the release commit's own hash is
+  deliberately not written; §19 states `ready for PR` (3.1.0) with what was verified and what is
+  NOT claimed; §20 states no blocker. The file still ends `blocked: []`.
+- **Why.** `tests/test_cdm_readiness.py` fixes the path (§57), selects released mode by a tag that
+  CONTAINS every 40-character hash §18 names (so only main-history hashes are named), and in
+  released mode requires the file to exist, end with the empty list and name `3.1.0` — all true of
+  this text. The 3.0.1 approval comment named this file at the release commit and the pipeline's
+  `witness` job derived `review_file` from it (`releases/witness/3.0.1.json`); a sibling document
+  would be a path no precedent or test names.
+- **Alternatives.** A sibling readiness document (no test or precedent supports it); naming the
+  release commit's hash (a file cannot carry its own commit's hash — the report's standing rule).
+- **Compatibility evidence.** The readiness module reads 26 passed / 2 skipped on this tree with
+  one red — the tag-conditional empty-list test (D69) — and 0 failed at the tag in the clone.
+- **Covering tests.** `tests/test_cdm_readiness.py`, `tests/test_cdm_witness.py` (the approval-
+  comment rule), `tests/test_cdm_trusted_publishing.py`.
+
+### D74 — Drafts: the commit message carries `Signed-off-by` as its only trailer and the tag message follows `v2.2.0`'s and `v3.0.1`'s shape
+
+- **What.** `<pipeline dir>/state/release-commit-message.txt` — subject `Release 3.1.0: …`, a body
+  with the arc, the derivation, the release-state set, and the condition-by-condition state with
+  the suite readings of this phase; `Signed-off-by: Matej Michalko <m@decentcybersecurity.eu>`
+  as the only trailer, so the maintainer commits with `-F` and NOT `-s` (the 2.1.x lesson: `-s`
+  double-signs a message that already carries the trailer). `<pipeline dir>/state/release-tag-message.txt`
+  — `synapse-cdm 3.1.0 — …`, the derived counts, what ships, what is not claimed.
+- **Why.** The phase names the trailer; `gates/commit_message.py --file` reads the draft `clean`.
+- **Alternatives.** A `Co-Authored-By:` trailer (the phase's instruction names the sign-off as the
+  only trailer).
+- **Covering tests.** `gates/commit_message.py --file` on the draft; `--rev HEAD` in the throwaway
+  clone where the draft was used verbatim.
+
+### D75 — `evidence.available` flips to `true` on the five new adapter modules IN the release commit, because the pre-check at a local tag surfaced the test that requires it
+
+- **What.** `adapters/geojson.py`, `geopackage.py`, `c2sim.py`, `aixm511.py` and `aixm52.py`:
+  `Evidence(available=True)` and the one limitation sentence the agreement gate reads, rewritten
+  from "is false because no published Release carries this adapter's records yet; it becomes true
+  at the first release that attaches them" to "is true because 3.1.0 is the first release carrying
+  this adapter and its pipeline generates the records for every shipped adapter and attaches them
+  to the `v3.1.0` Release as `evidence-3.1.0.tar.gz`, retrievable by a third party; it says nothing
+  about what the wheel contains, and a tag that released nothing carries this sentence to nobody".
+  `manifests/<name>.json` ×5 and `docs/docs/cdm/support-matrix.mdx` regenerated through their
+  generators (`--check` CURRENT). Four of the arc's own per-adapter tests pinned the declaration
+  as a literal (`… evidence.available is False` in `tests/test_cdm_geojson_adapter.py`,
+  `test_cdm_geopackage_adapter.py`, `test_cdm_aixm511_adapter.py`, `test_cdm_aixm52_adapter.py`;
+  `c2sim`'s test never pinned it) and could never be green at the tag together with the rule test;
+  the literal is the constant and the rule test the derivation (its own docstring: "the assertion
+  is the RULE and not a constant"), so the four literals move to `True` with a dated comment — the
+  2.2.0 precedent of moving pinned literals in the release commit (`test_cdm_packaging.py`'s
+  version pair), not a gate loosened: the value is held by the rule test and by the agreement test.
+  The fourteen that predate the arc are untouched.
+- **Why.** The fresh-clone pre-check, run a second time at a local `v3.1.0` in the throwaway clone,
+  read ONE failure outside the eight: `tests/test_cdm_evidence.py::test_evidence_available_is_true_on_every_shipped_adapter`
+  — its rule (written by the arc itself, `3c359f7`) is "every adapter the newest tag carries
+  declares `true`, every adapter it does not carry declares `false`", read off `git ls-tree` of the
+  newest `v*` tag, and its docstring assigns the flip to "the release round that attaches its
+  records". At the tag the five are in the tag's tree, so `false` fails condition 1 in the release
+  workflow's gate job and the tag publishes nothing — the 3.0.0 class, arriving before the tag
+  this time, which is what the pre-check is for. The ground for `true` is the same one the
+  fourteen's `true` rests on: the records are an asset of a Release a third party can fetch —
+  `publish.yml`'s evidence job runs `generate --all` (every shipped adapter) and its release job
+  attaches `evidence-<version>.tar.gz`; for the fourteen that Release was `v2.1.2`, for the five it
+  is `v3.1.0`, the release this commit is. The field still says nothing about the three external
+  categories: a record can be retrievable and read ABSENT for `independent_endpoint`.
+- **Alternatives.** Editing the test to accept `false` at the tag (a gate edited to pass — the
+  phase forbids it, and the rule is the repository's own); leaving `false` and letting the tag be
+  refused (the pre-check's whole purpose is to stop that); flipping only the manifests (the
+  agreement gate holds field, prose and manifest together — the PR2 lesson).
+- **Compatibility evidence.** The five class bodies are units the arc ADDED relative to `v3.0.1`,
+  so the edit changes no ruling: the raw derivation after the flip reads the same 581 signals /
+  26 files / 9 ambiguities; the moved set stays 351 (the five modules were already in it).
+  `test_the_field_the_prose_and_the_manifest_all_state_the_same_availability` green on the
+  nineteen; `manifests --check` and `support_matrix --check` CURRENT. Pre-tag the flipped field
+  reads RED in `test_evidence_available_is_true_on_every_shipped_adapter` (the newest tag,
+  `v3.0.1`, does not carry the five), so that test joins the tag-conditional set as its ninth
+  member (D69) and reads green at the tag in the clone.
+- **Covering tests.** `tests/test_cdm_evidence.py` (both tests above), `tests/test_cdm_manifests.py`,
+  `tests/test_cdm_suite.py`, and the four per-adapter manifest tests at their moved literal.
+
+
 ## Progress
 
 ### Phase 0 — Baseline, source pins and normative resources — COMPLETE (2026-09-20)
@@ -2616,6 +2837,73 @@ second implementation of AIXM or C2SIM read them; the Donlon reading is this rep
 ElementTree script, D64).
 
 
+### Phase 8 — Release preparation for 3.1.0 (no tag, no push, no commit) — COMPLETE (2026-09-21)
+
+Started from `phase-diff.sh`'s empty reading for the phase (no earlier attempt; the tree was
+clean at `c4caab5`). Complete, in the procedure's order: (1) **The pre-step and condition 5**
+— `python gates/bump_derivation.py --json` on the unedited tree read `pending.unruled == []`,
+kind MINOR, number `3.1.0` (Validation), so no rulings round preceded the number. (2) **The
+number** — `PACKAGE_VERSION = "3.1.0"` in `version.py` with the axis table's reading, the
+parenthetical history, the live-readings paragraph ("eleventh version of itself"), an eighth
+dated correction and the constant's own dated comment, the way the 3.0.1 commit moved them
+(D68). `--mutation-check` cannot read `1 check, 0 failed` here until a tag names 3.1.0 — the
+gate reads rulings under the pending heading until then, the 2.0.0/2.2.0/3.0.0 transitional
+reading — so the at-tag reading was taken by the gate's own `apply_rulings(…, "3.1.0")` in-tree
+(0 ambiguities, 9 ruled) and by `--mutation-check` in a throwaway clone tagged `v3.1.0` under
+`/tmp`, where it reads `1 check, 0 failed` (D69). (3) **`MIGRATIONS.md`** — the pending section
+rolled under `### 3.1.0 — 2026-09-21 — …` with the five opening paragraphs every roll writes,
+the nine `**Bump ruling.**` units and the arc's account kept, the `351 files` listing kept with
+`MIGRATIONS.md`'s and `version.py`'s entries updated, the introduction's two-number sentence
+and both tag-command examples moved; no fresh pending stub (the file's convention). The heading
+token occurs zero times in the file (grep) and the carrier gate is green. (4)
+**`RELEASE_NOTES.md`** — rewritten for 3.1.0 in the file's voice, every number quoted from a
+command in the Validation table (D71): the roster and its nineteen from `--list-adapters` /
+`discover()`, the per-adapter verdicts and the 580 / 0 total from the harness, the installed-wheel
+figures from the wheel gate, the nine schema files from `python -m synapse_cdm.schemas`, maturity
+and claim from the manifests; the honest statements kept in their own section (external
+interoperability NOT claimed, `independent_endpoint` ABSENT on all five, `independent_expected`
+only where GDAL read the format, Digital NOTAM on the draft, the `validate` extra optional,
+`publish.yml`'s changed gate step run only in rehearsal). (5) **Every other current-claim site**
+— `README.md`'s tag example; `docs/docs/changelog.mdx`'s dated 3.1.0 paragraph with the live pair
+on one line each (D72); `docs/docs/current-contracts.mdx` regenerated by
+`gates/current_contracts.py --write`; `VERSIONING.md`'s figure, tag example and a dated note under
+§4; `tests/test_cdm_packaging.py`'s two literals; the two stale `RELEASE_NOTES.md` rows retired
+from `tests/test_cdm_prose_counts.py::TREE_EXEMPT`; the eleventh `UNRULED_HISTORICAL_ARCS` row
+(D70); this record's Handoff. `tests/frozen/cdm/MANIFEST.json` is left alone: the 3.0.1 diff
+moved it to resolve a `SELF` provenance, not to stamp a package version, and its sentence
+"3.0.1 ships the bytes" is history. The history sites (`PUBLICATION.md`, the 3.0.1 sections,
+`releases/witness/`, `docs/audit-remediation-report.md`, `SECURITY.md`'s SBOM row) are left
+alone. (6) **The readiness statement** — re-qualification paragraphs in
+`docs/soif-part1-release-readiness.md` §18, §19 and §20 (D73); the approval comment must name
+that path at the release commit (Handoff). (7) **Condition 1's pre-check and the suite** — the
+suite on the edited tree and in a fresh `git clone --no-local` with this tree applied (no tag),
+both read by subtracting the nine-member tag-conditional set named in D69, nothing else failed;
+the same clone tagged `v3.1.0` reads `0 failed` (Validation) — after the pre-check's first at-tag
+run found the one defect this phase repaired (D75). (8) **The remaining local gates** —
+schemas CURRENT, manifests CURRENT, support matrix CURRENT, current-contracts CURRENT, ruff clean,
+pin 30/0, parks 13/0, `gates/wheel_install.py --mutation-check` on the edited tree (13 checks,
+0 failed, the mutation caught), `gates/commit_message.py --file` on the draft `clean`, the docs
+build green. (9) **The drafts** — `<pipeline dir>/state/release-commit-message.txt` and
+`release-tag-message.txt` (D74). (10) **This record** — Progress, D68–D74, the Phase 8 Validation
+table, Remaining gaps, the Handoff subsection "Release 3.1.0 — what the maintainer runs next".
+
+Fix rounds within the phase, from the tree's own readings: the first draft of the notes and the
+rolled heading spelled `five … adapters`, which the roster sweep reads as a stale count (repaired
+to "five adapter modules"; no exemption row); the first draft of the changelog page added an
+adapter bullet under "Adapters that landed with no schema change", which the curated-subset gate
+refuses (D72); and the pre-check at a local tag in the throwaway clone read
+`tests/test_cdm_evidence.py::test_evidence_available_is_true_on_every_shipped_adapter` red — the
+field the arc left `false` on the five would have failed condition 1 on the pushed tag — so the
+release commit flips it with its manifests, on the ground the test's own rule states (D75).
+Nothing else went red outside the tag-conditional set.
+
+Incomplete: nothing in the phase's scope. Not done by design, and left to the maintainer by the
+phase's own terms: the commit, the fast-forward of `main`, the tag, the rehearsal, the push, the
+`pypi` approval (Handoff). Not done because it cannot be here: `--mutation-check`'s
+`1 check, 0 failed` and the nine tag-conditional tests' green in THIS repository — both read in
+the throwaway clone at the local tag and recorded as that.
+
+
 ## Validation
 
 Phase 0, 2026-09-20, worktree at `f1c4669` + the Phase 0 edits (all from the worktree root,
@@ -2850,6 +3138,64 @@ nothing is staged. Nothing was committed, staged, stashed, tagged or pushed.
 | the evidence categories, per adapter, read off the records (D64) | — | `internal_fixture` PRESENT ×5 · `self_round_trip` PRESENT `geojson`, `c2sim`; NOT_APPLICABLE `geopackage`, `aixm511`, `aixm52` · `independent_expected` PRESENT `geojson`, `geopackage` (GDAL); ABSENT `c2sim`, `aixm511`, `aixm52` · `normative_schema` PRESENT `c2sim`, `aixm511`, `aixm52` (lxml/libxml2 against the pinned closures); ABSENT `geojson`, `geopackage` (no normative schema exists) · `independent_endpoint` ABSENT ×5. `maturity_support`: declared L4/L3/L4/L3/L3, eligible L5 ×5, `satisfied: true`, `local_complete: true`, `external_outstanding` = the ABSENT ones |
 | the per-adapter documentation check (deliverable 6), scripted over the manifests, `FORMAT_COVERAGE.md`, the fixture READMEs, `parser-safety.mdx` and the support matrix | — | for each of the five: specification/profile (`format` in the manifest; the coverage section heading), direction (`geojson` bidirectional, `c2sim` bidirectional, three ingest), supported and unsupported features (the coverage rows and the 11/11/12/14/14 structured limitations), required configuration (the three XML READMEs' paragraph: the `validate` extra and the `SYNAPSE_CDM_*_XSD_DIR` variable, catalog where needed; none for translation), id/time/CRS mapping (the coverage sections: D12/D13, D23/D22/D26, D33/D34, D41/D45/D46), parser limits (`max_input_bytes`, `max_depth`, `max_objects` declared with basis on all five; the parser-safety rows), dependencies (standard library only at runtime; lxml behind the extra; GDAL as the fixture writer/oracle, never a dependency), fixture provenance (3/4/4/8/4 `PROVENANCE.json`, a `spec/*_pin.json` each), reproducible commands (each README states the harness command; the three demonstrations), measured evidence categories (the row above) — present and consistent with the manifests and the code |
 
+Phase 8, 2026-09-21, worktree `/Users/admin/synapsecommand-public-release` on `soif/release-3.1.0`
+at `c4caab5` + this phase's edits (twenty-seven tracked files modified, this record included, nothing new), `env.sh` sourced,
+`.venv` on PATH (Python 3.14.7). Order of the readings follows the procedure: the pre-step before
+any number was typed, the number, the sites, the gates. Logs under `/tmp/p8/` on the pipeline
+machine (`bump-prestep.json`, `raw-arc.txt`, `raw-arc-after.txt`, `at-tag-reading.txt`,
+`harness-per-adapter.txt`, `manifest-claims.txt`, `wheel-install.log`, `wheel-mutation.log`,
+`suite-tree-1.log`, `suite-clone-notag.log`, `suite-clone-tagged.log`, `docs-build.log`).
+
+| Command | RC | Result |
+| --- | --- | --- |
+| `python gates/bump_derivation.py --json` — THE PRE-STEP, on the unedited tree (`bump-prestep.json`) | 0 | `"pending": {"kind": "MINOR", "number": "3.1.0", "unruled": []}`; `declared: "3.0.1"`, `arc: {from: v3.0.0, to: v3.0.1}`, `derived_kind: PATCH`, `version_ruling: null`, one signal (`synapse_cdm/MIGRATIONS.md`, PATCH) |
+| `python gates/bump_derivation.py` — console form, unedited tree | 0 | `pending  the arc since 3.0.1 derives MINOR with 0 unruled, so the next release is at least 3.1.0`; `1 check, 0 failed` |
+| `derive(snapshot_at("v3.0.1"), snapshot_at(None))` through the gate's own functions (`/tmp/p8/raw_arc.py`, module registered in `sys.modules` — the test module's own method), unedited tree (`raw-arc.txt`) | 0 | floor MINOR; 582 signals across 27 distribution files (348 MINOR, 234 PATCH); 9 ambiguities: `lossless.py:Mapping`, `RULES`, `_check_field`, `_match_pattern`, `_targets`, `ledger`, `parse_path`, `render_path`, `suite.py:check_temporal`; snapshot 1433 → 1773 files |
+| the same derivation AFTER the phase's edits (`raw-arc-after.txt`) | 0 | floor MINOR; **581 signals across 26 files** (348 MINOR, 233 PATCH) — `version.py` left the signal set when its constant moved (the assignment is excluded; the rest of its edit is docstring and comment); the same 9 ambiguities |
+| `git diff --name-only v3.0.1 -- packages/cdm \| wc -l` before and after the edits | 0 | 351 and 351 — the moved set the rolled section states; the 22 non-fixture members listed (`NOTICE`, `pyproject.toml`, `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `__init__.py`, `adapter.py`, eight adapter modules, `aixm_resolve.py`, `lossless.py`, `normative_validation.py`, `secure_xml.py`, `suite.py`, `symbology.py`, `version.py`) |
+| `python -c "from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION; print(...)"` after the edit | 0 | `3.1.0 3.0.0` |
+| `python gates/bump_derivation.py` — after the roll, NO tag (`bump-console-after.txt`) | 1 | `FAIL  UNRULED — 9 changed unit(s) between v3.0.1 and the working tree …` — the nine, read under the pending heading the roll removed; the transitional reading D69 describes, the same the 2.0.0/2.2.0/3.0.0 release commits recorded |
+| `python gates/bump_derivation.py --mutation-check` — after the roll, NO tag (`bump-mutation.txt`) | 1 | the five mutation fixtures PASS, then the live check refuses UNRULED (above) — the at-tag reading is the clone row below |
+| `apply_rulings(derive(v3.0.1 → tree), "3.1.0")` in-tree (`at-tag-reading.txt`) | 0 | `under the 3.1.0 section: floor MINOR ambiguities 0 ruled 9`; `under the pending heading: floor MINOR ambiguities 9 ruled 0`; `rulings('3.1.0') -> 9`, `rulings('Unreleased') -> 0`; `_successor(3.0.1, MINOR) = 3.1.0` |
+| `python -m synapse_cdm.harness --list-adapters` (`list-adapters.txt`) | 0 | `19 adapters registered`; the table's `name` column: adsb, ais, aixm511, aixm52, c2sim, cat021, cat023, cat034, cat048, cat062, geojson, geopackage, gmti, legion, pntmap, stanag4586, stanag4609, stanag4676, tak; `binding` `standard-encoding` on eighteen, `provisional-internal-profile` on `stanag4676` |
+| `python -c "from synapse_cdm import adapter; …discover()…roster()"` (`discover.txt`) | 0 | `discover() 19` and `roster() 19`, the same nineteen names |
+| `python -m synapse_cdm.harness --adapter <name> --schemas schemas --json` × 19 (`harness-per-adapter.txt`) | 0 ×19 | passed / failed: adsb 32/0, ais 22/0, cat021 40/0, cat023 34/0, cat034 34/0, cat048 82/0, cat062 56/0, gmti 32/0, legion 6/0, pntmap 4/0, stanag4586 24/0, stanag4609 126/0, stanag4676 34/0, tak 12/0, geojson 4/0, geopackage 8/0, c2sim 10/0, aixm511 10/0, aixm52 10/0 — **580 passed, 0 failed, 580 verdicts**; `preservation` basis `ledger` on pntmap, geojson, geopackage, c2sim, aixm511, aixm52 and `heuristic` on the other thirteen; `roundtrip` column PASS on every raw fixture of the thirteen bidirectional, SKIP on the six ingest (parsed twins skip both columns by design) |
+| `manifests/<name>.json` read for direction, maturity, claim, binding, `evidence.available` (`manifest-claims.txt`) | 0 | L4 on geojson and c2sim, L3 on the other seventeen; PROVISIONAL on stanag4676, VERIFIED on the other eighteen; `evidence.available` `false` on the five new, `true` on the fourteen |
+| `python -m synapse_cdm.schemas` (`schemas-list.txt`) | 0 | wrote nine files — `entity`, `event`, `track`, `plan_object`, `payload_gnss_interference`, `cdm_object`, `manifests/adapter-manifest`, `evidence/evidence`, `evidence/exercise` — `git status` clean afterwards (byte-identical) |
+| `python -m synapse_cdm.schemas --check --out schemas` | 0 | `CURRENT: schemas vs models at 3.0.0` |
+| `python -m synapse_cdm.manifests --check` | 0 | `CURRENT: manifests vs 19 shipped adapters at manifest schema 2.1.0` |
+| `git diff v3.0.1 --stat -- schemas/` | 0 | empty — no published schema moved |
+| `python gates/wheel_install.py` (unedited tree, `wheel-install.log`) | 0 | `13 checks, 0 failed`: build `synapse_cdm-3.0.1-py3-none-any.whl` (8007 KiB) + sdist; closure 96 modules; manifest 1770 files equal to git both directions; licences; prose 119 shipped files; install; metadata; import; **resources `19 adapters, 599 fixture files`**; schemas 6 regenerated byte-identical; **harness `19 adapters x 2 schema modes, 1160 fixture verdicts, 0 failed`**; scripts; slice `3745 passed, 114 skipped in 169.27s` |
+| `gh run view 35591088608 --json …` | 0 | `CI`, `push`, `main`, `headSha c4caab5bfd33b29aadbe954763e8b55f62658534`, `createdAt 2026-09-21T10:53:00Z`, `conclusion success`; eleven jobs all `success` (suite/gates/manifests on 3.11, 3.12, 3.13, 3.14; lint; wheel gate; conformance sweep; evidence; gitleaks; pip-audit; npm audit) |
+| `python gates/current_contracts.py --write` then `--check` | 0, 0 | `rendered docs/docs/current-contracts.mdx`; `current-contracts: CURRENT` (one line moved: `PACKAGE_VERSION` `3.0.1` → `3.1.0`) |
+| `python -m synapse_cdm.support_matrix --check --out docs/docs/cdm/support-matrix.mdx` | 0 | `CURRENT: … vs the declarations of 19 shipped adapters` |
+| `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests` | 0 | `All checks passed!` |
+| `python gates/pin_paths.py` | 0 | `30 copies, 0 failed` |
+| `python gates/parks_table.py` | 0 | `13 rows, 0 set-claims, 0 failed` |
+| `python gates/commit_message.py --file <pipeline dir>/state/release-commit-message.txt` | 0 | `clean` |
+| `npm ci --prefix docs` then `npm --prefix docs run ci` (`docs-build.log`) | 0, 0 | check:schemas, typecheck, `[SUCCESS] Generated static files in "build"`, `check-built-admonitions: OK — 20 directives … 0 literal ':::' in 29 built pages`; the built changelog's last `package is at <code>…</code>` reads `3.1.0`; `docs/build` is gitignored |
+| `python -m pytest tests/test_cdm_release.py tests/test_cdm_prose_counts.py tests/test_cdm_changelog_claim.py -q` (after the three prose repairs) | 0 | `291 passed, 6 skipped` |
+| `python -m pytest tests/test_cdm_readiness.py -q -rs` (unedited tree, for the baseline) | 0 | `26 passed, 2 skipped` |
+| `python -m pytest -q -rs -p no:cacheprovider` — the edited tree BEFORE the D75 flip (`suite-tree-1.log`) | 1 | **8 failed**, 6656 passed, 193 skipped in 556.80s (6857 collected); the eight, by module: `tests/test_cdm_bump_derivation.py` × 6 (`test_this_trees_package_version_is_the_bump_its_own_diff_requires`, `test_the_rulings_this_tree_records_are_the_rulings_its_arcs_need`, `test_the_gate_runs_clean_from_the_command_line_with_its_mutation_check`, `test_the_human_summary_states_the_pending_arcs_unruled_count`, `test_the_mutation_check_witnesses_a_non_zero_unruled_count_in_the_summary`, `test_the_json_measurement_is_what_a_round_would_quote` — all one cause, `UNRULED — 9` read under the pending heading the roll removed), `tests/test_cdm_readiness.py::test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_was_released` (pre-release mode: `pending.kind` None, `:236`), `tests/test_cdm_release_ref_rehearsal.py::test_every_check_in_the_plan_is_reachable_and_named_once` (the plan stops at the annotated-tag check, `:332`). Every one reads the tag; nothing else failed. The 193 skips are this worktree's: 43 `test_cdm_pins.py` + 10 `test_cdm_format_coverage.py` + 7 `test_cdm_pin_paths.py` + … (no pinned specification document in the worktree, gitignored), 6 `test_cdm_normative_validation.py` + 2 `normative_support.py` (`BLOCKED_EXTERNAL_EVIDENCE at step 'validator': lxml does not import` — `.venv` is `[test,lint]` and nothing is installed into it), 6 `test_cdm_release.py` (five "no v3.1.0 tag", one "nothing unreleased"), 2 `test_cdm_readiness.py`, 1 `test_cdm_witness.py` (`SC_ONLINE`) |
+| `git clone --no-local . /tmp/p8/precheck` + `git diff > release-tree.patch` + `git -C /tmp/p8/precheck apply release-tree.patch` (eleven files, no tag), then INSIDE the clone `PYTHONPATH=/tmp/p8/precheck/packages/cdm <venv>/bin/python -m pytest -q -rs -p no:cacheprovider` — condition 1's documented pre-check, on the tree CI reads, BEFORE the D75 flip (`suite-clone-notag.log`; `PYTHONPATH` pins the clone's package ahead of the venv's editable install — verified by `synapse_cdm.__file__` reading the clone) | 1 | **8 failed**, 6655 passed, 194 skipped in 570.46s — the same 6857 and the SAME EIGHT, by header (`test_this_trees_package_version_is_the_bump_its_own_diff_requires`, `test_the_rulings_this_tree_records_are_the_rulings_its_arcs_need`, `test_the_gate_runs_clean_from_the_command_line_with_its_mutation_check`, `test_the_human_summary_states_the_pending_arcs_unruled_count`, `test_the_mutation_check_witnesses_a_non_zero_unruled_count_in_the_summary`, `test_the_json_measurement_is_what_a_round_would_quote`, `test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_was_released`, `test_every_check_in_the_plan_is_reachable_and_named_once`); nothing else failed. The one extra skip is `test_cdm_version_floor.py:389` ("no virtualenv inside this clone"), the documented venv-placement delta |
+| INSIDE the clone: `git commit -a -F <the drafted message>` and `git tag -a v3.1.0 -F <the drafted tag message>` (with `-c user.name/-c user.email`, no config written; the clone only, never this repository), then `python gates/bump_derivation.py`, `--mutation-check`, `--json` and `gates/commit_message.py --rev HEAD` (`clone-bump-*.txt`, `clone-bump.json`) | 0, 0, 0, 0 | `declared 3.1.0 — a MINOR over v3.0.1`, `derived MINOR`, `ruled 9 unit(s) ruled by a person: [the nine]`, `pending the arc since 3.1.0 derives NONE with 0 unruled`, **`1 check, 0 failed`**; `--json`: `declared_kind MINOR`, `derived_kind MINOR`, `version_ruling null`, `pending {kind NONE, number 3.1.0, unruled []}`, 590 signals across 26 files (357 MINOR — the 348 raw plus the nine ruled — 233 PATCH), `ruled` nine keys all `MINOR`; the commit-message gate on the throwaway commit: `clean` |
+| INSIDE the clone at the local `v3.1.0`, BEFORE the D75 flip: the suite (`suite-clone-tagged.log`) | 1 | **1 failed**, 6663 passed, 193 skipped in 574.89s — the eight tag-conditional tests GREEN at the tag, and ONE failure outside the set: `tests/test_cdm_evidence.py::test_evidence_available_is_true_on_every_shipped_adapter` (`:543`: "`evidence.available` disagrees with the newest release tag's tree for {aixm511, aixm52, c2sim, geojson, geopackage: False}") — the defect the pre-check exists to arrive before the tag; repaired by D75 |
+| `derive(snapshot_at("v3.0.1"), snapshot_at(None))` AFTER the D75 flip (`raw-arc-after2.txt`) and `git diff --name-only v3.0.1 -- packages/cdm \| wc -l` | 0 | floor MINOR; 581 signals / 26 files (348 MINOR, 233 PATCH); the same 9 ambiguities — the five class bodies are added units and moved no ruling; the moved set is still 351 |
+| `python -m synapse_cdm.manifests --out manifests` then `--check`; `python -m synapse_cdm.support_matrix --out docs/docs/cdm/support-matrix.mdx` then `--check` (after D75) | 0, 0, 0, 0 | five manifests moved (`available: false → true` and the limitation sentence); `CURRENT: manifests vs 19 shipped adapters at manifest schema 2.1.0`; `CURRENT: docs/docs/cdm/support-matrix.mdx vs the declarations of 19 shipped adapters` |
+| `python -m pytest tests/test_cdm_evidence.py tests/test_cdm_manifests.py tests/test_cdm_prose_counts.py tests/test_cdm_release.py tests/test_cdm_suite.py -q -p no:cacheprovider` (after D75, no tag) | 1 | **1 failed**, 574 passed, 6 skipped in 246 s — the one is `test_evidence_available_is_true_on_every_shipped_adapter` in its PRE-tag half (the newest tag `v3.0.1` does not carry the five, so it expects `false`); the agreement test `test_the_field_the_prose_and_the_manifest_all_state_the_same_availability` is green on the nineteen |
+| `python -m pytest -q -rs -p no:cacheprovider` — the edited tree AFTER the D75 flip, before the four literals moved (`suite-tree-2.log`) | 1 | **13 failed**, 6651 passed, 193 skipped in 550.42s: the nine of D69 plus four per-adapter literals `evidence.available is False` (`test_cdm_geojson_adapter.py:751`, `test_cdm_geopackage_adapter.py:934`, `test_cdm_aixm511_adapter.py:746`, `test_cdm_aixm52_adapter.py:883`) — the constants D75 moves |
+| `python -m pytest tests/test_cdm_geojson_adapter.py tests/test_cdm_geopackage_adapter.py tests/test_cdm_aixm511_adapter.py tests/test_cdm_aixm52_adapter.py tests/test_cdm_c2sim_adapter.py -q` (after the literals moved) | 0 | `304 passed, 78 skipped in 139.96s` (the 78 are the normative half, BLOCKED without lxml) |
+| `python -m pytest -q -rs -p no:cacheprovider` — the FINAL tree (`suite-tree-3.log`) | 1 | **9 failed**, 6655 passed, 193 skipped in 563.12s (6857) — exactly the nine of D69, by header: the six `test_cdm_bump_derivation.py` tests, `test_evidence_available_is_true_on_every_shipped_adapter`, `test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_was_released`, `test_every_check_in_the_plan_is_reachable_and_named_once`; nothing else failed |
+| the clone reset to `c4caab5`, the FINAL `git diff` applied (27 files, no tag), the suite inside it (`suite-clone-notag-2.log`) — condition 1's pre-check on the final tree | 1 | **9 failed**, 6654 passed, 194 skipped in 566.91s — the same 6857 and the SAME NINE headers as the tree's final run (diffed header for header), nothing else; the one extra skip is the venv-outside-the-clone test |
+| INSIDE the clone: the throwaway commit with the final drafted message and the local `v3.1.0` with the drafted tag message; `python gates/bump_derivation.py --mutation-check`, `--json`, `gates/commit_message.py --rev HEAD` (`clone-bump-mutation-2.txt`, `clone-bump-2.json`) | 0, 0, 0 | **`1 check, 0 failed`**; `declared_kind MINOR`, `derived_kind MINOR`, `version_ruling null`, `pending {NONE, 3.1.0, []}`, 590 signals, 9 ruled; `clean` |
+| INSIDE the clone at the local `v3.1.0`, the FINAL tree: the suite (`suite-clone-tagged-2.log`) | 0 | **0 failed**, 6664 passed, 193 skipped in 587.50s — the same 6857; the nine of D69 green at the tag and one skip turned pass (6654 + 9 + `test_cdm_release.py:333`, which skips without the tag and asserts no pending section with it = 6664; 194 − 1 = 193), and five `test_cdm_release.py` gates plus two readiness gates skip on "identical to the tag" / "nothing unreleased" / "blocked is empty" — the 3.0.1 round's at-tag shape |
+| INSIDE the clone at the re-pointed local `v3.1.0` (the throwaway commit amended to the FINAL drafted message, byte-equal to `<pipeline dir>/state/release-commit-message.txt`): `python -m pytest tests/test_cdm_bump_derivation.py tests/test_cdm_readiness.py tests/test_cdm_release_ref_rehearsal.py tests/test_cdm_release.py tests/test_cdm_evidence.py tests/test_cdm_publication.py -q`; `gates/bump_derivation.py --mutation-check`; `gates/commit_message.py --rev HEAD` | 0, 0, 0 | `231 passed, 7 skipped` (the nine of D69 green); `1 check, 0 failed`; `clean` |
+| `python gates/wheel_install.py --mutation-check` — the FINAL tree (`wheel-mutation.log`) | 0 | `13 checks, 0 failed`: build `synapse_cdm-3.1.0-py3-none-any.whl` (8010 KiB) + sdist; metadata `synapse-cdm 3.1.0 (schema_version 3.0.0)`; resources `19 adapters, 599 fixture files`; harness `19 adapters x 2 schema modes, 1160 fixture verdicts, 0 failed`; slice `3745 passed, 114 skipped in 181.75s`; then `mutation caught: ['harness', 'manifest', 'prose', 'resources', 'scripts'] refused the fixture-less wheel, so this gate can fail` |
+| `npm --prefix docs run ci` — the FINAL tree, after the support matrix moved (`docs-build-2.log`) | 0 | `[SUCCESS] Generated static files`, `check-built-admonitions: OK — 20 directives … 0 literal ':::' in 29 built pages`; the built changelog's last `package is at <code>…</code>` reads `3.1.0` |
+| `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests`; `python gates/commit_message.py --file <pipeline dir>/state/release-commit-message.txt`; `python gates/current_contracts.py --check` — the FINAL tree | 0, 0, 0 | `All checks passed!`; `clean`; `current-contracts: CURRENT` |
+| `git status --short`, `git tag -l v3.1.0`, `git stash list` — this repository at the end of the phase | 0 | twenty-seven ` M` lines, no `A`/`??`; no tag; nothing stashed by this phase — nothing committed, staged, stashed, tagged or pushed here, and no git configuration written (the clone's commit and tag used `-c user.name`/`-c user.email` on the command line); the throwaway clone is deleted at the end |
+
+
 ## Verification
 
 How a verifier re-runs Phase 0 (the independent verifier does this; nothing here is trusted from
@@ -3026,6 +3372,52 @@ log named is under `<pipeline dir>/logs/phase7/`):
 6. The demonstrations: `python -B examples/c2sim/run.py`, `python -B examples/aixm_dnotam/run.py`,
    `python -B examples/geopackage_to_geojson/run.py` → 31/31, 29 passed, 65/65.
 
+How a verifier re-runs Phase 8 (the phase's done criteria, each with its expected reading;
+from the worktree root with `env.sh` sourced and `.venv` first on PATH):
+
+1. `git status --short` — expect exactly twenty-seven modified tracked files (`README.md`,
+   `RELEASE_NOTES.md`, `VERSIONING.md`, `docs/docs/changelog.mdx`,
+   `docs/docs/current-contracts.mdx`, `docs/docs/cdm/support-matrix.mdx`,
+   `docs/soif-part1-release-readiness.md`, `manifests/{geojson,geopackage,c2sim,aixm511,aixm52}.json`,
+   `packages/cdm/synapse_cdm/MIGRATIONS.md`, `packages/cdm/synapse_cdm/version.py`,
+   `packages/cdm/synapse_cdm/adapters/{geojson,geopackage,c2sim,aixm511,aixm52}.py`,
+   `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_packaging.py`,
+   `tests/test_cdm_prose_counts.py`, `tests/test_cdm_{geojson,geopackage,aixm511,aixm52}_adapter.py`,
+   and this record — twenty-seven with it), nothing staged, no new file;
+   `git tag -l v3.1.0` prints nothing; `git stash list` carries nothing of this phase.
+2. `python -c "from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)"` → `3.1.0`;
+   `python gates/bump_derivation.py --json` → `pending.unruled == []`, `pending.kind == "MINOR"`
+   is the PRE-STEP's reading and was taken on the unedited tree (Validation, first row); on the
+   edited tree the gate refuses `UNRULED — 9` until a tag names 3.1.0, and the at-tag reading is
+   `python /tmp/p8/at_tag.py` (or the three lines it runs: `apply_rulings(derive(snapshot_at("v3.0.1"),
+   snapshot_at(None)), "3.1.0")` → floor MINOR, 0 ambiguities, 9 ruled).
+3. `grep -c '### Unreleased' packages/cdm/synapse_cdm/MIGRATIONS.md` → 0;
+   `python -m pytest tests/test_cdm_release.py tests/test_cdm_prose_counts.py tests/test_cdm_changelog_claim.py tests/test_cdm_packaging.py tests/test_cdm_architecture_docs.py -q`
+   → 0 failed.
+4. `python -m pytest -q -rs -p no:cacheprovider` → exactly the nine tag-conditional failures of
+   D69 and nothing else (the Validation row states the counts); a fresh
+   `git clone --no-local . /tmp/precheck` with `git diff > p && git -C /tmp/precheck apply p`
+   and `PYTHONPATH=/tmp/precheck/packages/cdm python -m pytest -q -rs -p no:cacheprovider` run
+   inside it → the same nine and nothing else; the clone committed with the drafted message and
+   tagged `v3.1.0` (in the clone only) → `python gates/bump_derivation.py --mutation-check`
+   `1 check, 0 failed` and the suite `0 failed`. Delete the clone afterwards.
+5. `python -m synapse_cdm.schemas --check --out schemas` → CURRENT 3.0.0; `python -m synapse_cdm.manifests --check`
+   → CURRENT at 19; `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests` →
+   clean; `python gates/pin_paths.py` → 30/0; `python gates/parks_table.py` → 13/0;
+   `python gates/current_contracts.py --check` → CURRENT; `python gates/wheel_install.py --mutation-check`
+   → 13 checks, 0 failed, the mutation caught; `npm ci --prefix docs && npm --prefix docs run ci` → 0.
+6. `python gates/commit_message.py --file /Users/admin/synapsecommand-public/.adapter-run/state/release-commit-message.txt`
+   → `clean`; `test -s /Users/admin/synapsecommand-public/.adapter-run/state/release-tag-message.txt`.
+7. Reconcile `RELEASE_NOTES.md` against the Validation rows: nineteen names in the roster table
+   = `--list-adapters`; the verdict column = the harness rows; 580 / 0; the nine schema files;
+   `Package version 3.1.0` and `` `schema_version` 3.0.0 ``; `MIGRATIONS.md`'s 3.1.0 heading and
+   `version.py`'s constant agree; `docs/docs/changelog.mdx` carries `package is at \`3.1.0\`` and
+   `the schema stays at \`3.0.0\``; `docs/docs/current-contracts.mdx` row `PACKAGE_VERSION` → `3.1.0`;
+   `README.md` and `MIGRATIONS.md` tag commands name `v3.1.0`.
+8. `grep -n "Re-qualification, 2026-09-21" docs/soif-part1-release-readiness.md` → three
+   paragraphs (§18, §19, §20); the file ends `blocked: []`.
+
+
 ## Remaining gaps
 
 | Gap | Affected claim | Reproduction |
@@ -3075,11 +3467,19 @@ log named is under `<pipeline dir>/logs/phase7/`):
 | **The pinned schema closures are outside the repository** (D2, unchanged) | every `normative` test and the three `normative_schema` reports read BLOCKED / cannot be re-filed without `env.sh` and the external directory | `source <pipeline dir>/state/env.sh`; without it `tests/normative_support.py` skips with `BLOCKED_EXTERNAL_EVIDENCE at step 'hook'` and the exercise specifications' `xsd_pin.json` inputs do not resolve |
 | **CI's conformance sweep and the release gate were changed in this phase and have not run in CI** (D60) | `.github/workflows/ci.yml` (the derived `required` set) and `publish.yml` (J read from the artefact) | both were rehearsed locally (Validation); the first push of the branch runs `ci.yml`, and `publish.yml`'s gate runs at the release round's tag |
 | **`docs/build/` and `docs/node_modules/` exist from the docs build** | nothing tracked (both gitignored; `git status` clean of them) | `npm --prefix docs run clear` removes the build; neither reaches a snapshot or a wheel |
+| **`gates/bump_derivation.py --mutation-check` cannot read `1 check, 0 failed` in this repository before the tag** (Phase 8) | the release commit's own condition-5 reading; six `tests/test_cdm_bump_derivation.py` tests, the readiness empty-list test, the rehearsal plan's test and the evidence-availability test are red until `v3.1.0` exists (D69, D75) | `python gates/bump_derivation.py --mutation-check` → `FAIL UNRULED — 9 changed unit(s)`; then in a throwaway `git clone --no-local` with the tree applied, committed and tagged `v3.1.0` there: `1 check, 0 failed` and the eight green (Validation) |
+| **The evidence records for the five new adapter modules are not in the tree** (Phase 8) | the notes' per-category statements are Phase 7's measurement of 2026-09-21, cited to this record's Handoff §5, not a reading a clone can retake without the exercise specifications under `<pipeline dir>/logs/phase7/exercises/`; `evidence.available` reads `true` on the five from the release commit on the ground D75 states (the `v3.1.0` Release attaches `evidence-3.1.0.tar.gz`), which is a claim about this release's pipeline completing — a refused tag would leave it asserted in a tree nobody installs | `python -m synapse_cdm.evidence generate --all --out evidence` without `--exercises` reads every external category ABSENT; with the five specifications re-filed by `file_exercises.py`, PRESENT where Phase 7 read it |
+| **`publish.yml`'s changed gate step (check J held per adapter, D60) has not run on a tag** (Phase 8) | the notes and the readiness §19 say so; the step's body ran as a local rehearsal in Phase 7 (D60) and `ci.yml`'s per-adapter loop ran green in run 35591088608; the first run of `publish.yml` that exercises the step is this release's tag | `gh run list --workflow publish.yml --limit 6` shows no run of any event after `89d2c70` (v3.0.1, 2026-09-20) |
 
 ## Handoff
 
 The consolidated handoff of the whole arc (master §11), written by Phase 7 on 2026-09-21; the
-per-phase file lists that follow it are the detail and are kept as each phase wrote them.
+per-phase file lists that follow it are the detail and are kept as each phase wrote them. Items
+1 to 7 are Phase 7's readings as it wrote them (the arc has since been committed to `main` as
+`3c359f7` and `c4caab5`, and the release preparation lives on `soif/release-3.1.0`); **Release
+3.1.0** — the prepared release commit, what the maintainer runs next, the approval comment and
+what Phase 9 does afterwards — is the subsection "Release 3.1.0 — what the maintainer runs next"
+below, with its readings in the Phase 8 Validation table and its decisions in D68–D74.
 
 ### 1. Base and candidate
 
@@ -3200,6 +3600,73 @@ python -m synapse_cdm.evidence generate --all --out evidence
 find evidence -name evidence.json -print0 | xargs -0 -n1 python -m synapse_cdm.evidence verify
 python -B examples/c2sim/run.py && python -B examples/aixm_dnotam/run.py && python -B examples/geopackage_to_geojson/run.py
 ```
+
+### Release 3.1.0 — what the maintainer runs next (Phase 8, 2026-09-21)
+
+The tree of the `Release 3.1.0` commit is on `soif/release-3.1.0`, uncommitted (`git status`:
+twenty-seven modified tracked files including this record, nothing new, nothing staged). The two drafts are outside the
+repository: `<pipeline dir>/state/release-commit-message.txt` (subject `Release 3.1.0: …`,
+`Signed-off-by` as its only trailer — commit with `-F`, never `-s` on top of it) and
+`<pipeline dir>/state/release-tag-message.txt`. The phase's record is the `### Phase 8` entry
+under Progress, the D68–D74 decisions, and the Phase 8 Validation table; the tag-conditional set
+is named test by test in D69. Nothing was committed, staged, stashed, tagged or pushed, and no
+git configuration moved.
+
+**approval comment must name:** `docs/soif-part1-release-readiness.md` at the release commit —
+the comment text below, with `<release commit>` replaced by the full hash of the `Release 3.1.0`
+commit on `main` after the fast-forward.
+
+**The sequence** (`MIGRATIONS.md` "The sequence" and "Advancing `main`", `VERSIONING.md` §5.1,
+with this branch substituted; the push comes AFTER the rehearsal's green, as the 2.1.x rulings put
+it):
+
+```bash
+# 1. the release commit, on the branch, from the prepared tree
+git switch soif/release-3.1.0
+git status --short                                  # the twenty-seven modified files, nothing else
+git add -u                                          # tracked files only; nothing new is meant to be added
+git commit -F /Users/admin/synapsecommand-public/.adapter-run/state/release-commit-message.txt
+python gates/commit_message.py --rev HEAD           # expect: clean
+# 2. main advances by fast-forward only, then the tag on main's new tip
+git fetch origin
+git switch main
+git merge --ff-only soif/release-3.1.0              # a refusal is a STOP: never a merge commit, never a rebase
+git tag -a v3.1.0 -F /Users/admin/synapsecommand-public/.adapter-run/state/release-tag-message.txt
+# 3. the readings that need the tag — expect 1 check, 0 failed; the nine tag-conditional tests green
+python gates/bump_derivation.py --mutation-check
+python -m pytest tests/test_cdm_bump_derivation.py tests/test_cdm_readiness.py tests/test_cdm_release_ref_rehearsal.py tests/test_cdm_release.py tests/test_cdm_evidence.py -q
+# 4. the rehearsal — MANDATORY; red means do not push, and the tag is still local and unspent
+python gates/release_ref_rehearsal.py
+# 5. before the push: the pypi environment still has its required reviewer
+gh api repos/Decent-Cybersecurity/synapsecommand-public/environments/pypi --jq '.protection_rules[].type'
+# 6. the push — this is the whole of it; the tag is the release
+git push origin main --follow-tags
+git push origin soif/release-3.1.0
+```
+
+At the `pypi` hold, approve with a non-empty comment (an empty one is what stopped the 2.2.0
+witness job):
+
+```text
+Approved on the readiness report at the release commit: https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/<release commit>/docs/soif-part1-release-readiness.md
+```
+
+After the run: `gh run view <run id> --json jobs` must show every job `success`, the `witness`
+job included, before anything is committed from it.
+
+**What Phase 9 does afterwards (the witness half, `MIGRATIONS.md`'s procedure and
+`releases/witness/README.md`):** read the run's state and status rows, not a prior report; take
+condition 4's derivations from the run summary and the job log; download `witness-3.1.0.json` from
+the Release, verify it offline against the Release download and online with `--download`, and
+commit it as `releases/witness/3.1.0.json`; write `PUBLICATION.md` entry 22 (the upload's digests
+from the run log, the approval instant from the deployment's `queued` status, the served bytes
+re-hashed, entry 8's deployment row and the sweep table's five rows moved off 3.0.1); the dated
+measurement in `docs/docs/changelog.mdx` beside the 3.1.0 paragraph ("the index serves `3.1.0`");
+`MIGRATIONS.md`'s 3.1.0 section gains its "Measured after the upload" sentence and a fresh pending
+section returns with the next package change; the docs deploy from the tagged tree and its
+served-version witness; `evidence.available` on the five already reads `true` (D75) and Phase 9 verifies the ground —
+`evidence-3.1.0.tar.gz` on the `v3.1.0` Release carries nineteen records, the five included;
+and `tests/test_cdm_witness.py`'s record roster grows by one, by digest.
 
 ### Per-phase file lists (as each phase wrote them)
 

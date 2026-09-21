@@ -574,6 +574,28 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/version.py:MANIFEST_SCHEMA_VERSION",
         "synapse_cdm/version.py:compatible",
         "synapse_cdm/version.py:parse"},
+    # The eleventh row, written IN the 3.1.0 release commit (2026-09-21) from the gate's own
+    # `derive(snapshot_at("v3.0.1"), snapshot_at(None))` on that tree — the 2.2.0 and 3.0.0 route,
+    # so that the tag needs no re-tag for it. The nine are the adapter expansion's (phases 1 and 3
+    # of `docs/adapter-expansion-implementation.md`, D9, D17 and D36): eight bodies of
+    # `lossless.py` that moved for the ledger grammar's additive `#[*]`, `[_]` and `numeric_text`,
+    # and `suite.check_temporal`, which reads a declared `no-source-time` inapplicability. Every
+    # one is ruled MINOR in MIGRATIONS.md's `### 3.1.0` section, and the release commit adds no
+    # unit: its `version.py` edit is the assignment the gate excludes plus docstring and comment
+    # lines, and `MIGRATIONS.md` is the shipped-document row. The arc's 581 signals across 26
+    # distribution files (348 MINOR, 233 PATCH; `version.py` left the signal set when its
+    # constant moved, the 1.6.0 shape, and the moved set stays at 351) — five `Adapter` subclasses, three shared modules,
+    # five fixture sets and the `validate` extra — are what derive the MINOR the number types.
+    ("v3.0.1", "v3.1.0"): {
+        "synapse_cdm/lossless.py:Mapping",
+        "synapse_cdm/lossless.py:RULES",
+        "synapse_cdm/lossless.py:_check_field",
+        "synapse_cdm/lossless.py:_match_pattern",
+        "synapse_cdm/lossless.py:_targets",
+        "synapse_cdm/lossless.py:ledger",
+        "synapse_cdm/lossless.py:parse_path",
+        "synapse_cdm/lossless.py:render_path",
+        "synapse_cdm/suite.py:check_temporal"},
 }
 
 

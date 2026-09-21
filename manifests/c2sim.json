@@ -53,7 +53,7 @@
     "constituents": [],
     "direction": "bidirectional",
     "evidence": {
-      "available": false
+      "available": true
     },
     "format": {
       "name": "C2SIM",
@@ -113,7 +113,7 @@
       },
       "the APP-6 SIDC string a source states is carried verbatim as a classification and never becomes `Entity.symbol`, which is a 20-digit MIL-STD-2525D code; positions carry `position_source: ESTIMATED`, the understating reading legion applies to a simulation's fixes, and their MSL or AGL height is kept in `vertical` unconverted with `alt_m` None",
       "egress of an Entity with no `attributes.c2sim` block is refused: the schema needs a UUID, at least one EntityType and, for a Unit, an EchelonCode, and none of these is invented from the CDM's own fields",
-      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is true because 3.1.0 is the first release carrying this adapter and its pipeline generates the records for every shipped adapter and attaches them to the `v3.1.0` Release as `evidence-3.1.0.tar.gz`, retrievable by a third party; it says nothing about what the wheel contains, and a tag that released nothing carries this sentence to nobody",
       "of \u00a73.5's five resource limits this adapter enforces THREE \u2014 `max_input_bytes` by the base class before decode and again by `secure_xml` before a parser exists, `max_depth` and `max_objects` in this module before any object is built \u2014 plus an element count the manifest schema has no field for. The other two are absent with their reasons in `capabilities.limits.absent_because`",
       "XML is parsed with the standard library's expat through `secure_xml` and NOT with `defusedxml`, which is not a dependency of this package: a DOCTYPE is refused at its declaration before any entity is read, every entity reference other than the five predefined ones is refused, no external resource is fetched and XInclude is refused where it starts (`tests/test_cdm_secure_xml.py`). The tree is `xml.etree.ElementTree`'s own, built through its TreeBuilder"
     ],

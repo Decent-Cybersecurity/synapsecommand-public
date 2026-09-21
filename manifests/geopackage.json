@@ -50,7 +50,7 @@
     "constituents": [],
     "direction": "ingest",
     "evidence": {
-      "available": false
+      "available": true
     },
     "format": {
       "name": "GeoPackage",
@@ -116,7 +116,7 @@
         "unsupported_paths": []
       },
       "ingest only: `from_cdm` is the base class's refusal (`NotImplementedError`), the manifest advertises no egress, and no GeoPackage is ever written. The cross-format path is the GeoJSON adapter's export (examples/geopackage_to_geojson)",
-      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is true because 3.1.0 is the first release carrying this adapter and its pipeline generates the records for every shipped adapter and attaches them to the `v3.1.0` Release as `evidence-3.1.0.tar.gz`, retrievable by a third party; it says nothing about what the wheel contains, and a tag that released nothing carries this sentence to nobody",
       "of \u00a73.5's five resource limits this adapter enforces THREE \u2014 `max_input_bytes` and `max_depth` by the base class before decode, and `max_objects` (the row count) in this module before any row is fetched \u2014 plus a per-value size, a coordinate count and an output estimate the manifest schema has no field for. The other two are absent with their reasons in `capabilities.limits.absent_because`"
     ],
     "limitations_empty_reason": null,

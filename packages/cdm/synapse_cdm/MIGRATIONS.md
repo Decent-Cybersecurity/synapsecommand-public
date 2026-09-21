@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.0.1` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.1.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -204,7 +204,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.0.1 -m "..."                           # annotated, never lightweight
+git tag -a v3.1.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -409,7 +409,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.0.1 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.1.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -464,27 +464,98 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.1.0 — 2026-09-21 — the adapter expansion: five adapter modules land as #16 to #20 — GeoJSON and C2SIM bidirectional, GeoPackage, AIXM 5.1.1 with Digital NOTAM and AIXM 5.2 ingest — the roster moves fourteen to nineteen, the preservation-ledger grammar grows, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.0.1`, and `3.0.1` is what the index serves — `PUBLICATION.md` entry 21 is the
-measurement. `PACKAGE_VERSION` still reads `3.0.1`; the number the next release takes is typed by
-the release round with its tag, and `python gates/bump_derivation.py` reports the pending arc as
-MINOR — at least `3.1.0` — with the nine rulings below folded in and nothing unruled.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.1.0` at this
+commit, in `version.py`, and the tag `v3.1.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release, that the newest release
+tag was `v3.0.1` and that `3.0.1` was what the index served (`PUBLICATION.md` entry 21) — the first
+clause stops being true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.0.1 -> 3.1.0 ON 2026-09-21, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.0.1` and derives MINOR with nothing unruled: the
+pre-step's `--json` reported `pending.unruled` as the empty list and `pending.number` as `3.1.0`
+before any number was typed, and `--mutation-check` reads `1 check, 0 failed` on this tree from
+the moment the tag names it (until then the gate reads its rulings under the pending heading this
+commit removed and refuses nine UNRULED — the transitional reading every release commit since
+2.0.0 records, and the release round reads the green at the tag). The
+floor comes from the public names the record below added and from nothing removed — the five
+`Adapter` subclasses `GeoJsonAdapter`, `GeoPackageAdapter`, `C2simAdapter`, `Aixm511Adapter` and
+`Aixm52Adapter` with their codec modules, the three shared modules `secure_xml.py`,
+`normative_validation.py` and `aixm_resolve.py`, the five fixture sets, and the `validate` optional
+extra in `pyproject.toml` — and the nine units the table cannot decide (`lossless.py`'s grammar
+additions and `suite.check_temporal`) are every one ruled in this section's `**Bump ruling.**`
+paragraph, which the gate reads from this section from the moment the tag exists. So the floor and
+the number are one number and no Version ruling is needed or present. It is the second number in
+a row that moved for what the distribution carries rather than for what a workflow refused.
+`SCHEMA_VERSION` does not move and stays at `3.0.0`: no model, no enum, no published schema and no
+golden of the fourteen moved in this arc (`python -m synapse_cdm.schemas --check` reads CURRENT at
+3.0.0), and the two axes are a MINOR apart for the ordinary reason. `ADAPTER_API_VERSION` 3.0.0,
+`MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release
+put them.
+
+**THE RELEASE TRANSITION ITSELF, 2026-09-21 — the release-state set and nothing else.**
+`version.py`'s constant and the live readings in its docstring; this section's heading and its
+opening paragraphs, the introduction's two-number sentence, and the two tag-command examples in
+the procedure and in the pipeline section; `RELEASE_NOTES.md`, rewritten for this release with
+every count derived; `README.md`'s tag example; `VERSIONING.md`'s package-version figure, its
+tag-command example and a dated note under §4; `docs/docs/changelog.mdx`'s live pair of numbers
+in a dated paragraph; `docs/docs/current-contracts.mdx`, regenerated; the two version literals
+`tests/test_cdm_packaging.py` pins; the retired `RELEASE_NOTES.md` exemption rows in
+`tests/test_cdm_prose_counts.py`; the four per-adapter tests whose `evidence.available` literal
+moved with the declaration; the readiness report's re-qualification; and the eleventh
+`UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`, for `("v3.0.1", "v3.1.0")`
+at nine units — the same nine this section rules, compared set to set, written before the tag
+exists by the 2.2.0 and 3.0.0 route (the raw derivation from `v3.0.1` to the working tree, to
+which this commit adds no unit: its `version.py` edit is the assignment the gate excludes plus
+docstring and comment lines, and `MIGRATIONS.md` is the shipped-document row). No adapter's
+translation, no schema, no fixture and no dependency moves in this commit: the distribution's
+contents are the arc's, and the arc is what the records below describe. One declaration moves with the release
+and not with the arc: the five new adapter modules landed declaring `evidence.available: false`
+— "it becomes true at the first release that attaches them", their own words below — and
+`tests/test_cdm_evidence.py` holds the field to the newest tag's tree (an adapter the tag carries
+declares `true`), so this commit flips the five to `true` with the sentence beside each saying
+why (3.1.0 is that first release; `publish.yml` generates the records for every shipped adapter
+and attaches `evidence-3.1.0.tar.gz` to the Release) and regenerates their manifests. Those
+five class bodies are units the arc ADDED, so the flip moves no ruling. Units:
+`synapse_cdm/MIGRATIONS.md`, `synapse_cdm/version.py`, `adapters/geojson.py`,
+`adapters/geopackage.py`, `adapters/c2sim.py`, `adapters/aixm511.py` and `adapters/aixm52.py`,
+all already inside the count the next paragraph states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Two things the
+release notes say and this section repeats because they are the honest boundary of the arc:
+external interoperability is NOT claimed for any of the five — `independent_endpoint` is ABSENT on
+all five records and `independent_expected` is PRESENT only where GDAL read the format
+(`geojson`, `geopackage`); and `publish.yml`'s changed gate step (check J read per adapter, with
+the `no-source-time` declaration) has run only as a local rehearsal of its body and on no run of
+that workflow until this release's tag exercises it (`ci.yml`'s per-adapter loop of the same rule
+ran green on `main` in `CI` run 35591088608).
 
 **What moved inside the distribution: 351 files** — the adapter expansion of 2026-09-20/21 (phases
 0 to 7, recorded in `docs/adapter-expansion-implementation.md`, which ships in nothing) and the
-two rounds before it. Twenty-two are modules and documents, the other 329 are the five new fixture
-sets, and every one is named here by its basename because that is what the release gate reads.
+two rounds before it, the release transition adding no file to the set. Twenty-two are modules and
+documents, the other 329 are the five new fixture sets, and every one is named here by its basename
+because that is what the release gate reads.
 The modules and documents: `NOTICE` (the byte-identical copy of the repository's, which gained the
 third-party notice carrier list — the two Donlon extracts under `fixtures/aixm511/independent/`
-carry EUROCONTROL's BSD-2-Clause notice by obligation); `MIGRATIONS.md` (this section, the two dated witness paragraphs in the
-release procedure, the index note in the 3.0.1 section, and release condition 2's harness count,
+carry EUROCONTROL's BSD-2-Clause notice by obligation); `MIGRATIONS.md` (this section and its roll, the two dated witness paragraphs in the
+release procedure, the index note in the 3.0.1 section, the introduction's two-number sentence,
+the two tag-command examples, and release condition 2's harness count,
 now nineteen); `pyproject.toml` (the `validate` optional extra and the two count comments);
 `FORMAT_COVERAGE.md` (five new sections and five ordinal rows, #16 to #20); `README.md` (the
 roster sentence, five roster rows, the pair arithmetic and two register entries); `__init__.py`,
-`symbology.py`, `version.py` and `adapter.py` (docstring and comment counts only — nineteen
-adapters, seventeen of them with `fixture_dir` unset); the eight new adapter modules
+`symbology.py` and `adapter.py` (docstring and comment counts only — nineteen
+adapters, seventeen of them with `fixture_dir` unset); `version.py` (the roster counts in its
+docstring during the arc, and at this commit the constant and its live readings); the eight new adapter modules
 `adapters/geojson.py`, `adapters/geopackage.py`, `adapters/geopackage_codec.py`,
 `adapters/c2sim.py`, `adapters/c2sim_codec.py`, `adapters/aixm511.py`, `adapters/aixm52.py` and
 `adapters/aixm_codec.py`; the three new shared modules `secure_xml.py` (the one guarded XML parse),

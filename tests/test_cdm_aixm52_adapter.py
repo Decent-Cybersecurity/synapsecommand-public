@@ -880,7 +880,9 @@ def test_the_typed_blocks_validate_against_the_contract_and_the_manifest_matches
         "pinned-families", "digital-notam-not-available", "unsupported-geometry-refused", "composite-volumes-not-drawn",
         "vertical-projection-by-member", "cancelled-slice-needs-as-of", "identifier-required", "references-one-hop",
         "schedules-not-resolved"}
-    assert Aixm52Adapter.metadata.maturity.level.value == "L3" and Aixm52Adapter.metadata.evidence.available is False
+    # `evidence.available` moved false -> true in the 3.1.0 release commit (2026-09-21): the first
+    # release carrying this adapter attaches its records; `tests/test_cdm_evidence.py` holds the value.
+    assert Aixm52Adapter.metadata.maturity.level.value == "L3" and Aixm52Adapter.metadata.evidence.available is True
     assert Aixm52Adapter.MAPPINGS[""].to == "*:residual.data"
     assert "5.2.0" in Aixm52Adapter.metadata.format.version and "17 January 2025" in Aixm52Adapter.metadata.format.version
     assert Aixm52Adapter.metadata.id == Aixm52Adapter.name == "aixm52"

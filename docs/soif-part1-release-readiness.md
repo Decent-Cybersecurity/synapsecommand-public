@@ -791,6 +791,19 @@ This report also describes the corrective release commit on `main`, whose subjec
 `Release 3.0.1`; its hash is deliberately not written here, for the reason the paragraph above
 gives. The tag that names 3.0.1 is to be placed on it and contains every commit named above.
 
+**Re-qualification, 2026-09-21, the 3.1.0 release commit.** `v3.0.1` was placed on `89d2c70`
+and published (`PUBLICATION.md` entry 21). This report also describes the adapter expansion's
+arc on `main` — `3c359f7` (phases 0 to 7, adapters #16 to #20) and
+**`c4caab5bfd33b29aadbe954763e8b55f62658534`** (the AIXM 24:00:00 reading), the tip of `main` at
+the time of writing, on which `CI` run 35591088608 (a `push` event, 2026-09-21T10:53:00Z) read
+`success` on all eleven jobs: the suite, gates and manifests on Python 3.11, 3.12, 3.13 and
+3.14; lint; the wheel gate; the conformance sweep; evidence records, provenance and badges;
+gitleaks over the reachable history; pip-audit over the environment and the wheel's closure; and
+`npm audit` over `docs/`. The release commit itself sits on `soif/release-3.1.0`, a branch created
+from that tip; its subject begins `Release 3.1.0` and its hash is deliberately not written here,
+for the reason the paragraph above gives. The tag that names 3.1.0 is to be placed on it after
+`main` is fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -901,6 +914,32 @@ the arc is the release workflow, `MIGRATIONS.md` and `version.py`) and leaves `S
 corrective changes is the environment the release workflow's build job judges the tree in, and
 whether a red there is named. No §58 line and no blocker.
 
+**Re-qualification, 2026-09-21, the 3.1.0 release: the verdict is `ready for PR` (3.1.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.1.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.0.1` as `{"kind": "MINOR", "number": "3.1.0", "unruled": []}` before the number was
+typed, and `--mutation-check` reads `1 check, 0 failed` on the release commit) and leaves
+`SCHEMA_VERSION` **3.0.0**, `ADAPTER_API_VERSION` 3.0.0, the manifest schema 2.1.0 and the evidence
+schema 2.0.0 where the 3.0.0 release put them. What was verified on the arc and on the release
+commit: the suite in the working tree and in a fresh clone (read by subtracting the tag-conditional
+set, named test by test in `docs/adapter-expansion-implementation.md`'s Phase 8 record);
+`schemas --check` and `manifests --check` CURRENT; ruff clean; the pin-paths, parks-table and
+commit-message gates; `gates/wheel_install.py --mutation-check` (nineteen adapters replayed from
+the installed wheel, 1160 verdicts, 0 failed, the mutation caught); the docs build; and, on the
+arc's tip, the eleven-job `CI` run 35591088608. The five evidence categories per new adapter, as
+measured on 2026-09-21: `internal_fixture` PRESENT on all five; `self_round_trip` PRESENT on
+`geojson` and `c2sim`, NOT_APPLICABLE on the three ingest-only; `independent_expected` PRESENT
+only where GDAL read the format (`geojson`, `geopackage`); `normative_schema` PRESENT on `c2sim`,
+`aixm511` and `aixm52`; `independent_endpoint` ABSENT on every one. **What is NOT claimed:**
+external interoperability — no partner, exercise, reference server or certification for any of
+the five; `evidence.available` reads `true` on the five from this release commit — the field is
+held by `tests/test_cdm_evidence.py` to the newest tag's tree, and 3.1.0 is the first release
+whose pipeline attaches their records — and says nothing about the external categories; Digital NOTAM Specification 2.0 is read as the draft it is; the `validate` extra is
+optional and the schema closures live outside the repository; and `publish.yml`'s changed gate
+step (check J held per adapter off the `no-source-time` declaration) has run only as a local
+rehearsal of its body and on no run of that workflow until this tag exercises it — `ci.yml`'s
+per-adapter loop of the same rule is what run 35591088608 exercised. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -920,6 +959,12 @@ complete rather than of this tree.
 this date names, no CI job is red on it, the pending arc leaves nothing unruled, and nothing in
 section 15 — every item of which now carries its 2026-09-16 correction where the audit closed it —
 rises to a blocker. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-09-21, the 3.1.0 release: none.** No §56 item is red on the arc section
+18's paragraph of this date names, `CI` run 35591088608 is green on its tip, the pre-step's
+`pending.unruled` is the empty list, and nothing in section 15 or in the arc's own remaining-gaps
+table (external evidence categories, a draft specification, an optional extra) rises to a
+blocker. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

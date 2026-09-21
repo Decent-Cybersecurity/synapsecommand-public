@@ -824,9 +824,11 @@ class GeopackageAdapter(Adapter):
             "manifest advertises no egress, and no GeoPackage is ever written. The cross-format "
             "path is the GeoJSON adapter's export (examples/geopackage_to_geojson)",
             "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
-            "untracked and unpackaged. `evidence.available` is false because no published "
-            "Release carries this adapter's records yet; it becomes true at the first release "
-            "that attaches them",
+            "untracked and unpackaged. `evidence.available` is true because 3.1.0 is the first "
+            "release carrying this adapter and its pipeline generates the records for every "
+            "shipped adapter and attaches them to the `v3.1.0` Release as "
+            "`evidence-3.1.0.tar.gz`, retrievable by a third party; it says nothing about what "
+            "the wheel contains, and a tag that released nothing carries this sentence to nobody",
             "of §3.5's five resource limits this adapter enforces THREE — `max_input_bytes` "
             "and `max_depth` by the base class before decode, and `max_objects` (the row "
             "count) in this module before any row is fetched — plus a per-value size, a "
@@ -837,7 +839,7 @@ class GeopackageAdapter(Adapter):
         residual=Residual.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     #: Nothing a source states changes value in translation: coordinates are carried as the

@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.0.1   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.1.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -77,7 +77,12 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   run's build job refused it — the environment that job built
                                   around its second run of the suite, not the tree — so the
                                   package took a corrective PATCH and the wire contract, for
-                                  the third time, had no part in the move.)
+                                  the third time, had no part in the move. And on 2026-09-21,
+                                  at 3.1.0 against 3.0.0, for the ordinary reason again: the
+                                  adapter expansion added five ``Adapter`` subclasses, three
+                                  shared modules and an optional extra, and moved no model,
+                                  enum or published schema, so the package took a MINOR the
+                                  wire contract had no part in.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -127,8 +132,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.0.1`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
-tenth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.1.0`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
+eleventh version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -176,7 +181,15 @@ The package took a third corrective PATCH the wire contract had no part in, and 
 read 3.0.1 and 3.0.0. Three of the six partings in this file's life are now release-pipeline
 defects, and this one is the first that no rehearsal of ref-dependent steps could have reached:
 nothing about it depended on the ref, and everything about it depended on the environment a step
-judged the tree in. MIGRATIONS.md's 3.0.1 section is the record.)
+judged the tree in. MIGRATIONS.md's 3.0.1 section is the record. **Corrected an eighth time
+2026-09-21, the 3.1.0 release, and the parting is a MINOR wide for the ordinary reason**: the
+adapter expansion since ``v3.0.1`` added five ``Adapter`` subclasses (``geojson``, ``geopackage``,
+``c2sim``, ``aixm511``, ``aixm52``), three shared modules (``secure_xml``,
+``normative_validation``, ``aixm_resolve``), the ``validate`` optional extra and five fixture
+sets, and removed nothing; ``gates/bump_derivation.py`` derived MINOR over it with nothing unruled
+once MIGRATIONS.md's nine rulings in the 3.1.0 section are read. The schema moved by nothing: no
+model, no enum, no published schema and no golden of the fourteen changed, and the two numbers
+read 3.1.0 and 3.0.0. MIGRATIONS.md's 3.1.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -395,7 +408,19 @@ SCHEMA_VERSION = "3.0.0"
 #: with nothing unruled; the wire contract did not move and `SCHEMA_VERSION` stays at 3.0.0. The
 #: repair is `publish.yml`'s: the tooling now lives in a venv of its own, and condition 4 names
 #: the tests it fails on. Neither 2.1.0, 2.1.1 nor 3.0.0 reached the index; all three tags stay.
-PACKAGE_VERSION = "3.0.1"
+#: Moved 3.0.1 -> 3.1.0 on 2026-09-21, a MINOR, and this one IS the derived floor — the ordinary
+#: reason, as 2.2.0 was: the adapter expansion arc since `v3.0.1` (phases 0 to 7 of
+#: `docs/adapter-expansion-implementation.md`) adds five `Adapter` subclasses — `geojson`,
+#: `geopackage`, `c2sim`, `aixm511` and `aixm52`, the roster fourteen -> nineteen — with their
+#: codecs, three shared modules (`secure_xml`, `normative_validation`, `aixm_resolve`), five
+#: fixture sets and the `validate` optional extra, and removes nothing. `gates/bump_derivation.py`
+#: derives MINOR over that arc with nothing unruled once MIGRATIONS.md's nine rulings in the 3.1.0
+#: section (the `lossless.py` grammar additions and `suite.check_temporal`'s declared skip) are
+#: read, so the gate's floor and this number are one number and no Version ruling is needed.
+#: `SCHEMA_VERSION` stays at 3.0.0: no model, enum, published schema or golden of the fourteen
+#: moved, and `ADAPTER_API_VERSION`, `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay
+#: where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.1.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

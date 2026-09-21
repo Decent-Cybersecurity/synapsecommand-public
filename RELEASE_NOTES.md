@@ -1,50 +1,54 @@
-# synapse-cdm 3.0.1
+# synapse-cdm 3.1.0
 
-**The corrective of the tagged-never-published 3.0.0, and the first published release of the audit
-remediation arc.** `v3.0.0` was tagged on 2026-09-20 and its own release run (35506445471) refused
-it in the build job: the gate job had run the suite green on the same commit, and the build job's
-second run of it — in an interpreter that job had first loaded with `twine` and `cyclonedx-bom`,
-whose dependency closure made every spawned parser worker import a Lark grammar and seven format
-libraries before its first byte of input — crossed a wall-clock budget in one isolation test and
-stopped, recording a count and no name. Nothing reached PyPI. What moved between 3.0.0 and 3.0.1
-is the release workflow (the tooling now lives in a venv of its own, and condition 4 names the
-tests it fails on), `MIGRATIONS.md` and `version.py`; the distribution is otherwise byte-for-byte
-the tree `v3.0.0` named, so everything below describes this release. `MIGRATIONS.md`'s 3.0.1
-section is the record, and no test budget moved to get here.
+**The adapter expansion release.** Between the 3.0.1 release of 2026-09-20 and this one, the tree
+gained five adapter modules — `geojson` (#16), `geopackage` (#17), `c2sim` (#18), `aixm511` (#19)
+and `aixm52` (#20) — and the registry moved from fourteen to nineteen. Two are bidirectional,
+three ingest-only. Each ships pinned synthetic fixtures with a parsed twin per document, a
+field-level preservation ledger (`MAPPINGS`), adversarial tests that detect a wrong mapping, a
+structured residual, declared and enforced parser bounds, a manifest, and a harness and
+conformance reading of CONFORMANT. Three shared modules landed with them: `secure_xml` (the one
+guarded XML parse every XML adapter goes through), `normative_validation` (the schema-validation
+hook behind the optional `validate` extra) and `aixm_resolve` (effective AIXM state from explicit
+prior state — no file, no socket, no clock). Nothing on the wire moved: `SCHEMA_VERSION` stays
+`3.0.0`, no model, enum or published schema changed, and no golden of the fourteen that predate
+the arc moved by a byte. The design records are D1 to D67 in
+`docs/adapter-expansion-implementation.md`, which ships in nothing.
 
-**The audit remediation release.** Between the 2.2.0 release of 2026-09-17 and this one, the
-independent audit of 2026-09-19 raised nine findings against this package, F01 to F09, and every
-one of them is answered in the tree at this tag: version compatibility is directional and rests
-on frozen evidence rather than on major-number arithmetic; the lossless check's empty result is
-no longer treated as proof, and a path-bound preservation ledger replaces it wherever an adapter
-declares its field mappings; the conformance suite's parser deadline is a real, process-isolated
-one; the published JSON Schema now states every constraint the Python models enforce; the STANAG
-4676 adapter's wire binding is declared provisional in its manifest, its CLI row and its page;
-resource limits are enforced where the platform can enforce them and refused where it cannot,
-never claimed; evidence records carry five categories with the three external ones honestly
-ABSENT; governance is an auditable derivation with a runbook; and the documentation is derived
-from the tree and drift-checked. The register of all nine, with reproductions, tests, evidence
-paths and what stays external, is `docs/audit-remediation-report.md`. Two things are removed or
-narrowed, which is why this is a MAJOR on both of the first two axes — read the next two sections.
+**If you are upgrading from 3.0.1, nothing you read or write changes.** A 3.0.1 reader reads a
+3.1.0 object unchanged and `version.compatible("3.0.0", "3.0.0")` is the same answer it was; the
+typed blocks the five new adapter modules carry (`geo-object/1`, `geopackage`'s package block, `c2sim-order/1`,
+`aixm-timeslice/1`, `aixm-dnotam/1`) are named, versioned payload contracts under fields the
+3.0.0 schema already has. If you are upgrading from 2.2.0 or earlier, read the 3.0.1 notes first —
+they are the body of the `v3.0.1` Release and describe the MAJOR on both of the first two axes —
+and everything they describe is still here.
 
-**If you are upgrading from 2.2.0 — which is what the index serves — read this as the MAJOR it
-is on both numbers.** If you are upgrading from 2.1.2 or earlier, read the 2.2.0 notes first: they
-are the body of the `v2.2.0` Release, and everything they describe is still here.
+## Why the number is 3.1.0
 
-## In the tree since 3.0.1, in no release: the adapter expansion (2026-09-20/21)
+**The number is the derived floor.** `gates/bump_derivation.py --json`, run before any number was
+typed, reported the arc since `v3.0.1` as `{"kind": "MINOR", "number": "3.1.0", "unruled": []}`;
+on the release commit `--mutation-check` reads `1 check, 0 failed`. The floor comes from the
+public names the arc added and from nothing removed — five `Adapter` subclasses with their codec
+modules, three shared modules, five fixture sets and the `validate` optional extra — and the nine
+units the table cannot decide on its own (`lossless.Mapping`, `RULES`, `parse_path`,
+`render_path`, `_match_pattern`, `_targets`, `_check_field` and `ledger` for the ledger grammar's
+additive `#[*]`, `[_]` and `numeric_text`; `suite.check_temporal` for the declared
+`no-source-time` skip) are every one ruled MINOR in `MIGRATIONS.md`'s 3.1.0 section, which the
+gate reads and reports nothing unruled. It is the second number in a row that moved for what the
+distribution carries rather than for what a workflow refused.
 
-**Nothing in this section is in `3.0.1` or in any release.** `PACKAGE_VERSION` still reads `3.0.1`;
-the next number is the release round's to type, and `python gates/bump_derivation.py` reads the
-pending arc as at least `3.1.0` (MINOR: five new fixture sets, five `Adapter` subclasses, the
-`validate` optional extra, and the ruled units `MIGRATIONS.md`'s `### Unreleased` section names).
-The roster table below is the LIVE registry — `tests/test_cdm_release.py` holds it to `roster()`
-in both directions — so the five rows marked **post-3.0.1** are in the tree and in no artefact
-a consumer can install today.
+**Package version 3.1.0 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
+· evidence schema 2.0.0.** The first two are a MINOR apart for the ordinary reason: the surface
+grew and the contract did not. `python -m synapse_cdm.schemas --check --out schemas` reads
+`CURRENT: schemas vs models at 3.0.0` and `python -m synapse_cdm.manifests --check` reads
+`CURRENT: manifests vs 19 shipped adapters at manifest schema 2.1.0`. `ADAPTER_API_VERSION`,
+`MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them:
+no member of `Adapter`'s contract, no manifest field and no evidence field moved. SC-OES, the
+Operational Ontology and the profile versions did not move: `SC_OES_VERSION` is still `0.1.0` and
+still a Draft. `synapse_cdm/version.py` states the nine version axes and their independence, and
+`tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive one number
+from another.
 
-**Implemented capability, measured in this tree** — five, each with pinned synthetic
-fixtures, a parsed twin per document, a field-level preservation ledger (`MAPPINGS`), adversarial
-tests that detect a wrong mapping, a structured residual, declared and enforced parser bounds, and
-a harness and conformance reading of CONFORMANT:
+## The five, and what each one is measured to do
 
 | Adapter | Specification / profile | Direction | What ships |
 |---|---|---|---|
@@ -54,170 +58,105 @@ a harness and conformance reading of CONFORMANT:
 | `aixm511` | AIXM 5.1.1 (April 2016) + Digital NOTAM Event Schema 2.0.m, four pinned scenario profiles | ingest | one `Entity` per time slice, `aixm-timeslice/1` and `aixm-dnotam/1` blocks, `synapse_cdm.aixm_resolve` for effective state from explicit prior state |
 | `aixm52` | AIXM 5.2 (schema release 5.2.0, 17 January 2025) | ingest | a second profile on `aixm511`'s reader; Digital NOTAM declared NOT available on 5.2 |
 
-**External interoperability validation is a separate conclusion, and it is NOT claimed.** Normative
-schema validation of every positive fixture against the pinned XSD closures (C2SIM, AIXM 5.1.1,
-AIXM 5.2, Digital NOTAM) is a test that runs only where the schemas are held OUTSIDE this
-repository and the `validate` extra is installed, and records `BLOCKED_EXTERNAL_EVIDENCE` otherwise;
-the `normative_schema` evidence category reads from that. `independent_expected` rests on GDAL's
-own reading of the GeoPackage fixtures and on the pinned independent samples; `independent_endpoint`
-is ABSENT for every one of the five — no partner system, reference server or exercise has been
-exchanged with, and `examples/c2sim/exercise_client.py` is the opt-in procedure, not a result.
-`evidence.available` is `false` on all five until a Release attaches their records. The
-implementation record is `docs/adapter-expansion-implementation.md`.
+**What is refused, by name.** GeoJSON: `GeometryCollection`, a bare geometry, empty coordinates,
+the 2008 `crs` member, a non-finite number, an unclosed ring. GeoPackage: any CRS other than the
+three named, measured (M) geometry, `GeometryCollection` rows, non-linear and user-defined
+geometry types, a WAL-dependent header, a `user_version` other than 1.4.0 — each refuses the
+package whole with the offending row or declaration named — while raster tiles, gridded
+coverages, attributes-only tables and views are inventoried as unsupported content and the
+supported layers still translate. C2SIM: a system
+command body, an unsupported task code, a `SimulationTime` with no caller `ExerciseClock`, a
+relative-time observation. AIXM: arcs and circles by centre point (by default; typed as
+unsupported on request), a projected CRS, three-dimensional positions, an `xi:include`, a slice
+with no `gml:identifier`, and — on every XML adapter, through `secure_xml` — a DTD, an entity
+reference, a document past the declared depth or byte bound. Every refusal is asserted by name
+in the adapter's tests — most on a committed fixture under `malformed/` or `counterexamples/`,
+the bounds on inputs the tests generate rather than commit.
 
-## Why the number is 3.0.1
+**Digital NOTAM is read on the specification's DRAFT.** The four scenario profiles `aixm511`
+pins — RWY.CLS, ATSA.ACT, SAA.ACT, NAV.UNS — are read from Digital NOTAM Specification 2.0 as
+published in draft, whose rule numbering may move; the Event Schema 2.0.m is the schema the
+fixtures validate against. `aixm52` declares Digital NOTAM NOT available, because no Event Schema
+release binds to AIXM 5.2.
 
-**The number is the derived floor twice over: a PATCH from `v3.0.0` for the corrective — an arc of
-the release workflow, `MIGRATIONS.md` and `version.py`, which `gates/bump_derivation.py` derives
-as PATCH with nothing unruled — on top of the MAJOR the 3.0.0 release commit typed over `v2.2.0`,
-the first MAJOR since 2.0.0.** For that arc, `gates/bump_derivation.py` reads from `v2.2.0` and
-derives MAJOR from one shape signal —
-`lossless.unrepresented`, an importable name removed with no alias, because the old name was a
-claim of proof the function could not make — and from the units whose meaning changed and were
-ruled MAJOR in `MIGRATIONS.md`'s 3.0.0 section: `version.compatible` and `version.parse` (F01),
-`harness.run` and `evidence.badges` (F02), `suite.check_malformed` and
-`suite.check_parser_robustness` (F03), `conformance.assess_a`, `conformance._validator` and
-`models.Timestamp` (F04), `manifest.AdapterMetadata`, `Stanag4676Adapter` and `parse_document`
-(F05), `harness.load_raw` (F06) and `evidence.EvidenceRecord` (F07). The units the table cannot
-classify on its own are every one ruled in that section, and the gate reads those rulings and
-reports nothing unruled.
+## External interoperability is a separate conclusion, and it is NOT claimed
 
-**Package version 3.0.1 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
-· evidence schema 2.0.0.** The first two were level at the 3.0.0 release commit and are one PATCH
-apart at this one, and **the equality was a coincidence of two separately argued majors and not a
-derivation**: the package moved on `version.py`'s table for a
-removed name and ruled meaning changes; the schema moved on `MIGRATIONS.md`'s table because
-finding F04 NARROWED the published contract (next section). `ADAPTER_API_VERSION` moved
-2.1.0 -> 3.0.0 on `VERSIONING.md` §3's own row because `AdapterMetadata.binding` is required with
-no default; the manifest schema moved 1.2.0 -> 2.0.0 for that required field and 2.0.0 -> 2.1.0 for
-one added enum member; the evidence schema moved 1.0.0 -> 2.0.0 for three required fields. SC-OES,
-the Operational Ontology and the profile versions did not move: `SC_OES_VERSION` is still `0.1.0`
-and still a Draft. `synapse_cdm/version.py` states the nine version axes and their independence,
-and `tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive one number
-from another.
+Local implementation completion and external interoperability completion are two conclusions.
+The first is reached and this release claims it. The second is not claimed anywhere in the tree:
+no certification, deployment, partner exchange or reference-server session is asserted for any of
+the five.
 
-## What changed on the wire, and what a 2.2.0 consumer must do
+* **Normative schema validation** of every positive fixture against the pinned XSD closures
+  (C2SIMArtifacts v1.0.1, AIXM 5.1.1 with the Event Schema 2.0.m, AIXM 5.2.0) is a test that runs
+  only where the schemas are held OUTSIDE this repository — no XSD is mirrored into the tree — and
+  the optional `validate` extra (`pip install "synapse-cdm[validate]"`, lxml 6.1.3, the only
+  non-standard-library import and the only optional one) is installed; it records
+  `BLOCKED_EXTERNAL_EVIDENCE` otherwise. No runtime dependency changed.
+* **The five evidence categories**, as measured on 2026-09-21 by the arc's Phase 7 and recorded in
+  `docs/adapter-expansion-implementation.md`'s Handoff §5 — the records themselves are generated,
+  gitignored, and attached by a Release rather than committed: `internal_fixture` PRESENT on all
+  five; `self_round_trip` PRESENT on `geojson` and `c2sim`, NOT_APPLICABLE on the three ingest-only;
+  `independent_expected` PRESENT only where GDAL 3.13.3 read the format (`geojson`, `geopackage`)
+  and ABSENT on `c2sim`, `aixm511` and `aixm52`; `normative_schema` PRESENT on `c2sim`, `aixm511`
+  and `aixm52` and ABSENT on the two formats no normative schema exists for; and
+  **`independent_endpoint` ABSENT on every one of the five** — no partner system, reference server
+  or exercise has been exchanged with, and `examples/c2sim/exercise_client.py` is the opt-in
+  procedure, not a result.
+* **`evidence.available` is `true` on all five, from this release and on this release's own
+  ground.** The arc landed the five declaring `false` — "no published Release carries this
+  adapter's records yet; it becomes true at the first release that attaches them" — and
+  `tests/test_cdm_evidence.py` holds the field to the newest release tag's tree: an adapter the
+  tag carries declares `true`. 3.1.0 is that first release, `.github/workflows/publish.yml`'s
+  evidence job generates the records for every shipped adapter and its release job attaches
+  `evidence-3.1.0.tar.gz` to the `v3.1.0` Release, so the release commit flips the five
+  (`manifests/<name>.json` regenerated) and each limitation says so in words. What the field does
+  NOT say: nothing about the wheel's contents, and nothing about the three external categories —
+  a record can be retrievable and still read ABSENT for `independent_endpoint`.
 
-**The published schema is narrower, and that is the MAJOR.** The four object schemas under
-`schemas/` carry `pattern` on every `schema_version` and `adapter_version`, `pattern` on
-`Entity.symbol` and `uniqueItems` on `Entity.ontology_types`. Every one of those constraints
-restates what the Python models enforced already, so no document this package ever emitted becomes
-invalid — but a consumer validating with the published schema alone accepted
-`"adapter_version": "banana"` under 2.1.0 and is refused it under 3.0.0, and the bump table in
-`MIGRATIONS.md` puts a narrowed type on the MAJOR row for exactly that reader. No path was removed, no
-`required` list grew, no enum member went. The 2.1.0 contract stays frozen under
-`tests/frozen/cdm/2.1.0/` beside the 3.0.0 one under `tests/frozen/cdm/3.0.0/`, and
-`tests/test_cdm_version_matrix.py` shows the narrowing on the frozen bytes.
+## What changed for a 3.0.1 consumer
 
-**Every golden moved by one stamp.** The 538 golden files under the package's `fixtures/*/golden/`
-and the eight reference-position goldens under `fixtures/adsb/local/` carry
-`schema_version: "3.0.0"` and differ from 2.2.0's by that line alone; the harness reads the same
-538 fixture verdicts, 0 failed, on every adapter. The fourteen examples under `examples/` declare
-`3.0.0` too (they declared `2.0.0` through two minors): `synapse conformance` reads a document's
-`schema_version` against this package's, and a document of another major is refused in its
-structural dimension rather than read on trust.
-
-**What to change in a 2.2.0 consumer, in one place:**
-
-* Rename `lossless.unrepresented` to `lossless.value_presence_heuristic`, and read its `{}` as
-  "nothing seen", not as proof.
-* Expect `version.compatible(written_with, read_by)` to answer `False` for any pair a major apart
-  (`("2.1.0", "3.0.0")` in either direction), `False` for a writer newer than the reader within a
-  major, `False` for a minor nobody has frozen, and to raise `ValueError` on a malformed string
-  (a trailing newline, a leading zero, a prefix, a sign). Use `version.assess()` for the verdict,
-  the direction and the evidence it rests on. `KNOWN_CONTRACTS` reads `("2.0.0", "2.1.0", "3.0.0")`.
-* Declare `binding=` on every adapter's metadata: `"standard-encoding"` where the wire form is the
-  cited document's own encoding, `"provisional-internal-profile"` with a limitation containing
-  "provisional" where the element names or namespace were chosen locally. A provisional binding
-  claims `PROVISIONAL` (new) and not `VERIFIED`.
-* Expect the harness's `lossless` column to FAIL on a ledger loss for an adapter that declares
-  `MAPPINGS`, and the `lossless-verified` badge to read `heuristic` for one that does not.
-* Expect the suite's H and N checks to carry outcome codes in `details`, and N's
-  `over_time_bound` strings to name a code rather than a duration; expect `--startup-timeout`,
-  `--diagnostics`, `--memory-limit-bytes` and `--cpu-limit-seconds` on the suite's CLI, the last
-  two refused with an explicit reason on a platform that cannot enforce them.
-* Expect the conformance tool to refuse a string boolean, a trailing newline in a version, a
-  malformed UUID and a timestamp outside the wire form on the JSON path.
-* Expect `--list-adapters` to print a `binding` column; expect an evidence record to carry
-  `snapshot`, `evidence_categories` and `maturity_support`, and a manifest to carry `binding`.
-* Nothing is migrated in place: manifests, schemas, evidence and goldens are regenerated from
-  their sources.
-
-## Two maintainer rulings, applied in this release
-
-**Preservation maturity is declared to what the evidence proves.** Eleven manifests declared L4
-ROUNDTRIP VERIFIED on a basis sentence that cited the `lossless` check as evidence — and since
-F02 that check, for an adapter with no declared field mappings, rests on the value-presence
-heuristic: a source value present somewhere in the output is not a value that reached its path.
-"Applicable information survives source -> CDM -> source" is precisely the claim the heuristic
-cannot prove, so `adsb`, `ais`, `cat021`, `cat023`, `cat034`, `cat048`, `cat062`, `gmti`,
-`stanag4609`, `stanag4676` and `tak` declare **L3** from this release, each basis sentence says why,
-and `tests/test_cdm_manifests.py` holds a bidirectional adapter to L3 wherever the report's
-`preservation.basis` reads `heuristic`. Their `roundtrip` columns still read PASS and the suite's
-`maturity_eligible` still computes L5 from the verdicts; what moved is the declaration, and an
-adapter regains L4 when its field mappings are declared and the ledger reports no loss. `pntmap`,
-the one adapter with a ledger, is ingest-only and stays at L3 for the reason it always gave.
-
-**A provisional binding claims PROVISIONAL.** `manifests/stanag4676.json` declared
-`claim_status: VERIFIED` beside `binding: provisional-internal-profile`. A gate that passes against
-element names chosen in this repository verifies nothing about the standard, so `ClaimStatus` gains
-a seventh member, `PROVISIONAL` (the manifest schema's 2.1.0), the adapter claims it, and
-`manifest.AdapterMetadata` refuses the two fields apart in both directions. `VERIFIED` returns
-with `standard-encoding` or `normative-verified` — the road to which is the register's §5 item 1.
-
-## The nine findings, and what each one left open
-
-* **F01 — version compatibility** is directional and evidence-based: `assess()` returns a verdict,
-  a direction and the frozen evidence; the 2.0.0 and 2.1.0 contracts are frozen from their tags
-  and 3.0.0 from this commit. Nothing external.
-* **F02 — preservation** rests on a path-bound ledger where `MAPPINGS` are declared (one shipped
-  adapter today) and on the heuristic, said so, everywhere else. Declaring mappings for the other
-  thirteen is queued work, one adapter per session.
-* **F03 — parser deadlines** are process-isolated (`multiprocessing` spawn over `os.pipe()`), with
-  a six-code outcome vocabulary and one refusal among them.
-* **F04 — schema and model alignment**: the published schema states what the models enforce, a
-  semantic-rules document and a 44-case corpus cover what a schema cannot say, and the wire path
-  refuses a string boolean, a trailing newline and a malformed UUID.
-* **F05 — STANAG 4676**: `binding` is a required field on every manifest, the 4676 adapter reads
-  `provisional-internal-profile`, an explicit normative mode exists and refuses with a five-step
-  procedure until an authorised XSD pair and a validator are supplied. The normative verification
-  itself is external and has not happened.
-* **F06 — resource limits**: input bounds on depth and bytes, memory and CPU limits enforced on
-  Linux and refused with a reason elsewhere; the Linux enforcement branch is first observed by
-  the remote CI of the pushed branch.
-* **F07 — evidence**: five categories per record, the three external ones ABSENT on every adapter,
-  a runner and a verifier for exercise reports. No partner, exercise or date is invented.
-* **F08 — governance**: one workflow defect closed, workflow properties tested, an audit gate that
-  says UNVERIFIED rather than guessing, two staged ruleset proposals and a runbook. Applying a
-  ruleset needs an administrator and has not been done.
-* **F09 — documentation**: a current-contracts page generated from the constants, a support matrix
-  generated from the declarations, symbol citations instead of line numbers, and a widened lint
-  gate with an explicit, shrink-only baseline.
+* **Nothing on the wire.** No field, enum, schema or golden of the fourteen that predate the arc
+  moved; `git diff v3.0.1 -- schemas/` is empty.
+* **The preservation-ledger grammar grew, additively.** A `MAPPINGS` ledger may now name an
+  index-bound target `#[*]`, an unbound source wildcard `[_]` and the `numeric_text` rule; every
+  ledger that parsed before parses to the same mappings, and a destination carrying `[_]` is
+  refused rather than read (`tests/test_cdm_preservation.py` asserts the grammar round trip and
+  the fourteen legacy ledgers' verdicts).
+* **The conformance suite's check J reads a declared inapplicability.** An adapter that emits no
+  timestamp AND carries the structured limitation `no-source-time` reads a DECLARED SKIP
+  (`declared_inapplicable: true`); one that declares nothing reads the undeclared SKIP it read
+  before. `geojson` and `geopackage` declare it: both translate formats that state no instant.
+* **Five new fixture directories** ship in the package (`fixtures/{geojson,geopackage,c2sim,
+  aixm511,aixm52}/`), each with a `spec/*_pin.json` that hashes every file and a
+  `PROVENANCE.json` per directory; `--list-adapters` reports nineteen and the harness replays any
+  of them with `--adapter <name>` and no `--fixtures`.
+* **`NOTICE` gains a third-party notice carrier list**: the two Donlon extracts under
+  `fixtures/aixm511/independent/` carry EUROCONTROL's BSD-2-Clause notice by obligation.
+* **Three examples** under `examples/` demonstrate the arc end to end from a clean state:
+  `c2sim/run.py`, `aixm_dnotam/run.py` and `geopackage_to_geojson/run.py`.
 
 ## What else moved
 
-* **No runtime dependency changed.** `pydantic` and `jsonschema`, as before; `jsonschema` was
-  already a runtime dependency before F04 used it on the Python path.
-* **No adapter was added or removed**, and no adapter's translation changed: every golden moved by
-  its `schema_version` stamp and by nothing else.
+* **The release workflow's gate step now reads check J per adapter**, with the `no-source-time`
+  declaration, and the wheel gate's test rosters know the new modules. `ci.yml`'s per-adapter
+  loop of the same rule ran green in `CI` run 35591088608 on `main`; `publish.yml`'s step has run
+  only as a local rehearsal of its body over the `--all` artefact (the record's D60) and on no run
+  of that workflow: this release's tag is the first push that exercises it.
+* **`gates/bump_derivation.py` resolves an adapter's base class across the snapshot's modules**, so
+  a profile adapter inheriting `to_cdm` from a base in another module is classified as the adapter
+  it is (`aixm52` on `aixm511.AixmAdapterBase`).
 * **The release rehearsal gate** (`gates/release_ref_rehearsal.py`) replays every ref-dependent
   release step against the local tag before it is pushed, as it has since 2.1.2; it is refused
   without a tag, which is the reading the release commit records before the tag exists.
-* **The release workflow moved, and it is the reason this is 3.0.1 and not 3.0.0.** The build
-  job's `twine` and `cyclonedx-py` live in a venv of their own, so the interpreter that runs
-  condition 4's suite receives the documented install and nothing else, and condition 4 writes the
-  suite's output to a file and prints the failing tests before it stops. Nothing about the ref was
-  involved, which is why the rehearsal gate passed `v3.0.0` and was right to.
 
-## Fourteen adapters at 3.0.1, all harness-verified — and five more in the tree since
+## Nineteen adapters, all harness-verified
 
-`python -m synapse_cdm.harness --adapter <name> --update-golden`, run over the roster with no
-`--fixtures` at this commit, and every verdict read from the run. The table is the live registry,
-and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. **The roster did not move in the 3.0.1 arc**: at `v3.0.1` `discover()` and
-`roster()` each return fourteen, the same fourteen names in the same two directions as 2.2.0. The
-five rows marked **post-3.0.1** landed in the tree on 2026-09-20/21 (the section at the top) and
-are in no release; their verdict counts are this tree's harness reading, not 3.0.1's.
+`python -m synapse_cdm.harness --adapter <name> --schemas schemas --json`, run over the roster
+with no `--fixtures` at this commit, and every verdict read from the run. The table is the live
+registry — `python -m synapse_cdm.harness --list-adapters` prints `19 adapters registered` and
+`adapter.discover()` and `adapter.roster()` each return the same nineteen names — and
+`tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
+directions to agree. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -235,24 +174,37 @@ are in no release; their verdict counts are this tree's harness reading, not 3.0
 | `stanag4609` | bidirectional | 126 | L3 | VERIFIED |
 | `stanag4676` | bidirectional | 34 | L3 | PROVISIONAL |
 | `tak` | bidirectional | 12 | L3 | VERIFIED |
-| `geojson` | bidirectional | 4 | L4 | VERIFIED (**post-3.0.1**, in no release) |
-| `geopackage` | ingest | 8 | L3 | VERIFIED (**post-3.0.1**, in no release) |
-| `c2sim` | bidirectional | 10 | L4 | VERIFIED (**post-3.0.1**, in no release) |
-| `aixm511` | ingest | 10 | L3 | VERIFIED (**post-3.0.1**, in no release) |
-| `aixm52` | ingest | 10 | L3 | VERIFIED (**post-3.0.1**, in no release) |
+| `geojson` | bidirectional | 4 | L4 | VERIFIED (new in 3.1.0) |
+| `geopackage` | ingest | 8 | L3 | VERIFIED (new in 3.1.0) |
+| `c2sim` | bidirectional | 10 | L4 | VERIFIED (new in 3.1.0) |
+| `aixm511` | ingest | 10 | L3 | VERIFIED (new in 3.1.0) |
+| `aixm52` | ingest | 10 | L3 | VERIFIED (new in 3.1.0) |
 
-**538 fixture verdicts, 0 failed** across the fourteen adapters 3.0.1 shipped, against the
-published 3.0.0 schemas — the same 538 as 2.2.0; the five post-3.0.1 rows add 42 in this tree (`python -m synapse_cdm.harness --adapter <name>`, 2026-09-21). The `roundtrip` column reads PASS for the eleven emitters and a
-declared SKIP for the three that emit nothing; the `lossless` column reads PASS on every one, on
-the ledger for `pntmap` and on the heuristic, said so, for the other thirteen.
+**580 fixture verdicts, 0 failed** across the nineteen, against the published 3.0.0 schemas —
+the 538 that 3.0.1 shipped, unchanged, plus 42 from the five new sets; `gates/wheel_install.py`
+reads the same roster off the installed wheel as `19 adapters, 599 fixture files` and
+`19 adapters x 2 schema modes, 1160 fixture verdicts, 0 failed`. The `roundtrip` column reads
+PASS for the thirteen that emit their format back and a declared SKIP for the six ingest-only;
+the `lossless` column reads PASS on every one, on a declared ledger for `pntmap` and the five
+new ones and on the value-presence heuristic, said so, for the other thirteen. The two L4
+declarations (`geojson`, `c2sim`) rest on a ledger that reports no loss over a self round trip
+under the `values` tolerance; every other declaration is L3, and `tests/test_cdm_manifests.py`
+holds a bidirectional adapter to L3 wherever the report's `preservation.basis` reads
+`heuristic`.
 
-## Published by CI over OIDC, as 1.1.0 through 2.2.0 were
+**Nine schema files**, regenerated from the models by `python -m synapse_cdm.schemas` and
+byte-identical to the committed ones: `entity`, `event`, `track`, `plan_object`,
+`payload_gnss_interference` and `cdm_object` under `schemas/`, `manifests/adapter-manifest` and
+`evidence/evidence` and `evidence/exercise` beside them. None of the nine moved in this arc.
+
+## Published by CI over OIDC, as 1.1.0 through 3.0.1 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
 the tree's `PACKAGE_VERSION`, and uploads those same files through PyPI Trusted Publishing after a
 required reviewer approves the `pypi` environment. `PUBLICATION.md` ledger entry 6 records the
-configuration, and entry 20 records the 2.2.0 upload.
+configuration, and entry 21 records the 3.0.1 upload — the first whose witness record the
+pipeline itself produced and this repository committed.
 
 ## Artefacts
 
@@ -273,6 +225,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==3.0.1
+pip install synapse-cdm==3.1.0
 python -m synapse_cdm.harness --list-adapters
 ```
