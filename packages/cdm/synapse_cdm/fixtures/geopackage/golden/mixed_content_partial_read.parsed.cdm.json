@@ -1,0 +1,586 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.1,
+        57.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "be82b3d5-3c81-5da4-9b63-1da42acb1176",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "measured",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.1,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4326,
+              "table_name": "measured"
+            },
+            {
+              "data_type": "attributes",
+              "description": "",
+              "identifier": "notes",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": null,
+              "max_y": null,
+              "min_x": null,
+              "min_y": null,
+              "srs_id": 0,
+              "table_name": "notes"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "positions",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4326,
+              "table_name": "positions"
+            },
+            {
+              "data_type": "tiles",
+              "description": "",
+              "identifier": "tiles_sample",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 2749939.296002586,
+              "max_y": 7967317.535015907,
+              "min_x": 2671667.779038566,
+              "min_y": 7810774.501087866,
+              "srs_id": 3857,
+              "table_name": "tiles_sample"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "measured"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "positions"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 2,
+              "srs_id": 4326,
+              "table_name": "measured",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "positions",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "positions"
+            ],
+            "unselected": [],
+            "unsupported": [
+              {
+                "data_type": "features",
+                "reason": "m = 2 (optional measure ordinates): M is refused by this adapter's profile, never dropped and never read as height",
+                "table": "measured"
+              },
+              {
+                "data_type": "attributes",
+                "reason": "attributes-only table (data_type 'attributes', no geometry column) is outside the Simple Features vector profile; not read",
+                "table": "notes"
+              },
+              {
+                "data_type": "tiles",
+                "reason": "raster tiles (data_type 'tiles') are outside the vector profile; not read",
+                "table": "tiles_sample"
+              }
+            ]
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "positions",
+              "m": 0,
+              "name": "positions",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]",
+              "description": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 3857,
+              "srs_id": 3857,
+              "srs_name": "WGS 84 / Pseudo-Mercator"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 143360,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE P1"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 29,
+            "srs_id": 4326,
+            "wkb_octets": 21,
+            "wkb_offset": 8
+          },
+          "layer": "positions",
+          "pk": 1
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "1",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['positions'], 0 unselected, 3 unsupported (['measured', 'notes', 'tiles_sample']); a partial reading of the package where either later count is not zero",
+        "crs: layer 'positions' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'positions' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'positions', primary key 1); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "positions/1",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.2,
+        57.1
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "a7833e8f-c4e1-5c37-a2e0-c6cf1b5f7014",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "measured",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.1,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4326,
+              "table_name": "measured"
+            },
+            {
+              "data_type": "attributes",
+              "description": "",
+              "identifier": "notes",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": null,
+              "max_y": null,
+              "min_x": null,
+              "min_y": null,
+              "srs_id": 0,
+              "table_name": "notes"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "positions",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4326,
+              "table_name": "positions"
+            },
+            {
+              "data_type": "tiles",
+              "description": "",
+              "identifier": "tiles_sample",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 2749939.296002586,
+              "max_y": 7967317.535015907,
+              "min_x": 2671667.779038566,
+              "min_y": 7810774.501087866,
+              "srs_id": 3857,
+              "table_name": "tiles_sample"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "measured"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "positions"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 2,
+              "srs_id": 4326,
+              "table_name": "measured",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "positions",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "positions"
+            ],
+            "unselected": [],
+            "unsupported": [
+              {
+                "data_type": "features",
+                "reason": "m = 2 (optional measure ordinates): M is refused by this adapter's profile, never dropped and never read as height",
+                "table": "measured"
+              },
+              {
+                "data_type": "attributes",
+                "reason": "attributes-only table (data_type 'attributes', no geometry column) is outside the Simple Features vector profile; not read",
+                "table": "notes"
+              },
+              {
+                "data_type": "tiles",
+                "reason": "raster tiles (data_type 'tiles') are outside the vector profile; not read",
+                "table": "tiles_sample"
+              }
+            ]
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "positions",
+              "m": 0,
+              "name": "positions",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]",
+              "description": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 3857,
+              "srs_id": 3857,
+              "srs_name": "WGS 84 / Pseudo-Mercator"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 143360,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE P2"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 29,
+            "srs_id": 4326,
+            "wkb_octets": 21,
+            "wkb_offset": 8
+          },
+          "layer": "positions",
+          "pk": 2
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "2",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['positions'], 0 unselected, 3 unsupported (['measured', 'notes', 'tiles_sample']); a partial reading of the package where either later count is not zero",
+        "crs: layer 'positions' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'positions' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'positions', primary key 2); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "positions/2",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

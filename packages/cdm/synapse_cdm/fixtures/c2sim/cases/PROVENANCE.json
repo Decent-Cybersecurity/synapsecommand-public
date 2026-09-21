@@ -1,0 +1,62 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "c2sim/cases",
+  "fixtures": [
+    {
+      "file": "extension_fields.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "initialisation_untyped_classes.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "initialisation_with_route.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "order_with_route.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "report_position_simulation_time.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "report_unknown_status_code.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    },
+    {
+      "file": "reports_out_of_order.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic ACCEPTED counterexamples built on 2026-09-21 from this directory's own synthetic C2SIM messages (the leading comment of each names what it exercises): a Route map graphic in an initialisation and in an order (a route's points nest past the harness loader's margin, so the harness fixtures carry none), simulation time under an exercise clock, out-of-order and repeated reports, status codes outside the pinned enumerations, extension elements and attributes, untyped object classes. The harness never selects this directory; `tests/test_cdm_c2sim_adapter.py` reads each by name and states what the adapter must do with it."
+    }
+  ]
+}

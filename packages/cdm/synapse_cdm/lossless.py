@@ -217,11 +217,13 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that returned `None` for "nothing left" would make every call site write the same branch. An
     adapter that wants the field absent tests `block.data` and passes `None`.
 
-    THE FOURTEEN ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
-    ARCHITECTURE.md §5's ruling rather than an oversight: they keep their `attributes` /
-    `payload` parking under `source_extras` through Part 1 and declare `residual: legacy`. This
-    exists for the Part 2 adapters, which declare `residual: structured`, and it exists NOW so
-    that the first of them is written against a helper rather than against a shape it invents.
+    FOURTEEN OF THE NINETEEN ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
+    ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of Part 1 keep their
+    `attributes` / `payload` parking under `source_extras` and declare `residual: legacy`. This
+    exists for the Part 2 adapters, which declare `residual: structured` — the five of the
+    adapter expansion (`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, 2026-09-20/21) call
+    it — and it existed BEFORE the first of them so that it was written against a helper rather
+    than against a shape it invents.
     """
     return Residual(namespace=adapter.metadata.format.name, data=residual(raw, consumed))
 
@@ -231,7 +233,7 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
 # WHAT THE HEURISTIC COULD NOT SAY, AND WHY A SECOND FUNCTION RATHER THAN A WIDER ONE
 # ----------------------------------------------------------------------------------------
 # `value_presence_heuristic()` answers one question — "did this value survive at all?" — and answers it
-# well enough to gate fourteen adapters. It cannot answer the question §34 asks, which is
+# well enough to gate the roster that predates the ledger. It cannot answer the question §34 asks, which is
 # WHERE a value went and BY WHAT LICENCE. A field that arrived in `attributes` and a field
 # that arrived in a canonical slot are both "present" to the check above, and they are not the
 # same fact about a translation: the first is parked and the second is mapped, and an
@@ -449,6 +451,27 @@ class _Wild:
 
 
 WILD = _Wild()
+
+
+class _Unbound:
+    """The `[_]` token (2026-09-21, adapter expansion phase 3): any array index in a SOURCE key,
+    matched and NOT bound — so a container the destination has no list for does not push its
+    index into the destination's `[*]`s.
+
+    `_substitute` hands bound indices to a destination's `[*]`s in order, first to first. A C2SIM
+    unit sits under `ObjectDefinitions[*].Entity[*]…Location[*]`, and its destination
+    `attributes.c2sim.state.locations[*]` has one `[*]` — which would receive the
+    ObjectDefinitions index, never the Location's. Spelling the two outer containers `[_]` binds
+    only the index the destination wants. A source key may mix the two; a destination may carry
+    `[_]` nowhere (`Mapping` refuses it: a destination path names a place, and "some index" is
+    not a place)."""
+    __slots__ = ()
+
+    def __repr__(self) -> str:                       # pragma: no cover - debugging convenience
+        return "[_]"
+
+
+UNBOUND = _Unbound()
 _BARE_KEY = re.compile(r'[^.\[\]"]+')
 
 
@@ -468,7 +491,7 @@ def parse_path(text: str) -> tuple:
             if close == -1:
                 raise ValueError(f"unterminated index in path {text!r}")
             inner = text[i + 1:close]
-            tokens.append(WILD if inner == "*" else int(inner))
+            tokens.append(WILD if inner == "*" else UNBOUND if inner == "_" else int(inner))
             i = close + 1
             continue
         if ch == '"':
@@ -497,11 +520,13 @@ def render_path(tokens: Iterable) -> str:
     """The inverse of `parse_path`, quoting a key the bare grammar could not carry."""
     out = ""
     for token in tokens:
-        if isinstance(token, bool) or not isinstance(token, (int, _Wild)):
+        if isinstance(token, bool) or not isinstance(token, (int, _Wild, _Unbound)):
             key = token if _BARE_KEY.fullmatch(str(token)) else json.dumps(str(token))
             out += ("." if out else "") + key
         elif token is WILD:
             out += "[*]"
+        elif token is UNBOUND:
+            out += "[_]"
         else:
             out += f"[{token}]"
     return out
@@ -592,6 +617,23 @@ def _rule_number(source, observed, tolerance, params):
     return None if abs(float(source) - float(observed)) <= (tolerance or 0.0) else "outside tolerance"
 
 
+def _rule_numeric_text(source, observed, tolerance, params):
+    """The rule an XML adapter needs (2026-09-21, adapter expansion phase 3): the source leaf is
+    the TEXT of a number — every leaf of an XML twin is text, `xs:double` included — and the
+    destination is the number it denotes. `number` refuses a text source on purpose (a JSON
+    payload whose number arrived as a string has been transformed), so the reading is its own
+    rule with its own name, and a `number` mapping on an XML leaf still fails."""
+    if not isinstance(source, str) or not _numeric(observed):
+        return "source must be the text of a number and observed a number"
+    try:
+        value = float(source.strip())
+    except ValueError:
+        return "source text is not a number"
+    if value != value or value in (float("inf"), float("-inf")):
+        return "source text is not a finite number"
+    return None if abs(value - float(observed)) <= (tolerance or 0.0) else "outside tolerance"
+
+
 def _rule_scale(source, observed, tolerance, params):
     if not _numeric(source) or not _numeric(observed):
         return "both sides must be numbers"
@@ -656,6 +698,7 @@ RULES: dict[str, Callable[[Any, Any, float | None, dict], str | None]] = {
     "identity": _rule_identity, "number": _rule_number, "scale": _rule_scale,
     "round": _rule_round, "enum_map": _rule_enum_map, "casefold": _rule_casefold,
     "text": _rule_text, "instant": _rule_instant, "absent_if": _rule_absent_if,
+    "numeric_text": _rule_numeric_text,
 }
 
 
@@ -664,9 +707,13 @@ class Mapping:
     """One declared binding from a source path to one destination.
 
     `to` is `<target>:<path>`: the target is an `object_kind` (`entity`, `event`, `track`,
-    `plan`), `#<index>` for a position in the output list, or `*` for any object — and `*`
-    forfeits the WRONG_OBJECT diagnosis, so a shipped adapter names its kinds. `[*]` in the
-    source key binds an array index that `[*]` in the path receives, in order.
+    `plan`), `#<index>` for a position in the output list, `#[*]` for the position the source
+    key's FIRST `[*]` binds (`INDEX_BOUND_TARGET`, for one-object-per-record payloads), or `*`
+    for any object — and `*` forfeits the WRONG_OBJECT diagnosis, so a shipped adapter names its
+    kinds or binds the index. `[*]` in the source key binds an array index that `[*]` in the path
+    receives, in order; under `#[*]` the first bound index is the object and the rest go to the
+    path. `[_]` in the source key matches an index and binds nothing (`UNBOUND`), for a container
+    the destination has no list for.
 
     `kind="residual"` declares that the SUBTREE at the source key is parked, structure intact,
     under `to`, with the key's prefix replaced: the adapter that parks `interference.*` at
@@ -690,7 +737,9 @@ class Mapping:
         if ":" not in self.to:
             raise ValueError(f"a destination names its target object: '<target>:<path>', "
                              f"not {self.to!r}")
-        parse_path(self.to.split(":", 1)[1])
+        if any(token is UNBOUND for token in parse_path(self.to.split(":", 1)[1])):
+            raise ValueError(f"destination {self.to!r} carries `[_]`; the unbound wildcard belongs "
+                             "in a SOURCE key only — a destination names a place")
 
     @property
     def target(self) -> str:
@@ -771,10 +820,11 @@ def _match_pattern(pattern: tuple, tokens: tuple, prefix: bool = False) -> list[
         return None
     bound: list[int] = []
     for want, have in zip(pattern, tokens):
-        if want is WILD:
+        if want is WILD or want is UNBOUND:
             if isinstance(have, bool) or not isinstance(have, int):
                 return None
-            bound.append(have)
+            if want is WILD:
+                bound.append(have)
         elif want != have or type(want) is not type(have):
             return None
     return bound
@@ -794,9 +844,23 @@ def _substitute(path: tuple, bound: list[int]) -> tuple:
     return tuple(out)
 
 
-def _targets(objects: list[dict], target: str) -> list[int]:
+#: The INDEX-BOUND target (2026-09-20, adapter expansion phase 1): `#[*]` names the output object
+#: whose position is the FIRST `[*]` the source key binds. A multi-record payload that yields one
+#: object per record — a GeoJSON FeatureCollection, a GeoPackage layer — cannot name its objects
+#: by kind (every feature is the same kind) or by a fixed `#N` (the count is the payload's), and
+#: `*` would credit a value that landed on the WRONG feature's object as MAPPED, which is exactly
+#: the repeated-identical-scalar failure a ledger exists to catch. With `#[*]` the leaf
+#: `features[3].properties.name` is held to object 3 and nowhere else, and a value found on
+#: another object reads WRONG_OBJECT. The remaining bound indices go to the destination path's
+#: own `[*]`s, in order, as before.
+INDEX_BOUND_TARGET = "#[*]"
+
+
+def _targets(objects: list[dict], target: str, index: int | None = None) -> list[int]:
     if target == "*":
         return list(range(len(objects)))
+    if target == INDEX_BOUND_TARGET:
+        return [index] if index is not None and index < len(objects) else []
     if target.startswith("#"):
         index = int(target[1:])
         return [index] if index < len(objects) else []
@@ -845,9 +909,10 @@ def _observed(destination: str | None, value: Any) -> dict:
 
 
 def _check_field(source: Any, mapping: Mapping, dest: tuple,
-                 objects: list[dict]) -> tuple[str, str | None, dict]:
-    """(category, loss, observed) for one declared destination of one leaf."""
-    candidates = _targets(objects, mapping.target)
+                 objects: list[dict], index: int | None = None) -> tuple[str, str | None, dict]:
+    """(category, loss, observed) for one declared destination of one leaf. `index` is the
+    object the source key's first `[*]` bound, read only by an `#[*]` target."""
+    candidates = _targets(objects, mapping.target, index)
     rule = RULES[mapping.rule]
     first_failure: tuple[str, str | None, dict] | None = None
     for i in candidates:
@@ -925,10 +990,19 @@ def ledger(raw: Any, cdm_objects: Iterable[dict], mappings: dict[str, Mapping | 
                 continue
             remainder = tokens[len(pattern):] if residual_only else ()
             for m in group:
-                dest = _substitute(m.path, bound) + remainder
+                index: int | None = None
+                path_bound = bound
+                if m.target == INDEX_BOUND_TARGET:
+                    if not bound:
+                        raise ValueError(
+                            f"MAPPINGS[{render_path(pattern)!r}] names the index-bound target "
+                            f"{INDEX_BOUND_TARGET!r} and its source key binds no [*]; the object "
+                            "index comes from the key's first [*] and there is none to read")
+                    index, path_bound = bound[0], bound[1:]
+                dest = _substitute(m.path, path_bound) + remainder
                 expected = {"destination": f"{m.target}:{render_path(dest)}", "rule": m.rule,
                             "tolerance": m.tolerance}
-                category, loss, observed = _check_field(value, m, dest, objects)
+                category, loss, observed = _check_field(value, m, dest, objects, index)
                 if category == "MAPPED" and m.kind == "residual":
                     category = "RESIDUAL"
                 if category == "LOST" and m.kind == "residual" and loss == "MISSING":

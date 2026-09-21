@@ -43,7 +43,7 @@ keywords = [
 ]
 classifiers = [
     # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
-    # exactly one voice: fourteen adapters shipped and harness-verified, the Adapter contract
+    # exactly one voice: nineteen adapters shipped and harness-verified, the Adapter contract
     # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
     # tree does not have.
     "Development Status :: 5 - Production/Stable",
@@ -104,6 +104,19 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # over `packages/cdm gates tests`; and `--select F` still counts 13 F841 and 8 F541. Every reading
 # below was taken with 0.16.6 and every one of them holds at 0.16.7, so none is re-dated.
 lint = ["ruff==0.16.7"]
+# The normative-validation extra, added 2026-09-20 by the adapter-expansion arc (Phase 0,
+# docs/adapter-expansion-implementation.md, decision D5). `synapse_cdm/normative_binding.py` has
+# imported `lxml` under an explicit normative mode since F05 without any extra declaring it, so
+# every normative XSD check in this repository reported step `validator` BLOCKED unless somebody
+# had installed lxml by hand. This extra is that declaration: development/integration tooling
+# ONLY — `dependencies` above is unchanged and `tests/test_cdm_boundary.py` holds it to two —
+# for validating emitted and fixture XML against the AIXM 5.1.1 / 5.2, Digital NOTAM Event and
+# C2SIM schema closures held OUTSIDE the repository (the `SYNAPSE_CDM_*_XSD_DIR` hooks). The
+# runtime adapters parse with the standard library and never import it; default discovery works
+# without it. Pinned exactly, like `lint`, so the validator that judged a fixture is the one a
+# reader reinstalls: lxml 6.1.3 (BSD-3-Clause, released 2026-09-02; libxml2 is MIT), compatible
+# with Apache-2.0 under the same criterion ADR 0010 decision 5 states for a test extra.
+validate = ["lxml==6.1.3"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
@@ -237,7 +250,7 @@ include = ["synapse_cdm*"]
 # any file that is neither shipped nor in a stated do-not-ship class.
 #
 # SHIPS
-#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, fourteen adapters.
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, nineteen adapters.
 #   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
 #                                      partner writing an adapter reads; MIGRATIONS is also what
 #                                      tells them what `schema_version` will and will not do.

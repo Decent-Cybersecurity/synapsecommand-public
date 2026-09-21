@@ -1,0 +1,94 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geopackage/sources",
+  "fixtures": [
+    {
+      "file": "areas.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "collection_row.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "elevations.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "empty_null.csv",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "facilities.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "families.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "measured.csv",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "notes.csv",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "positions.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "routes.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    },
+    {
+      "file": "undefined_srs.csv",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON and CSV sources written on 2026-09-20 by `spec/build_fixtures.py` from its own literals (adapter-expansion phase 2) and handed to GDAL 3.13.3 to write every .gpkg in the parent directory; every name is prefixed EXERCISE, no coordinate describes a real feature, and no file derives from any recorded dataset. Read by `tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec` against the hashes in `spec/geopackage_pin.json`."
+    }
+  ]
+}

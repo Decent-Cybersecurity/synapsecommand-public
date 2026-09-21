@@ -535,9 +535,10 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 #: each went through. The two are kept apart rather than merged with a flag because the shipped
 #: half's whole value is being an equality against the registry: a Phase 1 name in there would
 #: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
-SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021",
+SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52", "ais": "ais", "c2sim": "c2sim", "cat021": "cat021",
                         "cat023": "cat023", "cat034": "cat034", "cat048": "cat048",
-                        "cat062": "cat062", "gmti": "gmti", "legion": "legion",
+                        "cat062": "cat062", "geojson": "geojson", "geopackage": "geopackage",
+                        "gmti": "gmti", "legion": "legion",
                         "pntmap": "pntmap", "stanag4586": "stanag4586",
                         "stanag4609": "klv", "stanag4676": "nits",
                         "tak": "tak"}

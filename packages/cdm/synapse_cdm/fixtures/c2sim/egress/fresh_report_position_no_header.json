@@ -1,0 +1,79 @@
+[
+  {
+    "event_id": "94838830-e224-508b-8fc4-30a1f43ad5cb",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        24.58,
+        58.44
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-22T06:40:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "content_count": 1,
+        "content_index": 0,
+        "contract": "c2sim-report/1",
+        "from_sender": "c2510000-0013-8000-8000-000000000001",
+        "health": [
+          {
+            "form": "Strength",
+            "strength_percentage": 100.0
+          }
+        ],
+        "kind": "PositionReportContent",
+        "location": {
+          "altitude_msl_m": 810.0,
+          "form": "GeodeticCoordinate",
+          "latitude": 58.44,
+          "longitude": 24.58
+        },
+        "observations": [],
+        "report_id": "c2510000-0019-8000-8000-000000000001",
+        "reporting_entity": "c2510000-0013-8000-8000-000000000001",
+        "subject_entity": "c2510000-0013-8000-8000-000000000001",
+        "time_of_observation": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-22T06:40:00Z",
+          "resolution": "stated",
+          "resolved": "2026-09-22T06:40:00.000Z"
+        },
+        "to_receiver": "c2510000-0012-8000-8000-000000000001"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-09-22T06:40:00.000Z",
+    "related_entities": [
+      "45293e56-832a-5413-bf78-918ab36fd135"
+    ],
+    "residual": null,
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0019-8000-8000-000000000001#0",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  }
+]

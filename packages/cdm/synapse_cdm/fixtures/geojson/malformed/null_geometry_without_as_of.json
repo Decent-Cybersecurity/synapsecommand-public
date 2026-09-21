@@ -1,0 +1,8 @@
+{
+  "type": "Feature",
+  "id": "nowhere",
+  "geometry": null,
+  "properties": {
+    "name": "EXERCISE"
+  }
+}

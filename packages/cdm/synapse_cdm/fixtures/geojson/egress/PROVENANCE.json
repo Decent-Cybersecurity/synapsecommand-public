@@ -1,0 +1,30 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geojson/egress",
+  "fixtures": [
+    {
+      "file": "fresh_control_measure_polygon.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written by hand on 2026-09-20 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce; ids are RFC 9562 version-8 UUIDs under the `f1c70000-0016-` prefix. Read by `tests/test_cdm_geojson_adapter.py::test_every_egress_fixture_matches_its_golden_under_both_profiles`."
+    },
+    {
+      "file": "fresh_entity_with_position.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written by hand on 2026-09-20 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce; ids are RFC 9562 version-8 UUIDs under the `f1c70000-0016-` prefix. Read by `tests/test_cdm_geojson_adapter.py::test_every_egress_fixture_matches_its_golden_under_both_profiles`."
+    },
+    {
+      "file": "fresh_entity_without_position.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written by hand on 2026-09-20 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce; ids are RFC 9562 version-8 UUIDs under the `f1c70000-0016-` prefix. Read by `tests/test_cdm_geojson_adapter.py::test_every_egress_fixture_matches_its_golden_under_both_profiles`."
+    }
+  ]
+}

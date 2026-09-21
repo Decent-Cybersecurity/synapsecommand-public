@@ -132,7 +132,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All fourteen harnesses are green**, and at least one of them run against the INSTALLED
+2. **All nineteen harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -468,13 +468,88 @@ now true of it.
 
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v3.0.1`, and `3.0.1` is what the index serves — `PUBLICATION.md` entry 21 is the
-measurement.
+measurement. `PACKAGE_VERSION` still reads `3.0.1`; the number the next release takes is typed by
+the release round with its tag, and `python gates/bump_derivation.py` reports the pending arc as
+MINOR — at least `3.1.0` — with the nine rulings below folded in and nothing unruled.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-two dated witness paragraphs in the release procedure and the index note in the 3.0.1 section
-being what moved in it. Everything else the round touched ships in nothing: the ledger, the
-witness record and its README, the release-pipeline and changelog pages, the security policy, the
-audit register and two test modules.
+**What moved inside the distribution: 351 files** — the adapter expansion of 2026-09-20/21 (phases
+0 to 7, recorded in `docs/adapter-expansion-implementation.md`, which ships in nothing) and the
+two rounds before it. Twenty-two are modules and documents, the other 329 are the five new fixture
+sets, and every one is named here by its basename because that is what the release gate reads.
+The modules and documents: `NOTICE` (the byte-identical copy of the repository's, which gained the
+third-party notice carrier list — the two Donlon extracts under `fixtures/aixm511/independent/`
+carry EUROCONTROL's BSD-2-Clause notice by obligation); `MIGRATIONS.md` (this section, the two dated witness paragraphs in the
+release procedure, the index note in the 3.0.1 section, and release condition 2's harness count,
+now nineteen); `pyproject.toml` (the `validate` optional extra and the two count comments);
+`FORMAT_COVERAGE.md` (five new sections and five ordinal rows, #16 to #20); `README.md` (the
+roster sentence, five roster rows, the pair arithmetic and two register entries); `__init__.py`,
+`symbology.py`, `version.py` and `adapter.py` (docstring and comment counts only — nineteen
+adapters, seventeen of them with `fixture_dir` unset); the eight new adapter modules
+`adapters/geojson.py`, `adapters/geopackage.py`, `adapters/geopackage_codec.py`,
+`adapters/c2sim.py`, `adapters/c2sim_codec.py`, `adapters/aixm511.py`, `adapters/aixm52.py` and
+`adapters/aixm_codec.py`; the three new shared modules `secure_xml.py` (the one guarded XML parse),
+`normative_validation.py` (the schema-validation hook behind the `validate` extra) and
+`aixm_resolve.py` (effective state from explicit prior state, no file, socket or clock);
+`lossless.py` (the ledger's `#[*]` index-bound target, the `[_]` unbound wildcard and the
+`numeric_text` rule, ruled below); and `suite.py` (check J reads a declared `no-source-time`
+inapplicability, ruled below). The fixture sets, each with its parsed twins, goldens, malformed
+and counterexample documents, `PROVENANCE.json` records, READMEs and a `spec/` pin that hashes
+every file:
+
+`fixtures/geojson/` (36 files): under the directory itself `PROVENANCE.json`, `README.md`, `antimeridian_bbox_repeated_values.json`, `feature_zero_meridian_clockwise_ring.json`, `null_and_empty_properties_typed_ids.json`, `six_geometries_baltic.json`; under `egress/` `PROVENANCE.json`, `README.md`, `fresh_control_measure_polygon.json`, `fresh_entity_with_position.json`, `fresh_entity_without_position.json`; under `egress/golden/` `fresh_control_measure_polygon.exchange.geojson`, `fresh_control_measure_polygon.generic.geojson`, `fresh_entity_with_position.exchange.geojson`, `fresh_entity_with_position.generic.geojson`, `fresh_entity_without_position.exchange.geojson`, `fresh_entity_without_position.generic.geojson`; under `golden/` `antimeridian_bbox_repeated_values.cdm.json`, `feature_zero_meridian_clockwise_ring.cdm.json`, `null_and_empty_properties_typed_ids.cdm.json`, `six_geometries_baltic.cdm.json`; under `malformed/` `PROVENANCE.json`, `README.md`, `a_json_array.json`, `bare_geometry.json`, `empty_coordinates.json`, `feature_without_properties.json`, `geometry_collection_feature.json`, `id_less_feature_default_policy.json`, `legacy_crs_member.json`, `malformed_json.json`, `non_finite_number.json`, `null_geometry_without_as_of.json`, `swapped_lat_lon_point.json`, `unclosed_ring.json`; under `spec/` `geojson_pin.json`.
+
+`fixtures/geopackage/` (65 files): under the directory itself `PROVENANCE.json`, `README.md`, `elevations_epsg4979_and_crs84.gpkg`, `elevations_epsg4979_and_crs84.parsed.json`, `exercise_facilities_routes_areas.gpkg`, `exercise_facilities_routes_areas.parsed.json`, `mixed_content_partial_read.gpkg`, `mixed_content_partial_read.parsed.json`, `six_families_geometry_column.gpkg`, `six_families_geometry_column.parsed.json`; under `golden/` `elevations_epsg4979_and_crs84.cdm.json`, `elevations_epsg4979_and_crs84.parsed.cdm.json`, `exercise_facilities_routes_areas.cdm.json`, `exercise_facilities_routes_areas.parsed.cdm.json`, `mixed_content_partial_read.cdm.json`, `mixed_content_partial_read.parsed.cdm.json`, `six_families_geometry_column.cdm.json`, `six_families_geometry_column.parsed.cdm.json`; under `independent/` `PROVENANCE.json`, `elevations_epsg4979_and_crs84.crs84_points.geojson`, `elevations_epsg4979_and_crs84.crs84_points.ogrinfo.json`, `elevations_epsg4979_and_crs84.elevations.geojson`, `elevations_epsg4979_and_crs84.elevations.ogrinfo.json`, `exercise_facilities_routes_areas.areas.geojson`, `exercise_facilities_routes_areas.areas.ogrinfo.json`, `exercise_facilities_routes_areas.facilities.geojson`, `exercise_facilities_routes_areas.facilities.ogrinfo.json`, `exercise_facilities_routes_areas.routes.geojson`, `exercise_facilities_routes_areas.routes.ogrinfo.json`, `mixed_content_partial_read.measured.geojson`, `mixed_content_partial_read.measured.ogrinfo.json`, `mixed_content_partial_read.positions.geojson`, `mixed_content_partial_read.positions.ogrinfo.json`, `six_families_geometry_column.families.geojson`, `six_families_geometry_column.families.ogrinfo.json`; under `malformed/` `PROVENANCE.json`, `empty_and_null_geometry_no_as_of.gpkg`, `geometry_collection_row.gpkg`, `gpb_byte_order_octet_invalid.gpkg`, `gpb_envelope_disagrees_with_wkb.gpkg`, `gpb_extended_type_flag.gpkg`, `gpb_srs_id_disagrees_with_layer.gpkg`, `not_sqlite_at_all.gpkg`, `plain_sqlite_not_a_geopackage.gpkg`, `projected_crs_epsg3857.gpkg`, `truncated_container.gpkg`, `undefined_srs_layer.gpkg`, `user_version_1_3_0.gpkg`, `wal_mode_header.gpkg`, `wkb_ewkb_flag_bit.gpkg`, `wkb_truncated_polygon.gpkg`; under `sources/` `PROVENANCE.json`, `areas.geojson`, `collection_row.geojson`, `elevations.geojson`, `empty_null.csv`, `facilities.geojson`, `families.geojson`, `measured.csv`, `notes.csv`, `positions.geojson`, `routes.geojson`, `undefined_srs.csv`; under `spec/` `build_fixtures.py`, `geopackage_pin.json`.
+
+`fixtures/c2sim/` (54 files): under the directory itself `PROVENANCE.json`, `README.md`, `initialisation_three_sides.parsed.json`, `initialisation_three_sides.xml`, `order_hold_in_place.parsed.json`, `order_hold_in_place.xml`, `order_move_to_location.parsed.json`, `order_move_to_location.xml`, `report_position_two_subjects.parsed.json`, `report_position_two_subjects.xml`, `report_status_observations.parsed.json`, `report_status_observations.xml`; under `cases/` `PROVENANCE.json`, `extension_fields.xml`, `initialisation_untyped_classes.xml`, `initialisation_with_route.xml`, `order_with_route.xml`, `report_position_simulation_time.xml`, `report_unknown_status_code.xml`, `reports_out_of_order.xml`; under `egress/` `PROVENANCE.json`, `README.md`, `fresh_initialisation_side_unit_platform_route.json`, `fresh_order_move_and_hold.json`, `fresh_report_position_no_header.json`; under `egress/golden/` `fresh_initialisation_side_unit_platform_route.c2sim.xml`, `fresh_order_move_and_hold.c2sim.xml`, `fresh_report_position_no_header.c2sim.xml`; under `golden/` `initialisation_three_sides.cdm.json`, `initialisation_three_sides.parsed.cdm.json`, `order_hold_in_place.cdm.json`, `order_hold_in_place.parsed.cdm.json`, `order_move_to_location.cdm.json`, `order_move_to_location.parsed.cdm.json`, `report_position_two_subjects.cdm.json`, `report_position_two_subjects.parsed.cdm.json`, `report_status_observations.cdm.json`, `report_status_observations.parsed.cdm.json`; under `malformed/` `PROVENANCE.json`, `billion_laughs_dtd.xml`, `duplicate_ids.xml`, `malformed_timestamp.xml`, `missing_header_fields.xml`, `move_without_destination.xml`, `over_depth_document.xml`, `position_report_without_location.xml`, `relative_time_observation.xml`, `simulation_time_without_clock.xml`, `system_command_body.xml`, `truncated_document.xml`, `unresolved_entity_reference.xml`, `unsupported_task_code.xml`, `wrong_namespace_version.xml`; under `spec/` `c2sim_pin.json`.
+
+`fixtures/aixm511/` (114 files): under the directory itself `PROVENANCE.json`, `README.md`, `airport_runway_navaid.parsed.json`, `airport_runway_navaid.xml`, `airspace_baseline_polygon.parsed.json`, `airspace_baseline_polygon.xml`, `airspace_deltas_same_feature.parsed.json`, `airspace_deltas_same_feature.xml`, `airspace_hole_crs84_snapshot.parsed.json`, `airspace_hole_crs84_snapshot.xml`, `vertical_structure_two_parts.parsed.json`, `vertical_structure_two_parts.xml`; under `cases/` `PROVENANCE.json`, `axis_order_crs84.xml`, `axis_order_epsg4326.xml`, `baseline_with_time_instant_ts001.xml`, `composite_and_cyclic_contributors.xml`, `interior_ring_of_curves.xml`, `nil_absent_withdrawn.xml`, `other_feature_location_availability.xml`, `reference_forms.xml`, `vertical_references.xml`; under `counterexamples/` `PROVENANCE.json`, `README.md`, `foreign_extension_element.xml`, `missing_interpretation.xml`, `properties_out_of_order.xml`, `status_outside_enumeration.xml`, `unknown_property_in_slice.xml`; under `dnotam/` `PROVENANCE.json`, `README.md`, `atsa_act_baseline_and_activation.parsed.json`, `atsa_act_baseline_and_activation.xml`, `corrections_out_of_order.parsed.json`, `corrections_out_of_order.xml`, `expiry.parsed.json`, `expiry.xml`, `explicit_nil_values.parsed.json`, `explicit_nil_values.xml`, `future_effective_change.parsed.json`, `future_effective_change.xml`, `nav_uns_baseline_and_outage.parsed.json`, `nav_uns_baseline_and_outage.xml`, `overlapping_tempdeltas.parsed.json`, `overlapping_tempdeltas.xml`, `rwy_cls_baseline_and_closure.parsed.json`, `rwy_cls_baseline_and_closure.xml`, `saa_act_activation_with_schedule.parsed.json`, `saa_act_activation_with_schedule.xml`, `unresolved_references.parsed.json`, `unresolved_references.xml`; under `dnotam/cases/` `PROVENANCE.json`, `cancellation.xml`; under `dnotam/counterexamples/` `PROVENANCE.json`, `rule_invalid_rwy_cls_on_an_airspace.xml`, `rule_invalid_rwy_cls_without_closed_status.xml`, `schema_invalid_event_schema_1_0_namespace.xml`, `schema_invalid_unknown_event_property.xml`; under `dnotam/golden/` `atsa_act_baseline_and_activation.cdm.json`, `atsa_act_baseline_and_activation.parsed.cdm.json`, `corrections_out_of_order.cdm.json`, `corrections_out_of_order.parsed.cdm.json`, `expiry.cdm.json`, `expiry.parsed.cdm.json`, `explicit_nil_values.cdm.json`, `explicit_nil_values.parsed.cdm.json`, `future_effective_change.cdm.json`, `future_effective_change.parsed.cdm.json`, `nav_uns_baseline_and_outage.cdm.json`, `nav_uns_baseline_and_outage.parsed.cdm.json`, `overlapping_tempdeltas.cdm.json`, `overlapping_tempdeltas.parsed.cdm.json`, `rwy_cls_baseline_and_closure.cdm.json`, `rwy_cls_baseline_and_closure.parsed.cdm.json`, `saa_act_activation_with_schedule.cdm.json`, `saa_act_activation_with_schedule.parsed.cdm.json`, `unresolved_references.cdm.json`, `unresolved_references.parsed.cdm.json`; under `dnotam/spec/` `build_fixtures.py`; under `golden/` `airport_runway_navaid.cdm.json`, `airport_runway_navaid.parsed.cdm.json`, `airspace_baseline_polygon.cdm.json`, `airspace_baseline_polygon.parsed.cdm.json`, `airspace_deltas_same_feature.cdm.json`, `airspace_deltas_same_feature.parsed.cdm.json`, `airspace_hole_crs84_snapshot.cdm.json`, `airspace_hole_crs84_snapshot.parsed.cdm.json`, `vertical_structure_two_parts.cdm.json`, `vertical_structure_two_parts.parsed.cdm.json`; under `independent/` `PROVENANCE.json`, `README.md`, `donlon_extract.xml`, `donlon_extract_arc_airspace.xml`, `expected.json`; under `malformed/` `PROVENANCE.json`, `arc_by_centre_point_airspace.xml`, `billion_laughs_dtd.xml`, `cancelled_slice_without_as_of.xml`, `circle_by_centre_point_airspace.xml`, `end_before_begin.xml`, `feature_without_identifier.xml`, `no_feature_member.xml`, `non_integer_sequence_number.xml`, `three_dimensional_positions.xml`, `truncated_document.xml`, `unclosed_ring.xml`, `unknown_interpretation.xml`, `unresolved_entity_reference.xml`, `unsupported_crs_epsg3857.xml`, `wrong_namespace_5_1.xml`, `wrong_root_element.xml`, `xinclude_element.xml`; under `spec/` `aixm511_pin.json`, `build_fixtures.py`.
+
+`fixtures/aixm52/` (60 files): under the directory itself `PROVENANCE.json`, `README.md`, `airport_runway_navaid.parsed.json`, `airport_runway_navaid.xml`, `airspace_baseline_polygon.parsed.json`, `airspace_baseline_polygon.xml`, `airspace_deltas_same_feature.parsed.json`, `airspace_deltas_same_feature.xml`, `airspace_hole_crs84_snapshot.parsed.json`, `airspace_hole_crs84_snapshot.xml`, `vertical_structure_two_parts.parsed.json`, `vertical_structure_two_parts.xml`; under `cases/` `PROVENANCE.json`, `axis_order_crs84.xml`, `axis_order_epsg4326.xml`, `baseline_with_time_instant_ts001.xml`, `composite_and_cyclic_contributors.xml`, `interior_ring_of_curves.xml`, `nil_absent_withdrawn.xml`, `other_feature_location_availability.xml`, `reference_forms.xml`, `vertical_references.xml`; under `counterexamples/` `PROVENANCE.json`, `README.md`, `foreign_extension_element.xml`, `missing_interpretation.xml`, `properties_out_of_order.xml`, `property_removed_in_5_2.xml`, `status_outside_enumeration.xml`, `unknown_property_in_slice.xml`; under `golden/` `airport_runway_navaid.cdm.json`, `airport_runway_navaid.parsed.cdm.json`, `airspace_baseline_polygon.cdm.json`, `airspace_baseline_polygon.parsed.cdm.json`, `airspace_deltas_same_feature.cdm.json`, `airspace_deltas_same_feature.parsed.cdm.json`, `airspace_hole_crs84_snapshot.cdm.json`, `airspace_hole_crs84_snapshot.parsed.cdm.json`, `vertical_structure_two_parts.cdm.json`, `vertical_structure_two_parts.parsed.cdm.json`; under `malformed/` `PROVENANCE.json`, `arc_by_centre_point_airspace.xml`, `billion_laughs_dtd.xml`, `cancelled_slice_without_as_of.xml`, `circle_by_centre_point_airspace.xml`, `end_before_begin.xml`, `feature_without_identifier.xml`, `no_feature_member.xml`, `non_integer_sequence_number.xml`, `three_dimensional_positions.xml`, `truncated_document.xml`, `unclosed_ring.xml`, `unknown_interpretation.xml`, `unresolved_entity_reference.xml`, `unsupported_crs_epsg3857.xml`, `wrong_namespace_5_1_1.xml`, `wrong_root_element.xml`, `xinclude_element.xml`; under `spec/` `aixm52_pin.json`, `build_fixtures.py`.
+
+**THE ADAPTER EXPANSION, PHASES 1 TO 7, 2026-09-20/21 — five new adapter modules, and the roster
+moves fourteen to nineteen.** `geojson` (#16, RFC 7946, bidirectional), `geopackage` (#17, OGC
+GeoPackage 1.4.0, ingest), `c2sim` (#18, SISO-STD-019/020-2020 on C2SIMArtifacts v1.0.1,
+bidirectional), `aixm511` (#19, AIXM 5.1.1 with the Digital NOTAM Event Schema 2.0.m, ingest) and
+`aixm52` (#20, AIXM 5.2 as a second profile on `aixm511`'s reader, ingest). Each declares
+`residual: structured` and a field-level `MAPPINGS` ledger, ships synthetic fixtures with a parsed
+twin per document, declares and enforces its parser bounds, reads CONFORMANT from the conformance
+suite and PASS from the harness, and declares `evidence.available: false` until a Release attaches
+its records. No model, enum or schema moved: `SCHEMA_VERSION` stays `3.0.0`, `ADAPTER_API_VERSION`
+`3.0.0`, `MANIFEST_SCHEMA_VERSION` `2.1.0` and `EVIDENCE_SCHEMA_VERSION` `2.0.0`, and
+`python -m synapse_cdm.schemas --check` and `manifests --check` read CURRENT. External
+interoperability is a separate conclusion and is NOT claimed: normative validation against the
+pinned XSD closures runs only where the schemas are held outside this repository and the
+`validate` extra is installed, and `independent_endpoint` is ABSENT on all five. The roster count
+moved at every site that states it, and the sweep that holds those sites gained one number form
+(one hundred and seventy-one, the pair arithmetic at nineteen). The design records are D1 to D57
+in `docs/adapter-expansion-implementation.md`.
+
+**Bump ruling.** Units of `synapse_cdm/lossless.py` and `synapse_cdm/suite.py` in the arc since
+`v3.0.1` (adapter expansion phases 1 and 3, the record's D9, D17 and D36):
+`synapse_cdm/lossless.py:Mapping` — MINOR: the mapping grammar gains the `#[*]` index-bound
+target, the `[_]` unbound source wildcard and the `numeric_text` rule; every ledger that parsed
+before parses to the same mappings, and a destination carrying `[_]` is refused rather than read.
+`synapse_cdm/lossless.py:RULES` — MINOR: `numeric_text` joins the rule table; no existing rule's
+meaning moves, and `number` still refuses text.
+`synapse_cdm/lossless.py:parse_path` — MINOR: `[_]` and `#[*]` are parsed; every path that parsed
+before parses to the same segments.
+`synapse_cdm/lossless.py:render_path` — MINOR: renders the two new segment kinds; every path that
+rendered before renders to the same string (the grammar round trip is asserted in
+`tests/test_cdm_preservation.py`).
+`synapse_cdm/lossless.py:_match_pattern` — MINOR: `[_]` matches an index and binds nothing;
+every bound `[*]` match is unchanged.
+`synapse_cdm/lossless.py:_targets` — MINOR: `#[*]` resolves to the object at the source key's
+first bound index; `*`, `#N` and kind targets resolve as before.
+`synapse_cdm/lossless.py:_check_field` — MINOR: a value on another object's position under
+`#[*]` reads WRONG_OBJECT; every verdict a legacy ledger produced is unchanged (the regressions of the
+fourteen in `tests/test_cdm_preservation.py` are green).
+`synapse_cdm/lossless.py:ledger` — MINOR: refuses a `#[*]` mapping on a key that binds no `[*]`
+at ledger time; every existing ledger is accepted as before.
+`synapse_cdm/suite.py:check_temporal` — MINOR: an adapter that emitted no timestamp AND carries
+the structured limitation `no-source-time` reads a DECLARED SKIP (`declared_inapplicable: true`,
+`details.declaration: limitations[id=no-source-time]`); an adapter that declares nothing reads the
+undeclared SKIP it read before, and one that emits a stamp is judged on the stamp. Every other
+adapter's J is PASS and `tests/test_cdm_suite.py` asserts it.
 
 **THE 3.0.1 WITNESS ROUND's RECORD, 2026-09-20 — the record is the pipeline's, for the first time.**
 Run 35514833652's `witness` job succeeded end to end — built, verified with `--download --assets
@@ -484,6 +559,19 @@ entry 21 records the upload and the readings behind it; the three paragraphs tha
 never produced a committed record say what this run did; `tests/test_cdm_witness.py` holds the
 directory to two hand-built records and this one, by digest. Nothing in the distribution moved
 except this file, and `PACKAGE_VERSION` still reads `3.0.1`.
+
+**ADAPTER EXPANSION, PHASE 0, 2026-09-20 — an optional extra and nothing at runtime.**
+`pyproject.toml` gains `[project.optional-dependencies] validate = ["lxml==6.1.3"]`, installed
+only by an explicit `pip install "synapse-cdm[validate]"`; `dependencies` is unchanged and no
+module imports `lxml` outside the explicit normative mode `normative_binding.py` has always
+guarded it behind. The extra exists so the later phases of that arc can validate C2SIM, AIXM
+5.1.1/5.2 and Digital NOTAM documents against schemas held OUTSIDE the repository (the hooks
+follow `stanag4676`'s); the decision and its citations are D5 in
+`docs/adapter-expansion-implementation.md`. `tests/test_cdm_boundary.py` re-anchors the extras
+set to name it, and `tests/test_cdm_stanag4676_binding.py`'s stand-in entry schema became a
+minimal well-formed one, because a host that now HAS `lxml` hands it to the real compiler. The
+package version this arc derives to is not settled here — the extra is a MINOR unit under
+`gates/bump_derivation.py`, and its ruling belongs to the release commit, not to this paragraph.
 
 ### 3.0.1 — 2026-09-20 — the corrective of the tagged-never-published 3.0.0: the release workflow's build job judges the tree in the documented environment again, and names the tests it fails on
 

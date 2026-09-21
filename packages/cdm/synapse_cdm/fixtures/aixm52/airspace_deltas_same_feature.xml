@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Three later time slices of the SAME fictitious airspace as
+     airspace_baseline_polygon.xml: a TEMPDELTA activating it, its correction ending two hours
+     earlier, and a PERMDELTA at an instant that renames it and withdraws localType (xsi:nil).
+     Written by spec/build_fixtures.py on 2026-09-21 for the SynapseCommand aixm52 adapter. AIXM 5.2:
+     each AirspaceActivation object carries its own gml:identifier (no 5.1.1 object may). -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.2/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.2" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_AIRSPACE_DELTAS">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-0520-4000-8000-000000000001">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000001</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_TD_2_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TSA1_TD_2_0_VT">
+              <gml:beginPosition>2026-03-10T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T16:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="TSA1_ACT_2">
+              <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000022</gml:identifier>
+              <aixm:status>ACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_TD_2_1">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TSA1_TD_2_1_VT">
+              <gml:beginPosition>2026-03-10T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T14:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+          <aixm:correctionNumber>1</aixm:correctionNumber>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="TSA1_ACT_3">
+              <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000023</gml:identifier>
+              <aixm:status>ACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_PD_3_0">
+          <gml:validTime>
+            <gml:TimeInstant gml:id="TSA1_PD_3_0_VT">
+              <gml:timePosition>2026-04-01T00:00:00Z</gml:timePosition>
+            </gml:TimeInstant>
+          </gml:validTime>
+          <aixm:interpretation>PERMDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>3</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:localType nilReason="inapplicable" xsi:nil="true"/>
+          <aixm:name>SYNTHETIC TSA ONE RENAMED</aixm:name>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

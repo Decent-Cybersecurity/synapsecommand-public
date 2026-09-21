@@ -1,0 +1,140 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest",
+        "egress"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
+          "max_parse_seconds": "no wall-clock bound is enforced by this adapter; the conformance suite's parser worker kills a decode that overruns its deadline, and the byte, depth, element and object bounds make every walk in this module linear in a bounded input"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`secure_xml.parse` counts the depth in expat's StartElementHandler and refuses on the element that crosses the bound, before the rest of the document is read; a parsed twin (a dict) is held to the same bound by `Adapter.__init_subclass__`'s `enforce_depth_bound` before `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "SISO-STD-019-2020 states no maximum nesting; a unit's latitude sits 14 elements below the root, the deepest XML shipped under `fixtures/c2sim/` nests 15 and the deepest JSON (the initialisation's parsed twin) 18 containers. 192 (`C2SIM_MAX_DEPTH`, `adapters/c2sim.py`) is chosen on 2026-09-21 by the repository's rule of at least eight times the deepest shipped document, with room. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_c2sim_adapter.py::test_the_depth_bound_admits_a_document_at_it_and_refuses_one_past"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs; `secure_xml.parse` reads the same bound off the octets again before it creates a parser",
+            "kind": "implementation_cap",
+            "source": "SISO-STD-019-2020 states no maximum document size. 4 MiB (`C2SIM_MAX_INPUT_BYTES`, `adapters/c2sim.py`) is chosen on 2026-09-21: an aggregated initialisation for a brigade-sized exercise is under 1 MiB and the largest fixture in `fixtures/c2sim/` is under 12 KiB. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`C2simAdapter.to_cdm` counts the object-bearing elements on the twin and raises `ObjectCountExceeded` (a `ValueError`) before any canonical object is built",
+            "kind": "implementation_cap",
+            "source": "SISO-STD-019-2020 states no maximum object count. 5 000 (`C2SIM_MAX_OBJECTS`, `adapters/c2sim.py`) object-bearing elements per message \u2014 AbstractObject, Entity, ReportContent, Task \u2014 chosen on 2026-09-21 as a brigade-sized initialisation with room to spare. A second cap the manifest schema has no field for is declared beside it: `C2SIM_MAX_ELEMENTS` (200 000), the elements across the document, refused by `secure_xml.parse` on the element that crosses it. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_c2sim_adapter.py::test_the_object_bound_admits_a_message_at_it_and_refuses_one_past"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 192,
+        "max_input_bytes": 4194304,
+        "max_objects": 5000,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "C2SIMInitializationBody \u2014 force sides, units and platforms (with source identifiers, entity classifications as source vocabulary, locations and organisational relationships) as Entities, Route map graphics as ROUTE PlanObjects; both directions",
+        "ReportBody / PositionReportContent \u2014 one TRACK_UPDATE Event per content, reporting entity, subject, position, time of observation, health; both directions",
+        "ReportBody / ObservationReportContent and TaskStatus \u2014 one STATUS_CHANGE Event per content, source status vocabulary verbatim; both directions",
+        "OrderBody / ManeuverWarfareTask \u2014 one PLAN_INJECT Event per order with the `c2sim-order/1` payload, task action codes MoveToLocation and HoldInPlace only; both directions"
+      ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "an element or attribute the pinned schema does not declare at its position \u2014 any element outside the C2SIM namespace, any C2SIM-namespace child its parent's content model does not name \u2014 is kept in the structured residual at its own path and position and listed under `residual.data.unknown` with its namespace, path and position; `validate_source` names each one; none is re-emitted",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "bidirectional",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "C2SIM",
+      "version": "SISO-STD-019-2020 v1.0 (Core + SMX) with SISO-STD-020-2020 (LOX); XML schema C2SIMArtifacts v1.0.1"
+    },
+    "id": "c2sim",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "untyped-object-class",
+        "notes": null,
+        "severity": null,
+        "summary": "an initialisation's Person, NonMilitaryOrganization, CommunicationNetwork, Overlay, CulturalFeature, EnvironmentalObject, GeographicFeature, non-Route map graphic, Action and PlanPhaseReference produce no canonical object: each is carried whole in every object's residual at its own path under `residual.data.MessageBody` and named by `validate_source`. The typed classes are ForceSide, Unit, the four Platform kinds and the Route map graphic",
+        "unsupported_paths": []
+      },
+      {
+        "id": "unsupported-message-body",
+        "notes": null,
+        "severity": null,
+        "summary": "AcknowledgementBody, PlanBody, RequestBody, ObjectInitializationBody, SystemAcknowledgementBody and SystemCommandBody are refused by name: session and protocol state live in the exercise client (`examples/c2sim/exercise_client.py`), never in the adapter",
+        "unsupported_paths": []
+      },
+      {
+        "id": "pinned-task-forms",
+        "notes": null,
+        "severity": null,
+        "summary": "a ManeuverWarfareTask whose TaskActionCode is not MoveToLocation or HoldInPlace (decision D1) is refused with a diagnostic naming the two supported forms, on ingest and on egress; no other task is ever substituted",
+        "unsupported_paths": []
+      },
+      {
+        "id": "untyped-observations",
+        "notes": null,
+        "severity": null,
+        "summary": "ActivityObservation, ResourceObservation and SubjectTypeObservation are carried whole under `payload.c2sim.observations[].raw` (typed: false); Health, Location and Name observations are typed",
+        "unsupported_paths": []
+      },
+      {
+        "id": "simulation-time-needs-a-clock",
+        "notes": null,
+        "severity": null,
+        "summary": "a SimulationTime instant is scenario seconds since the scenario epoch and resolves only against `C2simAdapter(exercise=ExerciseClock(epoch, basis))`; a RelativeTime never resolves here. An Event whose observed_at would need an unresolved instant is refused, naming the form; a task's start and end times are carried typed either way",
+        "unsupported_paths": []
+      },
+      {
+        "id": "affiliation-needs-own-side",
+        "notes": null,
+        "severity": null,
+        "summary": "affiliation is read from the own side's stated ForceSideRelation only when `C2simAdapter(own_side=<uuid>)` names it (FR, HO, NEUTRL; every other hostility code reads UNKNOWN with the code kept); without it every entity is UNKNOWN. Nothing is inferred from a name or a SIDC",
+        "unsupported_paths": []
+      },
+      {
+        "id": "extension-not-reemitted",
+        "notes": null,
+        "severity": null,
+        "summary": "elements and attributes outside the pinned vocabulary are preserved and listed on ingest but are not written back on egress, so an emitted document stays inside the schema the validator judges; a re-ingested round trip therefore lacks them, and the harness fixtures carry none",
+        "unsupported_paths": []
+      },
+      "the APP-6 SIDC string a source states is carried verbatim as a classification and never becomes `Entity.symbol`, which is a 20-digit MIL-STD-2525D code; positions carry `position_source: ESTIMATED`, the understating reading legion applies to a simulation's fixes, and their MSL or AGL height is kept in `vertical` unconverted with `alt_m` None",
+      "egress of an Entity with no `attributes.c2sim` block is refused: the schema needs a UUID, at least one EntityType and, for a Unit, an EchelonCode, and none of these is invented from the CDM's own fields",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+      "of \u00a73.5's five resource limits this adapter enforces THREE \u2014 `max_input_bytes` by the base class before decode and again by `secure_xml` before a parser exists, `max_depth` and `max_objects` in this module before any object is built \u2014 plus an element count the manifest schema has no field for. The other two are absent with their reasons in `capabilities.limits.absent_because`",
+      "XML is parsed with the standard library's expat through `secure_xml` and NOT with `defusedxml`, which is not a dependency of this package: a DOCTYPE is refused at its declaration before any entity is read, every entity reference other than the five predefined ones is refused, no external resource is fetched and XInclude is refused where it starts (`tests/test_cdm_secure_xml.py`). The tree is `xml.etree.ElementTree`'s own, built through its TreeBuilder"
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L4 ROUND-TRIP VERIFIED, from evidence that runs today. The harness's `translate`, `schema` and `provenance` checks are PASS on every fixture of this adapter (L1 to L3). Its `lossless` column rests on the PATH-BOUND LEDGER: this adapter declares `MAPPINGS` for every leaf it types \u2014 identity, names, classifications, every organisational relationship, the physical state, the header, report content and order tasks, with the `[_]` wildcard holding a nested container's leaves to the right list \u2014 and residual subtrees for everything else at its own position, and the ledger reports no LOST leaf on any fixture. Its `roundtrip` column is PASS on every fixture under the `values` tolerance (`ROUNDTRIP_TOLERANCE`) an XML emitter needs: `from_cdm` rebuilds each element from the typed block and the residual and no source value is absent after re-ingest, so `synapse conformance run --adapter c2sim` computes E = PASS and D on the ledger basis. The adapter's own statement of the round-trip claim is tests/test_cdm_c2sim_adapter.py::test_semantic_round_trip_of_every_fixture; normative validation of every emitted document against the pinned XSD closure is test_every_emitted_document_validates_against_the_pinned_schema, which records BLOCKED_EXTERNAL_EVIDENCE rather than passing when the resource or the `validate` extra is absent. L5 is NOT declared: the rung above L4 rests on `M` (streaming) being inapplicable, and a rung passed vacuously is not a rung declared (ARCHITECTURE.md \u00a73.6, rule 4). No independent endpoint has been exercised: `examples/c2sim/exercise_client.py` is the procedure, and `independent_endpoint` reads ABSENT until an exercise report exists.",
+      "external_exercise": null,
+      "level": "L4"
+    },
+    "name": "C2SIM",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.0.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

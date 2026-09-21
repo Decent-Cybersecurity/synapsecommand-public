@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Two fictitious features OUTSIDE the five families whose ledger-bound elements the
+     generic reading carries: a DME with a location and one availability (and 5.2's tuningFrequencyVHF),
+     a Taxiway with two availability structures. Written by spec/build_fixtures.py on 2026-09-21 (aixm52). -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.2/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.2" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_OTHER_CARRIED">
+  <message:hasMember>
+    <aixm:DME gml:id="uuid.a1a40000-0520-4000-8000-000000000124">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000124</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:DMETimeSlice gml:id="DME_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="DME_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYD</aixm:designator>
+          <aixm:name>SYNTHETIC DME</aixm:name>
+          <aixm:location>
+            <aixm:ElevatedPoint gml:id="DME_LOC" srsName="urn:ogc:def:crs:EPSG::4326">
+              <gml:pos>52.5 5.5</gml:pos>
+              <aixm:elevation uom="M">30</aixm:elevation>
+            </aixm:ElevatedPoint>
+          </aixm:location>
+          <aixm:availability>
+            <aixm:NavaidOperationalStatus gml:id="DME_AV">
+              <aixm:operationalStatus>OPERATIONAL</aixm:operationalStatus>
+            </aixm:NavaidOperationalStatus>
+          </aixm:availability>
+          <aixm:channel>84X</aixm:channel>
+          <aixm:tuningFrequencyVHF uom="MHZ">113.7</aixm:tuningFrequencyVHF>
+        </aixm:DMETimeSlice>
+      </aixm:timeSlice>
+    </aixm:DME>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Taxiway gml:id="uuid.a1a40000-0520-4000-8000-000000000125">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000125</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:TaxiwayTimeSlice gml:id="TWY_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TWY_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYNA</aixm:designator>
+          <aixm:type>PARALLEL</aixm:type>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="TWY_AV1">
+              <aixm:operationalStatus>NORMAL</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="TWY_AV2">
+              <aixm:timeInterval>
+                <aixm:Timesheet gml:id="TWY_TS">
+                  <aixm:timeReference>UTC</aixm:timeReference>
+                  <aixm:day>ANY</aixm:day>
+                  <aixm:startTime>23:00</aixm:startTime>
+                  <aixm:endTime>05:00</aixm:endTime>
+                </aixm:Timesheet>
+              </aixm:timeInterval>
+              <aixm:operationalStatus>CLOSED</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+        </aixm:TaxiwayTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Taxiway>
+  </message:hasMember>
+</message:AIXMBasicMessage>

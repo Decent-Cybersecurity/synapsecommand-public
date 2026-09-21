@@ -1,0 +1,36 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          24.1052,
+          56.9496,
+          8.0
+        ],
+        "type": "Point"
+      },
+      "id": "f1c70000-0016-8000-8000-000000000002",
+      "properties": {
+        "sc:affiliation": "FRIENDLY",
+        "sc:entity_id": "f1c70000-0016-8000-8000-000000000002",
+        "sc:entity_type": "FACILITY",
+        "sc:object_kind": "entity",
+        "sc:schema_version": "3.0.0",
+        "sc:source_adapter": "planner_stub",
+        "sc:source_adapter_version": "1.0.0",
+        "sc:source_ids": [
+          {
+            "external_id": "FAC-EX-0002",
+            "system": "PLANNER"
+          }
+        ],
+        "sc:source_system": "PLANNER",
+        "sc:synthetic": true,
+        "sc:valid_from": "2026-04-29T06:00:00.000Z"
+      },
+      "type": "Feature"
+    }
+  ],
+  "sc:profile": "synapsecommand-exchange/1",
+  "type": "FeatureCollection"
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A fictitious danger area with a hole, authored by hand on 2026-09-21: the exterior
+     is the pinned Ring of one Curve with one LineStringSegment (interpolation="linear"), the
+     interior a gml:LinearRing (the full GML schema AIXM imports admits it; the aviation profile's
+     Ring-of-curves interior is exercised in cases/interior_ring_of_curves.xml, whose twin would
+     nest past the harness loader's margin); both under CRS84, so the numbers are LONGITUDE first.
+     The upper limit is nil (unknown) and the lower is the GND token: a column the source described
+     without a number at either end, distinct from no vertical statement at all. A SNAPSHOT slice
+     (no sequence, no correction, one instant) follows; it draws nothing because it states no
+     geometry. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_DANGER_AREA">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-0001-4000-8000-000000000002">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0001-4000-8000-000000000002</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="D1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="D1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYND1</aixm:designator>
+          <aixm:name>SYNTHETIC DANGER ONE</aixm:name>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="D1_GC_1">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="D1_AV_1">
+                  <aixm:upperLimit xsi:nil="true" nilReason="unknown"/>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="D1_SF_1" srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:Ring>
+                              <gml:curveMember>
+                                <aixm:Curve gml:id="D1_CV_1">
+                                  <gml:segments>
+                                    <gml:LineStringSegment interpolation="linear">
+                                      <gml:posList>6.0 53.0 6.4 53.0 6.4 53.3 6.0 53.3 6.0 53.0</gml:posList>
+                                    </gml:LineStringSegment>
+                                  </gml:segments>
+                                </aixm:Curve>
+                              </gml:curveMember>
+                            </gml:Ring>
+                          </gml:exterior>
+                          <gml:interior>
+                            <gml:LinearRing>
+                              <gml:posList>6.1 53.1 6.1 53.2 6.3 53.2 6.3 53.1 6.1 53.1</gml:posList>
+                            </gml:LinearRing>
+                          </gml:interior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="D1_SNAPSHOT">
+          <gml:validTime>
+            <gml:TimeInstant gml:id="D1_SNAPSHOT_VT">
+              <gml:timePosition>2026-06-01T12:00:00Z</gml:timePosition>
+            </gml:TimeInstant>
+          </gml:validTime>
+          <aixm:interpretation>SNAPSHOT</aixm:interpretation>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYND1</aixm:designator>
+          <aixm:name>SYNTHETIC DANGER ONE</aixm:name>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

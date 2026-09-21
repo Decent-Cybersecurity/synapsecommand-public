@@ -62,3 +62,30 @@ EUROCONTROL's for the ASTERIX specifications, NATO's for the STANAGs and AEDPs,
 MISB's for the Motion Imagery Standards Profile. See the pin records under
 packages/cdm/synapse_cdm/fixtures/*/spec/ for each document's terms as its own
 front matter states them.
+
+THIRD-PARTY NOTICES RETAINED IN THE TREE, AND WHERE
+
+Added 2026-09-21, adapter expansion phase 7. The rule above — no copyright
+notice outside a licence file — is this repository's rule about ITS OWN work.
+A third party's licence can oblige the opposite: BSD-2-Clause's first condition
+is that a redistribution in source form "must retain the above copyright
+notice", so a third-party file this repository redistributes carries that
+party's notice by obligation, not as a per-file header of the Work. Those files
+are enumerated here, one per line under the marker below, and
+tests/test_cdm_publication.py reads THIS list: a listed file must exist, be
+tracked and actually carry a notice, and no file outside the list may carry one.
+The list is the vocabulary the policy lacked; the absence it states for the
+Work's own files is unchanged.
+
+  THIRD-PARTY NOTICE CARRIERS:
+  packages/cdm/synapse_cdm/fixtures/aixm511/independent/donlon_extract.xml
+  packages/cdm/synapse_cdm/fixtures/aixm511/independent/donlon_extract_arc_airspace.xml
+  packages/cdm/synapse_cdm/fixtures/aixm511/spec/build_fixtures.py
+
+The first two are extracts of the EUROCONTROL/FAA Donlon fictitious AIXM 5.1.1
+data set (github.com/aixm/Donlon_2025, BSD-2-Clause), cut by the third — the
+generator that writes them and therefore holds the notice it must write into
+each — and every one carries the notice the licence requires verbatim, as the
+comment at the top of the file. The extracts are the independent inputs of the
+aixm511 adapter's `independent_expected` evidence category and are not part of
+the Work's authorship; their provenance is fixtures/aixm511/independent/PROVENANCE.json.

@@ -368,10 +368,28 @@ def test_the_rdf_parser_is_declared_in_the_test_extra_and_only_there():
     Re-anchored 2026-09-16, when the `lint` extra (ruff's one pin, `tests/test_cdm_lint_stage.py`)
     joined `test`: the extras are exactly those two, and `rdflib` is in `test`, in no other extra,
     and in no runtime dependency.
+
+    Re-anchored again 2026-09-20, when the `validate` extra joined (adapter-expansion Phase 0,
+    `docs/adapter-expansion-implementation.md` decision D5): the extras are exactly three. The new
+    one is held to the same shape as `lint` — one requirement, `lxml==X.Y.Z`, pinned exactly —
+    and `lxml` is in that extra, in no other, and in no runtime dependency, because
+    `normative_binding.py` imports it only under an explicit normative mode and the runtime
+    adapters never do.
     """
     project = _pyproject()["project"]
     extras = project["optional-dependencies"]
-    assert sorted(extras) == ["lint", "test"], f"unexpected extras: {sorted(extras)}"
+    assert sorted(extras) == ["lint", "test", "validate"], f"unexpected extras: {sorted(extras)}"
+    assert len(extras["validate"]) == 1 and re.fullmatch(r"lxml==\d+\.\d+\.\d+",
+                                                          extras["validate"][0]), (
+        f"the `validate` extra is {extras['validate']!r}; it should be exactly one requirement "
+        "of the form `lxml==X.Y.Z` — the validator that judged a fixture is the one a reader "
+        "reinstalls, and a second requirement would make the extra something other than that pin")
+    for name, requirements in extras.items():
+        if name != "validate":
+            assert "lxml" not in " ".join(requirements).lower(), (
+                f"lxml is declared in the `{name}` extra; `validate` is the one place it may be")
+    assert "lxml" not in " ".join(project["dependencies"]).lower(), (
+        "lxml is a RUNTIME dependency; it is development/integration tooling and nothing else")
     test_extra = " ".join(extras["test"]).lower()
     assert "rdflib" in test_extra, "rdflib left the test extra; the ontology's graph tests need it"
     for name, requirements in extras.items():

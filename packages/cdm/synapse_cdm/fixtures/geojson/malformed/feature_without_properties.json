@@ -1,0 +1,11 @@
+{
+  "type": "Feature",
+  "id": "np",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      24.0,
+      57.0
+    ]
+  }
+}

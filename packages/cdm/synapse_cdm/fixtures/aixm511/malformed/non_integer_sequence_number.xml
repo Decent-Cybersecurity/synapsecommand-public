@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A sequenceNumber that is not an integer; refused. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_SEQ">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000061">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000061</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="SEQ">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="SEQ_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>one</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYN</aixm:designator>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

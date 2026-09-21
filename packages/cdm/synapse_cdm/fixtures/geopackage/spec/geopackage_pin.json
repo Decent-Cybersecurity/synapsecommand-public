@@ -1,0 +1,444 @@
+{
+  "what_this_is": "The provenance record for every GeoPackage payload under fixtures/geopackage/: the standard the payloads follow, the INDEPENDENT IMPLEMENTATION that wrote every one of them (GDAL), the exact commands, the SHA-256 and byte count of every output, and GDAL's own reading of every harness fixture (spec/independent/) so the adapter's parse is never the only oracle for what a fixture contains. House style follows fixtures/geojson/spec/geojson_pin.json. No node here pairs a `local_path` with a `sha256`, deliberately: gates/pin_paths.py's corpus is the pinned STANDARDS, and this record pins fixtures, which are the repository's own files.",
+  "adapter": {
+    "name": "geopackage",
+    "ordinal": 17,
+    "direction": "ingest",
+    "fixture_directory": "geopackage",
+    "mapping_profile": "geo-object/1"
+  },
+  "standard": {
+    "document": "OGC GeoPackage Encoding Standard, version 1.4.0, OGC 12-128r19 (approved 2024)",
+    "document_identifier": "OGC 12-128r19",
+    "url": "https://docs.ogc.org/is/12-128r19/12-128r19.html",
+    "publisher": "Open Geospatial Consortium",
+    "terms": "OGC document licence; freely retrievable and freely implementable, which is the reading the adapter's OPEN licence class rests on",
+    "carried_here": false,
+    "why_not_carried": "The standard is a stable, freely retrievable HTML document at one URL; the requirements the adapter cites (1, 2, 6, 10, 11, 13, 19, 22, 25-33, 146, Table 5, F.10) are named in adapters/geopackage.py and adapters/geopackage_codec.py at the line that applies each one.",
+    "read_on": "2026-09-20"
+  },
+  "independent_implementation": {
+    "tool": "GDAL (ogr2ogr, ogrinfo, gdal_create, gdal_translate) and the sqlite3 CLI",
+    "version": "GDAL 3.13.3 \"Iowa City\", released 2026/08/13",
+    "taken_on": "2026-09-20",
+    "environment": {
+      "OGR_CURRENT_DATE": "2026-09-20T00:00:00.000Z",
+      "GDAL_PAM_ENABLED": "NO"
+    },
+    "what_it_shows": "Every .gpkg here was written by GDAL from the synthetic sources under fixtures/geopackage/sources/ (this script's own literals). fixtures/geopackage/independent/ holds GDAL's reading of every harness fixture: `ogrinfo -json -features` (fid, properties, geometry per feature, the layer's CRS as WKT) and `ogr2ogr -f GeoJSON` (with the fid carried as the feature id through `-lco ID_FIELD`). tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading compares the adapter's geometry, attributes, ids, nulls and CRS against them.",
+    "commands": [
+      "ogr2ogr --version",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/facilities.geojson -nln facilities -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326",
+      "ogrinfo -q /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg -sql ALTER TABLE facilities ADD COLUMN payload BLOB",
+      "ogrinfo -q /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg -sql UPDATE facilities SET payload = X'DEADBEEF00' WHERE fid IN (1, 2)",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/routes.geojson -nln routes -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -update -a_srs EPSG:4326",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/areas.geojson -nln areas -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -update -a_srs EPSG:4326",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/six_families_geometry_column.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/families.geojson -nln families -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/elevations.geojson -nln elevations -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/positions.geojson -nln crs84_points -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -update -a_srs OGC:CRS84",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/positions.geojson -nln positions -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/notes.csv -nln notes -nlt NONE -update",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/measured.csv -nln measured -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -update -a_srs EPSG:4326 -oo KEEP_GEOM_COLUMNS=NO -oo AUTODETECT_TYPE=YES",
+      "gdal_create -of GTiff -outsize 2 2 -bands 1 -burn 7 -a_srs EPSG:4326 -a_ullr 24 58 25 57 /var/folders/ff/mv_t4lfx3ldchm10t9_4f1400000gn/T/tmpce0nlnp8/tiny.tif",
+      "gdal_translate -of GPKG /var/folders/ff/mv_t4lfx3ldchm10t9_4f1400000gn/T/tmpce0nlnp8/tiny.tif /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg -co APPEND_SUBDATASET=YES -co RASTER_TABLE=tiles_sample -co TILING_SCHEME=GoogleMapsCompatible",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/user_version_1_3_0.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/positions.geojson -nln positions -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.3 -a_srs EPSG:4326",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/projected_crs_epsg3857.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/positions.geojson -nln positions -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -t_srs EPSG:3857",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/undefined_srs_layer.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/undefined_srs.csv -nln positions -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -oo KEEP_GEOM_COLUMNS=NO -oo AUTODETECT_TYPE=YES",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/empty_and_null_geometry_no_as_of.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/empty_null.csv -nln shapes -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326 -oo KEEP_GEOM_COLUMNS=NO -oo AUTODETECT_TYPE=YES",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/geometry_collection_row.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/collection_row.geojson -nln shapes -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=YES -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326",
+      "sqlite3 /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/wal_mode_header.gpkg PRAGMA journal_mode=WAL;",
+      "ogr2ogr -f GPKG /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/malformed/.mutation_base.gpkg /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/sources/areas.geojson -nln areas -lco FID=fid -lco GEOMETRY_NAME=geom -lco SPATIAL_INDEX=NO -preserve_fid -dsco VERSION=1.4 -a_srs EPSG:4326",
+      "ogrinfo -json /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg elevations",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"elevations\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg crs84_points",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"crs84_points\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg facilities",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"facilities\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg routes",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"routes\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg areas",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/exercise_facilities_routes_areas.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"areas\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg positions",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"positions\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg measured",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/mixed_content_partial_read.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"measured\" -lco ID_FIELD=gpkg_fid",
+      "ogrinfo -json /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/six_families_geometry_column.gpkg",
+      "ogrinfo -json -features /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/six_families_geometry_column.gpkg families",
+      "ogr2ogr -f GeoJSON /vsistdout/ /Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/six_families_geometry_column.gpkg -sql SELECT fid AS gpkg_fid, * FROM \"families\" -lco ID_FIELD=gpkg_fid"
+    ]
+  },
+  "fixtures_are_synthetic": "Every source is a literal in spec/build_fixtures.py, written on 2026-09-20 by the adapter-expansion arc's phase 2. Every name is prefixed EXERCISE, every coordinate is a plausible Baltic or equatorial position chosen for the case it exercises and describes no real feature, the raster is a 2x2 constant image, and no file derives from any recorded dataset.",
+  "regenerate": "python synapse_cdm/fixtures/geopackage/spec/build_fixtures.py, from the directory holding the package (--check rebuilds into a temporary directory and compares hashes); the hashes below are what the tree holds, re-derived by tests/test_cdm_geopackage_adapter.py::test_every_fixture_matches_the_record_in_spec on every run.",
+  "fixtures": [
+    {
+      "file": "elevations_epsg4979_and_crs84.gpkg",
+      "sha256": "2859542822d9507d87c0fa0eb675c9a7ca4a4a6cea0c8ace139648afedd8d6e9",
+      "bytes": 126976,
+      "layers": {
+        "elevations": {
+          "feature_count": 2,
+          "geometry_type": "PointZ",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1,
+            2
+          ],
+          "ogrinfo": "elevations_epsg4979_and_crs84.elevations.ogrinfo.json",
+          "geojson": "elevations_epsg4979_and_crs84.elevations.geojson"
+        },
+        "crs84_points": {
+          "feature_count": 2,
+          "geometry_type": "Point",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84 (CRS84)\",",
+          "fids": [
+            1,
+            2
+          ],
+          "ogrinfo": "elevations_epsg4979_and_crs84.crs84_points.ogrinfo.json",
+          "geojson": "elevations_epsg4979_and_crs84.crs84_points.geojson"
+        }
+      }
+    },
+    {
+      "file": "exercise_facilities_routes_areas.gpkg",
+      "sha256": "8cce1131633a02041499b7ce183a8cec17a9c7264bbeba78d79668df04a3dbb3",
+      "bytes": 147456,
+      "layers": {
+        "facilities": {
+          "feature_count": 3,
+          "geometry_type": "PointZ",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1,
+            2,
+            3
+          ],
+          "ogrinfo": "exercise_facilities_routes_areas.facilities.ogrinfo.json",
+          "geojson": "exercise_facilities_routes_areas.facilities.geojson"
+        },
+        "routes": {
+          "feature_count": 3,
+          "geometry_type": "LineString",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1,
+            2,
+            3
+          ],
+          "ogrinfo": "exercise_facilities_routes_areas.routes.ogrinfo.json",
+          "geojson": "exercise_facilities_routes_areas.routes.geojson"
+        },
+        "areas": {
+          "feature_count": 3,
+          "geometry_type": "Polygon",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1,
+            2,
+            3
+          ],
+          "ogrinfo": "exercise_facilities_routes_areas.areas.ogrinfo.json",
+          "geojson": "exercise_facilities_routes_areas.areas.geojson"
+        }
+      }
+    },
+    {
+      "file": "mixed_content_partial_read.gpkg",
+      "sha256": "021b3ac54cec52f164e2f5c96301ab51bc43d95f5864a528c003a55877e7e5be",
+      "bytes": 143360,
+      "layers": {
+        "positions": {
+          "feature_count": 2,
+          "geometry_type": "Point",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1,
+            2
+          ],
+          "ogrinfo": "mixed_content_partial_read.positions.ogrinfo.json",
+          "geojson": "mixed_content_partial_read.positions.geojson"
+        },
+        "measured": {
+          "feature_count": 1,
+          "geometry_type": "Geometry",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            1
+          ],
+          "ogrinfo": "mixed_content_partial_read.measured.ogrinfo.json",
+          "geojson": "mixed_content_partial_read.measured.geojson"
+        },
+        "notes": {
+          "geometry": null,
+          "note": "no geometry field: not a vector layer of the profile"
+        }
+      }
+    },
+    {
+      "file": "six_families_geometry_column.gpkg",
+      "sha256": "cc948685326396903f46ed697debc121b150742f9f7048a6e7a11e54e1230a55",
+      "bytes": 106496,
+      "layers": {
+        "families": {
+          "feature_count": 6,
+          "geometry_type": "Geometry",
+          "srs_wkt_first_line": "GEOGCRS[\"WGS 84\",",
+          "fids": [
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "ogrinfo": "six_families_geometry_column.families.ogrinfo.json",
+          "geojson": "six_families_geometry_column.families.geojson"
+        }
+      }
+    }
+  ],
+  "twins": [
+    {
+      "file": "elevations_epsg4979_and_crs84.parsed.json",
+      "sha256": "55665211a9d19346f1c526448defa63e86b1f2c34a93395359aba3c188f3d6de",
+      "bytes": 9764
+    },
+    {
+      "file": "exercise_facilities_routes_areas.parsed.json",
+      "sha256": "828e88dd5f3dffaaee48aa712fbab0bafdbaaab190924a21831b512bf6028756",
+      "bytes": 14950
+    },
+    {
+      "file": "mixed_content_partial_read.parsed.json",
+      "sha256": "b4bb44177a6e9631adc009d4a6186d28df56cf08e14a3d0e2b048111058d3738",
+      "bytes": 7015
+    },
+    {
+      "file": "six_families_geometry_column.parsed.json",
+      "sha256": "a557a34ca79b238b29248bcd4a905c96fbd7a0841fee0f2e8ede386430873344",
+      "bytes": 8225
+    }
+  ],
+  "malformed": {
+    "what_these_are": "The refusal set the conformance suite's check H reads. Six are GDAL's own output for a case the adapter refuses; the rest are one GDAL package (areas, no spatial index) with one mutation each, named for the rule broken. None is claimed as independent evidence.",
+    "files": [
+      {
+        "file": "empty_and_null_geometry_no_as_of.gpkg",
+        "sha256": "c3dc84fb2cbd9bfeabd43d1eae904c7a0c471980d0799654e533d021fddfb9db",
+        "bytes": 98304
+      },
+      {
+        "file": "geometry_collection_row.gpkg",
+        "sha256": "98c52a1dc9377a1dfea574954104ed3382da14d0205cd7d4d48b5094a5d9a737",
+        "bytes": 106496
+      },
+      {
+        "file": "gpb_byte_order_octet_invalid.gpkg",
+        "sha256": "cd3d47bea4538fdd2812758f88c4fdefd2dec624758ce98f7a987a5a49e07f23",
+        "bytes": 90112
+      },
+      {
+        "file": "gpb_envelope_disagrees_with_wkb.gpkg",
+        "sha256": "359407b6e28a595d1ffa0bb4250121803010c21911163fe0186fd40bb8923e5c",
+        "bytes": 90112
+      },
+      {
+        "file": "gpb_extended_type_flag.gpkg",
+        "sha256": "cf7a431791b4c0f0279c916749739726a285e229ee45c05070edc5f6779e12a1",
+        "bytes": 90112
+      },
+      {
+        "file": "gpb_srs_id_disagrees_with_layer.gpkg",
+        "sha256": "5773d238ae7ea68178ddfde2cb9448e2f4b981d3b41dc498a18e7c8e5c0014aa",
+        "bytes": 90112
+      },
+      {
+        "file": "not_sqlite_at_all.gpkg",
+        "sha256": "b9c0b71abf3e225ffe5765ebcae31afb13bea61bdb47dccc2278548272bf53af",
+        "bytes": 244
+      },
+      {
+        "file": "plain_sqlite_not_a_geopackage.gpkg",
+        "sha256": "7b9688ecf9bb3eb4bb3a595e7bc1440a2709df0dbed2c0a10f6f1f405f9a325d",
+        "bytes": 90112
+      },
+      {
+        "file": "projected_crs_epsg3857.gpkg",
+        "sha256": "caf129d7076c6f415f4b9a11e1465010852214ff9d8d97573a987db81da718a2",
+        "bytes": 106496
+      },
+      {
+        "file": "truncated_container.gpkg",
+        "sha256": "c1f1dcdc704a75297fe7ab56b229e0432b70c468748e357a89d35561f348fdb5",
+        "bytes": 8192
+      },
+      {
+        "file": "undefined_srs_layer.gpkg",
+        "sha256": "ff58641c15c28acfa1709b0eb592b6f1b6ff990192ec3112e50c9e2de6a25b7d",
+        "bytes": 98304
+      },
+      {
+        "file": "user_version_1_3_0.gpkg",
+        "sha256": "57f7a4e364425f80df2cd5305bf4fac9973f9deaedd3ef085b3f8d9a20f0eeb4",
+        "bytes": 106496
+      },
+      {
+        "file": "wal_mode_header.gpkg",
+        "sha256": "8b4d05143f5aabc0179473585820bd3d0b4569e9370df60d56c9d506bcb0f733",
+        "bytes": 143360
+      },
+      {
+        "file": "wkb_ewkb_flag_bit.gpkg",
+        "sha256": "bbc84234787858c6acf6524885a3cc86f4b1d54970678bd94e183757504e2ce4",
+        "bytes": 90112
+      },
+      {
+        "file": "wkb_truncated_polygon.gpkg",
+        "sha256": "192ac8d70a860bffee66d19ddf266f9e1a365996d6729eaf4cf0b5633173ad37",
+        "bytes": 90112
+      }
+    ]
+  },
+  "sources": [
+    {
+      "file": "areas.geojson",
+      "sha256": "6e8854a6a712f5075f9c7d6e3e1720bc9f3f2b2d29e9cb184ac929329ff27923",
+      "bytes": 1594
+    },
+    {
+      "file": "collection_row.geojson",
+      "sha256": "42103f426373ef50e273645c8a8101cb588edc829da88b0c3e4772f9272420f3",
+      "bytes": 681
+    },
+    {
+      "file": "elevations.geojson",
+      "sha256": "51e740ef8ce785aaa32962745cb7ca6ab917834076308354a344861e5ce8b347",
+      "bytes": 448
+    },
+    {
+      "file": "empty_null.csv",
+      "sha256": "0fc51bcc7098e04ed53f949966b772d9ea41cc85d9ca253f9de105a4c29f75d4",
+      "bytes": 111
+    },
+    {
+      "file": "facilities.geojson",
+      "sha256": "502fa433db7733815085cf5485e489edcae33aedf30929fdd639d53c603160a4",
+      "bytes": 913
+    },
+    {
+      "file": "families.geojson",
+      "sha256": "88dc2cd1ad574449d444ea584f8d83780d2e14d60720003e895b854979e8e847",
+      "bytes": 2521
+    },
+    {
+      "file": "measured.csv",
+      "sha256": "96984f292e84c174dccd53c73ed0a0acd16a9dc7058d22f36c339990b339f4ac",
+      "bytes": 57
+    },
+    {
+      "file": "notes.csv",
+      "sha256": "fe941114685e0aa377c3fa5b2f9497d1aeecf7937af324197713b34b41a4d64c",
+      "bytes": 48
+    },
+    {
+      "file": "positions.geojson",
+      "sha256": "134f2cf348dab5bf4534ddaf56e6e57aa5ae90d0b8032e8a8d54ed2cd2ad6b92",
+      "bytes": 421
+    },
+    {
+      "file": "routes.geojson",
+      "sha256": "c46e4f2a182249710fc5e73fbb1fec7f1f318d00756c1a43c77ceb0905e85f6a",
+      "bytes": 974
+    },
+    {
+      "file": "undefined_srs.csv",
+      "sha256": "1d9b2b5920c47bee80f80ce014a677fec764d39994157d91b21460b8125cfec2",
+      "bytes": 51
+    }
+  ],
+  "independent": [
+    {
+      "file": "elevations_epsg4979_and_crs84.crs84_points.geojson",
+      "sha256": "ca18810d94eb60ff77613bc45ac5222f94f716a508b873a901ea3b1fd756adc5",
+      "bytes": 383
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.crs84_points.ogrinfo.json",
+      "sha256": "fc85386c0655ebd1c1f4fcb421cf1f87ff36bb941518002d5584785864e1896b",
+      "bytes": 3106
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.elevations.geojson",
+      "sha256": "d1a52a7eae71fc1dbce0f3802995789b5be620e6ffeae3b0672367fd8d49baf6",
+      "bytes": 398
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.elevations.ogrinfo.json",
+      "sha256": "043826bfb3943b58a1b8e4d77b43e15c9f1748326363306fbb83076a4d151d69",
+      "bytes": 5427
+    },
+    {
+      "file": "exercise_facilities_routes_areas.areas.geojson",
+      "sha256": "1a53102c8c3ed206fdaadc1f7296d2de01b79e3f061c6b5e4978276f267499de",
+      "bytes": 843
+    },
+    {
+      "file": "exercise_facilities_routes_areas.areas.ogrinfo.json",
+      "sha256": "898ad100f3f456a481a7c53b6c4c5f791f33be677557dc4e81b7dcc8163e3579",
+      "bytes": 6676
+    },
+    {
+      "file": "exercise_facilities_routes_areas.facilities.geojson",
+      "sha256": "05a4892df20a891159cad4234a011c8da799ae116d1d00e47f983a3e6186bdd9",
+      "bytes": 781
+    },
+    {
+      "file": "exercise_facilities_routes_areas.facilities.ogrinfo.json",
+      "sha256": "9c0c4e22ae81b7b83a00067abd62f7a056e7e4d233c51ecab0c0e167ecfaea18",
+      "bytes": 6213
+    },
+    {
+      "file": "exercise_facilities_routes_areas.routes.geojson",
+      "sha256": "e30c4a85ca20758cd0a2a23f3a27874bc5520028ebf24c7a79b6c504188630bf",
+      "bytes": 689
+    },
+    {
+      "file": "exercise_facilities_routes_areas.routes.ogrinfo.json",
+      "sha256": "4787b7c07a225d59863d86fb78cd071c14deb24bbbec614f796aa791a50ccc06",
+      "bytes": 5941
+    },
+    {
+      "file": "mixed_content_partial_read.measured.geojson",
+      "sha256": "9b4335b01589b065557ce35ea246bf20b0f80b7a2223b345662d952ba0a33a45",
+      "bytes": 275
+    },
+    {
+      "file": "mixed_content_partial_read.measured.ogrinfo.json",
+      "sha256": "5165166b59dfb1377c12a6b124ca6478e2bac92f5b71645d9f0e65d1aea6d3a6",
+      "bytes": 4750
+    },
+    {
+      "file": "mixed_content_partial_read.positions.geojson",
+      "sha256": "0bcc05223c63bce0aad35ecc3667546f4774ad174030fe196c73afeadb5e88b4",
+      "bytes": 386
+    },
+    {
+      "file": "mixed_content_partial_read.positions.ogrinfo.json",
+      "sha256": "dc20ceee50dec9e5ab2f11ceca7efcd2dda7e1fb061ad108dfb0ca8b6069fee6",
+      "bytes": 5067
+    },
+    {
+      "file": "six_families_geometry_column.families.geojson",
+      "sha256": "18ebdd76f09f06f0ce381ddc2038a7d2ff2d61fb460c99027868b994a5813d5e",
+      "bytes": 1258
+    },
+    {
+      "file": "six_families_geometry_column.families.ogrinfo.json",
+      "sha256": "b007f446f2996301e70e3e04ea90ea5eabc2c0167269ba4b1e60f7765c1b2c22",
+      "bytes": 7529
+    }
+  ]
+}

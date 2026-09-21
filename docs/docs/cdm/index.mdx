@@ -112,10 +112,11 @@ it came from. It **identifies its origin** and it is **never semantically truste
 that the source said something the CDM has no home for, which is a fact about the source record
 and not an assertion about the world. See [CDM Policies](./policies.mdx).
 
-The fourteen adapters shipped today do not use it yet — they keep parking leftovers in
+Fourteen of the nineteen adapters shipped today do not use it — they keep parking leftovers in
 `attributes.source_extras` and declare `residual: legacy`, because the information is already
 preserved and moving the placement would cost every golden file and every consumer for nothing a
-reader can use.
+reader can use. The five of the adapter expansion (`geojson`, `geopackage`, `c2sim`,
+`aixm511`, `aixm52`) declare `residual: structured` and carry their leftovers in it.
 
 ## Why `additionalProperties: false` everywhere
 

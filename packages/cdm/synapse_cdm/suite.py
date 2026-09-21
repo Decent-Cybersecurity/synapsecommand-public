@@ -247,6 +247,11 @@ IDENTITY_FIELDS = ("entity_id", "event_id", "track_id", "object_id")
 #: and holding it to the CDM's serialisation rule would punish the adapter for keeping it.
 PARKED = ("attributes", "payload", "source_extras")
 
+#: The `Limitation.id` an adapter declares when its FORMAT states no instant for any object, so
+#: that J's "no timestamp to judge" is a declared inapplicability and not an omission
+#: (2026-09-20, adapter expansion phase 1; `check_temporal`).
+NO_SOURCE_TIME_LIMITATION = "no-source-time"
+
 _EPOCH = "1970-01-01T00:00:00.000Z"
 _TOP_SENTINEL = "soifunknowntopsentinel"
 _NESTED_SENTINEL = "soifunknownnestedsentinel"
@@ -1003,6 +1008,20 @@ def check_temporal(adapter: Adapter, payloads: list[tuple[str, Any]], *, clock: 
     if malformed or epochs or undeclared or ordering:
         return _verdict(FAIL, reason=(malformed + epochs + undeclared + ordering)[0], **details)
     if not stamps:
+        # A DECLARED absence, since 2026-09-20 (adapter expansion phase 1): a format that states
+        # no instant for any object — a static GeoJSON layer is the first — emits no timestamp
+        # unless its caller supplies an as-of context, which the suite's fresh instances never
+        # carry. The adapter says so in a structured limitation with the id below, read here the
+        # way I reads `capabilities.unknown_fields`: the SKIP then carries the declaration, §3.6
+        # rule 4 lets it through, and an adapter that emits stamps is judged on them regardless.
+        declared = next((lim for lim in adapter.metadata.limitations
+                         if not isinstance(lim, str) and lim.id == NO_SOURCE_TIME_LIMITATION),
+                        None)
+        if declared is not None:
+            return _verdict(SKIP, reason="the adapter emitted no CDM timestamp to judge, and "
+                                         "declares that its format states no instant: "
+                            + declared.summary, declared=True,
+                            declaration=f"limitations[id={NO_SOURCE_TIME_LIMITATION}]", **details)
         return _verdict(SKIP, reason="the adapter emitted no CDM timestamp to judge", **details)
     return _verdict(PASS, **details)
 

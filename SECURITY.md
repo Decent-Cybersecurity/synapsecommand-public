@@ -113,7 +113,7 @@ payload by its caller, who is the party entitled to decide what to connect to.
 This is not an assurance offered on trust. `tests/test_cdm_no_network.py` proves it twice: it
 sweeps every module under `synapse_cdm` for an import of any networking module — the syntax tree,
 so an import inside a function body is caught as well as one at the top — and then it takes
-`socket.socket` away and runs the conformance suite over all fourteen adapters underneath, which
+`socket.socket` away and runs the conformance suite over all nineteen adapters underneath, which
 exits 0 with no socket obtainable in the process.
 
 What that test does **not** claim: that no dependency of this package opens a socket. `pydantic`

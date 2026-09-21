@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {},
+  "features": [
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.0,
+          50.0
+        ]
+      },
+      "properties": null
+    },
+    {
+      "type": "Feature",
+      "id": "7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.0,
+          50.0
+        ]
+      },
+      "properties": {}
+    }
+  ]
+}

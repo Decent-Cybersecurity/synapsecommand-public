@@ -1,0 +1,192 @@
+{
+ "description": "/Users/admin/synapsecommand-public-adapters/packages/cdm/synapse_cdm/fixtures/geopackage/elevations_epsg4979_and_crs84.gpkg",
+ "domains": {},
+ "driverLongName": "GeoPackage",
+ "driverShortName": "GPKG",
+ "layers": [
+  {
+   "featureCount": 2,
+   "features": [
+    {
+     "fid": 1,
+     "geometry": {
+      "coordinates": [
+       24.1,
+       57.0,
+       100.0
+      ],
+      "type": "Point"
+     },
+     "properties": {
+      "name": "EXERCISE MAST"
+     },
+     "type": "Feature"
+    },
+    {
+     "fid": 2,
+     "geometry": {
+      "coordinates": [
+       24.2,
+       57.0,
+       0.0
+      ],
+      "type": "Point"
+     },
+     "properties": {
+      "name": "EXERCISE SHORE"
+     },
+     "type": "Feature"
+    }
+   ],
+   "fidColumnName": "fid",
+   "fields": [
+    {
+     "name": "name",
+     "nullable": true,
+     "type": "String",
+     "uniqueConstraint": false
+    }
+   ],
+   "geometryFields": [
+    {
+     "coordinateSystem": {
+      "dataAxisToSRSAxisMapping": [
+       2,
+       1,
+       3
+      ],
+      "projjson": {
+       "$schema": "https://proj.org/schemas/v0.7/projjson.schema.json",
+       "area": "World.",
+       "bbox": {
+        "east_longitude": 180,
+        "north_latitude": 90,
+        "south_latitude": -90,
+        "west_longitude": -180
+       },
+       "coordinate_system": {
+        "axis": [
+         {
+          "abbreviation": "Lat",
+          "direction": "north",
+          "name": "Geodetic latitude",
+          "unit": "degree"
+         },
+         {
+          "abbreviation": "Lon",
+          "direction": "east",
+          "name": "Geodetic longitude",
+          "unit": "degree"
+         },
+         {
+          "abbreviation": "h",
+          "direction": "up",
+          "name": "Ellipsoidal height",
+          "unit": "metre"
+         }
+        ],
+        "subtype": "ellipsoidal"
+       },
+       "datum_ensemble": {
+        "accuracy": "2.0",
+        "ellipsoid": {
+         "inverse_flattening": 298.257223563,
+         "name": "WGS 84",
+         "semi_major_axis": 6378137
+        },
+        "id": {
+         "authority": "EPSG",
+         "code": 6326
+        },
+        "members": [
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1166
+          },
+          "name": "World Geodetic System 1984 (Transit)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1152
+          },
+          "name": "World Geodetic System 1984 (G730)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1153
+          },
+          "name": "World Geodetic System 1984 (G873)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1154
+          },
+          "name": "World Geodetic System 1984 (G1150)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1155
+          },
+          "name": "World Geodetic System 1984 (G1674)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1156
+          },
+          "name": "World Geodetic System 1984 (G1762)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1309
+          },
+          "name": "World Geodetic System 1984 (G2139)"
+         },
+         {
+          "id": {
+           "authority": "EPSG",
+           "code": 1383
+          },
+          "name": "World Geodetic System 1984 (G2296)"
+         }
+        ],
+        "name": "World Geodetic System 1984 ensemble"
+       },
+       "id": {
+        "authority": "EPSG",
+        "code": 4979
+       },
+       "name": "WGS 84",
+       "scope": "Geodesy. Navigation and positioning using GPS satellite system.",
+       "type": "GeographicCRS"
+      },
+      "wkt": "GEOGCRS[\"WGS 84\",\n    ENSEMBLE[\"World Geodetic System 1984 ensemble\",\n        MEMBER[\"World Geodetic System 1984 (Transit)\"],\n        MEMBER[\"World Geodetic System 1984 (G730)\"],\n        MEMBER[\"World Geodetic System 1984 (G873)\"],\n        MEMBER[\"World Geodetic System 1984 (G1150)\"],\n        MEMBER[\"World Geodetic System 1984 (G1674)\"],\n        MEMBER[\"World Geodetic System 1984 (G1762)\"],\n        MEMBER[\"World Geodetic System 1984 (G2139)\"],\n        MEMBER[\"World Geodetic System 1984 (G2296)\"],\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ENSEMBLEACCURACY[2.0]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433]],\n    CS[ellipsoidal,3],\n        AXIS[\"geodetic latitude (Lat)\",north,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"geodetic longitude (Lon)\",east,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"ellipsoidal height (h)\",up,\n            ORDER[3],\n            LENGTHUNIT[\"metre\",1]],\n    USAGE[\n        SCOPE[\"Geodesy. Navigation and positioning using GPS satellite system.\"],\n        AREA[\"World.\"],\n        BBOX[-90,-180,90,180]],\n    ID[\"EPSG\",4979]]"
+     },
+     "extent": [
+      24.1,
+      57.0,
+      24.2,
+      57.0
+     ],
+     "name": "geom",
+     "nullable": true,
+     "type": "PointZ"
+    }
+   ],
+   "metadata": {
+    "NATIVE_DATA": {
+     "NATIVE_DATA": "{ }",
+     "NATIVE_MEDIA_TYPE": "application/vnd.geo+json"
+    }
+   },
+   "name": "elevations"
+  }
+ ],
+ "metadata": {}
+}

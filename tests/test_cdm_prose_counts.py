@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that fourteen adapters
-cannot grow fourteen slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that nineteen adapters
+cannot grow nineteen slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -83,15 +83,25 @@ def spelled(word: str) -> int:
     quietly accept a typo as some other number, and the whole point of the module is that a
     wrong number is loud.
     """
-    key = word.strip().lower()
+    key = " ".join(word.strip().lower().split())
     if key in _UNITS:
         return _UNITS[key]
     if key in _TENS:
         return _TENS[key]
-    if "-" in key:
+    if "-" in key and " " not in key:
         tens, _, units = key.partition("-")
         if tens in _TENS and units in _UNITS and 1 <= _UNITS[units] <= 9:
             return _TENS[tens] + _UNITS[units]
+    # `"one hundred and seventy-one"` → 171, the form the pair arithmetic first needed on
+    # 2026-09-21 when the roster reached nineteen (19 × 18 / 2). Exactly one shape — a unit,
+    # `hundred`, `and`, then a word this function already parses — and nothing else, for the
+    # reason the docstring gives: the point is that a wrong number is loud.
+    hundreds, _, rest = key.partition(" hundred")
+    if rest and hundreds in _UNITS and 1 <= _UNITS[hundreds] <= 9:
+        if rest.startswith(" and ") and " " not in rest[5:]:
+            return _UNITS[hundreds] * 100 + spelled(rest[5:])
+    elif not rest and hundreds in _UNITS and 1 <= _UNITS[hundreds] <= 9 and key.endswith(" hundred"):
+        return _UNITS[hundreds] * 100
     raise AssertionError(
         f"{word!r} is not a number word this test knows. Either it is a typo, or a count is "
         "now spelled a way nothing here parses — both need a human, which is the point"
@@ -170,25 +180,25 @@ SITES: tuple[Site, ...] = (
          r"\*\*(?P<n>[A-Za-z]+)\s+integration adapters are shipped and harness-verified\*\*"),
     Site("README.md", "the pair-arithmetic sentence",
          r"N adapters means N\(N−1\)/2 translations and N private notions of \"a contact\" — "
-         r"(?P<t>[a-z-]+) and (?P<n>[a-z]+) as of today",
+         r"(?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>[a-z]+) as of today",
          translations_group="t"),
     Site("docs/docs/intro.mdx", "the shipped-adapter sentence",
          r"(?P<n>[A-Za-z]+) integration adapters are shipped and harness-verified —"),
     Site("docs/docs/intro.mdx", "the pair-arithmetic sentence",
          r"N adapters means N\(N−1\)/2 translations and N private notions of what "
-         r"\"a contact\" is — (?P<t>[a-z-]+) and (?P<n>[a-z]+) as of today",
+         r"\"a contact\" is — (?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>[a-z]+) as of today",
          translations_group="t"),
     Site("packages/cdm/synapse_cdm/README.md", "the shipped-adapter sentence",
          r"(?P<n>[A-Za-z]+) integration adapters are shipped: PNTMAP"),
     Site("packages/cdm/synapse_cdm/README.md", "the pair-arithmetic sentence",
-         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z-]+) translations and (?P<n2>[a-z]+) "
-         r"private notions of \"a contact\"",
+         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
+         r"(?P<n2>[a-z]+) private notions of \"a contact\"",
          count_groups=("n", "n2"), translations_group="t"),
     Site("packages/cdm/synapse_cdm/__init__.py", "the shipped-adapter sentence",
          r"(?P<n>[A-Za-z]+) integration adapters are shipped \(PNTMAP"),
     Site("packages/cdm/synapse_cdm/__init__.py", "the pair-arithmetic sentence",
-         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z-]+) translations and (?P<n2>[a-z]+) "
-         r"private notions of \"a contact\"",
+         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
+         r"(?P<n2>[a-z]+) private notions of \"a contact\"",
          count_groups=("n", "n2"), translations_group="t"),
     # The double-count sentence, in both files that carry it. THE reason this module exists:
     # 94c000a had to repair "seven adapters cannot grow six slightly different opinions".
@@ -1598,19 +1608,37 @@ def test_the_reference_adapter_the_readme_calls_the_shortest_is_the_shortest():
     figure in prose is derived by a test or not written. It now says the reference adapter is the
     shortest of the shipped adapters, which is a claim about the roster and is held to it here.
     """
-    text = (REPO / "README.md").read_text()
-    assert "and it is the shortest of the shipped adapters" in text, (
+    text = flat((REPO / "README.md").read_text())
+    assert ("and it is the shortest of the shipped adapters once each is counted with the reader "
+            "it runs on") in text, (
         "README.md's first-adapter step no longer calls the reference adapter the shortest of "
-        "the shipped adapters; re-anchor deliberately if the sentence was rewritten"
+        "the shipped adapters counted with their reader; re-anchor deliberately if the sentence "
+        "was rewritten"
     )
+    # Counted WITH THE READER: an adapter's length is the lines of every `synapse_cdm.adapters`
+    # module in its class's MRO, not of the file its `name` happens to sit in. `aixm52.py` is a
+    # 5.2 profile on `aixm511.py`'s `AixmAdapterBase` (2026-09-21) and is the shorter FILE; a
+    # reader who opened it as "the shortest adapter" would find no reader in it at all, which is
+    # the sentence the README now states and this derivation holds it to.
     lengths = {}
     for cls in shipped_adapters().values():
-        path = pathlib.Path(inspect.getsourcefile(cls))
-        lengths[path.name] = len(path.read_text().splitlines())
+        files = {pathlib.Path(inspect.getsourcefile(base)) for base in cls.__mro__
+                 if base.__module__.startswith("synapse_cdm.adapters.")}
+        own = pathlib.Path(inspect.getsourcefile(cls)).name
+        lengths[own] = sum(len(path.read_text().splitlines()) for path in files)
     shortest = min(lengths, key=lengths.get)
     assert shortest == "pntmap.py", (
         f"README.md calls pntmap.py the shortest shipped adapter and {shortest} is shorter "
-        f"({lengths[shortest]} lines against pntmap.py's {lengths['pntmap.py']})"
+        f"({lengths[shortest]} lines against pntmap.py's {lengths['pntmap.py']}, each counted "
+        "with the adapter modules its class inherits its reader from)"
+    )
+    bare = {pathlib.Path(inspect.getsourcefile(cls)).name: len(
+        pathlib.Path(inspect.getsourcefile(cls)).read_text().splitlines())
+        for cls in shipped_adapters().values()}
+    assert min(bare, key=bare.get) != "pntmap.py", (
+        "no shipped adapter FILE is shorter than pntmap.py any more, so the README's "
+        "'counted with the reader it runs on' qualification explains nothing; restore the plain "
+        "claim and this test's plain derivation"
     )
 
 
@@ -1897,6 +1925,356 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ("docs/audit-remediation-report.md",
      "park it for the 13 adapters' declaration rounds",
      "verbatim text of the S4 review in Appendix B, the same subset"),
+    # --- THE ADAPTER EXPANSION'S SWEEP, 2026-09-21 (phase 7): the roster went fourteen to nineteen in
+    # one arc, and every dated record, ledger entry, frozen contract and past-tense narrative that
+    # states the fourteen is a site of it. Each row below is one such site; the live sites were
+    # repaired and need no row. Grouped by file, the ground stated once per group and repeated per
+    # row so a row moved out of its group carries its reason with it.
+    ('PUBLICATION.md',
+     "in `MIGRATIONS.md`'s history, so the tree ships fourteen adapters and the release this block verifies",
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'step, in the same output that reports `harness PASS 14 adapters x 2 schema modes, 916 fixture',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     "`RELEASE_NOTES.md` and the run's condition-4 derivations — fourteen adapters, 458 fixture verdicts, six schemas,",
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'step, in the same output that reports `harness PASS 14 adapters x 2 schema modes, 992 fixture',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'derived from `RELEASE_NOTES.md` and the derivations — fourteen adapters, 496 fixture verdicts, six schemas,',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'step, in the same output that reports `harness PASS 14 adapters x 2 schema modes, 1048 fixture',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     "`RELEASE_NOTES.md` and the run's own derivations — fourteen adapters, 524 fixture verdicts, six schemas,",
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'step, in the same output that reports `harness PASS 14 adapters x 2 schema modes, 1076 fixture',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     "`RELEASE_NOTES.md` and the run's own derivations — fourteen adapters, 538 fixture verdicts, six schemas,",
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     '(2026-09-12, round PE) flipped `evidence.available` in all fourteen adapters and is an ancestor of `v2.2.0`;',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('PUBLICATION.md',
+     'unmoved, and `cdm-harness --list-adapters` reports **14 adapters**, three ingest and eleven bidirectional',
+     'a dated entry of the publication ledger — the roster, the run output or the Release body of a NAMED release as the round that watched it recorded it; the tree moved to nineteen on 2026-09-20/21 and the entry keeps what it measured'),
+    ('RELEASE_NOTES.md',
+     'rehearsal gate passed `v3.0.0` and was right to. # Fourteen adapters at 3.0.1, all harness-verified',
+     'named subset — the roster OF 3.0.1, the release these notes describe; the five that ship in the tree since are the rows marked post-3.0.1 in the same table, and the section at the top of the notes says they are in no release'),
+    ('RELEASE_NOTES.md',
+     '| **538 fixture verdicts, 0 failed** across the fourteen adapters 3.0.1 shipped, against the published',
+     "named subset — the 3.0.1 artefact's own verdict count. The shape the 1.3.0 row retired above had, re-created on 2026-09-21 because the notes again describe an artefact smaller than the tree; retire it with the next release's notes"),
+    ('docs/audit-remediation-report.md',
+     'commit (§4, §5 item 9): the ledger is wired; 1 of 14 shipped adapters declares mappings; the 11 manifests',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     'cases: counterexample, the 14 listed regressions, 14 corrupted adapters through harness.run, reporting);',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     'claim in the repository rested on value coincidence: fourteen adapters declare L3/L4 maturity with',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     'reason exempting nothing, declaration refusals); fourteen deliberately corrupted adapters — one per loss kind and per',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     "the mechanism and its wiring. Reassessment of the fourteen shipped adapters' losslessness claims, each of",
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     "of the reference adapter's 4 fixtures; changing fourteen adapters is outside F04's authorisation.",
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     'every external category ABSENT with a basis on all 14 shipped adapters, `external_exercise` None, `external_outstanding`',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     "`normative_schema` and `independent_endpoint` is OPEN on all 14 adapters, by the brief's own rule, and",
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     '`manifests --out` / `--check` → "CURRENT: manifests vs 14 shipped adapters at manifest schema 2.0.0"; `support_matrix',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/audit-remediation-report.md',
+     'evidence rather than value coincidence") holds for 1 of 14 adapters; 13 manifests still publish',
+     "the audit remediation register of 2026-09-19/20 — a dated record of the fourteen-adapter tree that audit examined and of the runs it took, not a statement of today's roster"),
+    ('docs/docs/schema-reference/cdm-object.mdx',
+     '(§28). None = nothing was left over, or — for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/cdm-object.mdx',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/entity.mdx',
+     '(§28). None = nothing was left over, or — for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/entity.mdx',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/event.mdx',
+     '(§28). None = nothing was left over, or — for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/event.mdx',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/plan-object.mdx',
+     '(§28). None = nothing was left over, or — for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/plan-object.mdx',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/track.mdx',
+     '(§28). None = nothing was left over, or — for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/docs/schema-reference/track.mdx',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('docs/sc-oes-final-report.md',
+     'the repository | | — its resources and harness | 14 adapters, 538 fixture files; 14 adapters',
+     'a dated SC-OES campaign report: the roster at its own commit, transcribed from the command it ran'),
+    ('docs/sc-oes-final-report.md',
+     'resources and harness | 14 adapters, 538 fixture files; 14 adapters × 2 schema modes, **1 076 fixture',
+     'a dated SC-OES campaign report: the roster at its own commit, transcribed from the command it ran'),
+    ('docs/sc-oes-implementation-plan.md',
+     '`REGISTRY` (`adapter.py:44`). The roster reads **fourteen adapters** at this commit (`python -c',
+     'a dated SC-OES campaign plan: the roster at its own commit, transcribed from the command it ran'),
+    ('docs/soif-part1-release-readiness.md',
+     '--check --out manifests` → `CURRENT: manifests vs 14 shipped adapters at manifest schema 1.2.0`. `pytest',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     'models at 2.1.0`. Manifests: `CURRENT: manifests vs 14 shipped adapters at manifest schema 1.2.0`. Conformance,',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     'for the wheel and for the sdist. Package test: **14 adapters CONFORMANT from the installed',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     '`4409115`. # 14. Existing-adapter regressions **All fourteen public adapters continue to work, and the CDM',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     '`gates/wheel_install.py` reports **1076** over the roster (14 adapters × 2 schema modes), 0 failed,',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     'checks 0 failed, manifest 1424 files, resources 14 adapters / 552 fixture files; the conformance',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     '"does NOT claim the new adapter portfolio exists". **Fourteen adapters**, the same fourteen as 2.0.0,',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     'models at 2.1.0`; manifests `CURRENT: manifests vs 14 shipped adapters at manifest schema 1.2.0`; `gates/wheel_install.py`',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     '`gates/wheel_install.py` **13 checks, 0 failed**, 14 adapters × 2 schema modes, **1076 fixture',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('docs/soif-part1-release-readiness.md',
+     'the roster **538 verdicts, 0 failed**, the same fourteen adapters in the same two directions as',
+     'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     "`fixtures/*/golden/` (every `.cdm.json` and `.parsed.cdm.json` the fourteen adapters' harness runs write, moved at",
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'DISCHARGED.** `evidence.available` is `false` in all fourteen adapters and therefore in all fourteen',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'paragraph says `evidence.available` "is `false` in all fourteen adapters and therefore in all fourteen',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'refused an absent bound that has no reason. All fourteen adapters then declare `max_input_bytes`:',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'landed and `manifests/<id>.json` publishes — so all fourteen adapters gained them without a single',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '**1334 files, equal to git in both directions**, **14 adapters, 538 fixture files**, and **1076',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'files**, and **1076 fixture verdicts, 0 failed** over fourteen adapters in two schema modes — and its',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'which is the check that decided it. The roster is fourteen adapters in both directions, unchanged',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '--mutation-check` reported **13 checks, 0 failed** — 14 adapters against 2 schema modes for **992',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '**The section held TWELVE bullets and the roster is FOURTEEN adapters, and the gap is two rather than',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '**782**. The pair arithmetic holds at every site — 14 adapters, **91** unordered and **182**',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '--mutation-check` reported **13 checks, 0 failed** — 14 adapters against 2 schema modes for **916',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '--mutation-check` reported **13 checks, 0 failed** — 14 adapters against 2 schema modes for **864',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'the brief predicted and none was taken from it: **14 adapters** from `roster()`, and **15',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/adapter.py',
+     'fact and this method projects it. That is why all fourteen shipped adapters gained the two fields in round',
+     'past-tense narrative of round P3, which projected the two fields onto the roster of that day'),
+    ('packages/cdm/synapse_cdm/fixtures/stanag4586/spec/stanag4586_pin.json',
+     "and takes ordinal FIFTEEN. The brief predicted '14 adapters' for the roster and was right",
+     "a QUOTATION of the brief's prediction, inside the pin's own ordinal note"),
+    ('packages/cdm/synapse_cdm/manifest.py',
+     'existing string entries stay valid unchanged, all fourteen shipped adapters keep the sentences they already',
+     "past-tense narrative of M's ruling of 2026-09-07 on the roster of that day"),
+    ('packages/cdm/synapse_cdm/models.py',
+     "destroying the reader's ability to see a list. THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/cdm_object.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/cdm_object.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/entity.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/entity.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/event.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/event.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/manifests/adapter-manifest.schema.json',
+     'existing string entries stay valid unchanged, all fourteen shipped adapters\\nkeep the sentences they already',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/plan_object.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/plan_object.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/track.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('schemas/track.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/entity.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/entity.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/event.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/event.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/plan_object.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/plan_object.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/track.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/2.1.0/track.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/entity.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/entity.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/event.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/event.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/plan_object.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/plan_object.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/track.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/frozen/cdm/3.0.0/track.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    ('tests/test_cdm_adapter_contract.py',
+     'passed in and it is not guessed. That is what let all fourteen shipped adapters gain `source.format_name` and',
+     'past-tense narrative of round P3, in the test that holds what that round added'),
+    ('tests/test_cdm_lossless.py',
+     'the same check. ARCHITECTURE.md §5 rules that the fourteen adapters shipped in Part 1 keep parking',
+     "named subset — the fourteen adapters shipped in Part 1, ARCHITECTURE.md §5's stance quoted in the test that enforces it"),
+    ('tests/test_cdm_release_notes.py',
+     'A test that rendered the real tree and asserted "14 adapters" would be a stale-count sweep',
+     'a hypothetical figure in a docstring explaining why the test asserts no such figure'),
+    # --- the adapter expansion's own record and one adapter docstring (phase 7, 2026-09-21): the
+    # record's dated per-phase readings become tracked sites the day the arc is committed, so
+    # they are ruled now rather than discovered then.
+    ('docs/adapter-expansion-implementation.md',
+     "— `*`, `#N` and kind targets are untouched; the fourteen adapters' `tests/test_cdm_preservation.py`",
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '`docs/docs/cdm/support-matrix.mdx` through their generators (`--check` CURRENT at 16 shipped adapters); `docs/docs/security/parser-safety.mdx`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'means") whose procedure re-stamps every golden of the fourteen adapters this arc may not touch. A contract',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     "schema MINOR that re-stamps every golden of the fourteen adapters this arc may not touch — D32's",
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     "design (Phase 7): the roster/count prose sites (now sixteen adapters), `MIGRATIONS.md`'s `### Unreleased`",
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     "design (Phase 7): the roster/count prose sites (now seventeen adapters), `MIGRATIONS.md`'s `### Unreleased`",
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '--check --out manifests` | 0 | `CURRENT: manifests vs 15 shipped adapters at manifest schema 2.1.0` (`manifests/geojson.json`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'docs/docs/cdm/support-matrix.mdx` | 0 | `CURRENT: … 15 shipped adapters` (page rewritten by `--out`)',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '--check --out manifests` | 0 | `CURRENT: manifests vs 16 shipped adapters at manifest schema 2.1.0` (`manifests/geopackage.json`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'docs/docs/cdm/support-matrix.mdx` | 0 | `CURRENT: … 16 shipped adapters` (page rewritten by `--out`)',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '--check --out manifests` | 0 | `CURRENT: manifests vs 17 shipped adapters at manifest schema 2.1.0` (`manifests/c2sim.json`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'docs/docs/cdm/support-matrix.mdx` | 0 | `CURRENT: … 17 shipped adapters` | | `python -m synapse_cdm.evidence',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '--check --out manifests` | 0 | `CURRENT: manifests vs 18 shipped adapters at manifest schema 2.1.0` (`manifests/aixm511.json`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'docs/docs/cdm/support-matrix.mdx` | 0 | `CURRENT: … 18 shipped adapters` | | `python -m synapse_cdm.schemas',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '`test_cdm_architecture_docs.py::test_no_document_states_an_adapter_count_that_is_not_the_roster` (ARCHITECTURE.md\'s "fourteen adapters" ×2, a Phase 7 roster site,',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'amended limitation text) | 0 | `CURRENT: manifests vs 18 shipped adapters at manifest schema 2.1.0`; `CURRENT`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'licences / install / metadata / import / resources (18 adapters, 588 fixture files) / schemas',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     'adapters, 588 fixture files) / schemas / harness (18 adapters × 2 schema modes, 1 140 verdicts,',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('docs/adapter-expansion-implementation.md',
+     '`test_cdm_architecture_docs.py` ×1 (ARCHITECTURE.md\'s "fourteen adapters", standing) and `test_cdm_prose_counts.py`',
+     "a dated per-phase reading in the adapter expansion's implementation record (phases 1–6, 2026-09-20/21): the generator's `CURRENT … N shipped adapters` line, the wheel gate's roster, or the roster as that phase read it on its day; the record annotates rather than tidies, and every live site is checked by comparison"),
+    ('packages/cdm/synapse_cdm/adapters/c2sim.py',
+     'schema MINOR that re-stamps every golden of the fourteen adapters this arc may not touch (decision',
+     "named subset — the fourteen adapters that predate the arc, whose goldens the adapter expansion's brief forbids re-stamping (the record's D32)"),
 )
 
 #: Pre-repair bytes quoted somewhere in the tree, and the file each was repaired in. Same

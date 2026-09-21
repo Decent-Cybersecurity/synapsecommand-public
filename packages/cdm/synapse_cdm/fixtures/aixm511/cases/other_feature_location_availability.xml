@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Two features OUTSIDE the five families that state structures the ledger binds residual-kind at slice level: a DME (NavaidEquipment) with an ElevatedPoint `location`, a NavaidOperationalStatus `availability` and a `channel`, and a Taxiway with TWO ManoeuvringAreaAvailability structures (one scheduled). The adapter's generic reading carries the DME's `location` at attributes.aixm.location and the Taxiway's repeated `availability` at attributes.aixm.availability, source verbatim (Entity.position and status stay None); the DME's single `availability` and the `channel` stay in the residual at their position; the ledger must report no LOST leaf. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter after a Donlon NavaidEquipment feature showed the gap; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_OTHER_LOCATION_AVAILABILITY">
+  <message:hasMember>
+    <aixm:DME gml:id="uuid.a1a40000-00d0-4000-8000-000000000050">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d0-4000-8000-000000000050</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:DMETimeSlice gml:id="DME_SYN_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="DME_SYN_BL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYD</aixm:designator>
+          <aixm:name>SYNTHETIC DME</aixm:name>
+          <aixm:location>
+            <aixm:ElevatedPoint gml:id="DME_SYN_LOC" srsName="urn:ogc:def:crs:EPSG::4326">
+              <gml:pos>52.31000 4.71000</gml:pos>
+              <aixm:elevation uom="FT">98</aixm:elevation>
+              <aixm:verticalDatum>EGM_96</aixm:verticalDatum>
+            </aixm:ElevatedPoint>
+          </aixm:location>
+          <aixm:availability>
+            <aixm:NavaidOperationalStatus gml:id="DME_SYN_OPS_1">
+              <aixm:operationalStatus>OPERATIONAL</aixm:operationalStatus>
+            </aixm:NavaidOperationalStatus>
+          </aixm:availability>
+          <aixm:channel>84X</aixm:channel>
+        </aixm:DMETimeSlice>
+      </aixm:timeSlice>
+    </aixm:DME>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Taxiway gml:id="uuid.a1a40000-00d1-4000-8000-000000000051">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d1-4000-8000-000000000051</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:TaxiwayTimeSlice gml:id="TWY_SYN_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TWY_SYN_BL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>A</aixm:designator>
+          <aixm:width uom="M">23</aixm:width>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="TWY_SYN_AVBL_1">
+              <aixm:timeInterval>
+                <aixm:Timesheet gml:id="TWY_SYN_TS_1">
+                  <aixm:timeReference>UTC</aixm:timeReference>
+                  <aixm:day>ANY</aixm:day>
+                  <aixm:dayTil>ANY</aixm:dayTil>
+                  <aixm:startTime>22:00</aixm:startTime>
+                  <aixm:endTime>05:00</aixm:endTime>
+                </aixm:Timesheet>
+              </aixm:timeInterval>
+              <aixm:operationalStatus>CLOSED</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="TWY_SYN_AVBL_2">
+              <aixm:operationalStatus>NORMAL</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+        </aixm:TaxiwayTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Taxiway>
+  </message:hasMember>
+</message:AIXMBasicMessage>

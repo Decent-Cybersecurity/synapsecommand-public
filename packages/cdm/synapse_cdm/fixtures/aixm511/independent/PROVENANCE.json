@@ -1,0 +1,30 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511/independent",
+  "fixtures": [
+    {
+      "file": "donlon_extract.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "A BOUNDED EXTRACT of the EUROCONTROL/FAA Donlon fictitious AIXM 5.1.1 data set (github.com/aixm/Donlon_2025, main, BSD-2-Clause; every source file carries a BSD-style notice and the words 'THIS FICTITIOUS DATA SET ... shall NEVER BE USED AS OPERATIONAL DATA'), cut on 2026-09-21 by `spec/build_fixtures.py` from six source files whose SHA-256 the script pins (Donlon_EADD_AirportHeliport.xml 34266d4f…, Donlon_EADD_Runway.xml 1196dfa5…, Donlon_EADD_RunwayDirection.xml 323c6a97…, Donlon_Navaid.xml 25d9593e…, Donlon_Airspace.xml 6570598a…, Donlon_VerticalStructure.xml f7c36910…; retrieved from raw.githubusercontent.com on 2026-09-21): thirteen members copied element for element with the source notice kept. Independently authored, so an `independent_expected` input: `expected.json` is an ElementTree/XPath reading of the SAME members over the SOURCE files — never through the adapter or its codec — and `tests/test_cdm_aixm511_adapter.py::test_the_adapter_agrees_with_the_independent_donlon_reading` compares the adapter against it. Fictitious by its authors' own statement; synthetic in this record's sense."
+    },
+    {
+      "file": "donlon_extract_arc_airspace.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "A BOUNDED EXTRACT of the EUROCONTROL/FAA Donlon fictitious AIXM 5.1.1 data set (github.com/aixm/Donlon_2025, main, BSD-2-Clause; every source file carries a BSD-style notice and the words 'THIS FICTITIOUS DATA SET ... shall NEVER BE USED AS OPERATIONAL DATA'), cut on 2026-09-21 by `spec/build_fixtures.py` from six source files whose SHA-256 the script pins (Donlon_EADD_AirportHeliport.xml 34266d4f…, Donlon_EADD_Runway.xml 1196dfa5…, Donlon_EADD_RunwayDirection.xml 323c6a97…, Donlon_Navaid.xml 25d9593e…, Donlon_Airspace.xml 6570598a…, Donlon_VerticalStructure.xml f7c36910…; retrieved from raw.githubusercontent.com on 2026-09-21): thirteen members copied element for element with the source notice kept. Independently authored, so an `independent_expected` input: `expected.json` is an ElementTree/XPath reading of the SAME members over the SOURCE files — never through the adapter or its codec — and `tests/test_cdm_aixm511_adapter.py::test_the_adapter_agrees_with_the_independent_donlon_reading` compares the adapter against it. Fictitious by its authors' own statement; synthetic in this record's sense."
+    },
+    {
+      "file": "expected.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "A BOUNDED EXTRACT of the EUROCONTROL/FAA Donlon fictitious AIXM 5.1.1 data set (github.com/aixm/Donlon_2025, main, BSD-2-Clause; every source file carries a BSD-style notice and the words 'THIS FICTITIOUS DATA SET ... shall NEVER BE USED AS OPERATIONAL DATA'), cut on 2026-09-21 by `spec/build_fixtures.py` from six source files whose SHA-256 the script pins (Donlon_EADD_AirportHeliport.xml 34266d4f…, Donlon_EADD_Runway.xml 1196dfa5…, Donlon_EADD_RunwayDirection.xml 323c6a97…, Donlon_Navaid.xml 25d9593e…, Donlon_Airspace.xml 6570598a…, Donlon_VerticalStructure.xml f7c36910…; retrieved from raw.githubusercontent.com on 2026-09-21): thirteen members copied element for element with the source notice kept. Independently authored, so an `independent_expected` input: `expected.json` is an ElementTree/XPath reading of the SAME members over the SOURCE files — never through the adapter or its codec — and `tests/test_cdm_aixm511_adapter.py::test_the_adapter_agrees_with_the_independent_donlon_reading` compares the adapter against it. Fictitious by its authors' own statement; synthetic in this record's sense."
+    }
+  ]
+}

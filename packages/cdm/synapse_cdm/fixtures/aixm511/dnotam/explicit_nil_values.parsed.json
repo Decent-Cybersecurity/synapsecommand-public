@@ -1,0 +1,145 @@
+{
+  "@gml:id": "M_DN_NIL",
+  "message:hasMember": [
+    {
+      "$": "event:Event",
+      "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000008",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-00e0-4000-8000-000000000008"
+      },
+      "event:timeSlice": [
+        {
+          "$": "event:EventTimeSlice",
+          "@gml:id": "EVT_8_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_8_BL_1_0_VT",
+            "gml:beginPosition": "2026-03-14T08:00:00Z",
+            "gml:endPosition": "2026-03-14T12:00:00Z"
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:featureLifetime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_8_BL_1_0_LT",
+            "gml:beginPosition": "2026-03-14T08:00:00Z",
+            "gml:endPosition": "2026-03-14T12:00:00Z"
+          },
+          "event:name": "SYN VOR/DME",
+          "event:designator": "DNOTAM",
+          "event:scenario": "NAV.UNS",
+          "event:version": "2.0",
+          "event:estimatedValidity": {
+            "@xsi:nil": "true"
+          },
+          "event:activity": {
+            "@xsi:nil": "true",
+            "@nilReason": "unknown"
+          },
+          "event:notification": [
+            {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_8_BL_1_0_N",
+              "event:series": "S",
+              "event:number": "108",
+              "event:year": "2026",
+              "event:issued": "2026-03-13T12:00:00Z",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:type": "N",
+              "event:affectedFIR": "ZZSY",
+              "event:location": "ZZSY",
+              "event:effectiveStart": "2603140800",
+              "event:effectiveEnd": "2603141200",
+              "event:estimatedEnd": "NO",
+              "event:permanent": "NO",
+              "event:text": {
+                "@lang": "ENG",
+                "#text": "SYN VOR/DME STATUS WITHDRAWN."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "aixm:Navaid",
+      "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000005",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-00d0-4000-8000-000000000005"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:NavaidTimeSlice",
+          "@gml:id": "NAV_SYN_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "NAV_SYN_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:type": "VOR_DME",
+          "aixm:designator": "SYN",
+          "aixm:name": "SYNTHETIC VOR DME",
+          "aixm:navaidEquipment": [
+            {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV_SYN_NC_1",
+              "aixm:collocationGroup": "1",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000006",
+                "@xlink:title": "SYN VOR"
+              }
+            }
+          ],
+          "aixm:availability": [
+            {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "NAV_SYN_BL_1_0_OPS1",
+              "aixm:operationalStatus": "OPERATIONAL"
+            }
+          ]
+        },
+        {
+          "$": "aixm:NavaidTimeSlice",
+          "@gml:id": "NAV_SYN_TD_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "NAV_SYN_TD_1_0_VT",
+            "gml:beginPosition": "2026-03-14T08:00:00Z",
+            "gml:endPosition": "2026-03-14T12:00:00Z"
+          },
+          "aixm:interpretation": "TEMPDELTA",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:availability": [
+            {
+              "@xsi:nil": "true",
+              "@nilReason": "unknown"
+            }
+          ],
+          "aixm:extension": [
+            {
+              "$": "event:NavaidExtension",
+              "@gml:id": "NAV_SYN_TD_1_0_EXT",
+              "event:theEvent": {
+                "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000008",
+                "@xlink:title": "SYN VOR/DME DNOTAM NAV.UNS"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

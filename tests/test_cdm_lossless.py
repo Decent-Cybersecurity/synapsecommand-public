@@ -70,7 +70,8 @@ def test_leaves_walks_lists_and_dicts():
 
 import uuid
 
-from synapse_cdm.adapter import Adapter, discover
+from synapse_cdm import harness
+from synapse_cdm.adapter import Adapter, discover, packaged_fixtures
 from synapse_cdm.enums import Affiliation, EntityType
 from synapse_cdm.manifest import FormatRef, Residual as ResidualStance
 from synapse_cdm.models import Entity
@@ -184,9 +185,12 @@ def test_a_structured_adapter_using_the_container_has_no_offence():
 def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_passing_silently():
     """The sweep over the real roster, and it states its own vacuity instead of hiding it.
 
-    Fourteen `legacy` and zero `structured` is ARCHITECTURE.md §5's Part 1 ruling, read from the
-    declarations rather than quoted. The day a Part 2 adapter lands, the count moves and the
-    `structured` branch of `structured_residual_offences` starts doing work on real fixtures.
+    Fourteen `legacy` is ARCHITECTURE.md §5's Part 1 ruling, read from the declarations rather
+    than quoted. The day this docstring foretold arrived on 2026-09-20 (adapter expansion phase
+    1): `geojson` is the first `structured` adapter, the count moved from fourteen-and-none to
+    fourteen-and-one, and the `structured` branch of `structured_residual_offences` now does work
+    on real fixtures — every object `geojson` produces from every fixture it ships is swept, and
+    an object that parked anything under `source_extras` would fail here.
     """
     # SHIPPED only. `discover()` returns the process-wide registry, and this module defines test
     # doubles that land in it — a sweep that counted them would report a roster that depends on
@@ -196,7 +200,22 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     census = {stance: sorted(cls.name for cls in roster.values()
                              if cls.metadata.residual is stance)
               for stance in ResidualStance}
-    assert len(census[ResidualStance.LEGACY]) == len(roster) == 14
-    assert census[ResidualStance.STRUCTURED] == []
+    assert len(census[ResidualStance.LEGACY]) == 14
+    # phase 2 (2026-09-20): `geopackage` is the second `structured` adapter; fourteen-and-two.
+    # phase 3 (2026-09-21): `c2sim` is the third; fourteen-and-three.
+    # phase 4 (2026-09-21): `aixm511` is the fourth; fourteen-and-four.
+    # phase 6 (2026-09-21): `aixm52` is the fifth; fourteen-and-five.
+    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "geojson", "geopackage"]
+    assert len(roster) == 19
+    swept = 0
     for cls in roster.values():
-        assert structured_residual_offences(cls(synthetic=True), []) == []
+        adapter = cls(synthetic=True)
+        assert structured_residual_offences(adapter, []) == []
+        if cls.metadata.residual is ResidualStance.STRUCTURED:
+            for path in harness.select_fixtures(packaged_fixtures(cls)):
+                objects = adapter.to_cdm(harness.load_raw(path))
+                assert objects, f"{cls.name}/{path.name} produced nothing to sweep"
+                assert structured_residual_offences(adapter, objects) == [], path.name
+                assert all(o.residual is not None and o.residual.data for o in objects), path.name
+                swept += len(objects)
+    assert swept >= 4, "the structured branch swept real objects, not an empty list"

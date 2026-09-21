@@ -1,0 +1,135 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       24.0,
+       57.0
+      ],
+      [
+       24.6,
+       57.0
+      ],
+      [
+       24.6,
+       57.3
+      ],
+      [
+       24.0,
+       57.3
+      ],
+      [
+       24.0,
+       57.0
+      ]
+     ],
+     [
+      [
+       24.2,
+       57.1
+      ],
+      [
+       24.2,
+       57.2
+      ],
+      [
+       24.4,
+       57.2
+      ],
+      [
+       24.4,
+       57.1
+      ],
+      [
+       24.2,
+       57.1
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE TRAINING AREA",
+    "kind": "exclusion",
+    "priority": 1
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       23.8,
+       56.8
+      ],
+      [
+       23.9,
+       56.8
+      ],
+      [
+       23.9,
+       56.9
+      ],
+      [
+       23.8,
+       56.9
+      ],
+      [
+       23.8,
+       56.8
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE ANCHORAGE",
+    "kind": "anchorage",
+    "priority": 2
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 3,
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       24.7,
+       57.0
+      ],
+      [
+       24.9,
+       57.0
+      ],
+      [
+       24.9,
+       57.1
+      ],
+      [
+       24.7,
+       57.1
+      ],
+      [
+       24.7,
+       57.0
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE RANGE",
+    "kind": "range",
+    "priority": null
+   }
+  }
+ ]
+}

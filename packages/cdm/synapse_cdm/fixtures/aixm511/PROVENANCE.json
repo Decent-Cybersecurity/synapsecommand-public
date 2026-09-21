@@ -1,0 +1,86 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511",
+  "fixtures": [
+    {
+      "file": "airport_runway_navaid.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airport_runway_navaid.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_baseline_polygon.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_baseline_polygon.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_deltas_same_feature.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_deltas_same_feature.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_hole_crs84_snapshot.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "airspace_hole_crs84_snapshot.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "vertical_structure_two_parts.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    },
+    {
+      "file": "vertical_structure_two_parts.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 documents hand-written for this repository on 2026-09-21 (adapter-expansion phase 4) against the pinned AIXM 5.1.1 XML Schema closure (EUROCONTROL & FAA, April 2016; GML 3.2.1); every designator is prefixed SYN, every UUID sits under the a1a40000- prefix, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned XSD through an actual validator (`tests/test_cdm_aixm511_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/aixm511_pin.json`."
+    }
+  ]
+}

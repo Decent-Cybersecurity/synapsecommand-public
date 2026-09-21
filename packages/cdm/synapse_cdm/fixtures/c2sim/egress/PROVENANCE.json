@@ -1,0 +1,30 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "c2sim/egress",
+  "fixtures": [
+    {
+      "file": "fresh_initialisation_side_unit_platform_route.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written on 2026-09-21 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce: typed `c2sim-object/1`, `c2sim-order/1` and `c2sim-report/1` blocks built through `c2sim_codec`'s models and dumped in the canonical rendering; UUIDs under the c2510000-001x- prefix. Read by `tests/test_cdm_c2sim_adapter.py::test_every_egress_fixture_emits_its_golden_and_validates`; the `golden/*.c2sim.xml` beside each is what `from_cdm` emitted for it, validated against the pinned XSD."
+    },
+    {
+      "file": "fresh_order_move_and_hold.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written on 2026-09-21 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce: typed `c2sim-object/1`, `c2sim-order/1` and `c2sim-report/1` blocks built through `c2sim_codec`'s models and dumped in the canonical rendering; UUIDs under the c2510000-001x- prefix. Read by `tests/test_cdm_c2sim_adapter.py::test_every_egress_fixture_emits_its_golden_and_validates`; the `golden/*.c2sim.xml` beside each is what `from_cdm` emitted for it, validated against the pinned XSD."
+    },
+    {
+      "file": "fresh_report_position_no_header.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic CDM records written on 2026-09-21 as if by a planning stub (`source.adapter: planner_stub`), so the egress direction is proved on records this adapter did not produce: typed `c2sim-object/1`, `c2sim-order/1` and `c2sim-report/1` blocks built through `c2sim_codec`'s models and dumped in the canonical rendering; UUIDs under the c2510000-001x- prefix. Read by `tests/test_cdm_c2sim_adapter.py::test_every_egress_fixture_emits_its_golden_and_validates`; the `golden/*.c2sim.xml` beside each is what `from_cdm` emitted for it, validated against the pinned XSD."
+    }
+  ]
+}

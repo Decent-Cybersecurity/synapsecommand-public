@@ -1,0 +1,38 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geojson",
+  "fixtures": [
+    {
+      "file": "antimeridian_bbox_repeated_values.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON documents, hand-written for this repository on 2026-09-20 (adapter-expansion phase 1). Every name is prefixed EXERCISE and no coordinate describes a real feature; hashes and an independent GDAL reading of each file are in `spec/geojson_pin.json`, and the assertion is a tracked test's: `tests/test_cdm_geojson_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "feature_zero_meridian_clockwise_ring.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON documents, hand-written for this repository on 2026-09-20 (adapter-expansion phase 1). Every name is prefixed EXERCISE and no coordinate describes a real feature; hashes and an independent GDAL reading of each file are in `spec/geojson_pin.json`, and the assertion is a tracked test's: `tests/test_cdm_geojson_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "null_and_empty_properties_typed_ids.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON documents, hand-written for this repository on 2026-09-20 (adapter-expansion phase 1). Every name is prefixed EXERCISE and no coordinate describes a real feature; hashes and an independent GDAL reading of each file are in `spec/geojson_pin.json`, and the assertion is a tracked test's: `tests/test_cdm_geojson_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "six_geometries_baltic.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoJSON documents, hand-written for this repository on 2026-09-20 (adapter-expansion phase 1). Every name is prefixed EXERCISE and no coordinate describes a real feature; hashes and an independent GDAL reading of each file are in `spec/geojson_pin.json`, and the assertion is a tracked test's: `tests/test_cdm_geojson_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    }
+  ]
+}

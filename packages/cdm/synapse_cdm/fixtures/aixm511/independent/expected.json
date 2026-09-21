@@ -1,0 +1,411 @@
+{
+  "1371b29a-2ba6-44c8-8da3-711e5488fdb7": {
+    "family": "VerticalStructure",
+    "gml_id": "uuid.1371b29a-2ba6-44c8-8da3-711e5488fdb7",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": null,
+        "end_indeterminate": "unknown",
+        "gml_id": "OBST-EADD-1007",
+        "hrefs": [],
+        "interpretation": "BASELINE",
+        "name": "OBST-EADD-1007",
+        "operations": [],
+        "parts": 1,
+        "point": {
+          "elevation": "45.0",
+          "elevation_uom": "M",
+          "pos": "52.385208 -31.913058",
+          "srs_name": "urn:ogc:def:crs:EPSG::4326"
+        },
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "BUILDING"
+      }
+    ],
+    "source_file": "Donlon_VerticalStructure.xml"
+  },
+  "1b54b2d6-a5ff-4e57-94c2-f4047a381c64": {
+    "family": "AirportHeliport",
+    "gml_id": "uuid.1b54b2d6-a5ff-4e57-94c2-f4047a381c64",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "EADD",
+        "end_indeterminate": "unknown",
+        "gml_id": "AHP_EADD",
+        "hrefs": [
+          "urn:uuid:1e1bdf59-3dd6-4f96-9166-e6095e7231fc",
+          "urn:uuid:709c64da-44e4-47c7-9d57-326a04cbdd3c",
+          "urn:uuid:709c64da-44e4-47c7-9d57-326a04cbdd3c",
+          "urn:uuid:94c1184f-44d9-4858-9728-87d351982204"
+        ],
+        "interpretation": "BASELINE",
+        "name": "DONLON/INTL.",
+        "operations": [],
+        "parts": 0,
+        "point": {
+          "elevation": "30",
+          "elevation_uom": "M",
+          "pos": "52.37166667 -31.94944444",
+          "srs_name": "urn:ogc:def:crs:EPSG::4326"
+        },
+        "sequence_number": "1",
+        "status_codes": [
+          "NORMAL"
+        ],
+        "timesheets": 0,
+        "type": "AH"
+      }
+    ],
+    "source_file": "Donlon_EADD_AirportHeliport.xml"
+  },
+  "21a13c9f-a8ff-4fdd-9aaa-5dbfd91514b8": {
+    "family": "Airspace",
+    "gml_id": "uuid.21a13c9f-a8ff-4fdd-9aaa-5dbfd91514b8",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "EAP2",
+        "end_indeterminate": "unknown",
+        "gml_id": "ASE_VAARDNOR_P",
+        "hrefs": [],
+        "interpretation": "BASELINE",
+        "name": "VAARDNOR",
+        "operations": [
+          "BASE"
+        ],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [
+          "ACTIVE"
+        ],
+        "timesheets": 0,
+        "type": "P",
+        "volume": {
+          "lower_limit": "GND",
+          "lower_reference": null,
+          "lower_uom": null,
+          "pos_list_numbers": 2,
+          "segment_elements": [
+            "CircleByCenterPoint"
+          ],
+          "srs_name": "urn:ogc:def:crs:EPSG::4326",
+          "upper_limit": "UNL",
+          "upper_reference": null,
+          "upper_uom": null
+        }
+      }
+    ],
+    "source_file": "Donlon_Airspace.xml"
+  },
+  "425f1f4b-ef0f-4d7b-8706-aee197f124ed": {
+    "family": "RunwayDirection",
+    "gml_id": "uuid.425f1f4b-ef0f-4d7b-8706-aee197f124ed",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "13",
+        "end_indeterminate": "unknown",
+        "gml_id": "RDN_EADD_FATO-13",
+        "hrefs": [
+          "urn:uuid:b4744933-6271-4534-874c-380596a4d3d8"
+        ],
+        "interpretation": "BASELINE",
+        "name": null,
+        "operations": [],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [
+          "NORMAL"
+        ],
+        "timesheets": 0,
+        "type": null
+      }
+    ],
+    "source_file": "Donlon_EADD_RunwayDirection.xml"
+  },
+  "4428d037-1cdf-433a-9bfa-d0857aaf448a": {
+    "family": "Runway",
+    "gml_id": "uuid.4428d037-1cdf-433a-9bfa-d0857aaf448a",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "09R/27L",
+        "end_indeterminate": "unknown",
+        "gml_id": "RWY_EADD_RWY-09R-27L",
+        "hrefs": [
+          "urn:uuid:1b54b2d6-a5ff-4e57-94c2-f4047a381c64"
+        ],
+        "interpretation": "BASELINE",
+        "name": null,
+        "operations": [],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "RWY"
+      }
+    ],
+    "source_file": "Donlon_EADD_Runway.xml"
+  },
+  "56ef6d9c-4951-4a0b-83d8-95e4836c63c8": {
+    "family": "VerticalStructure",
+    "gml_id": "uuid.56ef6d9c-4951-4a0b-83d8-95e4836c63c8",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": null,
+        "end_indeterminate": "unknown",
+        "gml_id": "OBST-EA-0010",
+        "hrefs": [],
+        "interpretation": "BASELINE",
+        "name": "OBST-EA-0010",
+        "operations": [],
+        "parts": 1,
+        "point": {
+          "elevation": "150",
+          "elevation_uom": "M",
+          "pos": "55.5185166666667 -24.62186944444445",
+          "srs_name": "urn:ogc:def:crs:EPSG::4326"
+        },
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "POLE"
+      }
+    ],
+    "source_file": "Donlon_VerticalStructure.xml"
+  },
+  "9e51668f-bf8a-4f5b-ba6e-27087972b9b8": {
+    "family": "Runway",
+    "gml_id": "uuid.9e51668f-bf8a-4f5b-ba6e-27087972b9b8",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "09L/27R",
+        "end_indeterminate": "unknown",
+        "gml_id": "RWY_EADD_RWY-09L-27R",
+        "hrefs": [
+          "urn:uuid:1b54b2d6-a5ff-4e57-94c2-f4047a381c64"
+        ],
+        "interpretation": "BASELINE",
+        "name": null,
+        "operations": [],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "RWY"
+      }
+    ],
+    "source_file": "Donlon_EADD_Runway.xml"
+  },
+  "b4744933-6271-4534-874c-380596a4d3d8": {
+    "family": "Runway",
+    "gml_id": "uuid.b4744933-6271-4534-874c-380596a4d3d8",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "13/31",
+        "end_indeterminate": "unknown",
+        "gml_id": "RWY_EADD_FATO-13-31",
+        "hrefs": [
+          "urn:uuid:1b54b2d6-a5ff-4e57-94c2-f4047a381c64"
+        ],
+        "interpretation": "BASELINE",
+        "name": null,
+        "operations": [],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "FATO"
+      }
+    ],
+    "source_file": "Donlon_EADD_Runway.xml"
+  },
+  "c6fd6993-78ea-4815-9089-6a711bf58a2c": {
+    "family": "RunwayDirection",
+    "gml_id": "uuid.c6fd6993-78ea-4815-9089-6a711bf58a2c",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "31",
+        "end_indeterminate": "unknown",
+        "gml_id": "RDN_EADD_FATO-31",
+        "hrefs": [
+          "urn:uuid:b4744933-6271-4534-874c-380596a4d3d8"
+        ],
+        "interpretation": "BASELINE",
+        "name": null,
+        "operations": [],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [
+          "NORMAL"
+        ],
+        "timesheets": 0,
+        "type": null
+      }
+    ],
+    "source_file": "Donlon_EADD_RunwayDirection.xml"
+  },
+  "d1806917-9ca1-4213-83b5-9fac67e4f508": {
+    "family": "Airspace",
+    "gml_id": "uuid.d1806917-9ca1-4213-83b5-9fac67e4f508",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "EADD",
+        "end_indeterminate": "unknown",
+        "gml_id": "ASE_DONLON_CTA",
+        "hrefs": [
+          "urn:uuid:204451c5-be5e-4eaf-8859-0a62b24a389d",
+          "urn:uuid:b936e0e4-2b58-404f-9d95-d95c421c50d2"
+        ],
+        "interpretation": "BASELINE",
+        "name": "DONLON CTA",
+        "operations": [
+          "BASE",
+          "UNION"
+        ],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [],
+        "timesheets": 0,
+        "type": "CTA",
+        "volume": {
+          "lower_limit": null,
+          "lower_reference": null,
+          "lower_uom": null,
+          "pos_list_numbers": 0,
+          "segment_elements": [],
+          "srs_name": null,
+          "upper_limit": null,
+          "upper_reference": null,
+          "upper_uom": null
+        }
+      }
+    ],
+    "source_file": "Donlon_Airspace.xml"
+  },
+  "e0aaf66e-82dd-4c79-b333-d99efe04b99b": {
+    "family": "Navaid",
+    "gml_id": "uuid.e0aaf66e-82dd-4c79-b333-d99efe04b99b",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "AL",
+        "end_indeterminate": "unknown",
+        "gml_id": "NAV_NDB_AL_ALMA",
+        "hrefs": [
+          "urn:uuid:79c0d8ac-951a-427a-8516-9600a4e6adfb"
+        ],
+        "interpretation": "BASELINE",
+        "name": "ALMA",
+        "operations": [],
+        "parts": 0,
+        "point": {
+          "elevation": "45",
+          "elevation_uom": "M",
+          "pos": "41.08000000 -41.80166667",
+          "srs_name": "urn:ogc:def:crs:EPSG::4326"
+        },
+        "sequence_number": "1",
+        "status_codes": [
+          "OPERATIONAL"
+        ],
+        "timesheets": 0,
+        "type": "NDB"
+      }
+    ],
+    "source_file": "Donlon_Navaid.xml"
+  },
+  "e10319da-34de-404f-a5e1-0ebfd3d07e34": {
+    "family": "Navaid",
+    "gml_id": "uuid.e10319da-34de-404f-a5e1-0ebfd3d07e34",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "ALM",
+        "end_indeterminate": "unknown",
+        "gml_id": "NAV_VOR_ALM_ALMA",
+        "hrefs": [
+          "urn:uuid:f24f6095-9b29-46b9-816b-5fabf4cc6151"
+        ],
+        "interpretation": "BASELINE",
+        "name": "ALMA",
+        "operations": [],
+        "parts": 0,
+        "point": {
+          "elevation": "45",
+          "elevation_uom": "M",
+          "pos": "41.08000000 -41.80166667",
+          "srs_name": "urn:ogc:def:crs:EPSG::4326"
+        },
+        "sequence_number": "1",
+        "status_codes": [
+          "OPERATIONAL"
+        ],
+        "timesheets": 0,
+        "type": "VOR"
+      }
+    ],
+    "source_file": "Donlon_Navaid.xml"
+  },
+  "ecf4941f-21c8-4a47-af12-a333d1744e54": {
+    "family": "Airspace",
+    "gml_id": "uuid.ecf4941f-21c8-4a47-af12-a333d1744e54",
+    "slices": [
+      {
+        "begin_position": "2025-11-01T00:00:00Z",
+        "correction_number": "0",
+        "designator": "EAD21A",
+        "end_indeterminate": "unknown",
+        "gml_id": "ASE_D_EAD21A_ECLIPTA1",
+        "hrefs": [],
+        "interpretation": "BASELINE",
+        "name": "ECLIPTA1",
+        "operations": [
+          "BASE"
+        ],
+        "parts": 0,
+        "sequence_number": "1",
+        "status_codes": [
+          "AVBL_FOR_ACTIVATION"
+        ],
+        "timesheets": 0,
+        "type": "D",
+        "volume": {
+          "lower_limit": "200",
+          "lower_reference": "STD",
+          "lower_uom": "FL",
+          "pos_list_numbers": 10,
+          "segment_elements": [
+            "GeodesicString"
+          ],
+          "srs_name": "urn:ogc:def:crs:EPSG::4326",
+          "upper_limit": "300",
+          "upper_reference": "STD",
+          "upper_uom": "FL"
+        }
+      }
+    ],
+    "source_file": "Donlon_Airspace.xml"
+  }
+}

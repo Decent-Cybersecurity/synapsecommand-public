@@ -1,0 +1,218 @@
+{
+  "what_this_is": "Record of the aixm52 fixtures: SHA-256 and byte count of every fixture file, written 2026-09-21 by adapter-expansion phase 6 (`spec/build_fixtures.py --pin`). The normative schema closure itself is held OUTSIDE the repository (normative_binding `aixm52`, xsd_pin.json there, made offline-resolvable by its OASIS catalog; decision D2) and is not mirrored here. Every fixture is written by spec/build_fixtures.py (`--check` CURRENT), which is why no independent/ directory exists: no independent AIXM 5.2 data set was pinned in Phase 0 (record: Remaining gaps).",
+  "adapter": "aixm52",
+  "format": "AIXM 5.2 (EUROCONTROL & FAA, schema release 5.2.0, 17 January 2025)",
+  "schema_binding": "SYNAPSE_CDM_AIXM52_XSD_DIR (normative_binding.resolve); entry aixm-5.2.0/message/AIXM_BasicMessage.xsd; target namespace http://www.aixm.aero/schema/5.2; XML_CATALOG_FILES=<dir>/catalog.xml for the OGC/W3C imports",
+  "digital_notam": "None on 5.2 — no Event schema targets the 5.2 namespace and the publisher states the Digital NOTAM specifications are based on AIXM 5.1.1 (aixm.aero/page/aixm-52, 2026-09-20; decision D3); the adapter declares limitation digital-notam-not-available and pins no scenario profile.",
+  "documents_consulted": {
+    "AIXM Temporality Concept 1.1 (AIXM CCB, 06 FEB 2019, for AIXM 5.1.1)": {
+      "url": "https://aixm.aero/sites/default/files/imce/AIXM511/aixm_temporality_1.1.pdf",
+      "sha256": "609634808dfe5b449cb485595a7f622f134861f8ef27c924b9063fe4603e26fc",
+      "sections_used": "4.2 (correction / valid / active TimeSlice), 4.3 TS_001-TS_020, 4.4.1 (begin included, end excluded), 4.4.2 (indeterminate end), 4.4.6.1 (delta: absent = unchanged, nil = withdrawn), 4.4.7 (schedules), 4.4.8 (cancellation with nilReason inapplicable)"
+    },
+    "AIXM Feature Identification and Reference 1.0 (29 APR 2011)": {
+      "url": "https://aixm.aero/sites/default/files/imce/AIXM51/aixm_feature_identification_and_reference-1.0.pdf",
+      "sha256": "9df8bf1b8a10d10cb43a332db10d9152f36c9d0f1d5f9d90d040a8240dfc2dd4",
+      "sections_used": "2.1-2.2 (gml:identifier is the UUID), 3.2 (concrete local #id), 3.3 (concrete external URL), 3.4.1 (urn:uuid), 3.4.2 (natural keys)"
+    },
+    "OGC 12-028r1 GML profile for aviation (2016-03-24)": {
+      "sections_used": "6.2-6.4 (srsName, axis order, inheritance), 8.2.6 (ring orientation)",
+      "held_at": "normative directory _downloads/gmlprofile/ (Phase 0 pin)"
+    },
+    "AIXM 5.1.1 UML documentation (aixm.aero AIXM511HTML)": {
+      "pages_used": "Class_ElevatedPoint (elevation: 'measured from Mean Sea Level (MSL)'), Class_AirspaceVolume, Class_VerticalStructurePart, DataType_CodeVerticalReferenceType (SFC = AGL, MSL, W84 = WGS84 ellipsoid, STD = standard atmosphere), DataType_UomDistanceVerticalType (FT, M, FL, SM)"
+    },
+    "dnotam": "Digital NOTAM Event Schema 2.0.m (aixm.aero/schema/5.1.1/event/version_5.1.1-m, June 2025) with the AIXM 5.1.1 closure, through SYNAPSE_CDM_DNOTAM_XSD_DIR; Digital NOTAM Specification 2.0 (DRAFT) pages 220791360 RWY.CLS v30, 220791511 ATSA.ACT v35, 220791162 SAA.ACT v57, 220791463 NAV.UNS v35, 220791154 Event update or cancellation v7, 220790884 Usage limitation and closure scenarios; AIXM Temporality Concept 1.1 §3.6, §4.4.1–4.4.8, TS_005–TS_020",
+    "AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025)": {
+      "held_at": "normative directory aixm52/ (Phase 0 pin; xsd_pin.json records the package SHA-256 7848e868… and the on-line copies' agreement)",
+      "sections_used": "AIXM_Features.xsd: AirspacePropertyGroup, AirportHeliportPropertyGroup, RunwayPropertyGroup, RunwayDirectionPropertyGroup, NavaidPropertyGroup, VerticalStructurePropertyGroup, VerticalStructurePartPropertyGroup, AirspaceVolumePropertyGroup, ElevatedPointPropertyGroup, DMEPropertyGroup, TaxiwayPropertyGroup, AirportHeliportResponsibilityOrganisationPropertyGroup; AIXM_AbstractGML_ObjectTypes.xsd: AbstractAIXMObjectType (gml:identifier admitted); AIXM_DataTypes.xsd: CodeTimeReferenceType, CodeSegmentedCircleType, CodeRunwayApproachGuidanceType, CodeAircraftFieldLengthType, CodeAircraftWingspanClassType, CodeDataAssessmentStatusType, ValSlopeType, TextNameType (verticalDatum), CodeMilitaryOperationsType, CodeTaxiwayType"
+    },
+    "AIXM 5.1.1 -> 5.2 structural diff (normative directory _tools/aixm_family_diff.py, Phase 0)": {
+      "held_at": "normative directory aixm52/xsd_pin.json, field structural_differences_from_5_1_1; the implementation record's Source pins table",
+      "sections_used": "the per-family ADDED / REMOVED / RETYPED lists the adapter's ADDED_IN_52 / REMOVED_IN_52 tables restate and tests/test_cdm_aixm52_adapter.py holds to both schemas"
+    }
+  },
+  "files": {
+    "README.md": {
+      "sha256": "53bbef69974dbedebcfe82a44c921a6600e72cc9fd05c67ea3196e854881c08c",
+      "bytes": 10712
+    },
+    "airport_runway_navaid.parsed.json": {
+      "sha256": "b1aa76473380dd87b8e7b67d1d5df25f8a762af0a6b6488929db875667466d54",
+      "bytes": 9463
+    },
+    "airport_runway_navaid.xml": {
+      "sha256": "ec8289cff6cf938861e7dd1737b3e124d1f97190751eeb75f0674396fd7327a3",
+      "bytes": 11014
+    },
+    "airspace_baseline_polygon.parsed.json": {
+      "sha256": "e1a25c5dd2e96d5d0541c5c4e52b6cf93b2e53943f9dd5828b0282fc889b318c",
+      "bytes": 4597
+    },
+    "airspace_baseline_polygon.xml": {
+      "sha256": "44f2845fd4f6722e37474fdee0293dd0ba995f89e21a30c6563c8ccd7ee15891",
+      "bytes": 5714
+    },
+    "airspace_deltas_same_feature.parsed.json": {
+      "sha256": "27cf5199038e3d1aa2016d9a352f2d2466b0ad1bf2b81f7eb48c517808447a49",
+      "bytes": 2497
+    },
+    "airspace_deltas_same_feature.xml": {
+      "sha256": "273011dea85a838cbc572abe3a6772222f858e617350c4f90644f961e0a74859",
+      "bytes": 3519
+    },
+    "airspace_hole_crs84_snapshot.parsed.json": {
+      "sha256": "87e4e8a6a94efe4470d430d3560b5da2e3366b0ec0c6ab5f9e02899dfeb3f33f",
+      "bytes": 3515
+    },
+    "airspace_hole_crs84_snapshot.xml": {
+      "sha256": "059ee771a007e67ad8b71e3376401be2122ad2a2147f94d05f04c1c914898808",
+      "bytes": 4611
+    },
+    "cases/axis_order_crs84.xml": {
+      "sha256": "62a91be2d482ad8a7d06bef5c807987d87c7bdc222d4d99c01dc88d25ab5109b",
+      "bytes": 3338
+    },
+    "cases/axis_order_epsg4326.xml": {
+      "sha256": "4f9583fbbd399daa24ef9ac37ec67ed444d975aa619351018a330475c7738e58",
+      "bytes": 3334
+    },
+    "cases/baseline_with_time_instant_ts001.xml": {
+      "sha256": "40012877ddba7dcf6af3cd74b102505f783488bbc86c461163ba13d01c4de875",
+      "bytes": 1772
+    },
+    "cases/composite_and_cyclic_contributors.xml": {
+      "sha256": "767778b3f1a7552169baacc35b7cc539516ad7c0429efc26ecfcaa39d4e916df",
+      "bytes": 4872
+    },
+    "cases/interior_ring_of_curves.xml": {
+      "sha256": "c2ac36efeaedde0ff507e272f93c2e7568bacf3c95fb8f137b13ba022b9673ff",
+      "bytes": 4013
+    },
+    "cases/nil_absent_withdrawn.xml": {
+      "sha256": "52b50db85b3d3f8a48d852f254dea2934822e7334108ba1350026e203b21293c",
+      "bytes": 3361
+    },
+    "cases/other_feature_location_availability.xml": {
+      "sha256": "7c4cce6809811d44b34e06e9f84fd1d223a9d3ce34dc3b77720baaa46a78cd53",
+      "bytes": 3953
+    },
+    "cases/reference_forms.xml": {
+      "sha256": "a12e743f4b326edaafe5ddeea505c7cd083e4ee52ff49d9814ee9c43ec60e94d",
+      "bytes": 4794
+    },
+    "cases/vertical_references.xml": {
+      "sha256": "f79fbce421cd02ecde0084ab42bc4873619977bda3b83ea053d43f73114d265f",
+      "bytes": 33832
+    },
+    "counterexamples/README.md": {
+      "sha256": "be0d62c82c0dd97d999a2c636a7883a2bd1c1fb0397e673ef13e0699b1bc5492",
+      "bytes": 3004
+    },
+    "counterexamples/foreign_extension_element.xml": {
+      "sha256": "46f28cdae34c2d24d049c91127f28ae078bda73ad49eb07cbbaf4900d5170327",
+      "bytes": 6026
+    },
+    "counterexamples/missing_interpretation.xml": {
+      "sha256": "7c2e9b81a904207690b30f8ab02752ba6bb8b4c0a194a3fb5d44b4c1b5fa7e0f",
+      "bytes": 5729
+    },
+    "counterexamples/properties_out_of_order.xml": {
+      "sha256": "9b8fe0ba12f514a6f3152eed5e9cb3f943b7860261ab19b80fd68cfe29ccc7ec",
+      "bytes": 5766
+    },
+    "counterexamples/property_removed_in_5_2.xml": {
+      "sha256": "71c5f972466c719fba4e3a3e483c08ce20a3d0e35ea63ecfea0e06f9062376a8",
+      "bytes": 11195
+    },
+    "counterexamples/status_outside_enumeration.xml": {
+      "sha256": "70eb934e3845f6a1417996820859e0dc08cc656c034a372878fa8703859296df",
+      "bytes": 5773
+    },
+    "counterexamples/unknown_property_in_slice.xml": {
+      "sha256": "a7c9bd3b8f7854ec5f896e44c8e96cf0d839a683a24b89f67b6f9ec2023b4daa",
+      "bytes": 5834
+    },
+    "malformed/arc_by_centre_point_airspace.xml": {
+      "sha256": "ef4f5ac5ac413ac3afc3c5b308fed707803b56cb46b3fef6ba2c469e12ec77d5",
+      "bytes": 5993
+    },
+    "malformed/billion_laughs_dtd.xml": {
+      "sha256": "7932c87c12a7a8d6599a86b0c89b7493f57290d16965ffc84f5566eb86bb485b",
+      "bytes": 5874
+    },
+    "malformed/cancelled_slice_without_as_of.xml": {
+      "sha256": "ccc3fc41df82d664568fdae62d741bbd98ff1b4f8fd40da290d39e101a4dbb58",
+      "bytes": 5272
+    },
+    "malformed/circle_by_centre_point_airspace.xml": {
+      "sha256": "d8b73ebf3b2ee78b2e6f7761e8a3af3f0c26d0ab7b6c1734b10c583bd7e8438d",
+      "bytes": 5842
+    },
+    "malformed/end_before_begin.xml": {
+      "sha256": "0287f22b4b2bd7854555fb301da6a86345f08f242728385e1bbd18c7d77257ac",
+      "bytes": 5782
+    },
+    "malformed/feature_without_identifier.xml": {
+      "sha256": "7d2758d43b99d8beb469cd20c978c48a14dc497f0cf4ad1df0b9444e16851aaa",
+      "bytes": 5673
+    },
+    "malformed/no_feature_member.xml": {
+      "sha256": "481cc0b508fc09769b8f2368eac7c2095e93c30ed8a3ed56018e9920479286d9",
+      "bytes": 591
+    },
+    "malformed/non_integer_sequence_number.xml": {
+      "sha256": "2c0a5f0761ef1ab42c658023e6edbad6754d15516e17339cf490937312c0f214",
+      "bytes": 5769
+    },
+    "malformed/three_dimensional_positions.xml": {
+      "sha256": "8c24fc90ece950efe9a5df45f536a1b8a1d020997f5f99f1901fb146ee458a55",
+      "bytes": 5797
+    },
+    "malformed/truncated_document.xml": {
+      "sha256": "f06f4ec53ed01ba91e4629752944494edf83b15f39bcf248b86aa9369e410aa0",
+      "bytes": 4500
+    },
+    "malformed/unclosed_ring.xml": {
+      "sha256": "35c9829f8923b17cc196cf0670b06acb6d1daedb91673ff912f6dccd257b19a9",
+      "bytes": 5773
+    },
+    "malformed/unknown_interpretation.xml": {
+      "sha256": "479c5ae37c7459ab458c35c3c87d7c6a10951d5d6cb6d6390233a24767f9b4de",
+      "bytes": 5772
+    },
+    "malformed/unresolved_entity_reference.xml": {
+      "sha256": "2097f2e8153940aa1c593cd547612d31e7c0e5c886d437eff06853ea9f8b0648",
+      "bytes": 5708
+    },
+    "malformed/unsupported_crs_epsg3857.xml": {
+      "sha256": "d6e639e5fdc54909eb721b8d79012318d75092349269116d493bf95c364855e9",
+      "bytes": 5769
+    },
+    "malformed/wrong_namespace_5_1_1.xml": {
+      "sha256": "bfe31e30e695377b49b88fb30aa89bb339a77a45766dbd3935d852894aab99c1",
+      "bytes": 5828
+    },
+    "malformed/wrong_root_element.xml": {
+      "sha256": "73a5fb30e5c12f8bd61e2238074dc66d8e4d01c873e6c3326d78c2088b5c1cae",
+      "bytes": 5764
+    },
+    "malformed/xinclude_element.xml": {
+      "sha256": "cc89fe87a3bbc2dfc1c313005fb54b45186c1589d879759ab2addc92c9818262",
+      "bytes": 5807
+    },
+    "spec/build_fixtures.py": {
+      "sha256": "269df9534ebc506390c1c5edfab38350e46f76ca717d8b695e2aff95e64d4b34",
+      "bytes": 50394
+    },
+    "vertical_structure_two_parts.parsed.json": {
+      "sha256": "384d08d256095383ebb6847cabc22a5bf7dbfef016bab16f801e7f373d83237a",
+      "bytes": 2828
+    },
+    "vertical_structure_two_parts.xml": {
+      "sha256": "92d59ecb9efed4288f9dcaa75368bc557442633b2a85b5c1e43f48d9a42fcfab",
+      "bytes": 3525
+    }
+  },
+  "file_count": 45
+}

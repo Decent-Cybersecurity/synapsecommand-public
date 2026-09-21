@@ -1,0 +1,1334 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.1,
+        57.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "aa756262-13d7-5f2a-b1ad-468527c7822d",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "crs84_points",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 100000,
+              "table_name": "crs84_points"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "elevations",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4979,
+              "table_name": "elevations"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "crs84_points"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "elevations"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "definition_12_063",
+              "definition": "http://www.geopackage.org/spec120/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            },
+            {
+              "column_name": "epoch",
+              "definition": "http://www.geopackage.org/spec/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 100000,
+              "table_name": "crs84_points",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4979,
+              "table_name": "elevations",
+              "z": 1
+            }
+          ],
+          "inventory": {
+            "included": [
+              "crs84_points",
+              "elevations"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "OGC:CRS84",
+                "authority": [
+                  "OGC",
+                  "CRS84"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 100000
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "crs84_points",
+              "m": 0,
+              "name": "crs84_points",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 100000,
+              "z": 0
+            },
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4979",
+                "authority": [
+                  "EPSG",
+                  "4979"
+                ],
+                "datum": "World Geodetic System 1984",
+                "definition_column": "definition_12_063",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-3d",
+                "root": "GEODCRS",
+                "srs_id": 4979
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "elevations",
+              "m": 0,
+              "name": "elevations",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4979,
+              "z": 1
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],ID[\"EPSG\",4326]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,3],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1]],SCOPE[\"Geodesy. Navigation and positioning using GPS satellite system.\"],AREA[\"World.\"],BBOX[-90,-180,90,180],ID[\"EPSG\",4979]]",
+              "description": null,
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4979,
+              "srs_id": 4979,
+              "srs_name": "WGS 84"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84 (CRS84)\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH],AUTHORITY[\"OGC\",\"CRS84\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84 (CRS84)\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic longitude (Lon)\",east,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic latitude (Lat)\",north,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],SCOPE[\"unknown\"],AREA[\"World\"],BBOX[-90,-180,90,180],ID[\"OGC\",\"CRS84\"]]",
+              "description": null,
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 100000,
+              "srs_id": 100000,
+              "srs_name": "WGS 84 (CRS84)"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 126976,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE P1"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 29,
+            "srs_id": 100000,
+            "wkb_octets": 21,
+            "wkb_offset": 8
+          },
+          "layer": "crs84_points",
+          "pk": 1
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "1",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 2 layer(s) included ['crs84_points', 'elevations'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'crs84_points' srs_id 100000 accepted as OGC:CRS84 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'crs84_points' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'crs84_points', primary key 1); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "crs84_points/1",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.2,
+        57.1
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "7f5890c2-3fe2-5d71-9d06-fdcf0956d71e",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "crs84_points",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 100000,
+              "table_name": "crs84_points"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "elevations",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4979,
+              "table_name": "elevations"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "crs84_points"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "elevations"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "definition_12_063",
+              "definition": "http://www.geopackage.org/spec120/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            },
+            {
+              "column_name": "epoch",
+              "definition": "http://www.geopackage.org/spec/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 100000,
+              "table_name": "crs84_points",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4979,
+              "table_name": "elevations",
+              "z": 1
+            }
+          ],
+          "inventory": {
+            "included": [
+              "crs84_points",
+              "elevations"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "OGC:CRS84",
+                "authority": [
+                  "OGC",
+                  "CRS84"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 100000
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "crs84_points",
+              "m": 0,
+              "name": "crs84_points",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 100000,
+              "z": 0
+            },
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4979",
+                "authority": [
+                  "EPSG",
+                  "4979"
+                ],
+                "datum": "World Geodetic System 1984",
+                "definition_column": "definition_12_063",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-3d",
+                "root": "GEODCRS",
+                "srs_id": 4979
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "elevations",
+              "m": 0,
+              "name": "elevations",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4979,
+              "z": 1
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],ID[\"EPSG\",4326]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,3],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1]],SCOPE[\"Geodesy. Navigation and positioning using GPS satellite system.\"],AREA[\"World.\"],BBOX[-90,-180,90,180],ID[\"EPSG\",4979]]",
+              "description": null,
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4979,
+              "srs_id": 4979,
+              "srs_name": "WGS 84"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84 (CRS84)\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH],AUTHORITY[\"OGC\",\"CRS84\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84 (CRS84)\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic longitude (Lon)\",east,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic latitude (Lat)\",north,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],SCOPE[\"unknown\"],AREA[\"World\"],BBOX[-90,-180,90,180],ID[\"OGC\",\"CRS84\"]]",
+              "description": null,
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 100000,
+              "srs_id": 100000,
+              "srs_name": "WGS 84 (CRS84)"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 126976,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE P2"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 29,
+            "srs_id": 100000,
+            "wkb_octets": 21,
+            "wkb_offset": 8
+          },
+          "layer": "crs84_points",
+          "pk": 2
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "2",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 2 layer(s) included ['crs84_points', 'elevations'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'crs84_points' srs_id 100000 accepted as OGC:CRS84 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'crs84_points' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'crs84_points', primary key 2); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "crs84_points/2",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.1,
+        57.0,
+        100.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "28c8e5d4-1411-58fc-aafc-10da7263fd36",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "crs84_points",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 100000,
+              "table_name": "crs84_points"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "elevations",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4979,
+              "table_name": "elevations"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "crs84_points"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "elevations"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "definition_12_063",
+              "definition": "http://www.geopackage.org/spec120/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            },
+            {
+              "column_name": "epoch",
+              "definition": "http://www.geopackage.org/spec/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 100000,
+              "table_name": "crs84_points",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4979,
+              "table_name": "elevations",
+              "z": 1
+            }
+          ],
+          "inventory": {
+            "included": [
+              "crs84_points",
+              "elevations"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "OGC:CRS84",
+                "authority": [
+                  "OGC",
+                  "CRS84"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 100000
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "crs84_points",
+              "m": 0,
+              "name": "crs84_points",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 100000,
+              "z": 0
+            },
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4979",
+                "authority": [
+                  "EPSG",
+                  "4979"
+                ],
+                "datum": "World Geodetic System 1984",
+                "definition_column": "definition_12_063",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-3d",
+                "root": "GEODCRS",
+                "srs_id": 4979
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "elevations",
+              "m": 0,
+              "name": "elevations",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4979,
+              "z": 1
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],ID[\"EPSG\",4326]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,3],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1]],SCOPE[\"Geodesy. Navigation and positioning using GPS satellite system.\"],AREA[\"World.\"],BBOX[-90,-180,90,180],ID[\"EPSG\",4979]]",
+              "description": null,
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4979,
+              "srs_id": 4979,
+              "srs_name": "WGS 84"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84 (CRS84)\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH],AUTHORITY[\"OGC\",\"CRS84\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84 (CRS84)\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic longitude (Lon)\",east,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic latitude (Lat)\",north,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],SCOPE[\"unknown\"],AREA[\"World\"],BBOX[-90,-180,90,180],ID[\"OGC\",\"CRS84\"]]",
+              "description": null,
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 100000,
+              "srs_id": 100000,
+              "srs_name": "WGS 84 (CRS84)"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 126976,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE MAST"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XYZ",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 37,
+            "srs_id": 4979,
+            "wkb_octets": 29,
+            "wkb_offset": 8
+          },
+          "layer": "elevations",
+          "pk": 1
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "1",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 2 layer(s) included ['crs84_points', 'elevations'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'elevations' srs_id 4979 accepted as EPSG:4979 by its definition_12_063 (GEODCRS, datum 'World Geodetic System 1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'elevations' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'elevations', primary key 1); equal primary keys in two layers are two objects",
+        "z: carried as the third coordinate element; gpkg_geometry_columns.z = 1 (mandatory) for layer 'elevations'; the SRS (EPSG:4979) declares its third axis as ellipsoidal height, up, in metres \u2014 carried as sent, not converted"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "elevations/1",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        24.2,
+        57.0,
+        0.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "443c3fe3-1e17-5076-9d13-eb625f227995",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "crs84_points",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.1,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 100000,
+              "table_name": "crs84_points"
+            },
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "elevations",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 24.2,
+              "max_y": 57.0,
+              "min_x": 24.1,
+              "min_y": 57.0,
+              "srs_id": 4979,
+              "table_name": "elevations"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "crs84_points"
+            },
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "elevations"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            },
+            {
+              "column_name": "definition_12_063",
+              "definition": "http://www.geopackage.org/spec120/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            },
+            {
+              "column_name": "epoch",
+              "definition": "http://www.geopackage.org/spec/#extension_crs_wkt",
+              "extension_name": "gpkg_crs_wkt_1_1",
+              "scope": "read-write",
+              "table_name": "gpkg_spatial_ref_sys"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 100000,
+              "table_name": "crs84_points",
+              "z": 0
+            },
+            {
+              "column_name": "geom",
+              "geometry_type_name": "POINT",
+              "m": 0,
+              "srs_id": 4979,
+              "table_name": "elevations",
+              "z": 1
+            }
+          ],
+          "inventory": {
+            "included": [
+              "crs84_points",
+              "elevations"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "OGC:CRS84",
+                "authority": [
+                  "OGC",
+                  "CRS84"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 100000
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "crs84_points",
+              "m": 0,
+              "name": "crs84_points",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 100000,
+              "z": 0
+            },
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "POINT",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4979",
+                "authority": [
+                  "EPSG",
+                  "4979"
+                ],
+                "datum": "World Geodetic System 1984",
+                "definition_column": "definition_12_063",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-3d",
+                "root": "GEODCRS",
+                "srs_id": 4979
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "POINT",
+              "identifier": "elevations",
+              "m": 0,
+              "name": "elevations",
+              "primary_key": "fid",
+              "row_count": 2,
+              "srs_id": 4979,
+              "z": 1
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],ID[\"EPSG\",4326]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            },
+            {
+              "definition": "undefined",
+              "definition_12_063": "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,3],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic longitude (Lon)\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1]],SCOPE[\"Geodesy. Navigation and positioning using GPS satellite system.\"],AREA[\"World.\"],BBOX[-90,-180,90,180],ID[\"EPSG\",4979]]",
+              "description": null,
+              "epoch": null,
+              "organization": "EPSG",
+              "organization_coordsys_id": 4979,
+              "srs_id": 4979,
+              "srs_name": "WGS 84"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84 (CRS84)\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Longitude\",EAST],AXIS[\"Latitude\",NORTH],AUTHORITY[\"OGC\",\"CRS84\"]]",
+              "definition_12_063": "GEODCRS[\"WGS 84 (CRS84)\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"geodetic longitude (Lon)\",east,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],AXIS[\"geodetic latitude (Lat)\",north,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],SCOPE[\"unknown\"],AREA[\"World\"],BBOX[-90,-180,90,180],ID[\"OGC\",\"CRS84\"]]",
+              "description": null,
+              "epoch": null,
+              "organization": "NONE",
+              "organization_coordsys_id": 100000,
+              "srs_id": 100000,
+              "srs_name": "WGS 84 (CRS84)"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 126976,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE SHORE"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XYZ",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 37,
+            "srs_id": 4979,
+            "wkb_octets": 29,
+            "wkb_offset": 8
+          },
+          "layer": "elevations",
+          "pk": 2
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "2",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 2 layer(s) included ['crs84_points', 'elevations'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'elevations' srs_id 4979 accepted as EPSG:4979 by its definition_12_063 (GEODCRS, datum 'World Geodetic System 1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'elevations' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'elevations', primary key 2); equal primary keys in two layers are two objects",
+        "z: carried as the third coordinate element; gpkg_geometry_columns.z = 1 (mandatory) for layer 'elevations'; the SRS (EPSG:4979) declares its third axis as ellipsoidal height, up, in metres \u2014 carried as sent, not converted"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "elevations/2",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

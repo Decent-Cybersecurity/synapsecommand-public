@@ -1,0 +1,216 @@
+[
+  {
+    "event_id": "75d435a2-906b-5462-a74f-c28202fd6195",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        24.74,
+        58.521
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-21T06:40:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "content_count": 2,
+        "content_index": 0,
+        "contract": "c2sim-report/1",
+        "duration": "P00Y00M00DT00H00M30S",
+        "duration_seconds": 30,
+        "from_sender": "c2510000-0002-8000-8000-000000000002",
+        "health": [
+          {
+            "code": "MostlyOperational",
+            "form": "OperationalStatus",
+            "in_pinned_enumeration": true
+          },
+          {
+            "form": "Strength",
+            "strength_percentage": 88.0
+          }
+        ],
+        "kind": "PositionReportContent",
+        "location": {
+          "altitude_msl_m": 48.0,
+          "form": "GeodeticCoordinate",
+          "latitude": 58.521,
+          "longitude": 24.74
+        },
+        "message": {
+          "communicative_act": "Inform",
+          "conversation_id": "c2510000-0000-8000-8000-00000000c003",
+          "from_sending_system": "EXERCISE-SIM-BLUE",
+          "message_id": "c2510000-0000-8000-8000-00000000a004",
+          "protocol": "SISO-STD-C2SIM",
+          "protocol_matches_pin": true,
+          "protocol_version": "1.0.0",
+          "sending_time": "2026-09-21T06:40:05Z",
+          "to_receiving_system": "EXERCISE-C2"
+        },
+        "observations": [],
+        "report_id": "c2510000-0009-8000-8000-000000000001",
+        "reporting_entity": "c2510000-0002-8000-8000-000000000002",
+        "subject_entity": "c2510000-0002-8000-8000-000000000002",
+        "time_of_observation": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-21T06:40:00Z",
+          "resolution": "stated",
+          "resolved": "2026-09-21T06:40:00.000Z"
+        },
+        "to_receiver": "c2510000-0002-8000-8000-000000000001"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2364db41-f0a6-5d1d-af06-81d6f15c03f0"
+    ],
+    "residual": {
+      "data": {
+        "C2SIMHeader": {
+          "CommunicativeActTypeCode": "Inform",
+          "ConversationID": "c2510000-0000-8000-8000-00000000c003",
+          "FromSendingSystem": "EXERCISE-SIM-BLUE",
+          "MessageID": "c2510000-0000-8000-8000-00000000a004",
+          "Protocol": "SISO-STD-C2SIM",
+          "ProtocolVersion": "1.0.0",
+          "SendingTime": {
+            "IsoDateTime": "2026-09-21T06:40:05Z"
+          },
+          "ToReceivingSystem": "EXERCISE-C2"
+        }
+      },
+      "namespace": "C2SIM"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "c2sim",
+      "adapter_version": "1.0.0",
+      "format_name": "C2SIM",
+      "format_version": "SISO-STD-019-2020 v1.0 (Core + SMX) with SISO-STD-020-2020 (LOX); XML schema C2SIMArtifacts v1.0.1",
+      "observed_at": "2026-09-21T06:40:05.000Z",
+      "original_id": "c2510000-0000-8000-8000-00000000a004",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "C2SIM",
+      "transformations": [
+        "observed_at: TimeOfObservation (DateTime, stated)",
+        "event_id: derived from ReportID and the content's index \u2014 the report's identity, distinct from the subject's",
+        "geometry: the reported point as [lon, lat]; MSL/AGL heights stay typed in payload.c2sim.location, never on the GeoJSON position"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0009-8000-8000-000000000001#0",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  },
+  {
+    "event_id": "4fb3011f-4bb6-5619-8c5b-9e8b8b4a9a2e",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        24.74,
+        58.514
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-21T06:40:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "content_count": 2,
+        "content_index": 1,
+        "contract": "c2sim-report/1",
+        "from_sender": "c2510000-0002-8000-8000-000000000002",
+        "health": [],
+        "kind": "PositionReportContent",
+        "location": {
+          "altitude_agl_m": 0.0,
+          "form": "GeodeticCoordinate",
+          "latitude": 58.514,
+          "longitude": 24.74
+        },
+        "message": {
+          "communicative_act": "Inform",
+          "conversation_id": "c2510000-0000-8000-8000-00000000c003",
+          "from_sending_system": "EXERCISE-SIM-BLUE",
+          "message_id": "c2510000-0000-8000-8000-00000000a004",
+          "protocol": "SISO-STD-C2SIM",
+          "protocol_matches_pin": true,
+          "protocol_version": "1.0.0",
+          "sending_time": "2026-09-21T06:40:05Z",
+          "to_receiving_system": "EXERCISE-C2"
+        },
+        "observations": [],
+        "report_id": "c2510000-0009-8000-8000-000000000001",
+        "reporting_entity": "c2510000-0002-8000-8000-000000000002",
+        "subject_entity": "c2510000-0003-8000-8000-000000000002",
+        "time_of_observation": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-21T06:40:00Z",
+          "resolution": "stated",
+          "resolved": "2026-09-21T06:40:00.000Z"
+        },
+        "to_receiver": "c2510000-0002-8000-8000-000000000001"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "54afff41-b29b-54df-95c6-7bab633566b1"
+    ],
+    "residual": {
+      "data": {
+        "C2SIMHeader": {
+          "CommunicativeActTypeCode": "Inform",
+          "ConversationID": "c2510000-0000-8000-8000-00000000c003",
+          "FromSendingSystem": "EXERCISE-SIM-BLUE",
+          "MessageID": "c2510000-0000-8000-8000-00000000a004",
+          "Protocol": "SISO-STD-C2SIM",
+          "ProtocolVersion": "1.0.0",
+          "SendingTime": {
+            "IsoDateTime": "2026-09-21T06:40:05Z"
+          },
+          "ToReceivingSystem": "EXERCISE-C2"
+        }
+      },
+      "namespace": "C2SIM"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "c2sim",
+      "adapter_version": "1.0.0",
+      "format_name": "C2SIM",
+      "format_version": "SISO-STD-019-2020 v1.0 (Core + SMX) with SISO-STD-020-2020 (LOX); XML schema C2SIMArtifacts v1.0.1",
+      "observed_at": "2026-09-21T06:40:05.000Z",
+      "original_id": "c2510000-0000-8000-8000-00000000a004",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "C2SIM",
+      "transformations": [
+        "observed_at: TimeOfObservation (DateTime, stated)",
+        "event_id: derived from ReportID and the content's index \u2014 the report's identity, distinct from the subject's",
+        "geometry: the reported point as [lon, lat]; MSL/AGL heights stay typed in payload.c2sim.location, never on the GeoJSON position"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0009-8000-8000-000000000001#1",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  }
+]

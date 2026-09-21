@@ -329,17 +329,36 @@ jobs:
         # The artefact is written into the checkout root and `.gitignore` names it: unignored, it
         # made `git status` dirty for the evidence step below, and every record in
         # evidence-2.1.2.tar.gz reads `source_commit: <sha>-dirty` for a file that changed nothing.
+        #
+        # **J LEFT `--require` ON 2026-09-21 (adapter expansion phase 7) AND IS HELD BELOW INSTEAD,
+        # PER ADAPTER, OFF THE DECLARATION.** `geojson` and `geopackage` translate formats that
+        # state no instant, emit no timestamp under the suite's fresh instances, and carry the
+        # structured limitation `no-source-time` that makes their J a DECLARED SKIP; `--all` is one
+        # invocation with one required set, and a required SKIP exits non-zero whatever its
+        # declaration (§19). So J is read from the artefact itself: PASS on every adapter, or a
+        # SKIP whose `declared_inapplicable` is true and whose declaration is that limitation —
+        # anything else refuses the artefact exactly as a required J would have. The same rule,
+        # on the same two adapters, is `tests/test_cdm_suite.py`'s sweep assertion.
         run: |
           set -euo pipefail
           version="$(python -c 'from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)')"
           python -m synapse_cdm.suite conformance run --all \
-            --require A,B,C,D,F,G,H,J,K,L,O --format json > "conformance-${version}.json"
+            --require A,B,C,D,F,G,H,K,L,O --format json > "conformance-${version}.json"
           python - "conformance-${version}.json" <<'PY'
           import json, sys
           d = json.load(open(sys.argv[1]))
           print(len(d["conformant"]), "of", len(d["adapters"]), "CONFORMANT")
           if len(d["conformant"]) != len(d["adapters"]):
               sys.exit("::error::a NON-CONFORMANT adapter in the sweep: " + ", ".join(sorted(set(d["adapters"]) - set(d["conformant"]))))
+          unheld = []
+          for name, report in d["adapters"].items():
+              j = report["checks"]["J"]
+              declared = j.get("declared_inapplicable") and (j.get("details") or {}).get("declaration") == "limitations[id=no-source-time]"
+              if j["verdict"] != "PASS" and not (j["verdict"] == "SKIP" and declared):
+                  unheld.append(f"{name}: J {j['verdict']}")
+          print("J: PASS or declared no-source-time SKIP on every adapter" if not unheld else "J unheld")
+          if unheld:
+              sys.exit("::error::J is required on every adapter that states an instant: " + ", ".join(unheld))
           PY
 
       - name: Evidence records for every adapter, and the bundle the Release carries

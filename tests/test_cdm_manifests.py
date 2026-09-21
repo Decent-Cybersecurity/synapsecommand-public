@@ -491,7 +491,12 @@ def test_a_published_binding_agrees_with_the_limitations_in_both_directions(path
     """Provisional in the field ⇔ "provisional" in a limitation. The model enforces ⇒; this is ⇐,
     so a limitation describing a provisional binding cannot sit beside `standard-encoding`."""
     meta = json.loads(path.read_text())["adapter"]
-    says = any("provisional" in limitation_text(line).lower() for line in meta["limitations"])
+    # A PUBLISHED limitation is a string or the structured form's dict — `geojson` (2026-09-20)
+    # is the first shipped adapter whose manifest carries the dict form, so the prose is read
+    # from `summary` there, which is what `manifest.limitation_text` reads off the model.
+    says = any("provisional" in (line["summary"] if isinstance(line, dict)
+                                 else limitation_text(line)).lower()
+               for line in meta["limitations"])
     declares = meta["binding"] == WireBinding.PROVISIONAL_INTERNAL_PROFILE.value
     assert says == declares, (
         f"{path.name}: binding {meta['binding']!r} and the limitations "

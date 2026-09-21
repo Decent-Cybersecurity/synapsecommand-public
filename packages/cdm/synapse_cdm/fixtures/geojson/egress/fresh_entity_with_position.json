@@ -1,0 +1,30 @@
+{
+  "object_kind": "entity",
+  "schema_version": "3.0.0",
+  "source": {
+    "system": "PLANNER",
+    "adapter": "planner_stub",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {
+      "system": "PLANNER",
+      "external_id": "FAC-EX-0002"
+    }
+  ],
+  "entity_id": "f1c70000-0016-8000-8000-000000000002",
+  "entity_type": "FACILITY",
+  "affiliation": "FRIENDLY",
+  "symbol": null,
+  "position": {
+    "lat": 56.9496,
+    "lon": 24.1052,
+    "alt_m": 8.0,
+    "position_source": "MANUAL"
+  },
+  "valid_from": "2026-04-29T06:00:00.000Z",
+  "attributes": {
+    "callsign": "EXERCISE-DEPOT"
+  }
+}

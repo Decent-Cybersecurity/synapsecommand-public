@@ -1,0 +1,713 @@
+{
+  "cancellation_without_baseline": {
+    "asserted_status": null,
+    "findings": [],
+    "history": [
+      [
+        "TEMPDELTA",
+        1,
+        "cancelled"
+      ]
+    ],
+    "operative": [],
+    "outcome": "unresolved",
+    "source_of_status": "none",
+    "status_state": "not stated",
+    "statuses": []
+  },
+  "demonstration": "AIXM 5.1.1 baseline + Digital NOTAM (RWY.CLS, ATSA.ACT) — published-rule processing with synapse_cdm.aixm_resolve; not planning, not deconfliction",
+  "documents": {
+    "atsa_act_baseline_and_activation.xml": {
+      "dnotam": {
+        "a1a40000-00d0-4000-8000-000000000003/TEMPDELTA/1/0": {
+          "assertion": "initial",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "ATSA.ACT"
+        },
+        "a1a40000-00e0-4000-8000-000000000002/BASELINE/1/0": {
+          "assertion": "initial",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "ATSA.ACT"
+        }
+      },
+      "slices": [
+        "a1a40000-00d0-4000-8000-000000000007/BASELINE/1/0",
+        "a1a40000-00e0-4000-8000-000000000002/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000003/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000003/TEMPDELTA/1/0"
+      ],
+      "validate_source": []
+    },
+    "cases/cancellation.xml": {
+      "dnotam": {
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0": {
+          "assertion": "initial",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/1": {
+          "assertion": "cancellation",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0": {
+          "assertion": "initial",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/1": {
+          "assertion": "cancellation",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        }
+      },
+      "slices": [
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0",
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/1",
+        "a1a40000-00d0-4000-8000-000000000002/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/1"
+      ],
+      "validate_source": [
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 0: unresolved reference concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)",
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 1: unresolved reference concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)"
+      ]
+    },
+    "corrections_out_of_order.xml": {
+      "dnotam": {
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0": {
+          "assertion": "initial",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/1": {
+          "assertion": "correction",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0": {
+          "assertion": "initial",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/1": {
+          "assertion": "termination",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        }
+      },
+      "slices": [
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/1",
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/1",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0"
+      ],
+      "validate_source": [
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 0: unresolved reference concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)",
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 1: unresolved reference concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)"
+      ]
+    },
+    "rwy_cls_baseline_and_closure.xml": {
+      "dnotam": {
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0": {
+          "assertion": "initial",
+          "role": "affected-feature",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0": {
+          "assertion": "initial",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        }
+      },
+      "slices": [
+        "a1a40000-00d0-4000-8000-000000000001/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000007/BASELINE/1/0",
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0"
+      ],
+      "validate_source": []
+    },
+    "unresolved_references.xml": {
+      "dnotam": {
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0": {
+          "assertion": "initial",
+          "role": "affected-feature",
+          "rule_findings": [
+            "event:theEvent 'urn:uuid:a1a40000-00e0-4000-8000-000000000099' is unresolved; the Event's scenario is not readable and no scenario rule is checked"
+          ],
+          "scenario": null
+        },
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0": {
+          "assertion": "initial",
+          "role": "event",
+          "rule_findings": [],
+          "scenario": "RWY.CLS"
+        }
+      },
+      "slices": [
+        "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0",
+        "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0"
+      ],
+      "validate_source": [
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 0: unresolved reference concernedAirspace -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000007' (urn-uuid)",
+        "member 0 <event:Event> a1a40000-00e0-4000-8000-000000000001 slice 0: unresolved reference concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)",
+        "member 1 <aixm:RunwayDirection> a1a40000-00d0-4000-8000-000000000002 slice 0: event:theEvent 'urn:uuid:a1a40000-00e0-4000-8000-000000000099' is unresolved; the Event's scenario is not readable and no scenario rule is checked",
+        "member 1 <aixm:RunwayDirection> a1a40000-00d0-4000-8000-000000000002 slice 0: unresolved reference extension[0].theEvent -> 'urn:uuid:a1a40000-00e0-4000-8000-000000000099' (urn-uuid)"
+      ]
+    }
+  },
+  "events": {
+    "atsa_act_baseline_and_activation.xml#a1a40000-00e0-4000-8000-000000000002": [
+      {
+        "as_of": "2026-03-12T04:00:00Z",
+        "history": [
+          [
+            1,
+            "future",
+            "initial"
+          ]
+        ],
+        "in_force": null,
+        "scenario": "ATSA.ACT",
+        "state": "future",
+        "version": "2.0"
+      },
+      {
+        "as_of": "2026-03-12T06:00:00Z",
+        "history": [
+          [
+            1,
+            "applied",
+            "initial"
+          ]
+        ],
+        "in_force": "a1a40000-00e0-4000-8000-000000000002/BASELINE/1/0",
+        "scenario": "ATSA.ACT",
+        "state": "active",
+        "version": "2.0"
+      }
+    ],
+    "cases/cancellation.xml#a1a40000-00e0-4000-8000-000000000001": [
+      {
+        "as_of": "2026-06-01T07:00:00Z",
+        "history": [
+          [
+            1,
+            "cancelled",
+            "cancellation"
+          ]
+        ],
+        "in_force": null,
+        "scenario": "RWY.CLS",
+        "state": "cancelled",
+        "version": "2.0"
+      }
+    ],
+    "corrections_out_of_order.xml#a1a40000-00e0-4000-8000-000000000001": [
+      {
+        "as_of": "2026-03-10T07:00:00Z",
+        "history": [
+          [
+            1,
+            "applied",
+            "termination"
+          ]
+        ],
+        "in_force": "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/1",
+        "scenario": "RWY.CLS",
+        "state": "active",
+        "version": "2.0"
+      },
+      {
+        "as_of": "2026-03-10T09:00:00Z",
+        "history": [
+          [
+            1,
+            "expired",
+            "termination"
+          ]
+        ],
+        "in_force": null,
+        "scenario": "RWY.CLS",
+        "state": "ended",
+        "version": "2.0"
+      }
+    ],
+    "rwy_cls_baseline_and_closure.xml#a1a40000-00e0-4000-8000-000000000001": [
+      {
+        "as_of": "2026-03-10T05:00:00Z",
+        "history": [
+          [
+            1,
+            "future",
+            "initial"
+          ]
+        ],
+        "in_force": null,
+        "scenario": "RWY.CLS",
+        "state": "future",
+        "version": "2.0"
+      },
+      {
+        "as_of": "2026-03-10T07:00:00Z",
+        "history": [
+          [
+            1,
+            "applied",
+            "initial"
+          ]
+        ],
+        "in_force": "a1a40000-00e0-4000-8000-000000000001/BASELINE/1/0",
+        "scenario": "RWY.CLS",
+        "state": "active",
+        "version": "2.0"
+      },
+      {
+        "as_of": "2026-03-10T10:00:00Z",
+        "history": [
+          [
+            1,
+            "expired",
+            "initial"
+          ]
+        ],
+        "in_force": null,
+        "scenario": "RWY.CLS",
+        "state": "ended",
+        "version": "2.0"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "as_of": "2026-03-10T05:59:59Z",
+      "asserted_status": "NORMAL",
+      "document": "rwy_cls_baseline_and_closure.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "future"
+        ]
+      ],
+      "note": "one second before the closure begins: the baseline NORMAL",
+      "operative": [
+        "NORMAL"
+      ],
+      "outcome": "resolved",
+      "part": "1 runway closure",
+      "source_of_status": "BASELINE",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T06:00:00Z",
+      "asserted_status": "CLOSED",
+      "document": "rwy_cls_baseline_and_closure.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "the begin instant is included (§4.4.1): CLOSED",
+      "operative": [
+        "CLOSED"
+      ],
+      "outcome": "resolved",
+      "part": "1 runway closure",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL",
+        "CLOSED"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T08:00:00Z",
+      "asserted_status": "CLOSED",
+      "document": "rwy_cls_baseline_and_closure.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "inside the window; the NORMAL copy beside the CLOSED branch is kept, not ranked",
+      "operative": [
+        "CLOSED"
+      ],
+      "outcome": "resolved",
+      "part": "1 runway closure",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL",
+        "CLOSED"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T09:59:59Z",
+      "asserted_status": "CLOSED",
+      "document": "rwy_cls_baseline_and_closure.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "the last second of the window",
+      "operative": [
+        "CLOSED"
+      ],
+      "outcome": "resolved",
+      "part": "1 runway closure",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL",
+        "CLOSED"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T10:00:00Z",
+      "asserted_status": "NORMAL",
+      "document": "rwy_cls_baseline_and_closure.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "expired"
+        ]
+      ],
+      "note": "the end instant is excluded (§4.4.1): expired, the baseline NORMAL",
+      "operative": [
+        "NORMAL"
+      ],
+      "outcome": "resolved",
+      "part": "1 runway closure",
+      "source_of_status": "BASELINE",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL"
+      ]
+    },
+    {
+      "as_of": "2026-03-12T04:00:00Z",
+      "asserted_status": null,
+      "document": "atsa_act_baseline_and_activation.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000003",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "future"
+        ]
+      ],
+      "note": "before the Event: the baseline's scheduled ACTIVE / INACTIVE, typed and not asserted",
+      "operative": [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "outcome": "resolved",
+      "part": "2 airspace activation",
+      "source_of_status": "BASELINE",
+      "status_state": "scheduled",
+      "statuses": [
+        "ACTIVE",
+        "INACTIVE"
+      ]
+    },
+    {
+      "as_of": "2026-03-12T05:00:00Z",
+      "asserted_status": "ACTIVE",
+      "document": "atsa_act_baseline_and_activation.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000003",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "the activation begins: one unscheduled ACTIVE replaces the baseline's two structures (ER-04)",
+      "operative": [
+        "ACTIVE"
+      ],
+      "outcome": "resolved",
+      "part": "2 airspace activation",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "ACTIVE"
+      ]
+    },
+    {
+      "as_of": "2026-03-12T08:59:59Z",
+      "asserted_status": "ACTIVE",
+      "document": "atsa_act_baseline_and_activation.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000003",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "the last second of the activation",
+      "operative": [
+        "ACTIVE"
+      ],
+      "outcome": "resolved",
+      "part": "2 airspace activation",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "ACTIVE"
+      ]
+    },
+    {
+      "as_of": "2026-03-12T09:00:00Z",
+      "asserted_status": null,
+      "document": "atsa_act_baseline_and_activation.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000003",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "expired"
+        ]
+      ],
+      "note": "the activation has expired: the baseline schedule stands again",
+      "operative": [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "outcome": "resolved",
+      "part": "2 airspace activation",
+      "source_of_status": "BASELINE",
+      "status_state": "scheduled",
+      "statuses": [
+        "ACTIVE",
+        "INACTIVE"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T07:00:00Z",
+      "asserted_status": "CLOSED",
+      "document": "corrections_out_of_order.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "correction 1.1 (received first) keeps the begin and moves the end to 08:00Z; CLOSED at 07:00Z",
+      "operative": [
+        "CLOSED"
+      ],
+      "outcome": "resolved",
+      "part": "3 correction",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL",
+        "CLOSED"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T09:00:00Z",
+      "asserted_status": "NORMAL",
+      "document": "corrections_out_of_order.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "expired"
+        ]
+      ],
+      "note": "at 09:00Z the ORIGINAL 1.0 would still be closed; the correction (§3.6) has ended it — NORMAL",
+      "operative": [
+        "NORMAL"
+      ],
+      "outcome": "resolved",
+      "part": "3 correction",
+      "source_of_status": "BASELINE",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL"
+      ]
+    },
+    {
+      "as_of": "2026-06-01T07:00:00Z",
+      "asserted_status": "NORMAL",
+      "document": "cases/cancellation.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "BASELINE",
+          1,
+          "applied"
+        ],
+        [
+          "TEMPDELTA",
+          1,
+          "cancelled"
+        ]
+      ],
+      "note": "the closure was cancelled before effect (§4.4.8): its record stands, the baseline NORMAL applies",
+      "operative": [
+        "NORMAL"
+      ],
+      "outcome": "resolved",
+      "part": "4 cancellation",
+      "source_of_status": "BASELINE",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL"
+      ]
+    },
+    {
+      "as_of": "2026-03-10T07:00:00Z",
+      "asserted_status": "CLOSED",
+      "document": "unresolved_references.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "TEMPDELTA",
+          1,
+          "applied"
+        ]
+      ],
+      "note": "no baseline was passed: the TEMPDELTA's CLOSED is what the source asserts, the feature is UNRESOLVED",
+      "operative": [
+        "CLOSED"
+      ],
+      "outcome": "unresolved",
+      "part": "5 unresolved",
+      "source_of_status": "TEMPDELTA",
+      "status_state": "asserted",
+      "statuses": [
+        "NORMAL",
+        "CLOSED"
+      ]
+    },
+    {
+      "as_of": "2026-03-11T00:00:00Z",
+      "asserted_status": null,
+      "document": "unresolved_references.xml",
+      "feature": "a1a40000-00d0-4000-8000-000000000002",
+      "findings": [],
+      "history": [
+        [
+          "TEMPDELTA",
+          1,
+          "expired"
+        ]
+      ],
+      "note": "outside the change, with no baseline: nothing is stated and nothing is invented",
+      "operative": [],
+      "outcome": "unresolved",
+      "part": "5 unresolved",
+      "source_of_status": "none",
+      "status_state": "not stated",
+      "statuses": []
+    }
+  ]
+}

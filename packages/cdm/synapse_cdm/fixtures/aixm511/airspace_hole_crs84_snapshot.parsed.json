@@ -1,0 +1,98 @@
+{
+  "@gml:id": "M_DANGER_AREA",
+  "message:hasMember": [
+    {
+      "$": "aixm:Airspace",
+      "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000002",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0001-4000-8000-000000000002"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:AirspaceTimeSlice",
+          "@gml:id": "D1_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "D1_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:type": "D",
+          "aixm:designator": "SYND1",
+          "aixm:name": "SYNTHETIC DANGER ONE",
+          "aixm:geometryComponent": [
+            {
+              "$": "aixm:AirspaceGeometryComponent",
+              "@gml:id": "D1_GC_1",
+              "aixm:operation": "BASE",
+              "aixm:theAirspaceVolume": {
+                "$": "aixm:AirspaceVolume",
+                "@gml:id": "D1_AV_1",
+                "aixm:upperLimit": {
+                  "@xsi:nil": "true",
+                  "@nilReason": "unknown"
+                },
+                "aixm:lowerLimit": {
+                  "@uom": "FT",
+                  "#text": "GND"
+                },
+                "aixm:lowerLimitReference": "SFC",
+                "aixm:horizontalProjection": {
+                  "$": "aixm:Surface",
+                  "@gml:id": "D1_SF_1",
+                  "@srsName": "urn:ogc:def:crs:OGC:1.3:CRS84",
+                  "gml:patches": [
+                    {
+                      "$": "gml:PolygonPatch",
+                      "gml:exterior": {
+                        "$": "gml:Ring",
+                        "gml:curveMember": [
+                          {
+                            "$": "aixm:Curve",
+                            "@gml:id": "D1_CV_1",
+                            "gml:segments": [
+                              {
+                                "$": "gml:LineStringSegment",
+                                "@interpolation": "linear",
+                                "gml:posList": "6.0 53.0 6.4 53.0 6.4 53.3 6.0 53.3 6.0 53.0"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "gml:interior": [
+                        {
+                          "$": "gml:LinearRing",
+                          "gml:posList": "6.1 53.1 6.1 53.2 6.3 53.2 6.3 53.1 6.1 53.1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$": "aixm:AirspaceTimeSlice",
+          "@gml:id": "D1_SNAPSHOT",
+          "gml:validTime": {
+            "$": "gml:TimeInstant",
+            "@gml:id": "D1_SNAPSHOT_VT",
+            "gml:timePosition": "2026-06-01T12:00:00Z"
+          },
+          "aixm:interpretation": "SNAPSHOT",
+          "aixm:type": "D",
+          "aixm:designator": "SYND1",
+          "aixm:name": "SYNTHETIC DANGER ONE"
+        }
+      ]
+    }
+  ]
+}

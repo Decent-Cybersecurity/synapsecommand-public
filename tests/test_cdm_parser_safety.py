@@ -66,7 +66,7 @@ import pyexpat
 import pytest
 
 import synapse_cdm
-from synapse_cdm.adapter import (InputTooDeep, InputTooLarge, container_depth, discover,
+from synapse_cdm.adapter import (InputTooDeep, InputTooLarge, container_depth, discover, is_shipped,
                                  enforce_depth_bound, json_nesting_depth)
 
 #: The two adapters that parse XML at all. Derived, so a third would be swept without an edit.
@@ -229,7 +229,7 @@ def test_the_deepest_shipped_document_is_inside_the_declared_bound_and_translate
 
 #: The adapters whose `to_cdm` decodes JSON text. Derived below, from the syntax tree, so a sixth
 #: would be swept without an edit here and a comment that mentions the call would not.
-JSON_ADAPTERS = ("adsb", "ais", "legion", "pntmap", "tak")
+JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "c2sim", "geojson", "legion", "pntmap", "tak")
 
 
 def _decodes_json(tree: ast.Module) -> bool:
@@ -250,10 +250,24 @@ def _decodes_json(tree: ast.Module) -> bool:
 
 def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
     """Derived from the tree by parsing it, not by grepping it: an adapter that starts decoding
-    JSON must not slip past this module, and a docstring that names the call must not pull one in."""
+    JSON must not slip past this module, and a docstring that names the call must not pull one in.
+    Since phase 6 (2026-09-21) an adapter may INHERIT its decoder from a shared base in another
+    module (`aixm52` runs `aixm511.AixmAdapterBase._as_twin`), so the second half walks each
+    shipped class's MRO and parses the module of every base under `synapse_cdm.adapters`: a
+    module that decodes JSON, or a class that inherits from one, is in the set."""
     root = pathlib.Path(synapse_cdm.__file__).parent / "adapters"
-    decoding = sorted(p.stem for p in root.glob("*.py") if _decodes_json(ast.parse(p.read_text())))
-    assert decoding == list(JSON_ADAPTERS), decoding
+    by_module = {p.stem: _decodes_json(ast.parse(p.read_text())) for p in root.glob("*.py")}
+    decoding = set()
+    for name, cls in discover().items():
+        if not is_shipped(cls):                               # test doubles register too
+            continue
+        modules = {c.__module__.rsplit(".", 1)[1] for c in cls.__mro__
+                   if c.__module__.startswith("synapse_cdm.adapters.")}
+        if any(by_module.get(m, False) for m in modules):
+            decoding.add(name)
+    assert sorted(decoding) == list(JSON_ADAPTERS), sorted(decoding)
+    assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "c2sim", "geojson", "legion", "pntmap", "tak"}, \
+        "the modules that call the decoder themselves; aixm52 inherits it"
 
 
 def _nested_json(depth: int) -> str:

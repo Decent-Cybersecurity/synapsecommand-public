@@ -69,8 +69,19 @@ def hook(tmp_path: pathlib.Path, **overrides) -> tuple[dict[str, str], pathlib.P
     directory = tmp_path / "authorised-xsd"
     directory.mkdir(parents=True)
     files = {}
-    for name in nits.XSD_FILES:
-        content = f"<!-- stand-in for {name}; a test cannot hold the real schema -->".encode()
+    for index, name in enumerate(nits.XSD_FILES):
+        if index == 0:
+            # THE ENTRY FILE IS A MINIMAL WELL-FORMED SCHEMA, NOT A COMMENT. `xsd_validator`
+            # hands `files[0]` to whichever real validator imports, and a bare comment is not a
+            # document: on a host that has `lxml` (the `validate` extra, 2026-09-20) the lookup
+            # raised the compiler's `XMLSyntaxError` before either reading the test below could
+            # be asserted. An empty schema in the test namespace compiles under `lxml` and
+            # `xmlschema` alike and is still a stand-in — a test cannot hold the real schema.
+            content = (f'<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" '
+                       f'targetNamespace="{TARGET}"><!-- stand-in for {name} --></xs:schema>'
+                       ).encode()
+        else:
+            content = f"<!-- stand-in for {name}; a test cannot hold the real schema -->".encode()
         (directory / name).write_bytes(content)
         files[name] = hashlib.sha256(content).hexdigest()
     record = {
@@ -212,9 +223,10 @@ def test_with_neither_validator_installed_the_mode_is_blocked_at_the_validator_s
 
 
 def test_the_real_validator_lookup_names_both_libraries_when_they_are_absent(tmp_path):
-    """On a host without `xmlschema` and `lxml` — this one — the default factory is the refusal
-    above; on a host with one of them it is a validator with a name. Either reading is asserted,
-    neither is skipped."""
+    """On a host without `xmlschema` and `lxml` the default factory is the refusal above; on a
+    host with one of them — this one, since the `validate` extra put `lxml` in the venv — it is
+    a validator with a name, compiled from the stand-in entry schema `hook` writes. Either
+    reading is asserted, neither is skipped."""
     env, directory = hook(tmp_path)
     try:
         resource = normative_binding.resolve(

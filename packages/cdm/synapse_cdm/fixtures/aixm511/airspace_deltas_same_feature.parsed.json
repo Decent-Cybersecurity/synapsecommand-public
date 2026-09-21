@@ -1,0 +1,74 @@
+{
+  "@gml:id": "M_AIRSPACE_DELTAS",
+  "message:hasMember": [
+    {
+      "$": "aixm:Airspace",
+      "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0001-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:AirspaceTimeSlice",
+          "@gml:id": "TSA1_TD_2_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "TSA1_TD_2_0_VT",
+            "gml:beginPosition": "2026-03-10T08:00:00Z",
+            "gml:endPosition": "2026-03-10T16:00:00Z"
+          },
+          "aixm:interpretation": "TEMPDELTA",
+          "aixm:sequenceNumber": "2",
+          "aixm:correctionNumber": "0",
+          "aixm:activation": [
+            {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "TSA1_TD_2_0_ACT",
+              "aixm:activity": "MILOPS",
+              "aixm:status": "ACTIVE"
+            }
+          ]
+        },
+        {
+          "$": "aixm:AirspaceTimeSlice",
+          "@gml:id": "TSA1_TD_2_1",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "TSA1_TD_2_1_VT",
+            "gml:beginPosition": "2026-03-10T08:00:00Z",
+            "gml:endPosition": "2026-03-10T14:00:00Z"
+          },
+          "aixm:interpretation": "TEMPDELTA",
+          "aixm:sequenceNumber": "2",
+          "aixm:correctionNumber": "1",
+          "aixm:activation": [
+            {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "TSA1_TD_2_1_ACT",
+              "aixm:activity": "MILOPS",
+              "aixm:status": "ACTIVE"
+            }
+          ]
+        },
+        {
+          "$": "aixm:AirspaceTimeSlice",
+          "@gml:id": "TSA1_PD_3_0",
+          "gml:validTime": {
+            "$": "gml:TimeInstant",
+            "@gml:id": "TSA1_PD_3_0_VT",
+            "gml:timePosition": "2026-04-01T00:00:00Z"
+          },
+          "aixm:interpretation": "PERMDELTA",
+          "aixm:sequenceNumber": "3",
+          "aixm:correctionNumber": "0",
+          "aixm:localType": {
+            "@xsi:nil": "true",
+            "@nilReason": "inapplicable"
+          },
+          "aixm:name": "SYNTHETIC TSA ONE RENAMED"
+        }
+      ]
+    }
+  ]
+}

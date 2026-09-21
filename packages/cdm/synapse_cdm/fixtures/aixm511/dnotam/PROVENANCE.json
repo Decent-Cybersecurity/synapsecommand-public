@@ -1,0 +1,166 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511/dnotam",
+  "fixtures": [
+    {
+      "file": "atsa_act_baseline_and_activation.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "atsa_act_baseline_and_activation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "corrections_out_of_order.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "corrections_out_of_order.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "expiry.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "expiry.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "explicit_nil_values.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "explicit_nil_values.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "future_effective_change.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "future_effective_change.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "nav_uns_baseline_and_outage.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "nav_uns_baseline_and_outage.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "overlapping_tempdeltas.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "overlapping_tempdeltas.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "rwy_cls_baseline_and_closure.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "rwy_cls_baseline_and_closure.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "saa_act_activation_with_schedule.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "saa_act_activation_with_schedule.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "unresolved_references.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    },
+    {
+      "file": "unresolved_references.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.1.1 + Digital NOTAM Event Schema 2.0.m documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py` (deterministic; `--check` proves the committed file is what the script writes), one per Digital NOTAM reading the phase-5 tests need: the three pinned scenario families with their baselines (RWY.CLS, ATSA.ACT and SAA.ACT, NAV.UNS), a future-effective change, overlapping temporary changes, explicit nil values, unresolved references, corrections received out of order and an expiry with an estimated end. Coded after the Digital NOTAM Specification 2.0 (DRAFT) scenario pages and the AIXM Temporality Concept 1.1; every one validates against the pinned AIXM 5.1.1 + Event 2.0.m closure (BLOCKED, never a pass, when the resource is absent). The `.parsed.json` twins are the codec's reading of each XML, re-derived with the standard library alone by `tests/test_cdm_aixm511_dnotam.py`. Fictitious aerodrome ZZSY, designators SYN*, UUIDs under a1a40000-00d0-/00e0-; no published aeronautical data set is the source of any file."
+    }
+  ]
+}

@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Twelve airspaces, one per way of stating an upper limit: FT and M against MSL (the same height in two units, the same datum), FT against SFC, W84 and STD, FL against STD, SM (no CDM unit), FL against MSL (incoherent), FT with no reference (UNKNOWN datum), UNL (unlimited) and a nil upper limit (unknown) - and one whose two BASE components state different limits, which draws nothing. Every lower limit is the GND token against SFC. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_VERTICAL_REFERENCES">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000010">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000010</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FTMSL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FTMSL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFTMSL</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FTMSL_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FTMSL_AV">
+                  <aixm:upperLimit uom="FT">2500</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FTMSL_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000011">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000011</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_MMSL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_MMSL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VMMSL</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_MMSL_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_MMSL_AV">
+                  <aixm:upperLimit uom="M">762</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_MMSL_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000012">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000012</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FTSFC">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FTSFC_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFTSFC</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FTSFC_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FTSFC_AV">
+                  <aixm:upperLimit uom="FT">1000</aixm:upperLimit>
+                  <aixm:upperLimitReference>SFC</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FTSFC_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000013">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000013</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FTW84">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FTW84_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFTW84</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FTW84_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FTW84_AV">
+                  <aixm:upperLimit uom="FT">3000</aixm:upperLimit>
+                  <aixm:upperLimitReference>W84</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FTW84_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000014">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000014</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FTSTD">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FTSTD_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFTSTD</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FTSTD_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FTSTD_AV">
+                  <aixm:upperLimit uom="FT">10000</aixm:upperLimit>
+                  <aixm:upperLimitReference>STD</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FTSTD_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000015">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000015</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFL</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FL_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FL_AV">
+                  <aixm:upperLimit uom="FL">100</aixm:upperLimit>
+                  <aixm:upperLimitReference>STD</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FL_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000016">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000016</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_SM">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_SM_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VSM</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_SM_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_SM_AV">
+                  <aixm:upperLimit uom="SM">300</aixm:upperLimit>
+                  <aixm:upperLimitReference>STD</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_SM_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000017">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000017</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_FLMSL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_FLMSL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VFLMSL</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_FLMSL_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_FLMSL_AV">
+                  <aixm:upperLimit uom="FL">100</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_FLMSL_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000018">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000018</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_NOREF">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_NOREF_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VNOREF</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_NOREF_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_NOREF_AV">
+                  <aixm:upperLimit uom="FT">1000</aixm:upperLimit>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_NOREF_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000019">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000019</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_UNL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_UNL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VUNL</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_UNL_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_UNL_AV">
+                  <aixm:upperLimit>UNL</aixm:upperLimit>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_UNL_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000020">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000020</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_NILUNKNOWN">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_NILUNKNOWN_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VNILUNKNOW</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_NILUNKNOWN_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_NILUNKNOWN_AV">
+                  <aixm:upperLimit xsi:nil="true" nilReason="unknown"/>
+                  <aixm:lowerLimit uom="FT">GND</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>SFC</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_NILUNKNOWN_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000030">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000030</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="VR_DIFFER">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VR_DIFFER_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>VDIFFER</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_D1_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:operationSequence>1</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_D1_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_D1_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="VR_D2_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:operationSequence>2</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="VR_D2_AV">
+                  <aixm:upperLimit uom="FT">9000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="VR_D2_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:LinearRing>
+                              <gml:posList>52.5 5.2 52.5 5.4 52.7 5.4 52.7 5.2 52.5 5.2</gml:posList>
+                            </gml:LinearRing>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

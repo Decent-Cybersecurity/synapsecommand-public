@@ -1,0 +1,112 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        10.0,
+        50.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "f02cab26-5537-53f3-afb4-aa102b45629c",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "document": {
+          "metadata": {},
+          "type": "FeatureCollection"
+        },
+        "feature": {
+          "id": 7,
+          "properties": null,
+          "type": "Feature"
+        }
+      },
+      "namespace": "GeoJSON"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geojson",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoJSON",
+      "format_version": "RFC 7946 (August 2016)",
+      "observed_at": null,
+      "original_id": "7",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoJSON",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "7",
+        "system": "GeoJSON"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        10.0,
+        50.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "4950fe4e-734b-53b3-826e-ae00114df777",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "document": {
+          "metadata": {},
+          "type": "FeatureCollection"
+        },
+        "feature": {
+          "id": "7",
+          "properties": {},
+          "type": "Feature"
+        }
+      },
+      "namespace": "GeoJSON"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geojson",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoJSON",
+      "format_version": "RFC 7946 (August 2016)",
+      "observed_at": null,
+      "original_id": "\"7\"",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoJSON",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "7",
+        "system": "GeoJSON"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

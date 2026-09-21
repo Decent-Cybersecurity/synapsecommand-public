@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A surface with srsDimension=3; the profile is two-dimensional and the document is refused. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_3D">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000055">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000055</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TD">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TD_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYN</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="TD_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="TD_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="TD_SF" srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="3">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:Ring>
+                              <gml:curveMember>
+                                <aixm:Curve gml:id="TD_CV">
+                                  <gml:segments>
+                                    <gml:GeodesicString>
+                                      <gml:posList>52.1 5.2 100 52.1 5.4 100 52.3 5.4 100 52.3 5.2 100 52.1 5.2 100</gml:posList>
+                                    </gml:GeodesicString>
+                                  </gml:segments>
+                                </aixm:Curve>
+                              </gml:curveMember>
+                            </gml:Ring>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

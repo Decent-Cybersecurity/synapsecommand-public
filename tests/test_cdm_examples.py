@@ -124,13 +124,39 @@ def test_there_is_one_individual_example_per_governed_type_named_for_it():
         f"missing: {sorted(governed - on_disk)}; unexpected: {sorted(on_disk - governed)}")
 
 
-def test_nothing_but_the_examples_and_one_readme_lives_under_the_directory():
-    stray = [str(p.relative_to(REPO)) for p in (REPO / "examples").rglob("*")
-             if p.is_file() and p.suffix != ".json" and p != README]
+#: The runnable demonstrations beside the SC-OES examples (master prompt §9 of the adapter
+#: expansion, 2026-09-20): each is one directory holding exactly a `run.py`, a `README.md` and an
+#: `expected/` tree — and, for the C2SIM demonstration (phase 3, 2026-09-21), the opt-in
+#: `exercise_client.py` the master prompt places beside the offline example and outside the
+#: adapter package — and nothing else. Every `*.py` here is inside the version floor gate's
+#: closure by construction (`tests/test_cdm_version_floor.py` walks every `*.py` in the tree).
+DEMONSTRATIONS = {"geopackage_to_geojson": ["README.md", "expected", "run.py"],
+                  "c2sim": ["README.md", "exercise_client.py", "expected", "run.py"],
+                  "aixm_dnotam": ["README.md", "expected", "run.py"]}
+
+
+def test_nothing_but_the_examples_and_one_readme_lives_under_the_sc_oes_directory():
+    stray = [str(p.relative_to(REPO)) for p in EXAMPLES.rglob("*")
+             if p.is_file() and p.suffix != ".json"]
     assert not stray, (
-        f"{stray} are under examples/ and are neither an example nor its README. This directory "
-        "is data and prose only — a Python file here would also have to join the version floor "
-        "gate's closure (tests/test_cdm_version_floor.py)")
+        f"{stray} are under examples/sc-oes/ and are not examples. This directory is data only")
+
+
+def test_every_other_directory_under_examples_is_a_named_demonstration_with_its_three_parts():
+    """Re-anchored on 2026-09-20 from "nothing but the examples and one README lives under
+    examples/": the demonstrations of the adapter expansion live beside `sc-oes/`, each a script,
+    a README and its expected output, and nothing else may appear at either level."""
+    top = sorted(p for p in (REPO / "examples").iterdir())
+    assert [p.name for p in top if p.is_file()] == ["README.md"]
+    directories = {p.name for p in top if p.is_dir()}
+    assert directories == {"sc-oes"} | set(DEMONSTRATIONS), directories
+    for name, expected_parts in sorted(DEMONSTRATIONS.items()):
+        root = REPO / "examples" / name
+        parts = sorted(p.name for p in root.iterdir() if p.name != "__pycache__")
+        assert parts == sorted(expected_parts), (name, parts)
+        assert all(p.is_file() for p in (root / "expected").rglob("*") if p.suffix), name
+        assert f"examples/{name}/run.py" in README.read_text(), (
+            f"examples/README.md does not point at the {name} demonstration")
 
 
 # ---------------------------------------------------------------------- 2. every example loads

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A RWY.CLS Event whose end is an ESTIMATE (event:estimatedValidity stated and the
+     NOTAM's estimatedEnd YES) and whose TEMPDELTA ends at 10:00Z: at 09:59:59Z the closure applies,
+     at 10:00:00Z it has EXPIRED (end excluded, §4.4.1) and the baseline NORMAL stands; the source
+     assertion carries estimated_end. Authored 2026-09-21 by dnotam/spec/build_fixtures.py. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:event="http://www.aixm.aero/schema/5.1.1/event"
+    xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_DN_EXPIRY">
+  <message:hasMember>
+    <event:Event gml:id="uuid.a1a40000-00e0-4000-8000-000000000001">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00e0-4000-8000-000000000001</gml:identifier>
+      <event:timeSlice>
+        <event:EventTimeSlice gml:id="EVT_1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="EVT_1_BL_1_0_VT">
+              <gml:beginPosition>2026-03-10T06:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T10:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:featureLifetime>
+            <gml:TimePeriod gml:id="EVT_1_BL_1_0_LT">
+              <gml:beginPosition>2026-03-10T06:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T10:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </aixm:featureLifetime>
+          <event:name>ZZSY 09</event:name>
+          <event:designator>DNOTAM</event:designator>
+          <event:scenario>RWY.CLS</event:scenario>
+          <event:version>2.0</event:version>
+          <event:estimatedValidity>2026-03-10T10:00:00Z</event:estimatedValidity>
+          <event:concernedAirportHeliport xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000001" xlink:title="ZZSY"/>
+          <event:notification>
+            <event:NOTAM gml:id="EVT_1_BL_1_0_N">
+              <event:series>S</event:series>
+              <event:number>101</event:number>
+              <event:year>2026</event:year>
+              <event:issued>2026-03-09T12:00:00Z</event:issued>
+              <event:publisher xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000008" xlink:title="SYNTHETIC NOTAM OFFICE"/>
+              <event:type>N</event:type>
+              <event:affectedFIR>ZZSY</event:affectedFIR>
+              <event:location>ZZSY</event:location>
+              <event:effectiveStart>2603100600</event:effectiveStart>
+              <event:effectiveEnd>2603101000 EST</event:effectiveEnd>
+              <event:estimatedEnd>YES</event:estimatedEnd>
+              <event:permanent>NO</event:permanent>
+              <event:text lang="ENG">RWY 09 CLOSED.</event:text>
+            </event:NOTAM>
+          </event:notification>
+        </event:EventTimeSlice>
+      </event:timeSlice>
+    </event:Event>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayDirection gml:id="uuid.a1a40000-00d0-4000-8000-000000000002">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d0-4000-8000-000000000002</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayDirectionTimeSlice gml:id="RDN_ZZSY_09_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RDN_ZZSY_09_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>09</aixm:designator>
+          <aixm:trueBearing>87.2</aixm:trueBearing>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="RDN_ZZSY_09_BL_1_0_AV1">
+              <aixm:operationalStatus>NORMAL</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+        </aixm:RunwayDirectionTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:RunwayDirectionTimeSlice gml:id="RDN_ZZSY_09_TD_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RDN_ZZSY_09_TD_1_0_VT">
+              <gml:beginPosition>2026-03-10T06:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T10:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="RDN_ZZSY_09_TD_1_0_AV1">
+              <aixm:annotation>
+                <aixm:Note gml:id="RDN_ZZSY_09_TD_1_0_AV1_N">
+                  <aixm:propertyName>operationalStatus</aixm:propertyName>
+                  <aixm:purpose>REMARK</aixm:purpose>
+                  <aixm:translatedNote>
+                    <aixm:LinguisticNote gml:id="RDN_ZZSY_09_TD_1_0_AV1_LN">
+                      <aixm:note lang="ENG">Baseline data copy. Not included in the NOTAM text generation</aixm:note>
+                    </aixm:LinguisticNote>
+                  </aixm:translatedNote>
+                </aixm:Note>
+              </aixm:annotation>
+              <aixm:operationalStatus>NORMAL</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="RDN_ZZSY_09_TD_1_0_AV2">
+              <aixm:annotation>
+                <aixm:Note gml:id="RDN_ZZSY_09_TD_1_0_AV2_N">
+                  <aixm:propertyName>operationalStatus</aixm:propertyName>
+                  <aixm:purpose>REMARK</aixm:purpose>
+                  <aixm:translatedNote>
+                    <aixm:LinguisticNote gml:id="RDN_ZZSY_09_TD_1_0_AV2_LN">
+                      <aixm:note lang="ENG">Surface maintenance</aixm:note>
+                    </aixm:LinguisticNote>
+                  </aixm:translatedNote>
+                </aixm:Note>
+              </aixm:annotation>
+              <aixm:operationalStatus>CLOSED</aixm:operationalStatus>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+          <aixm:extension>
+            <event:RunwayDirectionExtension gml:id="RDN_ZZSY_09_TD_1_0_EXT">
+              <event:theEvent xlink:href="urn:uuid:a1a40000-00e0-4000-8000-000000000001" xlink:title="ZZSY 09 DNOTAM RWY.CLS"/>
+            </event:RunwayDirectionExtension>
+          </aixm:extension>
+        </aixm:RunwayDirectionTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayDirection>
+  </message:hasMember>
+</message:AIXMBasicMessage>

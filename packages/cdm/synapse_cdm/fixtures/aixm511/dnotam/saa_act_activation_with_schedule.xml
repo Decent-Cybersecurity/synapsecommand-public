@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Digital NOTAM SAA.ACT 2.0 (DRAFT guidance page 220791162): a TSA BASELINE (INACTIVE,
+     unconditional), the Event BASELINE 1.0, and the Airspace TEMPDELTA 1.0 with TWO AirspaceActivation
+     structures — ACTIVE under a Timesheet 08:00-16:00 (ER-05) and the INACTIVE baseline copy for the
+     other hours (ER-06, with the prescribed REMARK) — so the resolved view is SCHEDULED, not asserted.
+     Authored 2026-09-21 by dnotam/spec/build_fixtures.py. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:event="http://www.aixm.aero/schema/5.1.1/event"
+    xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_DN_SAA_ACT">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00d0-4000-8000-000000000007">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d0-4000-8000-000000000007</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="ASE_FIR_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="ASE_FIR_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>FIR</aixm:type>
+          <aixm:designator>ZZSY</aixm:designator>
+          <aixm:name>SYNTHETIC FIR</aixm:name>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <event:Event gml:id="uuid.a1a40000-00e0-4000-8000-000000000003">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00e0-4000-8000-000000000003</gml:identifier>
+      <event:timeSlice>
+        <event:EventTimeSlice gml:id="EVT_3_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="EVT_3_BL_1_0_VT">
+              <gml:beginPosition>2026-03-16T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-20T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:featureLifetime>
+            <gml:TimePeriod gml:id="EVT_3_BL_1_0_LT">
+              <gml:beginPosition>2026-03-16T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-20T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </aixm:featureLifetime>
+          <event:name>SYNTSA</event:name>
+          <event:designator>DNOTAM</event:designator>
+          <event:scenario>SAA.ACT</event:scenario>
+          <event:version>2.0</event:version>
+          <event:concernedAirspace xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000007" xlink:title="ZZSY FIR"/>
+          <event:notification>
+            <event:NOTAM gml:id="EVT_3_BL_1_0_N">
+              <event:series>S</event:series>
+              <event:number>103</event:number>
+              <event:year>2026</event:year>
+              <event:issued>2026-03-15T12:00:00Z</event:issued>
+              <event:publisher xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000008" xlink:title="SYNTHETIC NOTAM OFFICE"/>
+              <event:type>N</event:type>
+              <event:affectedFIR>ZZSY</event:affectedFIR>
+              <event:location>ZZSY</event:location>
+              <event:effectiveStart>2603160800</event:effectiveStart>
+              <event:effectiveEnd>2603191600</event:effectiveEnd>
+              <event:estimatedEnd>NO</event:estimatedEnd>
+              <event:permanent>NO</event:permanent>
+              <event:text lang="ENG">SYNTHETIC TSA ACTIVE DAILY 0800-1600.</event:text>
+            </event:NOTAM>
+          </event:notification>
+        </event:EventTimeSlice>
+      </event:timeSlice>
+    </event:Event>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00d0-4000-8000-000000000004">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d0-4000-8000-000000000004</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="ASE_TSA_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="ASE_TSA_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>TSA</aixm:type>
+          <aixm:designator>SYNTSA</aixm:designator>
+          <aixm:name>SYNTHETIC TSA</aixm:name>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="ASE_TSA_BL_1_0_ACT1">
+              <aixm:status>INACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="ASE_TSA_TD_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="ASE_TSA_TD_1_0_VT">
+              <gml:beginPosition>2026-03-16T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-20T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="ASE_TSA_TD_1_0_ACT1">
+              <aixm:timeInterval>
+                <aixm:Timesheet gml:id="ASE_TSA_TD_1_0_ACT1_TS">
+                  <aixm:timeReference>UTC</aixm:timeReference>
+                  <aixm:day>ANY</aixm:day>
+                  <aixm:dayTil>ANY</aixm:dayTil>
+                  <aixm:startTime>08:00</aixm:startTime>
+                  <aixm:endTime>16:00</aixm:endTime>
+                </aixm:Timesheet>
+              </aixm:timeInterval>
+              <aixm:status>ACTIVE</aixm:status>
+              <aixm:levels>
+                <aixm:AirspaceLayer gml:id="ASE_TSA_TD_1_0_ACT1_L">
+                  <aixm:upperLimit>CEILING</aixm:upperLimit>
+                  <aixm:lowerLimit>FLOOR</aixm:lowerLimit>
+                </aixm:AirspaceLayer>
+              </aixm:levels>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="ASE_TSA_TD_1_0_ACT2">
+              <aixm:timeInterval>
+                <aixm:Timesheet gml:id="ASE_TSA_TD_1_0_ACT2_TS">
+                  <aixm:timeReference>UTC</aixm:timeReference>
+                  <aixm:day>ANY</aixm:day>
+                  <aixm:dayTil>ANY</aixm:dayTil>
+                  <aixm:startTime>16:00</aixm:startTime>
+                  <aixm:endTime>08:00</aixm:endTime>
+                </aixm:Timesheet>
+              </aixm:timeInterval>
+              <aixm:annotation>
+                <aixm:Note gml:id="ASE_TSA_TD_1_0_ACT2_N">
+                  <aixm:propertyName>status</aixm:propertyName>
+                  <aixm:purpose>REMARK</aixm:purpose>
+                  <aixm:translatedNote>
+                    <aixm:LinguisticNote gml:id="ASE_TSA_TD_1_0_ACT2_LN">
+                      <aixm:note lang="ENG">Baseline data copy. Not included in the NOTAM text generation</aixm:note>
+                    </aixm:LinguisticNote>
+                  </aixm:translatedNote>
+                </aixm:Note>
+              </aixm:annotation>
+              <aixm:status>INACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+          <aixm:extension>
+            <event:AirspaceExtension gml:id="ASE_TSA_TD_1_0_EXT">
+              <event:theEvent xlink:href="urn:uuid:a1a40000-00e0-4000-8000-000000000003" xlink:title="SYNTSA DNOTAM SAA.ACT"/>
+            </event:AirspaceExtension>
+          </aixm:extension>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

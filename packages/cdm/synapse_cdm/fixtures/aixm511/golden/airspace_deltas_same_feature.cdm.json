@@ -1,0 +1,591 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "TSA1_TD_2_0_ACT",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "MILOPS"
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ACTIVE"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "TSA1_TD_2_0_ACT",
+              "aixm:activity": "MILOPS",
+              "aixm:status": "ACTIVE"
+            },
+            "time_interval": []
+          }
+        ],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0001-4000-8000-000000000001",
+          "identifier": "a1a40000-0001-4000-8000-000000000001",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designatorICAO": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "upperLowerSeparation": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "TSA1_TD_2_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 2,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T16:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T16:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "TSA1_TD_2_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "6725250b-0b79-5ed3-9cdc-22478cad8e39",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AIRSPACE_DELTAS",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000001",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "TSA1_TD_2_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001/TEMPDELTA/2/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusAirspaceType",
+      "since": null,
+      "state": "ACTIVE"
+    },
+    "symbol": null,
+    "valid_from": "2026-03-10T08:00:00.000Z",
+    "valid_to": "2026-03-10T16:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "TSA1_TD_2_1_ACT",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "MILOPS"
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ACTIVE"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "TSA1_TD_2_1_ACT",
+              "aixm:activity": "MILOPS",
+              "aixm:status": "ACTIVE"
+            },
+            "time_interval": []
+          }
+        ],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0001-4000-8000-000000000001",
+          "identifier": "a1a40000-0001-4000-8000-000000000001",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designatorICAO": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "upperLowerSeparation": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 1,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "TSA1_TD_2_1",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 2,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T14:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T14:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "TSA1_TD_2_1_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "6725250b-0b79-5ed3-9cdc-22478cad8e39",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AIRSPACE_DELTAS",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000001",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "TSA1_TD_2_1",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001/TEMPDELTA/2/1",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusAirspaceType",
+      "since": null,
+      "state": "ACTIVE"
+    },
+    "symbol": null,
+    "valid_from": "2026-03-10T08:00:00.000Z",
+    "valid_to": "2026-03-10T14:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0001-4000-8000-000000000001",
+          "identifier": "a1a40000-0001-4000-8000-000000000001",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designatorICAO": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "withdrawn",
+            "nil_reason": "inapplicable",
+            "state": "nil",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC TSA ONE RENAMED"
+          },
+          "type": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "upperLowerSeparation": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "TSA1_PD_3_0",
+          "interpretation": "PERMDELTA",
+          "sequence_number": 3,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimeInstant/gml:timePosition",
+          "valid_time": {
+            "begin": null,
+            "convention": null,
+            "element": "gml:TimeInstant",
+            "end": null,
+            "form": "instant",
+            "gml_id": "TSA1_PD_3_0_VT",
+            "nil_reason": null,
+            "time": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-04-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-04-01T00:00:00Z",
+              "utc": true
+            }
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "6725250b-0b79-5ed3-9cdc-22478cad8e39",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AIRSPACE_DELTAS",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000001",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "TSA1_PD_3_0",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000001/PERMDELTA/3/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-04-01T00:00:00.000Z",
+    "valid_to": null
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "type": "Feature",
+  "id": "open",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    ]
+  },
+  "properties": {}
+}

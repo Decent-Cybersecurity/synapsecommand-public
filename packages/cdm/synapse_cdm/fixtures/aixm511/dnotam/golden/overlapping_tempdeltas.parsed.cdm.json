@@ -1,0 +1,1790 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "event:Event",
+          "family": "Event",
+          "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000006",
+          "identifier": "a1a40000-00e0-4000-8000-000000000006",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "activity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "DNOTAM"
+          },
+          "estimatedValidity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY 09"
+          },
+          "scenario": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "RWY.CLS"
+          },
+          "version": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "2.0"
+          }
+        },
+        "references": {
+          "concernedAirportHeliport": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000001",
+              "key": "a1a40000-00d0-4000-8000-000000000001",
+              "nil_reason": null,
+              "property": "concernedAirportHeliport",
+              "resolved": false,
+              "target": null,
+              "title": "ZZSY"
+            }
+          ]
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "event:EventTimeSlice",
+          "feature_lifetime": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T06:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T06:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T10:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T10:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_6_BL_1_0_LT",
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "EVT_6_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T06:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T06:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T10:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T10:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_6_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [
+          "concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)"
+        ],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-10T06:00:00.000Z",
+          "effective_to": "2026-03-10T10:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "BASELINE",
+          "kind": "initial",
+          "lifetime_end": "2026-03-10T10:00:00.000Z",
+          "notam_types": [
+            "N"
+          ],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": null,
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": null,
+        "extension_gml_id": null,
+        "notifications": [
+          {
+            "element": "event:NOTAM",
+            "gml_id": "EVT_6_BL_1_0_N",
+            "nil": false,
+            "properties": {
+              "affectedFIR": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "coordinates": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "effectiveEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603101000"
+              },
+              "effectiveStart": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603100600"
+              },
+              "estimatedEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "issued": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026-03-09T12:00:00Z"
+              },
+              "location": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "maximumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "minimumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "number": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "106"
+              },
+              "permanent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "processed": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "purpose": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "radius": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredNumber": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredSeries": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredYear": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "scope": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "selectionCode": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "series": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "S"
+              },
+              "text": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "RWY 09 CLOSED."
+              },
+              "traffic": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "N"
+              },
+              "year": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026"
+              }
+            },
+            "source": {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_6_BL_1_0_N",
+              "event:affectedFIR": "ZZSY",
+              "event:effectiveEnd": "2603101000",
+              "event:effectiveStart": "2603100600",
+              "event:estimatedEnd": "NO",
+              "event:issued": "2026-03-09T12:00:00Z",
+              "event:location": "ZZSY",
+              "event:number": "106",
+              "event:permanent": "NO",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:series": "S",
+              "event:text": {
+                "#text": "RWY 09 CLOSED.",
+                "@lang": "ENG"
+              },
+              "event:type": "N",
+              "event:year": "2026"
+            }
+          }
+        ],
+        "profile": {
+          "affected_features": [
+            "aixm:RunwayDirection"
+          ],
+          "family": "runway closure/unavailability",
+          "forbidden_status": [],
+          "guidance_page": "220791360",
+          "guidance_page_version": "v30, 2025-12-09",
+          "id": "RWY.CLS",
+          "permitted_status": null,
+          "required_status": [
+            "CLOSED"
+          ],
+          "rules": [
+            "RWY.CLS.01",
+            "RWY.CLS.02",
+            "RWY.CLS.03",
+            "RWY.CLS.04",
+            "RWY.CLS.05",
+            "RWY.CLS.06"
+          ],
+          "specification": "Digital NOTAM Specification 2.0 (DRAFT \u2014 'in preparation', validated by implementation; EUROCONTROL/FAA, swim-eurocontrol.atlassian.net/wiki/spaces/DNOTAM)",
+          "status": "DRAFT",
+          "status_element": "aixm:ManoeuvringAreaAvailability",
+          "status_property": "operationalStatus",
+          "version": "2.0"
+        },
+        "profile_finding": null,
+        "role": "event",
+        "rule_findings": [],
+        "scenario": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "RWY.CLS"
+        },
+        "scenario_version": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "2.0"
+        },
+        "the_event": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "15b0d963-980f-573d-b40a-d02322df6f0d",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_OVERLAP",
+        "message:hasMember": [
+          {
+            "$": "event:Event",
+            "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000006",
+            "gml:identifier": {
+              "#text": "a1a40000-00e0-4000-8000-000000000006",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "EVT_6_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000006",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000006/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-10T06:00:00.000Z",
+    "valid_to": "2026-03-10T10:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "event:Event",
+          "family": "Event",
+          "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000007",
+          "identifier": "a1a40000-00e0-4000-8000-000000000007",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "activity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "DNOTAM"
+          },
+          "estimatedValidity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY 09"
+          },
+          "scenario": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "RWY.CLS"
+          },
+          "version": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "2.0"
+          }
+        },
+        "references": {
+          "concernedAirportHeliport": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000001",
+              "key": "a1a40000-00d0-4000-8000-000000000001",
+              "nil_reason": null,
+              "property": "concernedAirportHeliport",
+              "resolved": false,
+              "target": null,
+              "title": "ZZSY"
+            }
+          ]
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "event:EventTimeSlice",
+          "feature_lifetime": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_7_BL_1_0_LT",
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "EVT_7_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_7_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [
+          "concernedAirportHeliport -> 'urn:uuid:a1a40000-00d0-4000-8000-000000000001' (urn-uuid)"
+        ],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-10T08:00:00.000Z",
+          "effective_to": "2026-03-10T12:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "BASELINE",
+          "kind": "initial",
+          "lifetime_end": "2026-03-10T12:00:00.000Z",
+          "notam_types": [
+            "N"
+          ],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": null,
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": null,
+        "extension_gml_id": null,
+        "notifications": [
+          {
+            "element": "event:NOTAM",
+            "gml_id": "EVT_7_BL_1_0_N",
+            "nil": false,
+            "properties": {
+              "affectedFIR": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "coordinates": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "effectiveEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603101200"
+              },
+              "effectiveStart": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603100800"
+              },
+              "estimatedEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "issued": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026-03-09T18:00:00Z"
+              },
+              "location": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "maximumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "minimumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "number": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "107"
+              },
+              "permanent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "processed": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "purpose": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "radius": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredNumber": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredSeries": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredYear": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "scope": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "selectionCode": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "series": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "S"
+              },
+              "text": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "RWY 09 CLOSED."
+              },
+              "traffic": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "N"
+              },
+              "year": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026"
+              }
+            },
+            "source": {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_7_BL_1_0_N",
+              "event:affectedFIR": "ZZSY",
+              "event:effectiveEnd": "2603101200",
+              "event:effectiveStart": "2603100800",
+              "event:estimatedEnd": "NO",
+              "event:issued": "2026-03-09T18:00:00Z",
+              "event:location": "ZZSY",
+              "event:number": "107",
+              "event:permanent": "NO",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:series": "S",
+              "event:text": {
+                "#text": "RWY 09 CLOSED.",
+                "@lang": "ENG"
+              },
+              "event:type": "N",
+              "event:year": "2026"
+            }
+          }
+        ],
+        "profile": {
+          "affected_features": [
+            "aixm:RunwayDirection"
+          ],
+          "family": "runway closure/unavailability",
+          "forbidden_status": [],
+          "guidance_page": "220791360",
+          "guidance_page_version": "v30, 2025-12-09",
+          "id": "RWY.CLS",
+          "permitted_status": null,
+          "required_status": [
+            "CLOSED"
+          ],
+          "rules": [
+            "RWY.CLS.01",
+            "RWY.CLS.02",
+            "RWY.CLS.03",
+            "RWY.CLS.04",
+            "RWY.CLS.05",
+            "RWY.CLS.06"
+          ],
+          "specification": "Digital NOTAM Specification 2.0 (DRAFT \u2014 'in preparation', validated by implementation; EUROCONTROL/FAA, swim-eurocontrol.atlassian.net/wiki/spaces/DNOTAM)",
+          "status": "DRAFT",
+          "status_element": "aixm:ManoeuvringAreaAvailability",
+          "status_property": "operationalStatus",
+          "version": "2.0"
+        },
+        "profile_finding": null,
+        "role": "event",
+        "rule_findings": [],
+        "scenario": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "RWY.CLS"
+        },
+        "scenario_version": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "2.0"
+        },
+        "the_event": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "55f6af85-fcb8-5d5b-ac2d-553f139d8cf9",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_OVERLAP",
+        "message:hasMember": [
+          null,
+          {
+            "$": "event:Event",
+            "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000007",
+            "gml:identifier": {
+              "#text": "a1a40000-00e0-4000-8000-000000000007",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "EVT_7_BL_1_0",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000007",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000007/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-10T08:00:00.000Z",
+    "valid_to": "2026-03-10T12:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RDN_ZZSY_09_BL_1_0_AV1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NORMAL"
+              },
+              "warning": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_BL_1_0_AV1",
+              "aixm:operationalStatus": "NORMAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:RunwayDirection",
+          "family": "RunwayDirection",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+          "identifier": "a1a40000-00d0-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "09"
+          },
+          "elevationTDZ": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "elevationTDZAccuracy": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "magneticBearing": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "trueBearing": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "87.2"
+          },
+          "trueBearingAccuracy": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:RunwayDirectionTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "RDN_ZZSY_09_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "RDN_ZZSY_09_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "0fb4b825-8413-5083-b5e5-751ff5640e14",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_OVERLAP",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:RunwayDirection",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "RDN_ZZSY_09_BL_1_0",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusAirportType",
+      "since": null,
+      "state": "NORMAL"
+    },
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RDN_ZZSY_09_TD_1_0_AV1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NORMAL"
+              },
+              "warning": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1_LN",
+                      "aixm:note": {
+                        "#text": "Baseline data copy. Not included in the NOTAM text generation",
+                        "@lang": "ENG"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "NORMAL"
+            },
+            "time_interval": []
+          },
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RDN_ZZSY_09_TD_1_0_AV2",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "CLOSED"
+              },
+              "warning": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2_LN",
+                      "aixm:note": {
+                        "#text": "Surface maintenance",
+                        "@lang": "ENG"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "CLOSED"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:RunwayDirection",
+          "family": "RunwayDirection",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+          "identifier": "a1a40000-00d0-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "elevationTDZ": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "elevationTDZAccuracy": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "magneticBearing": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "trueBearing": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "trueBearingAccuracy": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:RunwayDirectionTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "RDN_ZZSY_09_TD_1_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T06:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T06:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T10:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T10:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "RDN_ZZSY_09_TD_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-10T06:00:00.000Z",
+          "effective_to": "2026-03-10T10:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "TEMPDELTA",
+          "kind": "initial",
+          "lifetime_end": null,
+          "notam_types": [],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": "RWY.CLS",
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": "event:RunwayDirectionExtension",
+        "extension_gml_id": "RDN_ZZSY_09_TD_1_0_EXT",
+        "notifications": [],
+        "profile": null,
+        "profile_finding": null,
+        "role": "affected-feature",
+        "rule_findings": [],
+        "scenario": null,
+        "scenario_version": null,
+        "the_event": {
+          "form": "urn-uuid",
+          "href": "urn:uuid:a1a40000-00e0-4000-8000-000000000006",
+          "key": "a1a40000-00e0-4000-8000-000000000006",
+          "nil_reason": null,
+          "property": "extension[0].theEvent",
+          "resolved": true,
+          "target": {
+            "element": "event:Event",
+            "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000006",
+            "identifier": "a1a40000-00e0-4000-8000-000000000006",
+            "member_index": 0,
+            "where": "document"
+          },
+          "title": "ZZSY 09 DNOTAM RWY.CLS"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "0fb4b825-8413-5083-b5e5-751ff5640e14",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_OVERLAP",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:RunwayDirection",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+            "aixm:timeSlice": [
+              null,
+              {
+                "aixm:extension": [
+                  {
+                    "$": "event:RunwayDirectionExtension",
+                    "@gml:id": "RDN_ZZSY_09_TD_1_0_EXT",
+                    "event:theEvent": {
+                      "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000006",
+                      "@xlink:title": "ZZSY 09 DNOTAM RWY.CLS"
+                    }
+                  }
+                ]
+              },
+              null
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "RDN_ZZSY_09_TD_1_0",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-10T06:00:00.000Z",
+    "valid_to": "2026-03-10T10:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RDN_ZZSY_09_TD_2_0_AV1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NORMAL"
+              },
+              "warning": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1_LN",
+                      "aixm:note": {
+                        "#text": "Baseline data copy. Not included in the NOTAM text generation",
+                        "@lang": "ENG"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "NORMAL"
+            },
+            "time_interval": []
+          },
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RDN_ZZSY_09_TD_2_0_AV2",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "CLOSED"
+              },
+              "warning": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2_LN",
+                      "aixm:note": {
+                        "#text": "Surface maintenance",
+                        "@lang": "ENG"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "CLOSED"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:RunwayDirection",
+          "family": "RunwayDirection",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+          "identifier": "a1a40000-00d0-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "elevationTDZ": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "elevationTDZAccuracy": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "magneticBearing": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "trueBearing": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "trueBearingAccuracy": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:RunwayDirectionTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "RDN_ZZSY_09_TD_2_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 2,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-10T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-10T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "RDN_ZZSY_09_TD_2_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 2, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-10T08:00:00.000Z",
+          "effective_to": "2026-03-10T12:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "TEMPDELTA",
+          "kind": "initial",
+          "lifetime_end": null,
+          "notam_types": [],
+          "sequence_number": 2,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": "RWY.CLS",
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": "event:RunwayDirectionExtension",
+        "extension_gml_id": "RDN_ZZSY_09_TD_2_0_EXT",
+        "notifications": [],
+        "profile": null,
+        "profile_finding": null,
+        "role": "affected-feature",
+        "rule_findings": [],
+        "scenario": null,
+        "scenario_version": null,
+        "the_event": {
+          "form": "urn-uuid",
+          "href": "urn:uuid:a1a40000-00e0-4000-8000-000000000007",
+          "key": "a1a40000-00e0-4000-8000-000000000007",
+          "nil_reason": null,
+          "property": "extension[0].theEvent",
+          "resolved": true,
+          "target": {
+            "element": "event:Event",
+            "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000007",
+            "identifier": "a1a40000-00e0-4000-8000-000000000007",
+            "member_index": 1,
+            "where": "document"
+          },
+          "title": "ZZSY 09 DNOTAM RWY.CLS"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "0fb4b825-8413-5083-b5e5-751ff5640e14",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_OVERLAP",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:RunwayDirection",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+            "aixm:timeSlice": [
+              null,
+              null,
+              {
+                "aixm:extension": [
+                  {
+                    "$": "event:RunwayDirectionExtension",
+                    "@gml:id": "RDN_ZZSY_09_TD_2_0_EXT",
+                    "event:theEvent": {
+                      "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000007",
+                      "@xlink:title": "ZZSY 09 DNOTAM RWY.CLS"
+                    }
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "RDN_ZZSY_09_TD_2_0",
+      "record_index": 4,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000002/TEMPDELTA/2/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-10T08:00:00.000Z",
+    "valid_to": "2026-03-10T12:00:00.000Z"
+  }
+]

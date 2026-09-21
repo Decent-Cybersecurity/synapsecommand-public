@@ -1,0 +1,127 @@
+[
+  {
+    "event_id": "a20ab11a-a85b-5e84-8032-14262b866555",
+    "event_type": "PLAN_INJECT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-22T06:10:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "contract": "c2sim-order/1",
+        "from_sender": "c2510000-0012-8000-8000-000000000001",
+        "issued_time": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-22T06:10:00Z",
+          "resolution": "stated",
+          "resolved": "2026-09-22T06:10:00.000Z"
+        },
+        "message": {
+          "communicative_act": "Propose",
+          "conversation_id": "c2510000-0010-8000-8000-00000000c101",
+          "from_sending_system": "EXERCISE-PLANNER",
+          "message_id": "c2510000-0010-8000-8000-00000000a101",
+          "protocol": "SISO-STD-C2SIM",
+          "protocol_matches_pin": true,
+          "protocol_version": "1.0.0",
+          "sending_time": "2026-09-22T06:10:00Z",
+          "to_receiving_system": "EXERCISE-SIM-BLUE"
+        },
+        "order_id": "c2510000-0017-8000-8000-000000000001",
+        "task_references": [],
+        "tasks": [
+          {
+            "action_code": "MoveToLocation",
+            "affected_entities": [],
+            "desired_effects": [
+              "TaskSuccess"
+            ],
+            "end_time": {
+              "elapsed": "P00Y00M00DT01H00M00S",
+              "elapsed_seconds": 3600,
+              "form": "SimulationTime",
+              "resolution": "unresolved: no clock at construction"
+            },
+            "functional_relations": [],
+            "locations": [
+              {
+                "form": "GeodeticCoordinate",
+                "latitude": 58.5,
+                "longitude": 24.7
+              }
+            ],
+            "map_graphic_ids": [
+              "c2510000-0016-8000-8000-000000000001"
+            ],
+            "name": "EXERCISE-FRESH-MOVE",
+            "performing_entity": "c2510000-0013-8000-8000-000000000001",
+            "rules_of_engagement": [],
+            "start_time": {
+              "form": "DateTime",
+              "iso_date_time": "2026-09-22T06:30:00Z",
+              "resolution": "stated",
+              "resolved": "2026-09-22T06:30:00.000Z"
+            },
+            "temporal_relationships": [],
+            "uuid": "c2510000-0014-8000-8000-000000000001"
+          },
+          {
+            "action_code": "HoldInPlace",
+            "affected_entities": [],
+            "desired_effects": [],
+            "duration": "P00Y00M00DT02H00M00S",
+            "duration_seconds": 7200,
+            "functional_relations": [],
+            "locations": [],
+            "map_graphic_ids": [],
+            "name": "EXERCISE-FRESH-HOLD",
+            "performing_entity": "c2510000-0012-8000-8000-000000000001",
+            "rules_of_engagement": [],
+            "temporal_relationships": [
+              {
+                "action": "c2510000-0014-8000-8000-000000000001",
+                "code": "STRSTR",
+                "in_pinned_enumeration": true,
+                "resolved_in_order": true
+              }
+            ],
+            "uuid": "c2510000-0014-8000-8000-000000000002"
+          }
+        ],
+        "to_receiver": "c2510000-0013-8000-8000-000000000001"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-09-22T06:10:00.000Z",
+    "related_entities": [
+      "45293e56-832a-5413-bf78-918ab36fd135",
+      "011f99f2-fb04-5e38-a191-c72cc8110a86"
+    ],
+    "residual": null,
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0017-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  }
+]

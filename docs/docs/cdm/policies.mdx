@@ -133,9 +133,10 @@ because the first version of `lossless.residual()` was the latter and it turned 
 into two keys named `affected_constellations[0]` and `affected_constellations[1]` — the never-drop
 rule satisfied in the letter, and a consumer that could no longer read the field as a list.
 
-**The fourteen adapters in this repository do not use the container yet, and that is ruled rather
-than pending.** They keep their `attributes` / `payload` parking under `source_extras` through the
-whole of Part 1 and declare `residual: legacy` in their manifests. The information is already
+**Fourteen of the nineteen adapters in this repository do not use the container, and that is ruled
+rather than pending.** The fourteen of Part 1 keep their `attributes` / `payload` parking under
+`source_extras` and declare `residual: legacy` in their manifests. The information is already
 preserved; only the placement would change, and paying for that with every golden file and every
 downstream consumer buys nothing a reader can use. Every Part 2 adapter declares
-`residual: structured` and calls `lossless.residual_block()`.
+`residual: structured` and calls `lossless.residual_block()` — the five of the adapter expansion
+(`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`) are the first.

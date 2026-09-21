@@ -1,0 +1,835 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "TSA1_ACT_1",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "MILOPS"
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "AVBL_FOR_ACTIVATION"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "TSA1_ACT_1",
+              "aixm:activity": "MILOPS",
+              "aixm:status": "AVBL_FOR_ACTIVATION",
+              "aixm:timeInterval": [
+                {
+                  "$": "aixm:Timesheet",
+                  "@gml:id": "TSA1_TS_1",
+                  "aixm:day": "WORK_DAY",
+                  "aixm:endTime": "17:00",
+                  "aixm:startTime": "07:00",
+                  "aixm:timeReference": "UTC"
+                }
+              ]
+            },
+            "time_interval": [
+              {
+                "gml_id": "TSA1_TS_1",
+                "properties": {
+                  "day": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "WORK_DAY"
+                  },
+                  "dayTil": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "daylightSavingAdjust": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endDate": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEventInterpretation": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "17:00"
+                  },
+                  "endTimeRelativeEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "excluded": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startDate": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEventInterpretation": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "07:00"
+                  },
+                  "startTimeRelativeEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "timeReference": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "UTC"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000001",
+          "identifier": "a1a40000-0520-4000-8000-000000000001",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [
+          {
+            "nil": false,
+            "operation": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": null,
+              "value": "BASE"
+            },
+            "operation_sequence": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": null,
+              "value": "1"
+            },
+            "source": {
+              "$": "aixm:AirspaceGeometryComponent",
+              "@gml:id": "TSA1_GC_1",
+              "aixm:operation": "BASE",
+              "aixm:operationSequence": "1",
+              "aixm:theAirspaceVolume": {
+                "$": "aixm:AirspaceVolume",
+                "@gml:id": "TSA1_AV_1",
+                "aixm:horizontalProjection": {
+                  "$": "aixm:Surface",
+                  "@gml:id": "TSA1_SF_1",
+                  "@srsName": "urn:ogc:def:crs:EPSG::4326",
+                  "gml:patches": [
+                    {
+                      "$": "gml:PolygonPatch",
+                      "gml:exterior": {
+                        "$": "gml:Ring",
+                        "gml:curveMember": [
+                          {
+                            "$": "aixm:Curve",
+                            "@gml:id": "TSA1_SF_1_CV",
+                            "gml:segments": [
+                              {
+                                "$": "gml:GeodesicString",
+                                "gml:posList": "52.0 5.0 52.0 5.5 52.5 5.5 52.5 5.0 52.0 5.0"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "aixm:location": {
+                  "$": "aixm:Point",
+                  "@gml:id": "TSA1_AV_1_LOC",
+                  "@srsName": "urn:ogc:def:crs:EPSG::4326",
+                  "gml:pos": "52.25 5.25"
+                },
+                "aixm:lowerLimit": {
+                  "#text": "2500",
+                  "@uom": "FT"
+                },
+                "aixm:lowerLimitReference": "MSL",
+                "aixm:name": "SYNTHETIC TSA ONE VOLUME",
+                "aixm:upperLimit": {
+                  "#text": "195",
+                  "@uom": "FL"
+                },
+                "aixm:upperLimitReference": "STD",
+                "gml:identifier": {
+                  "#text": "a1a40000-0520-4000-8000-000000000021",
+                  "@codeSpace": "urn:uuid:"
+                }
+              }
+            },
+            "volume": {
+              "centreline": null,
+              "centreline_state": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "contributor": null,
+              "gml_id": "TSA1_AV_1",
+              "horizontal_projection": {
+                "crs": {
+                  "axis_order": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "inherited": false,
+                  "srs_dimension": null,
+                  "srs_name": "urn:ogc:def:crs:EPSG::4326"
+                },
+                "element": "aixm:Surface",
+                "geojson": {
+                  "coordinates": [
+                    [
+                      [
+                        5.0,
+                        52.0
+                      ],
+                      [
+                        5.5,
+                        52.0
+                      ],
+                      [
+                        5.5,
+                        52.5
+                      ],
+                      [
+                        5.0,
+                        52.5
+                      ],
+                      [
+                        5.0,
+                        52.0
+                      ]
+                    ]
+                  ],
+                  "type": "Polygon"
+                },
+                "gml_id": "TSA1_SF_1",
+                "patches": [
+                  {
+                    "element": "gml:PolygonPatch",
+                    "exterior": {
+                      "coordinates": [
+                        [
+                          5.0,
+                          52.0
+                        ],
+                        [
+                          5.5,
+                          52.0
+                        ],
+                        [
+                          5.5,
+                          52.5
+                        ],
+                        [
+                          5.0,
+                          52.5
+                        ],
+                        [
+                          5.0,
+                          52.0
+                        ]
+                      ],
+                      "curves": [
+                        {
+                          "coordinates": [
+                            [
+                              5.0,
+                              52.0
+                            ],
+                            [
+                              5.5,
+                              52.0
+                            ],
+                            [
+                              5.5,
+                              52.5
+                            ],
+                            [
+                              5.0,
+                              52.5
+                            ],
+                            [
+                              5.0,
+                              52.0
+                            ]
+                          ],
+                          "crs": {
+                            "axis_order": [
+                              "latitude",
+                              "longitude"
+                            ],
+                            "inherited": true,
+                            "srs_dimension": null,
+                            "srs_name": "urn:ogc:def:crs:EPSG::4326"
+                          },
+                          "element": "aixm:Curve",
+                          "gml_id": "TSA1_SF_1_CV",
+                          "segments": [
+                            {
+                              "count": 5,
+                              "element": "gml:GeodesicString",
+                              "interpolation": "geodesic",
+                              "pos_list_text": "52.0 5.0 52.0 5.5 52.5 5.5 52.5 5.0 52.0 5.0",
+                              "pos_texts": [],
+                              "stated_interpolation": null
+                            }
+                          ]
+                        }
+                      ],
+                      "element": "gml:Ring",
+                      "gml_id": null,
+                      "orientation": "counter-clockwise",
+                      "pos_list_text": null,
+                      "role": "exterior"
+                    },
+                    "interiors": [],
+                    "stated_interpolation": null
+                  }
+                ]
+              },
+              "horizontal_projection_state": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "aixm:Surface"
+              },
+              "lower": {
+                "cdm": {
+                  "reference": "MSL",
+                  "unit": "ft",
+                  "value": 2500.0
+                },
+                "kind": "numeric",
+                "limit": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": "FT",
+                  "value": "2500"
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": null,
+                  "value": "MSL"
+                }
+              },
+              "maximum": {
+                "cdm": null,
+                "kind": "absent",
+                "limit": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                }
+              },
+              "minimum": {
+                "cdm": null,
+                "kind": "absent",
+                "limit": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                }
+              },
+              "unsupported": [],
+              "upper": {
+                "cdm": {
+                  "reference": "FL",
+                  "unit": "FL",
+                  "value": 195.0
+                },
+                "kind": "numeric",
+                "limit": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": "FL",
+                  "value": "195"
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": null,
+                  "value": "STD"
+                }
+              },
+              "width": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            }
+          }
+        ],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": "b8844e9e-fc20-5a09-a179-9175054774d8",
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTSA1"
+          },
+          "designatorICAO": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "NO"
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC TSA ONE"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "TSA"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "TSA1_BL_1_0_LT",
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "TSA1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "TSA1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "Polygon"
+      }
+    },
+    "confidence": null,
+    "entity_id": "634791da-6484-554b-93bc-bec472d45b50",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AIRSPACE_BASELINE",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000001",
+            "aixm:timeSlice": [
+              {
+                "aixm:annotation": [
+                  {
+                    "$": "aixm:Note",
+                    "@gml:id": "TSA1_N_1",
+                    "aixm:propertyName": "activation",
+                    "aixm:purpose": "REMARK",
+                    "aixm:translatedNote": [
+                      {
+                        "$": "aixm:LinguisticNote",
+                        "@gml:id": "TSA1_N_1_LN",
+                        "aixm:note": {
+                          "#text": "Activation announced by NOTAM.",
+                          "@lang": "eng"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "TSA1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000001/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "area": {
+      "bounds": null,
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              5.0,
+              52.0
+            ],
+            [
+              5.5,
+              52.0
+            ],
+            [
+              5.5,
+              52.5
+            ],
+            [
+              5.0,
+              52.5
+            ],
+            [
+              5.0,
+              52.0
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "validity": {
+        "effective": {
+          "end": null,
+          "start": "2026-01-01T00:00:00.000Z"
+        },
+        "observed_at": null,
+        "valid_from": "2026-01-01T00:00:00.000Z",
+        "valid_to": null
+      },
+      "vertical": {
+        "lower": {
+          "reference": "MSL",
+          "uncertainty": null,
+          "unit": "ft",
+          "value": 2500.0
+        },
+        "upper": {
+          "reference": "FL",
+          "uncertainty": null,
+          "unit": "FL",
+          "value": 195.0
+        }
+      }
+    },
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            5.0,
+            52.0
+          ],
+          [
+            5.5,
+            52.0
+          ],
+          [
+            5.5,
+            52.5
+          ],
+          [
+            5.0,
+            52.5
+          ],
+          [
+            5.0,
+            52.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": "SYNTSA1",
+    "object_id": "b8844e9e-fc20-5a09-a179-9175054774d8",
+    "object_kind": "plan_object",
+    "object_type": "CONTROL_MEASURE",
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AIRSPACE_BASELINE",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000001",
+            "aixm:timeSlice": [
+              {
+                "aixm:annotation": [
+                  {
+                    "$": "aixm:Note",
+                    "@gml:id": "TSA1_N_1",
+                    "aixm:propertyName": "activation",
+                    "aixm:purpose": "REMARK",
+                    "aixm:translatedNote": [
+                      {
+                        "$": "aixm:LinguisticNote",
+                        "@gml:id": "TSA1_N_1_LN",
+                        "aixm:note": {
+                          "#text": "Activation announced by NOTAM.",
+                          "@lang": "eng"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "TSA1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000001/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": {
+      "effective": {
+        "end": null,
+        "start": "2026-01-01T00:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": "2026-01-01T00:00:00.000Z",
+      "valid_to": null
+    }
+  }
+]

@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "SELECT",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{"type":"Feature","id":1,"properties":{"name":"EXERCISE COASTAL ROUTE","length_km":31.5,"active":1},"geometry":{"type":"LineString","coordinates":[[24.1,57.0],[24.3,57.1],[24.5,57.1]]}},
+{"type":"Feature","id":2,"properties":{"name":"EXERCISE MERIDIAN LEG","length_km":0.0,"active":0},"geometry":{"type":"LineString","coordinates":[[24.0,56.9],[24.0,57.2]]}},
+{"type":"Feature","id":3,"properties":{"name":"EXERCISE PARALLEL LEG","length_km":42.0,"active":null},"geometry":{"type":"LineString","coordinates":[[23.9,57.0],[24.6,57.0]]}}
+]
+}

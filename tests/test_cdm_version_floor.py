@@ -249,7 +249,7 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 #: Every root the gate parses, in one tuple, because `discover()` and the size check below both
 #: read it. They used to carry the same three-element literal each, which is two lists to keep in
 #: step for one fact — and the closure test exists precisely to catch a root nobody added.
-ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts")
+ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO / "examples")
 
 
 def discover() -> list[pathlib.Path]:
@@ -270,6 +270,12 @@ def discover() -> list[pathlib.Path]:
     `publish.yml`'s alone). It is IN SCOPE because a release is the worst place to meet a
     `SyntaxError`, and because the pin is a choice somebody can lower: the floor is what says
     which interpreters that choice may range over.
+
+    `examples/` joined on 2026-09-20 (adapter expansion phase 2) the same way: the closure test
+    failed on the commit that put `examples/geopackage_to_geojson/run.py` there. IN SCOPE, because
+    a demonstration is run by a reader on whatever interpreter they have — the one-command,
+    self-checking proof of a cross-format translation is the last file that should meet a
+    `SyntaxError` on the floor the project declares.
     """
     out = []
     for root in ROOTS:

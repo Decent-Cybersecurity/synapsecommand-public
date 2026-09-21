@@ -1,7 +1,7 @@
 # Contributing
 
 This repository holds the SynapseCommand **Canonical Data Model** — the contract layer that
-fourteen integration adapters translate into. A contract is the wrong place for a surprise, so the
+nineteen integration adapters translate into. A contract is the wrong place for a surprise, so the
 rules below are short and they are enforced by something that fails a build rather than by
 review alone.
 

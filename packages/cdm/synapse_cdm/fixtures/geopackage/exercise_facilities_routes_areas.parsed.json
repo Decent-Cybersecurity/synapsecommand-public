@@ -1,0 +1,814 @@
+{
+ "contents": [
+  {
+   "data_type": "features",
+   "description": "",
+   "identifier": "areas",
+   "last_change": "2026-09-20T00:00:00.000Z",
+   "max_x": 24.9,
+   "max_y": 57.3,
+   "min_x": 23.8,
+   "min_y": 56.8,
+   "srs_id": 4326,
+   "table_name": "areas"
+  },
+  {
+   "data_type": "features",
+   "description": "",
+   "identifier": "facilities",
+   "last_change": "2026-09-20T00:00:00.000Z",
+   "max_x": 24.4,
+   "max_y": 57.1,
+   "min_x": 0.0,
+   "min_y": 0.0,
+   "srs_id": 4326,
+   "table_name": "facilities"
+  },
+  {
+   "data_type": "features",
+   "description": "",
+   "identifier": "routes",
+   "last_change": "2026-09-20T00:00:00.000Z",
+   "max_x": 24.6,
+   "max_y": 57.2,
+   "min_x": 23.9,
+   "min_y": 56.9,
+   "srs_id": 4326,
+   "table_name": "routes"
+  }
+ ],
+ "extensions": [
+  {
+   "column_name": "geom",
+   "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+   "extension_name": "gpkg_rtree_index",
+   "scope": "write-only",
+   "table_name": "areas"
+  },
+  {
+   "column_name": "geom",
+   "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+   "extension_name": "gpkg_rtree_index",
+   "scope": "write-only",
+   "table_name": "facilities"
+  },
+  {
+   "column_name": null,
+   "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+   "extension_name": "gpkg_metadata",
+   "scope": "read-write",
+   "table_name": "gpkg_metadata"
+  },
+  {
+   "column_name": null,
+   "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+   "extension_name": "gpkg_metadata",
+   "scope": "read-write",
+   "table_name": "gpkg_metadata_reference"
+  },
+  {
+   "column_name": "geom",
+   "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+   "extension_name": "gpkg_rtree_index",
+   "scope": "write-only",
+   "table_name": "routes"
+  }
+ ],
+ "geometry_columns": [
+  {
+   "column_name": "geom",
+   "geometry_type_name": "POLYGON",
+   "m": 0,
+   "srs_id": 4326,
+   "table_name": "areas",
+   "z": 0
+  },
+  {
+   "column_name": "geom",
+   "geometry_type_name": "POINT",
+   "m": 0,
+   "srs_id": 4326,
+   "table_name": "facilities",
+   "z": 1
+  },
+  {
+   "column_name": "geom",
+   "geometry_type_name": "LINESTRING",
+   "m": 0,
+   "srs_id": 4326,
+   "table_name": "routes",
+   "z": 0
+  }
+ ],
+ "inventory": {
+  "included": [
+   "areas",
+   "facilities",
+   "routes"
+  ],
+  "unselected": [],
+  "unsupported": []
+ },
+ "layers": [
+  {
+   "columns": [
+    {
+     "declared_type": "INTEGER",
+     "name": "fid",
+     "not_null": true,
+     "primary_key": true
+    },
+    {
+     "declared_type": "POLYGON",
+     "name": "geom",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "name",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "kind",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "MEDIUMINT",
+     "name": "priority",
+     "not_null": false,
+     "primary_key": false
+    }
+   ],
+   "crs": {
+    "accepted_as": "EPSG:4326",
+    "authority": [
+     "EPSG",
+     "4326"
+    ],
+    "datum": "WGS_1984",
+    "definition_column": "definition",
+    "ellipsoid": [
+     6378137.0,
+     298.257223563
+    ],
+    "kind": "geographic-2d",
+    "root": "GEOGCS",
+    "srs_id": 4326
+   },
+   "geometry_column": "geom",
+   "geometry_type_name": "POLYGON",
+   "identifier": "areas",
+   "m": 0,
+   "name": "areas",
+   "primary_key": "fid",
+   "row_count": 3,
+   "srs_id": 4326,
+   "z": 0
+  },
+  {
+   "columns": [
+    {
+     "declared_type": "INTEGER",
+     "name": "fid",
+     "not_null": true,
+     "primary_key": true
+    },
+    {
+     "declared_type": "POINT",
+     "name": "geom",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "name",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "category",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "MEDIUMINT",
+     "name": "capacity",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "REAL",
+     "name": "ratio",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "note",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "BLOB",
+     "name": "payload",
+     "not_null": false,
+     "primary_key": false
+    }
+   ],
+   "crs": {
+    "accepted_as": "EPSG:4326",
+    "authority": [
+     "EPSG",
+     "4326"
+    ],
+    "datum": "WGS_1984",
+    "definition_column": "definition",
+    "ellipsoid": [
+     6378137.0,
+     298.257223563
+    ],
+    "kind": "geographic-2d",
+    "root": "GEOGCS",
+    "srs_id": 4326
+   },
+   "geometry_column": "geom",
+   "geometry_type_name": "POINT",
+   "identifier": "facilities",
+   "m": 0,
+   "name": "facilities",
+   "primary_key": "fid",
+   "row_count": 3,
+   "srs_id": 4326,
+   "z": 1
+  },
+  {
+   "columns": [
+    {
+     "declared_type": "INTEGER",
+     "name": "fid",
+     "not_null": true,
+     "primary_key": true
+    },
+    {
+     "declared_type": "LINESTRING",
+     "name": "geom",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "name",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "REAL",
+     "name": "length_km",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "MEDIUMINT",
+     "name": "active",
+     "not_null": false,
+     "primary_key": false
+    }
+   ],
+   "crs": {
+    "accepted_as": "EPSG:4326",
+    "authority": [
+     "EPSG",
+     "4326"
+    ],
+    "datum": "WGS_1984",
+    "definition_column": "definition",
+    "ellipsoid": [
+     6378137.0,
+     298.257223563
+    ],
+    "kind": "geographic-2d",
+    "root": "GEOGCS",
+    "srs_id": 4326
+   },
+   "geometry_column": "geom",
+   "geometry_type_name": "LINESTRING",
+   "identifier": "routes",
+   "m": 0,
+   "name": "routes",
+   "primary_key": "fid",
+   "row_count": 3,
+   "srs_id": 4326,
+   "z": 0
+  }
+ ],
+ "rows": [
+  {
+   "attribute_types": {
+    "kind": "text",
+    "name": "text",
+    "priority": "integer"
+   },
+   "attributes": {
+    "kind": "exclusion",
+    "name": "EXERCISE TRAINING AREA",
+    "priority": 1
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       24.0,
+       57.0
+      ],
+      [
+       24.6,
+       57.0
+      ],
+      [
+       24.6,
+       57.3
+      ],
+      [
+       24.0,
+       57.3
+      ],
+      [
+       24.0,
+       57.0
+      ]
+     ],
+     [
+      [
+       24.2,
+       57.1
+      ],
+      [
+       24.2,
+       57.2
+      ],
+      [
+       24.4,
+       57.2
+      ],
+      [
+       24.4,
+       57.1
+      ],
+      [
+       24.2,
+       57.1
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.6,
+     "max_y": 57.3,
+     "min_x": 24.0,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 217,
+    "srs_id": 4326,
+    "type": "Polygon",
+    "wkb_octets": 177,
+    "wkb_offset": 40
+   },
+   "layer": "areas",
+   "pk": 1
+  },
+  {
+   "attribute_types": {
+    "kind": "text",
+    "name": "text",
+    "priority": "integer"
+   },
+   "attributes": {
+    "kind": "anchorage",
+    "name": "EXERCISE ANCHORAGE",
+    "priority": 2
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       23.8,
+       56.8
+      ],
+      [
+       23.9,
+       56.8
+      ],
+      [
+       23.9,
+       56.9
+      ],
+      [
+       23.8,
+       56.9
+      ],
+      [
+       23.8,
+       56.8
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 23.9,
+     "max_y": 56.9,
+     "min_x": 23.8,
+     "min_y": 56.8
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 133,
+    "srs_id": 4326,
+    "type": "Polygon",
+    "wkb_octets": 93,
+    "wkb_offset": 40
+   },
+   "layer": "areas",
+   "pk": 2
+  },
+  {
+   "attribute_types": {
+    "kind": "text",
+    "name": "text",
+    "priority": "null"
+   },
+   "attributes": {
+    "kind": "range",
+    "name": "EXERCISE RANGE",
+    "priority": null
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       24.7,
+       57.0
+      ],
+      [
+       24.9,
+       57.0
+      ],
+      [
+       24.9,
+       57.1
+      ],
+      [
+       24.7,
+       57.1
+      ],
+      [
+       24.7,
+       57.0
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.9,
+     "max_y": 57.1,
+     "min_x": 24.7,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 133,
+    "srs_id": 4326,
+    "type": "Polygon",
+    "wkb_octets": 93,
+    "wkb_offset": 40
+   },
+   "layer": "areas",
+   "pk": 3
+  },
+  {
+   "attribute_types": {
+    "capacity": "integer",
+    "category": "text",
+    "name": "text",
+    "note": "null",
+    "payload": "blob",
+    "ratio": "real"
+   },
+   "attributes": {
+    "capacity": 120,
+    "category": "port",
+    "name": "EXERCISE HARBOUR OFFICE",
+    "note": null,
+    "payload": {
+     "encoding": "hex",
+     "hex": "DEADBEEF00"
+    },
+    "ratio": 0.5
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     24.1052,
+     56.9496,
+     12.5
+    ],
+    "dimension": "XYZ",
+    "envelope": null,
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 0,
+     "extended": false
+    },
+    "octets": 37,
+    "srs_id": 4326,
+    "type": "Point",
+    "wkb_octets": 29,
+    "wkb_offset": 8
+   },
+   "layer": "facilities",
+   "pk": 1
+  },
+  {
+   "attribute_types": {
+    "capacity": "integer",
+    "category": "text",
+    "name": "text",
+    "note": "text",
+    "payload": "blob",
+    "ratio": "real"
+   },
+   "attributes": {
+    "capacity": 0,
+    "category": "buoy",
+    "name": "EXERCISE ORIGIN BUOY",
+    "note": "zero",
+    "payload": {
+     "encoding": "hex",
+     "hex": "DEADBEEF00"
+    },
+    "ratio": 0.0
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "dimension": "XYZ",
+    "envelope": null,
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 0,
+     "extended": false
+    },
+    "octets": 37,
+    "srs_id": 4326,
+    "type": "Point",
+    "wkb_octets": 29,
+    "wkb_offset": 8
+   },
+   "layer": "facilities",
+   "pk": 2
+  },
+  {
+   "attribute_types": {
+    "capacity": "null",
+    "category": "text",
+    "name": "text",
+    "note": "null",
+    "payload": "null",
+    "ratio": "null"
+   },
+   "attributes": {
+    "capacity": null,
+    "category": "depot",
+    "name": "EXERCISE DEPOT",
+    "note": null,
+    "payload": null,
+    "ratio": null
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     24.4,
+     57.1,
+     -3.25
+    ],
+    "dimension": "XYZ",
+    "envelope": null,
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 0,
+     "extended": false
+    },
+    "octets": 37,
+    "srs_id": 4326,
+    "type": "Point",
+    "wkb_octets": 29,
+    "wkb_offset": 8
+   },
+   "layer": "facilities",
+   "pk": 3
+  },
+  {
+   "attribute_types": {
+    "active": "integer",
+    "length_km": "real",
+    "name": "text"
+   },
+   "attributes": {
+    "active": 1,
+    "length_km": 31.5,
+    "name": "EXERCISE COASTAL ROUTE"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      24.1,
+      57.0
+     ],
+     [
+      24.3,
+      57.1
+     ],
+     [
+      24.5,
+      57.1
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.5,
+     "max_y": 57.1,
+     "min_x": 24.1,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 97,
+    "srs_id": 4326,
+    "type": "LineString",
+    "wkb_octets": 57,
+    "wkb_offset": 40
+   },
+   "layer": "routes",
+   "pk": 1
+  },
+  {
+   "attribute_types": {
+    "active": "integer",
+    "length_km": "real",
+    "name": "text"
+   },
+   "attributes": {
+    "active": 0,
+    "length_km": 0.0,
+    "name": "EXERCISE MERIDIAN LEG"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      24.0,
+      56.9
+     ],
+     [
+      24.0,
+      57.2
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.0,
+     "max_y": 57.2,
+     "min_x": 24.0,
+     "min_y": 56.9
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 81,
+    "srs_id": 4326,
+    "type": "LineString",
+    "wkb_octets": 41,
+    "wkb_offset": 40
+   },
+   "layer": "routes",
+   "pk": 2
+  },
+  {
+   "attribute_types": {
+    "active": "null",
+    "length_km": "real",
+    "name": "text"
+   },
+   "attributes": {
+    "active": null,
+    "length_km": 42.0,
+    "name": "EXERCISE PARALLEL LEG"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      23.9,
+      57.0
+     ],
+     [
+      24.6,
+      57.0
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.6,
+     "max_y": 57.0,
+     "min_x": 23.9,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 81,
+    "srs_id": 4326,
+    "type": "LineString",
+    "wkb_octets": 41,
+    "wkb_offset": 40
+   },
+   "layer": "routes",
+   "pk": 3
+  }
+ ],
+ "spatial_ref_sys": [
+  {
+   "definition": "undefined",
+   "description": "undefined Cartesian coordinate reference system",
+   "organization": "NONE",
+   "organization_coordsys_id": -1,
+   "srs_id": -1,
+   "srs_name": "Undefined Cartesian SRS"
+  },
+  {
+   "definition": "undefined",
+   "description": "undefined geographic coordinate reference system",
+   "organization": "NONE",
+   "organization_coordsys_id": 0,
+   "srs_id": 0,
+   "srs_name": "Undefined geographic SRS"
+  },
+  {
+   "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+   "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+   "organization": "EPSG",
+   "organization_coordsys_id": 4326,
+   "srs_id": 4326,
+   "srs_name": "WGS 84 geodetic"
+  }
+ ],
+ "sqlite": {
+  "application_id": "GPKG",
+  "magic": "SQLite format 3",
+  "octets": 147456,
+  "page_size": 4096,
+  "read_version": 1,
+  "user_version": 10400,
+  "wal_read_as_checkpointed": false,
+  "write_version": 1
+ }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Three later time slices of the fictitious area of airspace_baseline_polygon.xml
+     (same gml:identifier), authored by hand on 2026-09-21: a TEMPDELTA (sequence 2, correction 0)
+     activating the area for one day with no schedule; its CORRECTION (sequence 2, correction 1)
+     ending the activation two hours earlier; and a PERMDELTA (sequence 3) at an instant, renaming
+     the area and withdrawing its localType with xsi:nil (Temporality Concept 1.1 §4.4.6.1). No
+     slice states geometry: under a delta an absent property is UNCHANGED, and no PlanObject is
+     drawn from what a slice does not state. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_AIRSPACE_DELTAS">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-0001-4000-8000-000000000001">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0001-4000-8000-000000000001</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_TD_2_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TSA1_TD_2_0_VT">
+              <gml:beginPosition>2026-03-10T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T16:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="TSA1_TD_2_0_ACT">
+              <aixm:activity>MILOPS</aixm:activity>
+              <aixm:status>ACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_TD_2_1">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="TSA1_TD_2_1_VT">
+              <gml:beginPosition>2026-03-10T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-10T14:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+          <aixm:correctionNumber>1</aixm:correctionNumber>
+          <aixm:activation>
+            <aixm:AirspaceActivation gml:id="TSA1_TD_2_1_ACT">
+              <aixm:activity>MILOPS</aixm:activity>
+              <aixm:status>ACTIVE</aixm:status>
+            </aixm:AirspaceActivation>
+          </aixm:activation>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="TSA1_PD_3_0">
+          <gml:validTime>
+            <gml:TimeInstant gml:id="TSA1_PD_3_0_VT">
+              <gml:timePosition>2026-04-01T00:00:00Z</gml:timePosition>
+            </gml:TimeInstant>
+          </gml:validTime>
+          <aixm:interpretation>PERMDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>3</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:localType xsi:nil="true" nilReason="inapplicable"/>
+          <aixm:name>SYNTHETIC TSA ONE RENAMED</aixm:name>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

@@ -488,31 +488,63 @@ def _public(name: str) -> bool:
     return not name.startswith("_") and not name.startswith("<")
 
 
-def _adapter_names(tree: ast.Module) -> set[str]:
-    """`name = "…"` on classes that subclass something called `Adapter`, by AST and no import.
+def _class_bases(trees: list[ast.Module]) -> dict[str, set[str]]:
+    """Every class in the snapshot's modules, by name, with the names of its bases."""
+    bases: dict[str, set[str]] = {}
+    for tree in trees:
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                named = {b.id for b in node.bases if isinstance(b, ast.Name)}
+                named |= {b.attr for b in node.bases if isinstance(b, ast.Attribute)}
+                bases.setdefault(node.name, set()).update(named)
+    return bases
+
+
+def _adapter_classes(trees: list[ast.Module]) -> set[str]:
+    """The class names that subclass `Adapter`, directly or through another class in the snapshot.
+
+    A fixed point over `_class_bases`: `Adapter` itself seeds the set, and a class whose base is
+    in the set joins it, until nothing joins. Names are matched across modules by the bare
+    identifier, which is the identifier a `from .x import Base` statement binds — the arc's other
+    end is a git revision and not an importable tree, so there is no MRO to ask.
+    """
+    bases = _class_bases(trees)
+    derived = {"Adapter"}
+    while True:
+        grown = {name for name, its in bases.items() if its & derived} | derived
+        if grown == derived:
+            return derived
+        derived = grown
+
+
+def _adapter_names(trees: list[ast.Module] | ast.Module) -> set[str]:
+    """`name = "…"` on classes that subclass `Adapter`, by AST and no import — directly, or
+    through an intermediate class that does (`aixm511.AixmAdapterBase`, since 2026-09-21).
 
     Importing would be the more accurate reading and is not available: the arc's other end is a
-    git revision, not an importable tree. The shape is uniform across the whole shipped roster —
-    `class XAdapter(Adapter):` with `name = "…"` as a class attribute — and `adapter.py`'s
-    `__init_subclass__` is what turns that literal into the registry key. **The roster is stated
+    git revision, not an importable tree. The shape was uniform across the roster until the
+    adapter expansion — `class XAdapter(Adapter):` with `name = "…"` as a class attribute — and
+    is now `class XAdapter(<a class that subclasses Adapter>):`, which `_adapter_classes` resolves
+    across the snapshot's modules; `adapter.py`'s `__init_subclass__` is what turns the literal
+    into the registry key either way. The first shape alone let two adapters (`aixm511`, `aixm52`)
+    be added with nothing in this gate seeing them, which
+    `test_the_gates_adapter_roster_is_the_registry` reported on 2026-09-21. **The roster is stated
     as no number here**, on rule 7 of the sweep protocol: this reading is compared against
-    `adapter.roster()` by `test_the_gates_adapter_roster_is_the_registry`, so a count in this
-    docstring would be a second statement of a fact one test already derives, and a second
-    statement re-drifts where a citation cannot.
+    `adapter.roster()` by that test, so a count in this docstring would be a second statement of
+    a fact one test already derives, and a second statement re-drifts where a citation cannot.
     """
+    trees = [trees] if isinstance(trees, ast.Module) else list(trees)
+    classes = _adapter_classes(trees) - {"Adapter"}    # the base declares the slot, not a name
     found = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.ClassDef):
-            continue
-        bases = {b.id for b in node.bases if isinstance(b, ast.Name)}
-        bases |= {b.attr for b in node.bases if isinstance(b, ast.Attribute)}
-        if "Adapter" not in bases:
-            continue
-        for stmt in node.body:
-            if (isinstance(stmt, ast.Assign) and _unit_name(stmt) == "name"
-                    and isinstance(stmt.value, ast.Constant)
-                    and isinstance(stmt.value.value, str)):
-                found.add(stmt.value.value)
+    for tree in trees:
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef) or node.name not in classes:
+                continue
+            for stmt in node.body:
+                if (isinstance(stmt, ast.Assign) and _unit_name(stmt) == "name"
+                        and isinstance(stmt.value, ast.Constant)
+                        and isinstance(stmt.value.value, str)):
+                    found.add(stmt.value.value)
     return found
 
 
@@ -612,6 +644,7 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
     checks: set[str] = set()
     schema_version = None
 
+    trees: list[ast.Module] = []
     for path, blob in snapshot.items():
         if not path.endswith(".py"):
             continue
@@ -621,7 +654,7 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
         modules[path] = units
         public[path] = {n for n in units if _public(n)}
         tree = _parse(blob)
-        adapters |= _adapter_names(tree)
+        trees.append(tree)
         if path == f"{PKG}/harness.py":
             flags |= _harness_flags(tree)
             exits |= _harness_exit_codes(tree)
@@ -631,6 +664,9 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
                 if (_unit_name(stmt) == "SCHEMA_VERSION" and isinstance(stmt, ast.Assign)
                         and isinstance(stmt.value, ast.Constant)):
                     schema_version = stmt.value.value
+
+    # Across the modules, not per module: an adapter's base may live in another file.
+    adapters |= _adapter_names(trees)
 
     fixture_sets = {path.split("/")[2] for path in snapshot
                     if path.startswith(f"{PKG}/fixtures/") and len(path.split("/")) > 3}

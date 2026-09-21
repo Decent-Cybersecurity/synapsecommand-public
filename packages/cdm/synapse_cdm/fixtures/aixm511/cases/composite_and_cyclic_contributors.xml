@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Two airspaces that refer to EACH OTHER through contributorAirspace (a cycle of references) and compose volumes with SUBTR and UNION: every component is typed, both references resolve one hop, and no PlanObject is drawn because the CDM Area is one volume and a composition would be a derivation. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_COMPOSITE">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000004">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000004</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="CA_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="CA_BL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYNA</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="CA1_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:operationSequence>1</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="CA1_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="CA1_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:Ring>
+                              <gml:curveMember>
+                                <aixm:Curve gml:id="CA1_CV">
+                                  <gml:segments>
+                                    <gml:GeodesicString>
+                                      <gml:posList>52.1 5.2 52.1 5.4 52.3 5.4 52.3 5.2 52.1 5.2</gml:posList>
+                                    </gml:GeodesicString>
+                                  </gml:segments>
+                                </aixm:Curve>
+                              </gml:curveMember>
+                            </gml:Ring>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="CA2_GC">
+              <aixm:operation>SUBTR</aixm:operation>
+              <aixm:operationSequence>2</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="CA2_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:contributorAirspace>
+                    <aixm:AirspaceVolumeDependency gml:id="CA2_DEP">
+                      <aixm:dependency>FULL_GEOMETRY</aixm:dependency>
+                      <aixm:theAirspace xlink:href="urn:uuid:a1a40000-00c0-4000-8000-000000000005"/>
+                    </aixm:AirspaceVolumeDependency>
+                  </aixm:contributorAirspace>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000005">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000005</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="CB_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="CB_BL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>D</aixm:type>
+          <aixm:designator>SYNB</aixm:designator>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="CB1_GC">
+              <aixm:operation>BASE</aixm:operation>
+              <aixm:operationSequence>1</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="CB1_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:horizontalProjection>
+                    <aixm:Surface gml:id="CB1_SF" srsName="urn:ogc:def:crs:EPSG::4326">
+                      <gml:patches>
+                        <gml:PolygonPatch>
+                          <gml:exterior>
+                            <gml:Ring>
+                              <gml:curveMember>
+                                <aixm:Curve gml:id="CB1_CV">
+                                  <gml:segments>
+                                    <gml:GeodesicString>
+                                      <gml:posList>52.15 5.25 52.15 5.35 52.25 5.35 52.25 5.25 52.15 5.25</gml:posList>
+                                    </gml:GeodesicString>
+                                  </gml:segments>
+                                </aixm:Curve>
+                              </gml:curveMember>
+                            </gml:Ring>
+                          </gml:exterior>
+                        </gml:PolygonPatch>
+                      </gml:patches>
+                    </aixm:Surface>
+                  </aixm:horizontalProjection>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+          <aixm:geometryComponent>
+            <aixm:AirspaceGeometryComponent gml:id="CB2_GC">
+              <aixm:operation>UNION</aixm:operation>
+              <aixm:operationSequence>2</aixm:operationSequence>
+              <aixm:theAirspaceVolume>
+                <aixm:AirspaceVolume gml:id="CB2_AV">
+                  <aixm:upperLimit uom="FT">5000</aixm:upperLimit>
+                  <aixm:upperLimitReference>MSL</aixm:upperLimitReference>
+                  <aixm:lowerLimit uom="FT">1000</aixm:lowerLimit>
+                  <aixm:lowerLimitReference>MSL</aixm:lowerLimitReference>
+                  <aixm:contributorAirspace>
+                    <aixm:AirspaceVolumeDependency gml:id="CB2_DEP">
+                      <aixm:dependency>HORZ_PROJECTION</aixm:dependency>
+                      <aixm:theAirspace xlink:href="urn:uuid:a1a40000-00c0-4000-8000-000000000004"/>
+                    </aixm:AirspaceVolumeDependency>
+                  </aixm:contributorAirspace>
+                </aixm:AirspaceVolume>
+              </aixm:theAirspaceVolume>
+            </aixm:AirspaceGeometryComponent>
+          </aixm:geometryComponent>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

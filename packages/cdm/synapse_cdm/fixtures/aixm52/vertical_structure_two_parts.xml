@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A fictitious lit tower with two parts: a mast with a point location (250 FT MSL)
+     and a 120 M vertical extent, and an antenna with no geometry. Written by spec/build_fixtures.py on
+     2026-09-21 for the SynapseCommand aixm52 adapter. AIXM 5.2: each part states its height, the
+     structure its designator, marked, placeName and dataAssessmentStatus, and two arrestingDevice
+     references (unbounded in 5.2, unresolved here); the part's location is the 5.2 ElevatedPoint. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.2/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.2" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_TOWER">
+  <message:hasMember>
+    <aixm:VerticalStructure gml:id="uuid.a1a40000-0520-4000-8000-000000000007">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000007</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:VerticalStructureTimeSlice gml:id="VS1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VS1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:name>SYNTHETIC TOWER</aixm:name>
+          <aixm:type>TOWER</aixm:type>
+          <aixm:lighted>YES</aixm:lighted>
+          <aixm:part>
+            <aixm:VerticalStructurePart gml:id="VS1_P1">
+              <aixm:verticalExtent uom="M">120</aixm:verticalExtent>
+              <aixm:type>TOWER</aixm:type>
+              <aixm:designator>SYNTOWER-MAST-LONG-DESIGNATOR</aixm:designator>
+              <aixm:horizontalProjection_location>
+              <aixm:ElevatedPoint gml:id="VS1_P1_LOC" srsName="urn:ogc:def:crs:EPSG::4326">
+                <gml:pos>52.4 5.1</gml:pos>
+                <aixm:elevation uom="FT">250</aixm:elevation>
+                <aixm:verticalDatum>EGM 96 GEOID (free text in 5.2)</aixm:verticalDatum>
+                <aixm:horizontalAccuracy uom="M">5</aixm:horizontalAccuracy>
+              </aixm:ElevatedPoint>
+              </aixm:horizontalProjection_location>
+              <aixm:height uom="M">120</aixm:height>
+            </aixm:VerticalStructurePart>
+          </aixm:part>
+          <aixm:part>
+            <aixm:VerticalStructurePart gml:id="VS1_P2">
+              <aixm:verticalExtent uom="M">15</aixm:verticalExtent>
+              <aixm:type>ANTENNA</aixm:type>
+              <aixm:designator>SYNTOWER-ANT</aixm:designator>
+              <aixm:height uom="M">15</aixm:height>
+            </aixm:VerticalStructurePart>
+          </aixm:part>
+          <aixm:marked>YES</aixm:marked>
+          <aixm:designator>SYNTWR1</aixm:designator>
+          <aixm:placeName>SYNTHETIC HILL</aixm:placeName>
+          <aixm:dataAssessmentStatus>VERIFIED</aixm:dataAssessmentStatus>
+          <aixm:arrestingDevice xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000031"/>
+          <aixm:arrestingDevice xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000032"/>
+        </aixm:VerticalStructureTimeSlice>
+      </aixm:timeSlice>
+    </aixm:VerticalStructure>
+  </message:hasMember>
+</message:AIXMBasicMessage>

@@ -1,0 +1,14 @@
+{
+  "type": "Feature",
+  "id": "swapped",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      24.1052,
+      95.0
+    ]
+  },
+  "properties": {
+    "name": "EXERCISE — a latitude of 95 is the [lat, lon] swap's signature"
+  }
+}

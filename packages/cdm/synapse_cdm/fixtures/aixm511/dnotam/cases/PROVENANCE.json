@@ -1,0 +1,14 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511/dnotam/cases",
+  "fixtures": [
+    {
+      "file": "cancellation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic document written on 2026-09-21 by `dnotam/spec/build_fixtures.py`: an inactive Digital NOTAM Event and its RunwayDirection TEMPDELTA cancelled before effect (Temporality Concept 1.1 \u00a74.4.8; guidance page 220791154) \u2014 read by name in `tests/test_cdm_aixm511_dnotam.py` and `tests/test_cdm_aixm_resolve.py` under the as-of context a cancelled slice needs (limitation cancelled-slice-needs-as-of), which is why it is not in the harness set. Validates against the pinned closure. Fictitious throughout."
+    }
+  ]
+}

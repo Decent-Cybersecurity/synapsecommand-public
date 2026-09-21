@@ -1,0 +1,122 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.5
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.5,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            0.1,
+            0.1
+          ],
+          [
+            0.4,
+            0.1
+          ],
+          [
+            0.4,
+            0.4
+          ],
+          [
+            0.1,
+            0.4
+          ],
+          [
+            0.1,
+            0.1
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "adcff0bc-9cb8-57c4-b8dd-287ee760ba06",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "document": {
+          "bbox": [
+            -0.5,
+            -0.5,
+            0.5,
+            0.5
+          ],
+          "geometry": {
+            "source_note": "EXERCISE \u2014 synthetic ring on the zero meridian"
+          },
+          "id": "eq-0",
+          "properties": {
+            "depth_m": 0,
+            "name": "EXERCISE equator square",
+            "nested": {
+              "a": [
+                1,
+                2,
+                {
+                  "b": null
+                }
+              ],
+              "c": ""
+            },
+            "ratio": 0.0
+          },
+          "type": "Feature"
+        }
+      },
+      "namespace": "GeoJSON"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geojson",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoJSON",
+      "format_version": "RFC 7946 (August 2016)",
+      "observed_at": null,
+      "original_id": "\"eq-0\"",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoJSON",
+      "transformations": [
+        "ring orientation: ring 0 (exterior) is clockwise; RFC 7946 \u00a73.1.6 asks for counterclockwise (a SHOULD) and lets a parser accept either \u2014 kept as sent, not reversed",
+        "ring orientation: ring 1 (hole) is counterclockwise; RFC 7946 \u00a73.1.6 asks for clockwise (a SHOULD) and lets a parser accept either \u2014 kept as sent, not reversed",
+        "bbox: kept verbatim at residual.data.document.bbox; the geo-object/1 profile projects no canonical BoundingBox (PlanObject carries bounds only inside an Area)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "eq-0",
+        "system": "GeoJSON"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

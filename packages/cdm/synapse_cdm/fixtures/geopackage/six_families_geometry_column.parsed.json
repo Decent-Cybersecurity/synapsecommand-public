@@ -1,0 +1,470 @@
+{
+ "contents": [
+  {
+   "data_type": "features",
+   "description": "",
+   "identifier": "families",
+   "last_change": "2026-09-20T00:00:00.000Z",
+   "max_x": 25.2,
+   "max_y": 57.5,
+   "min_x": 0.0,
+   "min_y": 0.0,
+   "srs_id": 4326,
+   "table_name": "families"
+  }
+ ],
+ "extensions": [
+  {
+   "column_name": "geom",
+   "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+   "extension_name": "gpkg_rtree_index",
+   "scope": "write-only",
+   "table_name": "families"
+  },
+  {
+   "column_name": null,
+   "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+   "extension_name": "gpkg_metadata",
+   "scope": "read-write",
+   "table_name": "gpkg_metadata"
+  },
+  {
+   "column_name": null,
+   "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+   "extension_name": "gpkg_metadata",
+   "scope": "read-write",
+   "table_name": "gpkg_metadata_reference"
+  }
+ ],
+ "geometry_columns": [
+  {
+   "column_name": "geom",
+   "geometry_type_name": "GEOMETRY",
+   "m": 0,
+   "srs_id": 4326,
+   "table_name": "families",
+   "z": 0
+  }
+ ],
+ "inventory": {
+  "included": [
+   "families"
+  ],
+  "unselected": [],
+  "unsupported": []
+ },
+ "layers": [
+  {
+   "columns": [
+    {
+     "declared_type": "INTEGER",
+     "name": "fid",
+     "not_null": true,
+     "primary_key": true
+    },
+    {
+     "declared_type": "GEOMETRY",
+     "name": "geom",
+     "not_null": false,
+     "primary_key": false
+    },
+    {
+     "declared_type": "TEXT",
+     "name": "name",
+     "not_null": false,
+     "primary_key": false
+    }
+   ],
+   "crs": {
+    "accepted_as": "EPSG:4326",
+    "authority": [
+     "EPSG",
+     "4326"
+    ],
+    "datum": "WGS_1984",
+    "definition_column": "definition",
+    "ellipsoid": [
+     6378137.0,
+     298.257223563
+    ],
+    "kind": "geographic-2d",
+    "root": "GEOGCS",
+    "srs_id": 4326
+   },
+   "geometry_column": "geom",
+   "geometry_type_name": "GEOMETRY",
+   "identifier": "families",
+   "m": 0,
+   "name": "families",
+   "primary_key": "fid",
+   "row_count": 6,
+   "srs_id": 4326,
+   "z": 0
+  }
+ ],
+ "rows": [
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE POINT"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     0.0,
+     0.0
+    ],
+    "dimension": "XY",
+    "envelope": null,
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 0,
+     "extended": false
+    },
+    "octets": 29,
+    "srs_id": 4326,
+    "type": "Point",
+    "wkb_octets": 21,
+    "wkb_offset": 8
+   },
+   "layer": "families",
+   "pk": 10
+  },
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE MULTIPOINT"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      24.1,
+      57.1
+     ],
+     [
+      24.2,
+      57.2
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.2,
+     "max_y": 57.2,
+     "min_x": 24.1,
+     "min_y": 57.1
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 91,
+    "srs_id": 4326,
+    "type": "MultiPoint",
+    "wkb_octets": 51,
+    "wkb_offset": 40
+   },
+   "layer": "families",
+   "pk": 11
+  },
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE LINESTRING"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      24.0,
+      57.0
+     ],
+     [
+      24.5,
+      57.5
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.5,
+     "max_y": 57.5,
+     "min_x": 24.0,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 81,
+    "srs_id": 4326,
+    "type": "LineString",
+    "wkb_octets": 41,
+    "wkb_offset": 40
+   },
+   "layer": "families",
+   "pk": 12
+  },
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE MULTILINESTRING"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       24.0,
+       57.0
+      ],
+      [
+       24.1,
+       57.0
+      ]
+     ],
+     [
+      [
+       24.2,
+       57.0
+      ],
+      [
+       24.3,
+       57.0
+      ],
+      [
+       24.4,
+       57.1
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.4,
+     "max_y": 57.1,
+     "min_x": 24.0,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 147,
+    "srs_id": 4326,
+    "type": "MultiLineString",
+    "wkb_octets": 107,
+    "wkb_offset": 40
+   },
+   "layer": "families",
+   "pk": 13
+  },
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE POLYGON"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       24.0,
+       57.0
+      ],
+      [
+       24.5,
+       57.0
+      ],
+      [
+       24.5,
+       57.5
+      ],
+      [
+       24.0,
+       57.5
+      ],
+      [
+       24.0,
+       57.0
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 24.5,
+     "max_y": 57.5,
+     "min_x": 24.0,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 133,
+    "srs_id": 4326,
+    "type": "Polygon",
+    "wkb_octets": 93,
+    "wkb_offset": 40
+   },
+   "layer": "families",
+   "pk": 14
+  },
+  {
+   "attribute_types": {
+    "name": "text"
+   },
+   "attributes": {
+    "name": "EXERCISE MULTIPOLYGON"
+   },
+   "geometry": {
+    "byte_order": "little",
+    "coordinates": [
+     [
+      [
+       [
+        24.0,
+        57.0
+       ],
+       [
+        24.2,
+        57.0
+       ],
+       [
+        24.2,
+        57.2
+       ],
+       [
+        24.0,
+        57.2
+       ],
+       [
+        24.0,
+        57.0
+       ]
+      ],
+      [
+       [
+        24.05,
+        57.05
+       ],
+       [
+        24.05,
+        57.15
+       ],
+       [
+        24.15,
+        57.15
+       ],
+       [
+        24.15,
+        57.05
+       ],
+       [
+        24.05,
+        57.05
+       ]
+      ]
+     ],
+     [
+      [
+       [
+        25.0,
+        57.0
+       ],
+       [
+        25.2,
+        57.0
+       ],
+       [
+        25.2,
+        57.2
+       ],
+       [
+        25.0,
+        57.2
+       ],
+       [
+        25.0,
+        57.0
+       ]
+      ]
+     ]
+    ],
+    "dimension": "XY",
+    "envelope": {
+     "max_x": 25.2,
+     "max_y": 57.2,
+     "min_x": 24.0,
+     "min_y": 57.0
+    },
+    "flags": {
+     "byte_order": "little",
+     "empty": false,
+     "envelope_indicator": 1,
+     "extended": false
+    },
+    "octets": 319,
+    "srs_id": 4326,
+    "type": "MultiPolygon",
+    "wkb_octets": 279,
+    "wkb_offset": 40
+   },
+   "layer": "families",
+   "pk": 15
+  }
+ ],
+ "spatial_ref_sys": [
+  {
+   "definition": "undefined",
+   "description": "undefined Cartesian coordinate reference system",
+   "organization": "NONE",
+   "organization_coordsys_id": -1,
+   "srs_id": -1,
+   "srs_name": "Undefined Cartesian SRS"
+  },
+  {
+   "definition": "undefined",
+   "description": "undefined geographic coordinate reference system",
+   "organization": "NONE",
+   "organization_coordsys_id": 0,
+   "srs_id": 0,
+   "srs_name": "Undefined geographic SRS"
+  },
+  {
+   "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+   "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+   "organization": "EPSG",
+   "organization_coordsys_id": 4326,
+   "srs_id": 4326,
+   "srs_name": "WGS 84 geodetic"
+  }
+ ],
+ "sqlite": {
+  "application_id": "GPKG",
+  "magic": "SQLite format 3",
+  "octets": 106496,
+  "page_size": 4096,
+  "read_version": 1,
+  "user_version": 10400,
+  "wal_read_as_checkpointed": false,
+  "write_version": 1
+ }
+}

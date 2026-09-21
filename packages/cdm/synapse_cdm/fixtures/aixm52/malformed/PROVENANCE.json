@@ -1,0 +1,142 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm52/malformed",
+  "fixtures": [
+    {
+      "file": "arc_by_centre_point_airspace.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "billion_laughs_dtd.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "cancelled_slice_without_as_of.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "circle_by_centre_point_airspace.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "end_before_begin.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "feature_without_identifier.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "no_feature_member.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "non_integer_sequence_number.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "three_dimensional_positions.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "truncated_document.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unclosed_ring.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unknown_interpretation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unresolved_entity_reference.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unsupported_crs_epsg3857.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "wrong_namespace_5_1_1.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "wrong_root_element.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "xinclude_element.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents (or fragments of them) written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — each a one-breach mutation of airspace_baseline_polygon.xml or a standalone attack — for the refusal each exercises: a parser-safety attack the guarded parser refuses before expansion (a DTD, an undefined entity, an XInclude, a truncation), a document outside the version or the root the adapter reads (the AIXM 5.1.1 namespaces — the sibling adapter's version — and a wrong root), a feature without the identifier identity is derived from, a geometry form outside the pinned profile (an arc, a circle, another CRS, a third dimension, an open ring — never approximated), a slice with no instant of its own, a rule breach the adapter refuses by name (an interpretation outside the four, a non-integer sequence number, an interval running backwards, no feature member). Every one is refused under the default constructor (`tests/test_cdm_aixm52_adapter.py::test_every_malformed_payload_is_refused_by_name`, conformance check H); the arc, the circle and the cancelled slice are ALSO translated in the adapter tests under the explicit `unsupported_geometry='report'` and `as_of` contexts. Fictitious identifiers and positions throughout."
+    }
+  ]
+}

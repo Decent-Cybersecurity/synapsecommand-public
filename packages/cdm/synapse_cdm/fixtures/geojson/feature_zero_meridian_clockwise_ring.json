@@ -1,0 +1,75 @@
+{
+  "type": "Feature",
+  "id": "eq-0",
+  "bbox": [
+    -0.5,
+    -0.5,
+    0.5,
+    0.5
+  ],
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.4,
+          0.1
+        ],
+        [
+          0.4,
+          0.4
+        ],
+        [
+          0.1,
+          0.4
+        ],
+        [
+          0.1,
+          0.1
+        ]
+      ]
+    ],
+    "source_note": "EXERCISE — synthetic ring on the zero meridian"
+  },
+  "properties": {
+    "name": "EXERCISE equator square",
+    "depth_m": 0,
+    "ratio": 0.0,
+    "nested": {
+      "a": [
+        1,
+        2,
+        {
+          "b": null
+        }
+      ],
+      "c": ""
+    }
+  }
+}

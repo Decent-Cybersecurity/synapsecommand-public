@@ -1,0 +1,86 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm52",
+  "fixtures": [
+    {
+      "file": "airport_runway_navaid.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airport_runway_navaid.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_baseline_polygon.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_baseline_polygon.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_deltas_same_feature.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_deltas_same_feature.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_hole_crs84_snapshot.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "airspace_hole_crs84_snapshot.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "vertical_structure_two_parts.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    },
+    {
+      "file": "vertical_structure_two_parts.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (adapter-expansion phase 6) from the pinned AIXM 5.2.0 XML Schema (EUROCONTROL & FAA, 17 January 2025; GML 3.2.1): every time slice in its 5.2 property-group order and carrying what 5.2 added (an AirspaceVolume's gml:identifier, name and location; timeZone, segmentedCircleMarker and repeated responsibleOrganisation; a runway's depth and reference codes; slope and approachGuidance; codeICAOCountry; a structure's designator, marked, placeName, dataAssessmentStatus and arrestingDevice; a part's height; the 5.2 ElevatedPoint group) — not 5.1.1 documents with the namespace edited. Every designator is prefixed SYN, every UUID sits under a1a40000-0520-, every position is a fictitious place and no file derives from any published aeronautical data set. Each `.xml` validates against the pinned 5.2 XSD through an actual validator and, with its namespaces rewritten, is INVALID against the 5.1.1 closure (`tests/test_cdm_aixm52_adapter.py::test_every_positive_fixture_validates_against_the_pinned_schema`, `::test_every_positive_fixture_is_a_5_2_document_and_not_a_namespace_edit`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; `build_fixtures.py --check` is CURRENT; hashes are in `spec/aixm52_pin.json`."
+    }
+  ]
+}

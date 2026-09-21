@@ -111,6 +111,12 @@ SWEPT = (
     "packages/cdm/synapse_cdm/fixtures/klv/README.md",
     "packages/cdm/synapse_cdm/fixtures/klv/spec/build_fixtures.py",
     "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
+    "packages/cdm/synapse_cdm/fixtures/geojson/README.md",
+    "packages/cdm/synapse_cdm/fixtures/geopackage/README.md",
+    "packages/cdm/synapse_cdm/fixtures/c2sim/README.md",
+    "packages/cdm/synapse_cdm/fixtures/aixm511/README.md",
+    "packages/cdm/synapse_cdm/fixtures/aixm511/dnotam/README.md",
+    "packages/cdm/synapse_cdm/fixtures/aixm52/README.md",
     "docs/docs/writing-an-adapter.mdx",
     # RELEASE_NOTES.md joined the sweep when adapter #10 landed on `main` after 1.1.0 and the notes
     # grew a section saying so. A release note is the one document a consumer is most likely to

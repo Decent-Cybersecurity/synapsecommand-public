@@ -1,0 +1,90 @@
+{
+  "@gml:id": "M_TOWER",
+  "message:hasMember": [
+    {
+      "$": "aixm:VerticalStructure",
+      "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000007",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0520-4000-8000-000000000007"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:VerticalStructureTimeSlice",
+          "@gml:id": "VS1_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "VS1_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:name": "SYNTHETIC TOWER",
+          "aixm:type": "TOWER",
+          "aixm:lighted": "YES",
+          "aixm:part": [
+            {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS1_P1",
+              "aixm:verticalExtent": {
+                "@uom": "M",
+                "#text": "120"
+              },
+              "aixm:type": "TOWER",
+              "aixm:designator": "SYNTOWER-MAST-LONG-DESIGNATOR",
+              "aixm:horizontalProjection_location": {
+                "$": "aixm:ElevatedPoint",
+                "@gml:id": "VS1_P1_LOC",
+                "@srsName": "urn:ogc:def:crs:EPSG::4326",
+                "gml:pos": "52.4 5.1",
+                "aixm:elevation": {
+                  "@uom": "FT",
+                  "#text": "250"
+                },
+                "aixm:verticalDatum": "EGM 96 GEOID (free text in 5.2)",
+                "aixm:horizontalAccuracy": {
+                  "@uom": "M",
+                  "#text": "5"
+                }
+              },
+              "aixm:height": {
+                "@uom": "M",
+                "#text": "120"
+              }
+            },
+            {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS1_P2",
+              "aixm:verticalExtent": {
+                "@uom": "M",
+                "#text": "15"
+              },
+              "aixm:type": "ANTENNA",
+              "aixm:designator": "SYNTOWER-ANT",
+              "aixm:height": {
+                "@uom": "M",
+                "#text": "15"
+              }
+            }
+          ],
+          "aixm:marked": "YES",
+          "aixm:designator": "SYNTWR1",
+          "aixm:placeName": "SYNTHETIC HILL",
+          "aixm:dataAssessmentStatus": "VERIFIED",
+          "aixm:arrestingDevice": [
+            {
+              "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000031"
+            },
+            {
+              "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000032"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

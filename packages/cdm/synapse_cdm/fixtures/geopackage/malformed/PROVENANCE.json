@@ -1,0 +1,126 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geopackage/malformed",
+  "fixtures": [
+    {
+      "file": "empty_and_null_geometry_no_as_of.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "geometry_collection_row.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "gpb_byte_order_octet_invalid.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "gpb_envelope_disagrees_with_wkb.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "gpb_extended_type_flag.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "gpb_srs_id_disagrees_with_layer.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "not_sqlite_at_all.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "plain_sqlite_not_a_geopackage.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "projected_crs_epsg3857.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "truncated_container.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "undefined_srs_layer.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "user_version_1_3_0.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "wal_mode_header.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "wkb_ewkb_flag_bit.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "wkb_truncated_polygon.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal packages built on 2026-09-20 by `spec/build_fixtures.py`: six are GDAL 3.13.3's own output for a case the adapter refuses (a WAL-mode header, version 1.3.0, a projected CRS, an undefined SRS, empty and NULL geometries with no as-of context, a GeometryCollection row) and nine are one GDAL package with a single mutation each, named for the rule it breaks; none derives from recorded data and none is claimed as independent evidence. Read by the conformance suite's check H only; `tests/test_cdm_geopackage_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    }
+  ]
+}

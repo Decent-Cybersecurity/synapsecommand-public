@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC REFUSAL. A SystemCommandBody (a session command): the exercise client's business, refused by name. -->
+<Message xmlns="http://www.sisostds.org/schemas/C2SIM/1.1">
+  <C2SIMHeader>
+    <CommunicativeActTypeCode>Request</CommunicativeActTypeCode>
+    <ConversationID>c2510000-0000-8000-8000-00000000c001</ConversationID>
+    <FromSendingSystem>EXERCISE-CONTROLLER</FromSendingSystem>
+    <MessageID>c2510000-0000-8000-8000-00000000a001</MessageID>
+    <Protocol>SISO-STD-C2SIM</Protocol>
+    <ProtocolVersion>1.0.0</ProtocolVersion>
+    <SecurityClassificationCode>Unclassified</SecurityClassificationCode>
+    <SendingTime>
+      <IsoDateTime>2026-09-21T05:58:30Z</IsoDateTime>
+    </SendingTime>
+    <ToReceivingSystem>ALL</ToReceivingSystem>
+  </C2SIMHeader>
+  <MessageBody>
+    <SystemCommandBody>
+      <SystemCommandTypeCode>StartScenario</SystemCommandTypeCode>
+    </SystemCommandBody>
+  </MessageBody>
+</Message>

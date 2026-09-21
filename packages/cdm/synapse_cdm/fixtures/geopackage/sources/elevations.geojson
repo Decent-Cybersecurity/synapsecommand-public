@@ -1,0 +1,35 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.1,
+     57.0,
+     100.0
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE MAST"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.2,
+     57.0,
+     0.0
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE SHORE"
+   }
+  }
+ ]
+}

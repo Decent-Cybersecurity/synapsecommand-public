@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A fictitious lit tower with two parts, authored by hand on 2026-09-21: the mast
+     (a point location with an MSL elevation and a 120 M vertical extent) and an antenna on it (a
+     15 M extent, no geometry of its own). One part states a point and no part states another
+     form, so the Entity's position is the mast's; the heights stay what the model calls them — an
+     extent with a unit and no datum, and an elevation above MSL — and nothing is added together. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_VERTICAL_STRUCTURE">
+  <message:hasMember>
+    <aixm:VerticalStructure gml:id="uuid.a1a40000-0007-4000-8000-000000000001">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0007-4000-8000-000000000001</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:VerticalStructureTimeSlice gml:id="VS_SYNTOWER_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="VS_SYNTOWER_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:name>SYNTHETIC TOWER</aixm:name>
+          <aixm:type>TOWER</aixm:type>
+          <aixm:lighted>YES</aixm:lighted>
+          <aixm:markingICAOStandard>YES</aixm:markingICAOStandard>
+          <aixm:group>NO</aixm:group>
+          <aixm:part>
+            <aixm:VerticalStructurePart gml:id="VS_SYNTOWER_P_1">
+              <aixm:verticalExtent uom="M">120</aixm:verticalExtent>
+              <aixm:verticalExtentAccuracy uom="M">1</aixm:verticalExtentAccuracy>
+              <aixm:type>TOWER</aixm:type>
+              <aixm:constructionStatus>COMPLETED</aixm:constructionStatus>
+              <aixm:markingPattern>CHEQUERED</aixm:markingPattern>
+              <aixm:markingFirstColour>RED</aixm:markingFirstColour>
+              <aixm:markingSecondColour>WHITE</aixm:markingSecondColour>
+              <aixm:mobile>NO</aixm:mobile>
+              <aixm:frangible>NO</aixm:frangible>
+              <aixm:designator>SYNTOWER-1</aixm:designator>
+              <aixm:horizontalProjection_location>
+                <aixm:ElevatedPoint gml:id="VS_SYNTOWER_P_1_LOC" srsName="urn:ogc:def:crs:EPSG::4326">
+                  <gml:pos>51.98000 5.10000</gml:pos>
+                  <aixm:elevation uom="FT">250</aixm:elevation>
+                  <aixm:verticalDatum>EGM_96</aixm:verticalDatum>
+                  <aixm:verticalAccuracy uom="M">3</aixm:verticalAccuracy>
+                </aixm:ElevatedPoint>
+              </aixm:horizontalProjection_location>
+            </aixm:VerticalStructurePart>
+          </aixm:part>
+          <aixm:part>
+            <aixm:VerticalStructurePart gml:id="VS_SYNTOWER_P_2">
+              <aixm:verticalExtent uom="M">15</aixm:verticalExtent>
+              <aixm:type>ANTENNA</aixm:type>
+              <aixm:constructionStatus>COMPLETED</aixm:constructionStatus>
+              <aixm:mobile>NO</aixm:mobile>
+              <aixm:frangible>YES</aixm:frangible>
+              <aixm:designator>SYNTOWER-2</aixm:designator>
+            </aixm:VerticalStructurePart>
+          </aixm:part>
+        </aixm:VerticalStructureTimeSlice>
+      </aixm:timeSlice>
+    </aixm:VerticalStructure>
+  </message:hasMember>
+</message:AIXMBasicMessage>

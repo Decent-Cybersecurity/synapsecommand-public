@@ -1,0 +1,505 @@
+{
+  "C2SIMHeader": {
+    "CommunicativeActTypeCode": "Request",
+    "ConversationID": "c2510000-0000-8000-8000-00000000c001",
+    "FromSendingSystem": "EXERCISE-CONTROLLER",
+    "MessageID": "c2510000-0000-8000-8000-00000000a001",
+    "Protocol": "SISO-STD-C2SIM",
+    "ProtocolVersion": "1.0.0",
+    "SecurityClassificationCode": "Unclassified",
+    "SendingTime": {
+      "IsoDateTime": "2026-09-21T05:58:30Z"
+    },
+    "ToReceivingSystem": "ALL"
+  },
+  "MessageBody": {
+    "C2SIMInitializationBody": {
+      "ObjectDefinitions": [
+        {
+          "AbstractObject": [
+            {
+              "ForceSide": {
+                "Name": [
+                  "EXERCISE-BLUE",
+                  "EXERCISE-BLUE-COALITION"
+                ],
+                "UUID": "c2510000-0001-8000-8000-000000000001",
+                "ForceSideRelation": [
+                  {
+                    "HostilityStatusCode": "HO",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000002"
+                  },
+                  {
+                    "HostilityStatusCode": "NEUTRL",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000003"
+                  }
+                ]
+              }
+            },
+            {
+              "ForceSide": {
+                "Name": [
+                  "EXERCISE-RED"
+                ],
+                "UUID": "c2510000-0001-8000-8000-000000000002",
+                "ForceSideRelation": [
+                  {
+                    "HostilityStatusCode": "HO",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000001"
+                  },
+                  {
+                    "HostilityStatusCode": "SUSPCT",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000003"
+                  }
+                ]
+              }
+            },
+            {
+              "ForceSide": {
+                "Name": [
+                  "EXERCISE-GREEN"
+                ],
+                "UUID": "c2510000-0001-8000-8000-000000000003",
+                "ForceSideRelation": [
+                  {
+                    "HostilityStatusCode": "NEUTRL",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000001"
+                  },
+                  {
+                    "HostilityStatusCode": "NEUTRL",
+                    "OtherSide": "c2510000-0001-8000-8000-000000000002"
+                  }
+                ]
+              }
+            }
+          ],
+          "Entity": [
+            {
+              "ActorEntity": {
+                "CollectiveEntity": {
+                  "MilitaryOrganization": {
+                    "Unit": {
+                      "EntityDescriptor": {
+                        "CommunicationsNetwork": [
+                          "c2510000-0005-8000-8000-000000000001"
+                        ],
+                        "Side": "c2510000-0001-8000-8000-000000000001"
+                      },
+                      "Resource": [
+                        {
+                          "EntityType": [
+                            {
+                              "NamedEntityType": {
+                                "EntityTypeString": "EXERCISE-RATION-PACK"
+                              }
+                            }
+                          ],
+                          "Name": "EXERCISE-RATIONS",
+                          "Quantity": "1200"
+                        }
+                      ],
+                      "CurrentState": {
+                        "PhysicalState": {
+                          "DateTime": {
+                            "IsoDateTime": "2026-09-21T06:00:00Z"
+                          },
+                          "DirectionOfMovement": {
+                            "Heading": {
+                              "HeadingAngle": "0"
+                            }
+                          },
+                          "EntityHealthStatus": [
+                            {
+                              "OperationalStatus": {
+                                "OperationalStatusCode": "FullyOperational"
+                              }
+                            },
+                            {
+                              "Strength": {
+                                "StrengthPercentage": "95"
+                              }
+                            }
+                          ],
+                          "Location": [
+                            {
+                              "GeodeticCoordinate": {
+                                "AltitudeMSL": "42.5",
+                                "Latitude": "58.5125",
+                                "Longitude": "24.6250"
+                              }
+                            }
+                          ],
+                          "Speed": "0"
+                        }
+                      },
+                      "Subordinate": [
+                        "c2510000-0002-8000-8000-000000000002",
+                        "c2510000-0002-8000-8000-000000000003"
+                      ],
+                      "EntityType": [
+                        {
+                          "APP6-SIDC": {
+                            "SIDCString": "SFGPUCI--------"
+                          }
+                        }
+                      ],
+                      "Name": "EXERCISE-BLUE-BN-HQ",
+                      "UUID": "c2510000-0002-8000-8000-000000000001",
+                      "EchelonCode": "BN"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "CollectiveEntity": {
+                  "MilitaryOrganization": {
+                    "Unit": {
+                      "EntityDescriptor": {
+                        "Side": "c2510000-0001-8000-8000-000000000001",
+                        "Superior": "c2510000-0002-8000-8000-000000000001"
+                      },
+                      "CurrentState": {
+                        "PhysicalState": {
+                          "DateTime": {
+                            "IsoDateTime": "2026-09-21T06:00:00Z"
+                          },
+                          "DirectionOfMovement": {
+                            "Heading": {
+                              "HeadingAngle": "270.5"
+                            }
+                          },
+                          "EntityHealthStatus": [
+                            {
+                              "Strength": {
+                                "StrengthPercentage": "95"
+                              }
+                            }
+                          ],
+                          "Location": [
+                            {
+                              "GeodeticCoordinate": {
+                                "AltitudeAGL": "2",
+                                "Latitude": "58.5125",
+                                "Longitude": "24.7100"
+                              }
+                            }
+                          ],
+                          "Speed": "4.2"
+                        }
+                      },
+                      "EntityType": [
+                        {
+                          "APP6-SIDC": {
+                            "SIDCString": "SFGPUCI--------"
+                          }
+                        }
+                      ],
+                      "Name": "EXERCISE-BLUE-A-COY",
+                      "UUID": "c2510000-0002-8000-8000-000000000002",
+                      "CommandRelation": [
+                        {
+                          "ActorReference": "c2510000-0002-8000-8000-000000000001",
+                          "CommandRelationCode": "OPCON"
+                        }
+                      ],
+                      "EchelonCode": "COY"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "CollectiveEntity": {
+                  "MilitaryOrganization": {
+                    "Unit": {
+                      "CurrentTask": [
+                        "c2510000-0004-8000-8000-000000000001"
+                      ],
+                      "EntityDescriptor": {
+                        "AffiliatedWith": [
+                          "c2510000-0002-8000-8000-000000000002"
+                        ],
+                        "AllegianceRelationship": [
+                          {
+                            "ActorReference": "c2510000-0002-8000-8000-000000000005",
+                            "AllegianceRelationshipCode": "NeutralTo"
+                          }
+                        ],
+                        "Side": "c2510000-0001-8000-8000-000000000001",
+                        "Superior": "c2510000-0002-8000-8000-000000000001"
+                      },
+                      "CurrentState": {
+                        "PhysicalState": {
+                          "Location": [
+                            {
+                              "GeodeticCoordinate": {
+                                "Latitude": "58.4900",
+                                "Longitude": "24.7100"
+                              }
+                            },
+                            {
+                              "GeodeticCoordinate": {
+                                "Latitude": "58.4950",
+                                "Longitude": "24.7150"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "EntityType": [
+                        {
+                          "APP6-SIDC": {
+                            "SIDCString": "SFGPUCI--------"
+                          }
+                        }
+                      ],
+                      "Name": "EXERCISE-BLUE-B-COY",
+                      "UUID": "c2510000-0002-8000-8000-000000000003",
+                      "CommandRelation": [
+                        {
+                          "ActorReference": "c2510000-0002-8000-8000-000000000001",
+                          "CommandRelationCode": "OPCON"
+                        }
+                      ],
+                      "EchelonCode": "COY"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "CollectiveEntity": {
+                  "MilitaryOrganization": {
+                    "Unit": {
+                      "EntityDescriptor": {
+                        "Side": "c2510000-0001-8000-8000-000000000002"
+                      },
+                      "CurrentState": {
+                        "PhysicalState": {
+                          "DateTime": {
+                            "IsoDateTime": "2026-09-21T06:00:00Z"
+                          },
+                          "EntityHealthStatus": [
+                            {
+                              "OperationalStatus": {
+                                "OperationalStatusCode": "PartlyOperational"
+                              }
+                            }
+                          ],
+                          "Location": [
+                            {
+                              "GeodeticCoordinate": {
+                                "Latitude": "58.6200",
+                                "Longitude": "24.9800"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "EntityType": [
+                        {
+                          "APP6-SIDC": {
+                            "SIDCString": "SHGPUCI--------"
+                          }
+                        },
+                        {
+                          "DISEntityType": {
+                            "DISCategory": "1",
+                            "DISCountry": "0",
+                            "DISDomain": "1",
+                            "DISExtra": "0",
+                            "DISKind": "1",
+                            "DISSpecific": "0",
+                            "DISSubCategory": "1"
+                          }
+                        }
+                      ],
+                      "Name": "EXERCISE-RED-1",
+                      "UUID": "c2510000-0002-8000-8000-000000000004",
+                      "EchelonCode": "BN"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "CollectiveEntity": {
+                  "MilitaryOrganization": {
+                    "Unit": {
+                      "EntityDescriptor": {
+                        "Side": "c2510000-0001-8000-8000-000000000003"
+                      },
+                      "EntityType": [
+                        {
+                          "NamedEntityType": {
+                            "EntityTypeString": "EXERCISE-OBSERVER-TEAM"
+                          }
+                        }
+                      ],
+                      "Name": "EXERCISE-GREEN-OBS",
+                      "UUID": "c2510000-0002-8000-8000-000000000005",
+                      "EchelonCode": "TEAM"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "Platform": {
+                  "Aircraft": {
+                    "EntityDescriptor": {
+                      "Side": "c2510000-0001-8000-8000-000000000001",
+                      "Superior": "c2510000-0002-8000-8000-000000000001"
+                    },
+                    "EntityType": [
+                      {
+                        "NamedEntityType": {
+                          "EntityTypeString": "EXERCISE-UAS-CLASS-I"
+                        }
+                      }
+                    ],
+                    "Name": "EXERCISE-BLUE-UAV-1",
+                    "UUID": "c2510000-0003-8000-8000-000000000001",
+                    "CurrentState": {
+                      "PhysicalState": {
+                        "DateTime": {
+                          "IsoDateTime": "2026-09-21T06:00:00Z"
+                        },
+                        "DirectionOfMovement": {
+                          "Heading": {
+                            "HeadingAngle": "90"
+                          }
+                        },
+                        "Location": [
+                          {
+                            "GeodeticCoordinate": {
+                              "AltitudeMSL": "1200",
+                              "Latitude": "58.5400",
+                              "Longitude": "24.6600"
+                            }
+                          }
+                        ],
+                        "Speed": "30"
+                      }
+                    },
+                    "Marking": "EX-UAV-1"
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "Platform": {
+                  "Vehicle": {
+                    "EntityDescriptor": {
+                      "Side": "c2510000-0001-8000-8000-000000000001",
+                      "Superior": "c2510000-0002-8000-8000-000000000002"
+                    },
+                    "EntityType": [
+                      {
+                        "DISEntityType": {
+                          "DISCategory": "2",
+                          "DISCountry": "0",
+                          "DISDomain": "1",
+                          "DISExtra": "0",
+                          "DISKind": "1",
+                          "DISSpecific": "0",
+                          "DISSubCategory": "0"
+                        }
+                      }
+                    ],
+                    "Name": "EXERCISE-BLUE-APC-1",
+                    "UUID": "c2510000-0003-8000-8000-000000000002",
+                    "CurrentState": {
+                      "PhysicalState": {
+                        "Location": [
+                          {
+                            "GeodeticCoordinate": {
+                              "Latitude": "58.5130",
+                              "Longitude": "24.7120"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "ActorEntity": {
+                "Platform": {
+                  "SurfaceVessel": {
+                    "EntityDescriptor": {
+                      "Side": "c2510000-0001-8000-8000-000000000002"
+                    },
+                    "EntityType": [
+                      {
+                        "APP6-SIDC": {
+                          "SIDCString": "SHSPCLCC-------"
+                        }
+                      }
+                    ],
+                    "Name": "EXERCISE-RED-BOAT-1",
+                    "UUID": "c2510000-0003-8000-8000-000000000003",
+                    "CurrentState": {
+                      "PhysicalState": {
+                        "DirectionOfMovement": {
+                          "Heading": {
+                            "HeadingAngle": "180"
+                          }
+                        },
+                        "Location": [
+                          {
+                            "GeodeticCoordinate": {
+                              "AltitudeMSL": "0",
+                              "Latitude": "58.7000",
+                              "Longitude": "24.3000"
+                            }
+                          }
+                        ],
+                        "Speed": "6.5"
+                      }
+                    },
+                    "Marking": "EX-RED-BOAT-1"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "ScenarioSetting": {
+        "DateTime": {
+          "IsoDateTime": "2026-09-21T06:00:00Z"
+        },
+        "Version": "EXERCISE-2026-09-21-v1"
+      },
+      "SystemEntityList": [
+        {
+          "ActorReference": [
+            "c2510000-0002-8000-8000-000000000001",
+            "c2510000-0002-8000-8000-000000000002",
+            "c2510000-0002-8000-8000-000000000003",
+            "c2510000-0003-8000-8000-000000000001",
+            "c2510000-0003-8000-8000-000000000002"
+          ],
+          "SystemName": "EXERCISE-SIM-BLUE"
+        },
+        {
+          "ActorReference": [
+            "c2510000-0002-8000-8000-000000000004",
+            "c2510000-0003-8000-8000-000000000003"
+          ],
+          "SystemName": "EXERCISE-SIM-RED"
+        }
+      ]
+    }
+  }
+}

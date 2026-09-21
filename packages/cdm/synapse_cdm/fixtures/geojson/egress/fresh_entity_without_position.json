@@ -1,0 +1,22 @@
+{
+  "object_kind": "entity",
+  "schema_version": "3.0.0",
+  "source": {
+    "system": "PLANNER",
+    "adapter": "planner_stub",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {
+      "system": "PLANNER",
+      "external_id": "UNK-EX-0003"
+    }
+  ],
+  "entity_id": "f1c70000-0016-8000-8000-000000000003",
+  "entity_type": "UNKNOWN",
+  "affiliation": "UNKNOWN",
+  "symbol": null,
+  "position": null,
+  "valid_from": "2026-04-29T06:00:00.000Z"
+}

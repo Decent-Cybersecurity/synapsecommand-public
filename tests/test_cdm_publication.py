@@ -289,6 +289,28 @@ def _licence_files() -> set[str]:
 
 LICENCE_FILES = _licence_files()
 
+#: The files NOTICE lists under its `THIRD-PARTY NOTICE CARRIERS:` marker (2026-09-21): third-party
+#: files this repository redistributes under a licence that OBLIGES the notice to be retained —
+#: BSD-2-Clause's first condition, for the Donlon extracts. Read from NOTICE and not typed here,
+#: so the policy has one statement; the reading is held both ways below — every listed file must
+#: exist, be tracked and carry a notice, and the sweep still refuses a carrier NOTICE does not name.
+THIRD_PARTY_CARRIER_MARKER = "THIRD-PARTY NOTICE CARRIERS:"
+
+
+def _third_party_carriers() -> set[str]:
+    text = _read("NOTICE")
+    if THIRD_PARTY_CARRIER_MARKER not in text:
+        return set()
+    listed = set()
+    for line in text.split(THIRD_PARTY_CARRIER_MARKER, 1)[1].splitlines()[1:]:
+        if not line.strip():
+            break
+        listed.add(line.strip())
+    return listed
+
+
+THIRD_PARTY_CARRIERS = _third_party_carriers()
+
 SPDX = re.compile(r"SPDX-(License-Identifier|FileCopyrightText)")
 
 #: Deliberately narrow. `copyright` as a bare word occurs in prose about licensing — `NOTICE`
@@ -339,14 +361,41 @@ def test_the_only_copyright_notices_are_in_licence_files():
     _require_git_history()
     carriers = [rel for rel in tracked_files()
                 if rel != SELF and (text := _readable_text(rel)) and COPYRIGHT.search(text)]
-    unexpected = sorted(set(carriers) - LICENCE_FILES)
+    unexpected = sorted(set(carriers) - LICENCE_FILES - THIRD_PARTY_CARRIERS)
     assert not unexpected, (
         f"copyright notice(s) outside the licence files: {unexpected}. The licence files are "
         f"{sorted(LICENCE_FILES)} — the three at the root plus whatever a distribution declares "
         "in `license-files` — and NOTICE states that the policy is stated at the repository "
         "level instead. A header in a source file is a second, per-file licence statement, the "
-        "exact thing NOTICE says this repository does not do"
+        "exact thing NOTICE says this repository does not do. A THIRD PARTY's notice that its "
+        "licence obliges this repository to retain is the one other case, and NOTICE lists those "
+        f"files under {THIRD_PARTY_CARRIER_MARKER!r}: {sorted(THIRD_PARTY_CARRIERS)}"
     )
+
+
+def test_every_third_party_notice_carrier_notice_lists_is_tracked_and_carries_one():
+    """The list in NOTICE, checked in the direction that makes it expire.
+
+    A listed file that is gone is a licence obligation nobody is meeting any more; a listed file
+    that carries no notice is a permission nobody is using, which the next stray header would
+    inherit. Both fail here, so the list can only ever name what it names for the reason it
+    gives. The set is asserted non-empty against the tree as it stands: the two Donlon extracts
+    and their generator, since 2026-09-21.
+    """
+    _require_git_history()
+    tracked = set(tracked_files())
+    assert THIRD_PARTY_CARRIERS, (
+        "NOTICE lists no third-party notice carrier and the tree redistributes the Donlon extracts "
+        "under BSD-2-Clause; either the list or the files went missing"
+    )
+    for rel in sorted(THIRD_PARTY_CARRIERS):
+        assert rel in tracked, f"NOTICE lists {rel} as a third-party notice carrier; it is not tracked"
+        text = _readable_text(rel)
+        assert text is not None and COPYRIGHT.search(text), (
+            f"NOTICE lists {rel} as carrying a third-party notice and it carries none; drop the "
+            "line with the notice, or the list is a licence for the next stray header"
+        )
+        assert rel not in LICENCE_FILES, f"{rel} is a licence file and needs no carrier line"
 
 
 def test_the_copyright_sweep_is_not_vacuous():

@@ -1,0 +1,228 @@
+{
+  "what_this_is": "The provenance record for every synthetic GeoJSON payload under fixtures/geojson/: the standard the payloads are written to, how each file was produced, its SHA-256 and byte count, and an INDEPENDENT reading of every harness fixture taken with GDAL's ogr2ogr so that the adapter's own parse is never the only oracle for what a fixture contains (master prompt §5: 'A newly authored parser's own parsed twin must not be the only oracle for correctness'). House style follows fixtures/stanag4586/spec/stanag4586_pin.json. No node here pairs a `local_path` with a `sha256`, deliberately: gates/pin_paths.py's corpus is the pinned STANDARDS, and this record pins fixtures, which are the repository's own files.",
+  "adapter": {
+    "name": "geojson",
+    "ordinal": 16,
+    "direction": "bidirectional",
+    "fixture_directory": "geojson",
+    "mapping_profile": "geo-object/1",
+    "export_profiles": [
+      "generic",
+      "synapsecommand-exchange/1"
+    ]
+  },
+  "standard": {
+    "document": "RFC 7946, The GeoJSON Format, IETF, August 2016 (H. Butler, M. Daly, A. Doyle, S. Gillies, S. Hagen, T. Schaub)",
+    "document_identifier": "RFC 7946",
+    "url": "https://www.rfc-editor.org/rfc/rfc7946",
+    "publisher": "IETF / RFC Editor",
+    "terms": "IETF Trust Legal Provisions; freely retrievable and freely implementable, which is the reading the adapter's OPEN licence class rests on",
+    "carried_here": false,
+    "why_not_carried": "An RFC is a stable, freely retrievable, canonical text at one URL; carrying a copy would add bytes to the distribution and pin nothing the URL does not already pin. The sections the adapter cites (3, 3.1, 3.1.1, 3.1.6, 3.1.8, 3.2, 3.3, 4, 5, 5.2, 6.1, 7.1) are named in adapters/geojson.py at the line that applies each one.",
+    "read_on": "2026-09-20"
+  },
+  "fixtures_are_synthetic": "Every payload was hand-written for this repository on 2026-09-20 by the adapter-expansion arc's phase 1 (the generator is the inline Python in that session, reproduced by the `regenerate` note below). Every name is prefixed EXERCISE, every coordinate is a plausible Baltic, equatorial or Fijian-longitude position chosen for the case it exercises and describes no real feature, and no file derives from any recorded dataset.",
+  "regenerate": "The fixtures are small enough to read; the hashes below are what the tree holds, re-derived by tests/test_cdm_geojson_adapter.py::test_every_fixture_matches_the_record_in_spec on every run.",
+  "independent_reading_tool": {
+    "tool": "GDAL ogr2ogr",
+    "version": "GDAL 3.13.3 \"Iowa City\", released 2026/08/13 (`ogr2ogr --version`)",
+    "taken_on": "2026-09-20",
+    "what_it_shows": "feature count and WKT geometry per feature, read by a library this repository does not depend on; tests/test_cdm_geojson_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading compares the adapter's geometry and feature count against these rows. Note GDAL's warning on null_and_empty_properties_typed_ids.json: OGR reads the numeric id 7 and the string id \"7\" as one FID and alters the second; RFC 7946 §3.2 says an id is a string or a number, and this adapter keeps the two as two identities (original_id `7` vs `\"7\"`). The disagreement is recorded rather than resolved in GDAL's favour."
+  },
+  "fixtures": [
+    {
+      "file": "antimeridian_bbox_repeated_values.json",
+      "sha256": "7f4d3fd455dead78b300ddbdb40e13c28cfcbcb05544aac0e027551c21cb7038",
+      "bytes": 824,
+      "document_type": "FeatureCollection",
+      "feature_count": 2,
+      "geometry_types": [
+        "Point",
+        "Point"
+      ],
+      "feature_ids_as_json": [
+        "\"west\"",
+        "\"east\""
+      ],
+      "independent_reading_gdal": {
+        "command": "ogr2ogr -f CSV /vsistdout/ antimeridian_bbox_repeated_values.json -lco GEOMETRY=AS_WKT -lco STRING_QUOTING=IF_NEEDED",
+        "wkt": [
+          "POINT Z (179.8 -16.5 120)",
+          "POINT Z (-179.8 -16.5 120)"
+        ],
+        "feature_count": 2,
+        "warnings": []
+      }
+    },
+    {
+      "file": "feature_zero_meridian_clockwise_ring.json",
+      "sha256": "b7f547ca577ffbb2599fcfd497b2ca7b908f61a1461e00b04d679a34a4e82e85",
+      "bytes": 985,
+      "document_type": "Feature",
+      "feature_count": 1,
+      "geometry_types": [
+        "Polygon"
+      ],
+      "feature_ids_as_json": [
+        "\"eq-0\""
+      ],
+      "independent_reading_gdal": {
+        "command": "ogr2ogr -f CSV /vsistdout/ feature_zero_meridian_clockwise_ring.json -lco GEOMETRY=AS_WKT -lco STRING_QUOTING=IF_NEEDED",
+        "wkt": [
+          "POLYGON ((0 0,0.0 0.5,0.5 0.5,0.5 0.0,0 0),(0.1 0.1,0.4 0.1,0.4 0.4,0.1 0.4,0.1 0.1))"
+        ],
+        "feature_count": 1,
+        "warnings": []
+      }
+    },
+    {
+      "file": "null_and_empty_properties_typed_ids.json",
+      "sha256": "a6e583f79a49e6ca34589f89693474c5478071fbcd5c69a6b935a553e765951b",
+      "bytes": 468,
+      "document_type": "FeatureCollection",
+      "feature_count": 2,
+      "geometry_types": [
+        "Point",
+        "Point"
+      ],
+      "feature_ids_as_json": [
+        "7",
+        "\"7\""
+      ],
+      "independent_reading_gdal": {
+        "command": "ogr2ogr -f CSV /vsistdout/ null_and_empty_properties_typed_ids.json -lco GEOMETRY=AS_WKT -lco STRING_QUOTING=IF_NEEDED",
+        "wkt": [
+          "POINT (10 50)",
+          "POINT (10 50)"
+        ],
+        "feature_count": 2,
+        "warnings": [
+          "Warning 1: Several features with id = 7 have been found. Altering it to be unique. This warning will not be emitted anymore for this layer"
+        ]
+      }
+    },
+    {
+      "file": "six_geometries_baltic.json",
+      "sha256": "c2af26616974a1cee02cefd15026040e11ba228879c92cc075477914e8b0c4f8",
+      "bytes": 3719,
+      "document_type": "FeatureCollection",
+      "feature_count": 6,
+      "geometry_types": [
+        "Point",
+        "LineString",
+        "Polygon",
+        "MultiPoint",
+        "MultiLineString",
+        "MultiPolygon"
+      ],
+      "feature_ids_as_json": [
+        "1",
+        "\"ls-2\"",
+        "3",
+        "\"mp-4\"",
+        "5",
+        "\"mpoly-6\""
+      ],
+      "independent_reading_gdal": {
+        "command": "ogr2ogr -f CSV /vsistdout/ six_geometries_baltic.json -lco GEOMETRY=AS_WKT -lco STRING_QUOTING=IF_NEEDED",
+        "wkt": [
+          "POINT (24.1052 56.9496)",
+          "LINESTRING (24.1052 56.9496,23.5 57.2,22.5 57.4)",
+          "POLYGON ((21.5 57.0,22 57,22.0 57.5,21.5 57.5,21.5 57.0))",
+          "MULTIPOINT ((25 58),(25.5 58.2))",
+          "MULTILINESTRING ((26.0 58.5,26.5 58.6),(27.0 58.7,27.5 58.9))",
+          "MULTIPOLYGON (((27 59,27.5 59.0,27.5 59.4,27.0 59.4,27 59)),((28.0 59.5,28.5 59.5,28.5 59.9,28.0 59.9,28.0 59.5)))"
+        ],
+        "feature_count": 6,
+        "warnings": [
+          "Warning 1: Several features with id = 0 have been found. Altering it to be unique. This warning will not be emitted anymore for this layer"
+        ]
+      }
+    }
+  ],
+  "malformed": {
+    "what": "refusal payloads read by the conformance suite's check H; each is built by cutting, corrupting or wrapping this directory's own synthetic payloads",
+    "files": [
+      {
+        "file": "a_json_array.json",
+        "sha256": "5f91c64d2da30fc21528c1fba5aeab7452ecdd0cc5ab8931f4df257445531b29",
+        "bytes": 91
+      },
+      {
+        "file": "bare_geometry.json",
+        "sha256": "af45dfa28b649d286699dd1efee0620b0d5e3ac77e4d9aec3623647f766a2b9b",
+        "bytes": 65
+      },
+      {
+        "file": "empty_coordinates.json",
+        "sha256": "aa9481d3c07e232ba6dfc915a19e6c21d89ea37ed304ac293ce8efa28fffd522",
+        "bytes": 130
+      },
+      {
+        "file": "feature_without_properties.json",
+        "sha256": "01dac6d6863cabe8969aa9920b9900a2d79520f3a2fef7d257111885f9d9d84c",
+        "bytes": 130
+      },
+      {
+        "file": "geometry_collection_feature.json",
+        "sha256": "26004321b3c294b72c2a500508a46cfcbfd3a8a144701b24c373f9d5f495a620",
+        "bytes": 366
+      },
+      {
+        "file": "id_less_feature_default_policy.json",
+        "sha256": "280254c26e5047ff586aacfcb6ef252a62d19a2eebfe5ac2b64c1acf78bf2101",
+        "bytes": 261
+      },
+      {
+        "file": "legacy_crs_member.json",
+        "sha256": "c76f942044574f4267a32b0a9a07ec9fe78eb760659ae084ae17627dda13e086",
+        "bytes": 365
+      },
+      {
+        "file": "malformed_json.json",
+        "sha256": "eff83c19eeaba4138afd18be0db2213680ea658d4f00449a2aadcef2cbed7c37",
+        "bytes": 44
+      },
+      {
+        "file": "non_finite_number.json",
+        "sha256": "682382ff54fb464856b0fd5ce4369eba1dfa9b5fcd0afc2128c34e9564d9cec3",
+        "bytes": 105
+      },
+      {
+        "file": "null_geometry_without_as_of.json",
+        "sha256": "cfd3c5694bee9a2ce02bdd5f7a6492374b9f7187630ef218c7b2e2abf42dc6fb",
+        "bytes": 109
+      },
+      {
+        "file": "swapped_lat_lon_point.json",
+        "sha256": "223ddc38976622eff351799d1ad28867cbe590abad8fc0f9fb4fbbe221d4c738",
+        "bytes": 240
+      },
+      {
+        "file": "unclosed_ring.json",
+        "sha256": "64c87f842e53cd67a6dcc37336b5c13851adfa88ad809d0ba69d55154337cf6b",
+        "bytes": 346
+      }
+    ]
+  },
+  "egress": {
+    "what": "independently constructed CDM records (a planning stub's, not this adapter's) exported under both profiles; the goldens beside them are read by tests/test_cdm_geojson_adapter.py",
+    "files": [
+      {
+        "file": "fresh_control_measure_polygon.json",
+        "sha256": "5a112872dccac34fb4510caed41e86c25c606d8934732d740bca57116dbec48a",
+        "bytes": 897
+      },
+      {
+        "file": "fresh_entity_with_position.json",
+        "sha256": "5267526326b3b6e47b2dad766b82cd84251586eace7f7b8e298b5f7b2738b8dd",
+        "bytes": 627
+      },
+      {
+        "file": "fresh_entity_without_position.json",
+        "sha256": "d614e962898333fab771ad64bcc34443a25c02f2e0a8e8304fe2c7e1906728be",
+        "bytes": 478
+      }
+    ]
+  }
+}

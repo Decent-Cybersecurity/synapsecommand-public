@@ -103,6 +103,31 @@ PACKAGE_ONLY_TESTS = (
     # Audit remediation F05: the binding modes, the hardened parser and the local-resource hook
     # run against the package alone — the hook's directory is a tmp_path the test builds.
     "test_cdm_stanag4676_binding.py",
+    # Adapter expansion phase 1 (2026-09-20): the shared XML guard and the offline normative
+    # validator judge the package alone — the validator's resources are a tmp_path the test
+    # builds, or the external directory `tests/normative_support.py` skips BLOCKED without —
+    # and the GeoJSON adapter reads its fixtures, spec record and goldens through the package.
+    "test_cdm_secure_xml.py", "test_cdm_normative_validation.py", "test_cdm_geojson_adapter.py",
+    # Adapter expansion phase 2 (2026-09-20): the GeoPackage adapter reads its fixtures, twins,
+    # spec record, independent readings and goldens through the package; its in-test packages
+    # are built in memory.
+    "test_cdm_geopackage_adapter.py",
+    # Adapter expansion phase 3 (2026-09-21): the C2SIM adapter reads its fixtures, twins,
+    # counterexamples, spec record and goldens through the package; the normative half skips
+    # BLOCKED without the external resource.
+    "test_cdm_c2sim_adapter.py",
+    # Adapter expansion phase 4 (2026-09-21): the AIXM 5.1.1 adapter and its shared codec read
+    # their fixtures, twins, cases, counterexamples, the Donlon extract, spec record and goldens
+    # through the package; the normative half skips BLOCKED without the external resource.
+    "test_cdm_aixm511_adapter.py", "test_cdm_aixm_codec.py",
+    # Adapter expansion phase 5 (2026-09-21): the Digital NOTAM binding and the temporality
+    # resolver read the `aixm511/dnotam/` fixtures, twins, cases, counterexamples, generator and
+    # goldens through the package; the normative half skips BLOCKED without the external resource.
+    "test_cdm_aixm511_dnotam.py", "test_cdm_aixm_resolve.py",
+    # Adapter expansion phase 6 (2026-09-21): the AIXM 5.2 adapter reads its fixtures, twins,
+    # cases, counterexamples, generator, pin and goldens through the package; the normative half
+    # (both closures) skips BLOCKED without the external resource.
+    "test_cdm_aixm52_adapter.py",
     # `test_cdm_oes.py` is package-only, and the classification is the same one
     # `test_cdm_models.py` earns: every path it touches is an importable name under
     # `synapse_cdm`, it reads no file at all, and the SC-OES block it exercises ships in the

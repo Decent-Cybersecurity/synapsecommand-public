@@ -1,0 +1,78 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm52/cases",
+  "fixtures": [
+    {
+      "file": "axis_order_crs84.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "axis_order_epsg4326.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "baseline_with_time_instant_ts001.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "composite_and_cyclic_contributors.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "interior_ring_of_curves.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "nil_absent_withdrawn.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "other_feature_location_availability.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "reference_forms.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    },
+    {
+      "file": "vertical_references.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) for a reading the harness fixtures cannot carry or that deserves its own file, mirroring the aixm511 set: the EPSG:4326 / CRS84 axis-order pair (the same numbers, two places), an interior ring of curves (too deep for a shipped twin), a composition with a cycle of contributor references, every reference form, twelve ways of stating a vertical limit, nil / absent / withdrawn property states, a schema-valid BASELINE with a TimeInstant that breaks Temporality Concept rule TS_001, and two features outside the families (a 5.2 DME with location, availability and tuningFrequencyVHF; a Taxiway with two availability structures) whose ledger-bound elements the generic reading carries. Read by name in `tests/test_cdm_aixm52_adapter.py`; every one validates against the pinned 5.2 XSD (BLOCKED, never a pass, without the resource) and is INVALID against 5.1.1 once its namespaces are rewritten. Fictitious identifiers (a1a40000-0520-) and positions throughout."
+    }
+  ]
+}

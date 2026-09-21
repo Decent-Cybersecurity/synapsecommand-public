@@ -1,0 +1,517 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:VerticalStructure",
+          "family": "VerticalStructure",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000007",
+          "identifier": "a1a40000-0520-4000-8000-000000000007",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [
+          {
+            "gml_id": "VS1_P1",
+            "linear_extent": null,
+            "location": {
+              "crs": {
+                "axis_order": [
+                  "latitude",
+                  "longitude"
+                ],
+                "inherited": false,
+                "srs_dimension": null,
+                "srs_name": "urn:ogc:def:crs:EPSG::4326"
+              },
+              "element": "aixm:ElevatedPoint",
+              "gml_id": "VS1_P1_LOC",
+              "latitude": 52.4,
+              "longitude": 5.1,
+              "pos_text": "52.4 5.1"
+            },
+            "location_elevation": {
+              "cdm": {
+                "reference": "MSL",
+                "unit": "ft",
+                "value": 250.0
+              },
+              "elevation": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": "FT",
+                "value": "250"
+              },
+              "geoid_undulation": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "not_projected": null,
+              "vertical_accuracy": null,
+              "vertical_datum": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "EGM 96 GEOID (free text in 5.2)"
+              }
+            },
+            "nil": false,
+            "properties": {
+              "constructionStatus": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "designator": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "SYNTOWER-MAST-LONG-DESIGNATOR"
+              },
+              "frangible": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "height": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": "M",
+                "value": "120"
+              },
+              "markingFirstColour": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "markingPattern": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "markingSecondColour": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "mobile": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "TOWER"
+              },
+              "verticalExtent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": "M",
+                "value": "120"
+              },
+              "visibleMaterial": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS1_P1",
+              "aixm:designator": "SYNTOWER-MAST-LONG-DESIGNATOR",
+              "aixm:height": {
+                "#text": "120",
+                "@uom": "M"
+              },
+              "aixm:horizontalProjection_location": {
+                "$": "aixm:ElevatedPoint",
+                "@gml:id": "VS1_P1_LOC",
+                "@srsName": "urn:ogc:def:crs:EPSG::4326",
+                "aixm:elevation": {
+                  "#text": "250",
+                  "@uom": "FT"
+                },
+                "aixm:horizontalAccuracy": {
+                  "#text": "5",
+                  "@uom": "M"
+                },
+                "aixm:verticalDatum": "EGM 96 GEOID (free text in 5.2)",
+                "gml:pos": "52.4 5.1"
+              },
+              "aixm:type": "TOWER",
+              "aixm:verticalExtent": {
+                "#text": "120",
+                "@uom": "M"
+              }
+            },
+            "surface_extent": null,
+            "time_interval": [],
+            "unsupported": []
+          },
+          {
+            "gml_id": "VS1_P2",
+            "linear_extent": null,
+            "location": null,
+            "location_elevation": null,
+            "nil": false,
+            "properties": {
+              "constructionStatus": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "designator": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "SYNTOWER-ANT"
+              },
+              "frangible": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "height": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": "M",
+                "value": "15"
+              },
+              "markingFirstColour": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "markingPattern": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "markingSecondColour": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "mobile": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ANTENNA"
+              },
+              "verticalExtent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": "M",
+                "value": "15"
+              },
+              "visibleMaterial": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS1_P2",
+              "aixm:designator": "SYNTOWER-ANT",
+              "aixm:height": {
+                "#text": "15",
+                "@uom": "M"
+              },
+              "aixm:type": "ANTENNA",
+              "aixm:verticalExtent": {
+                "#text": "15",
+                "@uom": "M"
+              }
+            },
+            "surface_extent": null,
+            "time_interval": [],
+            "unsupported": []
+          }
+        ],
+        "plan_object_id": null,
+        "properties": {
+          "dataAssessmentStatus": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "VERIFIED"
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTWR1"
+          },
+          "group": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "length": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "lighted": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "YES"
+          },
+          "lightingICAOStandard": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "marked": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "YES"
+          },
+          "markingICAOStandard": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC TOWER"
+          },
+          "placeName": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC HILL"
+          },
+          "radius": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "synchronisedLighting": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "TOWER"
+          },
+          "width": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:VerticalStructureTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "VS1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "VS1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "f069283e-68d6-52c5-a7d0-128af1fca0b5",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 52.4,
+      "lon": 5.1,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "ft",
+        "value": 250.0
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_TOWER",
+        "message:hasMember": [
+          {
+            "$": "aixm:VerticalStructure",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000007",
+            "aixm:timeSlice": [
+              {
+                "aixm:arrestingDevice": [
+                  {
+                    "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000031"
+                  },
+                  {
+                    "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000032"
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000007",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "VS1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000007",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000007/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  }
+]

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. One Navaid whose references take every form Feature Identification and Reference 1.0 section 3 names: urn:uuid (resolved in the document), #uuid.<uuid> (resolved by identifier), #gml:id of a member (resolved), an http URL (classified, never fetched), a urn:aixm natural key, a urn:uuid nobody in the document carries, a #local id nobody carries, and one href stated TWICE. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_REFERENCE_FORMS">
+  <message:hasMember>
+    <aixm:AirportHeliport gml:id="uuid.a1a40000-00c0-4000-8000-000000000006">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000006</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirportHeliportTimeSlice gml:id="RF_AHP">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_AHP_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>ZZSY</aixm:designator>
+          <aixm:type>AD</aixm:type>
+        </aixm:AirportHeliportTimeSlice>
+      </aixm:timeSlice>
+    </aixm:AirportHeliport>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Navaid gml:id="uuid.a1a40000-00c0-4000-8000-000000000007">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000007</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:NavaidTimeSlice gml:id="RF_NAV">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_NAV_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>VOR</aixm:type>
+          <aixm:designator>SYR</aixm:designator>
+          <aixm:runwayDirection xlink:href="#RF_MISSING_ID"/>
+          <aixm:runwayDirection xlink:href="urn:uuid:a1a40000-00c0-4000-8000-000000000008"/>
+          <aixm:servedAirport xlink:href="urn:uuid:a1a40000-00c0-4000-8000-000000000006"/>
+          <aixm:servedAirport xlink:href="#uuid.a1a40000-00c0-4000-8000-000000000006"/>
+          <aixm:servedAirport xlink:href="#uuid.a1a40000-00c0-4000-8000-000000000006"/>
+          <aixm:servedAirport xlink:href="http://example.invalid/AirportService#uuid.a1a40000-00c0-4000-8000-000000000006"/>
+          <aixm:servedAirport xlink:href="urn:aixm:AirportHeliport:designator=ZZSY"/>
+        </aixm:NavaidTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Navaid>
+  </message:hasMember>
+</message:AIXMBasicMessage>

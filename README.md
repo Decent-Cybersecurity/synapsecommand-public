@@ -13,14 +13,15 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Fourteen
+This is the contract layer, and it is public because that is what a contract is for. **Nineteen
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
-`cat062`, `cat023` and `stanag4586` (ingest) — byte-exact on the wire wherever the format is
+`cat062`, `cat023`, `stanag4586` (ingest), `geojson`, `geopackage` (ingest), `c2sim`,
+`aixm511` (ingest) and `aixm52` (ingest) — byte-exact on the wire wherever the format is
 binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — ninety-one and fourteen as of today; with one, an adapter is a thin translator and
-nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
+"a contact" — one hundred and seventy-one and nineteen as of today; with one, an adapter is a
+thin translator and nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
 forms, message families, exclusions and evidence scope — is the generated
 [support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
 One boundary deserves stating here: `stanag4676` reads and writes a **provisional internal XML
@@ -113,7 +114,7 @@ may not be made.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the fourteen shipped adapters are verified against** — which is what
+harness and **every fixture the nineteen shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:
@@ -176,7 +177,9 @@ The shortest honest path from an empty file to a green harness run. Nothing belo
 from the protocol documents; each step names the one that decides it.
 
 1. **Read the reference adapter.** `packages/cdm/synapse_cdm/adapters/pntmap.py`. Every rule
-   appears in it at least once, and it is the shortest of the shipped adapters.
+   appears in it at least once, and it is the shortest of the shipped adapters once each is
+   counted with the reader it runs on (`aixm52.py` is a shorter file only because its reader is
+   `aixm511.py`'s `AixmAdapterBase`).
 2. **Learn the four objects and the seven rules** —
    [the package README](packages/cdm/synapse_cdm/README.md) has both, with the site of
    enforcement named for each rule. There are only four objects and one of them is probably

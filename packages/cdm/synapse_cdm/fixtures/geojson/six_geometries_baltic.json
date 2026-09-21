@@ -1,0 +1,214 @@
+{
+  "type": "FeatureCollection",
+  "name": "EXERCISE synthetic Baltic layer",
+  "bbox": [
+    21.0,
+    56.5,
+    28.5,
+    59.9
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.1052,
+          56.9496
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE point one",
+        "elevation_m": 12.5,
+        "note": null,
+        "tags": [
+          "synthetic",
+          "riga"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ls-2",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            24.1052,
+            56.9496
+          ],
+          [
+            23.5,
+            57.2
+          ],
+          [
+            22.5,
+            57.4
+          ]
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE line two",
+        "length_km": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Polygon",
+        "bbox": [
+          21.5,
+          57.0,
+          22.0,
+          57.5
+        ],
+        "coordinates": [
+          [
+            [
+              21.5,
+              57.0
+            ],
+            [
+              22.0,
+              57.0
+            ],
+            [
+              22.0,
+              57.5
+            ],
+            [
+              21.5,
+              57.5
+            ],
+            [
+              21.5,
+              57.0
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE polygon three",
+        "area_class": "A"
+      },
+      "vendor_flag": true
+    },
+    {
+      "type": "Feature",
+      "id": "mp-4",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            25.0,
+            58.0
+          ],
+          [
+            25.5,
+            58.2
+          ]
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE multipoint four",
+        "count": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              26.0,
+              58.5
+            ],
+            [
+              26.5,
+              58.6
+            ]
+          ],
+          [
+            [
+              27.0,
+              58.7
+            ],
+            [
+              27.5,
+              58.9
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE multilinestring five",
+        "count": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mpoly-6",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                27.0,
+                59.0
+              ],
+              [
+                27.5,
+                59.0
+              ],
+              [
+                27.5,
+                59.4
+              ],
+              [
+                27.0,
+                59.4
+              ],
+              [
+                27.0,
+                59.0
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                28.0,
+                59.5
+              ],
+              [
+                28.5,
+                59.5
+              ],
+              [
+                28.5,
+                59.9
+              ],
+              [
+                28.0,
+                59.9
+              ],
+              [
+                28.0,
+                59.5
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE multipolygon six",
+        "parts": 2
+      }
+    }
+  ]
+}

@@ -183,10 +183,23 @@ def test_the_gitleaks_binary_is_pinned_by_version_and_by_checksum():
 
 
 def test_conformance_check_o_is_required_in_ci():
-    """P5's bounds are only enforced in CI if O is in the required set. It is, for all fourteen."""
+    """P5's bounds are only enforced in CI if O is in the required set. It is, for every adapter.
+
+    Since 2026-09-21 (adapter expansion phase 7) the sweep derives its required set PER ADAPTER
+    — the full set by default, and the same set without J only where the adapter's manifest
+    declares the structured limitation `no-source-time` — so both spellings are pinned here, both
+    must carry O, and the loop must run the DERIVED variable rather than a literal, or the
+    derivation is decoration.
+    """
     body = CI.read_text()
-    assert "--require A,B,C,D,F,G,H,J,K,L,O" in body
+    assert '"A,B,C,D,F,G,H,J,K,L,O"' in body, "the default required set, with J and O"
+    assert '"A,B,C,D,F,G,H,K,L,O"' in body, "the declared-no-source-time set, still with O"
+    assert '--require "${required}"' in body, "the sweep must run the derived set"
+    assert "suite.NO_SOURCE_TIME_LIMITATION in declared" in body, \
+        "the derivation must read the limitation id from the manifest, not a name list"
     assert "--require A,B,C,D,F,G,H,J,K,L\n" not in body
+    for spelled in re.findall(r'"([A-Z](?:,[A-Z])+)"', body):
+        assert "O" in spelled.split(","), f"a required set without O: {spelled}"
 
 
 def test_the_parser_safety_policy_exists_and_covers_the_three_families():

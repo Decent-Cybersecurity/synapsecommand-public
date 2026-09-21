@@ -1,0 +1,53 @@
+{
+  "object_kind": "plan_object",
+  "schema_version": "3.0.0",
+  "source": {
+    "system": "PLANNER",
+    "adapter": "planner_stub",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {
+      "system": "PLANNER",
+      "external_id": "CM-EX-0001"
+    }
+  ],
+  "object_id": "f1c70000-0016-8000-8000-000000000001",
+  "object_type": "CONTROL_MEASURE",
+  "label": "EXERCISE phase line ALPHA",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          24.0,
+          57.0
+        ],
+        [
+          24.5,
+          57.0
+        ],
+        [
+          24.5,
+          57.3
+        ],
+        [
+          24.0,
+          57.3
+        ],
+        [
+          24.0,
+          57.0
+        ]
+      ]
+    ]
+  },
+  "style": {
+    "stroke": "#ff0000"
+  },
+  "expires_at": null,
+  "validity": {
+    "observed_at": "2026-04-29T06:00:00.000Z"
+  }
+}

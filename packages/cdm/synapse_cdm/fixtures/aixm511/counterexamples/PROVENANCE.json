@@ -1,0 +1,46 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511/counterexamples",
+  "fixtures": [
+    {
+      "file": "foreign_extension_element.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.1.1 documents derived on 2026-09-21 from airspace_baseline_polygon.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a missing interpretation, a foreign element in an extension). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all five; the adapter's structural reading refuses the missing interpretation and carries the other four in the residual, which is what `residual: structured` promises about an unknown element. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "missing_interpretation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.1.1 documents derived on 2026-09-21 from airspace_baseline_polygon.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a missing interpretation, a foreign element in an extension). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all five; the adapter's structural reading refuses the missing interpretation and carries the other four in the residual, which is what `residual: structured` promises about an unknown element. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "properties_out_of_order.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.1.1 documents derived on 2026-09-21 from airspace_baseline_polygon.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a missing interpretation, a foreign element in an extension). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all five; the adapter's structural reading refuses the missing interpretation and carries the other four in the residual, which is what `residual: structured` promises about an unknown element. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "status_outside_enumeration.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.1.1 documents derived on 2026-09-21 from airspace_baseline_polygon.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a missing interpretation, a foreign element in an extension). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all five; the adapter's structural reading refuses the missing interpretation and carries the other four in the residual, which is what `residual: structured` promises about an unknown element. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unknown_property_in_slice.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.1.1 documents derived on 2026-09-21 from airspace_baseline_polygon.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a missing interpretation, a foreign element in an extension). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all five; the adapter's structural reading refuses the missing interpretation and carries the other four in the residual, which is what `residual: structured` promises about an unknown element. Fictitious identifiers and positions throughout."
+    }
+  ]
+}

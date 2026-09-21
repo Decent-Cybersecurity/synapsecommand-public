@@ -1,0 +1,309 @@
+{
+  "@gml:id": "M_DN_OVERLAP",
+  "message:hasMember": [
+    {
+      "$": "event:Event",
+      "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000006",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-00e0-4000-8000-000000000006"
+      },
+      "event:timeSlice": [
+        {
+          "$": "event:EventTimeSlice",
+          "@gml:id": "EVT_6_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_6_BL_1_0_VT",
+            "gml:beginPosition": "2026-03-10T06:00:00Z",
+            "gml:endPosition": "2026-03-10T10:00:00Z"
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:featureLifetime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_6_BL_1_0_LT",
+            "gml:beginPosition": "2026-03-10T06:00:00Z",
+            "gml:endPosition": "2026-03-10T10:00:00Z"
+          },
+          "event:name": "ZZSY 09",
+          "event:designator": "DNOTAM",
+          "event:scenario": "RWY.CLS",
+          "event:version": "2.0",
+          "event:concernedAirportHeliport": [
+            {
+              "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000001",
+              "@xlink:title": "ZZSY"
+            }
+          ],
+          "event:notification": [
+            {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_6_BL_1_0_N",
+              "event:series": "S",
+              "event:number": "106",
+              "event:year": "2026",
+              "event:issued": "2026-03-09T12:00:00Z",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:type": "N",
+              "event:affectedFIR": "ZZSY",
+              "event:location": "ZZSY",
+              "event:effectiveStart": "2603100600",
+              "event:effectiveEnd": "2603101000",
+              "event:estimatedEnd": "NO",
+              "event:permanent": "NO",
+              "event:text": {
+                "@lang": "ENG",
+                "#text": "RWY 09 CLOSED."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "event:Event",
+      "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000007",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-00e0-4000-8000-000000000007"
+      },
+      "event:timeSlice": [
+        {
+          "$": "event:EventTimeSlice",
+          "@gml:id": "EVT_7_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_7_BL_1_0_VT",
+            "gml:beginPosition": "2026-03-10T08:00:00Z",
+            "gml:endPosition": "2026-03-10T12:00:00Z"
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:featureLifetime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "EVT_7_BL_1_0_LT",
+            "gml:beginPosition": "2026-03-10T08:00:00Z",
+            "gml:endPosition": "2026-03-10T12:00:00Z"
+          },
+          "event:name": "ZZSY 09",
+          "event:designator": "DNOTAM",
+          "event:scenario": "RWY.CLS",
+          "event:version": "2.0",
+          "event:concernedAirportHeliport": [
+            {
+              "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000001",
+              "@xlink:title": "ZZSY"
+            }
+          ],
+          "event:notification": [
+            {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_7_BL_1_0_N",
+              "event:series": "S",
+              "event:number": "107",
+              "event:year": "2026",
+              "event:issued": "2026-03-09T18:00:00Z",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:type": "N",
+              "event:affectedFIR": "ZZSY",
+              "event:location": "ZZSY",
+              "event:effectiveStart": "2603100800",
+              "event:effectiveEnd": "2603101200",
+              "event:estimatedEnd": "NO",
+              "event:permanent": "NO",
+              "event:text": {
+                "@lang": "ENG",
+                "#text": "RWY 09 CLOSED."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "aixm:RunwayDirection",
+      "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000002",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-00d0-4000-8000-000000000002"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:RunwayDirectionTimeSlice",
+          "@gml:id": "RDN_ZZSY_09_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "RDN_ZZSY_09_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:designator": "09",
+          "aixm:trueBearing": "87.2",
+          "aixm:availability": [
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_BL_1_0_AV1",
+              "aixm:operationalStatus": "NORMAL"
+            }
+          ]
+        },
+        {
+          "$": "aixm:RunwayDirectionTimeSlice",
+          "@gml:id": "RDN_ZZSY_09_TD_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "RDN_ZZSY_09_TD_1_0_VT",
+            "gml:beginPosition": "2026-03-10T06:00:00Z",
+            "gml:endPosition": "2026-03-10T10:00:00Z"
+          },
+          "aixm:interpretation": "TEMPDELTA",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:availability": [
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_1_0_AV1_LN",
+                      "aixm:note": {
+                        "@lang": "ENG",
+                        "#text": "Baseline data copy. Not included in the NOTAM text generation"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "NORMAL"
+            },
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_1_0_AV2_LN",
+                      "aixm:note": {
+                        "@lang": "ENG",
+                        "#text": "Surface maintenance"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "CLOSED"
+            }
+          ],
+          "aixm:extension": [
+            {
+              "$": "event:RunwayDirectionExtension",
+              "@gml:id": "RDN_ZZSY_09_TD_1_0_EXT",
+              "event:theEvent": {
+                "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000006",
+                "@xlink:title": "ZZSY 09 DNOTAM RWY.CLS"
+              }
+            }
+          ]
+        },
+        {
+          "$": "aixm:RunwayDirectionTimeSlice",
+          "@gml:id": "RDN_ZZSY_09_TD_2_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "RDN_ZZSY_09_TD_2_0_VT",
+            "gml:beginPosition": "2026-03-10T08:00:00Z",
+            "gml:endPosition": "2026-03-10T12:00:00Z"
+          },
+          "aixm:interpretation": "TEMPDELTA",
+          "aixm:sequenceNumber": "2",
+          "aixm:correctionNumber": "0",
+          "aixm:availability": [
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_2_0_AV1_LN",
+                      "aixm:note": {
+                        "@lang": "ENG",
+                        "#text": "Baseline data copy. Not included in the NOTAM text generation"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "NORMAL"
+            },
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2_N",
+                  "aixm:propertyName": "operationalStatus",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "RDN_ZZSY_09_TD_2_0_AV2_LN",
+                      "aixm:note": {
+                        "@lang": "ENG",
+                        "#text": "Surface maintenance"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:operationalStatus": "CLOSED"
+            }
+          ],
+          "aixm:extension": [
+            {
+              "$": "event:RunwayDirectionExtension",
+              "@gml:id": "RDN_ZZSY_09_TD_2_0_EXT",
+              "event:theEvent": {
+                "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000007",
+                "@xlink:title": "ZZSY 09 DNOTAM RWY.CLS"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

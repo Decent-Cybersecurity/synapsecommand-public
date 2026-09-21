@@ -1,0 +1,38 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm511/dnotam/counterexamples",
+  "fixtures": [
+    {
+      "file": "rule_invalid_rwy_cls_on_an_airspace.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py`, each breaking ONE layer on purpose: two are well-formed and SCHEMA-INVALID (an undeclared Event property; an Event in the Event Schema 1.0 namespace), two are SCHEMA-VALID and invalid under a scenario RULE (RWY.CLS bound to an Airspace TEMPDELTA \u2014 RWY.CLS.02; RWY.CLS without a CLOSED branch \u2014 RWY.CLS.03). The layer that catches each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_dnotam.py`. Fictitious throughout."
+    },
+    {
+      "file": "rule_invalid_rwy_cls_without_closed_status.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py`, each breaking ONE layer on purpose: two are well-formed and SCHEMA-INVALID (an undeclared Event property; an Event in the Event Schema 1.0 namespace), two are SCHEMA-VALID and invalid under a scenario RULE (RWY.CLS bound to an Airspace TEMPDELTA \u2014 RWY.CLS.02; RWY.CLS without a CLOSED branch \u2014 RWY.CLS.03). The layer that catches each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_dnotam.py`. Fictitious throughout."
+    },
+    {
+      "file": "schema_invalid_event_schema_1_0_namespace.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py`, each breaking ONE layer on purpose: two are well-formed and SCHEMA-INVALID (an undeclared Event property; an Event in the Event Schema 1.0 namespace), two are SCHEMA-VALID and invalid under a scenario RULE (RWY.CLS bound to an Airspace TEMPDELTA \u2014 RWY.CLS.02; RWY.CLS without a CLOSED branch \u2014 RWY.CLS.03). The layer that catches each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_dnotam.py`. Fictitious throughout."
+    },
+    {
+      "file": "schema_invalid_unknown_event_property.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic documents written on 2026-09-21 by `dnotam/spec/build_fixtures.py`, each breaking ONE layer on purpose: two are well-formed and SCHEMA-INVALID (an undeclared Event property; an Event in the Event Schema 1.0 namespace), two are SCHEMA-VALID and invalid under a scenario RULE (RWY.CLS bound to an Airspace TEMPDELTA \u2014 RWY.CLS.02; RWY.CLS without a CLOSED branch \u2014 RWY.CLS.03). The layer that catches each is declared in this directory's README and asserted by `tests/test_cdm_aixm511_dnotam.py`. Fictitious throughout."
+    }
+  ]
+}

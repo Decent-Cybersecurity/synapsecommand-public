@@ -1,0 +1,134 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geopackage/independent",
+  "fixtures": [
+    {
+      "file": "elevations_epsg4979_and_crs84.crs84_points.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.crs84_points.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.elevations.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.elevations.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.areas.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.areas.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.facilities.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.facilities.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.routes.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.routes.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "mixed_content_partial_read.measured.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "mixed_content_partial_read.measured.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "mixed_content_partial_read.positions.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "mixed_content_partial_read.positions.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "six_families_geometry_column.families.geojson",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    },
+    {
+      "file": "six_families_geometry_column.families.ogrinfo.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3's own reading of every layer of the synthetic packages in the parent directory, written on 2026-09-20 by `spec/build_fixtures.py` with `ogrinfo -json -features` and `ogr2ogr -f GeoJSON` (the exact commands are in `spec/geopackage_pin.json`); the independent-expected oracle `tests/test_cdm_geopackage_adapter.py::test_the_adapter_agrees_with_the_independent_gdal_reading` and `examples/geopackage_to_geojson/run.py` compare the adapter against. Everything read is synthetic and prefixed EXERCISE; no file derives from any recorded dataset."
+    }
+  ]
+}

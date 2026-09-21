@@ -216,11 +216,17 @@ def test_the_harness_and_the_suite_both_stop_selecting_the_record(probe_dir):
 
 
 def test_the_shipped_fixture_counts_are_unchanged_by_the_new_exclusion():
-    """The number the harness selects is what it was before §33's records landed: 538."""
+    """The number the harness selects is what it was before §33's records landed: 538 — and,
+    since the adapter expansion of 2026-09-20/21 shipped five fixture sets beside the fourteen,
+    580: 538 plus geojson's 4, geopackage's 8, c2sim's 10, aixm511's 10 and aixm52's 10 (each
+    raw fixture and its parsed twin counted, as the harness counts them), every one of the five
+    sets carrying `PROVENANCE.json` records the selection still excludes. The literal moves with
+    the roster and only with the roster; a move for any other reason is the exclusion drifting.
+    """
     total = sum(len(harness_paths) for harness_paths in
                 (evidence.harness_selects(ROOT / name) for name in sorted(
                     p.name for p in ROOT.iterdir() if p.is_dir())))
-    assert total == 538, f"the harness now selects {total} top-level fixtures, not 538"
+    assert total == 580, f"the harness now selects {total} top-level fixtures, not 580"
 
 
 # ================================================================= §34: the six categories
@@ -479,6 +485,35 @@ def _limitation_text(entry) -> str:
     return entry if isinstance(entry, str) else entry.summary
 
 
+def _released_adapter_modules() -> set[str] | None:
+    """The adapter modules the NEWEST release tag carries, or None where git cannot answer.
+
+    Read off the tag's tree (`git ls-tree`), never off the index or the working tree, so the
+    answer is the same whether or not this checkout has staged the arc's new modules.
+    """
+    import shutil
+    import subprocess
+    if not shutil.which("git"):
+        return None
+    tags = subprocess.run(["git", "tag", "--list", "v*"], cwd=REPO, capture_output=True, text=True)
+    if tags.returncode != 0:
+        return None
+    versions = []
+    for tag in tags.stdout.split():
+        m = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)", tag)
+        if m:
+            versions.append((tuple(int(x) for x in m.groups()), tag))
+    if not versions:
+        return None
+    newest = max(versions)[1]
+    listing = subprocess.run(["git", "ls-tree", "--name-only", newest,
+                              "packages/cdm/synapse_cdm/adapters/"],
+                             cwd=REPO, capture_output=True, text=True)
+    if listing.returncode != 0:
+        return None
+    return {pathlib.PurePosixPath(line).stem for line in listing.stdout.split()}
+
+
 def test_evidence_available_is_true_on_every_shipped_adapter():
     """P4's condition, discharged: the records are attached to a published Release.
 
@@ -486,11 +521,30 @@ def test_evidence_available_is_true_on_every_shipped_adapter():
     through P4-P8 for that reason. What made it true is not this package: `evidence-2.1.2.tar.gz`
     is an asset of the `v2.1.2` Release, so a consumer who cannot run the harness can still fetch
     the records. See PUBLICATION.md entry 19 and MIGRATIONS.md's PE record.
+
+    THE SAME RULING, APPLIED TO AN ADAPTER NO RELEASE HAS CARRIED YET (2026-09-21, the adapter
+    expansion). An adapter whose module is absent from the newest release tag's tree has records
+    nobody can fetch, so it declares `false` — the value the ruling assigns to "producible" — and
+    the release round that attaches its records is what flips it (the record's D18). So the
+    assertion is the RULE and not a constant: every adapter the newest tag carries declares
+    `true`, every adapter it does not carry declares `false`, and the roster is the registry's.
     """
     declared = {name: cls.metadata.evidence.available for name, cls in shipped().items()}
-    assert len(declared) == 14, f"the shipped roster is {sorted(declared)}, not the fourteen"
-    assert set(declared.values()) == {True}, \
-        f"these adapters still deny available evidence: {[n for n, v in declared.items() if not v]}"
+    assert len(declared) == len(shipped()) == 19, \
+        f"the shipped roster is {sorted(declared)}, not the nineteen"
+    released = _released_adapter_modules()
+    if released is None:
+        pytest.skip("no git or no release tag here, so which adapters a Release has carried "
+                    "cannot be read; the agreement check below still holds field, prose and "
+                    "manifest together")
+    expected = {name: (cls.__module__.rsplit(".", 1)[-1] in released)
+                for name, cls in shipped().items()}
+    wrong = {name: declared[name] for name in declared if declared[name] != expected[name]}
+    assert not wrong, (
+        f"`evidence.available` disagrees with the newest release tag's tree for {wrong}: an "
+        "adapter a Release has carried declares true (its records are an asset of that Release), "
+        "one no Release has carried declares false (producible is not available, M 2026-09-08)"
+    )
 
 
 def test_the_field_the_prose_and_the_manifest_all_state_the_same_availability():
@@ -519,12 +573,12 @@ def test_the_field_the_prose_and_the_manifest_all_state_the_same_availability():
 
 
 def test_the_availability_claim_pattern_can_see_the_sentences_it_reads():
-    """A pattern matching nothing would make the agreement above green on fourteen silences."""
+    """A pattern matching nothing would make the agreement above green on nineteen silences."""
     assert AVAILABILITY_CLAIM.findall("`evidence.available` is true because the records") == \
-        ["true"], "the pattern no longer recognises the sentence the fourteen adapters carry"
+        ["true"], "the pattern no longer recognises the sentence a released adapter carries"
     assert AVAILABILITY_CLAIM.findall(
         "`evidence.available` is false for that reason and not because the checks do not run") == \
-        ["false"], "the pattern no longer recognises the sentence those fourteen carried before"
+        ["false"], "the pattern no longer recognises the sentence an unreleased adapter carries"
     assert AVAILABILITY_CLAIM.findall("evidence is available to anyone who asks") == [], \
         "the pattern matches prose that states no value, so the agreement check reads noise"
 
@@ -715,7 +769,7 @@ def test_the_generator_names_itself_and_the_package_version(record):
 def test_generating_the_whole_roster_writes_one_record_per_adapter(tmp_path):
     assert evidence.main(["generate", "--all", "--out", str(tmp_path)]) == 0
     written = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("evidence.json"))
-    assert len(written) == len(shipped()) == 14
+    assert len(written) == len(shipped()) == 19
     for name, cls in shipped().items():
         assert f"{name}/{cls.metadata.adapter_version}/evidence.json" in written
 

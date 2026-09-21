@@ -1,0 +1,75 @@
+{
+  "C2SIMHeader": {
+    "CommunicativeActTypeCode": "Inform",
+    "ConversationID": "c2510000-0000-8000-8000-00000000c003",
+    "FromSendingSystem": "EXERCISE-SIM-BLUE",
+    "MessageID": "c2510000-0000-8000-8000-00000000a004",
+    "Protocol": "SISO-STD-C2SIM",
+    "ProtocolVersion": "1.0.0",
+    "SendingTime": {
+      "IsoDateTime": "2026-09-21T06:40:05Z"
+    },
+    "ToReceivingSystem": "EXERCISE-C2"
+  },
+  "MessageBody": {
+    "DomainMessageBody": {
+      "ReportBody": {
+        "FromSender": "c2510000-0002-8000-8000-000000000002",
+        "ToReceiver": "c2510000-0002-8000-8000-000000000001",
+        "ReportContent": [
+          {
+            "PositionReportContent": {
+              "Duration": {
+                "IsoTimeDuration": "P00Y00M00DT00H00M30S"
+              },
+              "TimeOfObservation": {
+                "DateTime": {
+                  "IsoDateTime": "2026-09-21T06:40:00Z"
+                }
+              },
+              "EntityHealthStatus": [
+                {
+                  "OperationalStatus": {
+                    "OperationalStatusCode": "MostlyOperational"
+                  }
+                },
+                {
+                  "Strength": {
+                    "StrengthPercentage": "88"
+                  }
+                }
+              ],
+              "Location": {
+                "GeodeticCoordinate": {
+                  "AltitudeMSL": "48",
+                  "Latitude": "58.5210",
+                  "Longitude": "24.7400"
+                }
+              },
+              "SubjectEntity": "c2510000-0002-8000-8000-000000000002"
+            }
+          },
+          {
+            "PositionReportContent": {
+              "TimeOfObservation": {
+                "DateTime": {
+                  "IsoDateTime": "2026-09-21T06:40:00Z"
+                }
+              },
+              "Location": {
+                "GeodeticCoordinate": {
+                  "AltitudeAGL": "0",
+                  "Latitude": "58.5140",
+                  "Longitude": "24.7400"
+                }
+              },
+              "SubjectEntity": "c2510000-0003-8000-8000-000000000002"
+            }
+          }
+        ],
+        "ReportID": "c2510000-0009-8000-8000-000000000001",
+        "ReportingEntity": "c2510000-0002-8000-8000-000000000002"
+      }
+    }
+  }
+}

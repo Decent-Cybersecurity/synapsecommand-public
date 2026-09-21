@@ -1,14 +1,16 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Fourteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Nineteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
 ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar service
-messages, ASTERIX category 062 SDPS system track messages, and ASTERIX category 023 CNS/ATM
-ground station and service status reports, and STANAG 4586 Edition 3 DLI air-vehicle telemetry.
-Without a canonical model in the middle, fourteen
-adapters means ninety-one translations and fourteen private notions of "a contact".
+messages, ASTERIX category 062 SDPS system track messages, ASTERIX category 023 CNS/ATM
+ground station and service status reports, STANAG 4586 Edition 3 DLI air-vehicle telemetry,
+GeoJSON (RFC 7946), OGC GeoPackage 1.4.0, C2SIM (SISO-STD-019/020-2020), AIXM 5.1.1 with the
+Digital NOTAM Event Schema 2.0, and AIXM 5.2.
+Without a canonical model in the middle, nineteen
+adapters means one hundred and seventy-one translations and nineteen private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -30,6 +32,11 @@ With one, an adapter is a thin translator and nothing else.
 | [`stanag4586`](adapters/stanag4586.py) 1.0.0 | ingest | STANAG 4586 **Edition 3** DLI air-vehicle telemetry (§3.3.1 wrapped messages, big-endian, presence-vector bodies) → one `Entity` per air vehicle plus a `Track` of that datagram's positioned observations, on its own tested decode layer ([`stanag4586_codec`](adapters/stanag4586_codec.py)). **Four messages are decoded** — #4000 Inertial States, #3002 Vehicle Operating States, #3009 Air and Ground Relative States and #3010 Body-Relative Sensed States — and every other message type, command messages included, is parked whole with its wrapper read. **Ingest by ruling, not by omission**: the DLI command uplink is out of scope because the CDM has no command kind and emitting DLI edges toward being a UCS component. **The edition is not the current one** — Edition 4 is paywalled and DRM-wrapped, and nothing here claims to read it. The first adapter whose `Position` is `INERTIAL` rather than `GNSS`, read off the message's own name, and the first to carry an ellipsoid/geoid datum ambiguity on the object |
 
 | [`stanag4609`](adapters/stanag4609.py) 1.0.0 | bidirectional | STANAG 4609 / MISP-2019.1 **UAS Datalink Local Set** KLV metadata, MISB ST 0601.14a (**45 of its 141 items** — 26 witnessed by the one pinned real stream and 19 by the document itself, with the other 96 rows reading `not yet`; **RE-DERIVED 2026-09-05 BY THE PARK 11 ROUND AND MOVED ONE STEP: 46 of the 141 are promoted and the other 95 read `not yet`** — 26 stream-witnessed and **20** document-witnessed, the twentieth being item 94, the MIIS Core Identifier, admitted on a FOURTH ground: MISB ST 1204.1 defines its Value's whole structure, two held documents state its key identically at CRC 30280, and both print the same worked example. Counted off the Status column, not carried. re-derived 2026-09-05 by the housekeeping round off the row set's Status column, this cell having kept the previous step across the pre-release round that promoted tag 75; the split and its two grounds are derived in FORMAT_COVERAGE.md's "Not witnessed" ledger row, and this cell cites it rather than restating it a second time) → `Entity` + `Event` **per packet**; Entities → one payload, **byte for byte**, on two tested codec layers ([`klv_codec`](adapters/klv_codec.py) for the framing, [`klv_uas_codec`](adapters/klv_uas_codec.py) for the tag table). **The first adapter here whose format defines a real checksum** — `ST 0601.14-32` makes it mandatory in every packet, where the five binary siblings each had to record that theirs defines none — and the first to ship a **codec ruling**: the one real stream carries an item at four octets where its own standard states a Required Length of two, so the length-divergence policy skips that item and records a structured defect annotation rather than rejecting the packet or reinterpreting the octets. `entity_id` is **packet-scoped**, because the witnessed set carries no identifier at all — items 3, 4, 10, 59 and 94 are the five that could and the stream has none of them, so consecutive packets of one aircraft get different ids and gap 30 records the cost |
+| [`geojson`](adapters/geojson.py) 1.0.0 | bidirectional | GeoJSON, RFC 7946 (Feature, FeatureCollection and the seven geometry types, WGS 84 / CRS84 only, no `crs` member) → one `Entity` or `PlanObject` per Feature under the `geo-object/1` contract, with every property, `bbox` and foreign member in a structured residual at its own position; `Entity` / `PlanObject` → a Feature through the `exchange` or `mirror` export profile. **The first `residual: structured` adapter**, and the first whose ledger holds each feature's leaves to its own object (`#[*]`). A source that states no instant: `attributes` carry no time and check J reads the declared `no-source-time` limitation |
+| [`geopackage`](adapters/geopackage.py) 1.0.0 | ingest | OGC GeoPackage 1.4.0 — the octets of a SQLite container, opened as an in-memory, read-only, authorized snapshot (no extension, view, trigger or attached database ever executes) — every feature table in `gpkg_contents` under EPSG:4326 / CRS84 / 4979, rows → `Entity` or `PlanObject` under a package-scoped identity (namespace, layer, primary key), on its own tested decode layer ([`geopackage_codec`](adapters/geopackage_codec.py): the GeoPackageBinary header and WKB). **Ingest by ruling**: writing a database is not translation. Every fixture was written by GDAL and is read back by GDAL, which is the independent oracle |
+| [`c2sim`](adapters/c2sim.py) 1.0.0 | bidirectional | SISO-STD-019-2020 C2SIM Core with the SISO-STD-020-2020 Land Operations extension, schema package C2SIMArtifacts v1.0.1 — initialisation (entities, organisations, forces, physical state), a `MoveToLocation` / `HoldInPlace` order and position / observation / status reports → `Entity`, `Track`, `Event` (`PLAN_INJECT` under the `c2sim-order/1` payload contract) and `PlanObject`; back to a schema-valid message from the typed block and the residual, on its own tested codec layer ([`c2sim_codec`](adapters/c2sim_codec.py)). Time in three forms kept as stated, a simulation time resolved only against the caller's `ExerciseClock`, and affiliation read as the own side's stated relation, never inferred. The exercise client (`examples/c2sim/exercise_client.py`) is opt-in and the only thing here that opens a socket |
+| [`aixm511`](adapters/aixm511.py) 1.0.0 | ingest | AIXM 5.1.1 (April 2016) — Airspace, AirportHeliport, Runway, RunwayDirection, Navaid and NavaidEquipment, DesignatedPoint, Route, RouteSegment, Taxiway and the NOTAM feature, plus the Digital NOTAM Event Schema 2.0.m — **one `Entity` per time slice**, the feature's `gml:identifier` its identity and the slice's `gml:validTime` its validity, the `aixm-timeslice/1` block beside a structured residual; an Airspace's drawable slices become `PlanObject` areas; the four pinned Digital NOTAM scenario profiles are read into `attributes.dnotam`, and nothing is resolved against a baseline — `synapse_cdm.aixm_resolve` does that from explicit prior state. XLinks are classified and never fetched, on the shared secure `pyexpat` reader ([`secure_xml`](secure_xml.py)) and the shared codec ([`aixm_codec`](adapters/aixm_codec.py)) |
+| [`aixm52`](adapters/aixm52.py) 1.0.0 | ingest | AIXM 5.2 (schema release 5.2.0, 17 January 2025) — the same families on the 5.2 property tables, read by `aixm511`'s `AixmAdapterBase` under its own `Profile`: the 5.2 namespaces, the added and removed properties held to both schemas by a test, `aixm_version: "5.2"` in the block, and a 5.1.1 document refused as the wrong version. **Digital NOTAM is declared NOT available on 5.2** — no Event schema targets it — rather than claimed |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -327,12 +334,15 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — eleven of the fourteen
-shipped adapters, every one of which emits something the check could not parse as JSON. The second
+clone. Every adapter that declares an egress direction was affected — thirteen of the nineteen
+shipped adapters, every one of which now declares its tolerance: the eleven that existed on
+2026-09-16 each emitted something the check could not parse as JSON, and the two that shipped since
+(`geojson`, `c2sim`) declared theirs from the start. The second
 of the two repairs that paragraph named was taken: the harness compares the emitted bytes itself,
 under the tolerance each class declares in `ROUNDTRIP_TOLERANCE` — octet for octet for the nine
-binary and line-oriented codecs, and by re-ingest for the two XML emitters, whose format cannot
-promise octet order — and prints the declaration with every report. The tests in `tests/` still
+binary and line-oriented codecs, and by re-ingest (`values`) for the XML emitters, whose format
+cannot promise octet order, and for the one JSON emitter the harness compares by value anyway —
+and prints the declaration with every report. The tests in `tests/` still
 make the same claims; they are each adapter's own statement of it, and the column is the suite's.
 The person who needs to know is the one reading `20 passed, 0 failed` from an installed copy, and
 what that line covers now includes the way back.
@@ -369,9 +379,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's fourteen adapters it is 182 against 91.
+   contradiction. At today's nineteen adapters it is 342 against 171.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that fourteen adapters cannot grow fourteen slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that nineteen adapters cannot grow nineteen slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC, SCHEMA-INVALID ON PURPOSE (fieldElevationAccuracy is an AIXM 5.1.1 property with no element in 5.2). A fictitious aerodrome ZZSY with one runway, one runway direction (CLOSED under
+     a night-time Timesheet — typed, not asserted), a VOR/DME whose location is CRS84 (LONGITUDE
+     first) and whose two component equipments the document does not carry, and an
+     OrganisationAuthority outside the five families. Written by spec/build_fixtures.py on 2026-09-21
+     for the SynapseCommand aixm52 adapter. AIXM 5.2: the ARP is the 5.2 ElevatedPoint (verticalDatum
+     free text, geoidUndulation, horizontalAccuracy, no verticalAccuracy), timeZone,
+     segmentedCircleMarker, TWO responsibleOrganisation (unbounded in 5.2), the runway's depth and
+     reference codes, the direction's slope and approachGuidance, the navaid's codeICAOCountry. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.2/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.2" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_AERODROME">
+  <message:hasMember>
+    <aixm:AirportHeliport gml:id="uuid.a1a40000-0520-4000-8000-000000000002">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000002</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirportHeliportTimeSlice gml:id="AP1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="AP1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>ZZSY</aixm:designator>
+          <aixm:name>SYNTHETIC FIELD</aixm:name>
+          <aixm:locationIndicatorICAO>ZZSY</aixm:locationIndicatorICAO>
+          <aixm:type>AD</aixm:type>
+          <aixm:controlType>CIVIL</aixm:controlType>
+          <aixm:fieldElevation uom="FT">12</aixm:fieldElevation>
+          <aixm:fieldElevationAccuracy uom="FT">1</aixm:fieldElevationAccuracy>
+          <aixm:verticalDatum>EGM 96 GEOID (free text in 5.2)</aixm:verticalDatum>
+          <aixm:magneticVariation>1.5</aixm:magneticVariation>
+          <aixm:abandoned>NO</aixm:abandoned>
+          <aixm:responsibleOrganisation>
+            <aixm:AirportHeliportResponsibilityOrganisation gml:id="AP1_RO_1">
+              <aixm:role>OPERATE</aixm:role>
+              <aixm:theOrganisationAuthority xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000006"/>
+            </aixm:AirportHeliportResponsibilityOrganisation>
+          </aixm:responsibleOrganisation>
+          <aixm:responsibleOrganisation>
+            <aixm:AirportHeliportResponsibilityOrganisation gml:id="AP1_RO_2">
+              <aixm:role>OWN</aixm:role>
+              <aixm:theOrganisationAuthority xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000006"/>
+            </aixm:AirportHeliportResponsibilityOrganisation>
+          </aixm:responsibleOrganisation>
+          <aixm:ARP>
+            <aixm:ElevatedPoint gml:id="AP1_ARP" srsName="urn:ogc:def:crs:EPSG::4326">
+              <gml:pos>52.30833 4.76389</gml:pos>
+              <aixm:elevation uom="FT">12</aixm:elevation>
+              <aixm:geoidUndulation uom="M">43.5</aixm:geoidUndulation>
+              <aixm:verticalDatum>EGM 96 GEOID (free text in 5.2)</aixm:verticalDatum>
+              <aixm:horizontalAccuracy uom="M">1</aixm:horizontalAccuracy>
+            </aixm:ElevatedPoint>
+          </aixm:ARP>
+          <aixm:availability>
+            <aixm:AirportHeliportAvailability gml:id="AP1_AV_1">
+              <aixm:operationalStatus>NORMAL</aixm:operationalStatus>
+            </aixm:AirportHeliportAvailability>
+          </aixm:availability>
+          <aixm:timeZone>UTC</aixm:timeZone>
+          <aixm:segmentedCircleMarker>YES_LIGHTED</aixm:segmentedCircleMarker>
+        </aixm:AirportHeliportTimeSlice>
+      </aixm:timeSlice>
+    </aixm:AirportHeliport>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Runway gml:id="uuid.a1a40000-0520-4000-8000-000000000003">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000003</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayTimeSlice gml:id="RWY1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RWY1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYN09/27</aixm:designator>
+          <aixm:type>RWY</aixm:type>
+          <aixm:nominalLength uom="M">2500</aixm:nominalLength>
+          <aixm:nominalWidth uom="M">45</aixm:nominalWidth>
+          <aixm:abandoned>NO</aixm:abandoned>
+          <aixm:associatedAirportHeliport xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000002" xlink:title="ZZSY SYNTHETIC FIELD"/>
+          <aixm:referenceCodeFieldLength>4</aixm:referenceCodeFieldLength>
+          <aixm:referenceCodeWingspan>D</aixm:referenceCodeWingspan>
+          <aixm:depth uom="M">0.9</aixm:depth>
+        </aixm:RunwayTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Runway>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayDirection gml:id="uuid.a1a40000-0520-4000-8000-000000000004">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000004</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayDirectionTimeSlice gml:id="RD1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RD1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYN09</aixm:designator>
+          <aixm:trueBearing>92.5</aixm:trueBearing>
+          <aixm:magneticBearing>91.0</aixm:magneticBearing>
+          <aixm:elevationTDZ uom="FT">10</aixm:elevationTDZ>
+          <aixm:usedRunway xlink:href="#uuid.a1a40000-0520-4000-8000-000000000003"/>
+          <aixm:availability>
+            <aixm:ManoeuvringAreaAvailability gml:id="RD1_AV_1">
+              <aixm:timeInterval>
+                <aixm:Timesheet gml:id="RD1_TS_1">
+                  <aixm:timeReference>UTC</aixm:timeReference>
+                  <aixm:day>ANY</aixm:day>
+                  <aixm:startTime>22:00</aixm:startTime>
+                  <aixm:endTime>06:00</aixm:endTime>
+                </aixm:Timesheet>
+              </aixm:timeInterval>
+              <aixm:operationalStatus>CLOSED</aixm:operationalStatus>
+              <aixm:warning>WIP</aixm:warning>
+            </aixm:ManoeuvringAreaAvailability>
+          </aixm:availability>
+          <aixm:slope>0.4</aixm:slope>
+          <aixm:approachGuidance>PRECISION_CAT_I</aixm:approachGuidance>
+        </aixm:RunwayDirectionTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayDirection>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Navaid gml:id="uuid.a1a40000-0520-4000-8000-000000000005">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000005</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:NavaidTimeSlice gml:id="NAV1_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="NAV1_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>VOR_DME</aixm:type>
+          <aixm:designator>SYV</aixm:designator>
+          <aixm:name>SYNTHETIC VOR DME</aixm:name>
+          <aixm:flightChecked>YES</aixm:flightChecked>
+          <aixm:navaidEquipment>
+            <aixm:NavaidComponent gml:id="NAV1_NC_1">
+              <aixm:collocationGroup>1</aixm:collocationGroup>
+              <aixm:theNavaidEquipment xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000011"/>
+            </aixm:NavaidComponent>
+          </aixm:navaidEquipment>
+          <aixm:navaidEquipment>
+            <aixm:NavaidComponent gml:id="NAV1_NC_2">
+              <aixm:collocationGroup>1</aixm:collocationGroup>
+              <aixm:theNavaidEquipment xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000012"/>
+            </aixm:NavaidComponent>
+          </aixm:navaidEquipment>
+          <aixm:location>
+            <aixm:ElevatedPoint gml:id="NAV1_LOC" srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+              <gml:pos>4.80000 52.31000</gml:pos>
+              <aixm:elevation uom="M">15</aixm:elevation>
+              <aixm:verticalDatum>EGM 96 GEOID (free text in 5.2)</aixm:verticalDatum>
+            </aixm:ElevatedPoint>
+          </aixm:location>
+          <aixm:runwayDirection xlink:href="#uuid.a1a40000-0520-4000-8000-000000000004"/>
+          <aixm:servedAirport xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000002"/>
+          <aixm:availability>
+            <aixm:NavaidOperationalStatus gml:id="NAV1_AV_1">
+              <aixm:operationalStatus>OPERATIONAL</aixm:operationalStatus>
+            </aixm:NavaidOperationalStatus>
+          </aixm:availability>
+          <aixm:codeICAOCountry>ZZ</aixm:codeICAOCountry>
+        </aixm:NavaidTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Navaid>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:OrganisationAuthority gml:id="uuid.a1a40000-0520-4000-8000-000000000006">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000006</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:OrganisationAuthorityTimeSlice gml:id="ORG1_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="ORG1_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:name>SYNTHETIC AIRPORT OPERATOR</aixm:name>
+          <aixm:designator>SYNOPS</aixm:designator>
+          <aixm:type>OTHER</aixm:type>
+          <aixm:military>CIVIL</aixm:military>
+        </aixm:OrganisationAuthorityTimeSlice>
+      </aixm:timeSlice>
+    </aixm:OrganisationAuthority>
+  </message:hasMember>
+</message:AIXMBasicMessage>

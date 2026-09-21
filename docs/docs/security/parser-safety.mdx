@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the fourteen shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the nineteen shipped adapters.
 ---
 
 # Parser safety
@@ -10,8 +10,9 @@ description: The five bounds and where they live, the rules an adapter MUST foll
 Every adapter in this repository is handed bytes somebody else produced. This page is the policy
 those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
 KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
-parser's default behaviour is dangerous, and it is enforced today on the fourteen adapters that
-already ship.
+parser's default behaviour is dangerous, and it is enforced today on the nineteen adapters that
+ship — since 2026-09-20/21 that roster includes the Part 2 formats it was written for: AIXM 5.1.1
+and 5.2 and C2SIM (XML), GeoPackage (a SQLite database) and GeoJSON.
 
 The convention is the specification's: **MUST**, **SHOULD**, **MAY**.
 
@@ -38,8 +39,8 @@ hardened against a figure the report does not print.
 > `enforced_at` point, and the `test` that proves the refusal.
 
 > A bound **MUST NOT** be described as the format's normative maximum unless the specification
-> actually says so. Nine of the fourteen adapters declare an implementation cap and say so in the
-> enum and in the prose.
+> actually says so. Fourteen of the nineteen adapters declare an implementation cap and say so in
+> the enum and in the prose; the five ASTERIX categories declare the normative `LEN` field.
 
 Which bound runs before which allocation — size before the depth scan, the depth scan before
 `json.loads`, the XML tree measured only after expat has built it — and what the conformance
@@ -50,11 +51,17 @@ worker and the hosting application each add on top is the subject of
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all fourteen**. `max_depth` is declared and enforced
-on the **two XML adapters**, `tak` and `stanag4676`, since 2026-09-16, and on the **four other
-adapters that decode JSON** — `adsb`, `ais`, `legion` and `pntmap` — since 2026-09-17. The other
-three bounds are declared absent with a reason on all fourteen, and `max_depth` on the other eight;
-none of those is enforced yet, and no page here says otherwise.
+`max_input_bytes` is declared and enforced on **all nineteen**. `max_depth` is declared and enforced
+on the **five XML readers** — `tak` and `stanag4676` since 2026-09-16, and `c2sim`, `aixm511` and
+`aixm52` since 2026-09-21, the last three inside expat's start-element handler through
+`secure_xml` — on the **five that decode JSON** — `adsb`, `ais`, `legion` and `pntmap`
+since 2026-09-17, `geojson` since 2026-09-20 — and on `geopackage` (the parsed twin it also
+accepts; the SQLite octets themselves have no nesting to measure, 2026-09-20).
+`max_objects` is declared and enforced on the five of the adapter expansion (`geojson`,
+`geopackage`, `c2sim`, `aixm511`, `aixm52`), each before the objects it bounds are built, and
+declared absent with a reason on the other fourteen. `max_decompressed_bytes` and
+`max_parse_seconds` are declared absent with a reason on all nineteen, and `max_depth` on the other
+eight; none of those is enforced, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
 `Adapter.__init_subclass__` wraps each subclass's own `to_cdm`, so the bound is checked before any
@@ -107,7 +114,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 > same number — `stanag4676`'s included, although that reader never descends past what the class
 > model names.
 
-### The fourteen declarations
+### The nineteen declarations
 
 | adapter | `max_input_bytes` | kind | where the figure comes from |
 |---|---|---|---|
@@ -125,11 +132,20 @@ nested one thousand deep, so check **H** records the refusal on every run.
 | `tak` | 1 048 576 | implementation cap | XML; Cursor-on-Target states no maximum event size |
 | `legion` | 1 048 576 | implementation cap | JSON; the pinned API record states no maximum response size |
 | `pntmap` | 1 048 576 | implementation cap | JSON; no document in this tree states a maximum |
+| `geojson` | 8 388 608 | implementation cap | JSON; RFC 7946 states no maximum document size (`geojson.GEOJSON_MAX_INPUT_BYTES`) |
+| `geopackage` | 67 108 864 | implementation cap | a SQLite container; OGC 12-128r19 states no maximum file size (`geopackage.GEOPACKAGE_MAX_INPUT_BYTES`) |
+| `c2sim` | 4 194 304 | implementation cap | XML; SISO-STD-019-2020 states no maximum message size (`c2sim.C2SIM_MAX_INPUT_BYTES`) |
+| `aixm511` | 16 777 216 | implementation cap | XML; AIXM 5.1.1 states no maximum document size (`aixm511.AIXM511_MAX_INPUT_BYTES`) |
+| `aixm52` | 16 777 216 | implementation cap | XML; AIXM 5.2 states no maximum document size (`aixm52.AIXM52_MAX_INPUT_BYTES`) |
 
 ## 2. XML
 
-Part 2's AIXM and KML are XML, and so are two adapters that already ship — `tak` and
-`stanag4676`, both through the standard library's `xml.etree.ElementTree`.
+Part 2's AIXM and KML are XML, and so are two adapters that shipped before it — `tak` and
+`stanag4676`, both through the standard library's `xml.etree.ElementTree`. Since 2026-09-21 three
+Part 2 adapters parse XML as well — `c2sim`, `aixm511` and `aixm52` — through one shared reader,
+`secure_xml.parse` (`pyexpat` driven directly: a DOCTYPE, an entity declaration, an external
+entity and XInclude are refused in the handlers, the input is bounded before a parser exists, and
+depth and element count are enforced in `StartElementHandler`; `tests/test_cdm_secure_xml.py`).
 
 > An XML parser **MUST NOT** resolve external entities.
 
@@ -203,7 +219,12 @@ that needs one is held to them rather than setting the precedent.
 
 ## 4. SQLite — Part 2 (GeoPackage)
 
-No shipped adapter opens a database: the same sweep for `sqlite3` returns nothing.
+**Dated correction, 2026-09-20 (adapter expansion phase 2).** The sentence below was true until
+`adapters/geopackage.py` shipped; one adapter now opens a database, and how it meets each rule
+follows the rules. The rules themselves are unchanged.
+
+No shipped adapter opens a database: the same sweep for `sqlite3` returns nothing. *(superseded —
+see the correction above)*
 
 > A SQLite-reading adapter **MUST** open the file read-only through a URI —
 > `file:…?mode=ro&immutable=1` — and never by plain path.
@@ -216,12 +237,43 @@ No shipped adapter opens a database: the same sweep for `sqlite3` returns nothin
 
 > It **MUST NOT** interpolate any value out of the file into SQL.
 
+How `geopackage` meets them (`adapters/geopackage.py`, `_Snapshot`):
+
+- **Read-only, and stronger than `mode=ro`**: the adapter never has a path. The caller supplies
+  the octets, `sqlite3.Connection.deserialize` copies them into an in-memory connection
+  (`sqlite3.connect(":memory:")` is the only `connect` in the module, held by a test), `PRAGMA
+  query_only = ON` and `PRAGMA trusted_schema = OFF` are set before any schema-dependent
+  statement, and an authorizer installed before the first read permits SELECT, READ on
+  `sqlite_master`, the four `gpkg_*` core tables and the SELECTED feature tables, four functions
+  (`count`, `length`, `max`, `typeof`) and one pragma (`table_xinfo`), and denies everything
+  else — ATTACH, every write, every view, every other table, every other function. A test hashes
+  the caller's bytes before and after. WAL-mode octets are refused as WAL-dependent unless the
+  caller asserts a checkpointed snapshot, in which case a COPY has its two header octets
+  rewritten and every object records the assertion.
+- **`enable_load_extension(False)`** is called explicitly on the connection (the module's
+  default is already off; a build without loadable-extension support has no method and nothing
+  to disable), and `load_extension` is also denied by the authorizer's function allow-list.
+- **Progress handler and bounds**: a progress handler aborts any statement past
+  `GEOPACKAGE_MAX_SQL_STEPS` (20 000 000) virtual-machine steps — a step count rather than a
+  clock, so the bound is deterministic; `PRAGMA quick_check(1)` runs once over the bounded
+  input; the row count is bounded by `count(*)` before any row is fetched (`max_objects`
+  10 000), every column's largest value by `max(length(…))` before any row is fetched (1 MiB),
+  the coordinates across the package by a budget every WKB array debits before it is decoded
+  (500 000), and the estimated output from the package block and the row count before any row
+  is fetched (64 MiB). `max_input_bytes` (64 MiB) is the base class's, before `deserialize`.
+- **No value from the file reaches SQL.** The only identifiers in any statement are table and
+  column names read from `sqlite_master` and `PRAGMA table_xinfo`, validated (non-empty, no NUL,
+  bounded length, no reserved prefix for a feature table) and double-quoted with `"` doubled;
+  no caller-supplied SQL exists and no attribute value is ever interpolated. A generated or
+  hidden column is refused rather than evaluated. Triggers never run because nothing is
+  written; views are never selected from because the authorizer denies them.
+
 ## 5. Timeouts
 
 > A decode **MUST** be bounded in wall time once `max_parse_seconds` is enforced, and an adapter
 > **MUST** declare the bound or the reason it has none.
 
-None of the fourteen enforces one today, and each says so in its own `absent_because`. The
+None of the nineteen enforces one today, and each says so in its own `absent_because`. The
 conformance suite's checks **H** and **N** hold the related property — that a malformed or
 truncated payload is refused *quickly* rather than hanging — with a per-case deadline that is
 **enforced**: since audit finding F03 (2026-09-19) each case runs in a spawned worker process
@@ -236,15 +288,15 @@ Linux-only and is refused where it cannot be enforced — `docs/docs/security/de
 | check | what it asserts |
 |---|---|
 | **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside an enforced deadline in a killable worker; a `.json` payload past the loader's depth bound is refused by the loader, and the layer is recorded |
-| **M** — streaming | `SKIP`, declared inapplicable, for all fourteen — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
+| **M** — streaming | `SKIP`, declared inapplicable, for all nineteen — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
 | **N** — parser robustness | a truncated payload at many offsets is refused, inside the same enforced deadline |
 | **O** — resource limits | one octet more than the declared `max_input_bytes` is refused; the payload *at* the bound is not refused by the size guard (`tests/test_cdm_resource_envelope.py`) |
 
-**O is required in CI for all fourteen.** It was a SKIP for all fourteen until round P5, because
+**O is required in CI for all nineteen.** It was a SKIP for all fourteen of the day's adapters until round P5, because
 no adapter declared a bound to check; it is now in the required set for every adapter in the
 sweep, which is what would notice a bound being quietly removed from a manifest.
 
-## 7. The audit: every parser call in the fourteen
+## 7. The audit: every parser call in the nineteen
 
 Taken with
 `grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.
@@ -261,8 +313,13 @@ Line numbers are as at round P5 and move; the grep is the durable form.
 | `pntmap` | `json.loads` (`pntmap.py:375`) | JSON text | **yes** — 1 MiB; and `max_depth` 64, in the base class, since 2026-09-17 |
 | `ais` | `json.loads` (`ais.py:1144`) | JSON text | **yes** — 1 024 octets; and `max_depth` 64, in the base class, since 2026-09-17 |
 | `adsb` | `json.loads` (`adsb.py:1623`) | JSON text | **yes** — 64 octets, which no text past `max_depth` 64 fits; the dict form is held to the depth bound in the base class, since 2026-09-17 |
+| `geojson` | `json.loads` (`geojson.py:765`, and `geojson.py:787` in `detect`) | JSON text, with `parse_constant` refusing `NaN`/`Infinity` | **yes** — 8 MiB and `max_depth` 128, in the base class; `max_objects` 20 000 (the feature count) and a 500 000-position cap in the module, on the parsed document before any object is built (2026-09-20, adapter expansion phase 1) |
+| `geopackage` | `sqlite3.connect(":memory:")` + `Connection.deserialize` (`geopackage.py`, `_Snapshot.__init__`) | the octets of a `.gpkg` SQLite container, copied into memory | **yes** — 64 MiB in the base class before `deserialize`; then §4's snapshot discipline (query_only, trusted_schema off, authorizer, progress handler, `quick_check`), `max_objects` 10 000 rows by `count(*)`, a 1 MiB per-value bound by `max(length(…))`, a 500 000-coordinate budget and a 64 MiB output estimate, all before the rows or the coordinates they bound are read (2026-09-20, adapter expansion phase 2). The WKB and GeoPackageBinary decoder is `geopackage_codec.py`, `struct` only, every count checked against the remaining octets before its array is read |
+| `c2sim` | `secure_xml.parse` → `pyexpat` (`c2sim.py`, `_as_twin`), `json.loads` (`c2sim.py`, `_as_twin` and `detect`, for a parsed twin) | XML octets; JSON text of a parsed twin | **yes** — 4 MiB in the base class before decode and again by `secure_xml` before a parser exists; `max_depth` 192 and 200 000 elements in expat's StartElementHandler, on the element that crosses the bound; a DOCTYPE, an entity, an external reference and XInclude refused there (§2's four properties, `tests/test_cdm_secure_xml.py`); `max_objects` 5 000 on the twin before any object is built; a JSON twin is held to `max_depth` by the base class (2026-09-21, adapter expansion phase 3) |
+| `aixm511` | `secure_xml.parse` → `pyexpat` (`aixm511.py`, `_as_twin`), `json.loads` (`aixm511.py`, `_as_twin`, for a parsed twin) | XML octets; JSON text of a parsed twin | **yes** — 16 MiB in the base class before decode and again by `secure_xml` before a parser exists; `max_depth` 192 and 500 000 elements in expat's StartElementHandler, on the element that crosses the bound; a DOCTYPE, an entity, an external reference and XInclude refused there (§2's four properties, `tests/test_cdm_secure_xml.py`); `max_objects` 20 000 time slices on the twin before any object is built; a JSON twin is held to `max_depth` in the base class; no XLink is dereferenced — a reference is resolved in the document or in a caller's table, one hop, and a URL is classified and never fetched (2026-09-21, adapter expansion phase 4); the Digital NOTAM Event reading (phase 5) adds no parser — the same expat parse, the same bounds, the `event:theEvent` binding resolved the same one-hop way and never fetched; `aixm_resolve` parses nothing and reads no file, socket or clock |
+| `aixm52` | `secure_xml.parse` → `pyexpat` and `json.loads` — both in `aixm511.py`'s `AixmAdapterBase._as_twin`, the shared reader `aixm52.py` runs under its own profile (`aixm52.py` itself calls no parser) | XML octets; JSON text of a parsed twin | **yes** — the same enforcement as `aixm511`'s row with this adapter's own declared figures (16 MiB, `max_depth` 192, 500 000 elements, 20 000 time slices, `aixm52.XML_LIMITS`), taken from `Aixm52Adapter.PROFILE` and `Aixm52Adapter.metadata` — the base class's wrapper is installed on `Aixm52Adapter.to_cdm` (it defines its own, so `_bind_input_bound` wraps it) and `secure_xml.parse` is handed the profile's limits; no XLink is dereferenced; no Digital NOTAM reading exists on 5.2, so no second parse path either (2026-09-21, adapter expansion phase 6) |
 | the rest of the roster | none | — | the ASTERIX, GMTI and KLV families decode octets with their own codecs and call no general-purpose parser |
-| all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** |
+| all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** — a reading from before 2026-09-20; `sqlite3` now hits in `geopackage` and its row is above |
 
 Two rows are the ones worth reading twice. The two `stanag4676` egress calls are **not** inbound
 parsing: the adapter re-parses a fragment it has just serialised itself, so the input is its own

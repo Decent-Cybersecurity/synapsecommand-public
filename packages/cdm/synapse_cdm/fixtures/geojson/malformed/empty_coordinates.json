@@ -1,0 +1,9 @@
+{
+  "type": "Feature",
+  "id": "empty",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": []
+  },
+  "properties": {}
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. One airspace, two slices: a BASELINE stating a designator and a NIL name (nilReason missing) with a validTime and a featureLifetime that both END (a decommissioned feature), and a TEMPDELTA that states the name nil again (WITHDRAWN under a delta) and nothing else (every other property UNCHANGED). Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_NIL_ABSENT_WITHDRAWN">
+  <message:hasMember>
+    <aixm:Airspace gml:id="uuid.a1a40000-00c0-4000-8000-000000000040">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000040</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="NW_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="NW_BL_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2027-01-01T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:featureLifetime>
+            <gml:TimePeriod gml:id="NW_BL_LT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2027-01-01T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </aixm:featureLifetime>
+          <aixm:type>R</aixm:type>
+          <aixm:designator>SYNR1</aixm:designator>
+          <aixm:name xsi:nil="true" nilReason="missing"/>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:AirspaceTimeSlice gml:id="NW_TD">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="NW_TD_VT">
+              <gml:beginPosition>2026-05-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-05-02T00:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>2</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:name xsi:nil="true" nilReason="inapplicable"/>
+        </aixm:AirspaceTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Airspace>
+  </message:hasMember>
+</message:AIXMBasicMessage>

@@ -1,0 +1,138 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest",
+        "egress"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
+          "max_parse_seconds": "no wall-clock bound is enforced by this adapter; the conformance suite's parser worker kills a decode that overruns its deadline, and the three bounds above make every walk in this module linear in a bounded input"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_depth_bound` beside `enforce_input_bound` (`adapter.py`, `_bind_input_bound`): JSON text is measured off its characters by `json_nesting_depth` and a parsed document off its containers by `container_depth`, before `_as_document` or `json.loads` runs; past the bound the wrapper raises `InputTooDeep`, a `ValueError` naming both numbers",
+            "kind": "implementation_cap",
+            "source": "RFC 7946 states no maximum nesting; a MultiPolygon feature inside a collection nests eight containers, the deepest JSON document shipped under `fixtures/geojson/` (goldens included) nests nine, and `properties` may nest freely. 128 (`GEOJSON_MAX_DEPTH`, `adapters/geojson.py`) is chosen on 2026-09-20 for `pntmap`'s reason and by the repository's rule of at least eight times the deepest shipped document: every walk after the parse recurses once per level and on CPython 3.11 `json.loads` itself raises `RecursionError` a little under a thousand containers deep (`adapter.InputTooDeep`), so the bound is read off the characters before the decoder runs. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
+            "kind": "implementation_cap",
+            "source": "RFC 7946 states no maximum document size. 8 MiB (`GEOJSON_MAX_INPUT_BYTES`, `adapters/geojson.py`) is chosen on 2026-09-20 as eight times the JSON message adapters' 1 MiB, because a FeatureCollection is a dataset rather than a message: the largest fixture in `fixtures/geojson/` is under 4 KiB and twenty thousand small synthetic features serialise to about 2 MiB. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`GeojsonAdapter.to_cdm` reads `len(features)` on the parsed document and raises `FeatureCountExceeded` (a `ValueError`) before any canonical object is built; the position count is taken during the structural walk of each geometry and raises `PositionCountExceeded` at the position that crosses it, before any model is constructed",
+            "kind": "implementation_cap",
+            "source": "RFC 7946 states no maximum feature count. One feature becomes one canonical object, so `max_objects` is the feature count: 20 000 (`GEOJSON_MAX_FEATURES`, `adapters/geojson.py`), chosen on 2026-09-20 as the size of a large municipal layer and well inside what the byte bound admits. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum. A second cap the manifest schema has no field for is declared beside it in the module: `GEOJSON_MAX_POSITIONS` (500 000), the positions across the whole document.",
+            "test": "tests/test_cdm_geojson_adapter.py::test_the_feature_bound_admits_a_collection_at_it_and_refuses_one_feature_past"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 128,
+        "max_input_bytes": 8388608,
+        "max_objects": 20000,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "RFC 7946 Feature \u2014 one feature becomes one ANNOTATION PlanObject, or an OVERLAY_OBJECT Entity with no position when its geometry is null",
+        "RFC 7946 FeatureCollection \u2014 one object per feature, in the collection's order, with the collection's own members kept in every object's residual",
+        "FeatureCollection or Feature on egress, under the `generic` or the `synapsecommand-exchange/1` export profile"
+      ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "RFC 7946 \u00a76.1 permits foreign members on every GeoJSON object; every member this adapter does not consume \u2014 at collection, feature and geometry level \u2014 is kept verbatim in the structured residual at its own relative path",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "bidirectional",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "GeoJSON",
+      "version": "RFC 7946 (August 2016)"
+    },
+    "id": "geojson",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "geometry-collection",
+        "notes": null,
+        "severity": null,
+        "summary": "`GeometryCollection` is refused, not translated: `geo.py` keeps it out of the CDM union deliberately (a heterogeneous geometry has no single semantics for a consumer), so a feature carrying one refuses the whole document. The RFC's other six geometry types are all carried",
+        "unsupported_paths": []
+      },
+      {
+        "id": "bare-geometry",
+        "notes": null,
+        "severity": null,
+        "summary": "a GeoJSON text whose top-level object is a geometry (RFC 7946 \u00a73 permits it) is refused: it has no id and no properties to carry, so nothing identifies it. Wrap it in a Feature",
+        "unsupported_paths": []
+      },
+      {
+        "id": "empty-coordinates",
+        "notes": null,
+        "severity": null,
+        "summary": "a geometry whose `coordinates` array is empty is refused. RFC 7946 \u00a73.1 lets a processor read it as a null geometry; this adapter does not turn a stated geometry into an absent one silently",
+        "unsupported_paths": []
+      },
+      {
+        "id": "legacy-crs",
+        "notes": null,
+        "severity": null,
+        "summary": "a `crs` member at any level is refused. RFC 7946 \u00a74 removed it; a document carrying one follows the 2008 specification, and no legacy profile is implemented here. Projected coordinates are never relabelled as WGS84",
+        "unsupported_paths": []
+      },
+      {
+        "id": "empty-collection",
+        "notes": null,
+        "severity": null,
+        "summary": "an empty FeatureCollection translates to no object, which is what it carries; its collection-level members then have no object to ride in and the preservation ledger reports them LOST for that document. Stated here so the empty result is never read as a filtered one",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-source-time",
+        "notes": null,
+        "severity": null,
+        "summary": "RFC 7946 states no instant for a Feature or a FeatureCollection, so no object carries a timestamp unless the caller supplies an as-of context (`GeojsonAdapter(as_of=AsOf(instant, basis))`), which lands at `validity.observed_at` (PlanObject) or `valid_from` (Entity) with its basis in `source.transformations`. The conformance suite's check J reads this id as the declared reason it has no timestamp to judge",
+        "unsupported_paths": []
+      },
+      {
+        "id": "bbox-not-projected",
+        "notes": null,
+        "severity": null,
+        "summary": "`bbox` at every level is kept verbatim in the residual and is NOT projected to a canonical `BoundingBox`: `PlanObject` carries bounds only inside an `Area`, and `geo.BoundingBox` refuses an antimeridian-crossing box (west > east) by construction. Every bbox is noted in `source.transformations`, the antimeridian case as such",
+        "unsupported_paths": []
+      },
+      "egress accepts `PlanObject` and `Entity` (an entity's `position` becomes a Point, or a null geometry when it has none); an `Event` or a `Track` is not compatible with the geo-object profile and egress refuses it rather than choosing a geometry for it",
+      "egress under the exchange profile refuses a source property already named `sc:...` rather than overwriting it; the `sc:` keys of a re-ingested exchange document are ordinary source properties on ingest (this adapter never reads its own export keys back as canonical meaning), so such a document exports under the generic profile only",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+      "of \u00a73.5's five resource limits this adapter enforces THREE \u2014 `max_input_bytes` and `max_depth` by the base class before decode, and `max_objects` (the feature count) in this module before any object is built \u2014 plus a position count the manifest schema has no field for. The other two are absent with their reasons in `capabilities.limits.absent_because`"
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L4 ROUND-TRIP VERIFIED, from evidence that runs today. The harness's `translate`, `schema` and `provenance` checks are PASS on every fixture of this adapter (L1 to L3). Its `lossless` column rests on the PATH-BOUND LEDGER and not on the heuristic alone: this adapter declares `MAPPINGS` for every source leaf \u2014 geometry type and coordinates at every nesting depth, the feature id, and residual subtrees for properties, bbox and every foreign member at every level \u2014 with the `#[*]` target holding each feature's leaves to its own object, and the ledger reports no LOST leaf on any fixture. Its `roundtrip` column is PASS on every fixture under the `values` tolerance (`ROUNDTRIP_TOLERANCE`) the class declares \u2014 the comparison the harness makes for every JSON emitter: `from_cdm` rebuilds each feature from the canonical geometry and the structured residual and no source value is absent from what it emits, so `synapse conformance run --adapter geojson` computes E = PASS and D on the ledger basis. The adapter's own statement of the round-trip claim, under the module docstring's definition of semantic equivalence, is tests/test_cdm_geojson_adapter.py::test_semantic_round_trip_of_every_fixture. L5 is NOT declared: the rung above L4 rests on `M` (streaming) being inapplicable, and a rung passed vacuously is not a rung declared (ARCHITECTURE.md \u00a73.6, rule 4).",
+      "external_exercise": null,
+      "level": "L4"
+    },
+    "name": "GeoJSON",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.0.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

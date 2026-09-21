@@ -1,0 +1,102 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geojson/malformed",
+  "fixtures": [
+    {
+      "file": "a_json_array.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "bare_geometry.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "empty_coordinates.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "feature_without_properties.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "geometry_collection_feature.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "id_less_feature_default_policy.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "legacy_crs_member.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "malformed_json.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "non_finite_number.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "null_geometry_without_as_of.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "swapped_lat_lon_point.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    },
+    {
+      "file": "unclosed_ring.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-20 by cutting, corrupting or wrapping this directory's own synthetic GeoJSON payloads; none derives from recorded data. Read by the conformance suite's check H only; `tests/test_cdm_geojson_adapter.py::test_every_malformed_payload_is_refused_by_name` states what each one must be refused for."
+    }
+  ]
+}

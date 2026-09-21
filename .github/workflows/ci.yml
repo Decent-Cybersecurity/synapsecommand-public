@@ -228,12 +228,32 @@ jobs:
         # NORMATIVE, nine an IMPLEMENTATION CAP, each with its basis in the manifest — and puts
         # the enforcement in `Adapter.__init_subclass__`, so O is PASS everywhere and is required
         # here. It is the check that would notice a bound being quietly removed from a manifest.
+        #
+        # **J IS REQUIRED PER ADAPTER SINCE 2026-09-21 (adapter expansion phase 7), AND THE
+        # EXCEPTION IS READ OFF THE DECLARATION.** `geojson` and `geopackage` translate formats that
+        # state no instant for any object, so with no caller as-of context they emit no timestamp
+        # and J is a DECLARED SKIP (`check_temporal` reads the structured limitation
+        # `no-source-time`); a required SKIP exits non-zero whatever its declaration (§19). So the
+        # required set is derived for each adapter from its own manifest: J is dropped only where
+        # that limitation id is declared, and stays required on every other adapter. The literal
+        # below is the default and `tests/test_cdm_security_policy.py` holds it; the declared set
+        # is held to exactly those two adapters by `tests/test_cdm_suite.py`, which also asserts
+        # every other adapter's J is PASS, so the exception cannot widen without an edit there.
         run: |
           set -euo pipefail
           for adapter in $(python -c "from synapse_cdm.adapter import roster; print(' '.join(roster()))"); do
             echo "::group::$adapter"
+            required="$(python - "$adapter" <<'PY'
+          import json, sys
+          from synapse_cdm import suite
+          manifest = json.load(open(f"manifests/{sys.argv[1]}.json"))
+          declared = {entry.get("id") for entry in manifest["adapter"]["limitations"] if isinstance(entry, dict)}
+          print("A,B,C,D,F,G,H,K,L,O" if suite.NO_SOURCE_TIME_LIMITATION in declared else "A,B,C,D,F,G,H,J,K,L,O")
+          PY
+          )"
+            echo "required: ${required}"
             python -m synapse_cdm.suite conformance run --adapter "$adapter" \
-              --require A,B,C,D,F,G,H,J,K,L,O
+              --require "${required}"
             echo "::endgroup::"
           done
 

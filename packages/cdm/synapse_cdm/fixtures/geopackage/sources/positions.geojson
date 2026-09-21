@@ -1,0 +1,33 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.1,
+     57.0
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE P1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.2,
+     57.1
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE P2"
+   }
+  }
+ ]
+}

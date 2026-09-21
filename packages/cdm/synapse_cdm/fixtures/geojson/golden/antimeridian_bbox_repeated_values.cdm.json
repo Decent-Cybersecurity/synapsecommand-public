@@ -1,0 +1,144 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        179.8,
+        -16.5,
+        120.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "3cd745a8-3ed5-597f-9812-ffc71f388873",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "document": {
+          "bbox": [
+            179.5,
+            -17.0,
+            -179.5,
+            -16.0
+          ],
+          "generator": {
+            "name": "EXERCISE hand-written",
+            "version": "1"
+          },
+          "type": "FeatureCollection"
+        },
+        "feature": {
+          "id": "west",
+          "properties": {
+            "name": "EXERCISE west of the line",
+            "reading": 7,
+            "unit": "kt"
+          },
+          "type": "Feature"
+        }
+      },
+      "namespace": "GeoJSON"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geojson",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoJSON",
+      "format_version": "RFC 7946 (August 2016)",
+      "observed_at": null,
+      "original_id": "\"west\"",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoJSON",
+      "transformations": [
+        "bbox: kept verbatim at residual.data.document.bbox; the geo-object/1 profile projects no canonical BoundingBox (PlanObject carries bounds only inside an Area) \u2014 and this box crosses the antimeridian (west 179.5 > east -179.5, RFC 7946 \u00a75.2), a form geo.BoundingBox refuses because the same four numbers also read as a box that covers everything else"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "west",
+        "system": "GeoJSON"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        -179.8,
+        -16.5,
+        120.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "f7291694-e129-535b-baea-35ebf5d557a1",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "document": {
+          "bbox": [
+            179.5,
+            -17.0,
+            -179.5,
+            -16.0
+          ],
+          "generator": {
+            "name": "EXERCISE hand-written",
+            "version": "1"
+          },
+          "type": "FeatureCollection"
+        },
+        "feature": {
+          "id": "east",
+          "properties": {
+            "name": "EXERCISE east of the line",
+            "reading": 7,
+            "unit": "kt"
+          },
+          "type": "Feature"
+        }
+      },
+      "namespace": "GeoJSON"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geojson",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoJSON",
+      "format_version": "RFC 7946 (August 2016)",
+      "observed_at": null,
+      "original_id": "\"east\"",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoJSON",
+      "transformations": [
+        "bbox: kept verbatim at residual.data.document.bbox; the geo-object/1 profile projects no canonical BoundingBox (PlanObject carries bounds only inside an Area) \u2014 and this box crosses the antimeridian (west 179.5 > east -179.5, RFC 7946 \u00a75.2), a form geo.BoundingBox refuses because the same four numbers also read as a box that covers everything else"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "east",
+        "system": "GeoJSON"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

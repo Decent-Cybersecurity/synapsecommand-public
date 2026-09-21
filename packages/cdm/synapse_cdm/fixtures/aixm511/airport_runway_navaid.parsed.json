@@ -1,0 +1,274 @@
+{
+  "@gml:id": "M_AERODROME",
+  "message:hasMember": [
+    {
+      "$": "aixm:AirportHeliport",
+      "@gml:id": "uuid.a1a40000-0002-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0002-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:AirportHeliportTimeSlice",
+          "@gml:id": "AHP_ZZSY_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "AHP_ZZSY_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:designator": "ZZSY",
+          "aixm:name": "SYNTHETIC FIELD",
+          "aixm:locationIndicatorICAO": "ZZSY",
+          "aixm:type": "AD",
+          "aixm:certifiedICAO": "YES",
+          "aixm:privateUse": "NO",
+          "aixm:controlType": "CIVIL",
+          "aixm:fieldElevation": {
+            "@uom": "FT",
+            "#text": "12"
+          },
+          "aixm:verticalDatum": "EGM_96",
+          "aixm:magneticVariation": "1.5",
+          "aixm:dateMagneticVariation": "2025",
+          "aixm:responsibleOrganisation": {
+            "$": "aixm:AirportHeliportResponsibilityOrganisation",
+            "@gml:id": "AHP_ZZSY_ORG",
+            "aixm:role": "OPERATE",
+            "aixm:theOrganisationAuthority": {
+              "@xlink:href": "urn:uuid:a1a40000-0009-4000-8000-000000000001"
+            }
+          },
+          "aixm:ARP": {
+            "$": "aixm:ElevatedPoint",
+            "@gml:id": "AHP_ZZSY_ARP",
+            "@srsName": "urn:ogc:def:crs:EPSG::4326",
+            "gml:pos": "52.30833 4.76389",
+            "aixm:elevation": {
+              "@uom": "FT",
+              "#text": "12"
+            },
+            "aixm:verticalDatum": "EGM_96"
+          },
+          "aixm:availability": [
+            {
+              "$": "aixm:AirportHeliportAvailability",
+              "@gml:id": "AHP_ZZSY_AVBL_1",
+              "aixm:operationalStatus": "NORMAL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "aixm:Runway",
+      "@gml:id": "uuid.a1a40000-0003-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0003-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:RunwayTimeSlice",
+          "@gml:id": "RWY_ZZSY_09_27_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "RWY_ZZSY_09_27_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:designator": "09/27",
+          "aixm:type": "RWY",
+          "aixm:nominalLength": {
+            "@uom": "M",
+            "#text": "2500"
+          },
+          "aixm:nominalWidth": {
+            "@uom": "M",
+            "#text": "45"
+          },
+          "aixm:widthShoulder": {
+            "@uom": "M",
+            "#text": "7.5"
+          },
+          "aixm:abandoned": "NO",
+          "aixm:associatedAirportHeliport": {
+            "@xlink:href": "urn:uuid:a1a40000-0002-4000-8000-000000000001",
+            "@xlink:title": "ZZSY SYNTHETIC FIELD"
+          }
+        }
+      ]
+    },
+    {
+      "$": "aixm:RunwayDirection",
+      "@gml:id": "uuid.a1a40000-0004-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0004-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:RunwayDirectionTimeSlice",
+          "@gml:id": "RDN_ZZSY_09_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "RDN_ZZSY_09_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:designator": "09",
+          "aixm:trueBearing": "87.2",
+          "aixm:magneticBearing": "86",
+          "aixm:elevationTDZ": {
+            "@uom": "FT",
+            "#text": "10"
+          },
+          "aixm:usedRunway": {
+            "@xlink:href": "#uuid.a1a40000-0003-4000-8000-000000000001"
+          },
+          "aixm:availability": [
+            {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RDN_ZZSY_09_AVBL_1",
+              "aixm:timeInterval": [
+                {
+                  "$": "aixm:Timesheet",
+                  "@gml:id": "RDN_ZZSY_09_TS_1",
+                  "aixm:timeReference": "UTC",
+                  "aixm:day": "ANY",
+                  "aixm:dayTil": "ANY",
+                  "aixm:startTime": "22:00",
+                  "aixm:endTime": "05:00"
+                }
+              ],
+              "aixm:operationalStatus": "CLOSED",
+              "aixm:warning": "WIP"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "aixm:Navaid",
+      "@gml:id": "uuid.a1a40000-0005-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0005-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:NavaidTimeSlice",
+          "@gml:id": "NAV_SYN_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "NAV_SYN_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:type": "VOR_DME",
+          "aixm:designator": "SYN",
+          "aixm:name": "SYNTHETIC VOR DME",
+          "aixm:flightChecked": "YES",
+          "aixm:navaidEquipment": [
+            {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV_SYN_NC_1",
+              "aixm:collocationGroup": "1",
+              "aixm:providesNavigableLocation": "YES",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-0006-4000-8000-000000000001",
+                "@xlink:title": "SYN VOR"
+              }
+            },
+            {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV_SYN_NC_2",
+              "aixm:collocationGroup": "1",
+              "aixm:providesNavigableLocation": "NO",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-0006-4000-8000-000000000002",
+                "@xlink:title": "SYN DME"
+              }
+            }
+          ],
+          "aixm:location": {
+            "$": "aixm:ElevatedPoint",
+            "@gml:id": "NAV_SYN_LOC",
+            "@srsName": "urn:ogc:def:crs:OGC:1.3:CRS84",
+            "gml:pos": "4.70000 52.30000",
+            "aixm:elevation": {
+              "@uom": "M",
+              "#text": "30"
+            },
+            "aixm:verticalDatum": "EGM_96"
+          },
+          "aixm:runwayDirection": [
+            {
+              "@xlink:href": "#uuid.a1a40000-0004-4000-8000-000000000001"
+            }
+          ],
+          "aixm:servedAirport": [
+            {
+              "@xlink:href": "urn:uuid:a1a40000-0002-4000-8000-000000000001"
+            }
+          ],
+          "aixm:availability": [
+            {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "NAV_SYN_OPS_1",
+              "aixm:operationalStatus": "OPERATIONAL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$": "aixm:OrganisationAuthority",
+      "@gml:id": "uuid.a1a40000-0009-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0009-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:OrganisationAuthorityTimeSlice",
+          "@gml:id": "ORG_SYN_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "ORG_SYN_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:name": "SYNTHETIC AIRPORT OPERATOR",
+          "aixm:type": "OTHER"
+        }
+      ]
+    }
+  ]
+}

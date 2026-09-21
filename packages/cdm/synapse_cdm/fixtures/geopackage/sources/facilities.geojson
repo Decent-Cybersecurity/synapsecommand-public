@@ -1,0 +1,62 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.1052,
+     56.9496,
+     12.5
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE HARBOUR OFFICE",
+    "category": "port",
+    "capacity": 120,
+    "ratio": 0.5,
+    "note": null
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE ORIGIN BUOY",
+    "category": "buoy",
+    "capacity": 0,
+    "ratio": 0.0,
+    "note": "zero"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 3,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.4,
+     57.1,
+     -3.25
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE DEPOT",
+    "category": "depot",
+    "capacity": null,
+    "ratio": null,
+    "note": null
+   }
+  }
+ ]
+}

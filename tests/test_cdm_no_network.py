@@ -9,7 +9,7 @@ function body (`ast.walk`, the same reading `tests/test_cdm_boundary.py` takes o
 
 The static half alone would still be a claim about spelling. So the dynamic half REMOVES the
 capability — `socket.socket` is replaced with something that raises — and runs the conformance
-suite over the whole roster underneath it. Fourteen adapters translate every fixture they ship,
+suite over the whole roster underneath it. Nineteen adapters translate every fixture they ship,
 the fifteen checks run, and the sweep exits 0 with no socket in the process able to be opened.
 
 WHAT IS DELIBERATELY NOT ASSERTED
@@ -97,10 +97,19 @@ def test_the_whole_roster_conforms_with_no_socket_available(monkeypatch, capsys)
     # those would depend on pytest's import order.
     names = sorted(name for name, cls in roster().items()
                    if cls.__module__.startswith("synapse_cdm.adapters."))
-    assert len(names) == 14, names
+    assert len(names) == 19, names
+    # The required set is CI's (`ci.yml`, the conformance job), derived per adapter exactly as
+    # that loop derives it: J is dropped only where the adapter declares the structured
+    # limitation `no-source-time` — a format that states no instant emits no timestamp under a
+    # fresh instance, its J is a DECLARED SKIP, and a required SKIP exits non-zero whatever its
+    # declaration (§19). Held to exactly the declaring adapters so the exception cannot widen
+    # silently: `tests/test_cdm_suite.py` pins that set to `geojson` and `geopackage`.
     for name in names:
+        declared = {getattr(entry, "id", None) for entry in roster()[name].metadata.limitations}
+        required = ("A,B,C,D,F,G,H,K,L,O" if suite.NO_SOURCE_TIME_LIMITATION in declared
+                    else "A,B,C,D,F,G,H,J,K,L,O")
         assert suite.main(["conformance", "run", "--adapter", name,
-                           "--require", "A,B,C,D,F,G,H,J,K,L,O"]) == suite.EXIT_OK, name
+                           "--require", required]) == suite.EXIT_OK, name
     capsys.readouterr()
 
 

@@ -1,0 +1,328 @@
+{
+  "what_this_is": "Record of the aixm511 fixtures: SHA-256 and byte count of every fixture file, written 2026-09-21 by adapter-expansion phase 4. The normative schema closure itself is held OUTSIDE the repository (normative_binding `aixm511`, xsd_pin.json there; decision D2) and is not mirrored here. Extended 2026-09-21 by phase 5 with the Digital NOTAM set under dnotam/ (harness documents and twins, cases/, counterexamples/, spec/build_fixtures.py); the Event schema closure is the `dnotam` normative binding, outside the repository.",
+  "adapter": "aixm511",
+  "format": "AIXM 5.1.1 (EUROCONTROL & FAA, April 2016)",
+  "schema_binding": "SYNAPSE_CDM_AIXM511_XSD_DIR (normative_binding.resolve); entry aixm-5.1.1/message/AIXM_BasicMessage.xsd; target namespace http://www.aixm.aero/schema/5.1.1",
+  "documents_consulted": {
+    "AIXM Temporality Concept 1.1 (AIXM CCB, 06 FEB 2019, for AIXM 5.1.1)": {
+      "url": "https://aixm.aero/sites/default/files/imce/AIXM511/aixm_temporality_1.1.pdf",
+      "sha256": "609634808dfe5b449cb485595a7f622f134861f8ef27c924b9063fe4603e26fc",
+      "sections_used": "4.2 (correction / valid / active TimeSlice), 4.3 TS_001-TS_020, 4.4.1 (begin included, end excluded), 4.4.2 (indeterminate end), 4.4.6.1 (delta: absent = unchanged, nil = withdrawn), 4.4.7 (schedules), 4.4.8 (cancellation with nilReason inapplicable)"
+    },
+    "AIXM Feature Identification and Reference 1.0 (29 APR 2011)": {
+      "url": "https://aixm.aero/sites/default/files/imce/AIXM51/aixm_feature_identification_and_reference-1.0.pdf",
+      "sha256": "9df8bf1b8a10d10cb43a332db10d9152f36c9d0f1d5f9d90d040a8240dfc2dd4",
+      "sections_used": "2.1-2.2 (gml:identifier is the UUID), 3.2 (concrete local #id), 3.3 (concrete external URL), 3.4.1 (urn:uuid), 3.4.2 (natural keys)"
+    },
+    "OGC 12-028r1 GML profile for aviation (2016-03-24)": {
+      "sections_used": "6.2-6.4 (srsName, axis order, inheritance), 8.2.6 (ring orientation)",
+      "held_at": "normative directory _downloads/gmlprofile/ (Phase 0 pin)"
+    },
+    "AIXM 5.1.1 UML documentation (aixm.aero AIXM511HTML)": {
+      "pages_used": "Class_ElevatedPoint (elevation: 'measured from Mean Sea Level (MSL)'), Class_AirspaceVolume, Class_VerticalStructurePart, DataType_CodeVerticalReferenceType (SFC = AGL, MSL, W84 = WGS84 ellipsoid, STD = standard atmosphere), DataType_UomDistanceVerticalType (FT, M, FL, SM)"
+    },
+    "dnotam": "Digital NOTAM Event Schema 2.0.m (aixm.aero/schema/5.1.1/event/version_5.1.1-m, June 2025) with the AIXM 5.1.1 closure, through SYNAPSE_CDM_DNOTAM_XSD_DIR; Digital NOTAM Specification 2.0 (DRAFT) pages 220791360 RWY.CLS v30, 220791511 ATSA.ACT v35, 220791162 SAA.ACT v57, 220791463 NAV.UNS v35, 220791154 Event update or cancellation v7, 220790884 Usage limitation and closure scenarios; AIXM Temporality Concept 1.1 \u00a73.6, \u00a74.4.1\u20134.4.8, TS_005\u2013TS_020"
+  },
+  "files": {
+    "README.md": {
+      "sha256": "488e774917df96615c31803e479609fe3742f1cbd2106094ad4b03e60c5f24dc",
+      "bytes": 8917
+    },
+    "airport_runway_navaid.parsed.json": {
+      "sha256": "8e55dc7485bfc06f0b85ced6470dc59d5724373a08644f9bda5b68c21e03c405",
+      "bytes": 8872
+    },
+    "airport_runway_navaid.xml": {
+      "sha256": "6429c7d5cdea47a01eaf0133ecae897c3e6779d469c04f40dac3405419e1388f",
+      "bytes": 10493
+    },
+    "airspace_baseline_polygon.parsed.json": {
+      "sha256": "0e13ca1dc97d67b910d151a35cccd49c60cbaf81325acacf5e7c2163231c4f7c",
+      "bytes": 4130
+    },
+    "airspace_baseline_polygon.xml": {
+      "sha256": "9268563b80e6ba7928dba8b2e26a5514671010b1d6443e5fe700e625458268b0",
+      "bytes": 5179
+    },
+    "airspace_deltas_same_feature.parsed.json": {
+      "sha256": "d2c4c03be4b6fbd13435339d58dd99ca78c8d9d6da29d0831e9f5447682d977f",
+      "bytes": 2273
+    },
+    "airspace_deltas_same_feature.xml": {
+      "sha256": "6c75288de12558f19174db26129f99b6ef0a731c8ad4259044009d7f317577a0",
+      "bytes": 3597
+    },
+    "airspace_hole_crs84_snapshot.parsed.json": {
+      "sha256": "93e573c9b0ce2b87bbfcdcfcda5fccf432ccf4e214188240b8b59a1f3cbff40d",
+      "bytes": 3302
+    },
+    "airspace_hole_crs84_snapshot.xml": {
+      "sha256": "7c36d0009ebc9c9bbdc21c1e996b3876c9e9072569001d0640a0159dbb1663a3",
+      "bytes": 4671
+    },
+    "cases/axis_order_crs84.xml": {
+      "sha256": "eabbf65ae96227a224598a04f517e883c39931a5a5d623634ded30a9025084a8",
+      "bytes": 4771
+    },
+    "cases/axis_order_epsg4326.xml": {
+      "sha256": "60e6bbfa744c57b44f14f027c14792ea29c186454c1093088cad28dbf6c3df52",
+      "bytes": 4792
+    },
+    "cases/baseline_with_time_instant_ts001.xml": {
+      "sha256": "8fe4dc24f87b6f9e0c711dd4c4ec30ca29b10f87142ee22110dae9f152cbf0a8",
+      "bytes": 5114
+    },
+    "cases/composite_and_cyclic_contributors.xml": {
+      "sha256": "9c73c534f53ae34d80d48749dacf2014be89bc7c43df62bd8e5b511a6f141649",
+      "bytes": 8506
+    },
+    "cases/interior_ring_of_curves.xml": {
+      "sha256": "cb91b8948bee878b2bd9a38a7e6e52cb7efa9e3c26bd2a544fe01e415f9c0e9a",
+      "bytes": 4114
+    },
+    "cases/nil_absent_withdrawn.xml": {
+      "sha256": "6b469cfbc60a5a78b59693a0830de0ab6a6ccc2d17cdf8c4a2b5d0229d34d032",
+      "bytes": 2699
+    },
+    "cases/other_feature_location_availability.xml": {
+      "sha256": "21b7cce5980183aa90885addbb864e4c17985e8b176b78a0b33c8088d8e76a4f",
+      "bytes": 4585
+    },
+    "cases/reference_forms.xml": {
+      "sha256": "7c47155341457d3371d1fee11cda67bc330343cfb21920622d8abb79445e7e54",
+      "bytes": 3327
+    },
+    "cases/vertical_references.xml": {
+      "sha256": "d466997cdc1a2f3dd7aad8f2651fd572052189b01b8c0f0ad3d25bdf207c27ce",
+      "bytes": 29215
+    },
+    "counterexamples/README.md": {
+      "sha256": "4ee992c947e458a449c34a10e1243b64f0b3d105b74abe07fb7b37010079f036",
+      "bytes": 2564
+    },
+    "counterexamples/foreign_extension_element.xml": {
+      "sha256": "803facc45ce422f614bbbcdb39d3e676f3a579cd439d0c119f26fc315e965af0",
+      "bytes": 5400
+    },
+    "counterexamples/missing_interpretation.xml": {
+      "sha256": "fde7d5dc40848c5f6c93a629ef32a99d5c51a6bd4976c495127baef7484cb4bc",
+      "bytes": 5117
+    },
+    "counterexamples/properties_out_of_order.xml": {
+      "sha256": "94af2690d76b96b3bb139eae07f8671f5d638cd1d75e302d5073c6eb20503a15",
+      "bytes": 5179
+    },
+    "counterexamples/status_outside_enumeration.xml": {
+      "sha256": "2841d263cafa61619ef9aff78809422f53ae274930657737dc17b55cbd412d29",
+      "bytes": 5164
+    },
+    "counterexamples/unknown_property_in_slice.xml": {
+      "sha256": "c09deec88a389a29bad068bb8caf97b99b1bb440c19445c30e1530fd9de5342e",
+      "bytes": 5220
+    },
+    "dnotam/README.md": {
+      "sha256": "6460ccbf54ebbd8581b507c24acdb04e7334e694a6dc24adc464025e8ee45982",
+      "bytes": 7691
+    },
+    "dnotam/atsa_act_baseline_and_activation.parsed.json": {
+      "sha256": "672d1ac60c6fdcee352d0f8f0f24b1d9d84b4e1cad76570aeb8974cfbef84461",
+      "bytes": 6469
+    },
+    "dnotam/atsa_act_baseline_and_activation.xml": {
+      "sha256": "e31c0f2bad7722aa361f2dd91c712e49165a7d0c8436383ae53f22d3422f8fb3",
+      "bytes": 7849
+    },
+    "dnotam/cases/cancellation.xml": {
+      "sha256": "e83fe93907079591e7b86d3bc5406f72698ae2e0daf98769b74f7c2b413d9834",
+      "bytes": 9725
+    },
+    "dnotam/corrections_out_of_order.parsed.json": {
+      "sha256": "3e92f4b6042d18d01e923cc0e5e1fb438b92c1ec25c49dcf028f21f388a152ef",
+      "bytes": 11562
+    },
+    "dnotam/corrections_out_of_order.xml": {
+      "sha256": "4821e978c038ffacda01ab31b0e8ac1a6a1fbe5dc45f73a8b51c80b68b1b994d",
+      "bytes": 13018
+    },
+    "dnotam/counterexamples/rule_invalid_rwy_cls_on_an_airspace.xml": {
+      "sha256": "8e6730c12770fb38d30963368516b92510f2e1739b1e137b301fdff28b3560f1",
+      "bytes": 5647
+    },
+    "dnotam/counterexamples/rule_invalid_rwy_cls_without_closed_status.xml": {
+      "sha256": "d54287ae3fe40ddfb8ce9b2e94e289cadc60950fcd200ba236abfb2050564c10",
+      "bytes": 6132
+    },
+    "dnotam/counterexamples/schema_invalid_event_schema_1_0_namespace.xml": {
+      "sha256": "0b8f1cdd48d72339c6f48582844c58355f19b166d4de05c8b6e0a9e5517d5455",
+      "bytes": 6292
+    },
+    "dnotam/counterexamples/schema_invalid_unknown_event_property.xml": {
+      "sha256": "d193c351ad59232e7a280424a95664992e661bd437f0034edb5e82e0aa9dc61d",
+      "bytes": 6139
+    },
+    "dnotam/expiry.parsed.json": {
+      "sha256": "c477355217ca97298bf4ac5f88ed28a150085a5ffa88674d6e7915b665d3670a",
+      "bytes": 6037
+    },
+    "dnotam/expiry.xml": {
+      "sha256": "10cc8803908de8b22f7b045aaffa193846915880055f7709bdc910229d002b65",
+      "bytes": 7103
+    },
+    "dnotam/explicit_nil_values.parsed.json": {
+      "sha256": "e21572d4defa1689f392bbc19f28857b5506b19f121a5ae5fc23c57c39a1489d",
+      "bytes": 4723
+    },
+    "dnotam/explicit_nil_values.xml": {
+      "sha256": "aa75413b7d4141d507d52193b1b9bb724a0ce12008743039105e3d63614dfbc5",
+      "bytes": 5803
+    },
+    "dnotam/future_effective_change.parsed.json": {
+      "sha256": "50dc4429010e92a33db9c70c53293ba565bf576c2b505a79b701c6538568a011",
+      "bytes": 5971
+    },
+    "dnotam/future_effective_change.xml": {
+      "sha256": "860718a24a45907ff0784ee5414bd69f70476e6188046f01bb8fd6dbb1578dd5",
+      "bytes": 6964
+    },
+    "dnotam/nav_uns_baseline_and_outage.parsed.json": {
+      "sha256": "b75ac6152f4d0f51025bfaad25675e36ac38903fcfed911076fea64c37ab01e8",
+      "bytes": 8928
+    },
+    "dnotam/nav_uns_baseline_and_outage.xml": {
+      "sha256": "31fb903723e6d4ff7856cc0c8d5cd9d4bb5afa3eeff503e4f8adfc2f663ef13d",
+      "bytes": 10522
+    },
+    "dnotam/overlapping_tempdeltas.parsed.json": {
+      "sha256": "37a129ea25711d2a208708ab944761f4129eb61a6ea4486422be52be05c6679b",
+      "bytes": 10799
+    },
+    "dnotam/overlapping_tempdeltas.xml": {
+      "sha256": "8b5a322232615c9d493cb5c4c1232399f49e05360efda10e5cd2c0572bd35914",
+      "bytes": 12023
+    },
+    "dnotam/rwy_cls_baseline_and_closure.parsed.json": {
+      "sha256": "ed17def1fec14736f59c470f0c1a8df660bd28b4fd14b72944eb3ce0af9d63b3",
+      "bytes": 7972
+    },
+    "dnotam/rwy_cls_baseline_and_closure.xml": {
+      "sha256": "0173595414c38f7d0fccb7cdf66b565f6e2696d1c61e06ceed28bebeb0dfcb13",
+      "bytes": 9347
+    },
+    "dnotam/saa_act_activation_with_schedule.parsed.json": {
+      "sha256": "faf0633596a0d95381fc2e6663b86c3249c7975bbb4c84e82e942560afd67910",
+      "bytes": 7169
+    },
+    "dnotam/saa_act_activation_with_schedule.xml": {
+      "sha256": "0ec8eb177b1075ff1cf69c8a200be0abf5e1172116e0acefeb483fc64512ba44",
+      "bytes": 8473
+    },
+    "dnotam/spec/build_fixtures.py": {
+      "sha256": "d89ef4226c3d3281405c3f7764bef1c0e2ecd16ffbb1cbc844582bd99151ba41",
+      "bytes": 38289
+    },
+    "dnotam/unresolved_references.parsed.json": {
+      "sha256": "7be4e6e633d13e9bfa2b8b31f87535e39a550e66dd60cdd318f808cb6c7ec819",
+      "bytes": 5359
+    },
+    "dnotam/unresolved_references.xml": {
+      "sha256": "f308d87c6f4dc5f0631666f44a2da6607286a21251aaa2109558c12f5dcd7fe3",
+      "bytes": 6253
+    },
+    "independent/README.md": {
+      "sha256": "0e76910aa4fd0a54f63644a6314238d67567c94020e79fd884bf1484b9e2ea8a",
+      "bytes": 2258
+    },
+    "independent/donlon_extract.xml": {
+      "sha256": "449ab69ea58161797a6a9aceb6a409e8ca5eda57564f8c1ec8dd833e1ce2013f",
+      "bytes": 87525
+    },
+    "independent/donlon_extract_arc_airspace.xml": {
+      "sha256": "1ec942fb6d134481f3e3db1f0e67720142a8286354c57c4cd73dc5565381e6a0",
+      "bytes": 7725
+    },
+    "independent/expected.json": {
+      "sha256": "03f9280bc98ce75bf63d15f647a3cdfbd80daff1af4d316eb443b4741f140e07",
+      "bytes": 11647
+    },
+    "malformed/arc_by_centre_point_airspace.xml": {
+      "sha256": "579c70d738b35e0a53572f6ed28d7df2661b49050a6daf66afda1be5ab414875",
+      "bytes": 3883
+    },
+    "malformed/billion_laughs_dtd.xml": {
+      "sha256": "55b28350876623248fd8cd978da97c0c5879b8b79b09de4b0476d6fc88e4f111",
+      "bytes": 652
+    },
+    "malformed/cancelled_slice_without_as_of.xml": {
+      "sha256": "b21ed3c091f529f425faacf1a139a989b95841db472db2550cc9b4434cf0308e",
+      "bytes": 1572
+    },
+    "malformed/circle_by_centre_point_airspace.xml": {
+      "sha256": "053053217ad46022ff02cea82ccfc96883f7acfbafaaa77d8da4f4b049174cda",
+      "bytes": 3291
+    },
+    "malformed/end_before_begin.xml": {
+      "sha256": "7187299c2d79faffa219921d425f7698f92172bf3e1f2fdf1fdf6d0cc4f96104",
+      "bytes": 1499
+    },
+    "malformed/feature_without_identifier.xml": {
+      "sha256": "1addc3540c1b8b907d05a9f95f8ea3d5b83b1190052d9cd407c2df88c9f4f4a6",
+      "bytes": 1381
+    },
+    "malformed/no_feature_member.xml": {
+      "sha256": "9aea899415a49838b16c6c685381656c6557c8a393a9218ec8dc0f3306f4bf5d",
+      "bytes": 913
+    },
+    "malformed/non_integer_sequence_number.xml": {
+      "sha256": "0c3ac4f1da4d38828bd81138040958f7da401044f6b6a4e0bb4946e7ac5113c7",
+      "bytes": 1436
+    },
+    "malformed/three_dimensional_positions.xml": {
+      "sha256": "0b7828dd4cc877cabcf11df176469f5a5f09864cb35a73b5832cb74240831a0d",
+      "bytes": 3258
+    },
+    "malformed/truncated_document.xml": {
+      "sha256": "edb0f655b056569be14d3a8d63ba6f3b6e4b75b63e54a4cce46da7977e6273af",
+      "bytes": 1800
+    },
+    "malformed/unclosed_ring.xml": {
+      "sha256": "9c83f58b48f3470fc259701d13febbab7b9923643aaf8e24b04ed10b4254b199",
+      "bytes": 3218
+    },
+    "malformed/unknown_interpretation.xml": {
+      "sha256": "b8c49c9a60be7dafd145625b1330c9ff5302beb6e27e7525a3b476d80a71ff59",
+      "bytes": 1453
+    },
+    "malformed/unresolved_entity_reference.xml": {
+      "sha256": "1be3368763152f053331b3bf22981cabebcf02c3cbb0f81486cecc0ecbc39453",
+      "bytes": 5173
+    },
+    "malformed/unsupported_crs_epsg3857.xml": {
+      "sha256": "dca4a1b2bb8490d423132e84cdeeba135e95fc9b01d3284f39f95ffe479c1b37",
+      "bytes": 3297
+    },
+    "malformed/wrong_namespace_5_1.xml": {
+      "sha256": "0016f1a69998c8cdb6d27c0f4ad1148879de23382f6ec91315a58de962976083",
+      "bytes": 1454
+    },
+    "malformed/wrong_root_element.xml": {
+      "sha256": "88be05f108dbf3a84a8e77384493c98b47bcb7d122f4d2b9fd5c34390d1655af",
+      "bytes": 549
+    },
+    "malformed/xinclude_element.xml": {
+      "sha256": "0db92823510a17f911263208636f4b5c155ca406056e96598db07a541f6fe736",
+      "bytes": 5287
+    },
+    "spec/build_fixtures.py": {
+      "sha256": "31d8cbfd2b325f0a6d460aaae224888e1cd8c98e689bf8343ce8b56f1d38f490",
+      "bytes": 13722
+    },
+    "vertical_structure_two_parts.parsed.json": {
+      "sha256": "17214dc9e219caf4404287a2d4e05d62a62f56dc0efcc66ca5dc4ad1f42453c1",
+      "bytes": 2801
+    },
+    "vertical_structure_two_parts.xml": {
+      "sha256": "5e223c4c86c01e9b069801bf1ad17855e7a4312a6f0b59a220d78a1e8eb7cdd1",
+      "bytes": 3766
+    }
+  }
+}

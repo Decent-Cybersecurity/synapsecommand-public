@@ -1,3 +1,33 @@
+# Examples
+
+Two kinds live here. `sc-oes/` holds the fourteen committed SC-OES examples described below.
+Beside it, since 2026-09-20, each runnable **demonstration** of the adapter expansion is one
+directory holding a `run.py` (one command, self-checking, exit 0 only on agreement), a
+`README.md` and its `expected/` output:
+
+```text
+examples/
+├── sc-oes/                     the SC-OES examples (this document)
+├── c2sim/                      demonstration 1: C2SIM initialisation, a MoveToLocation order,
+                                position and status reports and a deterministic replay from the
+                                recorded messages, offline — `python examples/c2sim/run.py`; and
+                                `exercise_client.py`, the opt-in exchange with the OpenC2SIM
+                                reference server (`C2SIM_SERVER_URL`), which writes an
+                                independent_endpoint exercise report
+├── aixm_dnotam/                demonstration 2: an AIXM 5.1.1 baseline plus Digital NOTAM
+                                runway closure and airspace activation through the adapter
+                                (one Entity per time slice, nothing resolved) and the separate
+                                resolver `synapse_cdm.aixm_resolve` — effective windows at
+                                several as-of times, a correction, a cancellation and an
+                                unresolved state; published-rule processing, not planning —
+                                `python examples/aixm_dnotam/run.py`
+└── geopackage_to_geojson/      demonstration 3: a synthetic GeoPackage into CDM and out
+                                through the GeoJSON exchange profile, compared against GDAL's
+                                independent reading — `python examples/geopackage_to_geojson/run.py`
+```
+
+`tests/test_cdm_examples.py` holds the directory to exactly that shape.
+
 # SC-OES examples
 
 Fourteen committed examples: one for each of the thirteen governed event types

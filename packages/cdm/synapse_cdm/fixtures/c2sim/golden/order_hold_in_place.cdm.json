@@ -1,0 +1,159 @@
+[
+  {
+    "event_id": "8ef973ef-6198-5b42-87d4-823502a6c63b",
+    "event_type": "PLAN_INJECT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-21T06:06:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "contract": "c2sim-order/1",
+        "from_sender": "c2510000-0002-8000-8000-000000000001",
+        "issued_time": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-21T06:06:00Z",
+          "name": "EXERCISE-ISSUED",
+          "resolution": "stated",
+          "resolved": "2026-09-21T06:06:00.000Z"
+        },
+        "message": {
+          "communicative_act": "Propose",
+          "conversation_id": "c2510000-0000-8000-8000-00000000c002",
+          "from_sending_system": "EXERCISE-C2",
+          "in_reply_to_message_id": "c2510000-0000-8000-8000-00000000a002",
+          "message_id": "c2510000-0000-8000-8000-00000000a003",
+          "protocol": "SISO-STD-C2SIM",
+          "protocol_matches_pin": true,
+          "protocol_version": "1.0.0",
+          "reply_to_system": "EXERCISE-C2",
+          "sending_time": "2026-09-21T06:06:00Z",
+          "to_receiving_system": "EXERCISE-SIM-BLUE"
+        },
+        "order_id": "c2510000-0007-8000-8000-000000000002",
+        "task_references": [
+          "c2510000-0004-8000-8000-000000000002"
+        ],
+        "tasks": [
+          {
+            "action_code": "HoldInPlace",
+            "affected_entities": [],
+            "desired_effects": [],
+            "duration": "P00Y00M00DT00H45M00S",
+            "duration_seconds": 2700,
+            "functional_relations": [],
+            "locations": [],
+            "map_graphic_ids": [],
+            "name": "EXERCISE-TASK-HOLD-1",
+            "performing_entity": "c2510000-0002-8000-8000-000000000003",
+            "rules_of_engagement": [
+              {
+                "MipWeaponUseROE": {
+                  "WeaponROECode": {
+                    "WeaponRuleOfEngagementCode": "ROEHold"
+                  }
+                }
+              }
+            ],
+            "start_time": {
+              "elapsed": "P00Y00M00DT00H05M00S",
+              "elapsed_seconds": 300,
+              "event_reference": "c2510000-0008-8000-8000-000000000001",
+              "form": "RelativeTime",
+              "resolution": "unresolved: relative to the start or end of an event this message does not carry; never resolved by the adapter",
+              "time_reference_code": "IntervalEndTime"
+            },
+            "temporal_relationships": [],
+            "uuid": "c2510000-0004-8000-8000-000000000003"
+          },
+          {
+            "action_code": "HoldInPlace",
+            "affected_entities": [],
+            "desired_effects": [],
+            "functional_relations": [
+              {
+                "code": "IOT",
+                "in_pinned_enumeration": true,
+                "resolved_in_order": true,
+                "task": "c2510000-0004-8000-8000-000000000003"
+              }
+            ],
+            "locations": [],
+            "map_graphic_ids": [],
+            "name": "EXERCISE-TASK-HOLD-2",
+            "performing_entity": "c2510000-0003-8000-8000-000000000002",
+            "rules_of_engagement": [],
+            "start_time": {
+              "form": "DateTime",
+              "iso_date_time": "2026-09-21T06:45:00Z",
+              "resolution": "stated",
+              "resolved": "2026-09-21T06:45:00.000Z"
+            },
+            "temporal_relationships": [
+              {
+                "action": "c2510000-0004-8000-8000-000000000003",
+                "code": "STRSTR",
+                "in_pinned_enumeration": true,
+                "resolved_in_order": true
+              }
+            ],
+            "uuid": "c2510000-0004-8000-8000-000000000004"
+          }
+        ],
+        "to_receiver": "c2510000-0002-8000-8000-000000000003"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "96356e39-9dc5-582a-86ac-ff294da30928",
+      "54afff41-b29b-54df-95c6-7bab633566b1",
+      "293fcacb-5e79-5e7e-a0dc-46d72b0c6b62"
+    ],
+    "residual": {
+      "data": {
+        "C2SIMHeader": {
+          "CommunicativeActTypeCode": "Propose",
+          "ConversationID": "c2510000-0000-8000-8000-00000000c002",
+          "FromSendingSystem": "EXERCISE-C2",
+          "InReplyToMessageID": "c2510000-0000-8000-8000-00000000a002",
+          "MessageID": "c2510000-0000-8000-8000-00000000a003",
+          "Protocol": "SISO-STD-C2SIM",
+          "ProtocolVersion": "1.0.0",
+          "ReplyToSystem": "EXERCISE-C2",
+          "SendingTime": {
+            "IsoDateTime": "2026-09-21T06:06:00Z"
+          },
+          "ToReceivingSystem": "EXERCISE-SIM-BLUE"
+        }
+      },
+      "namespace": "C2SIM"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "c2sim",
+      "adapter_version": "1.0.0",
+      "format_name": "C2SIM",
+      "format_version": "SISO-STD-019-2020 v1.0 (Core + SMX) with SISO-STD-020-2020 (LOX); XML schema C2SIMArtifacts v1.0.1",
+      "observed_at": "2026-09-21T06:06:00.000Z",
+      "original_id": "c2510000-0000-8000-8000-00000000a003",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "C2SIM",
+      "transformations": [
+        "observed_at: OrderBody/IssuedTime (a DateTime, stated)",
+        "event_id: derived from OrderID"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0007-8000-8000-000000000002",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  }
+]

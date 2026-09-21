@@ -1,0 +1,137 @@
+[
+  {
+    "event_id": "96abaa9a-ac10-5dad-9b3e-3065bf3efc5a",
+    "event_type": "PLAN_INJECT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-21T06:05:00.000Z",
+    "oes": null,
+    "payload": {
+      "c2sim": {
+        "contract": "c2sim-order/1",
+        "from_sender": "c2510000-0002-8000-8000-000000000001",
+        "issued_time": {
+          "form": "DateTime",
+          "iso_date_time": "2026-09-21T06:05:00Z",
+          "resolution": "stated",
+          "resolved": "2026-09-21T06:05:00.000Z"
+        },
+        "message": {
+          "communicative_act": "Propose",
+          "conversation_id": "c2510000-0000-8000-8000-00000000c002",
+          "from_sending_system": "EXERCISE-C2",
+          "message_id": "c2510000-0000-8000-8000-00000000a002",
+          "protocol": "SISO-STD-C2SIM",
+          "protocol_matches_pin": true,
+          "protocol_version": "1.0.0",
+          "sending_time": "2026-09-21T06:05:00Z",
+          "to_receiving_system": "EXERCISE-SIM-BLUE"
+        },
+        "order_id": "c2510000-0007-8000-8000-000000000001",
+        "requesting_entity": "c2510000-0002-8000-8000-000000000001",
+        "task_references": [],
+        "tasks": [
+          {
+            "action_code": "MoveToLocation",
+            "affected_entities": [
+              "c2510000-0002-8000-8000-000000000003"
+            ],
+            "desired_effects": [
+              "TaskSuccess"
+            ],
+            "duration": "P00Y00M00DT01H30M00S",
+            "duration_seconds": 5400,
+            "end_time": {
+              "elapsed": "P00Y00M00DT02H00M00S",
+              "elapsed_seconds": 7200,
+              "form": "SimulationTime",
+              "resolution": "unresolved: a SimulationTime is scenario seconds since the scenario epoch and this adapter was given no ExerciseClock (C2simAdapter(exercise=ExerciseClock(epoch, basis)))"
+            },
+            "functional_relations": [],
+            "locations": [
+              {
+                "form": "GeodeticCoordinate",
+                "latitude": 58.56,
+                "longitude": 24.8
+              }
+            ],
+            "map_graphic_ids": [
+              "c2510000-0006-8000-8000-000000000002"
+            ],
+            "name": "EXERCISE-TASK-MOVE-1",
+            "performing_entity": "c2510000-0002-8000-8000-000000000002",
+            "rules_of_engagement": [],
+            "start_time": {
+              "form": "DateTime",
+              "iso_date_time": "2026-09-21T06:30:00Z",
+              "resolution": "stated",
+              "resolved": "2026-09-21T06:30:00.000Z"
+            },
+            "temporal_relationships": [
+              {
+                "action": "c2510000-0004-8000-8000-000000000001",
+                "code": "STREND",
+                "duration": "P00Y00M00DT00H10M00S",
+                "duration_seconds": 600,
+                "in_pinned_enumeration": true,
+                "resolved_in_order": false
+              }
+            ],
+            "uuid": "c2510000-0004-8000-8000-000000000002"
+          }
+        ],
+        "to_receiver": "c2510000-0002-8000-8000-000000000002"
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2364db41-f0a6-5d1d-af06-81d6f15c03f0",
+      "96356e39-9dc5-582a-86ac-ff294da30928",
+      "293fcacb-5e79-5e7e-a0dc-46d72b0c6b62"
+    ],
+    "residual": {
+      "data": {
+        "C2SIMHeader": {
+          "CommunicativeActTypeCode": "Propose",
+          "ConversationID": "c2510000-0000-8000-8000-00000000c002",
+          "FromSendingSystem": "EXERCISE-C2",
+          "MessageID": "c2510000-0000-8000-8000-00000000a002",
+          "Protocol": "SISO-STD-C2SIM",
+          "ProtocolVersion": "1.0.0",
+          "SendingTime": {
+            "IsoDateTime": "2026-09-21T06:05:00Z"
+          },
+          "ToReceivingSystem": "EXERCISE-SIM-BLUE"
+        }
+      },
+      "namespace": "C2SIM"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "c2sim",
+      "adapter_version": "1.0.0",
+      "format_name": "C2SIM",
+      "format_version": "SISO-STD-019-2020 v1.0 (Core + SMX) with SISO-STD-020-2020 (LOX); XML schema C2SIMArtifacts v1.0.1",
+      "observed_at": "2026-09-21T06:05:00.000Z",
+      "original_id": "c2510000-0000-8000-8000-00000000a002",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "C2SIM",
+      "transformations": [
+        "observed_at: OrderBody/IssuedTime (a DateTime, stated)",
+        "event_id: derived from OrderID"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0007-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null
+  }
+]

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Every xlink:href form Feature Identification and Reference 1.0 names, on fictitious
+     features: urn:uuid (resolved in the document), #gml:id (resolved), a URL (classified, never fetched), a
+     natural key and an opaque token (kept unresolved). Written by spec/build_fixtures.py on 2026-09-21 (aixm52). -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.2/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.2" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_REFERENCES">
+  <message:hasMember>
+    <aixm:AirportHeliport gml:id="uuid.a1a40000-0520-4000-8000-000000000106">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000106</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:AirportHeliportTimeSlice gml:id="RF_AP_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_AP_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>ZZSR</aixm:designator>
+          <aixm:name>SYNTHETIC REFERENCE FIELD</aixm:name>
+          <aixm:timeZone>UTC</aixm:timeZone>
+        </aixm:AirportHeliportTimeSlice>
+      </aixm:timeSlice>
+    </aixm:AirportHeliport>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Runway gml:id="uuid.a1a40000-0520-4000-8000-000000000107">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000107</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayTimeSlice gml:id="RF_RWY_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_RWY_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYN18/36</aixm:designator>
+          <aixm:associatedAirportHeliport xlink:href="urn:uuid:a1a40000-0520-4000-8000-000000000106"/>
+        </aixm:RunwayTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Runway>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayDirection gml:id="uuid.a1a40000-0520-4000-8000-000000000108">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000108</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayDirectionTimeSlice gml:id="RF_RD1_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_RD1_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYN18</aixm:designator>
+          <aixm:usedRunway xlink:href="#uuid.a1a40000-0520-4000-8000-000000000107"/>
+          <aixm:startingElement xlink:href="https://example.invalid/aixm/RunwayElement#uuid.a1a40000-0520-4000-8000-000000000120"/>
+        </aixm:RunwayDirectionTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayDirection>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:RunwayDirection gml:id="uuid.a1a40000-0520-4000-8000-000000000109">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-0520-4000-8000-000000000109</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:RunwayDirectionTimeSlice gml:id="RF_RD2_BL">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="RF_RD2_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:designator>SYN36</aixm:designator>
+          <aixm:usedRunway xlink:href="urn:aixm:Runway:ZZSR:SYN18/36"/>
+          <aixm:startingElement xlink:href="unresolvable-token"/>
+        </aixm:RunwayDirectionTimeSlice>
+      </aixm:timeSlice>
+    </aixm:RunwayDirection>
+  </message:hasMember>
+</message:AIXMBasicMessage>

@@ -17,6 +17,7 @@ import pytest
 import synapse_cdm
 from synapse_cdm import harness, ids, suite, times, version
 from synapse_cdm.adapter import Adapter, roster
+from synapse_cdm.manifest import Limitation
 from synapse_cdm.adapters.pntmap import PntmapAdapter
 from synapse_cdm.enums import Affiliation, EntityType
 from synapse_cdm.models import Entity
@@ -26,10 +27,12 @@ from tests import probe_metadata
 REPO = pathlib.Path(__file__).resolve().parents[1]
 PACKAGE = pathlib.Path(synapse_cdm.__file__).resolve().parent
 
-#: The set every adapter in this repository is held to. E, I, M, N and O are absent and each
+#: The set every adapter in this repository is held to. E, I, J, M and N are absent and each
 #: absence is a READING rather than a preference — see
 #: `test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter_can_pass`.
-SWEEP = ("A", "B", "C", "D", "F", "G", "H", "J", "K", "L", "O")
+#: J left the set on 2026-09-20 (adapter expansion phase 1): `geojson`'s format states no
+#: instant, its J is a DECLARED SKIP, and a required SKIP exits non-zero whatever its declaration.
+SWEEP = ("A", "B", "C", "D", "F", "G", "H", "K", "L", "O")
 
 
 def shipped() -> dict:
@@ -169,7 +172,7 @@ def test_a_caller_who_scoped_the_run_is_not_failed_by_a_check_it_did_not_ask_abo
 
 @pytest.mark.parametrize("name", sorted(shipped()))
 def test_every_shipped_adapter_passes_the_sweep(name):
-    """The whole point of the round: fourteen adapters, one bar, exit 0."""
+    """The whole point of the round: every shipped adapter, one bar, exit 0."""
     report = _report(name)
     assert report["result"] == "CONFORMANT", suite.render_report(report)
     assert suite.exit_status(report, SWEEP) == suite.EXIT_OK, suite.render_report(report)
@@ -188,7 +191,13 @@ def test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter
     shape this test exists to make visible: an exclusion is a reading, and when the reading
     changes the exclusion goes.
     """
-    excluded = set("EIMN")
+    # **J JOINED THIS SET ON 2026-09-20 (adapter expansion phase 1) AND IT IS FIVE.** `geojson`
+    # is the first adapter whose format states no instant for any object: with no caller as-of
+    # context — which the suite's fresh instances never carry — it emits no timestamp, and it
+    # declares why (structured limitation `no-source-time`, read by `check_temporal`). Every
+    # other adapter's J is PASS, asserted below so a regression to SKIP elsewhere is not hidden
+    # by the exclusion; a FAIL anywhere is still caught by `result == CONFORMANT`.
+    excluded = set("EIJMN")
     assert set(suite.CHECK_LETTERS) - set(SWEEP) == excluded
     reports = {name: _report(name) for name in shipped()}
     for letter in excluded:
@@ -203,6 +212,22 @@ def test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter
     # every emitter declaring L4 on a test the suite could not see. The half of each fixture
     # pair that carries the verdict is exactly the set the adapter's own round-trip test reads:
     # the byte fixtures under `bytes`, the parsed twins under `values`.
+    # The adapters whose format states no instant, READ from the declarations rather than named:
+    # `geojson` (phase 1) and `geopackage` (phase 2, 2026-09-20) both carry the limitation, and
+    # the set is held to exactly those two so a third arrives as a deliberate edit here.
+    no_source_time = {name for name, cls in shipped().items()
+                      if any(getattr(entry, "id", None) == suite.NO_SOURCE_TIME_LIMITATION
+                             for entry in cls.metadata.limitations)}
+    assert no_source_time == {"geojson", "geopackage"}, no_source_time
+    for name in shipped():
+        entry = reports[name]["checks"]["J"]
+        if entry["verdict"] == suite.SKIP:
+            assert entry["declared_inapplicable"], (name, entry)
+            assert entry["details"]["declaration"] == "limitations[id=no-source-time]"
+            assert name in no_source_time, \
+                f"{name}: J is SKIP, and only {sorted(no_source_time)} declare no source time"
+        else:
+            assert entry["verdict"] == suite.PASS, (name, entry)
     for name, cls in shipped().items():
         entry = reports[name]["checks"]["E"]
         if cls.direction == "ingest":
@@ -418,6 +443,65 @@ def test_J_refuses_the_epoch_and_passes_a_real_instant(probe_fixtures):
                                frozen_at=times.FROZEN_NOW)
     assert bad["verdict"] == suite.FAIL
     assert "1970-01-01" in bad["reason"]
+
+
+class _Timeless(_Base):
+    """A PlanObject and no timestamp, from a format that states no instant."""
+    name = "probe-timeless"
+    metadata = probe_metadata("probe-timeless")
+
+    def to_cdm(self, raw):
+        from synapse_cdm.models import PlanObject
+        return [PlanObject(
+            object_id=ids.derive(self.system, str(raw.get("id")), kind="plan_object"),
+            source_ids=[{"system": self.system, "external_id": str(raw.get("id"))}],
+            object_type="ANNOTATION", source=self.source_ref(),
+            geometry={"type": "Point", "coordinates": [1.0, 2.0]})]
+
+
+class _TimelessDeclared(_Timeless):
+    name = "probe-timeless-declared"
+    metadata = probe_metadata("probe-timeless-declared", limitations=[
+        Limitation(id=suite.NO_SOURCE_TIME_LIMITATION,
+                   summary="the probe's format states no instant for any object")])
+
+
+def test_J_reads_a_no_source_time_limitation_as_a_declared_inapplicability(probe_fixtures):
+    """Both ways (2026-09-20): the same timestamp-less output is an UNDECLARED SKIP from an
+    adapter that says nothing and a DECLARED one from an adapter carrying the structured
+    limitation `no-source-time` — and a declared SKIP is what §3.6 rule 4 lets through, so the
+    difference is a rung. An adapter that declares it and still emits a stamp is judged on the
+    stamp: the declaration excuses nothing that exists."""
+    clock = times.frozen_clock()
+    silent = suite.check_temporal(_Timeless(clock=clock), _payloads(probe_fixtures), clock=clock,
+                                  frozen_at=times.FROZEN_NOW)
+    assert silent["verdict"] == suite.SKIP and not silent["declared_inapplicable"]
+    assert "declaration" not in silent["details"]
+    declared = suite.check_temporal(_TimelessDeclared(clock=clock), _payloads(probe_fixtures),
+                                    clock=clock, frozen_at=times.FROZEN_NOW)
+    assert declared["verdict"] == suite.SKIP and declared["declared_inapplicable"]
+    assert declared["details"]["declaration"] == "limitations[id=no-source-time]"
+    assert "states no instant" in declared["reason"]
+    checks = {letter: {"verdict": suite.PASS, "declared_inapplicable": False}
+              for letter in suite.CHECK_LETTERS}
+    checks["J"] = {"verdict": suite.SKIP, "declared_inapplicable": False}
+    assert suite.eligible_level(checks) == "L4", "an undeclared J SKIP blocks L5"
+    checks["J"] = {"verdict": suite.SKIP, "declared_inapplicable": True}
+    assert suite.eligible_level(checks) == "L5"
+
+    class _StampedAnyway(_TimelessDeclared):
+        name = "probe-timeless-stamped"
+        metadata = probe_metadata("probe-timeless-stamped", limitations=[
+            Limitation(id=suite.NO_SOURCE_TIME_LIMITATION, summary="claims no instant, emits one")])
+
+        def to_cdm(self, raw):
+            entity = _Base._entity(self, raw)
+            entity.valid_from = _dt.datetime(1970, 1, 1, tzinfo=_dt.timezone.utc)
+            return [entity]
+
+    stamped = suite.check_temporal(_StampedAnyway(clock=clock), _payloads(probe_fixtures),
+                                   clock=clock, frozen_at=times.FROZEN_NOW)
+    assert stamped["verdict"] == suite.FAIL and "1970-01-01" in stamped["reason"]
 
 
 def test_J_uses_a_second_clock_rather_than_equality_to_the_first():

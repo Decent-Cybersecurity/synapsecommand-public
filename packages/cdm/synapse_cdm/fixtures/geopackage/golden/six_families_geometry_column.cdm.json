@@ -1,0 +1,1451 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        0.0,
+        0.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "8b6eb8be-b9a5-5508-a368-d3a988a0c801",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE POINT"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": null,
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 0,
+              "extended": false
+            },
+            "octets": 29,
+            "srs_id": 4326,
+            "wkb_octets": 21,
+            "wkb_offset": 8
+          },
+          "layer": "families",
+          "pk": 10
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "10",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 10); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/10",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          24.1,
+          57.1
+        ],
+        [
+          24.2,
+          57.2
+        ]
+      ],
+      "type": "MultiPoint"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "e1411201-525c-55c7-884d-a95513641559",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE MULTIPOINT"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": {
+              "max_x": 24.2,
+              "max_y": 57.2,
+              "min_x": 24.1,
+              "min_y": 57.1
+            },
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 1,
+              "extended": false
+            },
+            "octets": 91,
+            "srs_id": 4326,
+            "wkb_octets": 51,
+            "wkb_offset": 40
+          },
+          "layer": "families",
+          "pk": 11
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "11",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 11); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/11",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          24.0,
+          57.0
+        ],
+        [
+          24.5,
+          57.5
+        ]
+      ],
+      "type": "LineString"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "95669651-b6d1-5560-adbe-e6c8289bf516",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE LINESTRING"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": {
+              "max_x": 24.5,
+              "max_y": 57.5,
+              "min_x": 24.0,
+              "min_y": 57.0
+            },
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 1,
+              "extended": false
+            },
+            "octets": 81,
+            "srs_id": 4326,
+            "wkb_octets": 41,
+            "wkb_offset": 40
+          },
+          "layer": "families",
+          "pk": 12
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "12",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 12); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/12",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            24.0,
+            57.0
+          ],
+          [
+            24.1,
+            57.0
+          ]
+        ],
+        [
+          [
+            24.2,
+            57.0
+          ],
+          [
+            24.3,
+            57.0
+          ],
+          [
+            24.4,
+            57.1
+          ]
+        ]
+      ],
+      "type": "MultiLineString"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "13a84b89-449b-530e-8949-57faa182e23b",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE MULTILINESTRING"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": {
+              "max_x": 24.4,
+              "max_y": 57.1,
+              "min_x": 24.0,
+              "min_y": 57.0
+            },
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 1,
+              "extended": false
+            },
+            "octets": 147,
+            "srs_id": 4326,
+            "wkb_octets": 107,
+            "wkb_offset": 40
+          },
+          "layer": "families",
+          "pk": 13
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "13",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 13); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/13",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            24.0,
+            57.0
+          ],
+          [
+            24.5,
+            57.0
+          ],
+          [
+            24.5,
+            57.5
+          ],
+          [
+            24.0,
+            57.5
+          ],
+          [
+            24.0,
+            57.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "2305b62f-5fab-502a-9160-90e632225421",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE POLYGON"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": {
+              "max_x": 24.5,
+              "max_y": 57.5,
+              "min_x": 24.0,
+              "min_y": 57.0
+            },
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 1,
+              "extended": false
+            },
+            "octets": 133,
+            "srs_id": 4326,
+            "wkb_octets": 93,
+            "wkb_offset": 40
+          },
+          "layer": "families",
+          "pk": 14
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "14",
+      "record_index": 4,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 14); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/14",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            [
+              24.0,
+              57.0
+            ],
+            [
+              24.2,
+              57.0
+            ],
+            [
+              24.2,
+              57.2
+            ],
+            [
+              24.0,
+              57.2
+            ],
+            [
+              24.0,
+              57.0
+            ]
+          ],
+          [
+            [
+              24.05,
+              57.05
+            ],
+            [
+              24.05,
+              57.15
+            ],
+            [
+              24.15,
+              57.15
+            ],
+            [
+              24.15,
+              57.05
+            ],
+            [
+              24.05,
+              57.05
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              25.0,
+              57.0
+            ],
+            [
+              25.2,
+              57.0
+            ],
+            [
+              25.2,
+              57.2
+            ],
+            [
+              25.0,
+              57.2
+            ],
+            [
+              25.0,
+              57.0
+            ]
+          ]
+        ]
+      ],
+      "type": "MultiPolygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "ba7bdf83-2aef-5085-b410-602f278ae486",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "package": {
+          "contents": [
+            {
+              "data_type": "features",
+              "description": "",
+              "identifier": "families",
+              "last_change": "2026-09-20T00:00:00.000Z",
+              "max_x": 25.2,
+              "max_y": 57.5,
+              "min_x": 0.0,
+              "min_y": 0.0,
+              "srs_id": 4326,
+              "table_name": "families"
+            }
+          ],
+          "extensions": [
+            {
+              "column_name": "geom",
+              "definition": "http://www.geopackage.org/spec120/#extension_rtree",
+              "extension_name": "gpkg_rtree_index",
+              "scope": "write-only",
+              "table_name": "families"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata"
+            },
+            {
+              "column_name": null,
+              "definition": "http://www.geopackage.org/spec120/#extension_metadata",
+              "extension_name": "gpkg_metadata",
+              "scope": "read-write",
+              "table_name": "gpkg_metadata_reference"
+            }
+          ],
+          "geometry_columns": [
+            {
+              "column_name": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "m": 0,
+              "srs_id": 4326,
+              "table_name": "families",
+              "z": 0
+            }
+          ],
+          "inventory": {
+            "included": [
+              "families"
+            ],
+            "unselected": [],
+            "unsupported": []
+          },
+          "layers": [
+            {
+              "columns": [
+                {
+                  "declared_type": "INTEGER",
+                  "name": "fid",
+                  "not_null": true,
+                  "primary_key": true
+                },
+                {
+                  "declared_type": "GEOMETRY",
+                  "name": "geom",
+                  "not_null": false,
+                  "primary_key": false
+                },
+                {
+                  "declared_type": "TEXT",
+                  "name": "name",
+                  "not_null": false,
+                  "primary_key": false
+                }
+              ],
+              "crs": {
+                "accepted_as": "EPSG:4326",
+                "authority": [
+                  "EPSG",
+                  "4326"
+                ],
+                "datum": "WGS_1984",
+                "definition_column": "definition",
+                "ellipsoid": [
+                  6378137.0,
+                  298.257223563
+                ],
+                "kind": "geographic-2d",
+                "root": "GEOGCS",
+                "srs_id": 4326
+              },
+              "geometry_column": "geom",
+              "geometry_type_name": "GEOMETRY",
+              "identifier": "families",
+              "m": 0,
+              "name": "families",
+              "primary_key": "fid",
+              "row_count": 6,
+              "srs_id": 4326,
+              "z": 0
+            }
+          ],
+          "spatial_ref_sys": [
+            {
+              "definition": "undefined",
+              "description": "undefined Cartesian coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": -1,
+              "srs_id": -1,
+              "srs_name": "Undefined Cartesian SRS"
+            },
+            {
+              "definition": "undefined",
+              "description": "undefined geographic coordinate reference system",
+              "organization": "NONE",
+              "organization_coordsys_id": 0,
+              "srs_id": 0,
+              "srs_name": "Undefined geographic SRS"
+            },
+            {
+              "definition": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]",
+              "description": "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid",
+              "organization": "EPSG",
+              "organization_coordsys_id": 4326,
+              "srs_id": 4326,
+              "srs_name": "WGS 84 geodetic"
+            }
+          ],
+          "sqlite": {
+            "application_id": "GPKG",
+            "magic": "SQLite format 3",
+            "octets": 106496,
+            "page_size": 4096,
+            "read_version": 1,
+            "user_version": 10400,
+            "wal_read_as_checkpointed": false,
+            "write_version": 1
+          }
+        },
+        "row": {
+          "attribute_types": {
+            "name": "text"
+          },
+          "attributes": {
+            "name": "EXERCISE MULTIPOLYGON"
+          },
+          "geometry": {
+            "byte_order": "little",
+            "dimension": "XY",
+            "envelope": {
+              "max_x": 25.2,
+              "max_y": 57.2,
+              "min_x": 24.0,
+              "min_y": 57.0
+            },
+            "flags": {
+              "byte_order": "little",
+              "empty": false,
+              "envelope_indicator": 1,
+              "extended": false
+            },
+            "octets": 319,
+            "srs_id": 4326,
+            "wkb_octets": 279,
+            "wkb_offset": 40
+          },
+          "layer": "families",
+          "pk": 15
+        }
+      },
+      "namespace": "GeoPackage"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "geopackage",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoPackage",
+      "format_version": "1.4.0 (OGC 12-128r19)",
+      "observed_at": null,
+      "original_id": "15",
+      "record_index": 5,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GeoPackage",
+      "transformations": [
+        "inventory: 1 layer(s) included ['families'], 0 unselected, 0 unsupported ([]); a partial reading of the package where either later count is not zero",
+        "crs: layer 'families' srs_id 4326 accepted as EPSG:4326 by its definition (GEOGCS, datum 'WGS_1984', ellipsoid [6378137.0, 298.257223563]); coordinates carried as [longitude, latitude] per OGC 12-128r19's WKB axis-order clause; no reprojection",
+        "last_change: gpkg_contents.last_change '2026-09-20T00:00:00.000Z' for layer 'families' is package metadata (residual.data.package.contents) and is NOT an observation time",
+        "identity: uuid5 over (namespace 'GeoPackage', layer 'families', primary key 15); equal primary keys in two layers are two objects"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "families/15",
+        "system": "GeoPackage"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

@@ -1,0 +1,420 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "c2sim": {
+        "affiliation_basis": "FRIENDLY: the planning stub's own side",
+        "classifications": [],
+        "contract": "c2sim-object/1",
+        "names": [
+          "EXERCISE-FRESH-BLUE"
+        ],
+        "object_class": "ForceSide",
+        "organisation": {
+          "affiliated_with": [],
+          "allegiance_relationships": [],
+          "command_relations": [],
+          "communications_networks": [],
+          "current_tasks": [],
+          "force_side_relations": [],
+          "subordinates": []
+        },
+        "scenario": {
+          "date_time": {
+            "form": "DateTime",
+            "iso_date_time": "2026-09-22T06:00:00Z",
+            "resolution": "stated",
+            "resolved": "2026-09-22T06:00:00.000Z"
+          },
+          "version": "EXERCISE-FRESH-v1"
+        },
+        "uuid": "c2510000-0011-8000-8000-000000000001"
+      }
+    },
+    "confidence": null,
+    "entity_id": "753095fa-699b-570a-8600-fe228f9d36ab",
+    "entity_type": "UNIT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0011-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-09-22T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "c2sim": {
+        "affiliation_basis": "FRIENDLY: the planning stub's own side",
+        "classifications": [
+          {
+            "form": "APP6-SIDC",
+            "sidc": "SFGPUCI--------"
+          }
+        ],
+        "contract": "c2sim-object/1",
+        "name": "EXERCISE-FRESH-HQ",
+        "names": [],
+        "object_class": "Unit",
+        "organisation": {
+          "affiliated_with": [],
+          "allegiance_relationships": [],
+          "command_relations": [],
+          "communications_networks": [],
+          "current_tasks": [],
+          "echelon": "BN",
+          "force_side_relations": [],
+          "side": "c2510000-0011-8000-8000-000000000001",
+          "subordinates": [
+            "c2510000-0013-8000-8000-000000000001"
+          ]
+        },
+        "scenario": {
+          "date_time": {
+            "form": "DateTime",
+            "iso_date_time": "2026-09-22T06:00:00Z",
+            "resolution": "stated",
+            "resolved": "2026-09-22T06:00:00.000Z"
+          },
+          "version": "EXERCISE-FRESH-v1"
+        },
+        "state": {
+          "date_time": {
+            "form": "DateTime",
+            "iso_date_time": "2026-09-22T06:00:00Z",
+            "resolution": "stated",
+            "resolved": "2026-09-22T06:00:00.000Z"
+          },
+          "heading_deg": 0.0,
+          "health": [
+            {
+              "code": "FullyOperational",
+              "form": "OperationalStatus",
+              "in_pinned_enumeration": true
+            }
+          ],
+          "locations": [
+            {
+              "altitude_msl_m": 30.0,
+              "form": "GeodeticCoordinate",
+              "latitude": 58.4,
+              "longitude": 24.5
+            }
+          ],
+          "speed_mps": 0.0
+        },
+        "uuid": "c2510000-0012-8000-8000-000000000001"
+      }
+    },
+    "confidence": null,
+    "entity_id": "011f99f2-fb04-5e38-a191-c72cc8110a86",
+    "entity_type": "UNIT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 58.4,
+      "lon": 24.5,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 30.0
+      }
+    },
+    "quality": null,
+    "residual": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0012-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-09-22T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "c2sim": {
+        "affiliation_basis": "FRIENDLY: the planning stub's own side",
+        "classifications": [
+          {
+            "form": "NamedEntityType",
+            "name": "EXERCISE-UAS-CLASS-I"
+          }
+        ],
+        "contract": "c2sim-object/1",
+        "marking": "EX-F-UAV",
+        "name": "EXERCISE-FRESH-UAV",
+        "names": [],
+        "object_class": "Aircraft",
+        "organisation": {
+          "affiliated_with": [],
+          "allegiance_relationships": [],
+          "command_relations": [],
+          "communications_networks": [],
+          "current_tasks": [],
+          "force_side_relations": [],
+          "side": "c2510000-0011-8000-8000-000000000001",
+          "subordinates": [],
+          "superior": "c2510000-0012-8000-8000-000000000001"
+        },
+        "scenario": {
+          "date_time": {
+            "form": "DateTime",
+            "iso_date_time": "2026-09-22T06:00:00Z",
+            "resolution": "stated",
+            "resolved": "2026-09-22T06:00:00.000Z"
+          },
+          "version": "EXERCISE-FRESH-v1"
+        },
+        "state": {
+          "heading_deg": 45.0,
+          "health": [],
+          "locations": [
+            {
+              "altitude_msl_m": 800.0,
+              "form": "GeodeticCoordinate",
+              "latitude": 58.41,
+              "longitude": 24.52
+            }
+          ],
+          "speed_mps": 25.0
+        },
+        "uuid": "c2510000-0013-8000-8000-000000000001"
+      }
+    },
+    "confidence": null,
+    "entity_id": "45293e56-832a-5413-bf78-918ab36fd135",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 58.41,
+      "lon": 24.52,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 800.0
+      }
+    },
+    "quality": null,
+    "residual": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0013-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-09-22T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          24.5,
+          58.4
+        ],
+        [
+          24.6,
+          58.45
+        ],
+        [
+          24.7,
+          58.5
+        ]
+      ],
+      "type": "LineString"
+    },
+    "integrity": null,
+    "label": "EXERCISE-FRESH-ROUTE",
+    "object_id": "127425e6-993e-5aa4-9bdc-0cb8d6ec048a",
+    "object_kind": "plan_object",
+    "object_type": "ROUTE",
+    "quality": null,
+    "residual": null,
+    "route": {
+      "legs": [],
+      "metadata": {
+        "c2sim": {
+          "classifications": [
+            {
+              "form": "APP6-SIDC",
+              "sidc": "GFGPGLC--------"
+            }
+          ],
+          "contract": "c2sim-object/1",
+          "names": [],
+          "object_class": "Route",
+          "owner": "c2510000-0012-8000-8000-000000000001",
+          "scenario": {
+            "date_time": {
+              "form": "DateTime",
+              "iso_date_time": "2026-09-22T06:00:00Z",
+              "resolution": "stated",
+              "resolved": "2026-09-22T06:00:00.000Z"
+            },
+            "version": "EXERCISE-FRESH-v1"
+          },
+          "uuid": "c2510000-0016-8000-8000-000000000001"
+        }
+      },
+      "waypoints": [
+        {
+          "altitude_constraint": null,
+          "eta": null,
+          "name": null,
+          "position": {
+            "accuracy_m": null,
+            "alt_m": null,
+            "lat": 58.4,
+            "lon": 24.5,
+            "position_source": "MANUAL",
+            "vertical": null
+          },
+          "sequence": 0
+        },
+        {
+          "altitude_constraint": null,
+          "eta": null,
+          "name": null,
+          "position": {
+            "accuracy_m": null,
+            "alt_m": null,
+            "lat": 58.45,
+            "lon": 24.6,
+            "position_source": "MANUAL",
+            "vertical": {
+              "reference": "MSL",
+              "uncertainty": null,
+              "unit": "m",
+              "value": 40.0
+            }
+          },
+          "sequence": 1
+        },
+        {
+          "altitude_constraint": null,
+          "eta": null,
+          "name": null,
+          "position": {
+            "accuracy_m": null,
+            "alt_m": null,
+            "lat": 58.5,
+            "lon": 24.7,
+            "position_source": "MANUAL",
+            "vertical": null
+          },
+          "sequence": 2
+        }
+      ]
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "planner_stub",
+      "adapter_version": "0.1.0",
+      "format_name": "planner-stub",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "PLANNER",
+      "transformations": [
+        "written by hand as a planning stub's output; no C2SIM message existed before egress"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "c2510000-0016-8000-8000-000000000001",
+        "system": "C2SIM"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": {
+      "effective": null,
+      "observed_at": "2026-09-22T06:00:00.000Z",
+      "valid_from": null,
+      "valid_to": null
+    }
+  }
+]

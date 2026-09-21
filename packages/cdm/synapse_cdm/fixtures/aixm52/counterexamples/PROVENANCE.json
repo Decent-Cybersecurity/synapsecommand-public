@@ -1,0 +1,54 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "aixm52/counterexamples",
+  "fixtures": [
+    {
+      "file": "foreign_extension_element.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "missing_interpretation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "properties_out_of_order.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "property_removed_in_5_2.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "status_outside_enumeration.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    },
+    {
+      "file": "unknown_property_in_slice.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic well-formed AIXM 5.2 documents written by `spec/build_fixtures.py` on 2026-09-21 (phase 6) — five derived from airspace_baseline_polygon.xml and one from airport_runway_navaid.xml by one deliberate schema breach each (an undeclared property, properties out of schema order, a status outside its enumeration, a foreign element in an extension, a missing interpretation, and an AIXM 5.1.1 property — fieldElevationAccuracy — that 5.2 has no element for). The layer that rejects each is declared in this directory's README and asserted by `tests/test_cdm_aixm52_adapter.py::test_every_counterexample_is_rejected_at_its_declared_layer`: the normative validator (BLOCKED, never a pass, without the resource) rejects all six; the adapter's structural reading refuses the missing interpretation and carries the other five breaches in the residual, LOST 0. Fictitious identifiers and positions throughout."
+    }
+  ]
+}

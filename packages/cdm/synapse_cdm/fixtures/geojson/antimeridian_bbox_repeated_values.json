@@ -1,0 +1,49 @@
+{
+  "type": "FeatureCollection",
+  "bbox": [
+    179.5,
+    -17.0,
+    -179.5,
+    -16.0
+  ],
+  "generator": {
+    "name": "EXERCISE hand-written",
+    "version": "1"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "west",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          179.8,
+          -16.5,
+          120.0
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE west of the line",
+        "reading": 7,
+        "unit": "kt"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "east",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -179.8,
+          -16.5,
+          120.0
+        ]
+      },
+      "properties": {
+        "name": "EXERCISE east of the line",
+        "reading": 7,
+        "unit": "kt"
+      }
+    }
+  ]
+}

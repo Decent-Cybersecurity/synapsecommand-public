@@ -1,0 +1,118 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "c2sim/malformed",
+  "fixtures": [
+    {
+      "file": "billion_laughs_dtd.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "duplicate_ids.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "malformed_timestamp.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "missing_header_fields.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "move_without_destination.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "over_depth_document.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "position_report_without_location.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "relative_time_observation.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "simulation_time_without_clock.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "system_command_body.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "truncated_document.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "unresolved_entity_reference.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "unsupported_task_code.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    },
+    {
+      "file": "wrong_namespace_version.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-09-21 by cutting, corrupting or re-typing this directory's own synthetic C2SIM messages (the leading comment of each names its one defect); none derives from recorded data. Read by the conformance suite's check H and by `tests/test_cdm_c2sim_adapter.py::test_every_malformed_payload_is_refused_by_name`, which states what each must be refused for. The over-BYTES case is generated in-test, never committed."
+    }
+  ]
+}

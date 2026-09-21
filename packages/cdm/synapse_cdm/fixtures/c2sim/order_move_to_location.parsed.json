@@ -1,0 +1,78 @@
+{
+  "C2SIMHeader": {
+    "CommunicativeActTypeCode": "Propose",
+    "ConversationID": "c2510000-0000-8000-8000-00000000c002",
+    "FromSendingSystem": "EXERCISE-C2",
+    "MessageID": "c2510000-0000-8000-8000-00000000a002",
+    "Protocol": "SISO-STD-C2SIM",
+    "ProtocolVersion": "1.0.0",
+    "SendingTime": {
+      "IsoDateTime": "2026-09-21T06:05:00Z"
+    },
+    "ToReceivingSystem": "EXERCISE-SIM-BLUE"
+  },
+  "MessageBody": {
+    "DomainMessageBody": {
+      "OrderBody": {
+        "FromSender": "c2510000-0002-8000-8000-000000000001",
+        "ToReceiver": "c2510000-0002-8000-8000-000000000002",
+        "IssuedTime": {
+          "IsoDateTime": "2026-09-21T06:05:00Z"
+        },
+        "OrderID": "c2510000-0007-8000-8000-000000000001",
+        "RequestingEntity": "c2510000-0002-8000-8000-000000000001",
+        "Task": [
+          {
+            "ManeuverWarfareTask": {
+              "ActionTemporalRelationship": [
+                {
+                  "ActionTemporalAssociationCode": "STREND",
+                  "Duration": {
+                    "IsoTimeDuration": "P00Y00M00DT00H10M00S"
+                  },
+                  "TemporalAssociationWithAction": "c2510000-0004-8000-8000-000000000001"
+                }
+              ],
+              "Location": [
+                {
+                  "GeodeticCoordinate": {
+                    "Latitude": "58.5600",
+                    "Longitude": "24.8000"
+                  }
+                }
+              ],
+              "MapGraphicID": [
+                "c2510000-0006-8000-8000-000000000002"
+              ],
+              "Name": "EXERCISE-TASK-MOVE-1",
+              "UUID": "c2510000-0004-8000-8000-000000000002",
+              "AffectedEntity": [
+                "c2510000-0002-8000-8000-000000000003"
+              ],
+              "DesiredEffectCode": [
+                "TaskSuccess"
+              ],
+              "Duration": {
+                "IsoTimeDuration": "P00Y00M00DT01H30M00S"
+              },
+              "EndTime": {
+                "SimulationTime": {
+                  "DelayTimeAmount": {
+                    "IsoTimeDuration": "P00Y00M00DT02H00M00S"
+                  }
+                }
+              },
+              "PerformingEntity": "c2510000-0002-8000-8000-000000000002",
+              "StartTime": {
+                "DateTime": {
+                  "IsoDateTime": "2026-09-21T06:30:00Z"
+                }
+              },
+              "TaskActionCode": "MoveToLocation"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

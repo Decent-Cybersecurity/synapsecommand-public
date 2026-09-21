@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Explicit nils on both sides of the binding: the Event states estimatedValidity xsi:nil
+     (nil, not absent) and activity nil with nilReason='unknown'; the Navaid TEMPDELTA states its
+     availability as ONE nil occurrence (Temporality Concept 1.1 §4.4.6.3, 'all occurrences are
+     removed'), so the resolved availability is WITHDRAWN — the baseline OPERATIONAL is not carried
+     through and nothing is asserted. Authored 2026-09-21 by dnotam/spec/build_fixtures.py. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:event="http://www.aixm.aero/schema/5.1.1/event"
+    xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_DN_NIL">
+  <message:hasMember>
+    <event:Event gml:id="uuid.a1a40000-00e0-4000-8000-000000000008">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00e0-4000-8000-000000000008</gml:identifier>
+      <event:timeSlice>
+        <event:EventTimeSlice gml:id="EVT_8_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="EVT_8_BL_1_0_VT">
+              <gml:beginPosition>2026-03-14T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-14T12:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:featureLifetime>
+            <gml:TimePeriod gml:id="EVT_8_BL_1_0_LT">
+              <gml:beginPosition>2026-03-14T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-14T12:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </aixm:featureLifetime>
+          <event:name>SYN VOR/DME</event:name>
+          <event:designator>DNOTAM</event:designator>
+          <event:scenario>NAV.UNS</event:scenario>
+          <event:version>2.0</event:version>
+          <event:estimatedValidity xsi:nil="true"/>
+          <event:activity xsi:nil="true" nilReason="unknown"/>
+          <event:notification>
+            <event:NOTAM gml:id="EVT_8_BL_1_0_N">
+              <event:series>S</event:series>
+              <event:number>108</event:number>
+              <event:year>2026</event:year>
+              <event:issued>2026-03-13T12:00:00Z</event:issued>
+              <event:publisher xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000008" xlink:title="SYNTHETIC NOTAM OFFICE"/>
+              <event:type>N</event:type>
+              <event:affectedFIR>ZZSY</event:affectedFIR>
+              <event:location>ZZSY</event:location>
+              <event:effectiveStart>2603140800</event:effectiveStart>
+              <event:effectiveEnd>2603141200</event:effectiveEnd>
+              <event:estimatedEnd>NO</event:estimatedEnd>
+              <event:permanent>NO</event:permanent>
+              <event:text lang="ENG">SYN VOR/DME STATUS WITHDRAWN.</event:text>
+            </event:NOTAM>
+          </event:notification>
+        </event:EventTimeSlice>
+      </event:timeSlice>
+    </event:Event>
+  </message:hasMember>
+  <message:hasMember>
+    <aixm:Navaid gml:id="uuid.a1a40000-00d0-4000-8000-000000000005">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00d0-4000-8000-000000000005</gml:identifier>
+      <aixm:timeSlice>
+        <aixm:NavaidTimeSlice gml:id="NAV_SYN_BL_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="NAV_SYN_BL_1_0_VT">
+              <gml:beginPosition>2026-01-01T00:00:00Z</gml:beginPosition>
+              <gml:endPosition indeterminatePosition="unknown"/>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>BASELINE</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:type>VOR_DME</aixm:type>
+          <aixm:designator>SYN</aixm:designator>
+          <aixm:name>SYNTHETIC VOR DME</aixm:name>
+          <aixm:navaidEquipment>
+            <aixm:NavaidComponent gml:id="NAV_SYN_NC_1">
+              <aixm:collocationGroup>1</aixm:collocationGroup>
+              <aixm:theNavaidEquipment xlink:href="urn:uuid:a1a40000-00d0-4000-8000-000000000006" xlink:title="SYN VOR"/>
+            </aixm:NavaidComponent>
+          </aixm:navaidEquipment>
+          <aixm:availability>
+            <aixm:NavaidOperationalStatus gml:id="NAV_SYN_BL_1_0_OPS1">
+              <aixm:operationalStatus>OPERATIONAL</aixm:operationalStatus>
+            </aixm:NavaidOperationalStatus>
+          </aixm:availability>
+        </aixm:NavaidTimeSlice>
+      </aixm:timeSlice>
+      <aixm:timeSlice>
+        <aixm:NavaidTimeSlice gml:id="NAV_SYN_TD_1_0">
+          <gml:validTime>
+            <gml:TimePeriod gml:id="NAV_SYN_TD_1_0_VT">
+              <gml:beginPosition>2026-03-14T08:00:00Z</gml:beginPosition>
+              <gml:endPosition>2026-03-14T12:00:00Z</gml:endPosition>
+            </gml:TimePeriod>
+          </gml:validTime>
+          <aixm:interpretation>TEMPDELTA</aixm:interpretation>
+          <aixm:sequenceNumber>1</aixm:sequenceNumber>
+          <aixm:correctionNumber>0</aixm:correctionNumber>
+          <aixm:availability xsi:nil="true" nilReason="unknown"/>
+          <aixm:extension>
+            <event:NavaidExtension gml:id="NAV_SYN_TD_1_0_EXT">
+              <event:theEvent xlink:href="urn:uuid:a1a40000-00e0-4000-8000-000000000008" xlink:title="SYN VOR/DME DNOTAM NAV.UNS"/>
+            </event:NavaidExtension>
+          </aixm:extension>
+        </aixm:NavaidTimeSlice>
+      </aixm:timeSlice>
+    </aixm:Navaid>
+  </message:hasMember>
+</message:AIXMBasicMessage>

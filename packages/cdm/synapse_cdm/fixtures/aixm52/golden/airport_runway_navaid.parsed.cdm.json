@@ -1,0 +1,1481 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": {
+          "elevation": {
+            "cdm": {
+              "reference": "MSL",
+              "unit": "ft",
+              "value": 12.0
+            },
+            "elevation": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": "FT",
+              "value": "12"
+            },
+            "geoid_undulation": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": "M",
+              "value": "43.5"
+            },
+            "not_projected": null,
+            "vertical_accuracy": null,
+            "vertical_datum": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": null,
+              "value": "EGM 96 GEOID (free text in 5.2)"
+            }
+          },
+          "point": {
+            "crs": {
+              "axis_order": [
+                "latitude",
+                "longitude"
+              ],
+              "inherited": false,
+              "srs_dimension": null,
+              "srs_name": "urn:ogc:def:crs:EPSG::4326"
+            },
+            "element": "aixm:ElevatedPoint",
+            "gml_id": "AP1_ARP",
+            "latitude": 52.30833,
+            "longitude": 4.76389,
+            "pos_text": "52.30833 4.76389"
+          },
+          "source": {
+            "$": "aixm:ElevatedPoint",
+            "@gml:id": "AP1_ARP",
+            "@srsName": "urn:ogc:def:crs:EPSG::4326",
+            "aixm:elevation": {
+              "#text": "12",
+              "@uom": "FT"
+            },
+            "aixm:geoidUndulation": {
+              "#text": "43.5",
+              "@uom": "M"
+            },
+            "aixm:horizontalAccuracy": {
+              "#text": "1",
+              "@uom": "M"
+            },
+            "aixm:verticalDatum": "EGM 96 GEOID (free text in 5.2)",
+            "gml:pos": "52.30833 4.76389"
+          },
+          "unsupported": null
+        },
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:AirportHeliportAvailability",
+            "gml_id": "AP1_AV_1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NORMAL"
+              },
+              "warning": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:AirportHeliportAvailability",
+              "@gml:id": "AP1_AV_1",
+              "aixm:operationalStatus": "NORMAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:AirportHeliport",
+          "family": "AirportHeliport",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000002",
+          "identifier": "a1a40000-0520-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "abandoned": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "NO"
+          },
+          "certifiedICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "controlType": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "CIVIL"
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "designatorIATA": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "fieldElevation": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": "FT",
+            "value": "12"
+          },
+          "locationIndicatorICAO": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "magneticVariation": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "1.5"
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC FIELD"
+          },
+          "privateUse": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "segmentedCircleMarker": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "YES_LIGHTED"
+          },
+          "timeZone": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "UTC"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "AD"
+          },
+          "verticalDatum": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "EGM 96 GEOID (free text in 5.2)"
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirportHeliportTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "AP1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "AP1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "de109c08-b611-59d9-bad0-9110959867bb",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 52.30833,
+      "lon": 4.76389,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "ft",
+        "value": 12.0
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AERODROME",
+        "message:hasMember": [
+          {
+            "$": "aixm:AirportHeliport",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000002",
+            "aixm:timeSlice": [
+              {
+                "aixm:responsibleOrganisation": [
+                  {
+                    "$": "aixm:AirportHeliportResponsibilityOrganisation",
+                    "@gml:id": "AP1_RO_1",
+                    "aixm:role": "OPERATE",
+                    "aixm:theOrganisationAuthority": {
+                      "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000006"
+                    }
+                  },
+                  {
+                    "$": "aixm:AirportHeliportResponsibilityOrganisation",
+                    "@gml:id": "AP1_RO_2",
+                    "aixm:role": "OWN",
+                    "aixm:theOrganisationAuthority": {
+                      "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000006"
+                    }
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "AP1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000002/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.2 CodeStatusAirportType",
+      "since": null,
+      "state": "NORMAL"
+    },
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Runway",
+          "family": "Runway",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000003",
+          "identifier": "a1a40000-0520-4000-8000-000000000003",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "abandoned": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "NO"
+          },
+          "depth": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": "M",
+            "value": "0.9"
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYN09/27"
+          },
+          "nominalLength": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": "M",
+            "value": "2500"
+          },
+          "nominalWidth": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": "M",
+            "value": "45"
+          },
+          "referenceCodeFieldLength": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "4"
+          },
+          "referenceCodeWingspan": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "D"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "RWY"
+          }
+        },
+        "references": {
+          "associatedAirportHeliport": {
+            "form": "urn-uuid",
+            "href": "urn:uuid:a1a40000-0520-4000-8000-000000000002",
+            "key": "a1a40000-0520-4000-8000-000000000002",
+            "nil_reason": null,
+            "property": "associatedAirportHeliport",
+            "resolved": true,
+            "target": {
+              "element": "aixm:AirportHeliport",
+              "gml_id": "uuid.a1a40000-0520-4000-8000-000000000002",
+              "identifier": "a1a40000-0520-4000-8000-000000000002",
+              "member_index": 0,
+              "where": "document"
+            },
+            "title": "ZZSY SYNTHETIC FIELD"
+          }
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:RunwayTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "RWY1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "RWY1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "09f56b7e-ff0a-560a-8d46-10398826b9ad",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AERODROME",
+        "message:hasMember": [
+          null,
+          {
+            "$": "aixm:Runway",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000003",
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000003",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "RWY1_BL_1_0",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000003",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000003/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:ManoeuvringAreaAvailability",
+            "gml_id": "RD1_AV_1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "CLOSED"
+              },
+              "warning": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "WIP"
+              }
+            },
+            "source": {
+              "$": "aixm:ManoeuvringAreaAvailability",
+              "@gml:id": "RD1_AV_1",
+              "aixm:operationalStatus": "CLOSED",
+              "aixm:timeInterval": [
+                {
+                  "$": "aixm:Timesheet",
+                  "@gml:id": "RD1_TS_1",
+                  "aixm:day": "ANY",
+                  "aixm:endTime": "06:00",
+                  "aixm:startTime": "22:00",
+                  "aixm:timeReference": "UTC"
+                }
+              ],
+              "aixm:warning": "WIP"
+            },
+            "time_interval": [
+              {
+                "gml_id": "RD1_TS_1",
+                "properties": {
+                  "day": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "ANY"
+                  },
+                  "dayTil": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "daylightSavingAdjust": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endDate": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEventInterpretation": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "06:00"
+                  },
+                  "endTimeRelativeEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "excluded": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startDate": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEventInterpretation": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "22:00"
+                  },
+                  "startTimeRelativeEvent": {
+                    "meaning": "not stated",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "timeReference": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "UTC"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:RunwayDirection",
+          "family": "RunwayDirection",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000004",
+          "identifier": "a1a40000-0520-4000-8000-000000000004",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "approachGuidance": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "PRECISION_CAT_I"
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYN09"
+          },
+          "elevationTDZ": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": "FT",
+            "value": "10"
+          },
+          "magneticBearing": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "91.0"
+          },
+          "slope": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "0.4"
+          },
+          "trueBearing": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "92.5"
+          }
+        },
+        "references": {
+          "usedRunway": {
+            "form": "local-id",
+            "href": "#uuid.a1a40000-0520-4000-8000-000000000003",
+            "key": "uuid.a1a40000-0520-4000-8000-000000000003",
+            "nil_reason": null,
+            "property": "usedRunway",
+            "resolved": true,
+            "target": {
+              "element": "aixm:Runway",
+              "gml_id": "uuid.a1a40000-0520-4000-8000-000000000003",
+              "identifier": "a1a40000-0520-4000-8000-000000000003",
+              "member_index": 1,
+              "where": "document"
+            },
+            "title": null
+          }
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:RunwayDirectionTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "RD1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "RD1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "31dab213-8b37-57b3-b4e8-d8ec9d2aa71d",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AERODROME",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:RunwayDirection",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000004",
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000004",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "RD1_BL_1_0",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000004",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000004/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:NavaidOperationalStatus",
+            "gml_id": "NAV1_AV_1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "OPERATIONAL"
+              },
+              "signalType": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "NAV1_AV_1",
+              "aixm:operationalStatus": "OPERATIONAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Navaid",
+          "family": "Navaid",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000005",
+          "identifier": "a1a40000-0520-4000-8000-000000000005",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": {
+          "elevation": {
+            "cdm": {
+              "reference": "MSL",
+              "unit": "m",
+              "value": 15.0
+            },
+            "elevation": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": "M",
+              "value": "15"
+            },
+            "geoid_undulation": {
+              "meaning": "not stated",
+              "nil_reason": null,
+              "state": "absent",
+              "uom": null,
+              "value": null
+            },
+            "not_projected": null,
+            "vertical_accuracy": null,
+            "vertical_datum": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": null,
+              "value": "EGM 96 GEOID (free text in 5.2)"
+            }
+          },
+          "point": {
+            "crs": {
+              "axis_order": [
+                "longitude",
+                "latitude"
+              ],
+              "inherited": false,
+              "srs_dimension": null,
+              "srs_name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            },
+            "element": "aixm:ElevatedPoint",
+            "gml_id": "NAV1_LOC",
+            "latitude": 52.31,
+            "longitude": 4.8,
+            "pos_text": "4.80000 52.31000"
+          },
+          "source": {
+            "$": "aixm:ElevatedPoint",
+            "@gml:id": "NAV1_LOC",
+            "@srsName": "urn:ogc:def:crs:OGC:1.3:CRS84",
+            "aixm:elevation": {
+              "#text": "15",
+              "@uom": "M"
+            },
+            "aixm:verticalDatum": "EGM 96 GEOID (free text in 5.2)",
+            "gml:pos": "4.80000 52.31000"
+          },
+          "unsupported": null
+        },
+        "navaid_equipment": [
+          {
+            "equipment": {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-0520-4000-8000-000000000011",
+              "key": "a1a40000-0520-4000-8000-000000000011",
+              "nil_reason": null,
+              "property": "navaidEquipment[0].theNavaidEquipment",
+              "resolved": false,
+              "target": null,
+              "title": null
+            },
+            "gml_id": "NAV1_NC_1",
+            "nil": false,
+            "properties": {
+              "collocationGroup": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "1"
+              },
+              "markerPosition": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "providesNavigableLocation": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV1_NC_1",
+              "aixm:collocationGroup": "1",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000011"
+              }
+            }
+          },
+          {
+            "equipment": {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-0520-4000-8000-000000000012",
+              "key": "a1a40000-0520-4000-8000-000000000012",
+              "nil_reason": null,
+              "property": "navaidEquipment[1].theNavaidEquipment",
+              "resolved": false,
+              "target": null,
+              "title": null
+            },
+            "gml_id": "NAV1_NC_2",
+            "nil": false,
+            "properties": {
+              "collocationGroup": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "1"
+              },
+              "markerPosition": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "providesNavigableLocation": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV1_NC_2",
+              "aixm:collocationGroup": "1",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-0520-4000-8000-000000000012"
+              }
+            }
+          }
+        ],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "codeICAOCountry": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZ"
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYV"
+          },
+          "flightChecked": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "YES"
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC VOR DME"
+          },
+          "purpose": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "signalPerformance": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "VOR_DME"
+          }
+        },
+        "references": {
+          "runwayDirection": [
+            {
+              "form": "local-id",
+              "href": "#uuid.a1a40000-0520-4000-8000-000000000004",
+              "key": "uuid.a1a40000-0520-4000-8000-000000000004",
+              "nil_reason": null,
+              "property": "runwayDirection",
+              "resolved": true,
+              "target": {
+                "element": "aixm:RunwayDirection",
+                "gml_id": "uuid.a1a40000-0520-4000-8000-000000000004",
+                "identifier": "a1a40000-0520-4000-8000-000000000004",
+                "member_index": 2,
+                "where": "document"
+              },
+              "title": null
+            }
+          ],
+          "servedAirport": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-0520-4000-8000-000000000002",
+              "key": "a1a40000-0520-4000-8000-000000000002",
+              "nil_reason": null,
+              "property": "servedAirport",
+              "resolved": true,
+              "target": {
+                "element": "aixm:AirportHeliport",
+                "gml_id": "uuid.a1a40000-0520-4000-8000-000000000002",
+                "identifier": "a1a40000-0520-4000-8000-000000000002",
+                "member_index": 0,
+                "where": "document"
+              },
+              "title": null
+            }
+          ]
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:NavaidTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "NAV1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "NAV1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [
+          "navaidEquipment[0].theNavaidEquipment -> 'urn:uuid:a1a40000-0520-4000-8000-000000000011' (urn-uuid)",
+          "navaidEquipment[1].theNavaidEquipment -> 'urn:uuid:a1a40000-0520-4000-8000-000000000012' (urn-uuid)"
+        ],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "694e86b9-3c10-5fe5-a280-73d822e819f2",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 52.31,
+      "lon": 4.8,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 15.0
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AERODROME",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:Navaid",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000005",
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000005",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "NAV1_BL_1_0",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000005",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000005/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.2 CodeStatusNavaidType",
+      "since": null,
+      "state": "OPERATIONAL"
+    },
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.2",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:OrganisationAuthority",
+          "family": "other",
+          "gml_id": "uuid.a1a40000-0520-4000-8000-000000000006",
+          "identifier": "a1a40000-0520-4000-8000-000000000006",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNOPS"
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC AIRPORT OPERATOR"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "OTHER"
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:OrganisationAuthorityTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "ORG1_BL",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "ORG1_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "712118cb-a071-59ed-9cb6-f3a7f6bebce7",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_AERODROME",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:OrganisationAuthority",
+            "@gml:id": "uuid.a1a40000-0520-4000-8000-000000000006",
+            "aixm:timeSlice": [
+              {
+                "aixm:military": "CIVIL"
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-0520-4000-8000-000000000006",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm52",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.2 (XML Schema release 5.2.0, 17 January 2025; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "ORG1_BL",
+      "record_index": 4,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000006",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0520-4000-8000-000000000006/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  }
+]

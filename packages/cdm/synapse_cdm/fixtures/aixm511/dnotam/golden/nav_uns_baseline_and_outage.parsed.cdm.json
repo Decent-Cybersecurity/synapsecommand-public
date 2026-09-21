@@ -1,0 +1,1815 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:AirportHeliport",
+          "family": "AirportHeliport",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000001",
+          "identifier": "a1a40000-00d0-4000-8000-000000000001",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "abandoned": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "certifiedICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "designatorIATA": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "fieldElevation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "fieldElevationAccuracy": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "locationIndicatorICAO": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "magneticVariation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC AERODROME"
+          },
+          "privateUse": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "verticalDatum": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirportHeliportTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "AHP_ZZSY_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "AHP_ZZSY_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "c94e703f-4889-5df2-a7f2-a854ab34064e",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          {
+            "$": "aixm:AirportHeliport",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000001",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000001",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "AHP_ZZSY_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000001",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000001/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+          "identifier": "a1a40000-00d0-4000-8000-000000000007",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "designatorICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC FIR"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "FIR"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "ASE_FIR_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "ASE_FIR_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "e18b7fb4-6dc6-511e-b362-48b1930ed741",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000007",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "ASE_FIR_BL_1_0",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000007",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000007/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "event:Event",
+          "family": "Event",
+          "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000004",
+          "identifier": "a1a40000-00e0-4000-8000-000000000004",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "activity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "DNOTAM"
+          },
+          "estimatedValidity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYN VOR/DME"
+          },
+          "scenario": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "NAV.UNS"
+          },
+          "version": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "2.0"
+          }
+        },
+        "references": {
+          "concernedAirportHeliport": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000001",
+              "key": "a1a40000-00d0-4000-8000-000000000001",
+              "nil_reason": null,
+              "property": "concernedAirportHeliport",
+              "resolved": true,
+              "target": {
+                "element": "aixm:AirportHeliport",
+                "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000001",
+                "identifier": "a1a40000-00d0-4000-8000-000000000001",
+                "member_index": 0,
+                "where": "document"
+              },
+              "title": "ZZSY"
+            }
+          ],
+          "concernedAirspace": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000007",
+              "key": "a1a40000-00d0-4000-8000-000000000007",
+              "nil_reason": null,
+              "property": "concernedAirspace",
+              "resolved": true,
+              "target": {
+                "element": "aixm:Airspace",
+                "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+                "identifier": "a1a40000-00d0-4000-8000-000000000007",
+                "member_index": 1,
+                "where": "document"
+              },
+              "title": "ZZSY FIR"
+            }
+          ]
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "event:EventTimeSlice",
+          "feature_lifetime": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_4_BL_1_0_LT",
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "EVT_4_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_4_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-14T08:00:00.000Z",
+          "effective_to": "2026-03-14T12:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "BASELINE",
+          "kind": "initial",
+          "lifetime_end": "2026-03-14T12:00:00.000Z",
+          "notam_types": [
+            "N"
+          ],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": null,
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": null,
+        "extension_gml_id": null,
+        "notifications": [
+          {
+            "element": "event:NOTAM",
+            "gml_id": "EVT_4_BL_1_0_N",
+            "nil": false,
+            "properties": {
+              "affectedFIR": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "coordinates": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "effectiveEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603141200"
+              },
+              "effectiveStart": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603140800"
+              },
+              "estimatedEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "issued": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026-03-13T12:00:00Z"
+              },
+              "location": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "maximumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "minimumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "number": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "104"
+              },
+              "permanent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "processed": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "purpose": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "radius": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredNumber": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredSeries": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredYear": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "scope": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "selectionCode": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "series": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "S"
+              },
+              "text": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "SYN VOR U/S. DME OPERATIONAL."
+              },
+              "traffic": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "N"
+              },
+              "year": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026"
+              }
+            },
+            "source": {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_4_BL_1_0_N",
+              "event:affectedFIR": "ZZSY",
+              "event:effectiveEnd": "2603141200",
+              "event:effectiveStart": "2603140800",
+              "event:estimatedEnd": "NO",
+              "event:issued": "2026-03-13T12:00:00Z",
+              "event:location": "ZZSY",
+              "event:number": "104",
+              "event:permanent": "NO",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:series": "S",
+              "event:text": {
+                "#text": "SYN VOR U/S. DME OPERATIONAL.",
+                "@lang": "ENG"
+              },
+              "event:type": "N",
+              "event:year": "2026"
+            }
+          }
+        ],
+        "profile": {
+          "affected_features": [
+            "aixm:Navaid",
+            "aixm:Azimuth",
+            "aixm:DME",
+            "aixm:DirectionFinder",
+            "aixm:Elevation",
+            "aixm:Glidepath",
+            "aixm:Localizer",
+            "aixm:MarkerBeacon",
+            "aixm:NDB",
+            "aixm:SDF",
+            "aixm:TACAN",
+            "aixm:VOR"
+          ],
+          "family": "navaid outage/unavailability",
+          "forbidden_status": [
+            "FALSE_POSSIBLE",
+            "CONDITIONAL",
+            "DISPLACED"
+          ],
+          "guidance_page": "220791463",
+          "guidance_page_version": "v35, 2026-03-20",
+          "id": "NAV.UNS",
+          "permitted_status": null,
+          "required_status": null,
+          "rules": [
+            "NAV.UNS.01",
+            "NAV.UNS.02",
+            "NAV.UNS.03",
+            "NAV.UNS.04",
+            "NAV.UNS.05",
+            "NAV.UNS.06",
+            "NAV.UNS.07",
+            "NAV.UNS.08",
+            "NAV.UNS.10",
+            "NAV.UNS.11"
+          ],
+          "specification": "Digital NOTAM Specification 2.0 (DRAFT \u2014 'in preparation', validated by implementation; EUROCONTROL/FAA, swim-eurocontrol.atlassian.net/wiki/spaces/DNOTAM)",
+          "status": "DRAFT",
+          "status_element": "aixm:NavaidOperationalStatus",
+          "status_property": "operationalStatus",
+          "version": "2.0"
+        },
+        "profile_finding": null,
+        "role": "event",
+        "rule_findings": [],
+        "scenario": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "NAV.UNS"
+        },
+        "scenario_version": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "2.0"
+        },
+        "the_event": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "59d2f6ca-b83c-5280-b417-04aa69e44145",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "event:Event",
+            "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000004",
+            "gml:identifier": {
+              "#text": "a1a40000-00e0-4000-8000-000000000004",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "EVT_4_BL_1_0",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000004",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000004/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-14T08:00:00.000Z",
+    "valid_to": "2026-03-14T12:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:NavaidOperationalStatus",
+            "gml_id": "NAV_SYN_BL_1_0_OPS1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "OPERATIONAL"
+              },
+              "signalType": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "NAV_SYN_BL_1_0_OPS1",
+              "aixm:operationalStatus": "OPERATIONAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Navaid",
+          "family": "Navaid",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000005",
+          "identifier": "a1a40000-00d0-4000-8000-000000000005",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [
+          {
+            "equipment": {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000006",
+              "key": "a1a40000-00d0-4000-8000-000000000006",
+              "nil_reason": null,
+              "property": "navaidEquipment[0].theNavaidEquipment",
+              "resolved": true,
+              "target": {
+                "element": "aixm:VOR",
+                "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000006",
+                "identifier": "a1a40000-00d0-4000-8000-000000000006",
+                "member_index": 4,
+                "where": "document"
+              },
+              "title": "SYN VOR"
+            },
+            "gml_id": "NAV_SYN_NC_1",
+            "nil": false,
+            "properties": {
+              "collocationGroup": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "1"
+              },
+              "markerPosition": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "providesNavigableLocation": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidComponent",
+              "@gml:id": "NAV_SYN_NC_1",
+              "aixm:collocationGroup": "1",
+              "aixm:theNavaidEquipment": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000006",
+                "@xlink:title": "SYN VOR"
+              }
+            }
+          }
+        ],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYN"
+          },
+          "flightChecked": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC VOR DME"
+          },
+          "purpose": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "signalPerformance": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "VOR_DME"
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:NavaidTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "NAV_SYN_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "NAV_SYN_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "e3fa56a3-aa73-51f0-b429-14c0c857d6fe",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:Navaid",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000005",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000005",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "NAV_SYN_BL_1_0",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000005",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000005/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusNavaidType",
+      "since": null,
+      "state": "OPERATIONAL"
+    },
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:NavaidOperationalStatus",
+            "gml_id": "NAV_SYN_TD_1_0_OPS1",
+            "nil": false,
+            "properties": {
+              "operationalStatus": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "PARTIAL"
+              },
+              "signalType": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            },
+            "source": {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "NAV_SYN_TD_1_0_OPS1",
+              "aixm:operationalStatus": "PARTIAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Navaid",
+          "family": "Navaid",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000005",
+          "identifier": "a1a40000-00d0-4000-8000-000000000005",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "flightChecked": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "purpose": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "signalPerformance": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "DME"
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:NavaidTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "NAV_SYN_TD_1_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "NAV_SYN_TD_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-14T08:00:00.000Z",
+          "effective_to": "2026-03-14T12:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "TEMPDELTA",
+          "kind": "initial",
+          "lifetime_end": null,
+          "notam_types": [],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": "NAV.UNS",
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": "event:NavaidExtension",
+        "extension_gml_id": "NAV_SYN_TD_1_0_EXT",
+        "notifications": [],
+        "profile": null,
+        "profile_finding": null,
+        "role": "affected-feature",
+        "rule_findings": [],
+        "scenario": null,
+        "scenario_version": null,
+        "the_event": {
+          "form": "urn-uuid",
+          "href": "urn:uuid:a1a40000-00e0-4000-8000-000000000004",
+          "key": "a1a40000-00e0-4000-8000-000000000004",
+          "nil_reason": null,
+          "property": "extension[0].theEvent",
+          "resolved": true,
+          "target": {
+            "element": "event:Event",
+            "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000004",
+            "identifier": "a1a40000-00e0-4000-8000-000000000004",
+            "member_index": 2,
+            "where": "document"
+          },
+          "title": "SYN VOR/DME DNOTAM NAV.UNS"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "e3fa56a3-aa73-51f0-b429-14c0c857d6fe",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:Navaid",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000005",
+            "aixm:timeSlice": [
+              null,
+              {
+                "aixm:extension": [
+                  {
+                    "$": "event:NavaidExtension",
+                    "@gml:id": "NAV_SYN_TD_1_0_EXT",
+                    "event:theEvent": {
+                      "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000004",
+                      "@xlink:title": "SYN VOR/DME DNOTAM NAV.UNS"
+                    }
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000005",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "NAV_SYN_TD_1_0",
+      "record_index": 4,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000005",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000005/TEMPDELTA/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusNavaidType",
+      "since": null,
+      "state": "PARTIAL"
+    },
+    "symbol": null,
+    "valid_from": "2026-03-14T08:00:00.000Z",
+    "valid_to": "2026-03-14T12:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:NavaidOperationalStatus",
+            "gml_id": "VOR_SYN_BL_1_0_OPS1",
+            "nil": false,
+            "properties": {},
+            "source": {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "VOR_SYN_BL_1_0_OPS1",
+              "aixm:operationalStatus": "OPERATIONAL"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:VOR",
+          "family": "other",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000006",
+          "identifier": "a1a40000-00d0-4000-8000-000000000006",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [
+          "member 4 <aixm:VOR> a1a40000-00d0-4000-8000-000000000006 slice 0: <aixm:VOR> is outside the families that type aixm:availability; carried at attributes.aixm.availability with its source verbatim, each item's element, gml:id and timesheets read, nothing else of it typed and nothing projected to the Entity"
+        ],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYN"
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC VOR"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "VOR"
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:VORTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "VOR_SYN_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "VOR_SYN_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "c2e3da08-c5a9-5fb0-9f84-5765c610dbd9",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:VOR",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000006",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000006",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "VOR_SYN_BL_1_0",
+      "record_index": 5,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": [
+        "member 4 <aixm:VOR> a1a40000-00d0-4000-8000-000000000006 slice 0: <aixm:VOR> is outside the families that type aixm:availability; carried at attributes.aixm.availability with its source verbatim, each item's element, gml:id and timesheets read, nothing else of it typed and nothing projected to the Entity"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000006",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000006/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [
+          {
+            "element": "aixm:NavaidOperationalStatus",
+            "gml_id": "VOR_SYN_TD_1_0_OPS1",
+            "nil": false,
+            "properties": {},
+            "source": {
+              "$": "aixm:NavaidOperationalStatus",
+              "@gml:id": "VOR_SYN_TD_1_0_OPS1",
+              "aixm:operationalStatus": "UNSERVICEABLE"
+            },
+            "time_interval": []
+          }
+        ],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:VOR",
+          "family": "other",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000006",
+          "identifier": "a1a40000-00d0-4000-8000-000000000006",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [
+          "member 4 <aixm:VOR> a1a40000-00d0-4000-8000-000000000006 slice 1: <aixm:VOR> is outside the families that type aixm:availability; carried at attributes.aixm.availability with its source verbatim, each item's element, gml:id and timesheets read, nothing else of it typed and nothing projected to the Entity"
+        ],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {},
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:VORTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "VOR_SYN_TD_1_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T08:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T08:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-14T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-14T12:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "VOR_SYN_TD_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-14T08:00:00.000Z",
+          "effective_to": "2026-03-14T12:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "TEMPDELTA",
+          "kind": "initial",
+          "lifetime_end": null,
+          "notam_types": [],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": "NAV.UNS",
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": "event:VORExtension",
+        "extension_gml_id": "VOR_SYN_TD_1_0_EXT",
+        "notifications": [],
+        "profile": null,
+        "profile_finding": null,
+        "role": "affected-feature",
+        "rule_findings": [],
+        "scenario": null,
+        "scenario_version": null,
+        "the_event": {
+          "form": "urn-uuid",
+          "href": "urn:uuid:a1a40000-00e0-4000-8000-000000000004",
+          "key": "a1a40000-00e0-4000-8000-000000000004",
+          "nil_reason": null,
+          "property": "extension[0].theEvent",
+          "resolved": true,
+          "target": {
+            "element": "event:Event",
+            "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000004",
+            "identifier": "a1a40000-00e0-4000-8000-000000000004",
+            "member_index": 2,
+            "where": "document"
+          },
+          "title": "SYN VOR/DME DNOTAM NAV.UNS"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "c2e3da08-c5a9-5fb0-9f84-5765c610dbd9",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_NAV_UNS",
+        "message:hasMember": [
+          null,
+          null,
+          null,
+          null,
+          {
+            "$": "aixm:VOR",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000006",
+            "aixm:timeSlice": [
+              null,
+              {
+                "aixm:extension": [
+                  {
+                    "$": "event:VORExtension",
+                    "@gml:id": "VOR_SYN_TD_1_0_EXT",
+                    "event:theEvent": {
+                      "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000004",
+                      "@xlink:title": "SYN VOR/DME DNOTAM NAV.UNS"
+                    }
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000006",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "VOR_SYN_TD_1_0",
+      "record_index": 6,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": [
+        "member 4 <aixm:VOR> a1a40000-00d0-4000-8000-000000000006 slice 1: <aixm:VOR> is outside the families that type aixm:availability; carried at attributes.aixm.availability with its source verbatim, each item's element, gml:id and timesheets read, nothing else of it typed and nothing projected to the Entity"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000006",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000006/TEMPDELTA/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-14T08:00:00.000Z",
+    "valid_to": "2026-03-14T12:00:00.000Z"
+  }
+]

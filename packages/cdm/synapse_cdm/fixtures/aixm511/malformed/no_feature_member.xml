@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A document whose only member is an aixm:Unit with no time slice at all - not an AIXM feature; nothing here is typed by this adapter and an empty translation would drop it, so it is refused. Authored by hand on 2026-09-21 for the SynapseCommand aixm511 adapter; fictitious positions and identifiers. -->
+<message:AIXMBasicMessage xmlns:message="http://www.aixm.aero/schema/5.1.1/message"
+    xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    gml:id="M_UNIT">
+  <message:hasMember>
+    <aixm:Unit gml:id="uuid.a1a40000-00c0-4000-8000-000000000059">
+      <gml:identifier codeSpace="urn:uuid:">a1a40000-00c0-4000-8000-000000000059</gml:identifier>
+    </aixm:Unit>
+  </message:hasMember>
+</message:AIXMBasicMessage>

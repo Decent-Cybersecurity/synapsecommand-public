@@ -31,6 +31,40 @@ narrowed, which is why this is a MAJOR on both of the first two axes — read th
 is on both numbers.** If you are upgrading from 2.1.2 or earlier, read the 2.2.0 notes first: they
 are the body of the `v2.2.0` Release, and everything they describe is still here.
 
+## In the tree since 3.0.1, in no release: the adapter expansion (2026-09-20/21)
+
+**Nothing in this section is in `3.0.1` or in any release.** `PACKAGE_VERSION` still reads `3.0.1`;
+the next number is the release round's to type, and `python gates/bump_derivation.py` reads the
+pending arc as at least `3.1.0` (MINOR: five new fixture sets, five `Adapter` subclasses, the
+`validate` optional extra, and the ruled units `MIGRATIONS.md`'s `### Unreleased` section names).
+The roster table below is the LIVE registry — `tests/test_cdm_release.py` holds it to `roster()`
+in both directions — so the five rows marked **post-3.0.1** are in the tree and in no artefact
+a consumer can install today.
+
+**Implemented capability, measured in this tree** — five, each with pinned synthetic
+fixtures, a parsed twin per document, a field-level preservation ledger (`MAPPINGS`), adversarial
+tests that detect a wrong mapping, a structured residual, declared and enforced parser bounds, and
+a harness and conformance reading of CONFORMANT:
+
+| Adapter | Specification / profile | Direction | What ships |
+|---|---|---|---|
+| `geojson` | RFC 7946 (Feature, FeatureCollection, the seven geometry types; WGS 84 / CRS84 only, no `crs`) | bidirectional | `geo-object/1` contract, `exchange` and `mirror` export profiles, `no-source-time` declared |
+| `geopackage` | OGC GeoPackage 1.4.0 (OGC 12-128r19), feature tables under EPSG:4326 / CRS84 / 4979 | ingest | in-memory read-only authorized snapshot; GDAL 3.13.3 wrote every fixture and is the independent reading |
+| `c2sim` | SISO-STD-019-2020 v1.0 + SISO-STD-020-2020 (LOX), C2SIMArtifacts v1.0.1 | bidirectional | initialisation, `MoveToLocation` / `HoldInPlace` orders, position / observation / status reports; `c2sim-order/1` payload contract |
+| `aixm511` | AIXM 5.1.1 (April 2016) + Digital NOTAM Event Schema 2.0.m, four pinned scenario profiles | ingest | one `Entity` per time slice, `aixm-timeslice/1` and `aixm-dnotam/1` blocks, `synapse_cdm.aixm_resolve` for effective state from explicit prior state |
+| `aixm52` | AIXM 5.2 (schema release 5.2.0, 17 January 2025) | ingest | a second profile on `aixm511`'s reader; Digital NOTAM declared NOT available on 5.2 |
+
+**External interoperability validation is a separate conclusion, and it is NOT claimed.** Normative
+schema validation of every positive fixture against the pinned XSD closures (C2SIM, AIXM 5.1.1,
+AIXM 5.2, Digital NOTAM) is a test that runs only where the schemas are held OUTSIDE this
+repository and the `validate` extra is installed, and records `BLOCKED_EXTERNAL_EVIDENCE` otherwise;
+the `normative_schema` evidence category reads from that. `independent_expected` rests on GDAL's
+own reading of the GeoPackage fixtures and on the pinned independent samples; `independent_endpoint`
+is ABSENT for every one of the five — no partner system, reference server or exercise has been
+exchanged with, and `examples/c2sim/exercise_client.py` is the opt-in procedure, not a result.
+`evidence.available` is `false` on all five until a Release attaches their records. The
+implementation record is `docs/adapter-expansion-implementation.md`.
+
 ## Why the number is 3.0.1
 
 **The number is the derived floor twice over: a PATCH from `v3.0.0` for the corrective — an arc of
@@ -175,13 +209,15 @@ with `standard-encoding` or `normative-verified` — the road to which is the re
   suite's output to a file and prints the failing tests before it stops. Nothing about the ref was
   involved, which is why the rehearsal gate passed `v3.0.0` and was right to.
 
-## Fourteen adapters, all harness-verified
+## Fourteen adapters at 3.0.1, all harness-verified — and five more in the tree since
 
 `python -m synapse_cdm.harness --adapter <name> --update-golden`, run over the roster with no
 `--fixtures` at this commit, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. **The roster did not move this arc**: `discover()` and `roster()` each return
-fourteen, the same fourteen names in the same two directions as 2.2.0.
+directions to agree. **The roster did not move in the 3.0.1 arc**: at `v3.0.1` `discover()` and
+`roster()` each return fourteen, the same fourteen names in the same two directions as 2.2.0. The
+five rows marked **post-3.0.1** landed in the tree on 2026-09-20/21 (the section at the top) and
+are in no release; their verdict counts are this tree's harness reading, not 3.0.1's.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -199,9 +235,14 @@ fourteen, the same fourteen names in the same two directions as 2.2.0.
 | `stanag4609` | bidirectional | 126 | L3 | VERIFIED |
 | `stanag4676` | bidirectional | 34 | L3 | PROVISIONAL |
 | `tak` | bidirectional | 12 | L3 | VERIFIED |
+| `geojson` | bidirectional | 4 | L4 | VERIFIED (**post-3.0.1**, in no release) |
+| `geopackage` | ingest | 8 | L3 | VERIFIED (**post-3.0.1**, in no release) |
+| `c2sim` | bidirectional | 10 | L4 | VERIFIED (**post-3.0.1**, in no release) |
+| `aixm511` | ingest | 10 | L3 | VERIFIED (**post-3.0.1**, in no release) |
+| `aixm52` | ingest | 10 | L3 | VERIFIED (**post-3.0.1**, in no release) |
 
-**538 fixture verdicts, 0 failed** across the fourteen adapters, against the published 3.0.0
-schemas — the same 538 as 2.2.0. The `roundtrip` column reads PASS for the eleven emitters and a
+**538 fixture verdicts, 0 failed** across the fourteen adapters 3.0.1 shipped, against the
+published 3.0.0 schemas — the same 538 as 2.2.0; the five post-3.0.1 rows add 42 in this tree (`python -m synapse_cdm.harness --adapter <name>`, 2026-09-21). The `roundtrip` column reads PASS for the eleven emitters and a
 declared SKIP for the three that emit nothing; the `lossless` column reads PASS on every one, on
 the ledger for `pntmap` and on the heuristic, said so, for the other thirteen.
 

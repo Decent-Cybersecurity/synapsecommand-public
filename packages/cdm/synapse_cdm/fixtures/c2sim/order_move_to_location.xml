@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. An OrderBody with one MoveToLocation task (SISO-STD-019-2020 Core individual
+     MoveToLocation: "The destination of this Movement task is defined as follows: -Location
+     property of the Task ... - MapGraphicID of the Task"). The task names a destination Location,
+     a Route map graphic referenced by MapGraphicID (carried in the same
+     order in cases/order_with_route.xml; here the reference points outside the message), a start instant, an end instant
+     stated as SimulationTime, a duration, an affected entity and a temporal relationship to a
+     task outside this order. UUIDs are under the c2510000- prefix; every name is EXERCISE-. -->
+<Message xmlns="http://www.sisostds.org/schemas/C2SIM/1.1">
+  <C2SIMHeader>
+    <CommunicativeActTypeCode>Propose</CommunicativeActTypeCode>
+    <ConversationID>c2510000-0000-8000-8000-00000000c002</ConversationID>
+    <FromSendingSystem>EXERCISE-C2</FromSendingSystem>
+    <MessageID>c2510000-0000-8000-8000-00000000a002</MessageID>
+    <Protocol>SISO-STD-C2SIM</Protocol>
+    <ProtocolVersion>1.0.0</ProtocolVersion>
+    <SendingTime>
+      <IsoDateTime>2026-09-21T06:05:00Z</IsoDateTime>
+    </SendingTime>
+    <ToReceivingSystem>EXERCISE-SIM-BLUE</ToReceivingSystem>
+  </C2SIMHeader>
+  <MessageBody>
+    <DomainMessageBody>
+      <OrderBody>
+        <FromSender>c2510000-0002-8000-8000-000000000001</FromSender>
+        <ToReceiver>c2510000-0002-8000-8000-000000000002</ToReceiver>
+        <IssuedTime>
+          <IsoDateTime>2026-09-21T06:05:00Z</IsoDateTime>
+        </IssuedTime>
+        <OrderID>c2510000-0007-8000-8000-000000000001</OrderID>
+        <RequestingEntity>c2510000-0002-8000-8000-000000000001</RequestingEntity>
+        <Task>
+          <ManeuverWarfareTask>
+            <ActionTemporalRelationship>
+              <ActionTemporalAssociationCode>STREND</ActionTemporalAssociationCode>
+              <Duration>
+                <IsoTimeDuration>P00Y00M00DT00H10M00S</IsoTimeDuration>
+              </Duration>
+              <TemporalAssociationWithAction>c2510000-0004-8000-8000-000000000001</TemporalAssociationWithAction>
+            </ActionTemporalRelationship>
+            <Location>
+              <GeodeticCoordinate>
+                <Latitude>58.5600</Latitude>
+                <Longitude>24.8000</Longitude>
+              </GeodeticCoordinate>
+            </Location>
+            <MapGraphicID>c2510000-0006-8000-8000-000000000002</MapGraphicID>
+            <Name>EXERCISE-TASK-MOVE-1</Name>
+            <UUID>c2510000-0004-8000-8000-000000000002</UUID>
+            <AffectedEntity>c2510000-0002-8000-8000-000000000003</AffectedEntity>
+            <DesiredEffectCode>TaskSuccess</DesiredEffectCode>
+            <Duration>
+              <IsoTimeDuration>P00Y00M00DT01H30M00S</IsoTimeDuration>
+            </Duration>
+            <EndTime>
+              <SimulationTime>
+                <DelayTimeAmount>
+                  <IsoTimeDuration>P00Y00M00DT02H00M00S</IsoTimeDuration>
+                </DelayTimeAmount>
+              </SimulationTime>
+            </EndTime>
+            <PerformingEntity>c2510000-0002-8000-8000-000000000002</PerformingEntity>
+            <StartTime>
+              <DateTime>
+                <IsoDateTime>2026-09-21T06:30:00Z</IsoDateTime>
+              </DateTime>
+            </StartTime>
+            <TaskActionCode>MoveToLocation</TaskActionCode>
+          </ManeuverWarfareTask>
+        </Task>
+      </OrderBody>
+    </DomainMessageBody>
+  </MessageBody>
+</Message>

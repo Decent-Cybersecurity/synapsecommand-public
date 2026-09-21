@@ -1,0 +1,1432 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+          "identifier": "a1a40000-00d0-4000-8000-000000000007",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "ZZSY"
+          },
+          "designatorICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC FIR"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "FIR"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "ASE_FIR_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "ASE_FIR_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "e18b7fb4-6dc6-511e-b362-48b1930ed741",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_SAA_ACT",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000007",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null,
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "ASE_FIR_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000007",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000007/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "event:Event",
+          "family": "Event",
+          "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000003",
+          "identifier": "a1a40000-00e0-4000-8000-000000000003",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "activity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "DNOTAM"
+          },
+          "estimatedValidity": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTSA"
+          },
+          "scenario": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SAA.ACT"
+          },
+          "version": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "2.0"
+          }
+        },
+        "references": {
+          "concernedAirspace": [
+            {
+              "form": "urn-uuid",
+              "href": "urn:uuid:a1a40000-00d0-4000-8000-000000000007",
+              "key": "a1a40000-00d0-4000-8000-000000000007",
+              "nil_reason": null,
+              "property": "concernedAirspace",
+              "resolved": true,
+              "target": {
+                "element": "aixm:Airspace",
+                "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000007",
+                "identifier": "a1a40000-00d0-4000-8000-000000000007",
+                "member_index": 0,
+                "where": "document"
+              },
+              "title": "ZZSY FIR"
+            }
+          ]
+        },
+        "time_slice": {
+          "correction_number": 0,
+          "element": "event:EventTimeSlice",
+          "feature_lifetime": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-16T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-16T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-20T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-20T00:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_3_BL_1_0_LT",
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "EVT_3_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-16T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-16T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-20T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-20T00:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "EVT_3_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": null
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-16T00:00:00.000Z",
+          "effective_to": "2026-03-20T00:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "BASELINE",
+          "kind": "initial",
+          "lifetime_end": "2026-03-20T00:00:00.000Z",
+          "notam_types": [
+            "N"
+          ],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": null,
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": null,
+        "extension_gml_id": null,
+        "notifications": [
+          {
+            "element": "event:NOTAM",
+            "gml_id": "EVT_3_BL_1_0_N",
+            "nil": false,
+            "properties": {
+              "affectedFIR": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "coordinates": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "effectiveEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603191600"
+              },
+              "effectiveStart": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2603160800"
+              },
+              "estimatedEnd": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "issued": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026-03-15T12:00:00Z"
+              },
+              "location": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ZZSY"
+              },
+              "maximumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "minimumFL": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "number": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "103"
+              },
+              "permanent": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "NO"
+              },
+              "processed": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "purpose": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "radius": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredNumber": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredSeries": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "referredYear": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "scope": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "selectionCode": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "series": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "S"
+              },
+              "text": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "SYNTHETIC TSA ACTIVE DAILY 0800-1600."
+              },
+              "traffic": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "type": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "N"
+              },
+              "year": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "2026"
+              }
+            },
+            "source": {
+              "$": "event:NOTAM",
+              "@gml:id": "EVT_3_BL_1_0_N",
+              "event:affectedFIR": "ZZSY",
+              "event:effectiveEnd": "2603191600",
+              "event:effectiveStart": "2603160800",
+              "event:estimatedEnd": "NO",
+              "event:issued": "2026-03-15T12:00:00Z",
+              "event:location": "ZZSY",
+              "event:number": "103",
+              "event:permanent": "NO",
+              "event:publisher": {
+                "@xlink:href": "urn:uuid:a1a40000-00d0-4000-8000-000000000008",
+                "@xlink:title": "SYNTHETIC NOTAM OFFICE"
+              },
+              "event:series": "S",
+              "event:text": {
+                "#text": "SYNTHETIC TSA ACTIVE DAILY 0800-1600.",
+                "@lang": "ENG"
+              },
+              "event:type": "N",
+              "event:year": "2026"
+            }
+          }
+        ],
+        "profile": {
+          "affected_features": [
+            "aixm:Airspace"
+          ],
+          "family": "airspace activation/reservation or availability change (published special activity area)",
+          "forbidden_status": [],
+          "guidance_page": "220791162",
+          "guidance_page_version": "v57, 2023-09-19",
+          "id": "SAA.ACT",
+          "permitted_status": null,
+          "required_status": [
+            "ACTIVE",
+            "IN_USE",
+            "INTERMITTENT"
+          ],
+          "rules": [
+            "ER-01",
+            "ER-02",
+            "ER-03",
+            "ER-04",
+            "ER-05",
+            "ER-06",
+            "ER-07",
+            "ER-08",
+            "ER-09"
+          ],
+          "specification": "Digital NOTAM Specification 2.0 (DRAFT \u2014 'in preparation', validated by implementation; EUROCONTROL/FAA, swim-eurocontrol.atlassian.net/wiki/spaces/DNOTAM)",
+          "status": "DRAFT",
+          "status_element": "aixm:AirspaceActivation",
+          "status_property": "status",
+          "version": "2.0"
+        },
+        "profile_finding": null,
+        "role": "event",
+        "rule_findings": [],
+        "scenario": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "SAA.ACT"
+        },
+        "scenario_version": {
+          "meaning": "stated",
+          "nil_reason": null,
+          "state": "stated",
+          "uom": null,
+          "value": "2.0"
+        },
+        "the_event": null
+      }
+    },
+    "confidence": null,
+    "entity_id": "fb38f0a1-42fe-5c89-b577-2973cb485b3e",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_SAA_ACT",
+        "message:hasMember": [
+          null,
+          {
+            "$": "event:Event",
+            "@gml:id": "uuid.a1a40000-00e0-4000-8000-000000000003",
+            "gml:identifier": {
+              "#text": "a1a40000-00e0-4000-8000-000000000003",
+              "@codeSpace": "urn:uuid:"
+            }
+          },
+          null
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "EVT_3_BL_1_0",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000003",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00e0-4000-8000-000000000003/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-16T00:00:00.000Z",
+    "valid_to": "2026-03-20T00:00:00.000Z"
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "ASE_TSA_BL_1_0_ACT1",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "INACTIVE"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "ASE_TSA_BL_1_0_ACT1",
+              "aixm:status": "INACTIVE"
+            },
+            "time_interval": []
+          }
+        ],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000004",
+          "identifier": "a1a40000-00d0-4000-8000-000000000004",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTSA"
+          },
+          "designatorICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC TSA"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "TSA"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "ASE_TSA_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "ASE_TSA_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "69959005-d5c5-52b7-9f11-14a08b193f0a",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_SAA_ACT",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000004",
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000004",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "ASE_TSA_BL_1_0",
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000004",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000004/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AIXM 5.1.1 CodeStatusAirspaceType",
+      "since": null,
+      "state": "INACTIVE"
+    },
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "ASE_TSA_TD_1_0_ACT1",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "ACTIVE"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "ASE_TSA_TD_1_0_ACT1",
+              "aixm:levels": [
+                {
+                  "$": "aixm:AirspaceLayer",
+                  "@gml:id": "ASE_TSA_TD_1_0_ACT1_L",
+                  "aixm:lowerLimit": "FLOOR",
+                  "aixm:upperLimit": "CEILING"
+                }
+              ],
+              "aixm:status": "ACTIVE",
+              "aixm:timeInterval": [
+                {
+                  "$": "aixm:Timesheet",
+                  "@gml:id": "ASE_TSA_TD_1_0_ACT1_TS",
+                  "aixm:day": "ANY",
+                  "aixm:dayTil": "ANY",
+                  "aixm:endTime": "16:00",
+                  "aixm:startTime": "08:00",
+                  "aixm:timeReference": "UTC"
+                }
+              ]
+            },
+            "time_interval": [
+              {
+                "gml_id": "ASE_TSA_TD_1_0_ACT1_TS",
+                "properties": {
+                  "day": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "ANY"
+                  },
+                  "dayTil": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "ANY"
+                  },
+                  "daylightSavingAdjust": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endDate": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEventInterpretation": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "16:00"
+                  },
+                  "endTimeRelativeEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "excluded": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startDate": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEventInterpretation": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "08:00"
+                  },
+                  "startTimeRelativeEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "timeReference": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "UTC"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "element": "aixm:AirspaceActivation",
+            "gml_id": "ASE_TSA_TD_1_0_ACT2",
+            "nil": false,
+            "properties": {
+              "activity": {
+                "meaning": "unchanged",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "status": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "INACTIVE"
+              }
+            },
+            "source": {
+              "$": "aixm:AirspaceActivation",
+              "@gml:id": "ASE_TSA_TD_1_0_ACT2",
+              "aixm:annotation": [
+                {
+                  "$": "aixm:Note",
+                  "@gml:id": "ASE_TSA_TD_1_0_ACT2_N",
+                  "aixm:propertyName": "status",
+                  "aixm:purpose": "REMARK",
+                  "aixm:translatedNote": [
+                    {
+                      "$": "aixm:LinguisticNote",
+                      "@gml:id": "ASE_TSA_TD_1_0_ACT2_LN",
+                      "aixm:note": {
+                        "#text": "Baseline data copy. Not included in the NOTAM text generation",
+                        "@lang": "ENG"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "aixm:status": "INACTIVE",
+              "aixm:timeInterval": [
+                {
+                  "$": "aixm:Timesheet",
+                  "@gml:id": "ASE_TSA_TD_1_0_ACT2_TS",
+                  "aixm:day": "ANY",
+                  "aixm:dayTil": "ANY",
+                  "aixm:endTime": "08:00",
+                  "aixm:startTime": "16:00",
+                  "aixm:timeReference": "UTC"
+                }
+              ]
+            },
+            "time_interval": [
+              {
+                "gml_id": "ASE_TSA_TD_1_0_ACT2_TS",
+                "properties": {
+                  "day": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "ANY"
+                  },
+                  "dayTil": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "ANY"
+                  },
+                  "daylightSavingAdjust": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endDate": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endEventInterpretation": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "endTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "08:00"
+                  },
+                  "endTimeRelativeEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "excluded": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startDate": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startEventInterpretation": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "startTime": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "16:00"
+                  },
+                  "startTimeRelativeEvent": {
+                    "meaning": "unchanged",
+                    "nil_reason": null,
+                    "state": "absent",
+                    "uom": null,
+                    "value": null
+                  },
+                  "timeReference": {
+                    "meaning": "stated",
+                    "nil_reason": null,
+                    "state": "stated",
+                    "uom": null,
+                    "value": "UTC"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-00d0-4000-8000-000000000004",
+          "identifier": "a1a40000-00d0-4000-8000-000000000004",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designatorICAO": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "type": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "upperLowerSeparation": {
+            "meaning": "unchanged",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "ASE_TSA_TD_1_0",
+          "interpretation": "TEMPDELTA",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-16T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-16T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-03-20T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-03-20T00:00:00Z",
+              "utc": true
+            },
+            "form": "period",
+            "gml_id": "ASE_TSA_TD_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      },
+      "dnotam": {
+        "assertion": {
+          "basis": "sequence 1, correction 0: the first slice of its sequence",
+          "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+          "correction_number": 0,
+          "effective_from": "2026-03-16T00:00:00.000Z",
+          "effective_to": "2026-03-20T00:00:00.000Z",
+          "end_open": false,
+          "estimated_end": false,
+          "interpretation": "TEMPDELTA",
+          "kind": "initial",
+          "lifetime_end": null,
+          "notam_types": [],
+          "sequence_number": 1,
+          "valid_time_form": "period"
+        },
+        "contract": "aixm-dnotam/1",
+        "event_scenario": "SAA.ACT",
+        "event_schema": "AIXM 5.1.1 Event Schema 2.0.m (June 2025; namespace http://www.aixm.aero/schema/5.1.1/event; permitted base: AIXM 5.1.1 April 2016)",
+        "extension_element": "event:AirspaceExtension",
+        "extension_gml_id": "ASE_TSA_TD_1_0_EXT",
+        "notifications": [],
+        "profile": null,
+        "profile_finding": null,
+        "role": "affected-feature",
+        "rule_findings": [],
+        "scenario": null,
+        "scenario_version": null,
+        "the_event": {
+          "form": "urn-uuid",
+          "href": "urn:uuid:a1a40000-00e0-4000-8000-000000000003",
+          "key": "a1a40000-00e0-4000-8000-000000000003",
+          "nil_reason": null,
+          "property": "extension[0].theEvent",
+          "resolved": true,
+          "target": {
+            "element": "event:Event",
+            "gml_id": "uuid.a1a40000-00e0-4000-8000-000000000003",
+            "identifier": "a1a40000-00e0-4000-8000-000000000003",
+            "member_index": 1,
+            "where": "document"
+          },
+          "title": "SYNTSA DNOTAM SAA.ACT"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "69959005-d5c5-52b7-9f11-14a08b193f0a",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DN_SAA_ACT",
+        "message:hasMember": [
+          null,
+          null,
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-00d0-4000-8000-000000000004",
+            "aixm:timeSlice": [
+              null,
+              {
+                "aixm:extension": [
+                  {
+                    "$": "event:AirspaceExtension",
+                    "@gml:id": "ASE_TSA_TD_1_0_EXT",
+                    "event:theEvent": {
+                      "@xlink:href": "urn:uuid:a1a40000-00e0-4000-8000-000000000003",
+                      "@xlink:title": "SYNTSA DNOTAM SAA.ACT"
+                    }
+                  }
+                ]
+              }
+            ],
+            "gml:identifier": {
+              "#text": "a1a40000-00d0-4000-8000-000000000004",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "ASE_TSA_TD_1_0",
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000004",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-00d0-4000-8000-000000000004/TEMPDELTA/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-03-16T00:00:00.000Z",
+    "valid_to": "2026-03-20T00:00:00.000Z"
+  }
+]

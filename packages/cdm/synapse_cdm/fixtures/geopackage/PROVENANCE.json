@@ -1,0 +1,70 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "geopackage",
+  "fixtures": [
+    {
+      "file": "elevations_epsg4979_and_crs84.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "elevations_epsg4979_and_crs84.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "exercise_facilities_routes_areas.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "mixed_content_partial_read.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "mixed_content_partial_read.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "six_families_geometry_column.gpkg",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    },
+    {
+      "file": "six_families_geometry_column.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic GeoPackage containers written by GDAL 3.13.3 (ogr2ogr, gdal_translate) on 2026-09-20 from the literal GeoJSON/CSV sources in `spec/build_fixtures.py` (adapter-expansion phase 2), and the parsed twin of each written by `synapse_cdm.adapters.geopackage.parse_payload`. Every name is prefixed EXERCISE, no coordinate describes a real feature, the one raster table is a 2x2 constant image, and no file derives from any recorded dataset; hashes, the exact GDAL commands and GDAL's own reading of every layer are in `spec/geopackage_pin.json` and `independent/`, and the assertion is a tracked test's: `tests/test_cdm_geopackage_adapter.py::test_every_fixture_is_synthetic_by_default`."
+    }
+  ]
+}

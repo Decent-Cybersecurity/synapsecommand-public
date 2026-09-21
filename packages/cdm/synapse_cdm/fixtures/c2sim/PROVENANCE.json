@@ -1,0 +1,86 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "c2sim",
+  "fixtures": [
+    {
+      "file": "initialisation_three_sides.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "initialisation_three_sides.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "order_hold_in_place.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "order_hold_in_place.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "order_move_to_location.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "order_move_to_location.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "report_position_two_subjects.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "report_position_two_subjects.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "report_status_observations.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    },
+    {
+      "file": "report_status_observations.xml",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic C2SIM messages hand-written for this repository on 2026-09-21 (adapter-expansion phase 3) against the pinned C2SIMArtifacts v1.0.1 composite schema (SISO-STD-019-2020 v1.0 Core + SMX, SISO-STD-020-2020 LOX); every name is prefixed EXERCISE, every UUID sits under the c2510000- prefix and no coordinate describes a real unit. Each `.xml` validates against the pinned XSD (`tests/test_cdm_c2sim_adapter.py::test_every_harness_fixture_validates_against_the_pinned_schema`, BLOCKED when the resource is absent); each `.parsed.json` twin is the codec's reading of the XML beside it, held to an independent ElementTree reading by `test_every_parsed_twin_corresponds_to_its_raw_fixture`; hashes are in `spec/c2sim_pin.json`."
+    }
+  ]
+}

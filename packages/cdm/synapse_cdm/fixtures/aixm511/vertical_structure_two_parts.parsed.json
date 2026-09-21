@@ -1,0 +1,85 @@
+{
+  "@gml:id": "M_VERTICAL_STRUCTURE",
+  "message:hasMember": [
+    {
+      "$": "aixm:VerticalStructure",
+      "@gml:id": "uuid.a1a40000-0007-4000-8000-000000000001",
+      "gml:identifier": {
+        "@codeSpace": "urn:uuid:",
+        "#text": "a1a40000-0007-4000-8000-000000000001"
+      },
+      "aixm:timeSlice": [
+        {
+          "$": "aixm:VerticalStructureTimeSlice",
+          "@gml:id": "VS_SYNTOWER_BL_1_0",
+          "gml:validTime": {
+            "$": "gml:TimePeriod",
+            "@gml:id": "VS_SYNTOWER_BL_1_0_VT",
+            "gml:beginPosition": "2026-01-01T00:00:00Z",
+            "gml:endPosition": {
+              "@indeterminatePosition": "unknown"
+            }
+          },
+          "aixm:interpretation": "BASELINE",
+          "aixm:sequenceNumber": "1",
+          "aixm:correctionNumber": "0",
+          "aixm:name": "SYNTHETIC TOWER",
+          "aixm:type": "TOWER",
+          "aixm:lighted": "YES",
+          "aixm:markingICAOStandard": "YES",
+          "aixm:group": "NO",
+          "aixm:part": [
+            {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS_SYNTOWER_P_1",
+              "aixm:verticalExtent": {
+                "@uom": "M",
+                "#text": "120"
+              },
+              "aixm:verticalExtentAccuracy": {
+                "@uom": "M",
+                "#text": "1"
+              },
+              "aixm:type": "TOWER",
+              "aixm:constructionStatus": "COMPLETED",
+              "aixm:markingPattern": "CHEQUERED",
+              "aixm:markingFirstColour": "RED",
+              "aixm:markingSecondColour": "WHITE",
+              "aixm:mobile": "NO",
+              "aixm:frangible": "NO",
+              "aixm:designator": "SYNTOWER-1",
+              "aixm:horizontalProjection_location": {
+                "$": "aixm:ElevatedPoint",
+                "@gml:id": "VS_SYNTOWER_P_1_LOC",
+                "@srsName": "urn:ogc:def:crs:EPSG::4326",
+                "gml:pos": "51.98000 5.10000",
+                "aixm:elevation": {
+                  "@uom": "FT",
+                  "#text": "250"
+                },
+                "aixm:verticalDatum": "EGM_96",
+                "aixm:verticalAccuracy": {
+                  "@uom": "M",
+                  "#text": "3"
+                }
+              }
+            },
+            {
+              "$": "aixm:VerticalStructurePart",
+              "@gml:id": "VS_SYNTOWER_P_2",
+              "aixm:verticalExtent": {
+                "@uom": "M",
+                "#text": "15"
+              },
+              "aixm:type": "ANTENNA",
+              "aixm:constructionStatus": "COMPLETED",
+              "aixm:mobile": "NO",
+              "aixm:frangible": "YES",
+              "aixm:designator": "SYNTOWER-2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

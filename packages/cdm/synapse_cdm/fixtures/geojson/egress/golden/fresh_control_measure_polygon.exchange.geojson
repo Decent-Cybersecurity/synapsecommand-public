@@ -1,0 +1,55 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              24.0,
+              57.0
+            ],
+            [
+              24.5,
+              57.0
+            ],
+            [
+              24.5,
+              57.3
+            ],
+            [
+              24.0,
+              57.3
+            ],
+            [
+              24.0,
+              57.0
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "f1c70000-0016-8000-8000-000000000001",
+      "properties": {
+        "sc:as_of": "2026-04-29T06:00:00.000Z",
+        "sc:label": "EXERCISE phase line ALPHA",
+        "sc:object_id": "f1c70000-0016-8000-8000-000000000001",
+        "sc:object_kind": "plan_object",
+        "sc:object_type": "CONTROL_MEASURE",
+        "sc:schema_version": "3.0.0",
+        "sc:source_adapter": "planner_stub",
+        "sc:source_adapter_version": "1.0.0",
+        "sc:source_ids": [
+          {
+            "external_id": "CM-EX-0001",
+            "system": "PLANNER"
+          }
+        ],
+        "sc:source_system": "PLANNER",
+        "sc:synthetic": true
+      },
+      "type": "Feature"
+    }
+  ],
+  "sc:profile": "synapsecommand-exchange/1",
+  "type": "FeatureCollection"
+}

@@ -556,3 +556,154 @@ def test_the_reference_adapter_declares_mappings_and_every_fixture_leaf_is_bound
         assert book["counts"]["LOST"] == 0, (result["fixture"], book["diagnostics"])
         assert book["counts"]["MAPPED"] >= 9, result["fixture"]
         assert book["total"] == sum(book["counts"].values())
+
+
+# --- the index-bound target `#[*]` (2026-09-20, adapter expansion phase 1) -----------------------
+#
+# A one-object-per-record payload cannot name its objects by kind (every feature is the same kind)
+# or by a fixed `#N` (the count is the payload's), and `*` credits a value that landed on the wrong
+# record's object. `#[*]` binds the object index to the source key's first `[*]`.
+
+TWO_RECORDS = {"features": [{"id": "A", "properties": {"name": "north", "n": 7}},
+                            {"id": "B", "properties": {"name": "south", "n": 7}}]}
+INDEX_BOUND = {
+    "features[*].id": Mapping("#[*]:source_ids[0].external_id", "text"),
+    "features[*].properties.n": Mapping("#[*]:residual.data.properties.n", "number"),
+    "features[*]": Mapping("#[*]:residual.data", kind="residual"),
+}
+
+
+def _record(external_id, **props):
+    return {"object_kind": "plan_object", "source_ids": [{"system": "T", "external_id": external_id}],
+            "residual": {"namespace": "T", "data": {"properties": props}}}
+
+
+def test_the_index_bound_target_holds_each_record_to_its_own_object():
+    book = lossless.ledger(TWO_RECORDS, [_record("A", name="north", n=7),
+                                         _record("B", name="south", n=7)], INDEX_BOUND)
+    assert book.lost == ()
+    assert _one(book, "features[1].properties.name").observed["destination"] == \
+        "#1:residual.data.properties.name"
+    assert _one(book, "features[1].properties.n").observed["destination"] == \
+        "#1:residual.data.properties.n"
+
+
+def test_a_value_on_the_other_records_object_is_wrong_object_under_the_index_bound_target():
+    """The repeated-identical-scalar case: both records carry `n: 7`, so a `*` target would be
+    satisfied by either object. `#[*]` is not: object 1 carries nothing and object 0 carries
+    record 1's name, and the ledger says WRONG_OBJECT rather than MAPPED."""
+    swapped = [_record("A", name="south", n=7), _record("B", name="north", n=7)]
+    book = lossless.ledger(TWO_RECORDS, swapped, INDEX_BOUND)
+    assert {e.source_path for e in book.lost} == \
+        {"features[0].properties.name", "features[1].properties.name"}
+    assert _one(book, "features[0].properties.name").loss == "VALUE_MISMATCH"
+    dropped = [_record("A", name="north", n=7),
+               {**_record("B", n=7), "residual": {"namespace": "T", "data": {"properties": {"n": 7}}}}]
+    book = lossless.ledger(TWO_RECORDS, dropped, INDEX_BOUND)
+    assert [e.source_path for e in book.lost] == ["features[1].properties.name"]
+    # Object 1 holds nothing at the path and object 0 holds record 0's name there, so the
+    # ledger's standing diagnosis is WRONG_OBJECT ("is it in an object of another kind?"), which
+    # names where a reader should look; MISSING is what it reads when no object holds the path.
+    assert _one(book, "features[1].properties.name").loss == "WRONG_OBJECT"
+    star = {k: Mapping(m.to.replace("#[*]", "*"), m.rule, kind=m.kind) for k, m in INDEX_BOUND.items()}
+    assert lossless.ledger(TWO_RECORDS, swapped, star).lost == (), \
+        "the `*` target is blind to the swap, which is why `#[*]` exists"
+
+
+def test_the_first_bound_index_is_the_object_and_the_rest_go_to_the_path():
+    raw = {"features": [{"coordinates": [[1.0, 2.0], [3.0, 4.0]]}]}
+    objects = [{"object_kind": "plan_object", "geometry": {"coordinates": [[1.0, 2.0], [3.0, 4.0]]}}]
+    book = lossless.ledger(raw, objects, {
+        "features[*].coordinates[*][*]": Mapping("#[*]:geometry.coordinates[*][*]", "number")})
+    assert book.lost == ()
+    assert _one(book, "features[0].coordinates[1][0]").observed["destination"] == \
+        "#0:geometry.coordinates[1][0]"
+
+
+def test_the_index_bound_target_is_refused_on_a_key_that_binds_no_index():
+    with pytest.raises(ValueError, match="binds no \\[\\*\\]"):
+        lossless.ledger({"id": "A"}, [_record("A")], {"id": Mapping("#[*]:source_ids[0].external_id")})
+
+
+def test_an_index_past_the_output_is_a_loss_and_not_a_crash():
+    """A second record whose object was never produced: no candidate object, and the ledger
+    reports the leaf LOST — WRONG_OBJECT where another object carries the path (object 0's
+    `source_ids[0].external_id`), MISSING where none does."""
+    book = lossless.ledger(TWO_RECORDS, [_record("A", name="north", n=7)], INDEX_BOUND)
+    assert _one(book, "features[1].id").category == "LOST"
+    assert _one(book, "features[1].id").loss == "WRONG_OBJECT"
+    assert _one(book, "features[1].properties.name").category == "LOST"
+
+
+# --- the unbound wildcard `[_]` (2026-09-21, adapter expansion phase 3) --------------------------
+#
+# `_substitute` hands bound indices to a destination's `[*]`s first to first. An object under a
+# NESTED repeatable container — a C2SIM unit sits under `ObjectDefinitions[*].Entity[*]` and its
+# own lists under that — has destinations with fewer `[*]` than the source key binds, and the
+# outermost index would land in the innermost list. `[_]` matches an index and binds nothing.
+
+NESTED = {"groups": [{"items": [{"id": "A", "values": [1.5, 2.5]}]},
+                     {"items": [{"id": "B", "values": [3.5]}]}]}
+
+
+def _typed(external_id, values):
+    return {"object_kind": "entity", "source_ids": [{"system": "T", "external_id": external_id}],
+            "attributes": {"values": values}}
+
+
+def test_the_unbound_wildcard_matches_an_index_and_binds_nothing():
+    book = lossless.ledger(NESTED, [_typed("A", [1.5, 2.5]), _typed("B", [3.5])], {
+        "groups[_].items[_].id": Mapping("entity:source_ids[0].external_id", "text"),
+        "groups[_].items[_].values[*]": Mapping("entity:attributes.values[*]", "number")})
+    assert book.lost == ()
+    assert _one(book, "groups[1].items[0].values[0]").observed["destination"] == \
+        "#1:attributes.values[0]"
+
+
+def test_binding_the_outer_container_would_put_its_index_into_the_inner_list():
+    """The defect `[_]` exists for, shown on the same payload: with every container bound, the
+    first bound index (the group's) is what the destination's one `[*]` receives."""
+    book = lossless.ledger(NESTED, [_typed("A", [1.5, 2.5]), _typed("B", [3.5])], {
+        "groups[_].items[_].id": Mapping("entity:source_ids[0].external_id", "text"),
+        "groups[*].items[*].values[*]": Mapping("entity:attributes.values[*]", "number")})
+    assert {e.source_path for e in book.lost} == {"groups[0].items[0].values[1]",
+                                                  "groups[1].items[0].values[0]"}
+    assert _one(book, "groups[1].items[0].values[0]").expected["destination"] == \
+        "entity:attributes.values[1]"
+
+
+def test_the_unbound_wildcard_round_trips_through_the_path_grammar_and_is_refused_in_a_destination():
+    tokens = lossless.parse_path("groups[_].items[*].id")
+    assert tokens[1] is lossless.UNBOUND and tokens[3] is lossless.WILD
+    assert lossless.render_path(tokens) == "groups[_].items[*].id"
+    with pytest.raises(ValueError, match="belongs in a SOURCE key only"):
+        Mapping("entity:attributes.values[_]", "number")
+
+
+# --- the `numeric_text` rule (2026-09-21, adapter expansion phase 3) -----------------------------
+#
+# Every leaf of an XML twin is text, an `xs:double` included. `number` refuses a text source on
+# purpose; the XML reading is its own rule, so the two cannot be confused.
+
+def test_numeric_text_binds_the_text_of_a_number_to_the_number_it_denotes():
+    raw = {"Latitude": "58.5125", "Speed": "0", "Heading": " 270.5 "}
+    objects = [{"object_kind": "entity", "attributes": {"lat": 58.5125, "speed": 0.0, "heading": 270.5}}]
+    book = lossless.ledger(raw, objects, {
+        "Latitude": Mapping("entity:attributes.lat", "numeric_text"),
+        "Speed": Mapping("entity:attributes.speed", "numeric_text"),
+        "Heading": Mapping("entity:attributes.heading", "numeric_text")})
+    assert book.lost == ()
+
+
+def test_numeric_text_refuses_what_number_refuses_and_number_still_refuses_text():
+    raw = {"Latitude": "58.5125", "Word": "north", "Nan": "nan"}
+    objects = [{"object_kind": "entity", "attributes": {"lat": 58.5, "word": 1.0, "nan": 0.0}}]
+    book = lossless.ledger(raw, objects, {
+        "Latitude": Mapping("entity:attributes.lat", "numeric_text"),
+        "Word": Mapping("entity:attributes.word", "numeric_text"),
+        "Nan": Mapping("entity:attributes.nan", "numeric_text")})
+    assert {e.source_path for e in book.lost} == {"Latitude", "Word", "Nan"}
+    assert _one(book, "Latitude").loss == "TRANSFORM_MISMATCH"
+    strict = lossless.ledger({"Latitude": "58.5125"}, [{"object_kind": "entity", "attributes": {"lat": 58.5125}}],
+                             {"Latitude": Mapping("entity:attributes.lat", "number")})
+    assert [e.source_path for e in strict.lost] == ["Latitude"], "a text source is not a `number`"

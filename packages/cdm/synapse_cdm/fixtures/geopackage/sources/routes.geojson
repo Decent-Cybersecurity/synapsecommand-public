@@ -1,0 +1,75 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      24.1,
+      57.0
+     ],
+     [
+      24.3,
+      57.1
+     ],
+     [
+      24.5,
+      57.1
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE COASTAL ROUTE",
+    "length_km": 31.5,
+    "active": 1
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      24.0,
+      56.9
+     ],
+     [
+      24.0,
+      57.2
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE MERIDIAN LEG",
+    "length_km": 0.0,
+    "active": 0
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 3,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      23.9,
+      57.0
+     ],
+     [
+      24.6,
+      57.0
+     ]
+    ]
+   },
+   "properties": {
+    "name": "EXERCISE PARALLEL LEG",
+    "length_km": 42.0,
+    "active": null
+   }
+  }
+ ]
+}

@@ -1,0 +1,878 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0001-4000-8000-000000000002",
+          "identifier": "a1a40000-0001-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [
+          {
+            "nil": false,
+            "operation": {
+              "meaning": "stated",
+              "nil_reason": null,
+              "state": "stated",
+              "uom": null,
+              "value": "BASE"
+            },
+            "operation_sequence": {
+              "meaning": "not stated",
+              "nil_reason": null,
+              "state": "absent",
+              "uom": null,
+              "value": null
+            },
+            "source": {
+              "$": "aixm:AirspaceGeometryComponent",
+              "@gml:id": "D1_GC_1",
+              "aixm:operation": "BASE",
+              "aixm:theAirspaceVolume": {
+                "$": "aixm:AirspaceVolume",
+                "@gml:id": "D1_AV_1",
+                "aixm:horizontalProjection": {
+                  "$": "aixm:Surface",
+                  "@gml:id": "D1_SF_1",
+                  "@srsName": "urn:ogc:def:crs:OGC:1.3:CRS84",
+                  "gml:patches": [
+                    {
+                      "$": "gml:PolygonPatch",
+                      "gml:exterior": {
+                        "$": "gml:Ring",
+                        "gml:curveMember": [
+                          {
+                            "$": "aixm:Curve",
+                            "@gml:id": "D1_CV_1",
+                            "gml:segments": [
+                              {
+                                "$": "gml:LineStringSegment",
+                                "@interpolation": "linear",
+                                "gml:posList": "6.0 53.0 6.4 53.0 6.4 53.3 6.0 53.3 6.0 53.0"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "gml:interior": [
+                        {
+                          "$": "gml:LinearRing",
+                          "gml:posList": "6.1 53.1 6.1 53.2 6.3 53.2 6.3 53.1 6.1 53.1"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "aixm:lowerLimit": {
+                  "#text": "GND",
+                  "@uom": "FT"
+                },
+                "aixm:lowerLimitReference": "SFC",
+                "aixm:upperLimit": {
+                  "@nilReason": "unknown",
+                  "@xsi:nil": "true"
+                }
+              }
+            },
+            "volume": {
+              "centreline": null,
+              "centreline_state": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              },
+              "contributor": null,
+              "gml_id": "D1_AV_1",
+              "horizontal_projection": {
+                "crs": {
+                  "axis_order": [
+                    "longitude",
+                    "latitude"
+                  ],
+                  "inherited": false,
+                  "srs_dimension": null,
+                  "srs_name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+                },
+                "element": "aixm:Surface",
+                "geojson": {
+                  "coordinates": [
+                    [
+                      [
+                        6.0,
+                        53.0
+                      ],
+                      [
+                        6.4,
+                        53.0
+                      ],
+                      [
+                        6.4,
+                        53.3
+                      ],
+                      [
+                        6.0,
+                        53.3
+                      ],
+                      [
+                        6.0,
+                        53.0
+                      ]
+                    ],
+                    [
+                      [
+                        6.1,
+                        53.1
+                      ],
+                      [
+                        6.1,
+                        53.2
+                      ],
+                      [
+                        6.3,
+                        53.2
+                      ],
+                      [
+                        6.3,
+                        53.1
+                      ],
+                      [
+                        6.1,
+                        53.1
+                      ]
+                    ]
+                  ],
+                  "type": "Polygon"
+                },
+                "gml_id": "D1_SF_1",
+                "patches": [
+                  {
+                    "element": "gml:PolygonPatch",
+                    "exterior": {
+                      "coordinates": [
+                        [
+                          6.0,
+                          53.0
+                        ],
+                        [
+                          6.4,
+                          53.0
+                        ],
+                        [
+                          6.4,
+                          53.3
+                        ],
+                        [
+                          6.0,
+                          53.3
+                        ],
+                        [
+                          6.0,
+                          53.0
+                        ]
+                      ],
+                      "curves": [
+                        {
+                          "coordinates": [
+                            [
+                              6.0,
+                              53.0
+                            ],
+                            [
+                              6.4,
+                              53.0
+                            ],
+                            [
+                              6.4,
+                              53.3
+                            ],
+                            [
+                              6.0,
+                              53.3
+                            ],
+                            [
+                              6.0,
+                              53.0
+                            ]
+                          ],
+                          "crs": {
+                            "axis_order": [
+                              "longitude",
+                              "latitude"
+                            ],
+                            "inherited": true,
+                            "srs_dimension": null,
+                            "srs_name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+                          },
+                          "element": "aixm:Curve",
+                          "gml_id": "D1_CV_1",
+                          "segments": [
+                            {
+                              "count": 5,
+                              "element": "gml:LineStringSegment",
+                              "interpolation": "linear",
+                              "pos_list_text": "6.0 53.0 6.4 53.0 6.4 53.3 6.0 53.3 6.0 53.0",
+                              "pos_texts": [],
+                              "stated_interpolation": "linear"
+                            }
+                          ]
+                        }
+                      ],
+                      "element": "gml:Ring",
+                      "gml_id": null,
+                      "orientation": "counter-clockwise",
+                      "pos_list_text": null,
+                      "role": "exterior"
+                    },
+                    "interiors": [
+                      {
+                        "coordinates": [
+                          [
+                            6.1,
+                            53.1
+                          ],
+                          [
+                            6.1,
+                            53.2
+                          ],
+                          [
+                            6.3,
+                            53.2
+                          ],
+                          [
+                            6.3,
+                            53.1
+                          ],
+                          [
+                            6.1,
+                            53.1
+                          ]
+                        ],
+                        "curves": [],
+                        "element": "gml:LinearRing",
+                        "gml_id": null,
+                        "orientation": "clockwise",
+                        "pos_list_text": "6.1 53.1 6.1 53.2 6.3 53.2 6.3 53.1 6.1 53.1",
+                        "role": "interior"
+                      }
+                    ],
+                    "stated_interpolation": null
+                  }
+                ]
+              },
+              "horizontal_projection_state": {
+                "meaning": "stated",
+                "nil_reason": null,
+                "state": "stated",
+                "uom": null,
+                "value": "aixm:Surface"
+              },
+              "lower": {
+                "cdm": null,
+                "kind": "ground",
+                "limit": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": "FT",
+                  "value": "GND"
+                },
+                "not_projected": "'GND' is a token, not a number: the ground \u2014 a floor at the surface with no number stated",
+                "reference": {
+                  "meaning": "stated",
+                  "nil_reason": null,
+                  "state": "stated",
+                  "uom": null,
+                  "value": "SFC"
+                }
+              },
+              "maximum": {
+                "cdm": null,
+                "kind": "absent",
+                "limit": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                }
+              },
+              "minimum": {
+                "cdm": null,
+                "kind": "absent",
+                "limit": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                },
+                "not_projected": null,
+                "reference": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                }
+              },
+              "unsupported": [],
+              "upper": {
+                "cdm": null,
+                "kind": "unknown",
+                "limit": {
+                  "meaning": "nil",
+                  "nil_reason": "unknown",
+                  "state": "nil",
+                  "uom": null,
+                  "value": null
+                },
+                "not_projected": "nil (unknown); unknown is not a bound",
+                "reference": {
+                  "meaning": "not stated",
+                  "nil_reason": null,
+                  "state": "absent",
+                  "uom": null,
+                  "value": null
+                }
+              },
+              "width": {
+                "meaning": "not stated",
+                "nil_reason": null,
+                "state": "absent",
+                "uom": null,
+                "value": null
+              }
+            }
+          }
+        ],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [
+          "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: lower limit 'GND' 'FT' reference 'SFC' is not projected onto Area.vertical ('GND' is a token, not a number: the ground \u2014 a floor at the surface with no number stated); carried typed in attributes.aixm",
+          "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: upper limit None None reference None is not projected onto Area.vertical (nil (unknown); unknown is not a bound); carried typed in attributes.aixm"
+        ],
+        "parts": [],
+        "plan_object_id": "8b4f4fc8-e111-5906-b606-d4fdb55ea48b",
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYND1"
+          },
+          "designatorICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC DANGER ONE"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "D"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": 0,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "D1_BL_1_0",
+          "interpretation": "BASELINE",
+          "sequence_number": 1,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimePeriod/gml:beginPosition",
+          "valid_time": {
+            "begin": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-01-01T00:00:00.000Z",
+              "problem": null,
+              "text": "2026-01-01T00:00:00Z",
+              "utc": true
+            },
+            "convention": "begin included, end excluded \u2014 AIXM Temporality Concept 1.1 \u00a74.4.1; the end position is the first instant the slice no longer applies",
+            "element": "gml:TimePeriod",
+            "end": {
+              "frame": null,
+              "indeterminate": "unknown",
+              "instant": null,
+              "problem": null,
+              "text": null,
+              "utc": null
+            },
+            "form": "period",
+            "gml_id": "D1_BL_1_0_VT",
+            "nil_reason": null,
+            "time": null
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "Polygon"
+      }
+    },
+    "confidence": null,
+    "entity_id": "402c8e9f-9f6a-59b1-9650-f44af0a25f3f",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DANGER_AREA",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000002",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "D1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": [
+        "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: lower limit 'GND' 'FT' reference 'SFC' is not projected onto Area.vertical ('GND' is a token, not a number: the ground \u2014 a floor at the surface with no number stated); carried typed in attributes.aixm",
+        "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: upper limit None None reference None is not projected onto Area.vertical (nil (unknown); unknown is not a bound); carried typed in attributes.aixm"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "area": {
+      "bounds": null,
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              6.0,
+              53.0
+            ],
+            [
+              6.4,
+              53.0
+            ],
+            [
+              6.4,
+              53.3
+            ],
+            [
+              6.0,
+              53.3
+            ],
+            [
+              6.0,
+              53.0
+            ]
+          ],
+          [
+            [
+              6.1,
+              53.1
+            ],
+            [
+              6.1,
+              53.2
+            ],
+            [
+              6.3,
+              53.2
+            ],
+            [
+              6.3,
+              53.1
+            ],
+            [
+              6.1,
+              53.1
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "validity": {
+        "effective": {
+          "end": null,
+          "start": "2026-01-01T00:00:00.000Z"
+        },
+        "observed_at": null,
+        "valid_from": "2026-01-01T00:00:00.000Z",
+        "valid_to": null
+      },
+      "vertical": {
+        "lower": null,
+        "upper": null
+      }
+    },
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            6.0,
+            53.0
+          ],
+          [
+            6.4,
+            53.0
+          ],
+          [
+            6.4,
+            53.3
+          ],
+          [
+            6.0,
+            53.3
+          ],
+          [
+            6.0,
+            53.0
+          ]
+        ],
+        [
+          [
+            6.1,
+            53.1
+          ],
+          [
+            6.1,
+            53.2
+          ],
+          [
+            6.3,
+            53.2
+          ],
+          [
+            6.3,
+            53.1
+          ],
+          [
+            6.1,
+            53.1
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": "SYND1",
+    "object_id": "8b4f4fc8-e111-5906-b606-d4fdb55ea48b",
+    "object_kind": "plan_object",
+    "object_type": "CONTROL_MEASURE",
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DANGER_AREA",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000002",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "route": null,
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "D1_BL_1_0",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": [
+        "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: lower limit 'GND' 'FT' reference 'SFC' is not projected onto Area.vertical ('GND' is a token, not a number: the ground \u2014 a floor at the surface with no number stated); carried typed in attributes.aixm",
+        "member 0 <aixm:Airspace> a1a40000-0001-4000-8000-000000000002 slice 0: upper limit None None reference None is not projected onto Area.vertical (nil (unknown); unknown is not a bound); carried typed in attributes.aixm"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002/BASELINE/1/0",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": {
+      "effective": {
+        "end": null,
+        "start": "2026-01-01T00:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": "2026-01-01T00:00:00.000Z",
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "aixm": {
+        "activation": [],
+        "aixm_version": "5.1.1",
+        "arp": null,
+        "as_of": null,
+        "availability": [],
+        "contract": "aixm-timeslice/1",
+        "feature": {
+          "element": "aixm:Airspace",
+          "family": "Airspace",
+          "gml_id": "uuid.a1a40000-0001-4000-8000-000000000002",
+          "identifier": "a1a40000-0001-4000-8000-000000000002",
+          "identifier_code_space": "urn:uuid:"
+        },
+        "geometry_components": [],
+        "location": null,
+        "navaid_equipment": [],
+        "notes": [],
+        "parts": [],
+        "plan_object_id": null,
+        "properties": {
+          "controlType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "designator": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYND1"
+          },
+          "designatorICAO": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "localType": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          },
+          "name": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "SYNTHETIC DANGER ONE"
+          },
+          "type": {
+            "meaning": "stated",
+            "nil_reason": null,
+            "state": "stated",
+            "uom": null,
+            "value": "D"
+          },
+          "upperLowerSeparation": {
+            "meaning": "not stated",
+            "nil_reason": null,
+            "state": "absent",
+            "uom": null,
+            "value": null
+          }
+        },
+        "references": {},
+        "time_slice": {
+          "correction_number": null,
+          "element": "aixm:AirspaceTimeSlice",
+          "feature_lifetime": {
+            "begin": null,
+            "convention": null,
+            "element": null,
+            "end": null,
+            "form": "absent",
+            "gml_id": null,
+            "nil_reason": null,
+            "time": null
+          },
+          "gml_id": "D1_SNAPSHOT",
+          "interpretation": "SNAPSHOT",
+          "sequence_number": null,
+          "temporality_problems": [],
+          "valid_from_basis": "gml:validTime/gml:TimeInstant/gml:timePosition",
+          "valid_time": {
+            "begin": null,
+            "convention": null,
+            "element": "gml:TimeInstant",
+            "end": null,
+            "form": "instant",
+            "gml_id": "D1_SNAPSHOT_VT",
+            "nil_reason": null,
+            "time": {
+              "frame": null,
+              "indeterminate": null,
+              "instant": "2026-06-01T12:00:00.000Z",
+              "problem": null,
+              "text": "2026-06-01T12:00:00Z",
+              "utc": true
+            }
+          }
+        },
+        "unresolved_references": [],
+        "volume_projection": "none: the slice states no geometryComponent"
+      }
+    },
+    "confidence": null,
+    "entity_id": "402c8e9f-9f6a-59b1-9650-f44af0a25f3f",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "@gml:id": "M_DANGER_AREA",
+        "message:hasMember": [
+          {
+            "$": "aixm:Airspace",
+            "@gml:id": "uuid.a1a40000-0001-4000-8000-000000000002",
+            "gml:identifier": {
+              "#text": "a1a40000-0001-4000-8000-000000000002",
+              "@codeSpace": "urn:uuid:"
+            }
+          }
+        ]
+      },
+      "namespace": "AIXM"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "aixm511",
+      "adapter_version": "1.0.0",
+      "format_name": "AIXM",
+      "format_version": "5.1.1 (XML Schema, April 2016; GML 3.2.1; AIXM Temporality Concept 1.1)",
+      "observed_at": null,
+      "original_id": "D1_SNAPSHOT",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AIXM",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002",
+        "system": "AIXM"
+      },
+      {
+        "external_id": "a1a40000-0001-4000-8000-000000000002/SNAPSHOT/-/-",
+        "system": "AIXM"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-06-01T12:00:00.000Z",
+    "valid_to": null
+  }
+]

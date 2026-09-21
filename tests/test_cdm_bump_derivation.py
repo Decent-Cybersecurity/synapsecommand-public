@@ -1034,6 +1034,37 @@ def test_the_gates_adapter_roster_is_the_registry(gate):
     )
 
 
+def test_an_adapter_on_an_intermediate_base_is_seen_and_an_unrelated_class_is_not(gate):
+    """THE SHAPE THAT CHANGED ON 2026-09-21, both ways, on a synthetic snapshot.
+
+    `aixm52.Aixm52Adapter` subclasses `aixm511.AixmAdapterBase`, which subclasses `Adapter` in
+    another module; the gate's per-module reading saw neither `aixm511` nor `aixm52` and
+    `test_the_gates_adapter_roster_is_the_registry` reported it. The reading is now a fixed point
+    across the snapshot's modules. Proved on a snapshot the real tree does not contain, so the
+    proof cannot go green on the roster by coincidence: a base one module away, a base two away,
+    a class with `name` on an unrelated base, and a class whose base is merely CALLED something
+    similar.
+    """
+    snapshot = {
+        "synapse_cdm/adapter.py": b"class Adapter:\n    name = 'not-an-adapter'\n",
+        "synapse_cdm/adapters/base.py": (
+            b"from ..adapter import Adapter\n"
+            b"class ReaderBase(Adapter):\n    pass\n"
+            b"class Other:\n    name = 'unrelated'\n"
+            b"class AdapterLike:\n    name = 'named-like-it'\n"),
+        "synapse_cdm/adapters/one.py": (
+            b"from .base import ReaderBase\n"
+            b"class OneAdapter(ReaderBase):\n    name = 'one'\n"
+            b"class Profiled(OneAdapter):\n    name = 'two'\n"),
+        "synapse_cdm/adapters/direct.py": (
+            b"from ..adapter import Adapter\n"
+            b"class DirectAdapter(Adapter):\n    name = 'direct'\n"
+            b"class Wrong(AdapterLike):\n    name = 'wrong'\n"),
+    }
+    seen = gate.read_surface(snapshot).adapters
+    assert seen == {"one", "two", "direct"}, seen
+
+
 def test_the_gates_check_roster_is_the_harnesss_own(gate):
     """`_COLUMNS`, not the `_check_*` names — see the note above for the subset this replaced."""
     from synapse_cdm import harness

@@ -1,0 +1,104 @@
+{
+  "C2SIMHeader": {
+    "CommunicativeActTypeCode": "Inform",
+    "ConversationID": "c2510000-0000-8000-8000-00000000c003",
+    "FromSendingSystem": "EXERCISE-SIM-BLUE",
+    "MessageID": "c2510000-0000-8000-8000-00000000a005",
+    "Protocol": "SISO-STD-C2SIM",
+    "ProtocolVersion": "1.0.0",
+    "SendingTime": {
+      "IsoDateTime": "2026-09-21T06:45:05Z"
+    },
+    "ToReceivingSystem": "EXERCISE-C2"
+  },
+  "MessageBody": {
+    "DomainMessageBody": {
+      "ReportBody": {
+        "FromSender": "c2510000-0003-8000-8000-000000000001",
+        "ToReceiver": "c2510000-0002-8000-8000-000000000001",
+        "ReportContent": [
+          {
+            "ObservationReportContent": {
+              "TimeOfObservation": {
+                "DateTime": {
+                  "Name": "EXERCISE-OBSERVED",
+                  "IsoDateTime": "2026-09-21T06:45:00Z"
+                }
+              },
+              "Observation": [
+                {
+                  "HealthObservation": {
+                    "ActorReference": "c2510000-0002-8000-8000-000000000004",
+                    "ConfidenceLevel": "0.75",
+                    "EntityHealthStatus": [
+                      {
+                        "OperationalStatus": {
+                          "OperationalStatusCode": "PartlyOperational"
+                        }
+                      },
+                      {
+                        "Strength": {
+                          "StrengthPercentage": "60"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "LocationObservation": {
+                    "ActorReference": "c2510000-0002-8000-8000-000000000004",
+                    "ConfidenceLevel": "0.9",
+                    "UncertaintyInterval": "150",
+                    "DirectionOfMovement": {
+                      "Heading": {
+                        "HeadingAngle": "225"
+                      }
+                    },
+                    "Location": {
+                      "GeodeticCoordinate": {
+                        "Latitude": "58.6100",
+                        "Longitude": "24.9500"
+                      }
+                    },
+                    "Speed": "3.5"
+                  }
+                },
+                {
+                  "NameObservation": {
+                    "ActorReference": "c2510000-0002-8000-8000-000000000004",
+                    "HostilityStatusCode": "HO",
+                    "Marking": "EX-RED-1",
+                    "Name": "EXERCISE-RED-1",
+                    "Side": "c2510000-0001-8000-8000-000000000002"
+                  }
+                },
+                {
+                  "ActivityObservation": {
+                    "ActorReference": "c2510000-0002-8000-8000-000000000004",
+                    "ConfidenceLevel": "0.5",
+                    "ActionCode": {
+                      "TaskActionCode": "Observe"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "TaskStatus": {
+              "TimeOfObservation": {
+                "DateTime": {
+                  "IsoDateTime": "2026-09-21T06:45:00Z"
+                }
+              },
+              "CurrentTask": "c2510000-0004-8000-8000-000000000002",
+              "TaskStatusCode": "TASKINPRG"
+            }
+          }
+        ],
+        "ReportID": "c2510000-0009-8000-8000-000000000002",
+        "ReportingEntity": "c2510000-0003-8000-8000-000000000001"
+      }
+    }
+  }
+}
