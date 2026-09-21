@@ -164,6 +164,19 @@ five new typed blocks are payload contracts under fields the 3.0.0 schema alread
 paragraphs above are kept as written. **What the index serves is still a separate fact from what
 this tree says** — at the time of writing it is `3.0.1` — and `PUBLICATION.md`'s ledger is where
 it is measured.
+
+**Updated 2026-09-21, the 3.1.1 corrective release, and the gap is a MINOR and a PATCH wide
+after the hours between a tag and its release run.** `v3.1.0` was tagged and its own release
+workflow refused it in the build job, at the package test — the conformance sweep run from the
+installed wheel with check J still required, which `geojson` and `geopackage` declare
+inapplicable, while the gate job's sweep on the same commit had held J per adapter and passed —
+so the package takes a corrective PATCH the wire contract has no part in: on this tree the
+package is at `3.1.1` and the schema stays at `3.0.0`. Nothing installable changed between the
+two: the arc is the release workflow, `MIGRATIONS.md` and `version.py`, and `MIGRATIONS.md`'s
+3.1.1 section is the record. Four of the eight partings this note has recorded are now
+release-pipeline defects rather than contract decisions. **What the index serves is still a
+separate fact from what this tree says** — at the time of writing it is `3.0.1` — and
+`PUBLICATION.md`'s ledger is where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

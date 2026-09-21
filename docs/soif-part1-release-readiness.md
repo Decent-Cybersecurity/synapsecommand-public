@@ -804,6 +804,17 @@ from that tip; its subject begins `Release 3.1.0` and its hash is deliberately n
 for the reason the paragraph above gives. The tag that names 3.1.0 is to be placed on it after
 `main` is fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-09-21, the 3.1.1 corrective release commit.** `v3.1.0` was placed on
+**`328737d26fd0adc39878310b902c4d7bdbb14204`** — the 3.1.0 release commit above, `main`'s tip —
+and pushed, and its `Release` run 35640088433 refused it in the build job at the package test:
+the conformance sweep run from the installed wheel with check J still required, where the gate
+job's sweep on the same commit holds J per adapter and had passed; `MIGRATIONS.md`'s 3.1.1
+section is the record and `PUBLICATION.md` entry 22 is the burned tag's. This report also
+describes the corrective release commit on `soif/release-3.1.1`, a branch created from that tip,
+whose subject begins `Release 3.1.1`; its hash is deliberately not written here, for the reason
+the paragraph above gives. The tag that names 3.1.1 is to be placed on it after `main` is
+fast-forwarded to it, and contains every commit named above.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -940,6 +951,26 @@ step (check J held per adapter off the `no-source-time` declaration) has run onl
 rehearsal of its body and on no run of that workflow until this tag exercises it — `ci.yml`'s
 per-adapter loop of the same rule is what run 35591088608 exercised. No §58 line and no blocker.
 
+**Re-qualification, 2026-09-21, the 3.1.1 corrective: the verdict is `ready for PR` (3.1.1), and
+nothing in §56 moved.** The corrective release commit types `PACKAGE_VERSION` **3.1.1** (PATCH,
+derived: `gates/bump_derivation.py` reads PATCH over the arc since `v3.1.0` with nothing unruled —
+the arc is the release workflow, `MIGRATIONS.md` and `version.py` — and `--mutation-check` reads
+`1 check, 0 failed` on the release commit) and leaves `SCHEMA_VERSION` **3.0.0** and every other
+axis where the 3.1.0 release commit put them. The suite that qualified 3.1.0 qualified this tree
+before the tag and after it, and `publish.yml`'s gate step — the one the paragraph above said had
+run only as a rehearsal — ran on the `v3.1.0` tag push and read `19 of 19 CONFORMANT` with J held;
+what the corrective changes is the build job's package test, which now requires what the gate
+requires and holds J the way the gate does, and a test in `tests/test_cdm_trusted_publishing.py`
+holds every sweep in both workflows to it. Verified on the release commit, as for 3.1.0: the suite
+in the working tree and in a fresh clone read by subtracting the tag-conditional set; the same
+clone at a local `v3.1.1`; `schemas --check` and `manifests --check` CURRENT; ruff; the pin-paths,
+parks-table and commit-message gates; the wheel gate with `--mutation-check`; the docs build; and
+the package test reproduced both ways on the wheel the gate exported from the tagged tree, in a
+clean venv away from the repository (`docs/adapter-expansion-implementation.md`, Phase 10). The
+sentence beside `evidence.available` on the five new adapter modules names 3.1.0 and is read with
+its own last clause: the Release that first carries their records is 3.1.1's. No §58 line and no
+blocker.
+
 ## 20. Blockers
 
 ```text
@@ -965,6 +996,12 @@ rises to a blocker. The machine-readable statement below is unchanged.
 `pending.unruled` is the empty list, and nothing in section 15 or in the arc's own remaining-gaps
 table (external evidence categories, a draft specification, an optional extra) rises to a
 blocker. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-09-21, the 3.1.1 corrective: none.** `v3.1.0` was refused by a step of
+its own release workflow and not by any §56 item: the gate job that runs §56's checks on the
+tagged commit passed every one of them, and the tree it judged is the tree this commit carries
+plus `MIGRATIONS.md`, `version.py` and the workflow's repair. The pre-step's `pending.unruled` is
+the empty list. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

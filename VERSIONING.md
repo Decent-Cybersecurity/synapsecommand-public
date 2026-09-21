@@ -87,7 +87,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.1.1` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
@@ -189,6 +189,15 @@ build job refused it at condition 4, a second run of the suite in an interpreter
 first loaded with release tooling, while the gate job's run of the same suite on the same commit
 was green. The package takes a PATCH; the wire contract has no part in it; the record is
 `MIGRATIONS.md`'s 3.0.1 section.
+
+**Dated correction, 2026-09-21, the 3.1.1 corrective (every paragraph above is left standing).**
+The two numbers part a PATCH further the same day as the 3.1.0 release — `3.1.1` and `3.0.0` —
+for the fourth time by a release pipeline's refusal rather than a contract decision: `v3.1.0` was
+tagged and its release run's build job refused it at the package test, the conformance sweep run
+from the installed wheel with check J still required, which two of the new adapters declare
+inapplicable, while the gate job's sweep on the same commit had held J per adapter and passed.
+The package takes a PATCH; the wire contract has no part in it; the record is `MIGRATIONS.md`'s
+3.1.1 section.
 
 **They MUST NOT automatically share a number.** Anything that made one axis follow another would
 turn every one of the coincidences above into a false statement the moment the axes diverged, and
@@ -293,6 +302,14 @@ schema moved; `schemas --check` CURRENT), the Adapter API stays 3.0.0 (no member
 moved; the new adapters implement it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0.
 SC-OES, the ontology and the profiles did not move.
 
+**Dated note, 2026-09-21: the release after 3.1.0 is `3.1.1`, the corrective of a tag that
+released nothing.** `v3.1.0` was tagged and pushed and its own release workflow refused it below
+the gate — the build job's package test, a conformance sweep from the installed wheel that still
+required check J where the gate's sweep holds it per adapter — so `gates/bump_derivation.py`
+derives PATCH over the arc from `v3.1.0` (the release workflow, `MIGRATIONS.md`, `version.py`;
+nothing importable) with nothing unruled, and the corrective release commit types that floor. No
+other axis moves.
+
 ---
 
 ## 5. Main advancement
@@ -325,7 +342,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.1.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.1.1 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

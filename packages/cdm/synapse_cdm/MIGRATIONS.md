@@ -11,11 +11,13 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.1.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.1.1` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
-corrective — a package PATCH the wire contract had no part in — see those two sections.)
+corrective — a package PATCH the wire contract had no part in — see those two sections; a MINOR
+apart at the 3.1.0 release of 2026-09-21 for the ordinary reason, and a PATCH further by the 3.1.1
+corrective the same day, a second package PATCH for a release pipeline's refusal.)
 
 ## What each bump means
 
@@ -204,7 +206,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.1.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.1.1 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -236,6 +238,20 @@ replay it; both are about the environment a step judges the tree in, and the rep
 `publish.yml`: release tooling lives in a venv of its own (`${TOOLS}`), and condition 4 writes the
 suite's output to a file and prints the FAILED lines before it stops. The 3.0.1 section under
 History is the record, and `tests/test_cdm_trusted_publishing.py` holds both properties.
+
+**And a fourth was burned on 2026-09-21 by the same class — a step below the gate whose behaviour
+depends on nothing about the ref — and this time the step was a twin of one that had been
+repaired.** `v3.1.0` passed every step of the gate job, including the conformance sweep that the
+adapter expansion's phase 7 had changed to hold check J per adapter off the `no-source-time`
+declaration — it read `19 of 19 CONFORMANT` and `J: PASS or declared no-source-time SKIP on every
+adapter` — and `Release` run 35640088433 refused it in the BUILD job, at the package test, whose
+sweep from the installed wheel still carried J in `--require`. `geojson` and `geopackage` declare J
+a DECLARED SKIP, a required SKIP exits non-zero whatever its declaration (§19), and the step
+redirected its JSON to a file and printed nothing before `set -e` stopped it. The repair is in
+`publish.yml`: the package test requires exactly what the gate requires and holds J by the gate
+step's own block, verbatim; `tests/test_cdm_trusted_publishing.py` holds every sweep in
+`publish.yml` and `ci.yml` to a `--require` without J, every `--all` sweep to the hold, and the two
+holds to one text. The 3.1.1 section under History is the record.
 
 The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
 `twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
@@ -409,7 +425,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.1.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.1.1 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -464,7 +480,143 @@ now true of it.
 
 ## History
 
+### 3.1.1 — 2026-09-21 — the corrective of the tagged-never-published 3.1.0: the release workflow's package test requires what its gate requires, and holds check J off the declaration the way the gate does
+
+**This section is a release and no longer the pending arc, and no pending-arc heading preceded
+it**: the arc it records was made in the release commit itself, hours after `v3.1.0` was tagged,
+so there was no commit between the two for a pending section to accumulate under — the 3.0.1
+shape, one release later. `PACKAGE_VERSION` is `3.1.1` at this commit, in `version.py`, and the
+tag `v3.1.1` names it. What the index actually serves is a measured fact about an upload rather
+than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that watched the
+upload and is not asserted here before it has happened; at the time of writing the index serves
+`3.0.1` (`PUBLICATION.md` entry 21), because 3.1.0 was tagged and never published — the dated note
+on the next section says so from its side, and `PUBLICATION.md` entry 22 is the burned tag's own
+record.
+
+**WHAT MOVED BETWEEN 3.1.0 AND 3.1.1 IS A WORKFLOW AND NOT THE DISTRIBUTION, FOR THE FOURTH TIME
+IN THIS FILE'S LIFE.** A reader upgrading from 3.0.1 — which is still what the index serves — gets
+exactly the arc the 3.1.0 section below describes, five adapter modules and a MINOR for the
+ordinary reason, and should read that section and the release notes as the description of this
+release; a reader comparing 3.1.0 with 3.1.1 finds this file and `version.py` and nothing else,
+because 3.1.0 was never installable. `Release` run 35640088433 on `v3.1.0` (commit `328737d`, tag
+object `5f38b63c`, created 18:21:23Z, the run created 18:42:11Z) passed the whole gate job —
+condition 1's suite, `6663 passed, 194 skipped in 1835.12s`, condition 3, the annotated-tag check,
+the schema and manifest drift checks, the conformance sweep (`19 of 19 CONFORMANT`, `J: PASS or
+declared no-source-time SKIP on every adapter`, the first run of that workflow to exercise the
+step phase 7 changed), the evidence bundle, gitleaks, the allowlist, pip-audit and CodeQL; the gate
+job ran 18:42:15–19:16:33Z. The build job ran 19:16:40–19:26:13Z and passed its first nine steps —
+the documented install, the tooling venv, condition 2 (`13 checks, 0 failed`, the mutation caught,
+`synapse_cdm-3.1.0-py3-none-any.whl` `8a9a90f2…e35788` and `synapse_cdm-3.1.0.tar.gz`
+`7df97b45…509a5`, both from the run's own log), the artefact naming, `twine check --strict`
+(`PASSED` twice) and the clean install — and failed at the tenth, **`Package test — the installed
+wheel answers for itself`**, 19:25:34–19:26:12Z: the step printed the nineteen-row `conformance
+list` table and then `Process completed with exit code 1`, and nothing else. Every step after it
+was skipped, the attestation, publish, release and witness jobs were skipped, no `pypi` deployment
+was created, no GitHub Release exists for `v3.1.0`, and `GET /pypi/synapse-cdm/3.1.0/json` answers
+404 with the index's latest at `3.0.1`.
+
+**THE CAUSE WAS A TWIN OF A STEP ALREADY REPAIRED, AND THE LOG COULD NOT NAME IT BECAUSE THE
+SWEEP'S OUTPUT WENT TO A FILE THE JOB NEVER READ.** The step ran
+`synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O --format json` from the installed
+wheel. The adapter expansion's phase 7 (the record's D60) had moved J out of `--require` in
+`ci.yml`'s per-adapter loop and in `publish.yml`'s gate-job sweep, holding it per adapter off the
+structured limitation `no-source-time` instead — `geojson` and `geopackage` translate formats that
+state no instant, emit no timestamp under the suite's fresh instances, and declare why, so their J
+is a DECLARED SKIP; and a required SKIP exits non-zero whatever its declaration (§19). The
+package-test step ran the same sweep with the old set, and nobody moved it. Reproduced on the
+maintainer's machine from the artefacts the wheel gate exported at this commit's parent (the tagged
+tree: `13 checks, 0 failed`, `twine check --strict` PASSED), the wheel installed into a venv of its
+own and the step's commands run from a directory with no repository near it: the old invocation
+exits 1 after the `conformance list` table, and the artefact it wrote — which the run's step
+redirected to `/tmp/installed-conformance.json` and never printed — reads `19 of 19 CONFORMANT`
+with `geojson` and `geopackage` at `J: SKIP`, `declared_inapplicable: true`, declaration
+`limitations[id=no-source-time]`, and every other adapter's J at PASS. So the wheel was
+conformant; the required set was wrong. Nothing about the ref was involved, so
+`gates/release_ref_rehearsal.py` passed `v3.1.0` and was right to, exactly as it was for
+`v3.0.0`: this is the second tag burned below the gate job by a step whose behaviour depends on
+nothing but the tree and the environment, and the first burned by a step that had a repaired
+twin.
+
+**THE REPAIR IS ONE PROPERTY OF `publish.yml`, HELD BY A TEST OVER BOTH WORKFLOWS.** The package
+test's sweep requires `A,B,C,D,F,G,H,K,L,O` — exactly the gate's set — keeps its assertion that
+`conformant` equals the sorted roster, and then holds J by the gate step's block VERBATIM, run by
+the clean venv's interpreter over the installed sweep's artefact: PASS on every adapter, or a SKIP
+whose `declared_inapplicable` is true and whose declaration is `limitations[id=no-source-time]`;
+anything else refuses the artefact by name, as the gate would. The repaired invocation, on the
+same wheel from the same directory, prints `19 adapters CONFORMANT from the installed wheel`,
+`19 of 19 CONFORMANT`, `J: PASS or declared no-source-time SKIP on every adapter` and the
+harness's nineteen, exit 0; the same block over the same artefact with one declaration flipped
+to `false` prints `J unheld` and exits 1. `tests/test_cdm_trusted_publishing.py` holds the
+property: no `conformance run` in `publish.yml` or `ci.yml` names J in a literal `--require`, a
+variable `--require` is derived in its step from the `no-source-time` declaration, every `--all`
+sweep is followed in its step by the hold, and the two holds in `publish.yml` are one text — and
+the test refuses the step as `v3.1.0` carried it, from a copy of that text in its own fixture. No
+test budget moved, no gate was loosened, and no letter was dropped without being held: the bar
+on every adapter that states an instant is what it was.
+
+**THE PACKAGE VERSION MOVED 3.1.0 -> 3.1.1 ON 2026-09-21, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.1.0` and derives PATCH with nothing unruled:
+before this section was written the pending arc read `NONE` with 0 unruled (the tree was the
+tagged tree), and with it written the shipped-document row carries this file and `version.py`'s
+edit is docstring and comment lines plus the assignment the gate excludes; no importable name was
+added, removed or narrowed. So the floor and the number are one number and no Version ruling is
+needed or present — the shape 3.0.1 had, one release earlier, for the same reason.
+`SCHEMA_VERSION` does not move and stays at `3.0.0`: the wire contract had no part in this
+corrective, and the two axes are a MINOR and a PATCH apart.
+
+**What moved inside the distribution: two files** — `MIGRATIONS.md` (this section, the dated note
+on the 3.1.0 section, the introduction's two numbers, the paragraph in the release sequence and
+the two tag-command examples) and `version.py` (the constant and its live readings). Everything
+else the corrective touched is repository-bound and ships in nothing: the release workflow, the
+test modules (the two new tests in `tests/test_cdm_trusted_publishing.py`, the packaging pin, the
+ledger-count words in `tests/test_cdm_publication.py`), the release notes, the root `README.md`,
+`VERSIONING.md`, the documentation site's changelog and current-contracts pages, the readiness
+report and `PUBLICATION.md`. One sentence in the distribution is left as the arc wrote it, and is
+read with its own last clause: the five new adapter modules' `evidence.available` limitation says
+the field is `true` because 3.1.0 is the first release carrying the adapter and its pipeline
+attaches `evidence-3.1.0.tar.gz` to the `v3.1.0` Release, "and a tag that released nothing carries
+this sentence to nobody". `v3.1.0` released nothing; `tests/test_cdm_evidence.py` holds the
+field to the newest tag's tree and that tree carries the five, so the field stays `true` on the
+rule's own terms; the Release that first carries their records is 3.1.1's, as
+`evidence-3.1.1.tar.gz`, and the sentence's number is the arc's and not a claim about an upload.
+An edit to five adapter modules for one word in a limitation string is not what a corrective of a
+workflow step moves.
+
+**THE RECOVERY, RECORDED WHERE A READER WILL FIND IT, AND IT IS NOW FOUR TAGS.** `v3.1.0` remains
+permanently attached to commit `328737d`, as `v2.1.0` does to `b69a267`, `v2.1.1` to `4409115` and
+`v3.0.0` to `ca445c6`. It is not moved, deleted or recreated, and history is not rewritten to
+pretend the run went otherwise. It was tagged and pushed on 2026-09-21 and its own release workflow
+refused publication below the gate; 3.1.1 is the corrective and, if its pipeline completes, the
+first published release of the adapter expansion arc. The dated note on the next section says the
+same thing from the other side, `PUBLICATION.md` entry 22 records the burned tag, and the ledger is
+where the upload that does happen is measured.
+
+**AND THE CLASS OF DEFECT IS THE ONE 3.0.1 NAMED, WHICH IS WHY THE REPAIR IS A TEST OVER EVERY
+SWEEP AND NOT A NOTE ON ONE.** `v3.0.0` died at a step whose behaviour depended on the environment
+a job had built around the suite; `v3.1.0` died at a step whose behaviour depended on a required
+set that two new adapters could not meet by declaration — neither about the ref, neither reachable
+by the rehearsal. The difference is that this one had a repaired twin fourteen lines of YAML away,
+and the repair was carried to one of the two sweeps by hand. What would have caught it is what
+now holds: a property over every `conformance run` in both workflows, with the pre-repair text in
+the test's own fixture so that the property is known to be able to fail.
+
 ### 3.1.0 — 2026-09-21 — the adapter expansion: five adapter modules land as #16 to #20 — GeoJSON and C2SIM bidirectional, GeoPackage, AIXM 5.1.1 with Digital NOTAM and AIXM 5.2 ingest — the roster moves fourteen to nineteen, the preservation-ledger grammar grows, and no wire contract moves
+
+**DATED NOTE, 2026-09-21, appended and not an edit: this release was tagged and never published.**
+`v3.1.0` was tagged on `328737d` and pushed on 2026-09-21. `Release` run 35640088433 passed every
+step of the gate job — condition 1's suite included, `6663 passed, 194 skipped`, and the
+conformance sweep this section says had run only as a rehearsal, which read `19 of 19 CONFORMANT`
+and held J on its first tag push — and failed in the build job at the package test, whose sweep
+from the installed wheel still required check J: `geojson` and `geopackage` declare J
+inapplicable, and a required SKIP exits non-zero. Nothing reached PyPI, no `pypi` hold was created
+and no GitHub Release exists, so `evidence-3.1.0.tar.gz` was never attached to anything and the
+sentence beside `evidence.available` on the five new adapter modules is read with its own last
+clause. The tag stays where it is, permanently, as `v2.1.0`, `v2.1.1` and `v3.0.0` do: four release
+tags now name commits that released nothing. The number that carries this work to the index is
+**3.1.1**, the section immediately above this one, which is the release that carries the repair —
+a package test that requires what the gate requires and holds J the way the gate does. Everything
+this section says about the arc since 3.0.1 stands: 3.1.1 ships exactly these bytes plus this file
+and `version.py`.
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 

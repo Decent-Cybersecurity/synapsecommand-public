@@ -347,6 +347,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     subclasses, three shared modules, five fixture sets and the `validate` extra added, nothing
     removed, nine ruled units — and the schema moved by nothing: the numbers are `3.1.0` and
     `3.0.0`, the parting `version.py`'s two tables describe as the normal case.
+
+    **AND THE SAME DAY IT WIDENED A PATCH FURTHER, FOR THE FOURTH TIME BY A WORKFLOW.** `v3.1.0`
+    was tagged and the release pipeline's build job refused it at the package test — the
+    conformance sweep run from the installed wheel with check J still required, which two of the
+    new adapters declare inapplicable, while the gate job's sweep on the same commit held J per
+    adapter and passed — so the corrective 3.1.1 moved the package one PATCH the schema again had
+    no part in: the numbers are `3.1.1` and `3.0.0`. Four of the partings this docstring tracks
+    are now release-pipeline defects, and two of them are below the gate job.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -366,15 +374,15 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.1.0", "3.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.1.1", "3.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "3.1.0 and 3.0.0. They are a MINOR apart since 2026-09-21, the 3.1.0 release — the adapter "
-        "expansion added five Adapter subclasses, three shared modules and an optional extra and "
-        "moved no model, enum, schema or golden, so the package took a MINOR the wire contract had "
-        "no part in, for the ordinary reason — so the sweep above is quiet and kept for the day a "
-        "schema change closes the gap. If you bumped one of them just now: that is the expected "
-        "event, and the fix is to update this assertion to the two numbers you now mean, not to "
-        "re-link them"
+        "3.1.1 and 3.0.0. They are a MINOR and a PATCH apart since 2026-09-21 — the MINOR for the "
+        "3.1.0 release, the adapter expansion, for the ordinary reason, and the PATCH for the "
+        "3.1.1 corrective of v3.1.0, which the release pipeline's package test refused for a "
+        "required check two new adapters declare inapplicable, the wire contract untouched — so "
+        "the sweep above is quiet and kept for the day a schema change closes the gap. If you "
+        "bumped one of them just now: that is the expected event, and the fix is to update this "
+        "assertion to the two numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

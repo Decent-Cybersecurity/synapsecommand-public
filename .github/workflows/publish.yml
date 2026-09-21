@@ -720,13 +720,51 @@ jobs:
         # artefact — the console scripts resolve, the packaged fixtures and schemas are inside the
         # wheel, and the conformance sweep runs from the installed package with no repository
         # anywhere near it.
+        #
+        # **J LEFT THIS STEP'S `--require` ON 2026-09-21 (the 3.1.1 corrective) AND IS HELD BELOW
+        # INSTEAD, BY THE GATE JOB'S RULE — AND THIS STEP IS WHAT BURNED `v3.1.0`.** The gate
+        # job's sweep dropped J from `--require` in the adapter expansion's phase 7, because
+        # `geojson` and `geopackage` declare the structured limitation `no-source-time` that makes
+        # their J a DECLARED SKIP and a required SKIP exits non-zero whatever its declaration
+        # (§19). This step ran the same sweep from the installed wheel with J still required, and
+        # nobody moved it: `Release` run 35640088433 passed every step of the gate job — the gate's
+        # sweep read `19 of 19 CONFORMANT` and `J: PASS or declared no-source-time SKIP on every
+        # adapter` — and failed HERE, at the sweep's exit status, thirty-eight seconds into the
+        # step, with its JSON redirected to a file and nothing printed; every job after it was
+        # skipped and nothing was published. `gates/release_ref_rehearsal.py` cannot reach this
+        # step because nothing about it depends on the ref: it is the third class of defect that
+        # has burned a tag, and the second below the gate job.
+        #
+        # So the sweep here requires exactly what the gate's requires, and J is read from the
+        # artefact by the block below, which is the gate step's block VERBATIM — the same reading
+        # of `declared_inapplicable` and of the declaration `limitations[id=no-source-time]` —
+        # run by the clean venv's interpreter over the installed sweep's artefact, so that what
+        # the gate accepts this step accepts and what the gate refuses this step refuses.
+        # `tests/test_cdm_trusted_publishing.py` holds the two blocks to one text and every
+        # `conformance run --all` in this workflow and `ci.yml` to a `--require` without J.
         run: |
           set -euo pipefail
           cd /tmp
           /tmp/clean/bin/synapse conformance list
-          /tmp/clean/bin/synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O \
+          /tmp/clean/bin/synapse conformance run --all --require A,B,C,D,F,G,H,K,L,O \
             --format json > /tmp/installed-conformance.json
           /tmp/clean/bin/python -c 'import json; d=json.load(open("/tmp/installed-conformance.json")); assert d["conformant"] == sorted(d["adapters"]), d["conformant"]; print(len(d["conformant"]), "adapters CONFORMANT from the installed wheel")'
+          /tmp/clean/bin/python - /tmp/installed-conformance.json <<'PY'
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          print(len(d["conformant"]), "of", len(d["adapters"]), "CONFORMANT")
+          if len(d["conformant"]) != len(d["adapters"]):
+              sys.exit("::error::a NON-CONFORMANT adapter in the sweep: " + ", ".join(sorted(set(d["adapters"]) - set(d["conformant"]))))
+          unheld = []
+          for name, report in d["adapters"].items():
+              j = report["checks"]["J"]
+              declared = j.get("declared_inapplicable") and (j.get("details") or {}).get("declaration") == "limitations[id=no-source-time]"
+              if j["verdict"] != "PASS" and not (j["verdict"] == "SKIP" and declared):
+                  unheld.append(f"{name}: J {j['verdict']}")
+          print("J: PASS or declared no-source-time SKIP on every adapter" if not unheld else "J unheld")
+          if unheld:
+              sys.exit("::error::J is required on every adapter that states an instant: " + ", ".join(unheld))
+          PY
           /tmp/clean/bin/cdm-harness --list-adapters
 
       - name: SBOM — SPDX, from syft over the clean-install environment

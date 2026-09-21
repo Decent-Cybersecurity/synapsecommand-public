@@ -1263,3 +1263,135 @@ def test_condition_4_names_the_tests_it_fails_on(workflow):
         "pytest is piped into tail again, which is exactly how run 35506445471 lost the name of "
         "the test that failed")
     assert "exit 1" in step, "a red suite run at condition 4 does not stop the job"
+
+
+# ------------------------------------------ check J is held off the declaration, in EVERY sweep
+#
+# `v3.1.0` (run 35640088433, 2026-09-21) is the fourth tag this repository burned and the second
+# burned below the gate job. The gate job passed every step — its conformance sweep read
+# `19 of 19 CONFORMANT` and `J: PASS or declared no-source-time SKIP on every adapter` — and the
+# build job failed at the package test, whose sweep from the installed wheel still carried J in
+# `--require`. `geojson` and `geopackage` declare the structured limitation `no-source-time`, so
+# their J is a DECLARED SKIP, and a required SKIP exits non-zero whatever its declaration (§19).
+# The adapter expansion's phase 7 had moved J out of the gate step's `--require` and into a block
+# that reads it off the artefact; the package-test step was the twin nobody moved. Nothing about
+# it depends on the ref, so `gates/release_ref_rehearsal.py` could not reach it. The property
+# below is what would have: no sweep in either workflow may require J unconditionally, and every
+# `--all` sweep is followed by the same hold. MIGRATIONS.md's 3.1.1 section is the record.
+
+CI_WORKFLOW = WORKFLOWS / "ci.yml"
+
+SWEEP = re.compile(r"conformance run\b(?P<args>(?:[^\n\\]|\\\n)*)")
+J_HOLD = ('declared = j.get("declared_inapplicable") and (j.get("details") or {})'
+          '.get("declaration") == "limitations[id=no-source-time]"')
+DERIVED_SET = "suite.NO_SOURCE_TIME_LIMITATION in declared"
+
+# The package-test step as `v3.1.0` carried it — the text the property below must refuse.
+PRE_REPAIR_PACKAGE_TEST = """\
+      - name: Package test — the installed wheel answers for itself
+        run: |
+          set -euo pipefail
+          cd /tmp
+          /tmp/clean/bin/synapse conformance list
+          /tmp/clean/bin/synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O \\
+            --format json > /tmp/installed-conformance.json
+          /tmp/clean/bin/python -c 'import json; d=json.load(open("/tmp/installed-conformance.json")); assert d["conformant"] == sorted(d["adapters"]), d["conformant"]; print(len(d["conformant"]), "adapters CONFORMANT from the installed wheel")'
+          /tmp/clean/bin/cdm-harness --list-adapters
+"""
+
+
+def _steps(text: str) -> list[tuple[str, str]]:
+    """Every `- name:` step of a workflow as (name, executable body), comments dropped."""
+    parts = re.split(r"\n[ \t]*- name: ", "\n" + _executable(text))
+    return [(part.split("\n", 1)[0].strip(), part) for part in parts[1:]]
+
+
+def _hold_blocks(step: str) -> list[str]:
+    """The heredoc bodies (`<<'PY'` … `PY`) of a step, dedented, in order."""
+    blocks = []
+    for m in re.finditer(r"<<'PY'\n(.*?)\n[ \t]*PY\n", step, re.DOTALL):
+        lines = m.group(1).splitlines()
+        indent = min(len(line) - len(line.lstrip()) for line in lines if line.strip())
+        blocks.append("\n".join(line[indent:] for line in lines))
+    return blocks
+
+
+def check_every_sweep_holds_j_off_the_declaration(text: str, label: str) -> list[str]:
+    """Returns the dedented hold block of every `--all` sweep, one per sweep, after checking.
+
+    Three properties, per `conformance run` invocation: a literal `--require` never names J; a
+    `--require` that is a shell variable is derived in the same step from the adapter's own
+    `no-source-time` declaration; and a `--all` sweep is followed, in the same step, by the block
+    that reads J off the artefact — PASS, or a SKIP whose `declared_inapplicable` is true and
+    whose declaration is `limitations[id=no-source-time]`.
+    """
+    holds = []
+    for name, step in _steps(text):
+        for m in SWEEP.finditer(step):
+            args = m.group("args").replace("\\\n", " ")
+            require = re.search(r"--require\s+(\S+)", args)
+            if not require:
+                # A run with no `--require` requires nothing, so nothing can be required of J
+                # there: `ci.yml`'s report-shape check is one, and it reads `result` instead.
+                continue
+            required = require.group(1).strip("\"'")
+            if required.startswith("$"):
+                assert DERIVED_SET in step, (
+                    f"{label}, step {name!r}: --require is the variable {required} and the step "
+                    "does not derive it from the adapter's no-source-time declaration")
+                continue
+            assert "J" not in required.split(","), (
+                f"{label}, step {name!r}: `--require {required}` names J unconditionally. A "
+                "required SKIP exits non-zero whatever its declaration (§19), geojson and "
+                "geopackage declare J inapplicable, and this is exactly the step that burned "
+                "v3.1.0 in run 35640088433")
+            if "--all" in args.split():
+                blocks = [b for b in _hold_blocks(step) if J_HOLD in b]
+                assert blocks, (
+                    f"{label}, step {name!r}: the `--all` sweep drops J from --require and "
+                    "nothing in the step reads J off the artefact, so an undeclared J SKIP or a "
+                    "J FAIL would pass here")
+                assert 'unheld.append(f"{name}: J {j[\'verdict\']}")' in blocks[-1], (
+                    f"{label}, step {name!r}: the hold names no adapter when it refuses")
+                assert "sys.exit(" in blocks[-1], (
+                    f"{label}, step {name!r}: the hold prints and does not refuse")
+                holds.append(blocks[-1])
+    return holds
+
+
+def test_no_sweep_requires_j_unconditionally_and_every_all_sweep_holds_it(workflow):
+    """The property `v3.1.0` lacked: J is read off the declaration in EVERY sweep, not in one.
+
+    `publish.yml` runs the `--all` sweep twice — the gate job over the tree and the build job
+    over the installed wheel — and `ci.yml` runs it per adapter with a derived set. Each is held
+    to the same rule, and the two `--all` holds are held to ONE TEXT, because "behaviourally
+    identical" enforced as prose is how the second sweep was left behind in the first place.
+    """
+    holds = check_every_sweep_holds_j_off_the_declaration(workflow, "publish.yml")
+    assert len(holds) == 2, (
+        f"publish.yml carries {len(holds)} `--all` sweeps with a J hold; the gate job's and the "
+        "package test's are the two, and a third would need a hold of its own")
+    assert holds[0] == holds[1], (
+        "the gate job's J hold and the package test's J hold are two texts. They are the same "
+        "rule by construction — what the gate accepts the package test accepts, what the gate "
+        "refuses it refuses — and a divergence here is the next v3.1.0")
+    assert CI_WORKFLOW.exists(), "ci.yml is gone"
+    ci = CI_WORKFLOW.read_text()
+    check_every_sweep_holds_j_off_the_declaration(ci, "ci.yml")
+    assert re.search(r"conformance run --adapter \"\$adapter\"[^\n]*\\\n\s*--require \"\$\{required\}\"", ci), (
+        "ci.yml's per-adapter sweep no longer requires the derived set")
+
+
+def test_the_sweep_check_refuses_the_step_that_burned_v3_1_0():
+    """The property must fail on the pre-repair text, or it holds nothing.
+
+    The fixture is the package-test step as the `v3.1.0` tag carries it, comments elided; the
+    check refuses it for the reason run 35640088433 failed, and names J in the refusal.
+    """
+    with pytest.raises(AssertionError, match=r"names J unconditionally"):
+        check_every_sweep_holds_j_off_the_declaration(PRE_REPAIR_PACKAGE_TEST, "v3.1.0")
+    # And a sweep that drops J and reads nothing is refused too: dropping the letter alone is
+    # the green-by-omission this repository refuses.
+    dropped = PRE_REPAIR_PACKAGE_TEST.replace("A,B,C,D,F,G,H,J,K,L,O", "A,B,C,D,F,G,H,K,L,O")
+    with pytest.raises(AssertionError, match=r"nothing in the step reads J off the artefact"):
+        check_every_sweep_holds_j_off_the_declaration(dropped, "J dropped, not held")

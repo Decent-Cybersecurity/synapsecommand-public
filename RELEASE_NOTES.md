@@ -1,4 +1,17 @@
-# synapse-cdm 3.1.0
+# synapse-cdm 3.1.1
+
+**The corrective of the tagged-never-published 3.1.0, and the first published release of the
+adapter expansion arc.** `v3.1.0` was tagged on 2026-09-21 and its own release run (35640088433)
+refused it in the build job: the gate job had run the suite green on the same commit and its
+conformance sweep had read nineteen of nineteen CONFORMANT with check J held per adapter, and
+the build job's package test — the same sweep run from the installed wheel — still required J
+unconditionally, which two of the new adapters declare inapplicable; a required SKIP exits
+non-zero, and the step stopped with its verdicts in a file it never printed. Nothing reached PyPI.
+What moved between 3.1.0 and 3.1.1 is the release workflow (the package test now requires what
+the gate requires and holds J the way the gate does, and a test holds every sweep in both
+workflows to it), `MIGRATIONS.md` and `version.py`; the distribution is otherwise byte-for-byte
+the tree `v3.1.0` named, so everything below describes this release. `MIGRATIONS.md`'s 3.1.1
+section is the record, and no test budget moved to get here.
 
 **The adapter expansion release.** Between the 3.0.1 release of 2026-09-20 and this one, the tree
 gained five adapter modules — `geojson` (#16), `geopackage` (#17), `c2sim` (#18), `aixm511` (#19)
@@ -15,30 +28,36 @@ the arc moved by a byte. The design records are D1 to D67 in
 `docs/adapter-expansion-implementation.md`, which ships in nothing.
 
 **If you are upgrading from 3.0.1, nothing you read or write changes.** A 3.0.1 reader reads a
-3.1.0 object unchanged and `version.compatible("3.0.0", "3.0.0")` is the same answer it was; the
+3.1.1 object unchanged and `version.compatible("3.0.0", "3.0.0")` is the same answer it was; the
 typed blocks the five new adapter modules carry (`geo-object/1`, `geopackage`'s package block, `c2sim-order/1`,
 `aixm-timeslice/1`, `aixm-dnotam/1`) are named, versioned payload contracts under fields the
 3.0.0 schema already has. If you are upgrading from 2.2.0 or earlier, read the 3.0.1 notes first —
 they are the body of the `v3.0.1` Release and describe the MAJOR on both of the first two axes —
 and everything they describe is still here.
 
-## Why the number is 3.1.0
+## Why the number is 3.1.1
 
-**The number is the derived floor.** `gates/bump_derivation.py --json`, run before any number was
-typed, reported the arc since `v3.0.1` as `{"kind": "MINOR", "number": "3.1.0", "unruled": []}`;
-on the release commit `--mutation-check` reads `1 check, 0 failed`. The floor comes from the
+**The number is the derived floor twice over: a PATCH from `v3.1.0` for the corrective — an arc
+of the release workflow, `MIGRATIONS.md` and `version.py`, which `gates/bump_derivation.py`
+derives as PATCH from one signal, the shipped-document row carrying `MIGRATIONS.md`, with nothing
+unruled and `--mutation-check` at `1 check, 0 failed` on the release commit — on top of the MINOR
+the 3.1.0 release commit typed over `v3.0.1`.** For that arc, `gates/bump_derivation.py --json`,
+run before any number was typed, reported it as `{"kind": "MINOR", "number": "3.1.0", "unruled":
+[]}`. The floor comes from the
 public names the arc added and from nothing removed — five `Adapter` subclasses with their codec
 modules, three shared modules, five fixture sets and the `validate` optional extra — and the nine
 units the table cannot decide on its own (`lossless.Mapping`, `RULES`, `parse_path`,
 `render_path`, `_match_pattern`, `_targets`, `_check_field` and `ledger` for the ledger grammar's
 additive `#[*]`, `[_]` and `numeric_text`; `suite.check_temporal` for the declared
 `no-source-time` skip) are every one ruled MINOR in `MIGRATIONS.md`'s 3.1.0 section, which the
-gate reads and reports nothing unruled. It is the second number in a row that moved for what the
-distribution carries rather than for what a workflow refused.
+gate reads and reports nothing unruled. 3.1.0 was the second number in a row that moved for what
+the distribution carries rather than for what a workflow refused; 3.1.1 is the fourth in this
+package's life that moved for a workflow's refusal.
 
-**Package version 3.1.0 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
-· evidence schema 2.0.0.** The first two are a MINOR apart for the ordinary reason: the surface
-grew and the contract did not. `python -m synapse_cdm.schemas --check --out schemas` reads
+**Package version 3.1.1 · CDM `schema_version` 3.0.0 · Adapter API 3.0.0 · manifest schema 2.1.0
+· evidence schema 2.0.0.** The first two are a MINOR and a PATCH apart — the MINOR for the
+ordinary reason, the surface grew and the contract did not, and the PATCH for a release workflow's
+refusal the contract had no part in. `python -m synapse_cdm.schemas --check --out schemas` reads
 `CURRENT: schemas vs models at 3.0.0` and `python -m synapse_cdm.manifests --check` reads
 `CURRENT: manifests vs 19 shipped adapters at manifest schema 2.1.0`. `ADAPTER_API_VERSION`,
 `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them:
@@ -106,12 +125,15 @@ the five.
   ground.** The arc landed the five declaring `false` — "no published Release carries this
   adapter's records yet; it becomes true at the first release that attaches them" — and
   `tests/test_cdm_evidence.py` holds the field to the newest release tag's tree: an adapter the
-  tag carries declares `true`. 3.1.0 is that first release, `.github/workflows/publish.yml`'s
-  evidence job generates the records for every shipped adapter and its release job attaches
-  `evidence-3.1.0.tar.gz` to the `v3.1.0` Release, so the release commit flips the five
-  (`manifests/<name>.json` regenerated) and each limitation says so in words. What the field does
-  NOT say: nothing about the wheel's contents, and nothing about the three external categories —
-  a record can be retrievable and still read ABSENT for `independent_endpoint`.
+  tag carries declares `true`. The 3.1.0 release commit flipped the five on that ground
+  (`manifests/<name>.json` regenerated) and each limitation says so in words, naming 3.1.0 and
+  `evidence-3.1.0.tar.gz` — and `v3.1.0` released nothing, so the sentence's own last clause
+  applies ("a tag that released nothing carries this sentence to nobody"): the Release that first
+  carries the five records is this one's, `.github/workflows/publish.yml`'s evidence job
+  generating them for every shipped adapter and its release job attaching `evidence-3.1.1.tar.gz`
+  to the `v3.1.1` Release. What the field does NOT say: nothing about the wheel's contents, and
+  nothing about the three external categories — a record can be retrievable and still read ABSENT
+  for `independent_endpoint`.
 
 ## What changed for a 3.0.1 consumer
 
@@ -137,11 +159,18 @@ the five.
 
 ## What else moved
 
-* **The release workflow's gate step now reads check J per adapter**, with the `no-source-time`
+* **The release workflow's gate step reads check J per adapter**, with the `no-source-time`
   declaration, and the wheel gate's test rosters know the new modules. `ci.yml`'s per-adapter
-  loop of the same rule ran green in `CI` run 35591088608 on `main`; `publish.yml`'s step has run
-  only as a local rehearsal of its body over the `--all` artefact (the record's D60) and on no run
-  of that workflow: this release's tag is the first push that exercises it.
+  loop of the same rule ran green in `CI` run 35591088608 on `main`, and `publish.yml`'s gate
+  step ran for the first time on the `v3.1.0` tag push (run 35640088433) and read `19 of 19
+  CONFORMANT` and `J: PASS or declared no-source-time SKIP on every adapter`.
+* **The release workflow's package test moved, and it is the reason this is 3.1.1 and not
+  3.1.0.** The sweep from the installed wheel requires exactly what the gate's sweep requires and
+  holds J by the gate step's own block, verbatim; `tests/test_cdm_trusted_publishing.py` holds
+  every `conformance run` in `publish.yml` and `ci.yml` to a `--require` without J, every `--all`
+  sweep to the hold, and the two holds to one text, and refuses the step as `v3.1.0` carried it.
+  Nothing about the ref was involved, which is why the rehearsal gate passed `v3.1.0` and was
+  right to.
 * **`gates/bump_derivation.py` resolves an adapter's base class across the snapshot's modules**, so
   a profile adapter inheriting `to_cdm` from a base in another module is classified as the adapter
   it is (`aixm52` on `aixm511.AixmAdapterBase`).
@@ -174,11 +203,11 @@ directions to agree. Declared maturity and claim status are read from `manifests
 | `stanag4609` | bidirectional | 126 | L3 | VERIFIED |
 | `stanag4676` | bidirectional | 34 | L3 | PROVISIONAL |
 | `tak` | bidirectional | 12 | L3 | VERIFIED |
-| `geojson` | bidirectional | 4 | L4 | VERIFIED (new in 3.1.0) |
-| `geopackage` | ingest | 8 | L3 | VERIFIED (new in 3.1.0) |
-| `c2sim` | bidirectional | 10 | L4 | VERIFIED (new in 3.1.0) |
-| `aixm511` | ingest | 10 | L3 | VERIFIED (new in 3.1.0) |
-| `aixm52` | ingest | 10 | L3 | VERIFIED (new in 3.1.0) |
+| `geojson` | bidirectional | 4 | L4 | VERIFIED (new in the 3.1.0 arc) |
+| `geopackage` | ingest | 8 | L3 | VERIFIED (new in the 3.1.0 arc) |
+| `c2sim` | bidirectional | 10 | L4 | VERIFIED (new in the 3.1.0 arc) |
+| `aixm511` | ingest | 10 | L3 | VERIFIED (new in the 3.1.0 arc) |
+| `aixm52` | ingest | 10 | L3 | VERIFIED (new in the 3.1.0 arc) |
 
 **580 fixture verdicts, 0 failed** across the nineteen, against the published 3.0.0 schemas —
 the 538 that 3.0.1 shipped, unchanged, plus 42 from the five new sets; `gates/wheel_install.py`
@@ -225,6 +254,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==3.1.0
+pip install synapse-cdm==3.1.1
 python -m synapse_cdm.harness --list-adapters
 ```
