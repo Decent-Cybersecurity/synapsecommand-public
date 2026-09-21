@@ -208,7 +208,12 @@ def test_time_positions_keep_the_text_the_instant_the_indeterminacy_and_the_zone
     assert offset.instant == "2026-03-10T08:00:00.000Z" and offset.utc is False and "TS_012" in offset.problem
     unknown = codec.read_time_position({"@indeterminatePosition": "unknown"})
     assert unknown.instant is None and unknown.indeterminate == "unknown" and unknown.problem is None
-    assert "TS_020" in codec.read_time_position("2026-03-10T24:00:00Z").problem
+    # 24:00:00 is the end of the stated day (ISO 8601), read the same on every Python — before
+    # 3.14 `fromisoformat` refuses the spelling, from 3.14 it accepts it — and TS_020 forbids it.
+    end_of_day = codec.read_time_position("2026-03-10T24:00:00Z")
+    assert end_of_day.instant == "2026-03-11T00:00:00.000Z" and "TS_020" in end_of_day.problem
+    assert codec.read_time_position("2026-12-31T24:00:00+02:00").instant == "2026-12-31T22:00:00.000Z"
+    assert "not an ISO 8601" in codec.read_time_position("2026-03-10T24:30:00Z").problem
     assert "not an ISO 8601" in codec.read_time_position("10 MAR 2026").problem
     assert "empty position" in codec.read_time_position("").problem
 

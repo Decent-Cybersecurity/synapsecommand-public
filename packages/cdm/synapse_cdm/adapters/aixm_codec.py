@@ -530,6 +530,12 @@ PERIOD_CONVENTION = ("begin included, end excluded — AIXM Temporality Concept 
                      "end position is the first instant the slice no longer applies")
 
 
+#: A date-time whose time of day is spelled 24:00 (seconds and a zero fraction optional):
+#: the end of the stated day, which TS_020 forbids and `read_time_position` still reads.
+_END_OF_DAY = re.compile(
+    r"^(?P<date>\d{4}-\d{2}-\d{2})T24:00(?::00(?:\.0+)?)?(?P<zone>Z|[+-]\d{2}:\d{2})?$")
+
+
 def read_time_position(node: Any) -> TimePosition:
     value = scalar(node)
     indeterminate = value.attributes.get("indeterminatePosition")
@@ -539,15 +545,25 @@ def read_time_position(node: Any) -> TimePosition:
                             problem=None if indeterminate else "empty position with no "
                                                                 "indeterminatePosition")
     text = value.text or ""
+    end_of_day = _END_OF_DAY.match(text)
     try:
-        instant = times.parse(text)
+        if end_of_day:
+            # ISO 8601 lets a day end at 24:00:00, the instant the next day starts. Python's
+            # `fromisoformat` refuses that spelling before 3.14 and accepts it from 3.14 on, so
+            # the reading is done here, the same on every interpreter: midnight of the stated
+            # date in the stated zone, plus one day. TS_020 forbids the spelling; the finding
+            # below says so, and the text is kept as the source wrote it.
+            instant = times.parse(f"{end_of_day['date']}T00:00:00{end_of_day['zone'] or ''}")
+            instant += _dt.timedelta(days=1)
+        else:
+            instant = times.parse(text)
     except (TypeError, ValueError):
         return TimePosition(text=text, indeterminate=indeterminate, frame=frame,
                             problem=f"{text!r} is not an ISO 8601 date-time")
     utc = text.endswith("Z")
     problem = None if utc else (f"{text!r} does not carry the 'Z' zone designator TS_012 "
                                 "requires; read as the offset it states")
-    if "T24" in text:
+    if end_of_day:
         problem = f"{text!r} spells 24:00 (TS_020 forbids it)"
     return TimePosition(text=text, instant=times.render(instant), indeterminate=indeterminate,
                         utc=utc, frame=frame, problem=problem)
