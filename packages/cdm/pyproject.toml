@@ -103,7 +103,7 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # set enables E902 and F821 and nothing else; the workflows' command reads `All checks passed!`
 # over `packages/cdm gates tests`; and `--select F` still counts 13 F841 and 8 F541. Every reading
 # below was taken with 0.16.6 and every one of them holds at 0.16.7, so none is re-dated.
-lint = ["ruff==0.16.7"]
+lint = ["ruff==0.16.8"]
 # The normative-validation extra, added 2026-09-20 by the adapter-expansion arc (Phase 0,
 # docs/adapter-expansion-implementation.md, decision D5). `synapse_cdm/normative_binding.py` has
 # imported `lxml` under an explicit normative mode since F05 without any extra declaring it, so
