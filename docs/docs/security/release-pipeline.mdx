@@ -265,3 +265,10 @@ symptom, and it is the one this refusal exists for.
   `witness-3.0.1.json` on the Release: the third committed record, `releases/witness/3.0.1.json`, is
   the pipeline's own, byte for byte, held by digest. A fourth makes this bullet red again until it
   says what that run did.
+  On `v3.1.1` — run 35695633330, 2026-09-22 — it did: the build step wrote the record, the verify
+  step refused it because the `pypi` approval had been given with an empty comment, the `v2.2.0`
+  reason, and the attach step was skipped; `releases/witness/3.1.1.json` is the fourth committed
+  record, built outside the pipeline with the same builder over that run's inputs and a
+  `--review-file` the maintainer designated afterwards, and `PUBLICATION.md` entry 23 says so. Four
+  records, three of them hand-built; the rule about the approval comment is in the release
+  procedure, and this is the second time it was not followed.

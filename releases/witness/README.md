@@ -15,7 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json --offline  # every record here
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -76,6 +76,24 @@ account, and the run before it, 35200069387, is the refusal this success is meas
 This is the first release whose committed record is the pipeline's own; the two before it say in
 the paragraph above why theirs are not.
 
+**`3.1.1.json` is hand-built again, 2026-09-22 — the fourth execution, refused for the 2.2.0 reason.**
+On the `v3.1.1` run
+([35695633330](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/35695633330))
+five of the six jobs succeeded and the `witness` job failed. Its build step read the run's one
+approval — given at 09:06:01Z with an EMPTY comment — and the `pypi` deployment's status history
+(`waiting` 07:46:54Z, `queued` 09:06:01Z, `in_progress` 09:06:04Z, `success` 09:06:29Z), fetched the
+attestation store by the wheel's digest, and wrote `witness-3.1.1.json for v3.1.1 (2 files, 1
+approval(s))`. Its verify step refused that record with *an approval entry has neither a
+`review_file` nor a `comment`, so nothing says what it was taken on*, exactly as run 35200069387's
+did; the attach step was skipped, and the Release carries no `witness-3.1.1.json`. `3.1.1.json` here
+was built by hand with the same builder over that run's own inputs, re-fetched from the APIs, plus
+the `--review-file` argument the 2.2.0 paragraph below describes — 1 988 bytes, sha256
+`932fdf8f2e51e47a520cabbf25887d1ecd6a8e57ad0dca41f22a9a30725fb2aa`, one line different from the
+refused shape (`c5f2b2d1…`, 1 844 bytes) — and verified offline against a `gh release download`,
+online with `--download`, and over all four records before it was committed. `PUBLICATION.md` entry
+23 records the ruling, the empty comment and the designation. The directory holds four records:
+three built by hand and the pipeline's one.
+
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
 The two are the same facts for two different readers and neither replaces the other: the ledger
@@ -101,7 +119,7 @@ holds this list and that tuple together.
 | `conformance_sha256` | the sweep `synapse conformance run --all --format json` produced |
 | `attestation` | `{bundle_sha256, verified, verified_at}` — the pipeline's own `gh attestation verify` result |
 | `released_at` | when the Release was published |
-| `approvals` | `[{environment, approved_at, approver, comment, review_file}]` — the `pypi` hold: who released it, the approval comment verbatim, and the public reference the comment names — or, for 2.2.0, the reference the ledger's entry 20 designates — or the empty string |
+| `approvals` | `[{environment, approved_at, approver, comment, review_file}]` — the `pypi` hold: who released it, the approval comment verbatim, and the public reference the comment names — or, for 2.2.0 and 3.1.1, the reference the ledger's entries 20 and 23 designate — or the empty string |
 
 Four of these are beyond §53's example, and each is here because `PUBLICATION.md` entry 18 had to
 state it in prose for want of a field: the tag object, the conformance digest, the attestation
@@ -142,6 +160,18 @@ commit:* followed by the report's URL at `89d2c707`, so the builder lifted that 
 `review_file` from the approval's own words; `--review-file` was not passed, `publish.yml` never
 passes it, and the record's `comment` and `review_file` name the same document. It is the first
 record in this directory whose `review_file` was derived rather than designated or private.
+
+**What `review_file` means for 3.1.1 — designated, not derived, a second time (2026-09-22).** The
+`pypi` approval of the `v3.1.1` run carried an EMPTY comment: the API's `comment` is `""`,
+`3.1.1.json` carries it as such, and the builder wrote `""` into `review_file` too, which is what the
+pipeline's verify step refused. The value `3.1.1.json` carries instead —
+`https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/184a1e3448a097e4a683fb3c70d87ff0c7770b0b/docs/soif-part1-release-readiness.md`,
+the release-readiness report at the release commit — was designated by the maintainer after the
+fact, in the witness round, and not named by the approval; it reached the record through
+`--review-file`, the 2.2.0 route, and `PUBLICATION.md` entry 23 states the designation, states that
+the comment was empty, and gives both digests. The weaker form, twice: a designation says what the
+maintainer holds the approval to have been taken on, where a derived reference says what the
+approver typed.
 
 ## What the verifier does not do
 

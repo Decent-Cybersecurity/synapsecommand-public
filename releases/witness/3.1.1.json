@@ -1,0 +1,51 @@
+{
+  "approvals": [
+    {
+      "approved_at": "2026-09-22T09:06:01Z",
+      "approver": "decentcybersecurity",
+      "comment": "",
+      "environment": "pypi",
+      "review_file": "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/184a1e3448a097e4a683fb3c70d87ff0c7770b0b/docs/soif-part1-release-readiness.md"
+    }
+  ],
+  "artifact_sha256": {
+    "synapse_cdm-3.1.1-py3-none-any.whl": "8588602930173ac43f64322c1483e0bd61f561d8cae2cc96c303b0688566c768",
+    "synapse_cdm-3.1.1.tar.gz": "4eee5fe87b81ea932e976c0a6f5e089716fca5f15fe8d55d0362e70085b4f382"
+  },
+  "attestation": {
+    "bundle_sha256": "2610180d90e9abbbffb91ec96782fd8b79881139f817e32fbc636a23d3f94f61",
+    "verified": true,
+    "verified_at": "2026-09-22T07:46:45Z"
+  },
+  "commit": "184a1e3448a097e4a683fb3c70d87ff0c7770b0b",
+  "conformance_sha256": "dc923453ff48337e8ea42c94105fa73859a7cef7306649033b43adbd8ec2b462",
+  "evidence_sha256": "95bcbfa7b56ddbe64af5f35162d2b5f3d339058f17e892767797e230c7eb9e20",
+  "github_release": {
+    "id": 393585365,
+    "published_at": "2026-09-22T09:06:58Z",
+    "url": "https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v3.1.1"
+  },
+  "pypi": {
+    "files": [
+      {
+        "filename": "synapse_cdm-3.1.1-py3-none-any.whl",
+        "sha256": "8588602930173ac43f64322c1483e0bd61f561d8cae2cc96c303b0688566c768",
+        "upload_time": "2026-09-22T09:06:23.492679Z"
+      },
+      {
+        "filename": "synapse_cdm-3.1.1.tar.gz",
+        "sha256": "4eee5fe87b81ea932e976c0a6f5e089716fca5f15fe8d55d0362e70085b4f382",
+        "upload_time": "2026-09-22T09:06:25.723659Z"
+      }
+    ],
+    "version": "3.1.1"
+  },
+  "release": "3.1.1",
+  "released_at": "2026-09-22T09:06:58Z",
+  "sbom_sha256": {
+    "cyclonedx": "356b5824f1314f0d01bea1035259fcfc2aca772eaf94a114482a9afa47bcc7ce",
+    "spdx": "87ad32dd8aefcaebcd241d3f38a2f3a2645eb7f943550b80946c3d8e9d14d90a"
+  },
+  "tag": "v3.1.1",
+  "tag_object": "14281243ddc87306dea03d222c8fca779eda75d5"
+}

@@ -2592,6 +2592,143 @@ document with room — the deepest XML nests 15 elements and the deepest JSON tw
 - **Covering tests.** `gates/commit_message.py --file` on the draft; the tag message is checked
   by the pipeline's annotated-tag step and by the rehearsal.
 
+### D83 — The 3.1.1 witness record is built by hand by the 2.2.0 route: the same builder, the run's own inputs, `--review-file` carrying the maintainer's after-the-fact designation, and `comment` left empty
+
+- **What.** `releases/witness/3.1.1.json` is `.github/scripts/build_witness.py`'s output over
+  the run's re-fetched inputs with the job's own arguments plus `--review-file
+  https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/184a1e3448a097e4a683fb3c70d87ff0c7770b0b/docs/soif-part1-release-readiness.md`.
+  `comment` is `""` as `GET /actions/runs/35695633330/approvals` returned it. The record is
+  1 988 bytes, sha256 `932fdf8f…`; the refused shape the same command writes without the flag is
+  1 844 bytes, `c5f2b2d1…`, and the two differ in the `review_file` line alone.
+- **Why.** `releases/witness/README.md` distinguishes a derived reference (3.0.1: lifted from the
+  approval's own words) from a designated one (2.2.0: named by the maintainer in the witness
+  round because the comment was empty), and the phase's brief designates the readiness report at
+  the release commit for 3.1.1 after the fact. The builder's `--review-file` is the documented
+  route for exactly that: accepted only as an `https://` URL, applied only to an approval whose
+  comment names no URL, never passed by `publish.yml`. No comment is invented, backfilled or
+  paraphrased; the ledger, the README, `MIGRATIONS.md` and the release-pipeline page all state
+  that the comment was empty and that the reference was designated afterwards.
+- **Alternatives.** Not writing a record (the README's history says a hand-built record under a
+  stated ruling is the route when the job does not produce one, and two precedents exist);
+  editing the JSON by hand (the flag exists so that the designation is a command — entry 20's ruling);
+  writing the URL into `comment` (would assert the approver typed what they did not).
+- **Compatibility evidence.** `gates/witness_verify.py` VERIFIED in every mode before and after
+  the copy: `--offline --assets` over the pipeline layout and the flat download, `--download
+  --assets` with a token (the job's invocation), `--download` over the committed path, `--offline`
+  over all four records (Validation).
+- **Covering tests.** `tests/test_cdm_witness.py` (offline over every committed record; the
+  roster and the three dated sites; `SC_ONLINE=1` for the network half) and
+  `tests/test_cdm_witness_builder.py` (the `--review-file` properties, untouched).
+
+### D84 — Nothing is uploaded to the Release by this phase; the attach is the maintainer's act and the Handoff says how and what to re-run
+
+- **What.** The Release `v3.1.1` carries eight assets and no `witness-3.1.1.json`. The Handoff
+  gives `gh release upload v3.1.1 releases/witness/3.1.1.json#witness-3.1.1.json` — the name the
+  job's attach step would have used, `witness-${version}.json` — and `python
+  gates/witness_verify.py releases/witness/3.1.1.json --download` afterwards.
+- **Why.** The phase's rules: nothing uploaded; and `witness_verify.py` requires the Release to
+  carry every file the record DIGESTS — the record itself is not among them — so the attach does
+  not change the verdict, only the Release's completeness. Entry 20's precedent left its record
+  on no Release; entry 23 says the record is on none and whose act the attach is.
+- **Alternatives.** Uploading it here (forbidden by the phase); leaving the attach unmentioned
+  (the README says the job uploads it, so a reader would look for it).
+- **Compatibility evidence.** `--download` VERIFIED over the committed record with the Release
+  as it is (Validation).
+- **Covering tests.** none new; `tests/test_cdm_witness.py`'s online half re-reads the Release
+  under `SC_ONLINE=1`.
+
+### D85 — `PUBLICATION.md` entry 22 moves to CLOSED by a dated paragraph, entry 23 is the 3.1.1 entry in entry 21's form, and the ledger's count sites move with them
+
+- **What.** Entry 22's heading reads `CLOSED by entry 23`; a dated paragraph after its opening
+  states what closed it (step 10's reading on the tag push) and that everything below is kept as
+  written on 2026-09-21. Entry 23 is the 3.1.1 entry: entry 21's paragraphs (the run, the
+  corrective, the number, the digests, the provenance trap, the files, what it does not claim,
+  the deploy) with entry 20's witness paragraph in place of entry 21's success paragraph. The
+  intro reads twenty-three entries, twenty settled, entries 2, 3 and 4 open, and gains the
+  entry 23 sentence. `tests/test_cdm_publication.py`'s docstring and number words move with it —
+  the count-vocabulary edit every witness round has made (f7585c4, bbe5140).
+- **Why.** Entry 22 said in its own words that the next entry closes it; entries change state
+  and are not deleted (entry 6's precedent, and the file's own rule). The test that holds the
+  count sentence admits only the numbers its vocabulary names, so the vocabulary is the one test
+  edit the phase's ledger deliverable cannot avoid; it is the precedent's move and weakens
+  nothing.
+- **Alternatives.** Measuring 3.1.1 inside entry 22 (contradicts entry 22's own sentence and the
+  one-entry-per-release form); leaving entry 22 OPEN (the intro would then say a closed act is
+  open).
+- **Compatibility evidence.** `tests/test_cdm_publication.py` green; `tests/test_cdm_prose_counts.py`
+  `260 passed` over the new prose (the quoted `19 adapters CONFORMANT …` reading is already in
+  entry 22 and passes the sweep as a code span).
+- **Covering tests.** `tests/test_cdm_publication.py`, `tests/test_cdm_prose_counts.py`.
+
+### D86 — The three dated witness paragraphs gain a 2026-09-22 paragraph each rather than a rewrite, and `HAND_BUILT` grows by one name
+
+- **What.** `MIGRATIONS.md`'s release procedure ("And on 2026-09-22 the fourth execution was
+  refused …") and pipeline section ("Also 2026-09-22 …"), `releases/witness/README.md`
+  ("`3.1.1.json` is hand-built again …" and "What `review_file` means for 3.1.1"), and
+  `docs/docs/security/release-pipeline.mdx`'s bullet each say what run 35695633330 did.
+  `tests/test_cdm_witness.py`: `HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]` and a
+  dated comment block; `SUCCEEDED_SITES`, `PIPELINE_BUILT` and every phrase they hold are
+  untouched, so each phrase is still in exactly one place.
+- **Why.** The test's own failure message says a fourth record makes the paragraphs go red
+  "until they say which" it is; the phase's deliverable 2 allows exactly the roster to grow. The
+  sentences about runs 35200069387 and 35514833652 are dated history and are not rewritten.
+- **Alternatives.** Renaming the test or the constant (an edit beyond the roster); leaving the
+  release-pipeline page (its bullet promises to say what a fourth run did, and the page is
+  served by this phase's deploy).
+- **Compatibility evidence.** `tests/test_cdm_witness.py` `52 passed, 4 skipped`;
+  `bump_derivation.py` reads the `MIGRATIONS.md` move as PATCH with 0 unruled.
+- **Covering tests.** `tests/test_cdm_witness.py`, `tests/test_cdm_bump_derivation.py` (via the gate).
+
+### D87 — Three builds, the third deployed: the first build after a fresh `npm ci` differs from the next two in the runtime chunk's hash alone
+
+- **What.** `npm ci --prefix docs` then `npm --prefix docs run ci` ×3. Builds 2 and 3 are
+  byte-identical across all 72 files; build 1 differs in `assets/js/runtime~main.<hash>.js`
+  (`ca64206a` → `6abb4432`) and, through the filename, in every HTML page that references it.
+  Build 3 is what was uploaded, and entry 23's deploy paragraph says so.
+- **Why.** The precedent's claim is "two consecutive builds byte-identical", and the second and
+  third are; the first is reported rather than hidden. The cause (docusaurus's persistent
+  bundler cache state after a fresh install) is not established here and is a Remaining gap.
+- **Alternatives.** Deploying build 1 (then no two builds agree with the deployed set);
+  `docusaurus clear` between builds (changes the procedure `docs/README.md` states).
+- **Compatibility evidence.** `check:schemas` CURRENT, `check:admonitions` OK, the served page
+  byte-identical to build 3 (Validation).
+- **Covering tests.** none; `gates/deploy_record.py` witnesses the served bytes.
+
+### D88 — The deploy is stamped with the release commit from a dirty tree, because the round commits nothing and the served pages are meant to carry the witness round's text
+
+- **What.** Deployment `bd0c1d8b`, source `184a1e3`, `commit_dirty: true`, `ad_hoc`; the built
+  tree included this phase's uncommitted edits to `docs/docs/changelog.mdx` and
+  `docs/docs/security/release-pipeline.mdx`. Entry 8's row says so; entry 23's deploy paragraph
+  states the departure from `docs/README.md`'s commit-first order in as many words.
+- **Why.** The phase forbids a commit and orders the deploy; the precedent (f1c4669) served the
+  witness commit's tree so that the changelog page carries the dated measurement. Deploying the
+  clean release tree would have served a changelog page without the measurement and left the
+  maintainer's witness commit needing a second deployment — a second row. The honest reading is
+  recorded: the stamp names the commit wrangler read, and the pages are the ones the
+  `Release 3.1.1 (witness)` commit carries provided the maintainer commits the tree as it stands.
+- **Alternatives.** Deploying before the docs edits from the clean tree (honest stamp, stale
+  page, a further deploy owed); not deploying (the phase's deliverable 3 and 4).
+- **Compatibility evidence.** `gates/deploy_record.py` `2 checks, 0 failed`, alias `bd0c1d8b`
+  5/5, served-version witness AGREE at 09:57:03Z.
+- **Covering tests.** `tests/test_cdm_deploy_record.py` (the gate's own tests, untouched).
+
+### D89 — Two draft commit messages, in the precedents' split, with the split made by hunk on `PUBLICATION.md`
+
+- **What.** `<pipeline dir>/state/witness-commit-message-3.1.1.txt` (subject `Release 3.1.1
+  (witness): …`, f7585c4's and bbe5140's body shape) and `docs-commit-message-3.1.1.txt` (subject
+  `Release 3.1.1 (docs): …`, f1c4669's shape); each with `Signed-off-by` as its only trailer and
+  `gates/commit_message.py --file` `clean`. The Handoff gives the hunk split: the entry 8 row,
+  count sentence, alias paragraph and refusal paragraph, and entry 23's deploy paragraph, belong to
+  the docs commit; everything else to the witness commit.
+- **Why.** The precedent's split is two acts with two gate readings — the witness record and the
+  deploy record — and both readings are in the tree. The precedent's other reason for the split
+  (the deploy stamped with the witness commit) does not apply here (D88), so the Handoff also
+  says that one commit with the witness message is acceptable if the maintainer prefers not to
+  split a file by hunk; the docs message's substance is then in entry 23 already.
+- **Alternatives.** One message only (the phase asks for both drafts).
+- **Compatibility evidence.** the gate over both files (Validation).
+- **Covering tests.** `gates/commit_message.py`.
+
 
 ## Progress
 
@@ -3153,6 +3290,87 @@ push of `main` alone and the wait for `codeql.yml`, the tag, the rehearsal, the 
 still requires J unconditionally (D77).
 
 
+### Phase 9 — After the v3.1.1 pipeline: witness record, ledger, docs deployment (no commit, no push) — COMPLETE (2026-09-22)
+
+Started from `phase-diff.sh`'s empty reading for the phase (no earlier attempt; the tree was
+clean at `184a1e3`, `main`'s tip and `v3.1.1`'s commit, on `soif/release-3.1.1`; the run's
+witness job had already failed). Complete, in the deliverables' order: (0) **The state, from the
+APIs** — `gh run list --workflow Release --limit 2`: run 35695633330, `push` on `v3.1.1`, `headSha
+184a1e34`, created 06:36:56Z, `failure`; `gh run view --json jobs`: gate, build, attest, publish
+and release `success`, witness `failure` (09:07:04–09:07:15Z); `--log-failed`: step 6 `DISAGREES
+witness-3.1.1.json (1)` — *an approval entry has neither a `review_file` nor a `comment`, so
+nothing says what it was taken on* — `1 witness record(s), 1 disagreeing`, exit 1; the approvals
+endpoint: one entry, `decentcybersecurity`, `approved`, `comment: ""`, environment `pypi`;
+`gh release view v3.1.1`: eight assets, published 09:06:58Z, id 393585365; PyPI's JSON: `3.1.1`,
+wheel `85886029…` 8 207 688 bytes at 09:06:23.492679Z, sdist `4eee5fe8…` 5 852 493 bytes at
+09:06:25.723659Z — the build's digests exactly, so the phase proceeded. (1) **The witness record,
+by the documented route** — the job's inputs re-fetched (`release.json`, `approvals.json`, the
+one `pypi` deployment `6585868020` of `184a1e34` and its four statuses `waiting` 07:46:54Z /
+`queued` 09:06:01Z / `in_progress` 09:06:04Z / `success` 09:06:29Z, the attestation store's one
+bundle for the wheel, `gh release download v3.1.1` re-hashed to all six `SHA256SUMS` digests and
+laid out as the pipeline's `assets/` with `sbom/`), the tag object `14281243` read from the local
+and remote tag; `.github/scripts/build_witness.py` run with the job's own arguments
+(`--attestation-verified-at 2026-09-22T07:46:45Z` read from the job log) first WITHOUT
+`--review-file` — the refused shape, 1 844 bytes, `c5f2b2d1…`, which `witness_verify.py --offline
+--assets` refuses here with the job's exact sentence — and then WITH `--review-file
+https://github.com/…/blob/184a1e3448a097e4a683fb3c70d87ff0c7770b0b/docs/soif-part1-release-readiness.md`,
+the maintainer's after-the-fact designation, the 2.2.0 route (D83): 1 988 bytes, `932fdf8f…`, one
+line different. VERIFIED in every mode before it entered the tree (`--offline --assets` over both
+layouts, `--download --assets` with a token at 09:47:12Z), copied to `releases/witness/3.1.1.json`
+(`cmp` identical), and VERIFIED again there (`--offline --assets` over the download, `--download`
+at 09:47:31Z, `--offline` over all four records: `4 witness record(s), 0 disagreeing`). Nothing was
+uploaded to the Release (D84). (2) **The ledger and the release's own account** — `PUBLICATION.md`
+entry 23 in entry 21's form with entry 20's witness-failure paragraphs (the run's job and step
+instants, the hold, deployment 6585868020's statuses, the six digests against the Release API and
+the index, the served bytes re-hashed, the wheel's version constants, the provenance trap's
+thirteenth reading, the witness job's refusal verbatim, the empty comment and the designation with
+both digests, what it does not claim); entry 22 moved to CLOSED with a dated closing paragraph and
+its 2026-09-21 text kept; the intro to twenty-three entries, twenty settled (D85);
+`MIGRATIONS.md`'s 3.1.1 "Measured after the upload" sentence, a dated paragraph in the release
+procedure and in the pipeline section, and the `### Unreleased` pending section the one-file
+change makes necessary (`bump_derivation.py`: PATCH, 0 unruled, `1 check, 0 failed`);
+`docs/docs/changelog.mdx`'s dated measurement; `releases/witness/README.md`'s history paragraph,
+"What `review_file` means for 3.1.1" and the `approvals` row; the release-pipeline page's bullet;
+`tests/test_cdm_witness.py`'s `HAND_BUILT` roster and `tests/test_cdm_publication.py`'s number
+vocabulary (D86). (3) **The documentation site** — `npm ci --prefix docs` (rc 0), `npm --prefix
+docs run ci` three times (rc 0; builds two and three byte-identical across 72 files, build one
+differing in the runtime chunk's hash, D87); the built changelog page carries ten `package is at`
+sentences ending `3.1.1` and the current-contracts page states 3.1.1; `npx wrangler whoami`
+authenticated; the pre-deploy gate reading at 09:55:06Z (DISAGREE, 3.0.1 served); ONE deploy —
+`docs/README.md`'s second documented command, verbatim, from the repository root — at 09:55:10Z → deployment `bd0c1d8b`, source `184a1e3`, `commit_dirty: true`
+(D88). (4) **The deploy record** — the alias witnessed by bytes at 09:55:37Z (domain and
+`pages.dev` both `acb1f929…`, 81 219 bytes, = local build); `gates/deploy_record.py` refused at
+09:55:46Z naming `bd0c1d8b`; entry 8's row, count sentence and alias paragraph moved in one edit;
+the gate then read `25 listed; 17 with a row, 11 covered retrospectively; 0 unaccounted for; 3
+recorded beyond the window`, alias `bd0c1d8b` 5/5 and 5/5 differing from `6a78d173`, `2 checks,
+0 failed`, served-version witness `states 3.1.1 and version.py declares 3.1.1 — AGREE` at
+09:57:03Z; entry 23's deploy paragraph in entry 21's form. (5) **This record** — this entry,
+D83–D89, the Phase 9 Validation table, Remaining gaps, the Handoff subsection "Release 3.1.1
+(witness) and (docs) — what the maintainer commits next", and the two drafts at
+`<pipeline dir>/state/witness-commit-message-3.1.1.txt` and `docs-commit-message-3.1.1.txt`
+(`gates/commit_message.py --file`: `clean`, `clean`) (D89).
+
+Fix rounds within the phase, from the tree's own readings: the first draft of entry 23 nested
+code spans inside the quoted refusal sentence and asserted what the run page's approval box
+shows, which no command in this phase read — both rewritten (italics as the README quotes it;
+the API reading with its instant); the first count of the round's files said seven and the tree
+says six plus two test modules. Nothing went red at any point in the four named test modules,
+the prose-count sweep or the bump gate. The full suite, run in the background while the record
+was still being written, read three reds: two evidence-snapshot tests that compare the dirty tree
+to a snapshot taken mid-run (the tree moved under them; green on the stable tree) and the
+deploy-mechanism site sweep, which read this record's verbatim quotation of the deploy command
+as a new file stating the mechanism — reworded to name `docs/README.md`'s command; both modules
+`114 passed` afterwards (Validation).
+
+Incomplete: nothing in the phase's scope. Not done by design, and left to the maintainer by the
+phase's own terms: the two commits, the fast-forward of `main` and its push, and the attach of
+`releases/witness/3.1.1.json` to the Release as `witness-3.1.1.json` followed by `--download`
+over the Release (Handoff). Recorded as gaps: the record is on no Release until that attach; the
+deployment is stamped with the release commit from a dirty tree and the served pages are the
+witness commit's; the runtime chunk's hash differed between the first build after `npm ci` and
+the two after it; Node 26.7.0 ran the build where `.node-version` pins 22.
+
+
 ## Validation
 
 Phase 0, 2026-09-20, worktree at `f1c4669` + the Phase 0 edits (all from the worktree root,
@@ -3484,6 +3702,52 @@ the gates. Logs under `/tmp/p10/` on the pipeline machine.
 | the clone reset to `328737d`, the FINAL diff applied (14 files, this record as it stands but for this row and the next), committed with the drafted message and tagged `v3.1.1` there (commit `f082ddb`); `python gates/bump_derivation.py --mutation-check`; the suite (`suite-clone-tagged-2.log`) | 0, 0 | **`1 check, 0 failed`**; **`6666 passed, 193 skipped in 555.48s`, 0 failed** — the same 6859 collected; the two of D79 green at the tag (6664 + 2), nothing red |
 | `git status --short`, `git tag -l v3.1.1`, `git stash list` — this repository at the end of the phase | 0 | fourteen ` M` lines, no `A`/`??`; no `v3.1.1` tag (`v3.1.0` is the remote's, carried since before the phase); nothing stashed — nothing committed, staged, stashed, tagged or pushed here, and no git configuration written (the clone's commit and tag used `-c user.name`/`-c user.email`); `docs/build/` and `docs/node_modules/` gitignored |
 
+Phase 9, 2026-09-22, worktree `/Users/admin/synapsecommand-public-release` on `soif/release-3.1.1`
+at `184a1e3` (= `v3.1.1`, `main`'s tip) + this phase's edits (seven tracked files modified, this
+record included, `releases/witness/3.1.1.json` new), `.venv` on PATH (Python 3.14.7), Node
+26.7.0, wrangler 4.136.2. Order follows the deliverables: the state, the record, the ledger, the
+site, the deploy record, the drafts. Logs and API payloads under `<pipeline dir>/state/p9/`.
+
+| Command | RC | Result |
+| --- | --- | --- |
+| `gh run list --workflow Release --limit 2 --json databaseId,headBranch,createdAt,conclusion,event,headSha` | 0 | `35695633330` `v3.1.1` `push` `184a1e34…` created `2026-09-22T06:36:56Z` `failure`; before it `35640088433` `v3.1.0` `failure` |
+| `gh run view 35695633330 --json jobs,number,url,displayTitle,attempt` (`run.json`) | 0 | run #37 attempt 1; gate `success` 06:36:59–07:04:24Z, build `success` 07:04:27–07:46:18Z, attest `success` 07:46:22–07:46:47Z, publish `success` 09:06:03–09:06:29Z, release `success` 09:06:32–09:07:01Z, witness **`failure`** 09:07:04–09:07:15Z (steps 1–5 success, 6 failure, 7 skipped) |
+| `gh run view 35695633330 --log-failed` (`witness-job-failed.log`, 18 lines) | 0 | step 6: `DISAGREES witness-3.1.1.json (1)` / `- an approval entry has neither a \`review_file\` nor a \`comment\`, so nothing says what it was taken on` / `1 witness record(s), 1 disagreeing` / `##[error]Process completed with exit code 1` |
+| `gh run view 35695633330 --log` (`run-full.log`, 3520 lines) | 0 | gate condition 1 `6665 passed, 194 skipped in 1465.69s`; sweep `19 of 19 CONFORMANT`, `J: PASS or declared no-source-time SKIP on every adapter`; build condition 2 `13 checks, 0 failed` (mutation reading `13 checks, 5 failed`), twine `PASSED` ×2, step 10 `19 adapters CONFORMANT from the installed wheel` / `19 of 19 CONFORMANT` / J held, condition 4 `6665 passed, 194 skipped in 1785.90s`; attest `Set output 'verified_at'` 07:46:45Z; publish `Uploading synapse_cdm-3.1.1-py3-none-any.whl` 09:06:23Z, sdist 09:06:25Z; witness build step `wrote witness-3.1.1.json for v3.1.1 (2 files, 1 approval(s))` at 09:07:13Z with `--attestation-verified-at "2026-09-22T07:46:45Z"` |
+| `gh api repos/…/actions/runs/35695633330/approvals` (`approvals.json`) | 0 | one entry: `user.login decentcybersecurity`, `state approved`, **`comment ""`**, environment `pypi` (id 20620073355); no timestamp key at any level |
+| `gh release view v3.1.1 --json assets,tagName,createdAt,url,targetCommitish`; `gh api repos/…/releases/tags/v3.1.1` (`release.json`) | 0, 0 | `v3.1.1`, id 393585365, `published_at 2026-09-22T09:06:58Z`, `draft false`, eight assets: `conformance-3.1.1.json` 469 165, `evidence-3.1.1.tar.gz` 235 955, `release-notes-3.1.1.md` 77 137, `SHA256SUMS` 564, wheel 8 207 688, sdist 5 852 493, `synapse_cdm.cdx.json` 69 254, `synapse_cdm.spdx.json` 110 994; no `witness-3.1.1.json`; body byte-identical to the notes asset (`614ff5dd…`, 77 137 bytes, no trailing-newline difference) |
+| `curl https://pypi.org/pypi/synapse-cdm/3.1.1/json` (`pypi-3.1.1.json`) at 09:44:19Z | 0 (HTTP 200) | `version 3.1.1`; wheel `8588602930173ac43f64322c1483e0bd61f561d8cae2cc96c303b0688566c768` 8 207 688 bytes `2026-09-22T09:06:23.492679Z`; sdist `4eee5fe87b81ea932e976c0a6f5e089716fca5f15fe8d55d0362e70085b4f382` 5 852 493 bytes `2026-09-22T09:06:25.723659Z` — **both equal to the build's**; sixteen keys per file, no `provenance` key |
+| the two files downloaded from the index at 09:48:06Z / 09:48:07Z, magic checked, re-hashed; `synapse_cdm/version.py` read out of the wheel | 0 | `PK\x03\x04` / `\x1f\x8b`, sizes and digests agree; line 450 `PACKAGE_VERSION = "3.1.1"`, 364 `SCHEMA_VERSION = "3.0.0"`, 477 `ADAPTER_API_VERSION = "3.0.0"`, 530 `MANIFEST_SCHEMA_VERSION = "2.1.0"`, 552 `EVIDENCE_SCHEMA_VERSION = "2.0.0"`, 456 `SC_OES_VERSION = "0.1.0"` |
+| `GET /simple/synapse-cdm/` (`application/vnd.pypi.simple.v1+json`) at 09:48:08Z and both `provenance` URLs | 0 | 16 versions, 32 files, serial 41323333, last `2.2.0, 3.0.1, 3.1.1`; `…/integrity/synapse-cdm/3.1.1/<file>/provenance`: one bundle, one attestation each, publisher `GitHub` / `Decent-Cybersecurity/synapsecommand-public` / `publish.yml` / `pypi`, `predicateType https://docs.pypi.org/attestations/publish/v1`, subject digests the wheel's and the sdist's |
+| `gh api repos/…/deployments?sha=184a1e34…&per_page=100`; each deployment's `statuses` → `jq -s 'add // []'` (`deployment-statuses.json`) | 0 | one deployment `6585868020` (`pypi`, created 07:46:53Z); statuses `waiting` 07:46:54Z, `queued` 09:06:01Z, `in_progress` 09:06:04Z, `success` 09:06:29Z, all naming job 106659820422 |
+| `gh api repos/…/attestations/sha256:85886029…` (`attestations.json`) | 0 | 1 bundle |
+| `gh release download v3.1.1 -D assets` at 09:46:40Z; `shasum -a 256 assets/*`; `cat assets/SHA256SUMS`; copy laid out as `build/` with `build/sbom/` | 0 | all six digested assets hash to their `SHA256SUMS` lines; `SHA256SUMS` itself `bf30cf84…`; the notes `614ff5dd…` |
+| `git rev-parse v3.1.1 v3.1.1^{commit}`; `git ls-remote origin refs/tags/v3.1.1 refs/tags/v3.1.1^{}`; `git cat-file tag v3.1.1` | 0 | tag object `14281243ddc87306dea03d222c8fca779eda75d5` → `184a1e3448a097e4a683fb3c70d87ff0c7770b0b`, local = remote; tagger Matej Michalko, `1790055886 +0100` = 05:44:46Z |
+| `python .github/scripts/build_witness.py --version 3.1.1 --commit 184a1e34… --tag v3.1.1 --tag-object 14281243… --release release.json --approvals approvals.json --deployment-statuses deployment-statuses.json --run-id 35695633330 --assets build --attestation-bundles attestations.json --attestation-verified --attestation-verified-at 2026-09-22T07:46:45Z --out refused-witness-3.1.1.json` (the job's arguments) | 0 | `wrote refused-witness-3.1.1.json for v3.1.1 (2 files, 1 approval(s))`; 1 844 bytes, `c5f2b2d1824261a7ff99d10548000d3b4d366e64cf4dc37a81113da69c4fb867` |
+| `python gates/witness_verify.py …/refused-witness-3.1.1.json --offline --assets …/build` | 1 | `DISAGREES … (1)` — the job's sentence verbatim — `1 witness record(s), 1 disagreeing` |
+| the same builder command plus `--review-file https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/184a1e3448a097e4a683fb3c70d87ff0c7770b0b/docs/soif-part1-release-readiness.md --out witness-3.1.1.json`; `diff refused-witness-3.1.1.json witness-3.1.1.json` | 0, 1 | `wrote witness-3.1.1.json …`; 1 988 bytes, `932fdf8f2e51e47a520cabbf25887d1ecd6a8e57ad0dca41f22a9a30725fb2aa`; the diff is line 8 alone, `"review_file": ""` → the URL; `approved_at 2026-09-22T09:06:01Z`, `comment ""`, `bundle_sha256 2610180d90e9abbbffb91ec96782fd8b79881139f817e32fbc636a23d3f94f61`, `verified_at 2026-09-22T07:46:45Z`, `released_at 2026-09-22T09:06:58Z` |
+| `python gates/witness_verify.py …/witness-3.1.1.json --offline --assets …/build`; `… --offline --assets …/assets` (the flat download) | 0, 0 | `VERIFIED … (3.1.1, against the shape and internal agreement and the assets under …)`, `0 disagreeing`, both layouts |
+| `GH_TOKEN=$(gh auth token) python gates/witness_verify.py …/witness-3.1.1.json --download --assets …/build` (the job's invocation) at 09:47:12–09:47:20Z | 0 | `VERIFIED … (3.1.1, against the index and Release and the assets under …/build)`, `1 witness record(s), 0 disagreeing` |
+| `cp` → `releases/witness/3.1.1.json`; `cmp`; `shasum -a 256` | 0 | identical; `932fdf8f…` |
+| `python gates/witness_verify.py releases/witness/3.1.1.json --offline --assets …/assets`; `GH_TOKEN=… … --download` at 09:47:31Z; `python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json --offline` | 0, 0, 0 | `VERIFIED` ×3 modes; `4 witness record(s), 0 disagreeing` (2.1.2's bundle `not established`, as documented) |
+| `python gates/bump_derivation.py` after `MIGRATIONS.md` moved | 0 | `declared 3.1.1 — a PATCH over v3.1.0`; `derived PATCH … PATCH synapse_cdm/MIGRATIONS.md`; `pending the arc since 3.1.1 derives PATCH with 0 unruled, so the next release is at least 3.1.2`; `1 check, 0 failed` |
+| `python -m pytest tests/test_cdm_witness.py tests/test_cdm_publication.py tests/test_cdm_changelog_claim.py tests/test_cdm_deploy_record.py tests/test_cdm_prose_counts.py -q` (after every ledger edit, last run after the deploy paragraph) | 0 | `367 passed, 4 skipped` (the 4: the `SC_ONLINE` half over the four records) |
+| `npm ci --prefix docs` (`npm-ci.log`) | 0 | installed from the lockfile; `fsevents` install-script warning only |
+| `npm --prefix docs run ci` ×3 (`npm-run-ci-{1,2,3}.log`); `find docs/build -type f \| shasum` after each; `diff` | 0, 0, 0; diff 1 then 0 | `check-schema-docs: CURRENT — 9 generated files`, `tsc` clean, `[SUCCESS] Generated static files in "build"`, `check-built-admonitions: OK — 20 directives … 29 built pages`; builds 2 and 3 byte-identical across 72 files; build 1 differs in `runtime~main.ca64206a.js` → `runtime~main.6abb4432.js` and every page referencing it (D87) |
+| `grep -o "package is at <code>[0-9.]*</code>" docs/build/changelog/index.html`; `grep 3.1.1 docs/build/current-contracts/index.html`; `grep "Measured 2026-09-22 after the upload" docs/build/changelog/index.html` | 0 | ten sentences in append order `2.0.0, 2.0.0, 2.1.0, 2.1.1, 2.1.2, 2.2.0, 3.0.0, 3.0.1, 3.1.0, 3.1.1`; current-contracts states 3.1.1; the dated measurement present; the page 81 219 bytes `acb1f92913ef25cd7549fa88c9c17ad08a45e739fb030d40eb956c54a9092c2e` |
+| `npx wrangler whoami` | 0 | OAuth token, account `49e3f0d07291112ca8dacfc221c1cb1e`, wrangler 4.136.2 |
+| `python gates/deploy_record.py` before the deploy (`deploy-record-before.log`) 09:54:56–09:55:06Z | 0 | `25 listed … 16 with a row, 11 covered retrospectively; 0 unaccounted for; 2 recorded beyond the window`; alias `6a78d173` 5/5, 5/5 differing from `880bf67c`; served `states 3.0.1 and version.py declares 3.1.1 — DISAGREE, read 2026-09-22T09:55:06Z`; `2 checks, 0 failed` |
+| the deploy: `docs/README.md`'s second documented command (`npx wrangler … docs/build --project-name synapsecommand-docs --branch main`), verbatim, from the repository root (`wrangler-deploy.log`), started 09:55:10Z, returned by 09:55:22Z — ONCE | 0 | dirty-tree warning; `Uploaded 44 files (28 already uploaded) (2.51 sec)`; `Deployment complete! … https://bd0c1d8b.synapsecommand-docs.pages.dev` |
+| `curl -A synapsecommand-deploy-witness/phase9 https://docs.synapsecommand.com/changelog/` and `https://bd0c1d8b.synapsecommand-docs.pages.dev/changelog/` at 09:55:37Z; `shasum` against the local build (a bare-UA `urllib` fetch of the domain answers 403, so the declared UA the gate uses is required) | 0 | 200, 81 219 bytes, `acb1f929…` on both — byte-identical to `docs/build/changelog/index.html` |
+| `npx wrangler pages deployment list --project-name synapsecommand-docs` (table and `--json`); `GET /accounts/…/pages/projects/synapsecommand-docs/deployments/bd0c1d8b-…` with wrangler's freshly-refreshed OAuth token (`deployment-bd0c1d8b.json`) | 0 | newest `bd0c1d8b-799c-4d32-9121-aa9a0e8e1b13`, Production, `main`, source `184a1e3`; `created_on 2026-09-22T09:55:20.039974Z`, deploy stage `success` ended `09:55:21.253098Z`, trigger `ad_hoc`, `commit_hash 184a1e34…`, `commit_dirty true`, `aliases ["https://docs.synapsecommand.com"]` |
+| `python gates/deploy_record.py` after the deploy, before the record moved (`deploy-record-refusal.log`) 09:55:44–09:55:46Z | 1 | `FAIL 1 deployment(s) that PUBLICATION.md cannot name: bd0c1d8b 25 seconds ago source 184a1e3` — the thirteenth catch of its own round's upload |
+| `python gates/deploy_record.py` after entry 8's row, count and alias paragraph moved (`deploy-record-after.log`) 09:56:57–09:57:03Z | 0 | `25 listed …; 17 with a row, 11 covered retrospectively; 0 unaccounted for; 3 recorded beyond the window: 039866b1, 323dff1f, 7489e528`; alias `bd0c1d8b` — 5/5 identical, 5/5 differing from `6a78d173`; served `states 3.1.1 and version.py declares 3.1.1 — AGREE, read 2026-09-22T09:57:03Z`; `2 checks, 0 failed; 1 witness, which cannot fail` |
+| `python gates/commit_message.py --file <pipeline dir>/state/witness-commit-message-3.1.1.txt`; `… docs-commit-message-3.1.1.txt` | 0, 0 | `clean`, `clean` |
+| `SC_ONLINE=1 GH_TOKEN=… python -m pytest tests/test_cdm_witness.py -q -k index_and_the_release` (the network half over the four committed records, `--download`) | 0 | `4 passed, 52 deselected` |
+| `python gates/deploy_record.py` at the end of the phase, after this record's last edit | 0 | `states 3.1.1 and version.py declares 3.1.1 — AGREE, read 2026-09-22T10:04:03Z`; `2 checks, 0 failed` |
+| `python -m pytest tests -q` (full suite, background, 09:58:12–10:08:24Z, `full-suite.log`) — run WHILE this record and `PUBLICATION.md` were still being edited | 1 | `3 failed, 6670 passed, 188 skipped in 610.96s`: `test_cdm_evidence.py::test_a_record_from_another_host_and_checkout_reproduces` and `::test_verify_reproduces_a_freshly_written_record` (`snapshot.digest … this tree gives …` — the dirty tree changed under the snapshot during the run, the known apparatus red of editing while the evidence tests run) and `test_cdm_deploy_workflow.py::test_the_site_list_is_exactly_the_files_that_state_the_mechanism` (this record quoted the deploy command verbatim in two places, which the sweep reads as a file stating the mechanism; reworded to name `docs/README.md`'s command instead) |
+| `python -m pytest tests/test_cdm_deploy_workflow.py tests/test_cdm_evidence.py -q` on the stable tree after the rewording | 0 | `114 passed` |
+
 ## Verification
 
 How a verifier re-runs Phase 0 (the independent verifier does this; nothing here is trusted from
@@ -3760,8 +4024,13 @@ from the worktree root with `env.sh` sourced and `.venv` first on PATH):
 | **`publish.yml`'s changed gate step (check J held per adapter, D60) has not run on a tag** (Phase 8) — **retired 2026-09-21, Phase 10: it ran on the `v3.1.0` push and passed; the step that failed was its unrepaired twin, the package test (D76)** | the notes and the readiness §19 say so; the step's body ran as a local rehearsal in Phase 7 (D60) and `ci.yml`'s per-adapter loop ran green in run 35591088608; the first run of `publish.yml` that exercises the step is this release's tag | `gh run list --workflow publish.yml --limit 6` shows no run of any event after `89d2c70` (v3.0.1, 2026-09-20) |
 
 | **`.github/workflows/rc-build.yml`'s per-adapter conformance loop still requires J unconditionally** (Phase 10, D77) | a `workflow_dispatch` of `rc-build.yml` on any tree carrying `geojson` or `geopackage` fails at `Conformance Suite v2, every shipped adapter, check O required` for the same reason `v3.1.0`'s package test failed; the release pipeline is unaffected | `grep -n 'require A,B,C,D,F,G,H,J,K,L,O' .github/workflows/rc-build.yml` (line 94); `python -m synapse_cdm.suite conformance run --adapter geojson --require A,B,C,D,F,G,H,J,K,L,O` exits non-zero. Out of this phase's stated repair scope (`publish.yml`'s package test only); the property test reads `publish.yml` and `ci.yml` and would refuse this loop if extended to it |
-| **`publish.yml`'s repaired package-test step has not run on a tag** (Phase 10) | the step's body was reproduced on the burned tag's wheel in a clean venv away from the repository (Validation), not in the workflow; `MIGRATIONS.md`'s 3.1.1 section and the notes say so | the `v3.1.1` push is the first execution; `gh run view <run id> --json jobs` must show the build job's step 10 `success` |
+| **`publish.yml`'s repaired package-test step has not run on a tag** (Phase 10) — **retired 2026-09-22 (Phase 9)**: run 35695633330's build job step 10 read `success`, `19 adapters CONFORMANT from the installed wheel` | dated; `PUBLICATION.md` entry 23 | `gh run view 35695633330 --json jobs` |
 | **The five adapter modules' `evidence.available` sentence names 3.1.0 and `evidence-3.1.0.tar.gz`, a Release that does not exist** (Phase 10, D80) | the manifests and support-matrix pages carry the sentence; every repository-bound site says its last clause is the operative one and 3.1.1's Release is the first to carry the records | `grep -n 'evidence-3.1.0' packages/cdm/synapse_cdm/adapters/*.py manifests/*.json`; `gh api repos/Decent-Cybersecurity/synapsecommand-public/releases/tags/v3.1.0` → 404. The next arc that edits the five modules for any other reason moves the number |
+| **`releases/witness/3.1.1.json` is on no Release** (Phase 9, D84) | the README says the job attaches `witness-<version>.json`; `v3.1.1` carries eight assets and no witness asset because the attach step was skipped | `gh release view v3.1.1 --json assets -q '.assets[].name'` lists no `witness-3.1.1.json` until the maintainer runs the Handoff's `gh release upload v3.1.1 releases/witness/3.1.1.json#witness-3.1.1.json` and re-runs `python gates/witness_verify.py releases/witness/3.1.1.json --download` |
+| **The 3.1.1 `pypi` approval carried an empty comment, for the second time in four executions** (Phase 9, D83) | the record's `review_file` is a designation, not the approver's words; the release procedure's 2026-09-17 rule was not followed at the approval | `gh api repos/Decent-Cybersecurity/synapsecommand-public/actions/runs/35695633330/approvals --jq '.[].comment'` → `""`; the next release's approval must name the readiness report's URL for the job to succeed |
+| **Deployment `bd0c1d8b` is stamped `184a1e3` with `commit_dirty: true` and serves the witness round's uncommitted docs edits** (Phase 9, D88) | `docs/README.md`'s commit-first order; entry 8's row and entry 23's deploy paragraph state it | the Pages API's `deployment_trigger.metadata` for `bd0c1d8b`; `diff <(curl -A x https://docs.synapsecommand.com/changelog/) docs/build/changelog/index.html` after the maintainer commits the tree as it stands (byte-identical if nothing under `docs/` was reworded before the commit; otherwise a further deploy is owed and is a further row) |
+| **The first docs build after a fresh `npm ci` differed from the next two in the runtime chunk's hash** (Phase 9, D87) | the precedent's "two consecutive builds byte-identical" holds for builds 2 and 3 only; the cause is not established | `npm ci --prefix docs && npm --prefix docs run ci && (cd docs/build && find . -type f \| sort \| xargs shasum -a 256) > a; npm --prefix docs run ci && … > b; diff a b` |
+| **Node 26.7.0 ran the docs build where `.node-version` pins 22** (Phase 9) | `docs/README.md`'s settings table; the build succeeded and its output is what is served | `node --version` on the pipeline machine; a build under Node 22 compared file by file against `bd0c1d8b`'s `pages.dev` pages |
 
 ## Handoff
 
@@ -3774,7 +4043,9 @@ what Phase 9 does afterwards — is the subsection "Release 3.1.0 — what the m
 below, with its readings in the Phase 8 Validation table and its decisions in D68–D74. **That
 release was committed as `328737d`, tagged `v3.1.0` and refused by its own run** (Phase 10); the
 subsection "Release 3.1.1 — what the maintainer runs next" supersedes it, and Phase 9 runs for
-3.1.1, not 3.1.0.
+3.1.1, not 3.1.0. **Phase 9 ran on 2026-09-22 after the `v3.1.1` pipeline**; the subsection
+"Release 3.1.1 (witness) and (docs) — what the maintainer commits next" at the end of this file is
+what the maintainer does now.
 
 ### 1. Base and candidate
 
@@ -4203,3 +4474,71 @@ the five included — and the sentence in the five modules noted as naming 3.1.0
   scratch index), `/tmp/sc-audit-venv` (pip-audit and build, isolated from the test interpreter).
   Generated and gitignored inside the worktree: `evidence/` (19 records, 5 exercise reports, 140
   badges), `docs/build/`, `docs/node_modules/`.
+
+### Release 3.1.1 (witness) and (docs) — what the maintainer commits next (Phase 9, 2026-09-22)
+
+3.1.1 is on the index and the Release exists; the pipeline's witness job was refused on an empty
+approval comment; `releases/witness/3.1.1.json` is in the tree, hand-built by the 2.2.0 route and
+VERIFIED in every mode; the site serves the tree (`bd0c1d8b`, AGREE at 09:57:03Z). The working
+tree on `soif/release-3.1.1` at `184a1e3` holds seven modified tracked files and one new file
+(`git status --short`: `PUBLICATION.md`, `docs/adapter-expansion-implementation.md`,
+`docs/docs/changelog.mdx`, `docs/docs/security/release-pipeline.mdx`,
+`packages/cdm/synapse_cdm/MIGRATIONS.md`, `releases/witness/README.md`,
+`tests/test_cdm_publication.py`, `tests/test_cdm_witness.py`; `?? releases/witness/3.1.1.json`).
+Nothing was committed, staged, stashed, tagged or pushed; no git configuration moved; nothing was
+uploaded to the Release. The two drafts are outside the repository, each with `Signed-off-by` as
+its only trailer and `gates/commit_message.py --file` `clean` — commit with `-F`, never `-s` on
+top of it. The phase's record is the `### Phase 9` entry under Progress, D83–D89 and the Phase 9
+Validation table.
+
+**The precedent's split (f7585c4 witness, f1c4669 docs), by hunk on `PUBLICATION.md`.** The docs
+commit takes: entry 8's `bd0c1d8b` row, its count sentence (`twenty-eight deployments — seventeen
+carrying a row`), its alias paragraph and its refusal paragraph, and entry 23's last paragraph
+(`THE DEPLOY, 2026-09-22 …`). Everything else is the witness commit. If splitting one file by hunk
+is not wanted, one commit with the witness message is acceptable (D89): the deploy's substance is
+in entry 23 either way, and the deployment was stamped with `184a1e3`, not with either commit.
+
+```bash
+# 0. the tree as this phase left it
+git switch soif/release-3.1.1
+git status --short                                  # the seven modified files and releases/witness/3.1.1.json
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json --offline
+python -m pytest tests/test_cdm_witness.py tests/test_cdm_deploy_record.py tests/test_cdm_publication.py tests/test_cdm_changelog_claim.py -q
+# 1. the witness commit — everything but the deploy-record hunks
+git add releases/witness/3.1.1.json releases/witness/README.md packages/cdm/synapse_cdm/MIGRATIONS.md docs/docs/changelog.mdx docs/docs/security/release-pipeline.mdx tests/test_cdm_publication.py tests/test_cdm_witness.py docs/adapter-expansion-implementation.md
+git add -p PUBLICATION.md                           # take every hunk EXCEPT the entry 8 row/count/alias/refusal hunks and entry 23's deploy paragraph
+git commit -F /Users/admin/synapsecommand-public/.adapter-run/state/witness-commit-message-3.1.1.txt
+python gates/commit_message.py --rev HEAD           # expect: clean
+# 2. the docs commit — the remaining PUBLICATION.md hunks
+git add PUBLICATION.md
+git commit -F /Users/admin/synapsecommand-public/.adapter-run/state/docs-commit-message-3.1.1.txt
+python gates/commit_message.py --rev HEAD           # expect: clean
+python gates/deploy_record.py                       # expect: 2 checks, 0 failed; alias bd0c1d8b; AGREE
+# 3. attach the verified record to the Release under the name the job would have used, then read it back
+gh release upload v3.1.1 releases/witness/3.1.1.json#witness-3.1.1.json
+gh release view v3.1.1 --json assets -q '.assets[].name'          # nine assets, witness-3.1.1.json among them
+python gates/witness_verify.py releases/witness/3.1.1.json --download   # expect: VERIFIED, 0 disagreeing
+# 4. main advances by fast-forward only, and the branch is pushed with it; no tag moves
+git push origin soif/release-3.1.1
+git fetch origin && git switch main && git merge --ff-only soif/release-3.1.1
+git push origin main
+```
+
+`v3.1.0` stays on `328737d` and `v3.1.1` on `184a1e3`: neither is moved, deleted or recreated.
+The site needs no further deploy for these commits unless a file under `docs/` is reworded
+before they are made (D88); if one is, `npm --prefix docs run ci` and the documented deploy from
+the repository root, and the new deployment gets its own row.
+
+- Files changed in Phase 9 (all uncommitted, nothing staged, stashed or pushed): `PUBLICATION.md`
+  (entry 23, entry 22 closed, the intro, entry 8's row, count, alias and refusal paragraphs);
+  `packages/cdm/synapse_cdm/MIGRATIONS.md` (the 3.1.1 measured sentence, the two dated witness
+  paragraphs, the `### Unreleased` section); `docs/docs/changelog.mdx` (the dated measurement);
+  `docs/docs/security/release-pipeline.mdx` (the witness bullet); `releases/witness/README.md`
+  (the example command, the 3.1.1 history paragraph, the `approvals` row, "What `review_file`
+  means for 3.1.1"); `releases/witness/3.1.1.json` (new); `tests/test_cdm_witness.py` (the
+  `HAND_BUILT` roster and a dated comment); `tests/test_cdm_publication.py` (the docstring and the
+  number vocabulary); this file. Outside the repository: `<pipeline dir>/state/p9/` (every API
+  payload, log and asset download named in the Validation table, the refused and the accepted
+  record, the three build digest lists), `<pipeline dir>/state/witness-commit-message-3.1.1.txt`
+  and `docs-commit-message-3.1.1.txt`. Generated and gitignored inside the worktree:
+  `docs/build/` (the deployed set), `docs/node_modules/`.

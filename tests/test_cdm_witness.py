@@ -622,6 +622,15 @@ def test_every_witness_path_the_documents_quote_exists():
 # `releases/witness/3.0.1.json` — the same bytes, held below by digest. So this section went red as
 # designed and was rewritten: the directory is two hand-built records and the pipeline's first, and
 # the three paragraphs say what that run did. A fourth record makes it red again.
+#
+# 2026-09-22: THE FOURTH RECORD LANDED, AND IT IS HAND-BUILT AGAIN. Run 35695633330 (`v3.1.1`) was
+# the job's fourth execution on a tag push: the build step wrote `witness-3.1.1.json for v3.1.1
+# (2 files, 1 approval(s))`, the verify step refused it for the `v2.2.0` reason — the `pypi`
+# approval comment was empty — and the attach step was skipped. `3.1.1.json` was built by the
+# witness round with the same builder over the run's own inputs and a `--review-file` the
+# maintainer designated afterwards, as `2.2.0.json` was; `PUBLICATION.md` entry 23 says so. The
+# roster below grows by that name and nothing else in this section moves: the three paragraphs
+# still say what run 35514833652 did, and each now also says what run 35695633330 did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
@@ -650,7 +659,7 @@ EXERCISED_ON_V2_2_0 = (
 ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bundles`")
 
 #: The records the three paragraphs describe as hand-built, and the reading each rests on.
-HAND_BUILT = ["2.1.2.json", "2.2.0.json"]
+HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]
 
 #: The record the paragraphs describe as the pipeline's own, by the digest of the Release asset
 #: run 35514833652 attached — so a re-built or edited file under this name is refused, and the

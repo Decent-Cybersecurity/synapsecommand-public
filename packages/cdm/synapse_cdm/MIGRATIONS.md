@@ -318,6 +318,25 @@ than a rehearsal can manage; the test module that held the directory to two hand
 holds it to those two and the pipeline's first, and goes red on a fourth until these paragraphs
 say what that run did.
 
+**And on 2026-09-22 the fourth execution was refused, for the 2.2.0 reason: the `v3.1.1` push, run
+35695633330.** Five of the run's six jobs read `success` — gate, build, attest, publish, release —
+and the `witness` job reads `failure`, which is the reading the sentence above says stops a witness
+round from committing the pipeline's record; there was none to commit. Its build step, under the
+same grants, read the run's one approval — given at 09:06:01Z with an EMPTY comment, `""` — and the
+`pypi` deployment's four statuses, fetched the attestation store, was handed
+`--attestation-bundles`, and wrote `witness-3.1.1.json for v3.1.1 (2 files, 1 approval(s))`; its
+verify step, `--download --assets assets` with a token, refused it with *an approval entry has
+neither a `review_file` nor a `comment`, so nothing says what it was taken on*, exactly as run
+35200069387's did; the attach step was skipped and the Release carries no `witness-3.1.1.json`.
+The rule in the paragraph before this one — a non-empty comment naming what the approval was taken
+on — was not followed at the approval, and the witness round did what the 2.2.0 round did:
+`releases/witness/3.1.1.json` was built with the same builder over the run's own inputs, re-fetched
+from the APIs, and a `--review-file` the maintainer designated afterwards — the readiness report at
+the release commit — with `comment` left `""` as the API recorded it; the verifier accepted it in
+every mode before it was committed, and `PUBLICATION.md` entry 23 states the designation and the
+empty comment in as many words. The directory holds four records: three built by hand and the
+pipeline's one.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -468,6 +487,13 @@ the release commit, and `releases/witness/3.0.1.json` is that asset byte for byt
 now holds three records: two built by hand, for the reasons above, and one by the pipeline.
 `PUBLICATION.md` entry 21 is the measurement.
 
+**Also 2026-09-22: the fourth execution was refused, on an empty comment again.** The `v3.1.1`
+push, run 35695633330, built `witness-3.1.1.json` and its verify step refused it because the
+`pypi` approval comment was the empty string, as on `v2.2.0`; nothing was attached.
+`releases/witness/3.1.1.json` was built by hand over that run's inputs with the maintainer's
+designated `--review-file`, under the ruling `PUBLICATION.md` entry 23 records. The directory
+holds four records: three built by hand and one by the pipeline.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -480,6 +506,30 @@ now true of it.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated witness paragraphs in the release procedure and the pipeline section, and the index note in
+the 3.1.1 section being what moved in it. Everything else the round touched ships in nothing: the
+ledger, the witness record and its README, the release-pipeline and changelog pages, and two test
+modules.
+
+**THE 3.1.1 WITNESS ROUND's RECORD, 2026-09-22 — the record is hand-built, for the second time on
+an empty approval comment.** Run 35695633330's `witness` job built `witness-3.1.1.json` and was
+refused by its own verify step because the `pypi` approval carried `comment: ""`; the attach step
+was skipped. `releases/witness/3.1.1.json` is the same builder's output over the run's own inputs
+with the `--review-file` the maintainer designated afterwards — the readiness report at the release
+commit — verified by `gates/witness_verify.py` offline against the Release download, online with
+`--download`, and over all four records, before it was committed. Ledger entry 23 records the
+upload and the readings behind it, states the empty comment and the designation, and closes entry
+22; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` names the
+record among the hand-built ones. Nothing in the distribution moved except this file, and
+`PACKAGE_VERSION` still reads `3.1.1`.
+
 ### 3.1.1 — 2026-09-21 — the corrective of the tagged-never-published 3.1.0: the release workflow's package test requires what its gate requires, and holds check J off the declaration the way the gate does
 
 **This section is a release and no longer the pending arc, and no pending-arc heading preceded
@@ -491,7 +541,8 @@ than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the roun
 upload and is not asserted here before it has happened; at the time of writing the index serves
 `3.0.1` (`PUBLICATION.md` entry 21), because 3.1.0 was tagged and never published — the dated note
 on the next section says so from its side, and `PUBLICATION.md` entry 22 is the burned tag's own
-record.
+record. **Measured after the upload, 2026-09-22:** `3.1.1` is what the index serves, and
+`PUBLICATION.md` entry 23 is the measurement.
 
 **WHAT MOVED BETWEEN 3.1.0 AND 3.1.1 IS A WORKFLOW AND NOT THE DISTRIBUTION, FOR THE FOURTH TIME
 IN THIS FILE'S LIFE.** A reader upgrading from 3.0.1 — which is still what the index serves — gets
