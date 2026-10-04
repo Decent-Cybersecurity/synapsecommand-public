@@ -1,0 +1,65 @@
+{
+  "pdu": {
+    "header": {
+      "protocol_version": 7,
+      "exercise_id": 42,
+      "pdu_type": 1,
+      "protocol_family": 1,
+      "timestamp": 1073741825,
+      "length": 160,
+      "status": 0,
+      "padding": 0
+    },
+    "entity_id": [
+      7,
+      11,
+      3
+    ],
+    "force_id": 9,
+    "entity_type": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "alternative_entity_type": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "velocity_mps": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "position_ecef_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "orientation_radians": [
+      0.5,
+      -0.25,
+      0.125
+    ],
+    "appearance": 305419896,
+    "dead_reckoning_hex": "09000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "marking_hex": "0145584552434953452d3031",
+    "capabilities": 2864434397,
+    "variable_parameters_hex": [
+      "ff3ff400000000000012345678abcdef"
+    ]
+  },
+  "time_context": {
+    "instant": "2026-04-29T06:15:00.000Z",
+    "basis": "Synthetic fixture scenario instant; not capture time"
+  },
+  "wire_hex": "072a01014000000100a000000007000b00030901000100000000000000000000000000003f80000040000000404000000000000000000000000000000000000000000000000000003f000000be8000003e00000012345678090000000000000000000000000000000000000000000000000000000000000000000000000000000145584552434953452d3031aabbccddff3ff400000000000012345678abcdef"
+}

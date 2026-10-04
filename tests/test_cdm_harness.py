@@ -574,7 +574,11 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
 #: first two Phase 1 entries whose row sets are complete rather than partial — 27 items and 9
 #: items respectively, every one dispositioned — so the window in which the relation could be
 #: folklore is the window between this commit and the two that ship the adapters.
-PLANNED_FIXTURE_DIRS = {"stanag5527": "fft"}
+#: `dis7` joined on the day `fixtures/dis7/spec/` was created, which is what this half of the map
+#: is for. Its directory is the same string as the adapter name: the directory holds DIS 7 Entity
+#: State payloads and the name is the payload's, not a covering document's. Until the adapter class
+#: lands the directory holds only `spec/`, `vectors/` and `contract/` and no top-level file.
+PLANNED_FIXTURE_DIRS = {"stanag5527": "fft", "dis7": "dis7"}
 
 
 def test_the_thirteen_shipped_adapters_all_have_a_real_fixture_directory():

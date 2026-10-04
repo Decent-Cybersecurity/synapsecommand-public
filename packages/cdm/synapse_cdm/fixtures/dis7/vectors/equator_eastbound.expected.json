@@ -1,0 +1,124 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "d55bb6da-5e94-5583-a12b-249da222ab37",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 0.0,
+      "course_deg": 90.0,
+      "speed_mps": 25.0
+    },
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 120.0,
+      "lat": 0.0,
+      "lon": 0.0,
+      "position_source": "ESTIMATED",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "pdu": {
+          "alternative_entity_type": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "appearance": 305419896,
+          "capabilities": 2864434397,
+          "dead_reckoning_hex": "02000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "entity_id": [
+            7,
+            11,
+            1
+          ],
+          "entity_type": [
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "force_id": 1,
+          "header": {
+            "exercise_id": 42,
+            "length": 144,
+            "padding": 0,
+            "pdu_type": 1,
+            "protocol_family": 1,
+            "protocol_version": 7,
+            "status": 0,
+            "timestamp": 1073741825
+          },
+          "marking_hex": "0145584552434953452d3031",
+          "orientation_radians": [
+            0.5,
+            -0.25,
+            0.125
+          ],
+          "position_ecef_m": [
+            6378257.0,
+            0.0,
+            0.0
+          ],
+          "variable_parameters_hex": [],
+          "velocity_mps": [
+            0.0,
+            25.0,
+            0.0
+          ]
+        },
+        "session": "unnamed",
+        "time_context": {
+          "basis": "Synthetic fixture scenario instant; not capture time",
+          "instant": "2026-04-29T06:15:00.000Z"
+        },
+        "wire_hex": "072a010140000001009000000007000b00010100010100000000000000000000000000000000000041c8000000000000415854c440000000000000000000000000000000000000003f000000be8000003e00000012345678020000000000000000000000000000000000000000000000000000000000000000000000000000000145584552434953452d3031aabbccdd",
+        "synthetic": true,
+        "source_hash": null
+      },
+      "namespace": "DIS"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "dis7",
+      "adapter_version": "1.0.0",
+      "format_name": "DIS",
+      "format_version": "7 / IEEE 1278.1-2012 Entity State subset",
+      "observed_at": "2026-04-29T06:15:00.000Z",
+      "original_id": "7:11:1",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "DIS7",
+      "transformations": [
+        "DIS timestamp preserved; state instant supplied by caller: Synthetic fixture scenario instant; not capture time",
+        "Force ID preserved; affiliation UNKNOWN without exercise viewpoint.",
+        "ECEF metres -> WGS84 degrees/HAE.",
+        "World-coordinate velocity -> local horizontal speed/course/up."
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "7:11:1",
+        "system": "DIS7:unnamed:42"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  }
+]

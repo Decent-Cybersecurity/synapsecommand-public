@@ -512,11 +512,33 @@ now true of it.
 release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, and the index note in
-the 3.1.1 section being what moved in it. Everything else the round touched ships in nothing: the
-ledger, the witness record and its README, the release-pipeline and changelog pages, and two test
-modules.
+**What moved inside the distribution: 28 files** — `MIGRATIONS.md` (this section, and the dated
+witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (a
+Phase 1 row for `dis7` in the ordinal table and the paragraph under that table), `dis7_codec.py`
+(the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes), and 25 new
+files under `fixtures/dis7/`, described in the next paragraph. What the 3.1.1 witness round
+touched outside the distribution ships in nothing: the ledger, the witness record and its
+README, the release-pipeline and changelog pages, and two test modules.
+
+**THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER.** `dis7` holds a name, an ordinal row and a
+fixture directory in the Phase 1 state, and no adapter is registered under that name. The contract
+is a handoff document identified by
+`SC DIS7 SPEC 001 v1.0`; it is not in this repository, and what is tracked is the part of its bundle
+the tests read. Under `fixtures/dis7/spec/`: `dis7_pin.json`, the SHA-256 and byte count of every
+vendored file as the bundle's manifest states them. Under `fixtures/dis7/vectors/`, byte-identical
+to the bundle: `index.json`, and for each of the three vectors its PDU, hex text, context, envelope
+and expected output — `equator_eastbound.dis`, `equator_eastbound.hex`,
+`equator_eastbound.context.json`, `equator_eastbound.envelope.json`,
+`equator_eastbound.expected.json`, `north_pole_stationary.dis`, `north_pole_stationary.hex`,
+`north_pole_stationary.context.json`, `north_pole_stationary.envelope.json`,
+`north_pole_stationary.expected.json`, `unprojectable_with_extensions.dis`,
+`unprojectable_with_extensions.hex`, `unprojectable_with_extensions.context.json`,
+`unprojectable_with_extensions.envelope.json` and `unprojectable_with_extensions.expected.json`.
+Under `fixtures/dis7/contract/`, byte-identical to the bundle: `acceptance-cases.json`,
+`dis7-context.schema.json`, `dis7-entity.schema.json`, `dis7-envelope.schema.json`,
+`dis7-pdu.schema.json` and `dis7-residual.schema.json`. Each of the two directories carries its own
+`PROVENANCE.json`. `tests/test_cdm_dis7_schema.py` holds every vendored file to the pin record and
+validates the vectors against the vendored schemas.
 
 **THE 3.1.1 WITNESS ROUND's RECORD, 2026-09-22 — the record is hand-built, for the second time on
 an empty approval comment.** Run 35695633330's `witness` job built `witness-3.1.1.json` and was

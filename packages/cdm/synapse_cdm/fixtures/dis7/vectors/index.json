@@ -1,0 +1,38 @@
+[
+  {
+    "id": "equator_eastbound",
+    "wire_file": "vectors/equator_eastbound.dis",
+    "envelope_file": "vectors/equator_eastbound.envelope.json",
+    "context_file": "vectors/equator_eastbound.context.json",
+    "expected_file": "vectors/equator_eastbound.expected.json",
+    "bytes": 144,
+    "sha256": "c958233bda22e82385788584e0297d0e264ee2a0db94dc32838141925155ef1a",
+    "expected_status": "ACCEPT",
+    "replay": "byte_exact",
+    "golden_status": "specified_target_not_executed_target"
+  },
+  {
+    "id": "north_pole_stationary",
+    "wire_file": "vectors/north_pole_stationary.dis",
+    "envelope_file": "vectors/north_pole_stationary.envelope.json",
+    "context_file": "vectors/north_pole_stationary.context.json",
+    "expected_file": "vectors/north_pole_stationary.expected.json",
+    "bytes": 144,
+    "sha256": "e7354d35aab73b5e372c13dbf9c946ed57a53dadb1e11f3b218eadf402f00fc7",
+    "expected_status": "ACCEPT",
+    "replay": "byte_exact",
+    "golden_status": "specified_target_not_executed_target"
+  },
+  {
+    "id": "unprojectable_with_extensions",
+    "wire_file": "vectors/unprojectable_with_extensions.dis",
+    "envelope_file": "vectors/unprojectable_with_extensions.envelope.json",
+    "context_file": "vectors/unprojectable_with_extensions.context.json",
+    "expected_file": "vectors/unprojectable_with_extensions.expected.json",
+    "bytes": 160,
+    "sha256": "4397c9e4f90188a7eee7ceba7abad8a0a5c2c65c3108a3110e5157539507912d",
+    "expected_status": "ACCEPT",
+    "replay": "byte_exact",
+    "golden_status": "specified_target_not_executed_target"
+  }
+]

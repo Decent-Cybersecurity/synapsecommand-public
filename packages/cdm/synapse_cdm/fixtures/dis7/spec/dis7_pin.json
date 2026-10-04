@@ -1,0 +1,64 @@
+{
+  "what_this_is": "The pin record for the vendored DIS 7 contract under fixtures/dis7/: the SHA-256 and byte count of every vendored vector and contract file as the bundle's MANIFEST.json states them. No node here pairs a `local_path` with a `sha256`, deliberately: gates/pin_paths.py's corpus is the pinned STANDARDS, and this record pins fixtures, which are the repository's own files.",
+  "adapter": {"name": "dis7", "ordinal": 21, "direction": "bidirectional", "fixture_directory": "dis7"},
+  "specification": {
+    "identifier": "SC DIS7 SPEC 001",
+    "version": "1.0",
+    "date": "2026-10-03",
+    "carried_here": false,
+    "why_not_carried": "The specification is a handoff document and is not in this repository; the vectors, the five contract schemas and the acceptance cases are the parts of its bundle that are tracked.",
+    "manifest_sha256": "3d6c04b4c02f4609625a57c5cfc965aae8d4b5c74ab39e5a0ad0a539e565c5b2",
+    "manifest_bytes": 9559
+  },
+  "standard": {
+    "document_identifier": "IEEE 1278.1-2012",
+    "publisher": "IEEE",
+    "carried_here": false,
+    "why_not_carried": "The IEEE text is a licensed document; it was not consulted and is not held. The layout authority is the reference implementation below at its pinned commit."
+  },
+  "reference_implementation": {
+    "name": "open-dis-python",
+    "url": "https://github.com/open-dis/open-dis-python",
+    "commit": "732b6655bb47e34ccc73722eefe0f4706fd0032f",
+    "license": "BSD-2-Clause",
+    "role": "layout authority and independent generator of the three vector PDUs; never a runtime dependency and never copied from"
+  },
+  "vectors": {
+    "what": "the bundle's vectors directory, verbatim",
+    "files": [
+      {"file": "vectors/equator_eastbound.context.json", "sha256": "e0bbd2dae2e53a1b94227a1aff32e88a3ba3df4efee1be651b231c6da83b3271", "bytes": 207},
+      {"file": "vectors/equator_eastbound.dis", "sha256": "c958233bda22e82385788584e0297d0e264ee2a0db94dc32838141925155ef1a", "bytes": 144},
+      {"file": "vectors/equator_eastbound.envelope.json", "sha256": "9d2285c1795c0808afa29f69e54901970eb532276e2adefb6e58c3c8bdccf3a7", "bytes": 1397},
+      {"file": "vectors/equator_eastbound.expected.json", "sha256": "549c77275db756242dc7267890d365f6124e983a3b8efe73d44b17e906face37", "bytes": 3430},
+      {"file": "vectors/equator_eastbound.hex", "sha256": "fde02e45bee86726f8c64152ff10d77528566a785c8533a1ee9f26f081d32aa1", "bytes": 289},
+      {"file": "vectors/index.json", "sha256": "5a56eb57f9728e6790dfa58855392808c8cbe05d61ae59cc482b200b8ac9a53b", "bytes": 1586},
+      {"file": "vectors/north_pole_stationary.context.json", "sha256": "e0bbd2dae2e53a1b94227a1aff32e88a3ba3df4efee1be651b231c6da83b3271", "bytes": 207},
+      {"file": "vectors/north_pole_stationary.dis", "sha256": "e7354d35aab73b5e372c13dbf9c946ed57a53dadb1e11f3b218eadf402f00fc7", "bytes": 144},
+      {"file": "vectors/north_pole_stationary.envelope.json", "sha256": "3a74e3680be175c47e824b9db0832748ad43450df4edb17e0968742e2410f9be", "bytes": 1405},
+      {"file": "vectors/north_pole_stationary.expected.json", "sha256": "365ade90961e3267edb95b0ddcbf11ea047d6bd692f3ca93f55794e76b02c3c1", "bytes": 3437},
+      {"file": "vectors/north_pole_stationary.hex", "sha256": "ea84c9a7860b1266b2a2d99396593ad3890d5009a073806732d5d36b54ef9d6b", "bytes": 289},
+      {"file": "vectors/unprojectable_with_extensions.context.json", "sha256": "e0bbd2dae2e53a1b94227a1aff32e88a3ba3df4efee1be651b231c6da83b3271", "bytes": 207},
+      {"file": "vectors/unprojectable_with_extensions.dis", "sha256": "4397c9e4f90188a7eee7ceba7abad8a0a5c2c65c3108a3110e5157539507912d", "bytes": 160},
+      {"file": "vectors/unprojectable_with_extensions.envelope.json", "sha256": "f2bd85fbe7343cc8e74ee8ad9c2bfcec68f37839045262ba7ffddfa2a7cdbb3e", "bytes": 1468},
+      {"file": "vectors/unprojectable_with_extensions.expected.json", "sha256": "db37974223d8e425ae3f2dac38a58087cae76a72c396f2f1515095eb0e4d3eab", "bytes": 3251},
+      {"file": "vectors/unprojectable_with_extensions.hex", "sha256": "0f0b0c81868201dd7c01b8e3a5340fabde4a124a458c0fc3aba912bf65a855d2", "bytes": 321}
+    ]
+  },
+  "contract": {
+    "what": "the bundle's five contract schemas and its acceptance-case list, verbatim",
+    "files": [
+      {"file": "contract/acceptance-cases.json", "sha256": "fc894f435ddb7c31fb8f22ecf001a50ebc668b8fc46b5df75305e35807d8881c", "bytes": 13589},
+      {"file": "contract/dis7-context.schema.json", "sha256": "1fd79b0128037d8c24fd7a508abe3c5b187671832194aff43d4e1df4dc3aa276", "bytes": 1577},
+      {"file": "contract/dis7-entity.schema.json", "sha256": "2df6487ef0e0354532c15c17adc2dc61d8fc59961e8deb985e871ff5852a2884", "bytes": 48573},
+      {"file": "contract/dis7-envelope.schema.json", "sha256": "c8deaf4aa54207207e61cb209c8e079b7eb936a040ecbe383dae99326450d0be", "bytes": 6769},
+      {"file": "contract/dis7-pdu.schema.json", "sha256": "a560a471f64e9b86deff44ef1ffc50cfe1114358f796ba877c93ea719fade71b", "bytes": 4953},
+      {"file": "contract/dis7-residual.schema.json", "sha256": "345f0ee5c5a0b68373b4281bdf8cb87eb89c3c0c5b974189ca13d9d4e7bae850", "bytes": 7580}
+    ]
+  },
+  "cdm_entity_schema": {
+    "what": "the bundle's schemas/cdm-entity.schema.json is NOT vendored: it is byte-identical to this repository's published schemas/entity.schema.json",
+    "bundle_file": "schemas/cdm-entity.schema.json",
+    "sha256": "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a",
+    "bytes": 32824
+  }
+}

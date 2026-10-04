@@ -141,6 +141,11 @@ CLONE_ONLY_SITES = {
         "sections state the commands a developer runs FROM A CLEAN CHECKOUT to reproduce the "
         "arc's readings, which is CONTRIBUTING.md's standing — a reader with a clone by "
         "construction — and the record instructs no consumer to install anything",
+    "docs/dis7-implementation.md":
+        "the DIS7 adapter's implementation record (2026-10): its Validation section states the "
+        "commands a developer runs FROM A CLEAN CHECKOUT of the branch to reproduce the arc's "
+        "readings, which is CONTRIBUTING.md's standing — a reader with a clone by construction — "
+        "and the record instructs no consumer to install anything",
     "tests/test_cdm_trusted_publishing.py":
         "quotes `pip install -e \"packages/cdm[test]\"` as the ONE install the release workflow's "
         "build job may make into the interpreter that runs condition 4's suite (2026-09-20, the "

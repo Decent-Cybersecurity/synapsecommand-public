@@ -1,0 +1,60 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "dis7/contract",
+  "fixtures": [
+    {
+      "file": "acceptance-cases.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "dis7-context.schema.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "dis7-entity.schema.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "dis7-envelope.schema.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "dis7-pdu.schema.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "dis7-residual.schema.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): contract schemas and the acceptance-case list, written for that bundle; not payloads. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    }
+  ]
+}

@@ -56,3 +56,11 @@
 *.imapb -text -diff
 *.klvframe -text -diff
 *.s4586 -text -diff
+
+# DIS 7 Entity State PDUs: raw binary, marked explicitly for the reason every entry above gives.
+# The vendored DIS 7 contract beside them is pinned by SHA-256 in `fixtures/dis7/spec/dis7_pin.json`,
+# text files included (`.json`, `.hex`), so the two directories are held out of line-ending
+# conversion as a whole: a checkout that rewrote one byte would fail the pin test.
+*.dis -text -diff
+packages/cdm/synapse_cdm/fixtures/dis7/vectors/** -text
+packages/cdm/synapse_cdm/fixtures/dis7/contract/** -text

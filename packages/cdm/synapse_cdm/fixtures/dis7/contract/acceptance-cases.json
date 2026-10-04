@@ -1,0 +1,498 @@
+{
+  "status": "required_acceptance_cases_not_execution_results",
+  "cases": [
+    {
+      "id": "A01",
+      "group": "T01",
+      "requirements": [
+        "R08",
+        "R14"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Read every fixed field at its documented offset",
+      "expected": "ACCEPT",
+      "assertions": "Assert values against normative target vector and exact replay"
+    },
+    {
+      "id": "N01",
+      "group": "T02",
+      "requirements": [
+        "R08",
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_byte": {
+          "offset": 0,
+          "value": 6
+        }
+      },
+      "expected": "E_HEADER_UNSUPPORTED",
+      "assertions": "No canonical output"
+    },
+    {
+      "id": "N02",
+      "group": "T02",
+      "requirements": [
+        "R08",
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_byte": {
+          "offset": 2,
+          "value": 67
+        }
+      },
+      "expected": "E_HEADER_UNSUPPORTED",
+      "assertions": "No canonical output"
+    },
+    {
+      "id": "N03",
+      "group": "T02",
+      "requirements": [
+        "R08",
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_byte": {
+          "offset": 3,
+          "value": 2
+        }
+      },
+      "expected": "E_HEADER_UNSUPPORTED",
+      "assertions": "No canonical output"
+    },
+    {
+      "id": "N04",
+      "group": "T02",
+      "requirements": [
+        "R08",
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_byte": {
+          "offset": 19,
+          "value": 1
+        }
+      },
+      "expected": "E_LENGTH_MISMATCH",
+      "assertions": "No canonical output"
+    },
+    {
+      "id": "N05",
+      "group": "T02",
+      "requirements": [
+        "R08",
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_byte": {
+          "offset": 9,
+          "value": 143
+        }
+      },
+      "expected": "E_LENGTH_MISMATCH",
+      "assertions": "No canonical output"
+    },
+    {
+      "id": "N06",
+      "group": "T02",
+      "requirements": [
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "truncate_each_length": {
+          "start_inclusive": 0,
+          "end_inclusive": 143
+        }
+      },
+      "expected": "E_LENGTH_MISMATCH",
+      "assertions": "All 144 shorter inputs refused"
+    },
+    {
+      "id": "N07",
+      "group": "T02",
+      "requirements": [
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "append_hex": "00"
+      },
+      "expected": "E_LENGTH_MISMATCH",
+      "assertions": "Trailing bytes refused"
+    },
+    {
+      "id": "N08",
+      "group": "T02",
+      "requirements": [
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Concatenate seed with itself",
+      "expected": "E_LENGTH_MISMATCH",
+      "assertions": "No splitting in adapter"
+    },
+    {
+      "id": "N09",
+      "group": "T03",
+      "requirements": [
+        "R08",
+        "R22"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Supply 4225 bytes",
+      "expected": "E_INPUT_LIMIT",
+      "assertions": "Refuse before field interpretation"
+    },
+    {
+      "id": "A02",
+      "group": "T03",
+      "requirements": [
+        "R09"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Set byte 19 to 255 and length to 4224; append 255 zero-filled 16-byte records",
+      "expected": "ACCEPT",
+      "assertions": "Exactly 255 opaque records preserved and byte exact replay"
+    },
+    {
+      "id": "N10",
+      "group": "T03",
+      "requirements": [
+        "R12"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Submit encode_pdu with 256 variable records",
+      "expected": "E_TWIN_SCHEMA",
+      "assertions": "No truncated or wrapped record count"
+    },
+    {
+      "id": "N36",
+      "group": "T04",
+      "requirements": [
+        "R12"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_ieee": {
+          "offset": 36,
+          "width": "binary32",
+          "values": [
+            "NaN",
+            "positive_infinity",
+            "negative_infinity"
+          ]
+        }
+      },
+      "expected": "E_NONFINITE",
+      "assertions": "All three values refused"
+    },
+    {
+      "id": "N48",
+      "group": "T04",
+      "requirements": [
+        "R12"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_ieee": {
+          "offset": 48,
+          "width": "binary64",
+          "values": [
+            "NaN",
+            "positive_infinity",
+            "negative_infinity"
+          ]
+        }
+      },
+      "expected": "E_NONFINITE",
+      "assertions": "All three values refused"
+    },
+    {
+      "id": "N72",
+      "group": "T04",
+      "requirements": [
+        "R12"
+      ],
+      "seed": "equator_eastbound",
+      "operation": {
+        "replace_ieee": {
+          "offset": 72,
+          "width": "binary32",
+          "values": [
+            "NaN",
+            "positive_infinity",
+            "negative_infinity"
+          ]
+        }
+      },
+      "expected": "E_NONFINITE",
+      "assertions": "All three values refused"
+    },
+    {
+      "id": "A03",
+      "group": "T05",
+      "requirements": [
+        "R15"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Project analytical ECEF positions at latitudes 0 49 -45 89.999 -90 with stated longitudes and heights",
+      "expected": "ACCEPT",
+      "assertions": "Tolerance 1e-9 degrees and 0.001 metre; use independent forward equations"
+    },
+    {
+      "id": "N11",
+      "group": "T05",
+      "requirements": [
+        "R15"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Replace ECEF vector with [1,1,1] or a vector with radius greater than 1e9",
+      "expected": "E_POSITION_DOMAIN",
+      "assertions": "Origin [0,0,0] is separately accepted with null position"
+    },
+    {
+      "id": "A04",
+      "group": "T06",
+      "requirements": [
+        "R16"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "For each algorithm 0..255 replace byte 88",
+      "expected": "ACCEPT",
+      "assertions": "Only 2..5 produce kinematics; every other code preserves without projection"
+    },
+    {
+      "id": "A05",
+      "group": "T07",
+      "requirements": [
+        "R16",
+        "R17"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Use world east north up down and zero velocity vectors with orientation unrelated to motion",
+      "expected": "ACCEPT",
+      "assertions": "Horizontal speed/course/climb correct; course null at stationary point and poles"
+    },
+    {
+      "id": "A06",
+      "group": "T08",
+      "requirements": [
+        "R11"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Mutate position time force and orientation independently; then mutate session exercise site application entity independently",
+      "expected": "ACCEPT",
+      "assertions": "First group preserves UUID; every second-group identity mutation changes it"
+    },
+    {
+      "id": "N12",
+      "group": "T09",
+      "requirements": [
+        "R10"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Omit time context on a raw byte call",
+      "expected": "E_CONTEXT_TIME",
+      "assertions": "No receipt-time fallback"
+    },
+    {
+      "id": "N13",
+      "group": "T09",
+      "requirements": [
+        "R10"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Use timezone-free timestamp leap second malformed date or more than 3 fractional digits",
+      "expected": "E_CONTEXT_TIME",
+      "assertions": "Record exact offending input in test report"
+    },
+    {
+      "id": "A07",
+      "group": "T09",
+      "requirements": [
+        "R10"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Normalize equivalent UTC and offset instants; feed timestamps either side of uint32 rollover with explicit state instants",
+      "expected": "ACCEPT",
+      "assertions": "Caller instant used verbatim after normalization; no rollover inference"
+    },
+    {
+      "id": "N14",
+      "group": "T09",
+      "requirements": [
+        "R06"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Supply a conflicting constructor and envelope time context",
+      "expected": "E_CONTEXT_CONFLICT",
+      "assertions": "Compare normalized instant and verbatim basis"
+    },
+    {
+      "id": "A08",
+      "group": "T10",
+      "requirements": [
+        "R19"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Change unknown enums nonzero padding status arbitrary marking and unknown record hex",
+      "expected": "ACCEPT",
+      "assertions": "All source bytes preserved; affiliation UNKNOWN"
+    },
+    {
+      "id": "A09",
+      "group": "T10",
+      "requirements": [
+        "R13",
+        "R20"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "In a JSON twin normalize numeric negative zero while retaining correct wire_hex",
+      "expected": "ACCEPT",
+      "assertions": "Projection derives from authoritative wire; replay preserves original sign bits"
+    },
+    {
+      "id": "N15",
+      "group": "T11",
+      "requirements": [
+        "R20"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Change each canonical non-source field independently on an otherwise valid Entity",
+      "expected": "E_REPLAY_CHANGED",
+      "assertions": "Do not export original bytes after canonical edit"
+    },
+    {
+      "id": "N16",
+      "group": "T11",
+      "requirements": [
+        "R18",
+        "R20"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Change source synthetic hash observed_at version or scoped identity independently",
+      "expected": "E_REPLAY_PROVENANCE",
+      "assertions": "Stored provenance copies remain unchanged; shape-invalid edits may fail schema first"
+    },
+    {
+      "id": "N17",
+      "group": "T11",
+      "requirements": [
+        "R20"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Replay zero objects two objects another CDM kind or an Entity without residual",
+      "expected": "E_REPLAY_SHAPE",
+      "assertions": "No partial output"
+    },
+    {
+      "id": "N18",
+      "group": "T12",
+      "requirements": [
+        "R12",
+        "R13"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Duplicate a JSON key add an unknown key omit a required key or supply wrong array size",
+      "expected": "E_TWIN_SCHEMA",
+      "assertions": "Duplicate detection occurs before model construction"
+    },
+    {
+      "id": "N19",
+      "group": "T12",
+      "requirements": [
+        "R13"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Change twin force_id while keeping wire_hex unchanged",
+      "expected": "E_TWIN_WIRE_MISMATCH",
+      "assertions": "Wire is authoritative and mismatch is an error"
+    },
+    {
+      "id": "N20",
+      "group": "T03",
+      "requirements": [
+        "R13"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Create 17 nested containers a cyclic native object or 65537 JSON bytes",
+      "expected": "E_INPUT_LIMIT",
+      "assertions": "No hang recursion failure or unbounded allocation"
+    },
+    {
+      "id": "A10",
+      "group": "T13",
+      "requirements": [
+        "R04",
+        "R06"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Disable network and vary wall clock hash seed input member order and repeated parallel independent instances",
+      "expected": "ACCEPT",
+      "assertions": "Deterministic outputs and no input mutation or shared state"
+    },
+    {
+      "id": "A11",
+      "group": "T14",
+      "requirements": [
+        "R18"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Run with source_hash null then with host SHA256 of seed",
+      "expected": "ACCEPT",
+      "assertions": "Hash carried from host and stored in source and residual context; no package hashlib import"
+    },
+    {
+      "id": "N21",
+      "group": "T14",
+      "requirements": [
+        "R05"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Omit session or synthetic; use invalid session characters or non-boolean classification",
+      "expected": "E_CONTEXT_SESSION or E_CONTEXT_SYNTHETIC",
+      "assertions": "Validate each single defect separately"
+    },
+    {
+      "id": "A12",
+      "group": "T15",
+      "requirements": [
+        "R24",
+        "R28"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Install wheel in clean environment and execute SDK harness and CLI decode replay self-test",
+      "expected": "ACCEPT",
+      "assertions": "Byte stdout clean; exit codes and generated metadata match contract"
+    },
+    {
+      "id": "A13",
+      "group": "T16",
+      "requirements": [
+        "R26"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Generate fixtures and reparse replay bytes with pinned clean OpenDIS checkout",
+      "expected": "ACCEPT",
+      "assertions": "Independent generation plus parse/reserialize equality; retain tool versions"
+    },
+    {
+      "id": "A14",
+      "group": "T16",
+      "requirements": [
+        "R27"
+      ],
+      "seed": "equator_eastbound",
+      "operation": "Inject each of the eight implementation faults listed in specification section 16",
+      "expected": "DETECTED",
+      "assertions": "Test suite must fail for every mutation; record matrix"
+    }
+  ]
+}

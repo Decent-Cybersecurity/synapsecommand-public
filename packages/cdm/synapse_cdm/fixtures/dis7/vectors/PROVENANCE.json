@@ -1,0 +1,150 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "dis7/vectors",
+  "fixtures": [
+    {
+      "file": "equator_eastbound.context.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "equator_eastbound.dis",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "equator_eastbound.envelope.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "equator_eastbound.expected.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "equator_eastbound.hex",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "index.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "north_pole_stationary.context.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "north_pole_stationary.dis",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "north_pole_stationary.envelope.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "north_pole_stationary.expected.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "north_pole_stationary.hex",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "unprojectable_with_extensions.context.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "unprojectable_with_extensions.dis",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "unprojectable_with_extensions.envelope.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "unprojectable_with_extensions.expected.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    },
+    {
+      "file": "unprojectable_with_extensions.hex",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Vendored byte-identical from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Hash and size are pinned in spec/dis7_pin.json.",
+      "standard_ref": "dis7/spec/dis7_pin.json"
+    }
+  ]
+}

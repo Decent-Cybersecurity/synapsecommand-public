@@ -220,6 +220,15 @@ PACKAGE_ONLY_TESTS = (
     # opened: the transcription is literals in `klv_mismms.ROWS` and the document's own footer
     # figures are the constants it checks them against.
     "test_cdm_mismms.py",
+    # `test_cdm_dis7_schema.py` is package-only: the vendored DIS 7 contract it pins and validates
+    # — `fixtures/dis7/vectors/`, `fixtures/dis7/contract/` and `fixtures/dis7/spec/dis7_pin.json`
+    # — ships in the wheel and is reached through `synapse_cdm.__file__`. The one repository file
+    # it reads, the published `schemas/entity.schema.json`, is anchored on the test module's own
+    # `__file__`, the way `test_cdm_gmtif_adapter.py` anchors its schemas directory.
+    "test_cdm_dis7_schema.py",
+    # `test_cdm_dis7_codec.py` reads the error model only, and, through the package, the
+    # vendored contract file (`fixtures/dis7/contract/acceptance-cases.json`).
+    "test_cdm_dis7_codec.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -281,6 +290,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_evidence_categories.py": "audit remediation F07: the categories, the exercise runner and the snapshot run against the package, but the module reads schemas/evidence/*.schema.json and INTEROPERABILITY.md at the repository root and builds a throwaway git checkout to tell two dirty states apart, none of which a wheel carries",
     "test_cdm_evidence.py": "schemas/evidence/evidence.schema.json and manifests/<id>.json at the repository root — an evidence record embeds the PUBLISHED manifest and validates against the PUBLISHED schema, and neither publication is inside the wheel (the same reason test_cdm_manifests.py is here). The provenance half is package-bound and would run against a wheel, but a module is decided as a whole and its repository half cannot",
     "test_cdm_manifests.py": "manifests/ and schemas/manifests/ at the repository root — both are PUBLICATIONS of what the package declares and neither is inside the wheel (M's ruling F1.4: manifests are framework-level interoperability artefacts and the wheel carries the generator, not a second copy of the payload), so against an installed wheel this module would have no files to compare the declarations with",
+    "test_cdm_dis7_trace.py": "AST over the tests/test_cdm_dis7_*.py modules as files in the tree: the traceability ratchet binds the contract's case ids to test functions in the repository's tests directory, which the wheel does not carry",
 }
 
 def source_roster() -> tuple[str, ...]:

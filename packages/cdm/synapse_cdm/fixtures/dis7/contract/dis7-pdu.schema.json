@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:dis7:spec:1.0:dis7-pdu",
+  "type": "object",
+  "properties": {
+    "header": {
+      "type": "object",
+      "properties": {
+        "protocol_version": {
+          "const": 7
+        },
+        "exercise_id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "pdu_type": {
+          "const": 1
+        },
+        "protocol_family": {
+          "const": 1
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 144,
+          "maximum": 4224
+        },
+        "status": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "protocol_version",
+        "exercise_id",
+        "pdu_type",
+        "protocol_family",
+        "timestamp",
+        "length",
+        "status",
+        "padding"
+      ],
+      "additionalProperties": false
+    },
+    "entity_id": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      ],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "force_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255
+    },
+    "entity_type": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "alternative_entity_type": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "velocity_mps": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "position_ecef_m": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "orientation_radians": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "appearance": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "dead_reckoning_hex": {
+      "type": "string",
+      "minLength": 80,
+      "maxLength": 80,
+      "pattern": "^[0-9a-f]{80}$(?![\\s\\S])"
+    },
+    "marking_hex": {
+      "type": "string",
+      "minLength": 24,
+      "maxLength": 24,
+      "pattern": "^[0-9a-f]{24}$(?![\\s\\S])"
+    },
+    "capabilities": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "variable_parameters_hex": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 32,
+        "maxLength": 32,
+        "pattern": "^[0-9a-f]{32}$(?![\\s\\S])"
+      },
+      "maxItems": 255
+    }
+  },
+  "required": [
+    "header",
+    "entity_id",
+    "force_id",
+    "entity_type",
+    "alternative_entity_type",
+    "velocity_mps",
+    "position_ecef_m",
+    "orientation_radians",
+    "appearance",
+    "dead_reckoning_hex",
+    "marking_hex",
+    "capabilities",
+    "variable_parameters_hex"
+  ],
+  "additionalProperties": false
+}
