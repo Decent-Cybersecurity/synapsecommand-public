@@ -15,6 +15,7 @@ import jsonschema
 import pytest
 
 from synapse_cdm import harness, schemas
+from synapse_cdm.adapters.dis7_codec import decode_pdu
 
 from tests import dis7_support
 
@@ -220,6 +221,39 @@ def test_schema_validation_can_fail():
     del data["wire_hex"]
     assert _errors(_schema("dis7-residual"), data) != []
 
+
+
+def _a02_input() -> bytes:
+    raw = dis7_support.patch(dis7_support.seed(), 8, bytes.fromhex("1080"))
+    return dis7_support.patch(raw, 19, bytes([255])) + bytes(4080)
+
+
+DECODED_INPUTS = [
+    *[pytest.param(lambda stem=stem: dis7_support.vector_bytes(stem), id=stem)
+      for stem in dis7_support.STEMS],
+    pytest.param(dis7_support.walking_pdu, id="walking"),
+    pytest.param(_a02_input, id="a02_255_records"),
+]
+
+
+@pytest.mark.parametrize("build", DECODED_INPUTS)
+def test_schema_every_decoded_pdu_validates_against_dis7_pdu(build):
+    schema = _schema("dis7-pdu")
+    raw = build()
+    pdu = decode_pdu(raw)
+    assert _errors(schema, pdu) == []
+    assert list(pdu) == schema["required"]
+    assert list(pdu["header"]) == schema["properties"]["header"]["required"]
+
+
+def test_schema_decoded_pdu_validation_can_fail():
+    schema = _schema("dis7-pdu")
+    extra_key = decode_pdu(dis7_support.seed())
+    extra_key["unknown"] = True
+    assert _errors(schema, extra_key) != []
+    short_length = decode_pdu(dis7_support.seed())
+    short_length["header"]["length"] = 143
+    assert _errors(schema, short_length) != []
 
 def test_support_helpers():
     raw = dis7_support.seed()

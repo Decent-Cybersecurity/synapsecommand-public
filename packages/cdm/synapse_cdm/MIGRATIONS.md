@@ -545,6 +545,14 @@ Under `fixtures/dis7/contract/`, byte-identical to the bundle: `acceptance-cases
 `PROVENANCE.json`. `tests/test_cdm_dis7_schema.py` holds every vendored file to the pin record and
 validates the vectors against the vendored schemas.
 
+**THE DIS 7 CODEC DECODES AND ENCODES ONE ENTITY STATE PDU.** `adapters/dis7_codec.py` now
+holds `decode_pdu`, which reads the octets of one Entity State PDU into its decoded shape,
+`encode_pdu`, which writes a decoded PDU back to the same octets, `looks_like_entity_state`, which
+judges the header triplet alone, and the wire constants `MIN_PDU_BYTES`, `MAX_PDU_BYTES`,
+`RECORD_BYTES` and `MAX_RECORDS`. Every refusal is a `Dis7Error` that carries a code and a path.
+The codec is a module of its own and nothing is registered: there is no adapter class for `dis7`,
+and no file joined the distribution in this step.
+
 **DIS 7 UNIT 1B, SDK HELPERS AND THE ADAPTER API AT 3.1.0, 2026-10-04 — a bytes-level digest, a
 four-digit year, one addition to the contract.** `evidence.py` gains `digest_bytes(data)`, the
 SHA-256 and size of octets a caller already holds, returning the pair `digest(path)` returns;

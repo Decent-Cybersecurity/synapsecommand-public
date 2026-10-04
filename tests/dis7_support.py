@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import struct
 
 import synapse_cdm
 
@@ -47,3 +48,28 @@ def patch(raw: bytes, offset: int, data: bytes) -> bytes:
         raise ValueError(f"offset {offset} and {len(data)} byte(s) do not fit inside "
                           f"{len(raw)} byte(s)")
     return raw[:offset] + data + raw[offset + len(data):]
+
+
+def walking_pdu() -> bytes:
+    """A 176-octet PDU with two records where octet i is 0x10 + i for i < 144 and the records are
+    0xC0 to 0xDF, except the forced octets 0, 2, 3 (7, 1, 1), 8-9 (00 b0) and 19 (2).
+
+    Built from `struct` and literals only, so a field read at a wrong offset, width or byte
+    order yields a different value.
+    """
+    raw = b"".join((
+        struct.pack(">BBBBIHBB", 7, 0x11, 1, 1, 0x14151617, 176, 0x1A, 0x1B),
+        struct.pack(">HHHBB", 0x1C1D, 0x1E1F, 0x2021, 0x22, 2),
+        struct.pack(">BBHBBBB", 0x24, 0x25, 0x2627, 0x28, 0x29, 0x2A, 0x2B),
+        struct.pack(">BBHBBBB", 0x2C, 0x2D, 0x2E2F, 0x30, 0x31, 0x32, 0x33),
+        bytes(range(0x34, 0x40)),   # velocity: three binary32
+        bytes(range(0x40, 0x58)),   # position: three binary64
+        bytes(range(0x58, 0x64)),   # orientation: three binary32
+        struct.pack(">I", 0x64656667),
+        bytes(range(0x68, 0x90)),   # dead reckoning, 40 octets
+        bytes(range(0x90, 0x9C)),   # marking, 12 octets
+        struct.pack(">I", 0x9C9D9E9F),
+        bytes(range(0xC0, 0xE0)),   # two records
+    ))
+    assert len(raw) == 176
+    return raw

@@ -205,6 +205,41 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **Alternatives.** Accept any bytes-like object.
 - **Covering tests.** `tests/test_cdm_evidence_categories.py::test_digest_bytes_refuses_anything_that_is_not_bytes`.
 
+### D52 — `decode_pdu` refuses text of any length as a type error
+
+- **What.** `decode_pdu` given a `str`, whatever its length, raises `E_INPUT_TYPE` at `$`. The oversize-text rule of CR-12 (`E_INPUT_LIMIT` for a `str` over the bound) is applied by the coded guard of the adapter class before the codec is called, not by the codec.
+- **Why.** The codec reads octets only and has no text bound of its own; CR-12 is a rule about what `to_cdm` accepts, so it lives where `to_cdm` is guarded, and the codec keeps one plain type-then-bounds order.
+- **Alternatives.** Measuring a `str` by its UTF-8 length inside the codec (rejected: it would put a second copy of the guard's text rule in the codec and make the codec's order depart from the contract order for one type).
+- **Covering tests.** `test_non_bytes_input_is_e_input_type_at_the_root` (ids `short_text` and `long_text`) in `tests/test_cdm_dis7_codec.py`.
+
+### D53 — The header predicate has no upper size bound
+
+- **What.** `looks_like_entity_state` returns True for any byte sequence of at least 12 octets whose octets 0, 2 and 3 are 7, 1 and 1, whatever its length; the over-size rule of CR-28 is added by `detect`.
+- **Why.** The predicate judges the header triplet alone, neither the length nor the record count, so `detect` can combine it with its own bounds and so it never raises.
+- **Alternatives.** Folding the 4224-octet bound into the predicate (rejected: `detect` owns CR-28, and a second bound here would be a second place to keep in step).
+- **Covering tests.** `test_r07_header_predicate_matrix` (id `triplet_5000`) in `tests/test_cdm_dis7_codec.py`.
+
+### D54 — A released memoryview is a type error at the root
+
+- **What.** `decode_pdu` given a released `memoryview` raises `E_INPUT_TYPE` at `$`: the one `bytes(raw)` conversion runs inside a handler for `ValueError`, `TypeError` and `BufferError`, which re-raises a `Dis7Error`. `looks_like_entity_state` returns False for it.
+- **Why.** The view is bytes-like by type but no octets can be read from it, so no later stage applies; a plain `ValueError` would leak a foreign exception.
+- **Alternatives.** Letting the `ValueError` through (rejected: nothing but a `Dis7Error` may leave `decode_pdu`); `E_LENGTH_MISMATCH` at `byte[0]` (rejected: the input was never measured).
+- **Covering tests.** `test_released_memoryview_is_e_input_type_at_the_root` and `test_r07_header_predicate_matrix` (id `released_memoryview`) in `tests/test_cdm_dis7_codec.py`.
+
+### D55 — The paths `encode_pdu` reports
+
+- **What.** `encode_pdu` reports `$` for an argument that is not a dict and for an unknown top-level member, the member's own path for a missing member (`force_id`, `header.length`), `header` for an unknown header member, the field name for a wrong container (`entity_id`, `variable_parameters_hex`) and `<field>[i]` for an element (`velocity_mps[1]`, `variable_parameters_hex[0]`). At the root and in `header` a missing member is reported before an unknown one, and the message of an unknown-member refusal never repeats the foreign key.
+- **Why.** Bare field paths are the frozen form for the encoder; reporting the parent for an unknown member keeps a caller-supplied key out of the diagnostic, and judging a container before its elements gives one path per defect.
+- **Alternatives.** Naming the unknown key in the path (rejected: a diagnostic must not echo arbitrary source strings); `pdu.`-prefixed paths as in the envelope (rejected: that is the adapter's stage 2, not the codec's).
+- **Covering tests.** `test_encode_structure_defects_are_twin_schema_at_the_member`, `test_t03_n10_256_records_are_refused_as_twin_schema` and `test_encode_reports_defects_in_the_frozen_stage_order` in `tests/test_cdm_dis7_codec.py`.
+
+### D56 — The types `encode_pdu` accepts
+
+- **What.** An integer field takes a plain `int` or a finite integral `float` (`7.0`); a boolean, a string, `None` or `7.5` is `E_TWIN_SCHEMA`. A vector component takes a plain `int` or `float`; a non-finite float is `E_NONFINITE` and a value that does not survive a pack and unpack at its wire width is `E_VALUE_RANGE`. `header.protocol_version = 256` is `E_HEADER_UNSUPPORTED` and `header.length = 65536` is `E_LENGTH_MISMATCH`, because stages 2 and 3 come before the range stage. Every type test uses `type(v) is ...`, never `isinstance`, so a `bool` is never an integer.
+- **Why.** CR-06 accepts integral floats as the schema does and refuses booleans; CR-04 fixes the stage of each class of defect, and the constants and the length are judged by their own stages before any range is.
+- **Alternatives.** Refusing integral floats (rejected: CR-06); reporting `header.protocol_version = 256` as a range defect (rejected: the constant stage comes first under CR-04).
+- **Covering tests.** `test_t04_integral_floats_are_accepted_for_integer_fields`, `test_t04_booleans_are_refused_for_integers_and_vector_components`, `test_encode_header_constants_are_header_unsupported`, `test_encode_length_must_equal_144_plus_16_per_record` and `test_t04_out_of_range_integers_are_refused_per_field_width` in `tests/test_cdm_dis7_codec.py`.
+
 ## Frozen contract
 
 ### Public API
@@ -370,11 +405,20 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 ### R07 — wp2-decode
 
-Not started.
+- `pkg/adapters/dis7_codec.py` gained the wire constants (`MIN_PDU_BYTES`, `MAX_PDU_BYTES`, `RECORD_BYTES`, `MAX_RECORDS`), `decode_pdu`, the record seam `_decode_records` and the header predicate `looks_like_entity_state`. Checks run in contract order (type, size bound, minimum length, octets 0, 2, 3, declared length, record count, the nine vector components in ascending offset) and every refusal carries its frozen code and path; a memoryview of any item size is read as its octets (CR-29). Decisions D52 to D54.
+- `tests/dis7_support.py` gained `walking_pdu()`, a 176-octet PDU built from `struct` and literals.
+- `tests/test_cdm_dis7_codec.py` binds A01 (T01), N01 to N08 (T02), N09 and A02 (T03), N36, N48 and N72 (T04), with the refused-category, bracket, defect-order, predicate, input-type and no-foreign-exception tests. `tests/test_cdm_dis7_schema.py` validates five decoded PDUs against `dis7-pdu.schema.json`, with a control that can fail.
+- The trace table's `PENDING` lost the eighteen ids the ratchet named stale: A01, A02, N01 to N09, N36, N48, N72, R08, R09, R14 and R22; R21's evidence gained the fuzz test.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12. No file under `packages/cdm` was added, so `### Unreleased` is unchanged.
+- Left for R08: `encode_pdu`, round-trip assertions, N10, counts 0, 1, 254 and 255, the multi-octet memoryview tests, the encoder fuzz, the `### Unreleased` sentence and the WP2 commit draft.
 
 ### R08 — wp2-encode
 
-Not started.
+- `pkg/adapters/dis7_codec.py` gained `encode_pdu`, the lossless inverse of `decode_pdu`. It validates in the five CR-04 stages, each finished over every member in decode order before the next begins: structure (`E_TWIN_SCHEMA`), header constants (`E_HEADER_UNSUPPORTED`), declared length against the record count (`E_LENGTH_MISMATCH`), finite vector components (`E_NONFINITE`), then integer ranges, pack-then-unpack representability and hex characters (`E_VALUE_RANGE`). Every refusal is a plain `Dis7Error` with a bare field path; the only handler is the one around `struct.pack`. The module docstring says the module also encodes. Decisions D55 and D56.
+- `tests/test_cdm_dis7_codec.py` binds N10 (T03) and adds the round trips of the three twins and the walking pattern, record counts 0, 1, 254 and 255, the maximal PDU, the stage-1 paths, booleans, header constants, length, the non-finite components, wire-width refusals, exact encodings and signed zero, integer widths, integral floats, hex characters, the stage-order pairs, tuples without mutation (CR-29), the two multi-octet memoryview cases and the encoder fuzz; the decoder fuzz now asserts `encode_pdu(decode_pdu(raw)) == raw`.
+- The trace table's `PENDING` lost N10; R21's evidence gained the encoder fuzz test.
+- `### Unreleased` gained the paragraph on the codec; its file list and count clause are unchanged. The WP2 commit draft for the maintainer is written outside the worktree.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
 
 ### R09 — wp3-time
 

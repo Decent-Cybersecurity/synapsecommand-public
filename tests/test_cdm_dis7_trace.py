@@ -33,13 +33,6 @@ CITED_BY = {r: tuple(c["id"] for c in CASES if r in c["requirements"]) for r in 
 UNCITED = tuple(r for r in REQUIREMENTS if not CITED_BY[r])
 
 PENDING = {
-    # run R07
-    "A01": "run R07", "N01": "run R07", "N02": "run R07", "N03": "run R07", "N04": "run R07",
-    "N05": "run R07", "N06": "run R07", "N07": "run R07", "N08": "run R07", "N09": "run R07",
-    "A02": "run R07", "N36": "run R07", "N48": "run R07", "N72": "run R07",
-    "R08": "run R07", "R09": "run R07", "R14": "run R07", "R22": "run R07",
-    # run R08
-    "N10": "run R08",
     # run R09
     "A06": "run R09", "N13": "run R09", "A07": "run R09",
     "R11": "run R09",
@@ -78,6 +71,8 @@ R_EVIDENCE = {
         "tests/test_cdm_dis7_codec.py::test_r21_too_large_carries_the_limit_code_and_both_base_classes",
         "tests/test_cdm_dis7_codec.py::test_r21_too_deep_carries_the_limit_code_and_both_base_classes",
         "tests/test_cdm_dis7_codec.py::test_r21_errors_survive_copy_and_pickle",
+        "tests/test_cdm_dis7_codec.py::test_r21_no_foreign_exception_escapes_decode_pdu",
+        "tests/test_cdm_dis7_codec.py::test_r21_no_foreign_exception_escapes_encode_pdu",
     ),
 }
 
