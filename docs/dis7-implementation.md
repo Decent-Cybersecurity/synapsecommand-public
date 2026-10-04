@@ -240,6 +240,34 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **Alternatives.** Refusing integral floats (rejected: CR-06); reporting `header.protocol_version = 256` as a range defect (rejected: the constant stage comes first under CR-04).
 - **Covering tests.** `test_t04_integral_floats_are_accepted_for_integer_fields`, `test_t04_booleans_are_refused_for_integers_and_vector_components`, `test_encode_header_constants_are_header_unsupported`, `test_encode_length_must_equal_144_plus_16_per_record` and `test_t04_out_of_range_integers_are_refused_per_field_width` in `tests/test_cdm_dis7_codec.py`.
 
+### D57 — CR-07: the enumerated whitespace set
+
+- **What.** `BASIS_WHITESPACE`, a public constant of `pkg/adapters/dis7.py`, is the frozenset of these 30 code points: U+0009, U+000A, U+000B, U+000C, U+000D, U+001C, U+001D, U+001E, U+001F, U+0020, U+0085, U+00A0, U+1680, U+2000, U+2001, U+2002, U+2003, U+2004, U+2005, U+2006, U+2007, U+2008, U+2009, U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF. A basis made only of them is `E_CONTEXT_TIME` at `time_context.basis`; U+200B, U+180E and U+001B are not in the set. The code points are written out as `chr(0x...)`, never derived from the interpreter.
+- **Why.** It is the whitespace of `str.isspace()` on CPython 3.11 to 3.14 plus U+FEFF, so a basis that passes satisfies the schemas' non-whitespace pattern under Python and under ECMA-262 alike; deriving it from `str.isspace`, a strip or a regex class would make the verdict depend on the interpreter.
+- **Alternatives.** The Unicode White_Space property (25 code points; rejected: it would accept a basis made only of U+001C to U+001F or of U+FEFF, which the ECMA-262 pattern refuses); `str.isspace()` at run time (rejected: interpreter-dependent).
+- **Covering tests.** `test_t09_basis_whitespace_is_the_enumerated_set` in `tests/test_cdm_dis7_time_identity.py`.
+
+### D58 — The three-layer geodesy oracle
+
+- **What.** `ecef_to_geodetic` is held to three always-on layers in `tests/test_cdm_dis7_geodesy.py`: analytical literals (height p - a on the equatorial plane, abs(z) - b on the axis), the forward equations of `tests/dis7_support.py` (`geodetic_to_ecef`, written with its own literals) over a 448-point grid of latitudes, longitudes and heights, and Heikkinen's closed-form inverse, which exists only in the test file, over that grid and eight raw ECEF points. Tolerances are 1e-9 degrees (longitude compared circularly) and 0.001 m; no layer takes a value or a constant from the module under test.
+- **Why.** The function cannot be validated against itself, and a fixture is only as right as the conversion that made it. The grid covers the equator, both poles, mid-latitudes, the antimeridian, below the ellipsoid and high altitude inside the cap, the locations an independent check must cover; the closed form is a different method, so a shared mistake in the iteration and the forward equations still shows.
+- **Alternatives.** The repository's existing single-step closed form in the legion and STANAG 4676 modules as the reference (rejected: it is 0.3 to 0.4 m off at depth and at the cap, and it is what the oracle must catch); an optional external geodesy library (rejected: no new dependency, and an optional layer would skip).
+- **Covering tests.** `test_t16_oracle_analytical_literals`, `test_t16_oracle_forward_equations_over_the_grid` and `test_t16_oracle_closed_form_inverse`.
+
+### D59 — Non-finite kinematics are `E_PROJECTION`; the algorithm byte is the caller's
+
+- **What.** When `velocity_to_kinematics` computes a speed or a climb that is not finite it raises `E_PROJECTION` at `byte[48]`. The function takes only the velocity, the latitude and the longitude: it never reads the dead-reckoning algorithm, and the caller decides with `algorithm in dis7_codec.WORLD_ALGORITHMS` whether to call it.
+- **Why.** All kinematics outputs must be finite, and stage 9 of the validation order has the one wire path `byte[48]` with the codes `E_POSITION_DOMAIN` and `E_PROJECTION`; the projection code is the one that describes a derived value that cannot be represented. Keeping the algorithm decision out of the helper leaves `WORLD_ALGORITHMS` a single mutation seam.
+- **Alternatives.** `E_NONFINITE` at the velocity's octets (rejected: stage 6 already guarantees finite octets, so the overflow is a property of the projection, not of the wire); returning `None` kinematics (rejected: a silent drop of a refusal); passing the algorithm in (rejected: two places would then decide the same question).
+- **Covering tests.** `test_t07_a05_non_finite_output_is_refused` and `test_t07_a05_kinematics_take_only_velocity_and_position`.
+
+### D60 — NaN or infinity reaching `ecef_to_geodetic` is `E_POSITION_DOMAIN`
+
+- **What.** `ecef_to_geodetic` refuses a radius that is not finite, as well as one below b/2 or above 1e9 metres, with `E_POSITION_DOMAIN` at `byte[48]`; a NaN or infinite coordinate, and a vector whose `math.hypot` overflows, therefore take this code.
+- **Why.** NaN compares false against both bounds, so without the explicit finiteness test a NaN coordinate would pass the domain check and reach the iteration. The adapter's stage 6 refuses non-finite octets earlier with `E_NONFINITE`; only helper-level calls reach this branch, and the domain rule already names a non-finite radius.
+- **Alternatives.** `E_NONFINITE` inside the helper (rejected: that code's paths are the component octets, which the helper does not know); `E_PROJECTION` (rejected: the domain rule names a non-finite radius explicitly).
+- **Covering tests.** `test_t05_n11_refused_positions` (the NaN, infinity and overflow rows).
+
 ## Frozen contract
 
 ### Public API
@@ -422,11 +450,22 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 ### R09 — wp3-time
 
-Not started.
+- `pkg/adapters/dis7.py` is new and holds no adapter class: `TimeContext` (a frozen dataclass whose instant is checked by an anchored ASCII-digit pattern and explicit range checks, normalised to UTC as `YYYY-MM-DDTHH:MM:SS.mmmZ`, and whose basis is kept verbatim), `BASIS_WHITESPACE`, `validate_session`, and the identity helpers `external_id`, `identity_system` and `entity_uuid`, the last through `ids.derive`. It re-exports the error model of `dis7_codec.py`. Decision D57.
+- `tests/test_cdm_dis7_time_identity.py` binds A06 (T08), N13 and A07 (T09) at helper level against literal UUIDs and literal normalised instants, with the basis, frozen-context and session tests; it is listed in `PACKAGE_ONLY_TESTS`.
+- The trace table's `PENDING` lost A06, N13, A07 and R11; R10 stays pending until N12 is bound.
+- `### Unreleased` names `adapters/dis7.py` in its file list, its count clause moved by one, and it gained the paragraph on the module.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
+- Left for R15: the adapter-level halves of A06, A07 and N13.
 
 ### R10 — wp3-geodesy
 
-Not started.
+- `pkg/adapters/dis7_codec.py` gains the WGS84 constants, `PROJECTION_MAX_ITERATIONS` (the iteration-cap seam), `WORLD_ALGORITHMS` (a mutation seam), `ecef_to_geodetic` (the origin returns `None` by value, CR-35; the radial domain; the pole branch; the reference iteration with an explicit convergence flag; finite in-range outputs; negative zero normalised) and `velocity_to_kinematics` (horizontal speed, course and climb; no course at zero speed or exactly at a pole; a computed 360 emitted as 0; negative zero normalised). Nothing calls them yet. Decisions D58, D59 and D60.
+- `tests/dis7_support.py` gains `geodetic_to_ecef`, the forward conversion with its own literals.
+- `tests/test_cdm_dis7_geodesy.py` binds A03 and N11 (T05), A04 (T06) and A05 (T07) at helper level, with the iteration-cap seam and the three-layer oracle (T16); it is listed in `PACKAGE_ONLY_TESTS`.
+- The trace table's `PENDING` lost A03, N11, A04, A05, R15, R16 and R17; A13 and A14 stay pending.
+- `### Unreleased` gained the paragraph on the helpers; its file list and count clause are unchanged.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
+- Left for R12 and R15: calling the helpers from the adapter and the adapter-level halves of A03, N11, A04 and A05.
 
 ### R11 — wp4-loader
 

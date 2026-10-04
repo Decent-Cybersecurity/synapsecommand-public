@@ -33,12 +33,6 @@ CITED_BY = {r: tuple(c["id"] for c in CASES if r in c["requirements"]) for r in 
 UNCITED = tuple(r for r in REQUIREMENTS if not CITED_BY[r])
 
 PENDING = {
-    # run R09
-    "A06": "run R09", "N13": "run R09", "A07": "run R09",
-    "R11": "run R09",
-    # run R10
-    "A03": "run R10", "N11": "run R10", "A04": "run R10", "A05": "run R10",
-    "R15": "run R10", "R16": "run R10", "R17": "run R10",
     # run R11
     "N18": "run R11", "N20": "run R11",
     "R12": "run R11",

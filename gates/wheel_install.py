@@ -235,6 +235,12 @@ PACKAGE_ONLY_TESTS = (
     # `test_cdm_dis7_codec.py` reads the error model only, and, through the package, the
     # vendored contract file (`fixtures/dis7/contract/acceptance-cases.json`).
     "test_cdm_dis7_codec.py",
+    # `test_cdm_dis7_time_identity.py` needs only the installed package and the three packaged
+    # vectors it reads through `tests/dis7_support.py`.
+    "test_cdm_dis7_time_identity.py",
+    # `test_cdm_dis7_geodesy.py` needs only the installed package and the three packaged vectors
+    # it reads through `tests/dis7_support.py`.
+    "test_cdm_dis7_geodesy.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason

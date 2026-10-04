@@ -7,6 +7,7 @@ against an installed wheel and against a scratch copy of the package.
 from __future__ import annotations
 
 import json
+import math
 import pathlib
 import struct
 
@@ -73,3 +74,18 @@ def walking_pdu() -> bytes:
     ))
     assert len(raw) == 176
     return raw
+
+
+def geodetic_to_ecef(lat, lon, h):
+    """ECEF metres for a WGS84 latitude and longitude in degrees and a height in metres.
+
+    The forward conversion, written with its own literals so no constant comes from the codec.
+    """
+    a = 6378137.0
+    f = 1 / 298.257223563
+    e2 = f * (2 - f)
+    phi, lam = math.radians(lat), math.radians(lon)
+    n = a / math.sqrt(1 - e2 * math.sin(phi) ** 2)
+    return ((n + h) * math.cos(phi) * math.cos(lam),
+            (n + h) * math.cos(phi) * math.sin(lam),
+            (n * (1 - e2) + h) * math.sin(phi))

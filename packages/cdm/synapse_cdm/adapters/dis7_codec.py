@@ -374,3 +374,93 @@ def encode_pdu(pdu) -> bytes:
         struct.pack(">I", int(pdu["capabilities"])),
         b"".join(bytes.fromhex(record) for record in records),
     ))
+
+
+# WGS84 ellipsoid. Heights are ellipsoidal (HAE); no geoid or terrain model is involved.
+WGS84_A = 6378137.0
+WGS84_F = 1 / 298.257223563
+WGS84_E2 = WGS84_F * (2 - WGS84_F)
+WGS84_B = WGS84_A * (1 - WGS84_F)
+# The reference iteration's cap, read at call time so a test can lower it and reach E_PROJECTION.
+PROJECTION_MAX_ITERATIONS = 15
+# Dead-reckoning algorithms whose velocity is world (ECEF) coordinates (case A04); a mutation seam.
+WORLD_ALGORITHMS = frozenset({2, 3, 4, 5})
+
+
+def _positive_zero(value: float) -> float:
+    return 0.0 if value == 0 else value
+
+
+def ecef_to_geodetic(x: float, y: float, z: float) -> tuple[float, float, float] | None:
+    """`(lat_deg, lon_deg, hae_m)` for an ECEF position in metres, or `None` for the origin.
+
+    The origin, also when written with negative zeros, has no projection (CR-35). Other radii
+    below b/2 or above 1e9 metres, and a non-finite radius, are `E_POSITION_DOMAIN` (case N11).
+    A point on the polar axis takes the pole branch; every other point runs the reference
+    iteration, which must converge within `PROJECTION_MAX_ITERATIONS` steps or the position is
+    `E_PROJECTION`. Outputs equal to zero are returned as positive zero.
+    """
+    if x == 0 and y == 0 and z == 0:
+        return None
+    r = math.hypot(x, y, z)
+    if not math.isfinite(r) or r < WGS84_B / 2 or r > 1e9:
+        raise Dis7Error(E_POSITION_DOMAIN, "byte[48]",
+                        "the location's radius is outside the projectable domain")
+    p = math.hypot(x, y)
+    if p == 0:
+        lat = math.copysign(90.0, z)
+        lon = 0.0
+        h = abs(z) - WGS84_B
+    else:
+        phi = math.atan2(z, p * (1 - WGS84_E2))
+        converged = False
+        for _ in range(PROJECTION_MAX_ITERATIONS):
+            n = WGS84_A / math.sqrt(1 - WGS84_E2 * math.sin(phi) ** 2)
+            next_phi = math.atan2(z + WGS84_E2 * n * math.sin(phi), p)
+            converged = abs(next_phi - phi) < 1e-14
+            phi = next_phi
+            if converged:
+                break
+        if not converged:
+            raise Dis7Error(E_PROJECTION, "byte[48]",
+                            "the reference iteration did not converge for the location")
+        n = WGS84_A / math.sqrt(1 - WGS84_E2 * math.sin(phi) ** 2)
+        h = p * math.cos(phi) + z * math.sin(phi) - n * (1 - WGS84_E2 * math.sin(phi) ** 2)
+        lat = math.degrees(phi)
+        # The sign of 180 at the antimeridian is whatever atan2 returns for the untouched y.
+        lon = math.degrees(math.atan2(y, x))
+    if not (math.isfinite(lat) and math.isfinite(lon) and math.isfinite(h)) \
+            or not -90.0 <= lat <= 90.0 or not -180.0 <= lon <= 180.0:
+        raise Dis7Error(E_PROJECTION, "byte[48]",
+                        "the location's projection is not finite or out of range")
+    return _positive_zero(lat), _positive_zero(lon), _positive_zero(h)
+
+
+def velocity_to_kinematics(velocity, lat_deg: float, lon_deg: float) -> dict:
+    """Horizontal speed, course and climb for an ECEF velocity at a projected position (A05).
+
+    The velocity is rotated into local east, north and up. `speed_mps` is the horizontal speed,
+    `climb_mps` is the up component, and `course_deg` is `None` at zero speed or at exactly
+    either pole; a course that rounds to 360 is 0. Outputs equal to zero are positive zero. The
+    caller decides from the dead-reckoning algorithm whether the velocity is world coordinates.
+    """
+    vx, vy, vz = velocity
+    phi = math.radians(lat_deg)
+    lam = math.radians(lon_deg)
+    east = -math.sin(lam) * vx + math.cos(lam) * vy
+    north = (-math.sin(phi) * math.cos(lam) * vx - math.sin(phi) * math.sin(lam) * vy
+             + math.cos(phi) * vz)
+    up = (math.cos(phi) * math.cos(lam) * vx + math.cos(phi) * math.sin(lam) * vy
+          + math.sin(phi) * vz)
+    speed = math.hypot(east, north)
+    if not (math.isfinite(speed) and math.isfinite(up)):
+        raise Dis7Error(E_PROJECTION, "byte[48]", "the velocity's projection is not finite")
+    if speed == 0 or lat_deg == 90 or lat_deg == -90:
+        course = None
+    else:
+        course = math.degrees(math.atan2(east, north)) % 360.0
+        if course >= 360.0:
+            course = 0.0
+        course = _positive_zero(course)
+    return {"speed_mps": _positive_zero(speed), "course_deg": course,
+            "climb_mps": _positive_zero(up)}

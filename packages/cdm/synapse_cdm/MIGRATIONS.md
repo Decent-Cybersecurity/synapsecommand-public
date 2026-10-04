@@ -512,10 +512,11 @@ now true of it.
 release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
 measurement.
 
-**What moved inside the distribution: 34 files** — `MIGRATIONS.md` (this section, and the dated
+**What moved inside the distribution: 35 files** — `MIGRATIONS.md` (this section, and the dated
 witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (a
 Phase 1 row for `dis7` in the ordinal table and the paragraph under that table), `dis7_codec.py`
 (the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes),
+`adapters/dis7.py` (the caller time context, the session rule and the identity derivation),
 `adapter.py`, `harness.py`, `suite.py` and `evidence.py` (the `fixture_instance` hook on `Adapter`
 and its callers: the constructions the harness, the conformance suite and the evidence generator
 make now go through it, and their command lines refuse a caller-supplied `--fixtures` for a shipped
@@ -552,6 +553,22 @@ judges the header triplet alone, and the wire constants `MIN_PDU_BYTES`, `MAX_PD
 `RECORD_BYTES` and `MAX_RECORDS`. Every refusal is a `Dis7Error` that carries a code and a path.
 The codec is a module of its own and nothing is registered: there is no adapter class for `dis7`,
 and no file joined the distribution in this step.
+
+**THE DIS 7 TIME CONTEXT, SESSION RULE AND IDENTITY.** `adapters/dis7.py` is new and holds
+`TimeContext`, the caller's resolved state instant normalised to UTC with three fractional digits
+and the basis kept verbatim, `BASIS_WHITESPACE`, the enumerated characters a basis may not consist
+of entirely, `validate_session`, the session rule, and `external_id`, `identity_system` and
+`entity_uuid`, the identity derivation through `ids.derive`. Every refusal is a `Dis7Error` with a
+code and a path. There is no adapter class in the module and nothing is registered.
+
+**THE DIS 7 PROJECTION AND KINEMATICS HELPERS.** `adapters/dis7_codec.py` now also carries the
+WGS84 projection and the ENU kinematics helpers: the constants `WGS84_A`, `WGS84_F`, `WGS84_E2`
+and `WGS84_B`, `ecef_to_geodetic`, which projects an ECEF location to latitude, longitude and
+ellipsoidal height by the reference iteration under the cap `PROJECTION_MAX_ITERATIONS`,
+`velocity_to_kinematics`, which turns a world-coordinate velocity into horizontal speed, course
+and climb, and `WORLD_ALGORITHMS`, the dead-reckoning algorithms whose velocity is world
+coordinates. Every refusal is a `Dis7Error` at `byte[48]`. The helpers are called by nothing yet
+and nothing is registered, and no file joined the distribution in this step.
 
 **DIS 7 UNIT 1B, SDK HELPERS AND THE ADAPTER API AT 3.1.0, 2026-10-04 — a bytes-level digest, a
 four-digit year, one addition to the contract.** `evidence.py` gains `digest_bytes(data)`, the
