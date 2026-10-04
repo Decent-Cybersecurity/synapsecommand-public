@@ -209,7 +209,7 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     assert len(roster) == 19
     swept = 0
     for cls in roster.values():
-        adapter = cls(synthetic=True)
+        adapter = cls.fixture_instance(synthetic=True)
         assert structured_residual_offences(adapter, []) == []
         if cls.metadata.residual is ResidualStance.STRUCTURED:
             for path in harness.select_fixtures(packaged_fixtures(cls)):

@@ -97,7 +97,8 @@ present meaning, for the whole of Part 1 and beyond it:
   > that has not been redeployed in the same hour.
 
 v2 adds four members, and renames nothing; 2.1.0 (2026-09-16) adds three more on the same terms,
-every default being the behaviour the member replaced:
+every default being the behaviour the member replaced; 3.1.0 (2026-10-04) adds one more,
+`fixture_instance()`, whose default is the construction the SDK performed before it existed:
 
 | v2 member | added by | contract |
 |---|---|---|
@@ -108,6 +109,7 @@ every default being the behaviour the member replaced:
 | `ROUNDTRIP_TOLERANCE` | 2.1.0 | how the roundtrip check compares egress — `bytes` (octet equality, the default) or `values` (re-ingest, no source value missing); §3.3's "declared tolerances" made a declaration the report prints |
 | `ROUNDTRIP_TRANSFORMS` | 2.1.0 | source paths egress legitimately re-stamps, with the reason; read under `values` only, printed beside `TRANSFORMS` |
 | `roundtrip_reference()` | 2.1.0 | the octets a re-emission must reproduce under `bytes`; identity unless the source format carries an envelope that is not part of the message, and the harness names every fixture it differs on |
+| `fixture_instance()` | 3.1.0 | a classmethod, `fixture_instance(clock=None, *, synthetic=True)`: the instance the harness, the conformance suite and the evidence generator build to replay the adapter's PACKAGED fixtures. The default returns `cls(clock=clock, synthetic=synthetic)`, which is what those callers did themselves before 3.1.0; an adapter whose constructor requires context a generic caller cannot supply overrides it and supplies that context for its packaged fixtures only |
 
 **`decode` and `encode` are the v2 NAMES of `to_cdm` and `from_cdm`.** Which is canonical, stated
 once so no later round has to decide it:

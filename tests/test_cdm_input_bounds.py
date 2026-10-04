@@ -126,7 +126,7 @@ def test_every_adapter_refuses_one_octet_over_its_declared_bound(name):
     assert len(oversized) == bound + 1
 
     with pytest.raises(InputTooLarge) as raised:
-        cls().to_cdm(oversized)
+        cls.fixture_instance().to_cdm(oversized)
     assert str(bound) in str(raised.value) and str(bound + 1) in str(raised.value)
 
 
@@ -143,7 +143,7 @@ def test_the_bound_is_checked_before_the_adapter_s_own_decoder_runs(name):
     bound = cls.metadata.capabilities.limits.max_input_bytes
     payload = b"\xff" * (bound + 1)
     with pytest.raises(InputTooLarge):
-        cls().to_cdm(payload)
+        cls.fixture_instance().to_cdm(payload)
 
 
 @pytest.mark.parametrize("name", ADAPTERS)

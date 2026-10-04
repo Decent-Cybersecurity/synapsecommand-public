@@ -93,7 +93,7 @@ def _limits(name):
 
 
 def _fresh(name):
-    return shipped()[name]()
+    return shipped()[name].fixture_instance()
 
 
 def _the_guard_is_silent(name, payload, guard: type[Exception]) -> None:

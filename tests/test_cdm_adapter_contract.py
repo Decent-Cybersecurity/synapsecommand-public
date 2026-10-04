@@ -4,7 +4,9 @@ Every failure here is one that would otherwise surface in production: an adapter
 version stamping unattributable provenance, an "egress" adapter that raises on the first
 outbound push, two adapters quietly sharing a name so the harness validates the wrong one.
 """
+import ast
 import datetime as _dt
+import inspect
 import uuid
 
 import pytest
@@ -355,7 +357,7 @@ def test_the_provenance_stamp_carries_the_format_the_adapter_declares():
     for name, cls in sorted(discover().items()):
         if not cls.__module__.startswith("synapse_cdm.adapters"):
             continue                              # test doubles defined by this suite
-        ref = cls(synthetic=True).source_ref()
+        ref = cls.fixture_instance(synthetic=True).source_ref()
         assert ref.format_name == cls.metadata.format.name, name
         assert ref.format_version == cls.metadata.format.version, name
 
@@ -371,7 +373,7 @@ def test_a_null_format_version_on_the_stamp_is_a_reading_a_limitation_states():
     for name, cls in sorted(discover().items()):
         if not cls.__module__.startswith("synapse_cdm.adapters"):
             continue
-        if cls(synthetic=True).source_ref().format_version is None:
+        if cls.fixture_instance(synthetic=True).source_ref().format_version is None:
             said_so = any("format version" in line.lower() or "edition" in line.lower()
                           for line in cls.metadata.limitations)
             unstated.append(name) if not said_so else None
@@ -390,3 +392,46 @@ def test_the_five_record_level_provenance_fields_are_not_filled_by_the_stamp():
     assert ref.original_id is None and ref.source_hash is None
     assert ref.record_index is None and ref.observed_at is None
     assert ref.transformations == []
+
+
+# ============================================ `times.render` and years below 1000 (DIS7, F7a)
+#
+# `render` wrote the year through `strftime`'s year directive until the DIS7 arc. On glibc under
+# CPython 3.11 and 3.12 that directive does not zero-pad a year below 1000, so a `valid_from` in
+# year 1 serialised as a string `TIMESTAMP_RE` refuses. macOS and CPython 3.14 pad by themselves,
+# so the two value tests below cannot fail there against the old function; the AST test can.
+
+def test_render_pads_the_year_to_four_digits_for_years_1_and_999():
+    utc = _dt.timezone.utc
+    assert times.render(_dt.datetime(1, 1, 1, 0, 0, 0, tzinfo=utc)) == "0001-01-01T00:00:00.000Z"
+    assert (times.render(_dt.datetime(999, 12, 31, 23, 59, 59, 999999, tzinfo=utc))
+            == "0999-12-31T23:59:59.999Z")
+    for year in (1, 999):
+        assert times.TIMESTAMP_RE.fullmatch(times.render(_dt.datetime(year, 6, 15, tzinfo=utc)))
+
+
+def test_render_is_byte_identical_for_four_digit_years():
+    utc = _dt.timezone.utc
+    assert times.render(_dt.datetime(1000, 1, 1, tzinfo=utc)) == "1000-01-01T00:00:00.000Z"
+    assert (times.render(_dt.datetime(2026, 4, 29, 6, 15, 0, 123456, tzinfo=utc))
+            == "2026-04-29T06:15:00.123Z")
+    assert (times.render(_dt.datetime(9999, 12, 31, 23, 59, 59, 999999, tzinfo=utc))
+            == "9999-12-31T23:59:59.999Z")
+
+
+def _string_constants(tree: ast.AST) -> list[str]:
+    return [node.value for node in ast.walk(tree)
+            if isinstance(node, ast.Constant) and isinstance(node.value, str)]
+
+
+def test_render_holds_no_strftime_year_directive():
+    constants = _string_constants(ast.parse(inspect.getsource(times.render)))
+    assert constants, "no string constant was found inside render, so this test reads nothing"
+    assert not [text for text in constants if "%Y" in text], (
+        "times.render formats the year through strftime again; on glibc under CPython 3.11 and "
+        "3.12 that does not zero-pad a year below 1000"
+    )
+    unfixed = "def render(stamp):\n    return stamp.strftime('%Y-%m-%dT%H:%M:%S')\n"
+    assert any("%Y" in text for text in _string_constants(ast.parse(unfixed))), (
+        "the walk cannot see the directive in the function as it was, so the check above is blind"
+    )

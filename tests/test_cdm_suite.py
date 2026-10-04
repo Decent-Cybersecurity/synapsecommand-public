@@ -53,7 +53,7 @@ def _fixtures(name: str) -> pathlib.Path:
 
 def _report(name: str = "pntmap", **kwargs) -> dict:
     cls = shipped()[name]
-    return suite.run(cls(clock=times.frozen_clock()), _fixtures(name), **kwargs)
+    return suite.run(cls.fixture_instance(clock=times.frozen_clock()), _fixtures(name), **kwargs)
 
 
 # --- the shape of the thing ------------------------------------------------------------------
@@ -770,7 +770,7 @@ def test_every_adapter_ships_at_least_two_malformed_fixtures_and_refuses_each(na
 def test_the_malformed_set_is_invisible_to_the_harness(name):
     """`harness.run` selects FILES (`harness.FIXTURE_PATTERN`); a subdirectory is out of A–F's
     reach by construction."""
-    report = harness.run(shipped()[name](clock=times.frozen_clock()), _fixtures(name))
+    report = harness.run(shipped()[name].fixture_instance(clock=times.frozen_clock()), _fixtures(name))
     replayed = {result["fixture"] for result in report["results"]}
     assert not any(name.startswith("truncated") or name.startswith("malformed")
                    for name in replayed)

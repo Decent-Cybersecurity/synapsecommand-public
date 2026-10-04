@@ -155,6 +155,12 @@ PACKAGE_ONLY_TESTS = (
     # doubles in `tests/synthetic_parsers.py` (a helper, not a test module — the spawned worker
     # imports it by name), and its fixtures are written under `tmp_path`.
     "test_cdm_parser_isolation.py",
+    # `test_cdm_fixture_instance.py` is package-only on the same reading: its subject is the
+    # `Adapter.fixture_instance` hook and its callers (the harness, the conformance suite with its
+    # spawned worker, the evidence generator and their command lines), its adapters are the
+    # module-level doubles in `tests/fixture_instance_double.py` (a helper, not a test module),
+    # and its fixtures are written under `tmp_path`.
+    "test_cdm_fixture_instance.py",
     # `test_cdm_registry.py` is package-only, and the boundary is the same one `test_cdm_oes.py`
     # is on the other side of nothing: both registries it reads — `registry/sc_oes/*.json` — ship
     # in the wheel and are reached through `importlib.resources.files("synapse_cdm")`, so against

@@ -90,7 +90,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 | Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.1.1` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
 | Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `MANIFEST_SCHEMA_VERSION` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `EVIDENCE_SCHEMA_VERSION` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |

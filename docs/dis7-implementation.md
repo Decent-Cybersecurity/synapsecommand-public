@@ -177,6 +177,34 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **Alternatives.** Paraphrase the result instead of quoting it; rejected because the run file requires a quote from the block, not a paraphrase.
 - **Covering tests.** `tests/test_cdm_prose_counts.py` (`ROSTER_COUNT`) over `docs/dis7-implementation.md`.
 
+### D48 — One refusal rule for a caller-supplied `--fixtures`, read by the three entry points
+
+- **What.** `harness.fixtures_refused_message(reference, adapter_class)` is the one rule and the one text: it returns a refusal only for an adapter this package ships that overrides `Adapter.fixture_instance`, and `None` otherwise. `harness.main`, `suite.main` and `evidence.main` read it when `--fixtures` is given and exit 2 behind their own name; `harness.run`, `suite.run` and `evidence.generate` are not restricted.
+- **Why.** F1: an override supplies the context of the packaged fixtures, and replaying a caller's directory under it would stamp that context onto other payloads. An adapter outside the package has no packaged fixtures, so `--fixtures` stays required for it and is never refused. One function keeps the three command lines from drifting apart, on the precedent of `fixtures_required_message`.
+- **Alternatives.** A refusal inside `run`/`generate` (rejected: F1 keeps the API unrestricted); three spellings of the rule, one per command line (rejected: three texts to keep in step).
+- **Covering tests.** `test_a_cli_refuses_caller_fixtures_for_a_shipped_adapter_that_overrides_the_hook`, `test_the_refusal_is_for_shipped_overriding_adapters_only`, `test_the_api_is_not_restricted_by_the_cli_refusal` in `tests/test_cdm_fixture_instance.py`.
+
+### D49 — A `ValueError` from the hook is a usage error only for a class that overrides it
+
+- **What.** `harness.main`, `suite.main` and `suite._sweep` catch a `ValueError` raised while building the adapter through the hook, and turn it into exit 2 only when `harness.overrides_fixture_instance(adapter_class)` is true; otherwise they re-raise.
+- **Why.** The default hook is the plain constructor call, so its `ValueError` is the constructor's own. An existing constructor's error (the `stanag4676` adapter under its normative environment raises `NormativeBindingBlocked`) must leave `main` as a raised exception exactly as at the baseline; only an override refuses on its own account.
+- **Alternatives.** Catching every `ValueError` around the hook (rejected: it would change the behaviour `tests/test_cdm_stanag4676_binding.py` relies on).
+- **Covering tests.** `test_a_refusal_raised_by_the_hook_is_exit_2`, `test_a_constructor_error_without_an_override_still_propagates` in `tests/test_cdm_fixture_instance.py`.
+
+### D50 — A hook refusal under `--all` leaves that adapter out and the sweep exits 2
+
+- **What.** In `suite._sweep` a refusal raised by an overriding hook is printed as `synapse conformance: <name>: <message>`, the adapter gets no entry in the document, the remaining adapters are still run and printed, and the sweep returns `EXIT_USAGE` (2) instead of the worst verdict.
+- **Why.** F1: "an `--all` sweep continues". A refused adapter has no report, so the document cannot carry one for it, and exit 2 keeps the invocation error from reading as a verdict.
+- **Alternatives.** Aborting the sweep at the first refusal, as it does for `NoFixturesFound` (rejected: F1 asks it to continue); recording a FAIL row for the refused adapter (rejected: no checks ran, so a row would claim a judgement that did not happen).
+- **Covering tests.** `test_a_hook_refusal_fails_one_row_and_the_sweep_continues` in `tests/test_cdm_fixture_instance.py`.
+
+### D51 — digest_bytes takes bytes only
+
+- **What.** `evidence.digest_bytes` accepts `bytes` only and raises `TypeError` otherwise.
+- **Why.** A `memoryview` of wider items would report a length that is not its octet count.
+- **Alternatives.** Accept any bytes-like object.
+- **Covering tests.** `tests/test_cdm_evidence_categories.py::test_digest_bytes_refuses_anything_that_is_not_bytes`.
+
 ## Frozen contract
 
 ### Public API
@@ -319,15 +347,26 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 ### R04 — wp1b-hook
 
-Not started.
+- Added `Adapter.fixture_instance(clock=None, *, synthetic=True)` directly after `encode()`; its default is `cls(clock=clock, synthetic=synthetic)`, the clock passed by keyword. `load_adapter` moved from line 654 to 671; `SECURITY.md` and `tests/test_cdm_security_policy.py` re-pinned to 671.
+- Routed the seven package sites (`harness.main`; `suite._fresh`, `suite._worker_main` twice, `suite._sweep`, `suite.main`; `evidence.generate`) and the eleven test sites through the hook.
+- Added `harness.overrides_fixture_instance` and `harness.fixtures_refused_message`, the `--fixtures` refusal in the three entry points, the exit-2 handling of a hook refusal in `harness.main`, `suite.main` and `suite._sweep` (D48 to D50), and the packaged-fixture paragraph of `suite.run`'s docstring.
+- Wrote the helper `tests/fixture_instance_double.py` (`RequiresContext`, `ContextDouble`, a coded outer guard) and `tests/test_cdm_fixture_instance.py`, eighteen test functions, added to `PACKAGE_ONLY_TESTS`.
+- `pkg/MIGRATIONS.md`'s `### Unreleased` raised to 32 files with `adapter.py`, `harness.py`, `suite.py` and `evidence.py` named. No bump ruling (R06), no `ADAPTER_API_VERSION` change (R05).
+- Exit check `bash /Users/admin/Documents/cc/dis7-run/checks/R04.sh` and its result are reported in `reports/R04-runner.md`.
 
 ### R05 — wp1b-sdk
 
-Not started.
+- WP1 step 9: `evidence.digest_bytes(data)`, the SHA-256 and size of octets the caller holds, added below `digest`; `digest`, the imports and the module docstring are unchanged, and `hashlib` is still imported by `evidence.py` alone (D51).
+- WP1 step 10: `times.render` writes the year as four digits itself, not through `strftime`'s year directive; output for years 1000 to 9999 is byte-identical. Tests in `tests/test_cdm_adapter_contract.py` (values for years 1 and 999, four-digit years, and an AST check that no string constant of `render` holds the directive) pass on 3.14, 3.11 and 3.12.
+- WP1 step 11: `ADAPTER_API_VERSION` reads 3.1.0 in `version.py` (constant, `#:` block, docstring row), `VERSIONING.md` §2, `ARCHITECTURE.md` §1.2 (a `fixture_instance()` row) and the generated block of `docs/docs/current-contracts.mdx` (`current-contracts: CURRENT`).
+- `pkg/MIGRATIONS.md`'s `### Unreleased` raised to 34 files with `times.py` and `version.py` named, and the paragraph that begins `DIS 7 UNIT 1B, SDK HELPERS` added. No bump ruling is in the repository.
+- Open, WP1 step 12: the bump-ruling proposals are written to the pipeline's `maintainer/bump-wp1b.proposed.md`, one per unit the bump gate lists as unruled; they wait for the maintainer's rulings, which run R06 pastes.
 
 ### R06 — wp1b-rulings
 
-Not started.
+- WP1 step 12 complete: the bump rulings are the maintainer's, pasted verbatim from the approved file into `pkg/MIGRATIONS.md`'s `### Unreleased`, ten paragraphs, directly after the paragraph that begins `DIS 7 UNIT 1B, SDK HELPERS`; the file list and its count clause are unchanged. `gates/bump_derivation.py --json` reads the pending arc as MINOR, 3.2.0, with nothing unruled.
+- Unit 1b exit passed: the full suite reads 6813 passed, 182 skipped on the staged tree, CPython 3.14.
+- The commit is the maintainer's; the message is drafted outside the worktree.
 
 ### R07 — wp2-decode
 

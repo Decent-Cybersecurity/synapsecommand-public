@@ -442,3 +442,23 @@ def test_interoperability_md_states_the_categories_and_the_acceptance_procedure(
     assert "python -m synapse_cdm.evidence exercise" in text
     assert "external_exercise" in text and "null" in text
     assert "not independence" in text
+
+
+# ============================================================ the bytes-level digest (DIS7, F2)
+
+def test_digest_bytes_is_the_sha256_and_size_of_the_octets_and_agrees_with_digest(tmp_path):
+    assert evidence.digest_bytes(b"") == (
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 0)
+    assert evidence.digest_bytes(b"abc") == (
+        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", 3)
+    payload = bytes(range(256)) * 17
+    (tmp_path / "payload.bin").write_bytes(payload)
+    assert evidence.digest_bytes(payload) == evidence.digest(tmp_path / "payload.bin")
+    assert evidence.digest_bytes(payload)[1] == 4352
+
+
+@pytest.mark.parametrize("bad", ["abc", bytearray(b"abc"), memoryview(b"abc"), 3, None],
+                         ids=["str", "bytearray", "memoryview", "int", "none"])
+def test_digest_bytes_refuses_anything_that_is_not_bytes(bad):
+    with pytest.raises(TypeError):
+        evidence.digest_bytes(bad)

@@ -140,7 +140,9 @@ def select_fixtures(directory: pathlib.Path) -> list[pathlib.Path]:
 #: three exit codes nobody would remember: no fixtures matched, no schemas were found in a
 #: `--schemas` directory, and `--fixtures` was omitted for an adapter this package does not ship
 #: and therefore has no fixtures for. The NAME is kept for the first, which is the one every gate
-#: sweep is written against.
+#: sweep is written against. Since the fixture_instance hook two more invocation errors share it:
+#: a caller-supplied --fixtures for a shipped adapter that overrides the hook, and a refusal
+#: raised by an overriding hook.
 EXIT_NO_FIXTURES = 2
 
 
@@ -445,6 +447,34 @@ def fixtures_required_message(reference: str, adapter_class: type[Adapter]) -> s
             f"{adapter_class.__module__}.{adapter_class.__qualname__} is not one of the "
             "adapters this package ships, so the package has no fixtures for it and will "
             "not guess at a directory")
+
+
+def overrides_fixture_instance(adapter_class: type[Adapter]) -> bool:
+    """Does this class override `Adapter.fixture_instance`?
+
+    The default hook is the plain construction, so it cannot refuse anything by itself: a
+    `ValueError` it raises is the constructor's own and propagates as it always did. Only an
+    override supplies a context, and only an override can refuse on its own account.
+    """
+    return adapter_class.fixture_instance.__func__ is not Adapter.fixture_instance.__func__
+
+
+def fixtures_refused_message(reference: str, adapter_class: type[Adapter]) -> str | None:
+    """The refusal of a caller-supplied `--fixtures`, minus the CLI's name, or `None`.
+
+    One rule and one text for the three command lines (this one, `synapse conformance` and
+    `synapse evidence`): an adapter this package ships that overrides `fixture_instance` supplies
+    the context of its packaged fixtures, and replaying anyone else's payloads under that context
+    would stamp it onto them. An adapter outside this package is never refused: it has no
+    packaged fixtures and `--fixtures` is required for it. The rule lives in the three entry
+    points only; `run`, `suite.run` and `evidence.generate` stay unrestricted.
+    """
+    if not (is_shipped(adapter_class) and overrides_fixture_instance(adapter_class)):
+        return None
+    return (f"--fixtures is refused for {reference!r}: "
+            f"{adapter_class.__module__}.{adapter_class.__qualname__} overrides "
+            "fixture_instance(), which supplies the context of the fixtures packaged with it "
+            "and of no other payloads. Omit --fixtures to replay the packaged set")
 
 
 def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False,
@@ -784,8 +814,19 @@ def main(argv: list[str] | None = None) -> int:
 
     frozen: _dt.datetime = times.parse(args.now) if args.now else times.FROZEN_NOW
     adapter_class = load_adapter(args.adapter)
-    adapter = adapter_class(clock=times.frozen_clock(frozen),
-                            synthetic=args.synthetic == "true")
+    if args.fixtures is not None:
+        refusal = fixtures_refused_message(args.adapter, adapter_class)
+        if refusal is not None:
+            print(f"harness: {refusal}", file=sys.stderr)
+            return EXIT_NO_FIXTURES
+    try:
+        adapter = adapter_class.fixture_instance(clock=times.frozen_clock(frozen),
+                                                 synthetic=args.synthetic == "true")
+    except ValueError as e:
+        if not overrides_fixture_instance(adapter_class):
+            raise
+        print(f"harness: {e}", file=sys.stderr)
+        return EXIT_NO_FIXTURES
 
     fixtures = args.fixtures
     if fixtures is None:

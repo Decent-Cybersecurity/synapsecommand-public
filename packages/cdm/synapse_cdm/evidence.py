@@ -651,6 +651,18 @@ def digest(path: pathlib.Path) -> tuple[str, int]:
     return hashlib.sha256(payload).hexdigest(), len(payload)
 
 
+def digest_bytes(data: bytes) -> tuple[str, int]:
+    """SHA-256 and size of octets the caller already holds: the pair `digest(path)` returns.
+
+    Content identification (M's ruling); see the module docstring. For a host that has read one
+    bounded input and must identify exactly those octets, which is deterministic content
+    addressing, without importing `hashlib` itself and without reading the file a second time.
+    """
+    if not isinstance(data, bytes):
+        raise TypeError(f"digest_bytes takes bytes, not {type(data).__name__}")
+    return hashlib.sha256(data).hexdigest(), len(data)
+
+
 def measured_files(directory: pathlib.Path) -> list[pathlib.Path]:
     """Every file the suite READ for one adapter: fixtures, goldens, malformed payloads.
 
@@ -848,7 +860,7 @@ def generate(adapter_name: str, *, fixtures: pathlib.Path | None = None,
     """
     adapter_class = load_adapter(adapter_name)
     frozen = times.FROZEN_NOW
-    adapter = adapter_class(clock=times.frozen_clock(frozen), synthetic=True)
+    adapter = adapter_class.fixture_instance(clock=times.frozen_clock(frozen), synthetic=True)
     directory = fixtures or packaged_fixtures(adapter_class)
     root = fixture_root()
 
@@ -1381,6 +1393,11 @@ def main(argv: list[str] | None = None) -> int:
     names = sorted(shipped()) if args.all else [args.adapter]
     for name in names:
         try:
+            if args.fixtures is not None:
+                refusal = harness.fixtures_refused_message(name, load_adapter(name))
+                if refusal is not None:
+                    print(f"synapse evidence: {refusal}", file=sys.stderr)
+                    return EXIT_USAGE
             exercises = args.exercises
             if exercises is None:
                 meta = manifest(load_adapter(name)).adapter

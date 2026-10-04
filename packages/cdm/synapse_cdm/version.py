@@ -99,7 +99,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     Event semantic major  v1      a SEGMENT OF THE IDENTIFIER — ``sc.pnt.gnss_interference.v1``
                                   — so a consumer matching on the string cannot fail to notice
                                   a breaking change to one type's semantics.
-    Adapter API           3.0.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
+    Adapter API           3.1.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
                                   class is written against — what ``Adapter`` requires of a
                                   subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
                                   §1 and additive over v1; 2.1.0 added the round-trip tolerance
@@ -107,6 +107,9 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   (2.1.0 -> 3.0.0 on 2026-09-20, audit remediation S10: the
                                   required, undefaulted ``binding`` — this line read 2.1.0
                                   until the 3.0.0 release commit re-read it.)
+                                  (3.0.0 -> 3.1.0 on 2026-10-04: ``Adapter.fixture_instance``
+                                  added, its default the construction the SDK performed
+                                  before; additive, so a MINOR on this axis.)
     Manifest schema       2.1.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
                                   published manifest, generated into
                                   ``schemas/manifests/adapter-manifest.schema.json`` and carried
@@ -474,7 +477,13 @@ SC_OES_VERSION = "0.1.0"
 #: where the wire form is the cited document's own encoding, or
 #: `binding="provisional-internal-profile"` with a limitation that contains the word
 #: "provisional" — and MIGRATIONS.md's S10 record under Unreleased carries the full note.
-ADAPTER_API_VERSION = "3.0.0"
+#: 3.0.0 -> 3.1.0 on 2026-10-04: `Adapter.fixture_instance(clock=None, *, synthetic=True)` added to
+#: the base class, the one place the harness, the conformance suite and the evidence generator
+#: build the instance that replays an adapter's packaged fixtures. Its default returns
+#: `cls(clock=clock, synthetic=synthetic)`, which is the old behaviour, and no existing member
+#: moved, so a MINOR by VERSIONING.md §3's own row ("An ADDITION is a MINOR"), as 2.0.0 -> 2.1.0
+#: was.
+ADAPTER_API_VERSION = "3.1.0"
 
 #: The published manifest's shape, and a FIFTH axis. It moves when the MANIFEST's shape moves — a
 #: required field added, a field's meaning changed — and not when an adapter's metadata VALUES

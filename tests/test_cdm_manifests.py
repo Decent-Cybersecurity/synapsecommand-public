@@ -366,7 +366,7 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
         # files written under it — `times.py:39`. A real clock turns every golden into
         # a FAIL and the rung would read as unsupported for a reason that is the
         # test's own.
-        instance = cls(clock=times.frozen_clock())
+        instance = cls.fixture_instance(clock=times.frozen_clock())
         report = suite.run(instance, adapter.packaged_fixtures(cls), schema_dir=schema_dir)
         assert report["result"] == "CONFORMANT", \
             f"{name}: the suite is not green, so no rung is supported"

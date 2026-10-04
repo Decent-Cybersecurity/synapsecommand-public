@@ -97,6 +97,11 @@ def render(stamp: _dt.datetime) -> str:
     Rounding 23:59:59.9995 forward produces 00:00:00.000 on the NEXT DAY, which is how a
     single event lands in the wrong day's audit slice. Truncation keeps the instant inside
     the second it was measured in.
+
+    The year is written here as four digits and not through `strftime`'s year directive: on
+    glibc under CPython 3.11 and 3.12 that directive does not zero-pad a year below 1000, and
+    the one serialised form always has four year digits. Years 1000 to 9999 render as before.
     """
     stamp = parse(stamp)
-    return f"{stamp.strftime('%Y-%m-%dT%H:%M:%S')}.{stamp.microsecond // 1000:03d}Z"
+    return (f"{stamp.year:04d}-{stamp.strftime('%m-%dT%H:%M:%S')}"
+            f".{stamp.microsecond // 1000:03d}Z")

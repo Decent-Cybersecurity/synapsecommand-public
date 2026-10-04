@@ -335,7 +335,7 @@ def test_dropped_is_exactly_the_harness_check_d_set_minus_the_declared_exception
     measured — on every shipped adapter, on every classifiable fixture.
     """
     cls = shipped()[name]
-    adapter = cls(clock=times.frozen_clock())
+    adapter = cls.fixture_instance(clock=times.frozen_clock())
     declared = manifest.unsupported_paths(adapter.metadata.limitations)
     checked = 0
     for path in evidence.harness_selects(packaged_fixtures(cls)):
@@ -354,7 +354,7 @@ def test_dropped_is_exactly_the_harness_check_d_set_minus_the_declared_exception
 def test_no_shipped_adapter_drops_a_source_value(name):
     """The brief's STOP condition, run as a test rather than taken once in a round report."""
     cls = shipped()[name]
-    report = suite.run(cls(clock=times.frozen_clock()), packaged_fixtures(cls))
+    report = suite.run(cls.fixture_instance(clock=times.frozen_clock()), packaged_fixtures(cls))
     assert report["loss_report"]["counts"]["DROPPED"] == 0, \
         report["loss_report"]["paths"]["DROPPED"][:8]
 

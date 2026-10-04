@@ -512,10 +512,15 @@ now true of it.
 release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
 measurement.
 
-**What moved inside the distribution: 28 files** — `MIGRATIONS.md` (this section, and the dated
+**What moved inside the distribution: 34 files** — `MIGRATIONS.md` (this section, and the dated
 witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (a
 Phase 1 row for `dis7` in the ordinal table and the paragraph under that table), `dis7_codec.py`
-(the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes), and 25 new
+(the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes),
+`adapter.py`, `harness.py`, `suite.py` and `evidence.py` (the `fixture_instance` hook on `Adapter`
+and its callers: the constructions the harness, the conformance suite and the evidence generator
+make now go through it, and their command lines refuse a caller-supplied `--fixtures` for a shipped
+adapter that overrides it), `times.py`, `version.py` and `evidence.py` again (the SDK helpers
+and the Adapter API reading of unit 1b, in the paragraph that begins DIS 7 UNIT 1B), and 25 new
 files under `fixtures/dis7/`, described in the next paragraph. What the 3.1.1 witness round
 touched outside the distribution ships in nothing: the ledger, the witness record and its
 README, the release-pipeline and changelog pages, and two test modules.
@@ -539,6 +544,64 @@ Under `fixtures/dis7/contract/`, byte-identical to the bundle: `acceptance-cases
 `dis7-pdu.schema.json` and `dis7-residual.schema.json`. Each of the two directories carries its own
 `PROVENANCE.json`. `tests/test_cdm_dis7_schema.py` holds every vendored file to the pin record and
 validates the vectors against the vendored schemas.
+
+**DIS 7 UNIT 1B, SDK HELPERS AND THE ADAPTER API AT 3.1.0, 2026-10-04 — a bytes-level digest, a
+four-digit year, one addition to the contract.** `evidence.py` gains `digest_bytes(data)`, the
+SHA-256 and size of octets a caller already holds, returning the pair `digest(path)` returns;
+`digest` itself is untouched, and `hashlib` is still imported by `evidence.py` and by no other
+module of the package. `times.py`: `render` writes the year as four digits itself and no longer
+through `strftime`'s year directive, which on glibc under CPython 3.11 and 3.12 does not
+zero-pad a year below 1000; the output for years 1000 to 9999 is byte-identical and no golden
+moved. `version.py`: `ADAPTER_API_VERSION` moves `3.0.0` → `3.1.0` for
+`Adapter.fixture_instance`, an addition whose default is the construction the SDK performed
+before it existed, so a MINOR on that axis by `VERSIONING.md` §3's own row; `SCHEMA_VERSION`
+stays `3.0.0` and `PACKAGE_VERSION` still reads `3.1.1`. `VERSIONING.md` §2, `ARCHITECTURE.md`
+§1.2 and the generated block of the current-contracts page state the new reading.
+
+**Bump ruling.** `synapse_cdm/adapter.py:Adapter` — MINOR: the class gains the classmethod
+`fixture_instance(clock=None, *, synthetic=True)` and loses nothing; its default returns
+`cls(clock=clock, synthetic=synthetic)`, the construction every caller performed itself before, so
+existing subclasses and callers keep working. This is the addition that `ADAPTER_API_VERSION` 3.1.0
+records.
+
+**Bump ruling.** `synapse_cdm/evidence.py:generate` — PATCH: builds the measured adapter through
+`fixture_instance` instead of calling the class; the record of an adapter that does not override the
+hook is unchanged.
+
+**Bump ruling.** `synapse_cdm/evidence.py:main` — PATCH: exits 2 on a caller-supplied `--fixtures`
+for a shipped adapter that overrides the hook; no adapter this package ships overrides it, so no
+invocation that ran before is refused.
+
+**Bump ruling.** `synapse_cdm/harness.py:main` — PATCH: builds the adapter through
+`fixture_instance`, and exits 2 on a caller-supplied `--fixtures` for a shipped adapter that
+overrides the hook or on a refusal raised by an overriding hook; the same construction route and the
+same two refusals as the conformance command, and no invocation that ran before is refused.
+
+**Bump ruling.** `synapse_cdm/suite.py:_fresh` — PATCH: builds the fresh instance through
+`fixture_instance` instead of calling the class; for an adapter that does not override the hook it
+is the instance built before.
+
+**Bump ruling.** `synapse_cdm/suite.py:_sweep` — PATCH: builds each adapter through
+`fixture_instance`; a refusal raised by an overriding hook is printed to stderr, that adapter is
+left out of the document, the sweep continues and exits 2; no released adapter raises one, so every
+sweep that ran before reads the same.
+
+**Bump ruling.** `synapse_cdm/suite.py:_worker_main` — PATCH: the spawned worker builds its adapter
+through `fixture_instance` at both of its construction sites; unchanged for an adapter that does not
+override the hook.
+
+**Bump ruling.** `synapse_cdm/suite.py:main` — PATCH: builds through `fixture_instance`, and exits 2
+on a refusal raised by an overriding hook or on a caller-supplied `--fixtures` for a shipped adapter
+that overrides the hook; no invocation that ran before is refused.
+
+**Bump ruling.** `synapse_cdm/times.py:render` — PATCH: the year is written as four digits by the
+function itself and no longer through the year directive of `strftime`; the output for years 1000 to
+9999 is byte-identical, and a year below 1000 is zero-padded on every platform, where glibc under
+CPython 3.11 and 3.12 wrote it unpadded. No name is added or removed.
+
+**Bump ruling.** `synapse_cdm/version.py:ADAPTER_API_VERSION` — MINOR: 3.0.0 → 3.1.0,
+`Adapter.fixture_instance` added with a default that is the old behaviour; the constant moved by the
+row of the versioning document that names it, an addition being a MINOR on that axis.
 
 **THE 3.1.1 WITNESS ROUND's RECORD, 2026-09-22 — the record is hand-built, for the second time on
 an empty approval comment.** Run 35695633330's `witness` job built `witness-3.1.1.json` and was

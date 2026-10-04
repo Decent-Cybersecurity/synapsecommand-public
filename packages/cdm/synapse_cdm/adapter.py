@@ -329,6 +329,23 @@ class Adapter(ABC):
         """The v2 spelling of `from_cdm`. A thin alias and nothing more (§1.2)."""
         return self.from_cdm(objects)
 
+    @classmethod
+    def fixture_instance(cls, clock: times.Clock | None = None, *,
+                         synthetic: bool = True) -> "Adapter":
+        """The instance the harness, the conformance suite and the evidence generator build to
+        replay this adapter's PACKAGED fixtures.
+
+        The default is the construction each of those callers used to spell for itself, the clock
+        passed BY KEYWORD, so an adapter that does not override this behaves exactly as before.
+
+        An adapter whose constructor needs context that no generic caller can know overrides
+        this to supply the context its packaged fixtures were recorded under. An override defines
+        the adapter's packaged-fixture context ONLY: it is not a default for payloads from
+        anywhere else, and a conformance verdict for such an adapter is defined for its packaged
+        fixtures only. An override refuses by raising a `ValueError`.
+        """
+        return cls(clock=clock, synthetic=synthetic)
+
 
 class InputTooLarge(ValueError):
     """A payload larger than the adapter's declared `capabilities.limits.max_input_bytes`.

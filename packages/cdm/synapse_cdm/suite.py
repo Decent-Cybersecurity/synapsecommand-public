@@ -371,7 +371,7 @@ def _fresh(adapter: Adapter, clock: times.Clock) -> Adapter:
     K's whole question is whether identity is derived or remembered, and reusing the instance
     would let an adapter answer it out of a cache.
     """
-    return type(adapter)(clock=clock, synthetic=adapter._synthetic)
+    return type(adapter).fixture_instance(clock=clock, synthetic=adapter._synthetic)
 
 
 def _walk(node: Any, path: str = "") -> Any:
@@ -518,7 +518,7 @@ def _worker_main(inbox, outbox, reference: str, frozen_iso: str, synthetic: bool
         _apply_resource_limits(limits or {})    # F06: the envelope, before anything is imported
         cls = load_adapter(reference)
         clock = times.frozen_clock(_dt.datetime.fromisoformat(frozen_iso))
-        cls(clock=clock, synthetic=synthetic)
+        cls.fixture_instance(clock=clock, synthetic=synthetic)
     except BaseException as e:                                # noqa: BLE001 - reported, then exit
         _send(outbox, {"init_error": _qualified(e), "detail": _clip(str(e), detail_cap)}, cap)
         return
@@ -548,7 +548,7 @@ def _worker_main(inbox, outbox, reference: str, frozen_iso: str, synthetic: bool
                          detail=_clip(str(e), detail_cap))
         if reply["outcome"] is None:
             try:
-                objects = cls(clock=clock, synthetic=synthetic).to_cdm(raw)
+                objects = cls.fixture_instance(clock=clock, synthetic=synthetic).to_cdm(raw)
             except CRASH_CLASSES as e:
                 reply.update(outcome=PARSER_CRASH, exception=_qualified(e))
             except Exception as e:                             # noqa: BLE001 - the refusal itself
@@ -1403,6 +1403,11 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None =
     which the report itself never carries. `limits` (F06) is the memory/CPU envelope for that
     worker; `UnsupportedResourceLimit` is raised before anything runs where the platform cannot
     enforce a requested field.
+
+    Checks G to L, N and O rebuild the adapter from its CLASS through `Adapter.fixture_instance`
+    (`_fresh` and the spawned worker). For an adapter that overrides that hook they therefore run
+    under the hook's context whatever context the caller's instance carries, and the verdict is
+    defined for the adapter's packaged fixtures only.
     """
     frozen_at = frozen_at or times.FROZEN_NOW
     clock = clock or times.frozen_clock(frozen_at)
@@ -1714,9 +1719,17 @@ def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen,
     reports: dict[str, dict] = {}
     diagnostics: dict[str, dict] = {}
     worst = EXIT_OK
+    refused = False
     for name, adapter_class in sorted(shipped_adapters().items()):
-        adapter = adapter_class(clock=times.frozen_clock(frozen),
-                                synthetic=args.synthetic == "true")
+        try:
+            adapter = adapter_class.fixture_instance(clock=times.frozen_clock(frozen),
+                                                     synthetic=args.synthetic == "true")
+        except ValueError as e:
+            if not harness.overrides_fixture_instance(adapter_class):
+                raise
+            print(f"synapse conformance: {name}: {e}", file=sys.stderr)
+            refused = True
+            continue
         diagnostics[name] = {}
         try:
             report = run(adapter, packaged_fixtures(adapter_class),
@@ -1747,7 +1760,7 @@ def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen,
         for name in sorted(reports):
             print(render_report(reports[name]))
         print(f"\n{len(document['conformant'])}/{len(reports)} CONFORMANT")
-    return worst
+    return EXIT_USAGE if refused else worst
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1800,7 +1813,19 @@ def main(argv: list[str] | None = None) -> int:
     except LookupError as e:
         print(f"synapse conformance: {e}", file=sys.stderr)
         return EXIT_USAGE
-    adapter = adapter_class(clock=times.frozen_clock(frozen), synthetic=args.synthetic == "true")
+    if args.fixtures is not None:
+        refusal = harness.fixtures_refused_message(args.adapter, adapter_class)
+        if refusal is not None:
+            print(f"synapse conformance: {refusal}", file=sys.stderr)
+            return EXIT_USAGE
+    try:
+        adapter = adapter_class.fixture_instance(clock=times.frozen_clock(frozen),
+                                                 synthetic=args.synthetic == "true")
+    except ValueError as e:
+        if not harness.overrides_fixture_instance(adapter_class):
+            raise
+        print(f"synapse conformance: {e}", file=sys.stderr)
+        return EXIT_USAGE
 
     fixtures = args.fixtures
     if fixtures is None:
