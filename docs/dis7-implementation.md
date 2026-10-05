@@ -1,6 +1,6 @@
 # DIS 7 adapter — implementation record
 
-This record is the implementation record for the DIS 7 adapter, kept as the work proceeds rather than written after the fact. The contract is the handoff specification identified as `SC DIS7 SPEC 001 v1.0`; it is a handoff document and is not in this repository, and wherever this record says "spec" or cites a specification section or line, it means that document. The work is done in pipeline runs R02 to R28 and R30 (R26, R27, R28 and R30 being the sessions of the follow-up unit WP7, which settles the final review's minor findings and then the review of that settlement; R29 is the release gates' check script on the staged tree and has no session), whose prompts, logs and reports live in a run directory outside the repository. Decisions D1 to D46 and the Frozen contract section quote the plan this pipeline follows and its rulings file; neither is in this repository. In the quoted text `§4.3`, `§4.4`, `§4.5`, `§4.8`, `§4.10` and `§10`, and anything written `PLAN.md §n`, are sections of the plan this pipeline follows: its §4.3, §4.4, §4.5 and §4.10 are reproduced under Frozen contract (Error model and codes, Validation order and paths, Replay order, Mutation seams), its §5 is the table of D12 to D46, its §4.8 is the command-line interface that run R16 writes, and its §10 is a list of risks. `§4 field order`, `§12`, `§16` and "spec lines" refer to the handoff specification.
+This record is the implementation record for the DIS 7 adapter, kept as the work proceeds rather than written after the fact. The contract is the handoff specification identified as `SC DIS7 SPEC 001 v1.0`; it is a handoff document and is not in this repository, and wherever this record says "spec" or cites a specification section or line, it means that document. The work is done in pipeline runs R02 to R28, R30 and R31 (R26, R27, R28 and R30 being the sessions of the follow-up unit WP7, which settles the final review's minor findings and then the review of that settlement; R29 is the release gates' check script on the staged tree and has no session; R31 is the one session of WP8, the release preparation on the arc that lands the F-39 fix under the maintainer's approved bump ruling and clears the docs audit), whose prompts, logs and reports live in a run directory outside the repository. Decisions D1 to D46 and the Frozen contract section quote the plan this pipeline follows and its rulings file; neither is in this repository. In the quoted text `§4.3`, `§4.4`, `§4.5`, `§4.8`, `§4.10` and `§10`, and anything written `PLAN.md §n`, are sections of the plan this pipeline follows: its §4.3, §4.4, §4.5 and §4.10 are reproduced under Frozen contract (Error model and codes, Validation order and paths, Replay order, Mutation seams), its §5 is the table of D12 to D46, its §4.8 is the command-line interface that run R16 writes, and its §10 is a list of risks. `§4 field order`, `§12`, `§16` and "spec lines" refer to the handoff specification.
 
 ## Scope
 
@@ -640,6 +640,20 @@ No retained state was found in the DIS7 modules: the full and the reduced worklo
 - **Alternatives.** Admitting only the exact `dict`, `list` and `tuple` (rejected: it changes what the contract admits); wrapping a whole stage in `except Exception` (rejected: it would also re-code a defect of the adapter); refusing in the depth guard at `$` (rejected: the member's path is known only to the structure check).
 - **Covering tests.** `test_t12_envelope_container_whose_read_raises_is_twin_schema` (`to_cdm` and `validate_source`) and `test_t11_residual_container_whose_read_raises_is_shape` (`from_cdm` and `encode`) in `tests/test_cdm_dis7_replay.py`, and `test_constructor_refuses_a_time_context_whose_read_raises` in `tests/test_cdm_dis7_adapter.py`.
 
+### D113 — Check O builds the adapter before it feeds the oversized payload (F-39)
+
+- **What.** `suite.check_resource_limits` builds the adapter through `fixture_instance` in a `try` of its own before it feeds the oversized payload. A crash class raised while building is FAIL (`building the adapter through fixture_instance raised a crash class: <name>`), any other exception while building is FAIL (`the adapter could not be built through fixture_instance, so the declared bound was not exercised: <module>.<class>`), and the feed's two `except` clauses and its final FAIL are unchanged. The maintainer's approved bump ruling for `synapse_cdm/suite.py:check_resource_limits` (PATCH) stands under `### Unreleased` of MIGRATIONS.md between the rulings for `suite.py:_worker_main` and `suite.py:main`, the order of the units, and the bump gate reads MINOR with nothing unruled.
+- **Why.** Final review F-39: a refusal raised by an overriding hook was read as the adapter refusing the bound, a PASS without the payload ever reaching `to_cdm`. The maintainer approved the ruling and asked for the fix before a release commit is drafted (answer 2 of 2026-10-05).
+- **Alternatives.** Shipping F-39 as a stated limitation (the maintainer chose the fix); reading a construction refusal as SKIP (rejected: the proposal the maintainer approved says FAIL, and a SKIP of a required check would read as a declared inapplicability, which it is not).
+- **Covering tests.** `tests/test_cdm_fixture_instance.py::test_a_hook_refusal_is_not_read_as_the_bound_refusing`, which fails on the tree as R31 found it and passes now; the existing assertion that the hook-built double reads `refusal == Q + "CodedInputTooLarge"` is unchanged and passes.
+
+### D114 — The docs audit is cleared on the arc, by three overrides and one time-bounded exception
+
+- **What.** The CI job "npm audit over docs/" named five unexcepted high advisories over the committed lock. Three `overrides` entries in `docs/package.json` (`brace-expansion ^1.1.20`, `http-cache-semantics ^4.3.0`, `joi ^17.13.7`), each at the lowest version that clears its advisories, clear four of them; the lock refresh moved exactly those three packages. The fifth, `braces` GHSA-vfj7-8cjw-p6xm, has no fixed version and is excepted by `security/exceptions/GHSA-vfj7-8cjw-p6xm.json`, owner the maintainer, created 2026-10-05, expiry 2026-12-04. `SECURITY.md`, the supply-chain page, `security/README.md`, `security/exceptions/README.md` and `### Unreleased` of MIGRATIONS.md state the ten overrides and the one exception, with dated corrections where a sentence said none.
+- **Why.** The maintainer's ruling of 2026-09-07 makes high and critical findings block a release, and answer 3 of 2026-10-05 decided the fix on this branch and never as a separate change to `main`, which moves only once, at the release.
+- **Alternatives.** A floor at `^1.1.21` for `brace-expansion`, which READINESS.md suggested (rejected: the run asks for the lowest version that clears each named advisory, and the caret resolves to 1.1.21 anyway); `npm audit fix` (rejected: the repository's own record shows it downgrading `qs` into its vulnerable range); a written ruling that the advisories do not block (not chosen by the maintainer); the owner as the security mailbox, as the two `image-size` exceptions had it (rejected: the ruling names the maintainer as owner, and the schema asks for a handle or an address of the person who answers for it).
+- **Covering tests.** `tests/test_cdm_security_policy.py::test_every_floor_the_docs_manifest_pins_is_named_in_the_policy_and_counted_on_the_page` and the module `tests/test_cdm_security_exceptions.py`, which validates the new file against the schema and fails the suite the day after its expiry; the job's own decision step, re-run over the new lock, reads `OK`.
+
 ## Frozen contract
 
 ### Public API
@@ -991,13 +1005,13 @@ Runs after the final commit and changes nothing in the repository; its output is
 - F-22 and F-23 FIXED: `_read_bounded` checks the descriptor it reads, opened without blocking, and asks for no more than `limit + 1` octets (D99); `test_t15_a12_host_module_import_rules` now expects the second `os.open`.
 - F-24 FIXED: `replay` names an oversize file's size as a floor (D100).
 - F-25 FIXED: two in-process tests bound the traced allocation of an oversize decode and replay; the CLI module read 81 passed as R26 left it.
-- F-39 BLOCKED: the fix to check O makes the bump gate report `synapse_cdm/suite.py:check_resource_limits` unruled; the change and its test were taken out again, and the proposed ruling waits for the maintainer.
+- F-39 BLOCKED: the fix to check O makes the bump gate report `synapse_cdm/suite.py:check_resource_limits` unruled; the change and its test were taken out again, and the proposed ruling waits for the maintainer. Corrected in R31: the maintainer approved the ruling on 2026-10-05, and R31 applied the change and its test (D113).
 - F-42 FIXED: an override of the hook that is not a classmethod is recognised (D101).
 - F-56 FIXED: `_emit` closes the redirect descriptor when the redirect cannot be made (D102).
 - F-57 FIXED: a comparison of replay steps 5 and 6 that raises counts as a difference (D69, D70); the seam lines are unchanged.
 - F-59 FIXED: the three sentences of D69 and D91, and the R24 entry's F-02 bullet, say what the code does.
 - No golden, manifest or schema changed; the output of `synapse-dis7` for the packaged vectors is byte-identical; the bump gate still reads MINOR, 3.2.0, nothing unruled; the mutation gate still detects every fault.
-- Not done here: F-39 (blocked, above); the findings of R27 and R28.
+- Not done here: F-39 (blocked, above; fixed in R31, D113); the findings of R27 and R28.
 
 ### R27 — settle-tests
 
@@ -1041,7 +1055,7 @@ Runs after the final commit and changes nothing in the repository; its output is
 - F-54 FIXED: the fix-round bullet under `## SHOULD-deviation log` and the sentence under `## Verification`, whose table gained the rows R24 to R27.
 - F-60 FIXED in the tree's texts (package README, `dis7` page, `pyproject.toml` comment, the host-command paragraph of `### Unreleased`); the argparse description is left (D111; R30 changed it).
 - Terms record: the confirmation sentence and the confirmed clause replace the two PENDING sentences; D89, the R22 entry and `### Unreleased` say so, and the row under `## Remaining gaps` is closed. No pin, provenance record or test hashes the file.
-- Not done here: the findings of R26 and R27; F-39 stays blocked on a bump ruling.
+- Not done here: the findings of R26 and R27; F-39 stays blocked on a bump ruling. Corrected in R31: F-39 is fixed under the approved ruling (D113).
 
 ### R30 — settle-final
 
@@ -1060,10 +1074,19 @@ Runs after the final commit and changes nothing in the repository; its output is
 - S-12, S-13 and S-14 FIXED: the framing bullets of the R26 and R27 entries and the F-41 bullet of the R28 entry.
 - S-15 FIXED: D89's covering tests.
 - S-16 FIXED: the opening paragraph names the runs of the follow-up unit, and `## Handoff` says how the unit is committed and pushed.
-- S-17 FIXED: `## Remaining gaps` carries the F-39 row; the D111 items are closed, so they have no row.
+- S-17 FIXED: `## Remaining gaps` carries the F-39 row; the D111 items are closed, so they have no row. Corrected in R31: the F-39 row is closed too, so it has no row (D113).
 - S-18 FIXED: the argparse description of `synapse-dis7` and its test, and the availability test (D111).
-- F-39 stays BLOCKED: no approved ruling exists for `synapse_cdm/suite.py:check_resource_limits`, so `suite.py` is as at the WP4-6 commit.
+- F-39 stays BLOCKED: no approved ruling exists for `synapse_cdm/suite.py:check_resource_limits`, so `suite.py` is as at the WP4-6 commit. Corrected in R31: the maintainer approved the ruling on 2026-10-05, R31 applied the change and its test, and the `## Remaining gaps` row is closed (D113).
 - No fixture, golden, manifest or schema changed; the bump gate still reads MINOR, 3.2.0, nothing unruled; the mutation gate still detects every fault; the CLI module reads 91 passed.
+
+### R31 — arc-release-prep
+
+- WP8, the one session of the unit: the two changes the maintainer decided on 2026-10-05 must land on `soif/dis7-1.0` before a release commit is drafted, on this branch because `main` moves once, at the release.
+- F-39 FIXED: check O builds the adapter in a step of its own and reports a refusal raised while building as FAIL (D113); the approved ruling is under `### Unreleased`; the new test fails on the tree as R31 found it and passes now; the bump gate reads a pending MINOR with nothing unruled; every shipped adapter still reads CONFORMANT under the CI job's required sets.
+- AUDIT FIXED: three `overrides` entries and a lock refresh that moved those three packages only, and the exception for `braces` (D114); the job's decision step reads `OK` with the exception derived, the two security test modules pass, and `npm --prefix docs run ci` exits 0.
+- The R26, R28 and R30 entries carry a correction sentence for F-39, and its `## Remaining gaps` row is closed.
+- No fixture, golden, manifest or schema changed; `### Unreleased` still counts 64 files inside the distribution, since every new path of this run is outside it.
+- Not done here: the release itself (the version, the roll of `### Unreleased`, the release notes, the evidence flag of `dis7`), which the maintainer's answers leave to the release round.
 
 ## Validation
 
@@ -1164,7 +1187,6 @@ The table gives each report's final verdict. Runs R02, R03 and R09 first receive
 | The live OpenDIS reference tests (case A13, requirement R26) need the pinned checkout named by `SYNAPSE_CDM_OPENDIS_DIR`; CI has none, so there they read `BLOCKED_EXTERNAL_EVIDENCE` [F6] | A13 and R26 verified locally only, unavailable in CI; the exercise report names the commit it was re-run on | `SYNAPSE_CDM_OPENDIS_DIR=<checkout at the pin> python -m pytest -q -rs -m reference tests/test_cdm_dis7_reference.py` |
 | Case A12's evidence is the wheel gate's clean-environment run of `gates/wheel_install.py::check_dis7_script` (written in run R20, run by the wheel gate in run R23), not the in-tree CLI test [CR-33] | A12: the installed `synapse-dis7` command behaves as specified | `python gates/wheel_install.py --mutation-check` |
 | Two SDK defects are filed separately and not fixed here [F7(b)]: `adapter.container_depth` never returns on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged root | none of this adapter's claims; the `dis7` adapter holds a parsed envelope to acyclicity itself | `adapter.container_depth` on a dict that contains itself; `evidence.generate` with a fixture directory outside the package |
-| Conformance check O reads a refusal raised by `Adapter.fixture_instance` while the suite builds the adapter as the adapter refusing the oversized payload (final review F-39); the fix changes `synapse_cdm/suite.py:check_resource_limits` and waits for a bump ruling | check O for an adapter whose overriding hook refuses | `suite.check_resource_limits` over `ContextDouble(clock=clock, context="x", synthetic=False)` from `tests/fixture_instance_double.py` returns PASS with a `ContextMissing` refusal |
 | `Evidence(available=False)` until the release round flips it [F11] | no published evidence badge for the `dis7` adapter | `grep -n '"available"' manifests/dis7.json` |
 
 ## Contract-defect log
@@ -1258,7 +1280,7 @@ bash RUN/run.sh
 git push -u origin soif/dis7-1.0
 ```
 
-The final review's minor findings were then settled in a follow-up unit, WP7: the sessions R26, R27, R28 and R30 and the release gates' check script R29 on the staged tree. The unit is committed on top of the WP4-6 commit, and the branch is pushed again once that commit has passed the post-commit gates.
+The final review's minor findings were then settled in a follow-up unit, WP7: the sessions R26, R27, R28 and R30 and the release gates' check script R29 on the staged tree. The unit is committed on top of the WP4-6 commit, and the branch is pushed again once that commit has passed the post-commit gates. The release preparation follows as WP8, the session R31: the F-39 fix under the maintainer's approved ruling and the docs audit cleared, committed on top of WP7 on this branch, so that the release commit is drafted from a reviewed tip and `main` moves once, at the release.
 
 On HOLD the final review is followed by `bash RUN/run.sh fix-final` before it is run again.
 

@@ -9,14 +9,17 @@ at rather than a second copy of it.
 - `README.md` — this file.
 - `exceptions/` — **present since round P6 (2026-09-08).** A documented, dated, owner-named
   exception for a dependency or static-analysis finding that will not be fixed immediately, one
-  file per exception. It holds `schema.json`, its own `README.md` and — today — **no exception
-  file**, which is a reading rather than an omission, and the second such reading: the directory
+  file per exception. It holds `schema.json`, its own `README.md` and — today — **one exception
+  file**, `GHSA-vfj7-8cjw-p6xm.json`: `braces`'s high npm advisory in the `docs/` toolchain, which
+  has no fixed version, written on 2026-10-05 on the maintainer's ruling of that date, with an
+  `expiry` of 2026-12-04. *(Corrected 2026-10-05: until that date this bullet read "no exception
+  file", a reading rather than an omission, and the second such reading.)* The directory
   was empty when P6 created it, held two files from later on 2026-09-08 (round PB: `image-size`'s
   two high npm advisories in the `docs/` toolchain, `GHSA-w3rx-r6r6-pgpr` and
-  `GHSA-5p2g-fcmc-qvqq`, with no upstream fix then) until 2026-09-16, and is empty again because
-  `image-size` 2.0.3 (2026-09-14) carried the fix, so both files were deleted on their own removal
-  trigger and `docs/package-lock.json` moved to 2.0.4. `pip-audit --strict` reported no known
-  vulnerabilities on 2026-09-08, and no CodeQL finding has ever been excepted: the first analysis
+  `GHSA-5p2g-fcmc-qvqq`, with no upstream fix then) until 2026-09-16, and was empty again from that date to
+  2026-10-05 because `image-size` 2.0.3 (2026-09-14) carried the fix, so both files were deleted
+  on their own removal trigger and `docs/package-lock.json` moved to 2.0.4. `pip-audit --strict`
+  reported no known vulnerabilities on 2026-09-08, and no CodeQL finding has ever been excepted: the first analysis
   of this repository was read on 2026-09-08 (run 34212170555, RED on four findings, none in the
   shipped package), round PC fixed all four at their sites, and the next run was GREEN —
   `SECURITY.md`'s CodeQL row is the record. `exceptions/README.md` is where the mechanism is

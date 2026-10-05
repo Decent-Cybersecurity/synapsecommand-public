@@ -3,7 +3,15 @@
 A documented, time-bounded decision **not to fix a security finding immediately**. SOIF Part 1
 §45: "no permanent undocumented exemptions".
 
-**There are none today, and this is the second time this paragraph has said so.** From
+**There is one today: `GHSA-vfj7-8cjw-p6xm.json`, written on 2026-10-05.** It covers `braces`'s
+high npm advisory, a stack-exhaustion denial of service in a package the `docs/` toolchain pulls in
+under `@docusaurus/core`, at build time and outside the Python distribution; no fixed release
+exists, so it was granted on the maintainer's ruling of 2026-10-05 with the maintainer as owner,
+bounded at sixty days (`expiry` 2026-12-04), and its `upstream_status` names the event that ends
+it sooner. The four other high advisories the `docs-audit` job named that day had fixed versions
+and were cleared by three `overrides` entries instead. *(Corrected 2026-10-05: until that date
+this paragraph opened "There are none today, and this is the second time this paragraph has said
+so", and what follows is its record of the first exceptions, kept as it stood.)* From
 2026-09-08 to 2026-09-16 it read "there are two today, and both are about `docs/`":
 `GHSA-w3rx-r6r6-pgpr.json` and `GHSA-5p2g-fcmc-qvqq.json`, written by round PB, covered
 `image-size`'s two high npm advisories — a denial of service in its ICNS, JXL and HEIF parsers,
@@ -17,8 +25,9 @@ is archived and has no tag past v2.0.2), and the commit before 2.0.3 — `e6e83a
 loops" — changes exactly `lib/types/icns.ts`, `lib/types/heif.ts` and `lib/types/jxl.ts` with an
 invalid-input fixture for each. So on 2026-09-16 both files were DELETED, as their own text
 required, and `docs/package.json` pins `image-size` at `^2.0.4` in `overrides`. `npm audit` over
-the committed `docs/package-lock.json` now reads zero high or critical advisories, and the
-`docs-audit` job's own derivation prints `excepted and present: []`.
+the committed `docs/package-lock.json` then read zero high or critical advisories, and the
+`docs-audit` job's own derivation printed `excepted and present: []` until 2026-10-05, when it
+printed `['GHSA-vfj7-8cjw-p6xm']`.
 
 Deleted rather than closed, because the schema has no field for a closed exception and the
 directory is read as the set of exceptions IN FORCE: a file that is present is honoured by every

@@ -1256,8 +1256,20 @@ def check_resource_limits(adapter: Adapter, payloads: list[tuple[str, Any]], *,
                         max_input_bytes=limits.max_input_bytes)
     bound = limits.max_input_bytes
     oversized = (bytes(seed) * (bound // max(1, len(seed)) + 2))[:bound + 1]
+    # Built in a `try` of its own (final review F-39): a refusal raised while the hook builds the
+    # adapter is not the adapter refusing the bound, since the payload never reached `to_cdm`.
     try:
-        objects = _fresh(adapter, clock).to_cdm(oversized)
+        instance = _fresh(adapter, clock)
+    except CRASH_CLASSES as e:
+        return _verdict(FAIL, reason=f"building the adapter through fixture_instance raised a "
+                                     f"crash class: {type(e).__name__}", max_input_bytes=bound)
+    except Exception as e:                                     # noqa: BLE001 - reported as FAIL
+        return _verdict(FAIL, reason=f"the adapter could not be built through fixture_instance, "
+                                     f"so the declared bound was not exercised: "
+                                     f"{type(e).__module__}.{type(e).__name__}",
+                        max_input_bytes=bound)
+    try:
+        objects = instance.to_cdm(oversized)
     except CRASH_CLASSES as e:
         return _verdict(FAIL, reason=f"an oversized payload raised a crash class: "
                                      f"{type(e).__name__}", max_input_bytes=bound)

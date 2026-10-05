@@ -524,7 +524,9 @@ offline host command `synapse-dis7`), `pyproject.toml` (that command's console-s
 `adapter.py`, `harness.py`, `suite.py` and `evidence.py` (the `fixture_instance` hook on `Adapter`
 and its callers: the constructions the harness, the conformance suite and the evidence generator
 make now go through it, and their command lines refuse a caller-supplied `--fixtures` for a shipped
-adapter that overrides it), `times.py`, `version.py` and `evidence.py` again (the SDK helpers
+adapter that overrides it), `suite.py` again (check O builds the adapter through that hook in a
+step of its own before it feeds the oversized payload, final review F-39, in the paragraph that
+begins CHECK O), `times.py`, `version.py` and `evidence.py` again (the SDK helpers
 and the Adapter API reading of unit 1b, in the paragraph that begins DIS 7 UNIT 1B),
 `__init__.py`, `lossless.py` and `symbology.py`, with `adapter.py`, `version.py` and `pyproject.toml`
 again (docstring and comment counts only: the roster at twenty; the `residual_block` docstring of
@@ -533,7 +535,10 @@ pair arithmetic, the `dis7` roster row, the new section on the `dis7` adapter an
 the refusal of a caller-supplied `--fixtures` for an adapter that overrides `fixture_instance`),
 and 48 new files under `fixtures/dis7/`, described in the paragraphs below. What the 3.1.1 witness round
 touched outside the distribution ships in nothing: the ledger, the witness record and its
-README, the release-pipeline and changelog pages, and two test modules.
+README, the release-pipeline and changelog pages, and two test modules. What the release
+preparation of 2026-10-05 touched outside the distribution ships in nothing either:
+`docs/package.json` and `docs/package-lock.json`, the exception file under `security/exceptions/`
+and the security documents, in the paragraph that begins THE DOCS AUDIT.
 
 **THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER.** `dis7` held a name, an ordinal row and a
 fixture directory in the Phase 1 state until its class, fixtures and goldens landed. The contract
@@ -671,6 +676,12 @@ sweep that ran before reads the same.
 through `fixture_instance` at both of its construction sites; unchanged for an adapter that does not
 override the hook.
 
+**Bump ruling.** `synapse_cdm/suite.py:check_resource_limits` — PATCH: conformance check O now
+builds the adapter through `fixture_instance` before it feeds the oversized payload and reports
+a refusal raised while building as FAIL instead of reading it as the adapter refusing the bound;
+no signature, no verdict name, no report key and no flag changes, and every adapter whose hook
+builds it (all that the package ships) reads the same verdict as before.
+
 **Bump ruling.** `synapse_cdm/suite.py:main` — PATCH: builds through `fixture_instance`, and exits 2
 on a refusal raised by an overriding hook or on a caller-supplied `--fixtures` for a shipped adapter
 that overrides the hook; no invocation that ran before is refused.
@@ -683,6 +694,50 @@ CPython 3.11 and 3.12 wrote it unpadded. No name is added or removed.
 **Bump ruling.** `synapse_cdm/version.py:ADAPTER_API_VERSION` — MINOR: 3.0.0 → 3.1.0,
 `Adapter.fixture_instance` added with a default that is the old behaviour; the constant moved by the
 row of the versioning document that names it, an addition being a MINOR on that axis.
+
+**CHECK O, 2026-10-05 — a refusal raised while the adapter is built is no longer read as the
+adapter refusing the bound (final review F-39).** `suite.check_resource_limits` built the adapter
+through `fixture_instance` inside the same `try` that fed the oversized payload, so an overriding
+hook that refused construction was reported as PASS, with the hook's exception as `refusal`,
+although the payload never reached `to_cdm`. The adapter is now built in a `try` of its own first:
+a crash class while building is FAIL, any other exception while building is FAIL with the reason
+that the declared bound was not exercised, and the feed's two `except` clauses and its final FAIL
+are as they were. `tests/test_cdm_fixture_instance.py` gains the test that hands check O a double
+whose hook refuses and requires FAIL, no `bytes_fed`, and a non-zero exit with O required. Every
+adapter the package ships builds through its hook, and the CI job's sweep, each adapter under its
+own required set, still reads CONFORMANT for every one. The unit is the one the bump ruling for
+`suite.py:check_resource_limits` above covers, approved by the maintainer on 2026-10-05.
+
+**THE DOCS AUDIT, 2026-10-05 — three floors and one time-bounded exception, all outside the
+distribution.** The `docs-audit` job of `.github/workflows/ci.yml` was red on the arc. Its
+enforcing step over the committed `docs/package-lock.json` read `advisories: 8` and five BLOCKING
+high advisories, all published after the reading of 2026-09-17 and all standing on `main`'s lock
+as well: `GHSA-6j4f-fj2g-mc7p` (`brace-expansion` `<1.1.19`), `GHSA-qhr7-859c-m2p7`
+(`brace-expansion` `<1.1.20`), `GHSA-ch52-4w7c-c8xp` (`http-cache-semantics` `<=4.2.0`),
+`GHSA-6h2x-m376-mqjq` (`joi` `>=17.2.0 <17.13.7`) and `GHSA-vfj7-8cjw-p6xm` (`braces` `<=3.0.3`).
+On the maintainer's ruling of 2026-10-05 the repair lands on the arc and not as a separate change
+to `main`, which moves once, at the release. **THE FLOORS.** Three `overrides` entries in
+`docs/package.json`, alphabetical among the seven already there, each at the lowest version that
+clears its advisories: `brace-expansion ^1.1.20`, `http-cache-semantics ^4.3.0` (the first release
+outside the advisory's range; GitHub's record of it names no patched version) and
+`joi ^17.13.7`. `npm install --package-lock-only --prefix docs` moved the lock by three entries and
+nothing else, each in its `version`, `resolved` and `integrity` only: `brace-expansion` 1.1.18 →
+1.1.21, `http-cache-semantics` 4.2.0 → 4.3.0 and `joi` 17.13.6 → 17.13.8, a caret resolving to the
+newest release in its range; 1.1.21 also clears the moderate `GHSA-q2hr-2g5m-vwhr`
+(`brace-expansion` `<1.1.21`). **THE EXCEPTION.** `braces` has no fixed release, 3.0.3 being its
+newest, so `security/exceptions/GHSA-vfj7-8cjw-p6xm.json` excepts it: owner the maintainer,
+`created` 2026-10-05, `expiry` 2026-12-04, sixty days as for the two `image-size` files. It
+reaches the lock once, `braces@3.0.3` under `@docusaurus/core@3.10.2` through `chokidar@3.6.0` and
+through `micromatch@4.0.8`, a build-time dependency of the documentation site. **READINGS, with the
+job's own steps over the new lock:** `gates/codeql_gate.py --emit-pip-audit-ignores` prints
+`--ignore-vuln GHSA-vfj7-8cjw-p6xm`; the enforcing step reads `advisories: 3; excepted and present:
+['GHSA-vfj7-8cjw-p6xm']; excepted and absent: []` and `OK`, the other two being `fast-uri`'s
+moderate `GHSA-hrr3-gc8f-f4qj` and `serialize-javascript`'s low `GHSA-gfhx-hw2g-v5hg`, below the
+floor; `npm --prefix docs run ci` exits 0. **AND THE PROSE MOVES WITH IT.** `SECURITY.md`'s
+overrides row says ten entries and names each, its npm audit row gains this date's reading and its
+exceptions row says one file; the supply-chain page's count reads ten; that page's exceptions
+paragraph, `security/README.md` and `security/exceptions/README.md` say one exception, each beside
+a dated correction of the sentence that said none.
 
 **THE 3.1.1 WITNESS ROUND's RECORD, 2026-09-22 — the record is hand-built, for the second time on
 an empty approval comment.** Run 35695633330's `witness` job built `witness-3.1.1.json` and was

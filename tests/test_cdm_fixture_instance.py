@@ -212,6 +212,22 @@ def test_the_double_passes_the_suite_and_the_spawned_worker_through_the_hook(tre
     assert n["outcomes"] == {"PARSER_REJECTED": 14}
 
 
+def test_a_hook_refusal_is_not_read_as_the_bound_refusing(tree):
+    """Final review F-39: check O builds the adapter through the hook before it feeds anything.
+
+    A refusal raised while building is FAIL, never the adapter refusing the oversized payload,
+    which never reached `to_cdm`.
+    """
+    clock = times.frozen_clock()
+    instance = ContextDouble(clock=clock, context="x", synthetic=False)
+    payloads = [(p.name, harness.load_raw(p)) for p in suite._fixtures(tree)]
+    entry = suite.check_resource_limits(instance, payloads, clock=clock)
+    assert entry["verdict"] == suite.FAIL, entry
+    assert "fixture_instance" in entry["reason"]
+    assert "bytes_fed" not in entry["details"]
+    assert suite.exit_status(suite.run(instance, tree), ("O",)) != 0
+
+
 def test_without_an_override_the_worker_cannot_construct_the_adapter(tree):
     clock = times.frozen_clock()
     entry = suite.check_malformed(RequiresContext(clock=clock, context="given by hand"), tree,

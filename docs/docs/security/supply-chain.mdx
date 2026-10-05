@@ -87,9 +87,11 @@ The npm reading is one: `npm ci` from the committed `docs/package-lock.json`, th
 critical advisory not derived from `security/exceptions/` — and, last in the same job, the
 site's own `npm run ci`, so a lock that clears an advisory and breaks the build is not green.
 Where an advisory sits in a package reachable only under `@docusaurus/*`, the repair is a floor
-in `docs/package.json`'s `overrides` (seven today — six until 2026-09-17, each for a high
-advisory, and since then a seventh for the one moderate advisory this job had reported on every
-push and by its own rule never blocked, `uuid`'s), never `npm audit fix`, which downgraded `qs`
+in `docs/package.json`'s `overrides` (ten today — six until 2026-09-17, each for a high
+advisory, then a seventh for the one moderate advisory this job had reported on every
+push and by its own rule never blocked, `uuid`'s, and since 2026-10-05 three more,
+`brace-expansion`, `http-cache-semantics` and `joi`, for four high advisories that had fixed
+versions), never `npm audit fix`, which downgraded `qs`
 into its vulnerable range when it was tried; the dated reason for each pin is in
 `packages/cdm/synapse_cdm/MIGRATIONS.md`, and `tests/test_cdm_security_policy.py` holds this
 count and `SECURITY.md`'s row to the block itself.
@@ -130,15 +132,22 @@ exception before its `expiry`. Two properties make it a mechanism rather than a 
    No flag, no grace period, no skip. The repair is to fix the finding or to write a new exception
    saying what changed — never to move the date.
 
-There are **no exceptions today**, and that is a reading rather than a first state. Two were in
-force from 2026-09-08 to 2026-09-16 — `GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq`,
+There is **one exception today**, `GHSA-vfj7-8cjw-p6xm`: `braces`'s stack-exhaustion denial of
+service, high, in a package the documentation toolchain pulls in under `@docusaurus/core` and the
+Python distribution does not carry, with no fixed release to move to — written on 2026-10-05 on
+the maintainer's ruling of that date, the maintainer its owner, `expiry` 2026-12-04, sixty days.
+(Corrected 2026-10-05: until that date this paragraph opened "There are **no exceptions
+today**, and that is a reading rather than a first state"; the rest of it is kept as it stood.)
+Two were in force from 2026-09-08 to 2026-09-16 — `GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq`,
 `image-size`'s ICNS and JXL/HEIF denial-of-service advisories, high, reachable only when
 Docusaurus measures an image at documentation build time, granted because no fixed release
 existed and bounded at sixty days — and both were deleted, as their own `upstream_status`
 required, when `image-size` 2.0.3 (published 2026-09-14) turned out to carry the fix for exactly
 those three parsers. `docs/package.json` now pins `image-size` at `^2.0.4` in `overrides`, and
-`npm audit` over the committed lock reads zero high or critical advisories — and, since
-2026-09-17, when `uuid` took the seventh floor, zero advisories at any severity. `pip-audit --strict`
+`npm audit` over the committed lock read zero high or critical advisories — and, from
+2026-09-17, when `uuid` took the seventh floor, zero advisories at any severity. On 2026-10-05 it
+read eight advisories, five of them high; after the three floors of that date it reads three:
+`braces`'s, excepted, a moderate one and a low one. `pip-audit --strict`
 reported *No known vulnerabilities found* on 2026-09-08, and no Python finding and no CodeQL
 finding has ever been excepted. (Until 2026-09-16 this paragraph still read as it had on
 2026-09-08, and was false for the eight days the two files existed.)

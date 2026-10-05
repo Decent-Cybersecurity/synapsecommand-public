@@ -15,7 +15,9 @@ the harshness is the point. The two softer arrangements both fail in the same di
 * a check in CI only — passed over by anyone running `pytest` locally, and CI is exactly where a
   red build gets an `|| true` added under time pressure.
 
-**There are no exception files today, and the directory has been through both states.** Round
+**There is one exception file today, `GHSA-vfj7-8cjw-p6xm.json` (`braces`, written 2026-10-05),
+and the directory has been through both states.** *(Corrected 2026-10-05: until that date this
+sentence read "There are no exception files today".)* Round
 PB wrote two on 2026-09-08 — `image-size`'s two high npm advisories, `GHSA-w3rx-r6r6-pgpr` and
 `GHSA-5p2g-fcmc-qvqq`, with no upstream fix then and an `expiry` of 2026-11-07 — and the audit of
 2026-09-16 deleted them, as each file's own `upstream_status` required, once `image-size` 2.0.3
@@ -25,7 +27,8 @@ empty directory; the assertions below are written so that they have content in E
 because a test that encodes today's emptiness as a fact about the tree is a test that goes red
 when the mechanism is first used — which is exactly what happened to two tests in other modules
 when the two files landed, and they were the things that were wrong, not the code. The
-parametrised tests below have zero cases today; the derivation tests still run.
+parametrised tests below have one case today (zero from 2026-09-16 until 2026-10-05); the
+derivation tests still run.
 
 `pip-audit --strict` over the Python environment is still clean, and both files were about the
 `docs/` npm toolchain, which the Python distribution does not carry.
@@ -268,7 +271,8 @@ def test_no_exception_is_granted_for_longer_than_a_year(path):
 
 
 # --------------------------------------------------------------------------------------------
-# The empty state, which is today's, and the derivation all three consumers share:
+# The empty state, which was today's from 2026-09-16 until 2026-10-05 (this heading called it
+# today's until then), and the derivation all three consumers share:
 # `gates/codeql_gate.py`, and the `pip-audit` step and the `docs-audit` job in ci.yml through it.
 # (This heading and the docstring below said "both consumers" until 2026-09-16; `docs-audit`
 # has been the third since round PB, 2026-09-08.)
