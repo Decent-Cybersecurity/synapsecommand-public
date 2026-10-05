@@ -1,0 +1,81 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest",
+        "egress"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
+          "max_depth": "octets are one PDU and never JSON text; the envelope is held to 16 levels and acyclicity by the adapter's coded guard",
+          "max_objects": "one payload is exactly one PDU and yields exactly one Entity; the record count is fixed by the byte bound",
+          "max_parse_seconds": "no wall-clock bound is enforced by this adapter; every walk is linear in an input the byte bound and the coded guard have already limited"
+        },
+        "declared_because": {
+          "max_input_bytes": {
+            "enforced_at": "the adapter's coded guard, installed on `to_cdm` after the class statement, measures the payload first and refuses with `E_INPUT_LIMIT`; behind it `Adapter.__init_subclass__` wraps the same method with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), and `decode_pdu` refuses the same size again",
+            "kind": "implementation_cap",
+            "source": "The Entity State subset this adapter accepts is 144 octets plus at most 255 variable parameter records of 16 octets, which is 4224 octets (`MAX_PDU_BYTES`, `adapters/dis7_codec.py`); a longer payload cannot be one PDU of this subset. This is an IMPLEMENTATION CAP chosen for this subset and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": null,
+        "max_input_bytes": 4224,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "Entity State PDU (protocol version 7, PDU type 1, protocol family 1), 144 octets plus 0 to 255 variable parameter records of 16 octets; ingest",
+        "replay of the original octets from an unchanged Entity produced by this adapter; egress"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the envelope has a closed key set at every level and an unknown key is refused with `E_TWIN_SCHEMA`; octets this subset does not interpret (dead reckoning parameters, marking, variable parameter records) are kept as hexadecimal in the structured residual and replayed unchanged",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "bidirectional",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "DIS",
+      "version": "7 / IEEE 1278.1-2012 Entity State subset"
+    },
+    "id": "dis7",
+    "license_class": "LICENSED",
+    "limitations": [
+      "Entity State subset only: protocol version 7, PDU type 1, protocol family 1. Every other PDU type, protocol family and DIS version is refused, and no network transport, capture file or multi-PDU datagram is read",
+      "no IEEE certification is claimed, and acceptance under this subset is not validation of every reserved bit of the standard",
+      "the IEEE 1278.1-2012 text was not consulted: the layout authority is open-dis-python (https://github.com/open-dis/open-dis-python, BSD-2-Clause) at commit 732b6655bb47e34ccc73722eefe0f4706fd0032f. A comparison with it exists as an opt-in test and an exercise report; no report ships in the distribution",
+      "the state instant is supplied by the caller with its basis; the DIS timestamp is preserved and never converted. Affiliation is UNKNOWN for every force ID, and velocity is projected only for dead reckoning algorithms 2 to 5",
+      "egress replays the original octets of an unchanged Entity only; a fresh or edited Entity is refused",
+      "`fixture_instance` supplies the packaged fixtures' context (session `unnamed`, synthetic, the vectors' state instant and basis) and refuses `synthetic=False`. The harness and the conformance suite construct through it, so their verdict is defined for the packaged fixtures only; PDUs from another exercise need a caller-built adapter",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them"
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L4 ROUND-TRIP VERIFIED on this repository's own evidence. The harness's `translate`, `schema` and `provenance` checks are PASS on every packaged fixture (L1 to L3). The `lossless` column rests on the PATH-BOUND LEDGER: `MAPPINGS` binds `pdu`, `wire_hex` and `time_context` of an envelope to `residual.data` as residual subtrees and the ledger reports no LOST leaf. `from_cdm(to_cdm(raw))` reproduces every byte fixture octet for octet under the declared `bytes` tolerance (`ROUNDTRIP_TOLERANCE`), so `synapse conformance run --adapter dis7` computes E = PASS with D on the ledger basis. The adapter's own statement of the round-trip claim is tests/test_cdm_dis7_adapter.py::test_t01_a01_vectors_replay_byte_exact. L5 is NOT declared: the rung above L4 rests on `M` (streaming) being inapplicable, and a rung passed vacuously is not a rung declared (ARCHITECTURE.md \u00a73.6, rule 4). No independent implementation has been exercised for a published record and no certification is claimed.",
+      "external_exercise": null,
+      "level": "L4"
+    },
+    "name": "DIS 7 Entity State PDU",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.0.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

@@ -205,8 +205,9 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # phase 3 (2026-09-21): `c2sim` is the third; fourteen-and-three.
     # phase 4 (2026-09-21): `aixm511` is the fourth; fourteen-and-four.
     # phase 6 (2026-09-21): `aixm52` is the fifth; fourteen-and-five.
-    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "geojson", "geopackage"]
-    assert len(roster) == 19
+    # the DIS 7 arc: `dis7` is the sixth; fourteen-and-six.
+    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "dis7", "geojson", "geopackage"]
+    assert len(roster) == 20
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

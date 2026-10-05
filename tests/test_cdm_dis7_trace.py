@@ -16,7 +16,11 @@ import ast
 import json
 import pathlib
 import re
+import sys
 
+import pytest
+
+import synapse_cdm
 from tests import dis7_support
 
 TESTS = pathlib.Path(__file__).resolve().parent
@@ -32,32 +36,23 @@ REQUIREMENTS = tuple(f"R{number:02d}" for number in range(1, 31))
 CITED_BY = {r: tuple(c["id"] for c in CASES if r in c["requirements"]) for r in REQUIREMENTS}
 UNCITED = tuple(r for r in REQUIREMENTS if not CITED_BY[r])
 
-PENDING = {
-    # run R11
-    "N18": "run R11", "N20": "run R11",
-    "R12": "run R11",
-    # run R14
-    "N15": "run R14", "N16": "run R14", "N17": "run R14", "N19": "run R14",
-    # run R15
-    "N12": "run R15", "N14": "run R15", "A08": "run R15", "A09": "run R15", "A10": "run R15",
-    "A11": "run R15", "N21": "run R15",
-    "R04": "run R15", "R05": "run R15", "R06": "run R15", "R10": "run R15", "R13": "run R15",
-    "R18": "run R15", "R19": "run R15", "R20": "run R15",
-    "R02": "run R15", "R03": "run R15", "R07": "run R15", "R25": "run R15", "R30": "run R15",
-    # run R16
-    "A12": "run R16",
-    "R24": "run R16", "R28": "run R16",
-    # run R17
-    "A13": "run R17",
-    "R26": "run R17",
-    # run R18
-    "A14": "run R18",
-    "R27": "run R18",
-    # run R19
-    "R01": "run R19", "R23": "run R19", "R29": "run R19",
-}
+PENDING = {}
 
 R_EVIDENCE = {
+    "R01": ("tests/test_cdm_dis7_trace.py::test_pending_is_exactly_the_set_of_unbound_ids",),
+    "R02": (
+        "tests/test_cdm_dis7_codec.py::test_r02_every_refused_category_is_refused_with_its_code_and_path",
+        "tests/test_cdm_dis7_adapter.py::test_t15_bracket_leading_and_refused_format_samples_get_coded_errors",
+    ),
+    "R03": (
+        "tests/test_cdm_dis7_schema.py::test_pin_every_vendored_file_matches_the_record_and_the_bundle_manifest",
+        "tests/test_cdm_dis7_schema.py::test_r12_stage2_verdict_equals_the_envelope_schema_except_enumerated_divergences",
+    ),
+    "R07": (
+        "tests/test_cdm_dis7_codec.py::test_r07_header_predicate_matrix",
+        "tests/test_cdm_dis7_adapter.py::test_r07_validate_source_matrix",
+        "tests/test_cdm_dis7_adapter.py::test_r07_detect_matrix",
+    ),
     "R21": (
         "tests/test_cdm_dis7_codec.py::test_r21_codes_are_the_contract_table_in_order",
         "tests/test_cdm_dis7_codec.py::test_r21_every_code_an_acceptance_case_expects_is_in_the_table",
@@ -67,6 +62,29 @@ R_EVIDENCE = {
         "tests/test_cdm_dis7_codec.py::test_r21_errors_survive_copy_and_pickle",
         "tests/test_cdm_dis7_codec.py::test_r21_no_foreign_exception_escapes_decode_pdu",
         "tests/test_cdm_dis7_codec.py::test_r21_no_foreign_exception_escapes_encode_pdu",
+    ),
+    "R23": (
+        "tests/test_cdm_dis7_benchmark.py::test_r23_quick_run_has_no_retained_growth",
+        "RUN:reports/benchmark.json",
+    ),
+    "R25": (
+        "tests/test_cdm_dis7_adapter.py::test_r25_index_walk_translates_each_wire_file_under_its_context_file",
+        "tests/test_cdm_dis7_schema.py::test_vector_index_agrees_with_the_files",
+    ),
+    "R29": (
+        "RUN:reports/R03-verify.md",
+        "RUN:reports/R06-verify.md",
+        "RUN:reports/R08-verify.md",
+        "RUN:reports/R10-verify.md",
+        "RUN:reports/R15-verify.md",
+        "RUN:reports/R19-verify.md",
+        "RUN:reports/R23-verify.md",
+    ),
+    "R30": (
+        "tests/test_cdm_dis7_adapter.py::test_adapter_version_is_1_0_0",
+        "tests/test_cdm_dis7_adapter.py::test_examples_is_never_imported",
+        "tests/test_cdm_dis7_trace.py::test_completion_prototype_is_never_imported",
+        "tests/test_cdm_dis7_trace.py::test_completion_adapter_reports_1_0_0",
     ),
 }
 
@@ -328,3 +346,183 @@ def test_the_evidence_check_refuses_what_does_not_resolve():
         {"R01": ("tests/test_cdm_dis7_does_not_exist.py::test_x",)}
     )) == 1
     assert len(evidence_problems({"R01": ("RUN:../outside",)})) == 1
+
+
+# ------------------------------------------------------------------------- completion checks
+#
+# The DIS 7 sources carry no placeholder and no empty function body, import only the standard
+# library, pydantic and the package itself, and never import the handoff prototype. Each helper is
+# a function of source text, so the checks are witnessed refusing before they judge the tree.
+
+PACKAGE_DIR = pathlib.Path(synapse_cdm.__file__).resolve().parent
+COMPLETION_SOURCES = (
+    PACKAGE_DIR / "adapters" / "dis7.py",
+    PACKAGE_DIR / "adapters" / "dis7_codec.py",
+    PACKAGE_DIR / "dis7_host.py",
+    *sorted((REPO_ROOT / "gates").glob("dis7_*.py")),
+)
+AUDITED_MODULES = {
+    "dis7.py": PACKAGE_DIR / "adapters" / "dis7.py",
+    "dis7_codec.py": PACKAGE_DIR / "adapters" / "dis7_codec.py",
+    "dis7_host.py": PACKAGE_DIR / "dis7_host.py",
+}
+ALLOWED_ROOTS = frozenset(sys.stdlib_module_names) | {"pydantic", "synapse_cdm"}
+ADAPTER_FORBIDDEN = frozenset({"hashlib", "hmac", "secrets", "ssl", "socket", "urllib", "http",
+                               "asyncio", "subprocess", "platform"})
+HOST_FORBIDDEN = frozenset({"hashlib", "hmac", "secrets", "ssl", "socket", "urllib", "http",
+                            "asyncio", "signal", "resource", "platform"})
+PLACEHOLDER = re.compile(r"\b(TODO|FIXME|XXX)\b")
+CLAIM_PHRASES = ("full dis 7 support", "ieee certified", "ieee-certified", "ieee compliant")
+NEGATIONS = frozenset({"no", "not", "never", "without"})
+
+
+def placeholder_markers(source: str) -> list[str]:
+    """Every placeholder marker in the text, and `NotImplementedError` wherever it occurs."""
+    found = [match.group(0) for match in PLACEHOLDER.finditer(source)]
+    if "NotImplementedError" in source:
+        found.append("NotImplementedError")
+    return found
+
+
+def _raises_not_implemented(statement: ast.stmt) -> bool:
+    if not isinstance(statement, ast.Raise) or statement.exc is None:
+        return False
+    target = statement.exc.func if isinstance(statement.exc, ast.Call) else statement.exc
+    return isinstance(target, ast.Name) and target.id == "NotImplementedError"
+
+
+def empty_function_bodies(source: str) -> list[str]:
+    """Functions whose body after a leading docstring is empty, only `pass`/`...`, or raises
+    `NotImplementedError` anywhere. Classes are exempt."""
+    flagged: list[str] = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            body = list(node.body)
+            if (body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)):
+                body = body[1:]
+            trivial = all(
+                isinstance(s, ast.Pass)
+                or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant)
+                    and s.value.value is Ellipsis)
+                for s in body
+            )
+            if trivial:
+                flagged.append(f"{node.name} (line {node.lineno})")
+        if _raises_not_implemented(node):
+            flagged.append(f"raise NotImplementedError (line {node.lineno})")
+    return flagged
+
+
+def imported_roots(source: str) -> set[str]:
+    """Top-level names a module imports; a relative import counts as `synapse_cdm`."""
+    roots: set[str] = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            roots |= {alias.name.split(".")[0] for alias in node.names}
+        elif isinstance(node, ast.ImportFrom):
+            if node.level > 0:
+                roots.add("synapse_cdm")
+            elif node.module:
+                roots.add(node.module.split(".")[0])
+    return roots
+
+
+def claim_sentences(text: str) -> list[str]:
+    """Sentences that claim more than the subset: a claim phrase with no negation before it."""
+    claims: list[str] = []
+    for chunk in re.split(r"[.;|]|\n[ \t]*\n", text):
+        sentence = " ".join(chunk.split()).lower()
+        for phrase in CLAIM_PHRASES:
+            at = sentence.find(phrase)
+            if at < 0:
+                continue
+            if not NEGATIONS & set(re.findall(r"[a-z]+", sentence[:at])):
+                claims.append(sentence)
+                break
+    return claims
+
+
+def _section(text: str, start: int) -> str:
+    rest = text[start:]
+    following = re.search(r"(?m)^## ", rest[1:])
+    return rest if following is None else rest[:following.start() + 1]
+
+
+def _claim_texts() -> dict[str, str]:
+    readme = (PACKAGE_DIR / "README.md").read_text(encoding="utf-8")
+    heading = "\n## DIS 7 Entity State: the `dis7` adapter\n"
+    coverage = (PACKAGE_DIR / "FORMAT_COVERAGE.md").read_text(encoding="utf-8")
+    dis = re.search(r"(?m)^## .*DIS.*$", coverage)
+    return {
+        "README": _section(readme, readme.index(heading) + 1) if heading in readme else "",
+        "dis7.mdx": (REPO_ROOT / "docs" / "docs" / "cdm" / "dis7.mdx").read_text(encoding="utf-8"),
+        "FORMAT_COVERAGE": _section(coverage, dis.start()) if dis else "",
+    }
+
+
+def test_completion_sources_exist():
+    names = {path.name for path in COMPLETION_SOURCES}
+    assert {"dis7.py", "dis7_codec.py", "dis7_host.py", "dis7_mutation.py",
+            "dis7_benchmark.py"} <= names
+    for path in COMPLETION_SOURCES:
+        assert path.is_file(), path
+
+
+@pytest.mark.parametrize("path", COMPLETION_SOURCES, ids=lambda p: p.name)
+def test_completion_no_placeholder_marker(path):
+    assert placeholder_markers(path.read_text(encoding="utf-8")) == []
+
+
+@pytest.mark.parametrize("path", COMPLETION_SOURCES, ids=lambda p: p.name)
+def test_completion_no_empty_function_body(path):
+    assert empty_function_bodies(path.read_text(encoding="utf-8")) == []
+
+
+def test_completion_checks_can_fail():
+    assert empty_function_bodies("def f():\n    pass\n")
+    assert empty_function_bodies("def f():\n    '''d'''\n    ...\n")
+    assert empty_function_bodies("def f():\n    return 1\n") == []
+    assert placeholder_markers("# TODO later")
+    assert placeholder_markers("todo = 1") == []
+
+
+@pytest.mark.parametrize("name", sorted(AUDITED_MODULES))
+def test_completion_import_audit(name):
+    roots = imported_roots(AUDITED_MODULES[name].read_text(encoding="utf-8"))
+    assert roots <= ALLOWED_ROOTS, sorted(roots - ALLOWED_ROOTS)
+    forbidden = HOST_FORBIDDEN if name == "dis7_host.py" else ADAPTER_FORBIDDEN
+    assert not roots & forbidden, sorted(roots & forbidden)
+
+
+def test_completion_prototype_is_never_imported():
+    importers = [path.relative_to(PACKAGE_DIR).as_posix() for path in sorted(PACKAGE_DIR.rglob("*.py"))
+                 if "examples" in imported_roots(path.read_text(encoding="utf-8"))]
+    assert importers == []
+    for path in AUDITED_MODULES.values():
+        text = path.read_text(encoding="utf-8")
+        assert "examples.dis7" not in text and "examples/dis7" not in text, path.name
+
+
+def test_completion_adapter_reports_1_0_0():
+    from synapse_cdm.adapters.dis7 import Dis7Adapter
+
+    assert Dis7Adapter.version == "1.0.0"
+    assert Dis7Adapter.name == "dis7"
+
+
+def test_completion_claims_guard():
+    texts = _claim_texts()
+    for where, text in texts.items():
+        assert text.strip(), f"{where}: the DIS 7 text was not found"
+    assert "Entity State subset" in texts["README"]
+    assert "Entity State subset" in texts["dis7.mdx"]
+    claims = {where: claim_sentences(text) for where, text in texts.items()}
+    assert claims == {where: [] for where in texts}
+
+
+def test_completion_claims_guard_can_fail():
+    assert claim_sentences("It provides full DIS 7 support.")
+    assert claim_sentences("The adapter is IEEE certified.")
+    assert claim_sentences("It is not full DIS 7 support.") == []
+    assert claim_sentences("It carries no IEEE certification.") == []

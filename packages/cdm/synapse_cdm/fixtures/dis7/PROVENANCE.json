@@ -1,0 +1,60 @@
+{
+  "directory": "dis7",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "equator_eastbound.dis",
+      "operational_data": false,
+      "origin": "Synthetic DIS 7 Entity State PDU: a byte-identical copy of dis7/vectors/equator_eastbound.dis, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equator_eastbound.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic envelope twin: a byte-identical copy of dis7/vectors/equator_eastbound.envelope.json, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "north_pole_stationary.dis",
+      "operational_data": false,
+      "origin": "Synthetic DIS 7 Entity State PDU: a byte-identical copy of dis7/vectors/north_pole_stationary.dis, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "north_pole_stationary.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic envelope twin: a byte-identical copy of dis7/vectors/north_pole_stationary.envelope.json, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unprojectable_with_extensions.dis",
+      "operational_data": false,
+      "origin": "Synthetic DIS 7 Entity State PDU: a byte-identical copy of dis7/vectors/unprojectable_with_extensions.dis, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unprojectable_with_extensions.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic envelope twin: a byte-identical copy of dis7/vectors/unprojectable_with_extensions.envelope.json, a vector of the handoff bundle identified by SC DIS7 SPEC 001 v1.0. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

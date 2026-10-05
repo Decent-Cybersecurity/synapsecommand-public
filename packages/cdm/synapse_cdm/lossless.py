@@ -217,7 +217,7 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that returned `None` for "nothing left" would make every call site write the same branch. An
     adapter that wants the field absent tests `block.data` and passes `None`.
 
-    FOURTEEN OF THE NINETEEN ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
+    FOURTEEN OF THE TWENTY ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
     ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of Part 1 keep their
     `attributes` / `payload` parking under `source_extras` and declare `residual: legacy`. This
     exists for the Part 2 adapters, which declare `residual: structured` — the five of the

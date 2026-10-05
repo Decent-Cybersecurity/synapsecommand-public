@@ -222,11 +222,12 @@ def test_the_shipped_fixture_counts_are_unchanged_by_the_new_exclusion():
     raw fixture and its parsed twin counted, as the harness counts them), every one of the five
     sets carrying `PROVENANCE.json` records the selection still excludes. The literal moves with
     the roster and only with the roster; a move for any other reason is the exclusion drifting.
+    With `dis7` (three PDUs and their three parsed twins at the top level) it is 586.
     """
     total = sum(len(harness_paths) for harness_paths in
                 (evidence.harness_selects(ROOT / name) for name in sorted(
                     p.name for p in ROOT.iterdir() if p.is_dir())))
-    assert total == 580, f"the harness now selects {total} top-level fixtures, not 580"
+    assert total == 586, f"the harness now selects {total} top-level fixtures, not 586"
 
 
 # ================================================================= §34: the six categories
@@ -530,8 +531,8 @@ def test_evidence_available_is_true_on_every_shipped_adapter():
     `true`, every adapter it does not carry declares `false`, and the roster is the registry's.
     """
     declared = {name: cls.metadata.evidence.available for name, cls in shipped().items()}
-    assert len(declared) == len(shipped()) == 19, \
-        f"the shipped roster is {sorted(declared)}, not the nineteen"
+    assert len(declared) == len(shipped()) == 20, \
+        f"the shipped roster is {sorted(declared)}, not the twenty"
     released = _released_adapter_modules()
     if released is None:
         pytest.skip("no git or no release tag here, so which adapters a Release has carried "
@@ -573,7 +574,7 @@ def test_the_field_the_prose_and_the_manifest_all_state_the_same_availability():
 
 
 def test_the_availability_claim_pattern_can_see_the_sentences_it_reads():
-    """A pattern matching nothing would make the agreement above green on nineteen silences."""
+    """A pattern matching nothing would make the agreement above green on twenty silences."""
     assert AVAILABILITY_CLAIM.findall("`evidence.available` is true because the records") == \
         ["true"], "the pattern no longer recognises the sentence a released adapter carries"
     assert AVAILABILITY_CLAIM.findall(
@@ -769,7 +770,7 @@ def test_the_generator_names_itself_and_the_package_version(record):
 def test_generating_the_whole_roster_writes_one_record_per_adapter(tmp_path):
     assert evidence.main(["generate", "--all", "--out", str(tmp_path)]) == 0
     written = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("evidence.json"))
-    assert len(written) == len(shipped()) == 19
+    assert len(written) == len(shipped()) == 20
     for name, cls in shipped().items():
         assert f"{name}/{cls.metadata.adapter_version}/evidence.json" in written
 

@@ -89,3 +89,20 @@ def geodetic_to_ecef(lat, lon, h):
     return ((n + h) * math.cos(phi) * math.cos(lam),
             (n + h) * math.cos(phi) * math.sin(lam),
             (n * (1 - e2) + h) * math.sin(phi))
+
+
+def fixture_adapter(**overrides):
+    """A `Dis7Adapter` built from `vectors/equator_eastbound.context.json`, keyword overrides on top
+    (`clock=`, `session=`, `synthetic=`, `time_context=` including `None`, `source_hash=`)."""
+    from synapse_cdm.adapters.dis7 import Dis7Adapter, TimeContext
+
+    context = vector_json("equator_eastbound", "context")
+    kwargs = {
+        "session": context["session"],
+        "synthetic": context["synthetic"],
+        "time_context": TimeContext(context["time_context"]["instant"],
+                                    context["time_context"]["basis"]),
+        "source_hash": context["source_hash"],
+    }
+    kwargs.update(overrides)
+    return Dis7Adapter(**kwargs)

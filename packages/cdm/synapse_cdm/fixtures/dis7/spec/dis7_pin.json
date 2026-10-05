@@ -60,5 +60,18 @@
     "bundle_file": "schemas/cdm-entity.schema.json",
     "sha256": "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a",
     "bytes": 32824
+  },
+  "independent_reading_tool": {
+    "status": "TAKEN",
+    "tool": "open-dis-python (https://github.com/open-dis/open-dis-python, BSD-2-Clause) at commit 732b6655bb47e34ccc73722eefe0f4706fd0032f: serialize and parse of opendis.dis7.EntityStatePdu, run in a child process through the SYNAPSE_CDM_OPENDIS_DIR hook (tests/dis7_reference_support.py); never a runtime dependency",
+    "version": "1.1.0a4",
+    "taken_on": "2026-10-04",
+    "environment": {
+      "python": "3.14.7",
+      "platform": "macosx-26.0-arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "opendis": "1.1.0a4@732b6655bb47e34ccc73722eefe0f4706fd0032f"
+    },
+    "what_it_shows": "for the three synthetic Entity State PDUs and nothing else, OpenDIS regenerates each packaged PDU byte for byte, its parse equals decode_pdu field by field, the adapter ingests its bytes and replays them exactly, and it reparses and reserialises the adapter's replay unchanged; a 255-record PDU agrees in both directions, and its type-67 and default zero-length PDUs are refused with E_HEADER_UNSUPPORTED and E_LENGTH_MISMATCH"
   }
 }

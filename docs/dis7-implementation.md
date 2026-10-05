@@ -44,8 +44,12 @@ Branch `soif/dis7-1.0`, created from `main` at commit `c4bba1b6ebfdfe956f6efc2b3
 | Package version | 3.1.1. |
 | CDM schema version | 3.0.0. |
 | Adapter API version | 3.0.0 at the baseline; 3.1.0 from run R05. |
-| Adapter version | 1.0.0 (target). |
+| Adapter version | 1.0.0. |
 | Specification id | `SC DIS7 SPEC 001`, version 1.0; bundle `MANIFEST.json` sha256 `3d6c04b4c02f4609625a57c5cfc965aae8d4b5c74ab39e5a0ad0a539e565c5b2`. |
+| Reference reading: Python | 3.14.7 (`tool_versions`, run R17). |
+| Reference reading: platform tag | `macosx-26.0-arm64`. |
+| Reference reading: git | `git version 2.50.1 (Apple Git-155)`. |
+| Reference reading: OpenDIS | `1.1.0a4@732b6655bb47e34ccc73722eefe0f4706fd0032f`. |
 
 ## Decisions
 
@@ -268,6 +272,225 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **Alternatives.** `E_NONFINITE` inside the helper (rejected: that code's paths are the component octets, which the helper does not know); `E_PROJECTION` (rejected: the domain rule names a non-finite radius explicitly).
 - **Covering tests.** `test_t05_n11_refused_positions` (the NaN, infinity and overflow rows).
 
+### D61 — Non-bytes input to the text loader is `E_INPUT_TYPE` at `$`
+
+- **What.** `parse_json_text` refuses anything that is not `bytes` — a `str`, a `bytearray`, a `memoryview`, `None`, a dict — with `E_INPUT_TYPE` at `$`, before any other check.
+- **Why.** The loader's job is to own the decoding of octets; a `str` has already been decoded by someone else, under rules the loader cannot see, and a mutable buffer can change between the checks and the decode.
+- **Alternatives.** Accept `str` and skip the UTF-8 step (rejected: the byte-order mark and NUL rules would then depend on who decoded it); accept any buffer by copying it (rejected: the plan says the loader takes bytes, and a copy hides the caller's type error).
+- **Covering tests.** `test_t12_text_argument_must_be_bytes`.
+
+### D62 — Duplicate-key paths and the foreign-key rule
+
+- **What.** A repeated key reports `E_TWIN_SCHEMA` at the path of the object that repeats it: `$` at the root, `k` and `P.k` for members, `[i]` and `P[i]` for array items. The first such object in document order wins, an outer object before the objects inside it. A key is written into a path only when it fullmatches `[a-z][a-z0-9_]{0,31}`; below any other key every container reports the nearest ancestor reached through such keys.
+- **Why.** The error model reports an unknown or duplicate key at its parent path and never echoes a foreign key; the decoder's pairs hook replaces an object with a repeated key by one private marker, so an outer duplicate swallows any inner one and an iterative walk in document order finds the first marker.
+- **Alternatives.** Report the duplicated key itself (rejected: it is input text); report always `$` (rejected: the frozen paths name `pdu.header` and `[0].residual.data`); escape foreign keys into the path (rejected: still echoes them).
+- **Covering tests.** `test_t12_n18_text_duplicate_key_in_an_envelope`, `test_t12_n18_text_duplicate_key_in_an_entity_document`, `test_t12_n18_text_duplicate_key_order_and_foreign_keys`.
+
+### D63 — The loader's size and depth refusals are the two input-limit subclasses
+
+- **What.** Over 65536 bytes raises `Dis7InputTooLarge("$", ...)` with a message naming the length and the bound; text nested deeper than 16 containers raises `Dis7InputTooDeep("$", ...)`. Both carry `E_INPUT_LIMIT` and are raised before anything else looks at the content (size) and before the decoder (depth).
+- **Why.** A host catching the SDK's `InputTooLarge`/`InputTooDeep` sees the loader's refusals the same way as the adapter's guard; the size check first keeps a hostile payload's cost bounded, and the lexical depth scan first keeps the decoder from raising `RecursionError` on CPython 3.11 and 3.12.
+- **Alternatives.** A plain `Dis7Error(E_INPUT_LIMIT, ...)` (rejected: hosts that catch the SDK classes would miss it); measuring depth on the decoded document (rejected: the decoder can recurse past the interpreter limit first).
+- **Covering tests.** `test_t03_n20_text_65536_bytes_accepted_and_65537_refused`, `test_t03_n20_text_size_is_checked_before_everything_else`, `test_t03_n20_text_depth_16_accepted_and_17_refused`, `test_t03_n20_text_very_deep_text_raises_no_recursion_error`, `test_t03_n20_text_depth_is_checked_before_the_decoder`.
+
+### D64 — Integer literals over 4300 characters are refused by the loader itself
+
+- **What.** The decoder's integer hook refuses a literal longer than 4300 characters (a private constant) with `ValueError`, which the loader maps to `E_TWIN_SCHEMA` at `$`.
+- **Why.** 4300 is CPython's default integer-string limit; holding it in the module makes the refusal independent of the interpreter's `sys.set_int_max_str_digits` setting, so every supported interpreter refuses the same text.
+- **Alternatives.** Rely on `int()`'s own limit (rejected: it is process-wide and can be raised or disabled by a host); a smaller bound (rejected: no case asks for one, and the wire fields are all far shorter).
+- **Covering tests.** `test_t12_text_oversized_integer_literal`.
+
+### D65 — A released buffer and a lone-surrogate text are type errors at the root of the guard
+
+- **What.** The adapter's coded guard converts bytes-like input once with `bytes(raw)` inside a handler for `ValueError`, `TypeError` and `BufferError`, so a released `memoryview` is `E_INPUT_TYPE` at `$` before the SDK wrapper or the codec runs; text is measured with `surrogatepass`, so a `str` holding a lone surrogate is measured without a `UnicodeEncodeError` and then refused as `E_INPUT_TYPE` at `$` (over the bound it is `E_INPUT_LIMIT` first). D54 covers the codec alone; this extends the same rule to `to_cdm`, `validate_source` and `detect`, which answers False for a released view.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Letting the guard's `bytes(raw)` raise `ValueError` (rejected: only a `Dis7Error` may leave `to_cdm`); a strict UTF-8 measurement (rejected: it raises on a lone surrogate before the size can be judged).
+- **Covering tests.** `test_guard_measures_text_before_it_types_it` in `tests/test_cdm_dis7_adapter.py`.
+
+### D66 — `detect` is False over 4224 octets
+
+- **What.** For bytes-like input `detect` measures the size first (`nbytes` for a `memoryview`, `len` otherwise) and answers False above `MAX_PDU_BYTES` without consulting the header predicate, whose missing upper bound (D53) is closed here; for a dict it requires exactly the three envelope keys, a passing depth and cycle walk, and a 7/1/1 header of integers. The whole body sits inside one handler, so `detect` never raises.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Leaving the size to `to_cdm` (rejected: CR-28 asks `detect` to be False for over-size input, and the predicate alone answers True for a valid header followed by any number of octets).
+- **Covering tests.** `test_t03_n09_guard_refuses_4225_octets_in_every_octet_form` and `test_t03_n20_guard_refuses_a_cycle`; the full matrix is in the tests of R14 and R15.
+
+### D67 — The order of the structure checks at one object
+
+- **What.** At every object of an envelope (`E_TWIN_SCHEMA`) or a stored residual (`E_REPLAY_SHAPE`): not a dict is refused at the object's own path; then a key that is not a `str` of the allowed set at the object's own path, never naming the key; then each required member, absent, at the member's path in schema order; then each member's value in schema order. An array's type or length is reported at the array, an element at `[i]`, lowest index first. The walk follows the schema's order, never the caller's.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Missing before unknown, as `encode_pdu` does (rejected for the envelope: D-13 of the shared decisions orders unknown first); the caller's member order (rejected: diagnostics would depend on it).
+- **Covering tests.** `test_t03_n20_guard_refuses_seventeen_levels_and_admits_sixteen` (an unknown key at `$`); the per-member matrix is in the tests of R14 and R15.
+
+### D68 — The stage 7 and stage 8 paths
+
+- **What.** Stage 7 compares the checked twin with the decoded wire, the eight header members first and then the other twelve members in schema order, and refuses `E_TWIN_WIRE_MISMATCH` at `pdu.header.<name>`, `pdu.<field>`, `pdu.<array>` when the lengths differ, or `pdu.<array>[i]`; Python values are compared, so `7.0` equals `7` and the two zeros are equal. Stage 8 builds `TimeContext` from the envelope's strings (its `E_CONTEXT_TIME` at `time_context.instant` or `time_context.basis` passes through), then, when the adapter has a context, refuses `E_CONTEXT_CONFLICT` at `time_context.instant` for differing normalised instants and then at `time_context.basis` for differing bases compared verbatim. Octets with no adapter context are `E_CONTEXT_TIME` at `time_context`.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Comparing serialised JSON (rejected: it separates `25` from `25.0`); preferring the adapter's context on disagreement (rejected: a silent choice between two caller statements).
+- **Covering tests.** tests of R14 and R15.
+
+### D69 — The replay paths and the replay classification
+
+- **What.** `from_cdm` raises only the three replay codes, in six steps: `E_REPLAY_SHAPE` at `$` (not a list of exactly one Entity), at `[0].residual` (no residual block or a namespace other than `DIS`) and at `[0].residual.data` or a member path below it (the residual schema, with the replay-only rows); `E_REPLAY_PROVENANCE` for the stored context, at `[0].residual.data.session`, `.synthetic`, `.time_context.instant`, `.time_context.basis`, `.source_hash`, with a `TimeContext` refusal re-coded at the path it names and an unnormalised stored instant at `.time_context.instant`; `E_REPLAY_CHANGED` at `[0].residual.data.wire_hex` when the stored wire fails the codec or no longer maps to an Entity, and at `[0].residual.data.pdu.<difference>`; `E_REPLAY_PROVENANCE` at `[0].source.<name>` in the frozen field order and then `[0].source_ids`; `E_REPLAY_CHANGED` at `[0].<field>` in `Entity.model_fields` order. A codec or mapping refusal inside replay is re-coded, never passed through. The residual block is also refused at `[0].residual` when it is not the model's residual type, which a model with assignment validation cannot normally hold. An Entity whose structure bypassed validation (`model_copy(update=...)`, `model_construct`) is refused before any attribute is read: `E_REPLAY_SHAPE` at `[0].<field>` for a model field absent from it (in `Entity.model_fields` order), at `[0].residual` for a residual without its namespace or data, and at `[0].source` for provenance that is not a complete `SourceRef`.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Passing the codec's code through (rejected: CR-15 classifies an undecodable wire as a changed record); a generic dump-and-compare (rejected: §4.5 forbids it, and it hides sub-millisecond edits).
+- **Covering tests.** `test_replay_smoke_refuses_count_edit_and_foreign_session`; the full matrix is in the tests of R14 and R15.
+
+### D70 — The signatures of the five seams
+
+- **What.** Five top-level functions, each called by its bare name from the adapter's methods and never bound as a default, a class attribute or an alias: `_assemble_position(lat_deg, lon_deg, hae_m)` returns an ESTIMATED `Position`; `_affiliation(force_id)` returns `UNKNOWN`; `_state_instant(adapter, context)` slices the normalised instant into a UTC-aware `datetime` and reads no clock; `_replay_bytes(wire_hex)` returns `bytes.fromhex(wire_hex)`; `_canonical_equal(provided, expected)` is true when the types are identical and the values equal.
+- **Why.** PLAN.md §4.3 to §4.5 leave it open.
+- **Alternatives.** Methods on the class (rejected: a mutation harness replacing a module attribute must reach every caller); bound defaults (rejected: they freeze the original at definition time).
+- **Covering tests.** `test_t01_a01_vector_bytes_equal_expected` (the north-pole vector kills a swapped `_assemble_position`) and `test_replay_smoke_refuses_count_edit_and_foreign_session` (kills an always-true `_canonical_equal`).
+
+### D71 — How the holding-state sentences of `### Unreleased` were put into the past tense
+
+- **What.** Besides the four places the run file names, the paragraph on `dis7_host.py` (R11) also said that nothing is registered; it now says nothing was registered at that step. In the codec paragraph the clause after the colon reads "there was no adapter class for `dis7`", and in the paragraph on `adapters/dis7.py` the words naming `Dis7Adapter` joined the sentence saying what the module holds, while the closing sentence reads "There was no adapter class in the module at that step."
+- **Why.** The section may say nowhere that nothing is registered, and a sentence in the present tense saying there is no adapter class would be false once the class landed.
+- **Alternatives.** Changing only the words `nothing is registered` (rejected: it leaves a false present-tense clause beside them); deleting the sentences (rejected: they record what each step did).
+- **Covering tests.** The `### Unreleased` step of the exit check; `tests/test_cdm_release.py` for the count clause.
+
+### D72 — The host-side shape paths of `replay`
+
+- **What.** Before anything is bound, the `replay` command refuses as `E_REPLAY_SHAPE`: more or fewer than one Entity at `$`; no residual or a namespace other than `DIS` at `[0].residual`; a stored session that is not a string or that `validate_session` refuses at `[0].residual.data.session`; a stored classification that is not a boolean at `[0].residual.data.synthetic`. A loader `E_TWIN_SCHEMA` is re-coded as `E_REPLAY_SHAPE` with its own path and message, a pydantic validation failure or a document that differs from the models' own dump is `E_REPLAY_SHAPE` at `$` with one fixed message.
+- **Why.** The command binds session and classification from the stored residual, so it has to read them before `from_cdm` can check them; the four paths are the ones `from_cdm` uses for the same defects (DECISIONS D-16), so a caller sees one path per defect whichever layer finds it.
+- **Alternatives.** Binding from whatever is stored and letting `from_cdm` refuse it (rejected: a non-string session would reach the constructor and be refused as `E_CONTEXT_SESSION`, a constructor code for a data defect); new host-only paths (rejected: two paths for one defect).
+- **Covering tests.** `test_t15_a12_replay_refusals_exit_3` (`residual null`, `residual namespace HLA`) and `test_t15_a12_replay_refuses_each_absent_null_member`.
+
+### D73 — `_same_json` lets a boolean equal only a boolean
+
+- **What.** The host's equality of parsed JSON values treats `true` and `false` as equal only to a boolean; integers and floats compare by value; objects need equal key sets and arrays equal lengths; anything else needs the same type and value.
+- **Why.** Python's `True == 1` would let a document spelling `source.synthetic` as `1` pass the canonical-form check after pydantic coerced it, and the self-test would accept a file whose flag changed type.
+- **Alternatives.** `==` on the parsed values (rejected: the coercion above); comparing serialised text (rejected: it depends on member order and number spelling the canonical form does not fix in the input).
+- **Covering tests.** `test_t15_a12_replay_refusals_exit_3` (`synthetic as 1`) and `test_t15_a12_self_test_passes`.
+
+### D74 — The two `synapse-dis7:` diagnostics
+
+- **What.** The two I/O refusals, both exit 4, are one stderr line each: `synapse-dis7: cannot read --input: <reason>` and `synapse-dis7: cannot write output: <reason>`, where the reason is the operating system's `strerror` or, for a file that is not regular, the words `not a regular file`. Every data and context refusal is instead the `Dis7Error`'s own `CODE at PATH: message` line.
+- **Why.** An I/O failure carries no error code of the contract, and the command's name as a prefix separates it from a coded refusal for a caller who reads stderr; the path the caller gave is not repeated, so nothing from the input is echoed.
+- **Alternatives.** Coding them as `E_INPUT_TYPE` (rejected: the contract's codes describe data, and exit 4 is a different class); a traceback (rejected: a closed pipe would end in exit 120).
+- **Covering tests.** `test_t15_a12_unreadable_input_exits_4` and `test_t15_a12_broken_pipe_exits_4`.
+
+### D75 — The `--version` format
+
+- **What.** Exactly three lines: `adapter dis7 1.0.0` from `Dis7Adapter.name` and `Dis7Adapter.version`, `package synapse-cdm <PACKAGE_VERSION>` from `synapse_cdm.version`, and `specification SC DIS7 SPEC 001 1.0` from the module constants `SPECIFICATION_ID` and `SPECIFICATION_VERSION`.
+- **Why.** The contract asks for adapter, package and specification identifiers; one `kind name version` line each is readable and splits on spaces except for the specification id, which is the last line. The package version is imported, never typed and never read from installed metadata, which an editable install can leave stale (F11, CR-34).
+- **Alternatives.** One line (rejected: harder to read and to parse); a JSON object (rejected: `--version` output is text by convention).
+- **Covering tests.** `test_t15_a12_version` and `test_t15_a12_broken_pipe_exits_4` (`version`).
+
+### D76 — The pin block is inserted as text, and the record keeps its row layout
+
+- **What.** `independent_reading_tool` is appended to `spec/dis7_pin.json` as text before its closing brace, indented two spaces like the other blocks; the one-line `file`/`sha256`/`bytes` rows and the one-line `adapter` object stay as they were.
+- **Why.** The run allows one new key and no change to an existing row; re-serialising the whole record with `json.dumps(indent=2)` would have rewritten every row onto five lines, a 129-line diff for a 13-line change, although the parsed value is the same.
+- **Alternatives.** Re-serialising the record (rejected: it moves every row in the diff); a second record file (rejected: `spec/` may hold only the generator and the `*_pin.json` and `*_terms.json` records, and the run names this record).
+- **Covering tests.** `test_t16_a13_pin_record_states_the_independent_reading`, `test_t16_a13_packaged_vectors_are_the_recorded_opendis_bytes` (the rows still carry their digests) and the pin tests of `tests/test_cdm_dis7_schema.py`.
+
+### D77 — How `resolve` words each step, and one child answers a batch
+
+- **What.** `tests/dis7_reference_support.resolve` raises `Blocked` with: `hook` — `SYNAPSE_CDM_OPENDIS_DIR is not set`; `directory` — the directory is missing, or holds no `opendis/dis7.py`; `record` — no `.git`, or `git rev-parse HEAD` cannot run or exits non-zero; `checksum` — HEAD is another commit, or `git status --porcelain` prints anything. A wrong commit and a dirty tree are both `checksum`, the step `normative_binding` uses for a resource whose content differs from the pin. `run_opendis` answers a list of requests in one child, so `write_exercise` starts one interpreter for its six requests.
+- **Why.** The wording follows `normative_binding.resolve` (`<hook>=<value> is not a directory`); one child per batch keeps OpenDIS out of the test process without an interpreter start per comparison.
+- **Alternatives.** A separate step name for a dirty tree (rejected: every step name must be a member of `normative_binding.STEPS`); one child per request in `write_exercise` (rejected: six starts for one specification).
+- **Covering tests.** `test_t16_a13_blocked_reasons` (`hook`, `directory`, `record`), the live tests through `support.checkout()`, and `test_t16_a13_exercise_files_agree`.
+
+### D78 — The generator's per-PDU line reports the built length and the packaged digest
+
+- **What.** Each line of `build_fixtures.py` reads `<stem>.dis: <n> bytes, sha256 <hex>: equal` (or `DIFFERENT`), where `<n>` is the length of the PDU OpenDIS built and `<hex>` is `evidence.digest` of the packaged file.
+- **Why.** The digest names the file the comparison is against, which is the pinned fact; the built length is what shows a missed length or record at a glance when the two differ.
+- **Alternatives.** The packaged length (rejected: equal to the pin row and silent about what was built); the digest of the built bytes (rejected: the generator imports no digest module and the run names `evidence.digest(path)`).
+- **Covering tests.** `test_t16_a13_generator_script_reproduces_the_packaged_vectors`; the verifier's scratch-copy run with `25.0` changed to `26.0` (exit 1, `DIFFERENT`).
+
+### D79 — The restamp mutant patches the call site of `_replay_bytes`
+
+- **What.** The `restamp_timestamp` row of `gates/dis7_mutation.py` replaces the one line `return _replay_bytes(stored_wire)` in `from_cdm` with a return of the same bytes whose octets 4 to 7 are the DIS encoding of the stored instant's position in its hour, `(int(s * 2**31 / 3600) << 1) | 1` big-endian, read from `context.instant` (minutes, seconds, milliseconds).
+- **Why.** `_replay_bytes(wire_hex)` cannot see the instant, and the call site is the one place where the stored instant is in scope; the encoding of the real instant is the fault the case names, and on every vector it equals the octets already there, so the mutant is blind exactly where the plan says naive killers are.
+- **Alternatives.** Restamping with the fixed octets `40000001` inside `_replay_bytes` (rejected: allowed only if the call site could not be patched, and it is a weaker model of the fault).
+- **Covering tests.** `test_acceptance_sweep[t09_a07]` and `test_t09_a07_years_0001_and_0999_are_dumped_with_four_digits` caught it; `test_t16_a14_every_fault_is_detected_and_the_control_is_green` holds the row to DETECTED.
+
+### D80 — The receipt-time and stale-PDU mutants still call the original seam
+
+- **What.** The two `receipt_time_*` rows and `stale_pdu_after_edit` wrap their seam like the others: the mutated function calls `<name>_original(...)`, discards its result and returns the adapter clock's `now()`, the wall clock in UTC, or `True`.
+- **Why.** The wrap form keeps every row the same shape (the `def` line as the anchor, the original renamed below it) and keeps whatever the original checks on its arguments, so the only change a row makes is the fault it names.
+- **Alternatives.** Replacing the body (rejected: the run asks for wraps, never body edits); not calling the original (rejected: it leaves the original as dead code with a different behaviour on bad arguments).
+- **Covering tests.** `test_t16_a14_every_patch_anchor_occurs_exactly_once` and the slow test of `tests/test_cdm_dis7_mutation.py`.
+
+### D81 — The benchmark's retained-growth allowance and reduced workload
+
+- **What.** `gates/dis7_benchmark.py` judges retained growth against `RETAINED_ALLOWANCE_BYTES = 65536` traced bytes between the end of a first and of a second identical pass, after `gc.collect()`; `--quick` runs 2000 calls after 200 warm-up calls, the workload the always-on test runs.
+- **Why.** Requirement R23 makes the absence of unbounded retained state mandatory but names no figure; 64 KiB is far below what a per-call leak of even one small object leaves over 2000 calls (2000 × 64 payload bytes is already 128000), yet absorbs interpreter-level one-off allocations such as a cache filled on the second pass. The reduced workload keeps the test well under a few seconds while still exercising both inputs and the traced passes.
+- **Alternatives.** A zero allowance (rejected: one-off interpreter allocations would make the verdict flaky); a figure relative to the call count (rejected: a constant is what the verdict and the test can both state); running the full workload in the test (rejected: minutes on every test run).
+- **Covering tests.** `test_r23_workload_sizes_are_the_required_ones`, `test_r23_retained_growth_sees_a_leak`, `test_r23_quick_run_has_no_retained_growth`, `test_r23_verdict_ignores_timings`.
+
+### D82 — The benchmark finds the seed through the imported package
+
+- **What.** `seed_pdu()` reads `fixtures/dis7/vectors/equator_eastbound.dis` next to `sys.modules["synapse_cdm"].__file__`, the package that `from synapse_cdm import version` has already imported, so the gate's imports stay the two named package imports and the standard library.
+- **Why.** The seed must be the bytes of the package under test, wherever it is installed; the module object is present once any submodule is imported.
+- **Alternatives.** A separate `import synapse_cdm` (rejected: the run lists the gate's imports exactly); a path relative to the gate file (rejected: it would read the source tree even when another installation is under test).
+- **Covering tests.** `test_r23_quick_run_has_no_retained_growth` (fixture sizes and record counts) and `test_r23_maximal_pdu_is_case_a02`.
+
+No retained state was found in the DIS7 modules: the full and the reduced workloads both reported no retained growth, so no code was changed for it.
+
+### D83 — The `synapse-dis7` check reports stderr only, and locates its inputs in text mode
+
+- **What.** `check_dis7_script` raises `Failed` through one local helper that names the step, the exit code and at most the last 800 characters of stderr decoded with `errors="replace"`; it never quotes stdout. Locating the packaged vectors and reading `PACKAGE_VERSION` go through the text-mode `run` and `must`, as `check_console_scripts` locates its golden.
+- **Why.** The script's stdout is JSON or PDU octets; a report that quotes it would carry undecodable bytes. The two locating calls print one line of text each, so the existing helpers fit them.
+- **Alternatives.** Quoting a hex digest of stdout on failure (rejected: the run file forbids stdout in the message); `run_bytes` for the locating calls too (rejected: the run file asks for the same route as the existing golden lookup).
+- **Covering tests.** `test_t15_a12_the_dis7_script_check_passes_against_this_environment`, `test_t15_a12_the_gate_reads_a_scripts_output_as_bytes`.
+
+### D84 — The coverage paragraph carries the profile sentence in lower case
+
+- **What.** The DIS section's first sentence continues with ", and the profile is the Entity State subset only (…)" rather than opening a new sentence with "The profile".
+- **Why.** The run file requires those exact words, and a capitalised "The" would not be them; the order it asks for (residual stance, then profile) is kept.
+- **Alternatives.** A separate sentence beginning "The profile" (rejected: not the exact words).
+- **Covering tests.** `tests/test_cdm_format_coverage.py` (paths of the CDM column) and the run's exit check, which greps the section.
+
+### D85 — The release-notes roster paragraph keeps the replaced sentences unwrapped
+
+- **What.** The replacement text in `RELEASE_NOTES.md` sits on one line inside the paragraph instead of being re-wrapped to the file's width.
+- **Why.** Tests and exit checks read that file's raw text for whole sentences (the test name, the `adapters registered` sentence, the **post-3.1.1** sentence); a line break inside one would hide it.
+- **Alternatives.** Re-wrapping to the file's column (rejected for that reason).
+- **Covering tests.** `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry`.
+
+### D86 — The declarations-table clause for `dis7` names the codec constant
+
+- **What.** The `dis7` row of the declarations table in `parser-safety.mdx` reads "one Entity State PDU of this subset is 144 octets plus at most 255 variable parameter records of 16 octets (`dis7_codec.MAX_PDU_BYTES`)".
+- **Why.** It is the manifest's `max_input_bytes` source, shortened to one clause, and the neighbouring rows cite the module constant that holds the figure in the same form.
+- **Alternatives.** Quoting the manifest's whole source sentence (rejected: the table holds one clause per row).
+- **Covering tests.** `tests/test_cdm_prose_counts.py` (the implementation-cap count of that page) and `tests/test_cdm_input_bounds.py`.
+
+### D87 — One ledger quotation is a shortened contiguous part of the printed text
+
+- **What.** The `TREE_EXEMPT` row for the ledger's second `CONFORMANT from the installed wheel` reading quotes the text from "and read" on, dropping the run's time-of-day range that the sweep printed before it.
+- **Why.** The pipeline forbids a time of day in any tracked file; the run file allows a contiguous part of the printed text that still holds the whole count phrase.
+- **Alternatives.** Pasting the printed text byte for byte (rejected: it carries a time of day).
+- **Covering tests.** `tests/test_cdm_prose_counts.py::test_every_tree_exemption_still_points_at_prose_that_is_there` and `test_no_tracked_file_states_an_adapter_count_that_is_neither_the_roster_nor_ruled`.
+
+### D88 — D85's quotation of a release-notes sentence names it without its count
+
+- **What.** D85's "Why" names the `adapters registered` sentence instead of quoting it with its number.
+- **Why.** This record is live and states no roster count; the sentence it names is the released version's, and quoting its number here was a stray of the tree-wide sweep.
+- **Alternatives.** A `TREE_EXEMPT` row for this file (rejected: a live file is never exempted).
+- **Covering tests.** `tests/test_cdm_prose_counts.py::test_no_tracked_file_states_an_adapter_count_that_is_neither_the_roster_nor_ruled`.
+
+### D89 — The terms record is a reading by a tool that does not expose the HTTP status
+
+- **What.** `fixtures/dis7/spec/dis7_terms.json` is written in the reading form, from one WebFetch of the IEEE page for IEEE 1278.1-2012: `http_status` is null and `notes` says the tool did not expose it, `quoted` carries only the words the tool returned (title, status, inactivation date, `Purchase`, `Access via Subscription`), and the maintainer confirmation reads PENDING.
+- **Why.** The run allowed exactly one fetch, and the result named the standard, so it counts as a reading; the earlier curl attempt from this machine met a challenge page, which the tool did not.
+- **Alternatives.** The no-reading form (rejected: a page was read); a second fetch by curl to obtain a status (rejected: one fetch only).
+- **Covering tests.** `tests/test_cdm_packaging.py` (the record ships as package data) and the run's exit check of the terms record; the maintainer's confirmation is the open item under `## Remaining gaps`.
+
+### D90 — The completion checks treat a docstring-only function as empty
+
+- **What.** `empty_function_bodies` flags a function whose body after a leading docstring is empty, only `pass` or `...`, and any `raise NotImplementedError`; classes are never flagged. The claims guard splits on `.`, `;`, `|` and blank lines and accepts a negation word anywhere before the phrase in the same sentence.
+- **Why.** The run's rule, stated as functions of source text so the checks are witnessed refusing before they judge the tree.
+- **Alternatives.** Flagging only `pass` (rejected: a docstring-only function is as unfinished).
+- **Covering tests.** `tests/test_cdm_dis7_trace.py::test_completion_checks_can_fail`, `tests/test_cdm_dis7_trace.py::test_completion_claims_guard_can_fail`.
+
+### D91 — A str subclass is refused for the session, the instant and the basis
+
+- **What.** `validate_session`, the instant check and the basis check of `TimeContext` require the exact type `str` (`type(value) is not str`), so an `enum.StrEnum` member, a `(str, Enum)` member or any other subclass of `str` is refused with the code and path a non-string gets (`E_CONTEXT_SESSION` at `session`; `E_CONTEXT_TIME` at `time_context.instant` or `time_context.basis`). `validate_session` still returns the very object it was given (D-08).
+- **Why.** The identity is derived from the characters, and a subclass can format differently (`Sess.ALPHA`) or lie about its length and encoding; the replay gate already requires the exact type, so an accepted subclass gave an Entity the same adapter could not replay (final review F-01).
+- **Alternatives.** Converting the value with `str(value)` (rejected: D-08 requires `validate_session` to return the object it was given, and `str()` of a mixin enum member is its name, not its value).
+- **Covering tests.** `tests/test_cdm_dis7_time_identity.py::test_t09_session_refuses_str_subclasses`, `::test_t09_time_context_refuses_str_subclasses`; the three `session_str_*` rows of `test_constructor_refuses_each_context_defect`.
+
 ## Frozen contract
 
 ### Public API
@@ -362,15 +585,19 @@ Two traps make naive killers blind, so the killer tests must avoid them: every v
 
 ## Optional-extension register
 
-| Extension | Why it does not alter the mandatory profile |
-| --- | --- |
-| `parse_json_text`, a public host loader | Cases N18 and N20 need an API for envelope text and the contract names none (CR-11); it only adds refusals. |
-| `Dis7InputTooLarge`, `Dis7InputTooDeep` | Both are `Dis7Error` with `E_INPUT_LIMIT`; the second base class only lets code that catches the SDK's classes see the same refusal. |
-| Sentinel defaults for `session` and `synthetic` | Omission still fails, as a coded `Dis7Error` instead of `TypeError` (CR-10); there is no usable default. |
-| Optional `--session`, `--synthetic`, `--live` on `replay` | Replay binds both from the stored residual; a flag is only asserted against it (CR-17). |
-| `Adapter.fixture_instance`, Adapter API 3.1.0 | Additive; the default is the previous construction; the DIS7 override serves the packaged fixtures only and refuses `synthetic=False` (CR-21, D1). |
-| `times.render` four-digit year | Years 1000 to 9999 print as before; smaller years gain zero padding (CR-32, D7). |
-| `evidence.digest_bytes` | A new function, existing ones untouched; it keeps hash imports out of the DIS7 adapter modules (D2). |
+| Extension | Why it does not alter the mandatory profile | State |
+| --- | --- | --- |
+| `parse_json_text`, a public host loader | Cases N18 and N20 need an API for envelope text and the contract names none (CR-11); it only adds refusals. | delivered |
+| `Dis7InputTooLarge`, `Dis7InputTooDeep` | Both are `Dis7Error` with `E_INPUT_LIMIT`; the second base class only lets code that catches the SDK's classes see the same refusal. | delivered |
+| Sentinel defaults for `session` and `synthetic` | Omission still fails, as a coded `Dis7Error` instead of `TypeError` (CR-10); there is no usable default. | delivered |
+| Optional `--session`, `--synthetic`, `--live` on `replay` | Replay binds both from the stored residual; a flag is only asserted against it (CR-17). | delivered |
+| `Adapter.fixture_instance`, Adapter API 3.1.0 | Additive; the default is the previous construction; the DIS7 override serves the packaged fixtures only and refuses `synthetic=False` (CR-21, D1). | delivered |
+| `times.render` four-digit year | Years 1000 to 9999 print as before; smaller years gain zero padding (CR-32, D7). | delivered |
+| `evidence.digest_bytes` | A new function, existing ones untouched; it keeps hash imports out of the DIS7 adapter modules (D2). | delivered |
+| An implementation in another language | No second implementation is part of this delivery; Python is the only one. | not delivered |
+| `detect` reading an envelope's header | A dict is judged by its PDU header alone, so `detect` stays cheap, bounded and never raises (CR-28). | delivered |
+| A network listener | The adapter and `synapse-dis7` read bytes the caller supplies and open no socket. | not delivered |
+| An adapted command spelling | The command is spelled `synapse-dis7` with the four commands of the contract and no alias. | not delivered |
 
 ## Sequencing deviations
 
@@ -381,7 +608,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 ### R02 — wp1a-vendor
 
 - `.gitattributes`: appended the DIS 7 block (blank line, 4-line comment, `*.dis -text -diff`, `packages/cdm/synapse_cdm/fixtures/dis7/vectors/** -text`, `packages/cdm/synapse_cdm/fixtures/dis7/contract/** -text`) verbatim per Deliverable 1, before any vendored file was staged.
-- `pkg/fixtures/dis7/vectors/`: the 16 bundle files (`index.json` plus 5 files each for `equator_eastbound`, `north_pole_stationary`, `unprojectable_with_extensions`) copied with `cp`, `cmp`-identical to `/Users/admin/Documents/cc/dis7-run/bundle/vectors`.
+- `pkg/fixtures/dis7/vectors/`: the 16 bundle files (`index.json` plus 5 files each for `equator_eastbound`, `north_pole_stationary`, `unprojectable_with_extensions`) copied with `cp`, `cmp`-identical to `RUN/bundle/vectors`.
 - `pkg/fixtures/dis7/contract/`: `acceptance-cases.json` and the five `dis7-*.schema.json` files, `cmp`-identical to the bundle; `cdm-entity.schema.json` deliberately not vendored (confirmed absent).
 - `PROVENANCE.json` written in both `vectors/` and `contract/`: `synapse.fixture-provenance/v1`, 16 and 6 rows respectively, each `synthetic: true` / `classification: PUBLIC`, `origin` text copied verbatim from the run file, `standard_ref` `dis7/spec/dis7_pin.json`, rows sorted by `file`.
 - `pkg/fixtures/dis7/spec/dis7_pin.json`: built to the given structure; `manifest_sha256` confirmed against `shasum -a 256 bundle/MANIFEST.json`; all 22 `vectors.files`/`contract.files` rows carry the bundle's `sha256`/`bytes`; no node anywhere carries a `local_path` key.
@@ -395,7 +622,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 - `pkg/MIGRATIONS.md` `### Unreleased`: the `**What moved inside the distribution: ...**` paragraph replaced with the two given paragraphs (27-file count, the "THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER" paragraph), keeping "no release" and "3.1.1"; `git diff --name-only v3.1.1 -- packages/cdm | wc -l` prints 27.
 - No edit to `tests/test_cdm_ordinals.py`; no ordinal-claim phrase naming this adapter's number was written anywhere (`git grep` confirms empty); no roster-count phrase was introduced.
 - All 33 files staged by explicit path; `git diff --quiet` true; `git ls-files --others --exclude-standard` empty; HEAD unchanged at `c4bba1b6ebfdfe956f6efc2b3a81a04db2b4bb5b`.
-- Exit check `bash /Users/admin/Documents/cc/dis7-run/checks/R02.sh` ends `EXIT-CHECK: PASS`, 0 blocked steps (see `logs/R02.exit.log`).
+- Exit check `bash RUN/checks/R02.sh` ends `EXIT-CHECK: PASS`, 0 blocked steps (see `logs/R02.exit.log`).
 - `docs/dis7-implementation.md` does not exist yet (it is introduced in R03 per the run file's Paths section), so step 3 of "How to finish this run" does not apply this run.
 
 ### R03 — wp1a-freeze
@@ -406,7 +633,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 - Wrote `tests/test_cdm_dis7_trace.py` (10 tests): the two-way ratchet (`scan_source`, `scan_tree`, `evidence_problems`, `bound_ids`, `ratchet_problems`) over the contract's 38 cases and R01 to R30; `PENDING` holds the 67 ids this run does not bind, and `R_EVIDENCE` binds R21 to the six tests above. No id came back already bound, so none was removed from `PENDING`.
 - Bookkeeping: the `CLONE_ONLY_SITES` row for this record in `tests/test_cdm_consumer_path.py`; `test_cdm_dis7_codec.py` added to `PACKAGE_ONLY_TESTS` and `test_cdm_dis7_trace.py` to `REPO_BOUND_TESTS` in `gates/wheel_install.py`; `pkg/MIGRATIONS.md`'s `### Unreleased` raised to 28 files with `dis7_codec.py` named.
 - All seven files staged by explicit path; `git diff --name-only v3.1.1 -- packages/cdm | wc -l` prints 28.
-- Exit check `bash /Users/admin/Documents/cc/dis7-run/checks/R03.sh` and its result are reported in `reports/R03-runner.md`.
+- Exit check `bash RUN/checks/R03.sh` and its result are reported in `reports/R03-runner.md`.
 
 ### R04 — wp1b-hook
 
@@ -415,7 +642,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 - Added `harness.overrides_fixture_instance` and `harness.fixtures_refused_message`, the `--fixtures` refusal in the three entry points, the exit-2 handling of a hook refusal in `harness.main`, `suite.main` and `suite._sweep` (D48 to D50), and the packaged-fixture paragraph of `suite.run`'s docstring.
 - Wrote the helper `tests/fixture_instance_double.py` (`RequiresContext`, `ContextDouble`, a coded outer guard) and `tests/test_cdm_fixture_instance.py`, eighteen test functions, added to `PACKAGE_ONLY_TESTS`.
 - `pkg/MIGRATIONS.md`'s `### Unreleased` raised to 32 files with `adapter.py`, `harness.py`, `suite.py` and `evidence.py` named. No bump ruling (R06), no `ADAPTER_API_VERSION` change (R05).
-- Exit check `bash /Users/admin/Documents/cc/dis7-run/checks/R04.sh` and its result are reported in `reports/R04-runner.md`.
+- Exit check `bash RUN/checks/R04.sh` and its result are reported in `reports/R04-runner.md`.
 
 ### R05 — wp1b-sdk
 
@@ -469,63 +696,138 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 ### R11 — wp4-loader
 
-Not started.
+- `pkg/dis7_host.py` is new: the host boundary's strict JSON text loader `parse_json_text` with `MAX_JSON_BYTES` and `MAX_JSON_DEPTH`, checking type, size, NUL, strict UTF-8, byte-order mark and lexical depth before the decoder, which is handed the decoded text with four hooks, then walking the document for a repeated key. No command line, no file access. Decisions D61 to D64.
+- `tests/test_cdm_dis7_replay.py` is new with the frozen helpers and eighteen loader tests: the duplicate-key tests bind N18 (T12) and the bound tests bind N20 (T03); the token, encoding, number and surface tests are named `test_t12_text_` and bind nothing. It is listed in `PACKAGE_ONLY_TESTS`.
+- The trace table's `PENDING` lost N18, N20 and R12. The table has no notion of half a case: the dict half of N18 and further native N20 tests arrive in R12 and R14 under the same case ids.
+- `### Unreleased` names `dis7_host.py` in its file list, its count clause moved by one, and it gained the paragraph on the loader.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
+- Left for R16: the command line, file reads, hashing and the replay command's re-coding of a loader `E_TWIN_SCHEMA` (CR-27).
 
 ### R12 — wp4-adapter
 
-Not started.
+- `pkg/adapters/dis7.py` now holds `Dis7Adapter`, registered as `dis7`: the registry holds twenty. It adds `FIXTURE_SESSION`, `FIXTURE_TIME_CONTEXT`, `MAX_ENVELOPE_DEPTH`, the five seams, the envelope and residual structure checks, `_twin_difference`, the coded guard installed outside the SDK wrapper, the constructor with its context checks, `fixture_instance`, `to_cdm` for octets and envelopes, the canonical mapping with stage 10, `from_cdm` in six steps, `detect` and `validate_source`. The declarations follow PLAN.md §4.9. Decisions D65 to D70.
+- `tests/dis7_support.py` gains `fixture_adapter`.
+- `tests/test_cdm_dis7_adapter.py` is new with the smoke tests (vectors on both paths, byte-exact replay, constructor defects and order, `fixture_instance`, the guard, the declarations); its case labels are A01, N09 and N20 only. It is listed in `PACKAGE_ONLY_TESTS`.
+- The trace table and `### Unreleased` are unchanged: no new case is bound and no file under `packages/cdm` is added.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
+- Left for R13: the packaged fixtures, goldens, the malformed set and the ordinal flip, so the harness, ordinal and roster-bookkeeping tests stay red until then. Left for R14 and R15: the replay, envelope, `detect` and `validate_source` matrices and the stage 10 test.
 
 ### R13 — wp4-fixtures
 
-Not started.
+- `fixtures/dis7/` gains its top level: the six harness fixtures (`<stem>.dis` and `<stem>.parsed.json` for the three stems, `cp` copies of `vectors/<stem>.dis` and `vectors/<stem>.envelope.json`), `README.md` and `PROVENANCE.json`; `golden/` with the six goldens the harness wrote with `--update-golden`, each equal to `vectors/<stem>.expected.json` as sorted JSON text; and `malformed/` with five refusal payloads (`wrong_protocol_version.dis`, `pdu_type_67.dis`, `truncated_by_one_byte.dis`, `one_trailing_byte.dis`, `envelope_unknown_key.json`), its `README.md` and `PROVENANCE.json`. No adapter or codec repair was needed: every harness column read as planned on the first run and every payload was refused with the planned code and path.
+- `FORMAT_COVERAGE.md`: the `dis7` ordinal row reads `shipped`; the paragraph under the table is the baseline text again, with two lines saying the second Phase 1 row has closed.
+- `tests/test_cdm_harness.py`: `dis7` moved from `PLANNED_FIXTURE_DIRS` to `SHIPPED_FIXTURE_DIRS`, and the comment above the planned map says so. `tests/test_cdm_ordinals.py`: `SWEPT` lists the fixture README. No earlier DIS 7 test asserted the holding state, so no existing assertion changed.
+- `tests/test_cdm_dis7_schema.py` gains four tests (byte identity of the top-level fixtures, the directory layout, the nesting bound, the two provenance records); `tests/test_cdm_dis7_adapter.py` gains the golden test, the harness test under two clocks, the malformed-set test and one test per payload, with the `REFUSALS` table. The cases bound are A01, N01, N02, N06 and N07; the trace table is unchanged.
+- `.gitattributes` holds the top-level envelope twins and the malformed JSON out of line-ending conversion.
+- `### Unreleased` names the new files, its count clause moved by the new files, and the holding-state sentences of earlier steps are now past tense and name `Dis7Adapter` (D71).
+- The harness reads `6 passed, 0 failed` under the default clock and under `--now 2031-01-02T03:04:05Z`; the conformance run with `--require A,B,C,D,E,F,G,H,J,K,L,N,O` exits 0. The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12. The registry holds twenty.
+- Left for R14 to R22: the replay and envelope matrices, the acceptance sweep, the CLI and the roster bookkeeping (manifest, support matrix, count prose) that stays allowlisted debt until WP6.
 
 ### R14 — wp4-replay-tests
 
-Not started.
+- `tests/test_cdm_dis7_replay.py` gains forty tests and their helpers. T11 replays through `Dis7Adapter.from_cdm`: byte-exact replay of the three vectors on both paths, one refusal per canonical field (N15), per `source` field, per scoped identity edit and per stored or constructor context member (N16), the wrong-shape inputs (N17), the residual shape gate, cyclic and very deep residuals, single-view edits, the three wire and view pairs at octets 1, 17 and 88 (CR-22), the check order under two defects and an unchanged argument. T12 drives the envelope structure through `to_cdm(dict)`: unknown, missing, short, long, wrongly typed, boolean, out-of-range and non-finite members (the dict half of N18) and a twin that disagrees with the wire at every member (N19). T03 holds the native half of N20: seventeen levels of each container kind, cycles and shared references measured at their deepest use.
+- No defect was exposed: every new test passed against `adapters/dis7.py` and `adapters/dis7_codec.py` as R12 left them, so neither module changed.
+- The module's existing `_depth` helper now also counts a `tuple` as a container, which the native depth rows need; the loader tests read the same depths, as JSON text never yields a tuple.
+- The trace table's `PENDING` lost N15, N16, N17 and N19; no requirement followed.
+- `### Unreleased` and the wheel-gate lists are unchanged: no file under `packages/cdm` moved and no test module was added.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12.
+- Left for R15: the acceptance sweep, emitted-output schema validation and the remaining T09, T10 and T13 to T15 tests.
 
 ### R15 — wp4-acceptance
 
-Not started.
+- `tests/test_cdm_dis7_adapter.py` gains the acceptance sweep: three item kinds (`Accept`, `Refuse`, `RefuseConstruct`), one runner and the builder table `SWEEP_BUILDERS` with its count table `SWEEP_COUNTS`, 28 keys, one per case whose operation reaches the adapter (A01 to A11, N01 to N09, N11 to N14, N21, N36, N48, N72). Every accepted item also validates against `dis7-entity.schema.json`, replays byte-exact and reads `[]` from `validate_source`; every refusal asserts code and path, that nothing was returned and the one `validate_source` string.
+- The same module gains the named tests: the index walk (R25), T09 (N12, N14), T10 (A08 over every force ID and entity kind, the opaque-field rule of R17), T13 (A10: no socket, no clock, an unchanged harness report under another `--now`, three hash seeds in child processes, member order, eight parallel instances, no mutation or aliasing, the import and call scan) with the three R22 tests, T14 (A11 and N21, the SDK CLI refusals, the four note shapes, a 1024-character basis, years 0001 and 0999, explicit nulls), and T15's SDK half with the `validate_source` and `detect` matrices, the stage 10 test (CR-09) and the bracket-leading and refused-format samples.
+- `tests/test_cdm_dis7_schema.py` gains four tests: emitted Entities against the profile and the published Entity schema, emitted residuals and the envelopes rebuilt from them, the oracles' red half, and the stage 2 differential over 106 envelopes, whose only divergences are the classes of CR-03 and CR-05.
+- The trace table's `PENDING` lost N12, N14, A08, A09, A10, A11, N21 and R04, R05, R06, R10, R13, R18, R19, R20 to the new tests, and R02, R03, R07, R25, R30 to new `R_EVIDENCE` entries.
+- No defect was exposed: every new test passed against `adapters/dis7.py` and `adapters/dis7_codec.py` as earlier runs left them, so neither module, no golden, `### Unreleased` and the wheel-gate lists changed.
+- The DIS 7 test modules pass on CPython 3.14, 3.11 and 3.12; the harness reads six passed and none failed; the WP4 exit's full suite fails only on allowlisted ids.
+- Left for R16 to R19: the CLI (A12), the OpenDIS reference test (A13), the mutation gate (A14), the benchmark and the last pending rows.
 
 ### R16 — wp5-cli
 
-Not started.
+- `dis7_host.py` gains the offline host command `synapse-dis7` beside `parse_json_text`: `decode`, `replay`, `self-test` and `--version`, the exit constants 0, 2, 3 and 4, the two specification constants, and the helpers `_read_bounded`, `_emit`, `_diagnose`, `_fixture_dir` and `_same_json`. Importing the module does not load `synapse_cdm.evidence`; `decode` imports it inside the handler for the SHA-256 of the file bytes.
+- `pyproject.toml` declares `synapse-dis7 = "synapse_cdm.dis7_host:main"` with its dated comment, and the comment above `synapse` now says it was the one entry not spelled `cdm-*` until then. The package was reinstalled editable in the three interpreters.
+- `tests/test_cdm_dis7_cli.py` runs the command as a child process with byte comparisons only: 59 passed. It is listed in `PACKAGE_ONLY_TESTS`. The trace table's `PENDING` lost A12, R24 and R28.
+- `### Unreleased` names `pyproject.toml` and the host command; the count clause moved to the new total.
+- `self-test` reports 16 checks over the packaged vectors and four refusals.
+- Not done here: the wheel gate's console-script check (R20), the CLI reference page (R22).
 
 ### R17 — wp5-reference
 
-Not started.
+- `spec/build_fixtures.py` (shipped, never imported by the package) rebuilds the three packaged PDUs from literal scenarios through open-dis-python at `732b6655bb47e34ccc73722eefe0f4706fd0032f`, compares them with `vectors/` and writes nothing: with the pinned checkout it prints the all-equal line and exits 0.
+- `tests/dis7_reference_support.py` resolves `SYNAPSE_CDM_OPENDIS_DIR`, verifies the commit and a clean tree, and drives OpenDIS in a child interpreter (`child_env()`); `tests/test_cdm_dis7_reference.py` binds A13 (and so R26): eleven always-on test cases and eighteen live ones under the `reference` marker, registered in `pytest.ini` beside `normative`. The module is in `REPO_BOUND_TESTS`; `PENDING` lost A13 and R26.
+- Live half, with the checkout: `-m reference` passes with nothing skipped on 3.14 and 3.11. OpenDIS generates each packaged PDU byte for byte, its parse equals `decode_pdu` field by field (the canonical text too, so the sign of −0.0 agrees), the adapter ingests OpenDIS bytes and replays them exactly, OpenDIS reparses and reserialises each replay unchanged, a 255-record PDU agrees in both directions, and OpenDIS's type-67 and default zero-length PDUs are refused with `E_HEADER_UNSUPPORTED` at `byte[2]` and `E_LENGTH_MISMATCH` at `byte[8]`. No disagreement between OpenDIS and the codec was found.
+- `spec/dis7_pin.json` gained `independent_reading_tool`, status `TAKEN`, with the tool versions of the reading; no existing row changed.
+- The exercise report `opendis-732b6655.json`, under the pipeline directory's `exercise/` (category `independent_expected`, six of six directions AGREE), is provisional: the tree is uncommitted, and the post-commit gates re-run it on the final commit. No report is tracked.
+- `### Unreleased` names `build_fixtures.py` and the count clause moved to the new total.
+- Not done here: the mutation gate (R18), the benchmark (R19), `spec/dis7_terms.json` and the regeneration command's documentation (R22).
 
 ### R18 — wp5-mutation
 
-Not started.
+- `gates/dis7_mutation.py` copies `packages/cdm` to a temporary directory outside the repository, runs the DIS7 test modules (all but the mutation and reference modules) against the copy with `-o pythonpath=<copy>` and `PYTHONPATH=<copy>`, plants a probe proving the package, `ids` and the two DIS7 modules were imported from the copy in process and in a child, and then applies each of the nine `MUTANTS` rows for the eight faults of case A14 in turn, restoring and byte-comparing the patched file after each run. No worktree file is patched.
+- Command: `python gates/dis7_mutation.py --out <dir>/mutation-matrix.json`. The matrix `mutation-matrix.json`, under the pipeline directory's `reports/`, is the evidence for case A14 and requirement R27: control `GREEN` with `imported_from_copy` true, nine rows `DETECTED`, result `PASS`. No report is tracked.
+- Every row was DETECTED on the first full run, so no killer test was strengthened. Every child Python of the DIS7 test modules already passed `PYTHONPATH` in the D-21 form and took the repository root from its own `__file__`, so no `env=` was changed.
+- `tests/test_cdm_dis7_mutation.py` binds A14 (and so R27) with seven test functions, the last running the whole gate; it is in `REPO_BOUND_TESTS`. `PENDING` lost A14 and R27.
+- T, the wall time of one unpatched run of the gate's modules, was about 16 seconds here; one gate run is ten such runs.
+- No file under `packages/cdm` changed, so `### Unreleased` is unchanged.
+- Not done here: the benchmark and the remaining trace rows (R19), the gate's documentation (R22).
 
 ### R19 — wp5-bench-trace
 
-Not started.
+- `gates/dis7_benchmark.py` records requirement R23's measurements: a 1000-call warm-up and 100000 timed calls of `to_cdm` for the 144-byte equator vector and for case A02's 4224-byte PDU (built in-process from the seed, never written to disk), the machine and runtime versions, elapsed time, throughput, nearest-rank p50/p95 latency, peak process memory, and the traced memory retained by a second identical pass. Its verdict is `PASS` only if the bound holds (4224 octets accepted, 4225 refused with `E_INPUT_LIMIT` at `$`, case N09) and no input retains more than the allowance (D81); it reads no timing field, as no numeric SLA applies.
+- `tests/test_cdm_dis7_benchmark.py` (7 tests, green on 3.14, 3.11 and 3.12) loads the gate from its source and runs the reduced workload on every test run; it asserts bound enforcement and the absence of retained growth, never a timing. It is in `REPO_BOUND_TESTS`.
+- The trace table is complete: `PENDING` is empty, and `R_EVIDENCE` gained R01 (the trace meta-test), R23 (the reduced benchmark test and the benchmark report) and R29 (the verifier report of each unit's exit run).
+- No file under `packages/cdm` changed, so `### Unreleased` is unchanged.
+- Evidence artefacts in the pipeline's run directory (outside the repository):
+  - requirement R23 → `reports/benchmark.json`, regenerated by `python gates/dis7_benchmark.py --out <file>`; measured on this run's staged tree (the WP5 snapshot) and not re-run after promotion or on the final commit. Its figures are recorded measurements, not a commitment;
+  - requirement R27 (case A14) → `reports/mutation-matrix.json`, regenerated by `python gates/dis7_mutation.py --out <file>`;
+  - requirement R26 (case A13) → the exercise report `opendis-732b6655.json` under `exercise/`, provisional until it is re-run on the final commit.
+- Not done here: the manifest, the support matrix, the roster literals and A12's wheel-gate evidence (R20), the prose counts (R21), the benchmark's documentation (R22).
 
 ### R20 — wp6-roster
 
-Not started.
+- Generated: `manifests/dis7.json` (the only manifest that moved), `docs/docs/cdm/support-matrix.mdx`; `docs/docs/current-contracts.mdx` was already current and did not change. `manifests --check`, `support_matrix --check`, `current_contracts.py --check` and `schemas --check` each read `CURRENT`. The manifest carries the values of PLAN.md §4.9 and F3 (`L4`, `VERIFIED`, `LICENSED`, `structured`, `max_input_bytes` 4224); the metadata block of the `dis7` adapter did not need a change.
+- Roster literals: the twenty-name assertions in `tests/test_cdm_no_network.py`, `tests/test_cdm_lossless.py` (with `dis7` as the sixth `structured` adapter) and `tests/test_cdm_evidence.py`; the harness's selected-fixture total is 586, derived from the test's own message, of which the `dis7` directory gives 6.
+- `RELEASE_NOTES.md`: the roster heading and paragraph say what `v3.1.1` registered, and a `dis7` row marked **post-3.1.1** carries this tree's harness reading of 6 verdicts.
+- `pkg/FORMAT_COVERAGE.md`: three `dis7` status rows and the section `DIS 7 Entity State PDU (IEEE 1278.1-2012 subset) — ingest and egress`, one paragraph and one table.
+- `gates/wheel_install.py`: `run_bytes` (bytes-mode helper) and `check_dis7_script` (version, self-test, decode, byte-exact replay, exit classes 0, 2, 3 and 4), called last in `check_console_scripts`; the gate keeps thirteen checks. Three tests appended to `tests/test_cdm_gate_rosters.py`; the gate itself is not run here (run R23). Decisions D83 to D85.
+- Not done here: the adapter-count prose (R21), the documentation page and the final `### Unreleased` (R22), the wheel gate's clean-venv run (R23).
 
 ### R21 — wp6-prose
 
-Not started.
+- Live counts moved to the registry's: the roster sentences, pair arithmetic (190 and 380), the double-count opinions sentence, the legacy census beside the roster, the egress count in the package README (fourteen), the `fixture_dir` note in `adapter.py` (eighteen), the implementation-cap and absent-bound counts in `parser-safety.mdx`, and the package README's byte-tolerance codec count (ten); every number read off `adapter.discover()` before it was written. Comment and docstring lines in `.py` files and `pyproject.toml` replaced one for one.
+- `dis7` joined the roster enumerations of `README.md`, `docs/docs/intro.mdx`, `pkg/__init__.py` and the package README, the package README's "Shipped so far" table and the declarations table of `parser-safety.mdx`.
+- Dated sites in the adapter expansion's implementation record, the publication ledger, the readiness report, the release notes and the dated history sections of `MIGRATIONS.md` are exempted by appended `TREE_EXEMPT` rows, never edited. `tests/test_cdm_prose_counts.py` and `tests/test_cdm_architecture_docs.py` are green. Decisions D86 to D88.
+- Not done here: the documentation page, the CLI reference, the audit-table row for the host JSON loader and the final `### Unreleased` wording (R22); the release gates (R23).
 
 ### R22 — wp6-docs
 
-Not started.
+- The package README gained the section on the `dis7` adapter before `## Layout`: the bounded-subset paragraph, the explicit-context Python example (run once on the packaged equator vector), the `synapse-dis7` commands and exit codes, the availability sentence and the docs address.
+- `docs/docs/cdm/dis7.mdx` is new, with the nine sections the run names; its flags and bounds were taken from `synapse-dis7 --help`, each sub-command's help and the module constants, and its code list was printed from `CODES`. The parser-safety page gained the subsection on the DIS 7 codec and host loader.
+- `fixtures/dis7/spec/dis7_terms.json` is a reading of the publisher's page with the confirmation PENDING (D89); the migration notes' Unreleased section names it and its count clause moved by one.
+- This record gained the contract-defect log, the SHOULD-deviation log, the dependency and licence inventory and installation, and its version register, optional-extension register, validation, verification, remaining gaps, handoff and the R24 and R25 entries were filled.
+- `tests/test_cdm_dis7_trace.py` carries the completion checks (D90), and `R_EVIDENCE["R30"]` names the two prototype guards. No covering test was missing from the contract-defect log.
+- Not done here: the release gates, the wheel gate and the full suite (R23); the handover directory (R25).
 
 ### R23 — wp6-gates
 
-Not started.
+- The pre-commit release-gate sequence ran once on the staged tree as R22 left it and every step read `PASS`, none `FAIL` and none `BLOCKED`: the git state, the adapter text rules, no bytecode under `fixtures/dis7`, the editable install, the registry count, both full suites (hooks unset: 8423 passed, 200 skipped; normative hooks and OpenDIS set: 8542 passed, 81 skipped; no failing test id in either junit report), the DIS7 modules on 3.14, 3.11 and 3.12, the four generated-file checks (`CURRENT`), ruff (`clean`), the `dis7` harness and conformance runs, the roster conformance loop, the bump gate (`MINOR`, `3.2.0`, nothing unruled), the pin, parks and provenance gates, evidence generate, verify and badges, the live OpenDIS reference test on 3.14 and 3.11, the mutation matrix (every mutant `DETECTED`, control `GREEN`), the wheel gate with its mutation check, the docs gate (`npm ci` and `npm run ci`), gitleaks over the staged diff and the drafted commit message.
+- No failure, so no owner run's file was changed and no fix was made; the only change of this run is this entry. The commit message draft still describes the staged tree and passes `gates/commit_message.py`.
+- Second pass, after R24's fixes: the whole sequence ran again on the staged tree as R24 left it and every step read `PASS` again, none `FAIL` and none `BLOCKED` (hooks unset: 8443 passed, 200 skipped; normative hooks and OpenDIS set: 8562 passed, 81 skipped; no failing test id in either junit report; every mutant `DETECTED`, control `GREEN`). No fix was made; the only change of this pass is this bullet.
+- Not done here: the commit, the post-commit gates and the push (the maintainer); the handover directory (R25).
 
 ### R24 — final-fix
 
-Not started.
+- The final review ended in HOLD with three major findings; all three are fixed, each with a regression test that fails on the reviewed tree and passes now.
+- F-01: `validate_session`, the instant check and the basis check in `adapters/dis7.py` require the exact type `str`, so a str subclass (an `enum.StrEnum` member, a `(str, Enum)` member, a plain subclass) is refused with the existing codes and paths (D91). Tests: `test_t09_session_refuses_str_subclasses`, `test_t09_time_context_refuses_str_subclasses` and three `session_str_*` rows of `test_constructor_refuses_each_context_defect`.
+- F-02: `from_cdm` refuses an Entity whose structure bypassed validation as `E_REPLAY_SHAPE` before any attribute is read, at `[0].<field>`, `[0].residual` or `[0].source` (D69). Test: `test_t11_n17_unvalidated_entity_is_refused`, through `from_cdm` and `encode`.
+- F-03: `dis7_host._emit` answers a closed stdout with exit 4 and `synapse-dis7: cannot write output: stdout is closed`, and `_diagnose` no longer raises when stderr is closed. Tests: `test_t15_a12_closed_stdout_exits_4`, `test_t15_a12_closed_stdout_and_stderr_exits_4`.
+- Minor findings applied: F-08 (readable test ids for the N13 inputs), F-18 (`from_cdm` refuses an Entity subclass at `$`; row `entity-subclass` of `test_t11_n17_wrong_shape_is_refused`), F-48 (the codec's module docstring), F-49 (no local absolute path in this record or the schema test), F-53 (the Verification table carries R22 and R23).
+- Not done here: the other minor findings, listed with their reasons in the run's report; F-40 and F-10 wait for the maintainer.
 
 ### R25 — handover
 
-Not started.
+Runs after the final commit and changes nothing in the repository; its output is the handover directory in the pipeline's run directory.
 
 ## Validation
 
@@ -544,16 +846,186 @@ ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests
 
 Results are in each run's Progress entry.
 
+The exit check of run R22, as read at the end of that run:
+
+| Command | RC | Result |
+| --- | --- | --- |
+| git state: index equals working tree, nothing untracked, HEAD unchanged | 0 | PASS |
+| adapter text rules over `adapters/dis7.py` and `adapters/dis7_codec.py` | 0 | PASS |
+| added text rules over every added line | 0 | PASS |
+| no bytecode under `fixtures/dis7` | 0 | PASS |
+| `adapter.discover()` | 0 | PASS |
+| `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests` | 0 | `All checks passed!` |
+| the registry holds twenty | 0 | PASS |
+| `schemas --check`, `manifests --check`, `support_matrix --check`, `current_contracts.py --check` | 0 | `CURRENT` |
+| `python gates/bump_derivation.py --json` | 0 | pending `MINOR`, `3.2.0`, unruled `[]` |
+| the DIS 7 test modules under Python 3.14, 3.11 and 3.12 | 0 | PASS; the live OpenDIS half skips as `BLOCKED_EXTERNAL_EVIDENCE` with the hook unset |
+| sentinels | 0 | PASS |
+| prose, path and policy gates (`test_cdm_prose_counts.py` and nine further modules) | 0 | PASS |
+| `python -m pytest -q -p no:cacheprovider tests/test_cdm_dis7_trace.py -k test_completion_` | 0 | PASS |
+| `R_EVIDENCE["R30"]` names the two prototype guards | 0 | PASS |
+| files this run delivers | 0 | PASS |
+| README section, docs page, parser-safety subsection | 0 | PASS |
+| terms record | 0 | PASS, form A |
+| implementation record: closing sections | 0 | PASS |
+| commit message draft through `gates/commit_message.py` | 0 | `clean` |
+| `cd docs && npm run ci` | 0 | PASS |
+
 ## Verification
 
-Every run is judged by a mechanical exit check and by an independent verifier session; both write to the pipeline's run directory, outside the repository. Run R22 completes this section.
+Every run is judged by a mechanical exit check and by an independent verifier session; both write to the pipeline's run directory, outside the repository. Its commands and verdicts:
+
+A verifier re-runs, from the branch with the staged tree:
+
+```bash
+bash RUN/checks/<run id>.sh
+python -m pytest -q -p no:cacheprovider tests/test_cdm_dis7_trace.py
+python gates/bump_derivation.py --json
+python -m synapse_cdm.manifests --check --out manifests
+python -m synapse_cdm.harness --adapter dis7 --schemas schemas
+python -m synapse_cdm.suite conformance run --adapter dis7 --require A,B,C,D,E,F,G,H,J,K,L,N,O
+```
+
+The last line of each verifier report, `RUN/reports/<run id>-verify.md`, that existed when this table was last edited; the report of a run that edits this record afterwards is in `RUN/reports/` only:
+
+| Run | Verdict |
+| --- | --- |
+| R01 | `VERDICT: PASS` |
+| R02 | `VERDICT: PASS` |
+| R03 | `VERDICT: PASS` |
+| R04 | `VERDICT: PASS` |
+| R05 | `VERDICT: PASS` |
+| R06 | `VERDICT: PASS` |
+| R07 | `VERDICT: PASS` |
+| R08 | `VERDICT: PASS` |
+| R09 | `VERDICT: PASS` |
+| R10 | `VERDICT: PASS` |
+| R11 | `VERDICT: PASS` |
+| R12 | `VERDICT: PASS` |
+| R13 | `VERDICT: PASS` |
+| R14 | `VERDICT: PASS` |
+| R15 | `VERDICT: PASS` |
+| R16 | `VERDICT: PASS` |
+| R17 | `VERDICT: PASS` |
+| R18 | `VERDICT: PASS` |
+| R19 | `VERDICT: PASS` |
+| R20 | `VERDICT: PASS` |
+| R21 | `VERDICT: PASS` |
+| R22 | `VERDICT: PASS` |
+| R23 | `VERDICT: PASS` |
+
 
 ## Remaining gaps
 
-- Runs R04 to R25 are not started.
-- Every unbound case and requirement is listed in `PENDING` in `tests/test_cdm_dis7_trace.py`.
-- The OpenDIS reference run stays open until run R17 and case A12's wheel-gate evidence (CR-33) until run R20.
+| Gap | Affected claim | Reproduction |
+| --- | --- | --- |
+| The live OpenDIS reference tests (case A13, requirement R26) need the pinned checkout named by `SYNAPSE_CDM_OPENDIS_DIR`; CI has none, so there they read `BLOCKED_EXTERNAL_EVIDENCE` [F6] | A13 and R26 verified locally only, unavailable in CI; the exercise report names the commit it was re-run on | `SYNAPSE_CDM_OPENDIS_DIR=<checkout at the pin> python -m pytest -q -rs -m reference tests/test_cdm_dis7_reference.py` |
+| Case A12's evidence is the wheel gate's clean-environment run of `gates/wheel_install.py::check_dis7_script` (written in run R20, run by the wheel gate in run R23), not the in-tree CLI test [CR-33] | A12: the installed `synapse-dis7` command behaves as specified | `python gates/wheel_install.py --mutation-check` |
+| Two SDK defects are filed separately and not fixed here [F7(b)]: `adapter.container_depth` never returns on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged root | none of this adapter's claims; the `dis7` adapter holds a parsed envelope to acyclicity itself | `adapter.container_depth` on a dict that contains itself; `evidence.generate` with a fixture directory outside the package |
+| The terms record awaits the maintainer's confirmation of the publisher page's wording and the class | `license_class` `LICENSED`, read from one fetch of the publisher's page | read `fixtures/dis7/spec/dis7_terms.json`, whose confirmation reads PENDING |
+| `Evidence(available=False)` until the release round flips it [F11] | no published evidence badge for the `dis7` adapter | `grep -n '"available"' manifests/dis7.json` |
+
+## Contract-defect log
+
+For the specification owner: every contract resolution CR-01 to CR-35 the plan froze, with the issue found in the handoff specification, the resolution this implementation follows, and the test that covers it. Issue and Resolution are the plan's own cells, quoted in `## Decisions` as D12 to D46. The handoff specification is identified by `SC DIS7 SPEC 001 v1.0` and is not in this repository.
+
+| CR | Issue | Resolution | Covering test |
+| --- | --- | --- | --- |
+| CR-01 | Schema instant regex accepts `:60`, Feb 30, hour 24, year 0000, offset `+24:00` | Prose wins; enforced in `TimeContext`; schema shipped unchanged | `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instant`, `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instants_that_cannot_be_test_ids` |
+| CR-02 | Residual schema accepts an unnormalised stored instant | Replay requires the normalised form → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n16_stored_context_edit_is_refused` |
+| CR-03 | Malformed envelope instant/basis: structural or `E_CONTEXT_TIME` | Wrong JSON type or missing key → `E_TWIN_SCHEMA` (stage 2); a string with a bad value → `E_CONTEXT_TIME` (stage 8) | `tests/test_cdm_dis7_replay.py::test_t12_n18_wrong_type_or_boolean` |
+| CR-04 | `encode_pdu` code split (table vs case N10) | Keys, types, array sizes, record count, hex width → `E_TWIN_SCHEMA`; header constants → `E_HEADER_UNSUPPORTED`; length vs records → `E_LENGTH_MISMATCH`; NaN/inf → `E_NONFINITE`; integer range, hex characters, float32 representability → `E_VALUE_RANGE` | `tests/test_cdm_dis7_codec.py::test_encode_reports_defects_in_the_frozen_stage_order` |
+| CR-05 | Envelope twin value classes | Constants, out-of-range integers, hex width or syntax, `wire_hex` outside 288–8448 characters, non-finite numbers → `E_TWIN_SCHEMA` at stage 2 | `tests/test_cdm_dis7_replay.py::test_t12_n18_range_constant_and_non_finite` |
+| CR-06 | Integral floats for integer fields (`7.0`) | Accepted in twins and `encode_pdu`, following the schema; booleans refused | `tests/test_cdm_dis7_replay.py::test_t12_n18_integral_floats_and_integer_components_are_accepted` |
+| CR-07 | Basis `\S` depends on the regex engine | Whitespace defined as an enumerated code-point set; tests for U+001C, U+0085, U+00A0, U+FEFF | `tests/test_cdm_dis7_time_identity.py::test_t09_basis_whitespace_is_the_enumerated_set` |
+| CR-08 | Context schema requires `time_context`; constructor makes it optional | Constructor optional (prose); the schema describes vector context files | `tests/test_cdm_dis7_adapter.py::test_t01_a01_vector_envelope_equals_expected` |
+| CR-09 | No code for "final CDM validity" | `E_PROJECTION` at `$` | `tests/test_cdm_dis7_adapter.py::test_cr09_final_cdm_validity_failure_is_e_projection_at_the_root` |
+| CR-10 | Omitted keyword-only argument raises `TypeError` | Sentinel defaults raise `Dis7Error` | `tests/test_cdm_dis7_adapter.py::test_constructor_refuses_each_context_defect` |
+| CR-11 | No API named for envelope text, yet N18 and N20 need one | Public `parse_json_text` (§4.8); unparseable JSON → `E_TWIN_SCHEMA` at `$` | `tests/test_cdm_dis7_replay.py::test_t12_text_unparseable` |
+| CR-12 | Oversize `str` to `to_cdm` | `E_INPUT_LIMIT` (forced by `tests/test_cdm_resource_envelope.py:121-131`); in-bounds `str` → `E_INPUT_TYPE`. Departs from §12's type-then-bounds order for `str` only | `tests/test_cdm_dis7_adapter.py::test_guard_measures_text_before_it_types_it` |
+| CR-13 | Path strings unspecified beyond two conventions | §4.4, frozen | `tests/test_cdm_dis7_adapter.py::test_acceptance_sweep` |
+| CR-14 | N15 vs the code table on "time" | `valid_from`/`valid_to` → `E_REPLAY_CHANGED`; `source.observed_at` and stored time context → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n15_canonical_edit_is_refused` |
+| CR-15 | Non-list replay input; undecodable or edited `wire_hex`/`residual.pdu` | `E_REPLAY_SHAPE` at `$`; `E_REPLAY_CHANGED` | `tests/test_cdm_dis7_replay.py::test_t11_single_view_edit_is_refused` |
+| CR-16 | Null vs absent on replay | Unobservable on model instances. At the CLI JSON boundary a non-canonical document (absent member, non-canonical spelling) → `E_REPLAY_SHAPE` | `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_refuses_each_absent_null_member` |
+| CR-17 | CLI `replay` has no session or classification flags | Bound from the stored residual, so the match is by construction; optional flags, when given, are asserted. Single-copy edits are still caught through `source_ids` and `source.synthetic` | `tests/test_cdm_dis7_cli.py::test_t15_a12_live_sets_synthetic_false_and_replay_asserts_flags` |
+| CR-18 | CLI exit classes; CLI output vs null-hash goldens | §4.8. CLI decode always carries a hash, so self-test compares the API's null-hash output | `tests/test_cdm_dis7_cli.py::test_t15_a12_self_test_passes` |
+| CR-19 | A03 "stated longitudes and heights" appear nowhere normative | Chosen and recorded: (0, 180, 35 786 000), (49, 16, 400), (−45, −179.5, 12 000), (89.999, 34, −100), (−90, 0, 0), plus exact `[0, 0, ±b]` for the pole branch | `tests/test_cdm_dis7_geodesy.py::test_t05_a03_analytical_positions` |
+| CR-20 | A09 and A14 cannot be exercised on the named seed | A09 uses `north_pole_stationary`; mutation killers per §4.10 | `tests/test_cdm_dis7_adapter.py::test_acceptance_sweep` (its item `t10_a09`) |
+| CR-21 | `fixture_instance` supplies a context without the caller passing it | Contract deviation, restricted per F1, stated as a manifest limitation | `tests/test_cdm_dis7_adapter.py::test_t14_n21_sdk_clis_refuse_live_and_a_caller_supplied_fixture_directory` |
+| CR-22 | Spec lines 219 and 221 order replay checks differently | §4.5 order; multi-defect tests at wire bytes 1, 17 and 88 | `tests/test_cdm_dis7_replay.py::test_t11_consistent_wire_and_view_edit_is_provenance` |
+| CR-23 | "RFC 3339" prose permits lowercase `t`/`z`; the schema refuses them | Refused, with the space separator | `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instant`, `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instants_that_cannot_be_test_ids` |
+| CR-24 | `-00:00` offset | Accepted, normalised to `Z` | `tests/test_cdm_dis7_time_identity.py::test_t09_a07_equivalent_spellings_normalise_to_one_instant` |
+| CR-25 | `residual.namespace` ≠ `DIS`; meaning of "Source namespace" in the code table | `E_REPLAY_SHAPE`; "Source namespace" is the scoped identity system in `source_ids` → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n16_source_ids_edit_is_refused` |
+| CR-26 | How much of the residual schema is the replay shape gate | All of it; CR-15 applies only to schema-valid hex | `tests/test_cdm_dis7_replay.py::test_t11_residual_shape_defect_is_refused` |
+| CR-27 | Duplicate key or unparseable JSON in replay's `entity.json` | `E_REPLAY_SHAPE` | `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_refusals_exit_3` |
+| CR-28 | `detect(envelope)` | True only for exactly the three keys and a 7/1/1 header by guarded lookups; False for cyclic, empty, unrelated or over-size input; never raises | `tests/test_cdm_dis7_adapter.py::test_r07_detect_matrix` |
+| CR-29 | Native twin types | `list` and `tuple` for arrays, `dict` only for objects, plain `int`/`float`; `time_context` as `TimeContext` only; `source_hash` as a plain dict; a memoryview of any item size is its underlying octets | `tests/test_cdm_dis7_codec.py::test_t04_a_memoryview_of_72_two_octet_items_decodes_as_its_144_octets` |
+| CR-30 | The note for position-present with a non-world algorithm appears in no vector | Asserted literally for algorithms 0, 1, 6, 9, 255; all four note shapes tested | `tests/test_cdm_dis7_adapter.py::test_t14_a11_note_sequences_for_all_four_shapes` |
+| CR-31 | `validate_source` format | Exactly one `"CODE at PATH: message"` string; the SDK default's type-name prefix is overridden | `tests/test_cdm_dis7_adapter.py::test_r07_validate_source_matrix` |
+| CR-32 | Years below 1000 in `valid_from`/`observed_at` | F7(a) | `tests/test_cdm_adapter_contract.py::test_render_pads_the_year_to_four_digits_for_years_1_and_999` |
+| CR-33 | A12's evidence | The wheel gate's clean-venv run, not the in-tree CLI test | `tests/test_cdm_gate_rosters.py::test_t15_a12_the_dis7_script_check_passes_against_this_environment` |
+| CR-34 | Self-test and wheel report package 3.1.1 although the tag has no dis7 | F11 | `tests/test_cdm_dis7_cli.py::test_t15_a12_version` |
+| CR-35 | Is a location written with negative zeros "the exact zero vector"? | Yes, compared by value: position and kinematics null, the zero-vector note, sign bits kept in residual and replay; never `E_POSITION_DOMAIN` | `tests/test_cdm_dis7_geodesy.py::test_t05_n11_origin_and_negative_zero_origin_have_no_projection` |
+
+## SHOULD-deviation log
+
+The handoff specification contains no SHOULD statement beyond its definition of the word, so no requirement-level SHOULD was deviated from. The process deviations, each logged for the delivery report:
+
+- The four sequencing deviations, recorded under `## Sequencing deviations`.
+- Three of the plan's gate commands run in CI's stricter form: `pytest -q -rs` with a junit report, `gates/wheel_install.py --mutation-check` with `--export-dist`, and `npm ci` in place of `npm install`, which can rewrite the tracked lock file.
+- CR-12: the input guard measures text before it types it, so an oversize `str` is `E_INPUT_LIMIT` rather than `E_INPUT_TYPE`; see D23.
+- CR-21: the conformance verdict is defined for the packaged fixtures only, because the generic tools build the adapter with the fixtures' context through `Adapter.fixture_instance` and refuse a caller-supplied fixture directory for it; see D32.
+- The maturity tension [F3]: the handoff specification allows an initial L3 with implemented claim status, while `tests/test_cdm_manifests.py` forces L4 and VERIFIED for a bidirectional `standard-encoding` adapter with `MAPPINGS` and a passing round trip. L4, VERIFIED and LICENSED are declared; L5, L6, `external_exercise` and `normative-verified` are not.
+- The conformance applicability [WP6]: checks I and M are declared inapplicable, and the gate requires `A,B,C,D,E,F,G,H,J,K,L,N,O`.
+
+## Dependency and licence inventory
+
+| Component | Role | Licence | Carried |
+| --- | --- | --- | --- |
+| `pydantic` | runtime dependency, unchanged | MIT | installed from the package index, not vendored |
+| `jsonschema` | runtime dependency, unchanged | MIT | installed from the package index, not vendored |
+| open-dis-python at `732b6655bb47e34ccc73722eefe0f4706fd0032f` (https://github.com/open-dis/open-dis-python) | development reference: the layout authority and the reference tests' oracle | BSD-2-Clause | not vendored and not a dependency; nothing is copied from it |
+| IEEE 1278.1-2012 | the standard the Entity State subset is written against | licensed by its publisher | not carried in this repository or in the wheel, and its text was not consulted; see `fixtures/dis7/spec/dis7_terms.json` |
+| this implementation | the `dis7` adapter, its codec, the host module and the tests | Apache-2.0 | this repository |
+
+The two runtime licences are what `importlib.metadata.metadata(name)["License-Expression"]` prints.
+
+## Installation
+
+From a clone of the branch:
+
+```bash
+python -m pip install -e "packages/cdm[test,lint]"
+synapse-dis7 --version
+synapse-dis7 self-test
+```
+
+The wheel is built and installed into a clean environment, and the `synapse-dis7` command is exercised there, by `python gates/wheel_install.py --mutation-check`. A wheel built from this tree is an unreleased build: it reports package 3.1.1.
 
 ## Handoff
 
-Written by run R22.
+The final steps, run by the maintainer from the pipeline's run directory:
+
+```bash
+bash RUN/run.sh final
+bash RUN/run.sh approve final-review
+bash RUN/run.sh commit wp4-6
+bash RUN/run.sh postcommit
+bash RUN/run.sh
+git push -u origin soif/dis7-1.0
+```
+
+On HOLD the final review is followed by `bash RUN/run.sh fix-final` before it is run again.
+
+The handover artefacts are untracked, are assembled under `RUN/handover/` and indexed there by `INDEX.json` with their SHA-256 and the commit, and this record cannot carry the SHA of the commit that contains it.
+
+| Artefact kind | Regenerated by |
+| --- | --- |
+| wheel and sdist, with their SHA-256 | `python gates/wheel_install.py --mutation-check --export-dist DIR` |
+| filled requirements file, trace matrix, skip ledger, geodesy oracle results and index | `python RUN/handover/tools/build_handover.py` (written by run R25) |
+| mutation matrix | `python gates/dis7_mutation.py --out FILE` |
+| benchmark report | `python gates/dis7_benchmark.py --out FILE` |
+| OpenDIS exercise report | `python -m tests.dis7_reference_support --exercise-out DIR`, with `SYNAPSE_CDM_OPENDIS_DIR` naming the pinned checkout, then `python -m synapse_cdm.evidence exercise --adapter dis7 --spec DIR/opendis.json --slug opendis-732b6655 --out DIR` |
+| gate logs and junit reports | `bash RUN/run.sh postcommit` |
+
+The release round is described here and not run in this arc: the version number is the one `python gates/bump_derivation.py --json` derives, `evidence.available` flips to true for the `dis7` adapter in the release commit, the tag is pushed, and the publish pipeline builds and publishes the distribution. Until then the package still reads 3.1.1.

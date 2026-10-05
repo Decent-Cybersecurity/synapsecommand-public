@@ -8,7 +8,7 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Nineteen integration adapters are shipped and harness-verified — PNTMAP
+Twenty integration adapters are shipped and harness-verified — PNTMAP
 GNSS alerts, TAK / Cursor-on-Target (bidirectional), AIS / NMEA 0183
 AIVDM (bidirectional), ADS-B 1090ES extended squitter (bidirectional),
 Picogrid Legion Platform API v3, ASTERIX category 021 ADS-B target
@@ -24,11 +24,11 @@ MISP-2019.1 UAS Datalink Local Set KLV metadata (bidirectional,
 byte-exact), STANAG 4586 Edition 3 DLI air-vehicle telemetry
 (ingest), GeoJSON / RFC 7946 (bidirectional), OGC GeoPackage 1.4.0
 (ingest), SISO-STD-019/020 C2SIM (bidirectional), AIXM 5.1.1 with the
-Digital NOTAM Event Schema 2.0 (ingest) and AIXM 5.2 (ingest).
+Digital NOTAM Event Schema 2.0 (ingest), AIXM 5.2 (ingest) and the DIS 7 Entity State PDU subset (bidirectional, byte-exact).
 
 Without a canonical model in the middle, N adapters means N(N−1)/2
 translations and N private notions of what "a contact" is — one hundred
-and seventy-one and nineteen as of today — and the integration layer becomes the place
+and ninety and twenty as of today — and the integration layer becomes the place
 where meaning is quietly lost. With one, an adapter is a thin
 translator and nothing else.
 
@@ -185,7 +185,7 @@ contributor's install and is documented in
 [`CONTRIBUTING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/CONTRIBUTING.md).
 A consumer never needs a clone.
 
-Everything it needs comes with it. The nineteen shipped adapters' **fixtures are part of the
+Everything it needs comes with it. The twenty shipped adapters' **fixtures are part of the
 package**, so the harness runs against the payloads those adapters are verified on without a
 repository anywhere:
 

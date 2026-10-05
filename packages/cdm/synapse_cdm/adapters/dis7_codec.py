@@ -1,12 +1,14 @@
-"""The DIS 7 Entity State codec's public error model.
+"""The DIS 7 Entity State codec: its public error model, the PDU decoder and encoder, and the
+WGS84 projection and ENU kinematics helpers.
 
 Every refusal this codec and the `dis7` adapter raise is a `Dis7Error`, which prints as
 `CODE at PATH: message`. `decode_pdu` reads one Entity State PDU into its decoded shape and
 `looks_like_entity_state` judges the header triplet alone. The module also encodes a decoded PDU
 back to its octets with `encode_pdu`. The code order below is the order of the code table in the handoff
 document `SC DIS7 SPEC 001 v1.0`, which is not in this repository. The acceptance cases this
-codec is held to ship in `fixtures/dis7/contract/acceptance-cases.json`. The projection and the
-kinematics are added in later work.
+codec is held to ship in `fixtures/dis7/contract/acceptance-cases.json`. The projection
+(`ecef_to_geodetic`) and the kinematics (`velocity_to_kinematics`) are the helpers the adapter
+maps a decoded PDU with.
 """
 from __future__ import annotations
 

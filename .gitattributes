@@ -64,3 +64,8 @@
 *.dis -text -diff
 packages/cdm/synapse_cdm/fixtures/dis7/vectors/** -text
 packages/cdm/synapse_cdm/fixtures/dis7/contract/** -text
+
+# The DIS 7 envelope twins at the top of the fixture directory and the malformed envelope are
+# compared byte for byte with the vendored vectors they are built from, so they stay as checked in.
+packages/cdm/synapse_cdm/fixtures/dis7/*.parsed.json -text
+packages/cdm/synapse_cdm/fixtures/dis7/malformed/*.json -text

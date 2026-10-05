@@ -134,7 +134,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All nineteen harnesses are green**, and at least one of them run against the INSTALLED
+2. **All twenty harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -512,22 +512,27 @@ now true of it.
 release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
 measurement.
 
-**What moved inside the distribution: 35 files** — `MIGRATIONS.md` (this section, and the dated
-witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (a
-Phase 1 row for `dis7` in the ordinal table and the paragraph under that table), `dis7_codec.py`
+**What moved inside the distribution: 64 files** — `MIGRATIONS.md` (this section, and the dated
+witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (the
+`dis7` row of the ordinal table, now shipped, and the paragraph under that table), `dis7_codec.py`
 (the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes),
 `adapters/dis7.py` (the caller time context, the session rule and the identity derivation),
+`dis7_host.py` (new: the host boundary's strict JSON text loader `parse_json_text`, and the
+offline host command `synapse-dis7`), `pyproject.toml` (that command's console-script entry),
 `adapter.py`, `harness.py`, `suite.py` and `evidence.py` (the `fixture_instance` hook on `Adapter`
 and its callers: the constructions the harness, the conformance suite and the evidence generator
 make now go through it, and their command lines refuse a caller-supplied `--fixtures` for a shipped
 adapter that overrides it), `times.py`, `version.py` and `evidence.py` again (the SDK helpers
-and the Adapter API reading of unit 1b, in the paragraph that begins DIS 7 UNIT 1B), and 25 new
+and the Adapter API reading of unit 1b, in the paragraph that begins DIS 7 UNIT 1B),
+`__init__.py`, `lossless.py` and `symbology.py`, with `adapter.py`, `version.py` and `pyproject.toml`
+again (docstring and comment counts only: the roster at twenty), the package's `README.md` (counts,
+pair arithmetic and the `dis7` roster row), and 25 new
 files under `fixtures/dis7/`, described in the next paragraph. What the 3.1.1 witness round
 touched outside the distribution ships in nothing: the ledger, the witness record and its
 README, the release-pipeline and changelog pages, and two test modules.
 
-**THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER.** `dis7` holds a name, an ordinal row and a
-fixture directory in the Phase 1 state, and no adapter is registered under that name. The contract
+**THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER.** `dis7` held a name, an ordinal row and a
+fixture directory in the Phase 1 state until its class, fixtures and goldens landed. The contract
 is a handoff document identified by
 `SC DIS7 SPEC 001 v1.0`; it is not in this repository, and what is tracked is the part of its bundle
 the tests read. Under `fixtures/dis7/spec/`: `dis7_pin.json`, the SHA-256 and byte count of every
@@ -546,20 +551,34 @@ Under `fixtures/dis7/contract/`, byte-identical to the bundle: `acceptance-cases
 `PROVENANCE.json`. `tests/test_cdm_dis7_schema.py` holds every vendored file to the pin record and
 validates the vectors against the vendored schemas.
 
+**THE DIS 7 ADAPTER SHIPS WITH ITS FIXTURES AND GOLDENS.** The `dis7` row of the ordinal table now
+reads shipped, and 21 files joined `fixtures/dis7/`. At its top level, the harness fixtures, each a
+byte-identical copy of a vendored vector: `equator_eastbound.dis`, `equator_eastbound.parsed.json`,
+`north_pole_stationary.dis`, `north_pole_stationary.parsed.json`, `unprojectable_with_extensions.dis`
+and `unprojectable_with_extensions.parsed.json`, with `README.md` and `PROVENANCE.json`. Under
+`golden/`, the harness's output over each, equal to the vector's expected output:
+`equator_eastbound.cdm.json`, `equator_eastbound.parsed.cdm.json`, `north_pole_stationary.cdm.json`,
+`north_pole_stationary.parsed.cdm.json`, `unprojectable_with_extensions.cdm.json` and
+`unprojectable_with_extensions.parsed.cdm.json`. Under `malformed/`, the refusal payloads of the
+conformance suite's check H: `wrong_protocol_version.dis`, `pdu_type_67.dis`,
+`truncated_by_one_byte.dis`, `one_trailing_byte.dis` and `envelope_unknown_key.json`, with that
+directory's own `README.md` and `PROVENANCE.json`.
+
 **THE DIS 7 CODEC DECODES AND ENCODES ONE ENTITY STATE PDU.** `adapters/dis7_codec.py` now
 holds `decode_pdu`, which reads the octets of one Entity State PDU into its decoded shape,
 `encode_pdu`, which writes a decoded PDU back to the same octets, `looks_like_entity_state`, which
 judges the header triplet alone, and the wire constants `MIN_PDU_BYTES`, `MAX_PDU_BYTES`,
 `RECORD_BYTES` and `MAX_RECORDS`. Every refusal is a `Dis7Error` that carries a code and a path.
-The codec is a module of its own and nothing is registered: there is no adapter class for `dis7`,
+The codec is a module of its own and nothing was registered at that step: there was no adapter class for `dis7`,
 and no file joined the distribution in this step.
 
 **THE DIS 7 TIME CONTEXT, SESSION RULE AND IDENTITY.** `adapters/dis7.py` is new and holds
 `TimeContext`, the caller's resolved state instant normalised to UTC with three fractional digits
 and the basis kept verbatim, `BASIS_WHITESPACE`, the enumerated characters a basis may not consist
 of entirely, `validate_session`, the session rule, and `external_id`, `identity_system` and
-`entity_uuid`, the identity derivation through `ids.derive`. Every refusal is a `Dis7Error` with a
-code and a path. There is no adapter class in the module and nothing is registered.
+`entity_uuid`, the identity derivation through `ids.derive`, and, since the class landed, `Dis7Adapter`, registered as `dis7`.
+Every refusal is a `Dis7Error` with a code and a path. There was no adapter class in the module at
+that step.
 
 **THE DIS 7 PROJECTION AND KINEMATICS HELPERS.** `adapters/dis7_codec.py` now also carries the
 WGS84 projection and the ENU kinematics helpers: the constants `WGS84_A`, `WGS84_F`, `WGS84_E2`
@@ -568,7 +587,40 @@ ellipsoidal height by the reference iteration under the cap `PROJECTION_MAX_ITER
 `velocity_to_kinematics`, which turns a world-coordinate velocity into horizontal speed, course
 and climb, and `WORLD_ALGORITHMS`, the dead-reckoning algorithms whose velocity is world
 coordinates. Every refusal is a `Dis7Error` at `byte[48]`. The helpers are called by nothing yet
-and nothing is registered, and no file joined the distribution in this step.
+and nothing was registered at that step, and no file joined the distribution in this step.
+
+**THE DIS 7 HOST LOADER.** `dis7_host.py` is new, a host-boundary module outside `adapters/`, and
+holds one function, `parse_json_text(data)`, with its two bounds `MAX_JSON_BYTES` (65536) and
+`MAX_JSON_DEPTH` (16). It takes bytes only and refuses, in order: a payload over the byte bound,
+a NUL, text that is not strict UTF-8, a byte-order mark, text nested past the depth bound, text
+the decoder cannot read, the `NaN` and `Infinity` tokens, numbers that overflow to infinity,
+integer literals over 4300 characters and a repeated key, which it reports at the path of the
+object that repeats it. The decoder is handed the decoded text, never the bytes. Nothing calls
+the loader yet and nothing was registered at that step.
+
+**THE DIS 7 HOST COMMAND.** `dis7_host.py` now also holds `main`, the console script
+`synapse-dis7` that `pyproject.toml` declares beside `synapse`: `decode` writes the one-element
+Entity array of one PDU file as canonical JSON with the SHA-256 of the file bytes as its source
+hash, `replay` writes the original PDU octets of a canonical Entity document, `self-test` runs
+the packaged vectors and a sample of refusals offline, and `--version` prints the adapter,
+package and specification identifiers. Exit codes: 0 success, 2 usage and flag-derived context,
+3 rejected data and a failed self-test, 4 file or output I/O. It reads one file, writes stdout
+and stderr only, and opens no socket. A new console script derives MINOR by itself.
+
+**THE DIS 7 FIXTURE GENERATOR.** `fixtures/dis7/spec/build_fixtures.py` is new, a script the
+package never imports: it rebuilds the three packaged PDUs from its own literal scenarios through
+the pinned open-dis-python checkout (https://github.com/open-dis/open-dis-python, BSD-2-Clause,
+commit `732b6655bb47e34ccc73722eefe0f4706fd0032f`) and reports whether each equals its file under
+`fixtures/dis7/vectors/`; it writes nothing, and the packaged vectors stay the handoff bundle's
+bytes. OpenDIS is a development reference, never a runtime dependency. `dis7_pin.json` gained
+the block `independent_reading_tool`, which records the tool versions of that reading, and
+changed no existing row.
+
+**THE DIS 7 TERMS RECORD.** `fixtures/dis7/spec/dis7_terms.json` is new, data the package never
+reads: the licence posture of IEEE 1278.1-2012 as one reading of the publisher's own page, which
+offers the standard by purchase and by subscription, so the declared class `LICENSED` rests on it.
+The maintainer's confirmation of that reading is still open in the record itself. The IEEE text
+was not consulted, and the standard is carried neither in this repository nor in the wheel.
 
 **DIS 7 UNIT 1B, SDK HELPERS AND THE ADAPTER API AT 3.1.0, 2026-10-04 — a bytes-level digest, a
 four-digit year, one addition to the contract.** `evidence.py` gains `digest_bytes(data)`, the

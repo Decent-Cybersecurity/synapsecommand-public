@@ -1,0 +1,51 @@
+{
+  "directory": "dis7/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "envelope_unknown_key.json",
+      "operational_data": false,
+      "origin": "Synthetic refusal payload for the conformance suite's check H, built from dis7/vectors/equator_eastbound.dis or its envelope by the single change malformed/README.md states. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "one_trailing_byte.dis",
+      "operational_data": false,
+      "origin": "Synthetic refusal payload for the conformance suite's check H, built from dis7/vectors/equator_eastbound.dis or its envelope by the single change malformed/README.md states. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "pdu_type_67.dis",
+      "operational_data": false,
+      "origin": "Synthetic refusal payload for the conformance suite's check H, built from dis7/vectors/equator_eastbound.dis or its envelope by the single change malformed/README.md states. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_by_one_byte.dis",
+      "operational_data": false,
+      "origin": "Synthetic refusal payload for the conformance suite's check H, built from dis7/vectors/equator_eastbound.dis or its envelope by the single change malformed/README.md states. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wrong_protocol_version.dis",
+      "operational_data": false,
+      "origin": "Synthetic refusal payload for the conformance suite's check H, built from dis7/vectors/equator_eastbound.dis or its envelope by the single change malformed/README.md states. Not derived from recorded traffic.",
+      "personal_data": false,
+      "standard_ref": "dis7/spec/dis7_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

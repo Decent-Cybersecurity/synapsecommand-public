@@ -63,6 +63,9 @@ run is a guess with a table around it.
 | `aixm511 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`, `PlanObject.residual`) at its own relative path under `residual.data` — the parsed twin minus what the typed block consumed, list positions kept — the fourth adapter to use the container; names no gap |
 | `aixm52 1.0.0` | implemented by `adapters/aixm52.py` — a second PROFILE on the AIXM 5.1.1 reader (`aixm511.AixmAdapterBase`) on the shared codec in `adapters/aixm_codec.py` — with an XML fixture, its parsed twin and a golden file |
 | `aixm52 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`, `PlanObject.residual`) at its own relative path under `residual.data` — the parsed twin minus what the typed block consumed, list positions kept — the fifth adapter to use the container; names no gap |
+| `dis7 1.0.0` | implemented by `adapters/dis7.py` on the codec in `adapters/dis7_codec.py`, with a binary fixture, its parsed twin and a golden file |
+| `dis7 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`) under `residual.data`; names no gap |
+| `dis7 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -268,21 +271,20 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 18 | `c2sim` | shipped | `adapters/c2sim.py`, whose docstring opens by claiming adapter #18 (bidirectional, the third `residual: structured` adapter), this document's C2SIM section, `fixtures/c2sim/spec/c2sim_pin.json`, `fixtures/c2sim/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter whose objects sit under a nested repeatable container** (`ObjectDefinitions[*].Entity[*]`), which is why the preservation ledger grew the `[_]` unbound wildcard and the `numeric_text` rule in the same phase, and the first to emit `EventType.PLAN_INJECT` — an order is a plan injected into an exercise — under a named, versioned payload contract (`c2sim-order/1`) rather than a `PAYLOAD_MODELS` registration |
 | 19 | `aixm511` | shipped | `adapters/aixm511.py`, whose docstring opens by claiming adapter #19 (ingest only, the fourth `residual: structured` adapter), this document's AIXM 5.1.1 section, `fixtures/aixm511/spec/aixm511_pin.json`, `fixtures/aixm511/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter whose objects are TIME SLICES of a feature** — one Entity per `aixm:timeSlice`, the feature's `gml:identifier` its stable identity, the slice's `gml:validTime` its validity, and nothing resolved against a baseline (the separate `aixm_resolve` does that, from explicit prior state) — the first to share a codec (`aixm_codec.py`) with the AIXM 5.2 adapter that does not exist yet, parameterised by the namespaces each version owns, and since phase 5 the reader of the Digital NOTAM Event Schema 2.0.m on the same documents (the four pinned scenario profiles, `attributes.dnotam`)
 | 20 | `aixm52` | shipped | `adapters/aixm52.py`, whose docstring opens by claiming adapter #20 (ingest only, the fifth `residual: structured` adapter), this document's AIXM 5.2 section, `fixtures/aixm52/spec/aixm52_pin.json`, `fixtures/aixm52/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter that is a second profile on another adapter's reader**: `aixm511.AixmAdapterBase` (abstract, registers no name) reads both versions from a `Profile` — namespaces, pinned property paths, the parsed twin's list-shape table, the ElevatedPoint group — so a 5.2 structure that differs from 5.1.1 is mapped by its own table row and never by a namespace substitution; Digital NOTAM is declared NOT available on 5.2 (no Event schema targets it) rather than claimed |
-| 21 | `dis7` | specification, Phase 1 | this row, the paragraph under this table and `fixtures/dis7/spec/dis7_pin.json`. **A Phase 1 that holds a vendored contract and no row set**: the three normative vectors, the five contract schemas and the acceptance-case list of the DIS 7 handoff contract (a handoff document identified by `SC DIS7 SPEC 001 v1.0`; it is not in this repository) are packaged under `fixtures/dis7/vectors/` and `fixtures/dis7/contract/` and pinned by SHA-256 in that record. No adapter is registered under the name and no mapping rows exist yet |
+| 21 | `dis7` | shipped | `adapters/dis7.py`, whose docstring claims the ordinal, and `fixtures/dis7/README.md`. One DIS 7 Entity State PDU becomes one `Entity`, and the unchanged Entity gives the original octets back. The row was at Phase 1 while only the vendored vectors, the contract files and `fixtures/dis7/spec/dis7_pin.json` existed; the class, the harness fixtures and their goldens landed together |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
-shipped adapter but never a conflicting claimant. **TWO rows are at Phase 1 as of this round** — #9,
-`stanag5527`, which is the narrowest of them all: a pinned covering document and no row set at all;
-and `dis7` at #21, which holds its name, its ordinal and its fixture directory with a vendored,
-hash-pinned contract (vectors, schemas and acceptance cases) and no registered adapter yet.
-The count had fallen from four to one in three rounds as #13, #14 and then #10 shipped against the row
+shipped adapter but never a conflicting claimant. **ONE row is at Phase 1 as of this round** — #9,
+`stanag5527`, and it is the narrowest of them all: a pinned covering document and no row set at all.
+The count has fallen from four to one in three rounds as #13, #14 and now #10 shipped against the row
 sets their Phase 1 wrote, and #10 is the one whose promotion is PARTIAL — 26 rows of 141 — which is a
-state this table's third column did not previously have to distinguish either; `dis7` at #21 brings
-the count back to two. It is the disjunction
+state this table's third column did not previously have to distinguish either. It is the disjunction
 treatment applied to an
 ordinal — the same reason `test_cdm_prose_counts.py` exists for the adapter *count*, and the same
 reason the STANAG 4609 pin rows are asserted as one composite string rather than three substrings.
+`dis7` at #21 was a second Phase 1 row from the round that vendored its vectors until its class,
+fixtures and goldens landed together, which returned the count to one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -14941,6 +14943,33 @@ held to both schemas by `tests/test_cdm_aixm52_adapter.py`):
 | a Digital NOTAM `event:Event` (namespace `…/5.1.1/event`) or an `event:<Feature>Extension` inside a 5.2 document | `Entity.residual` | carried | limitation `digital-notam-not-available`: no Event schema exists for AIXM 5.2; the member is not an AIXM 5.2 feature, `validate_source` names it, it is carried whole in the residual and nothing of it is typed — no `attributes.dnotam`, no scenario profile, no resolver claim for 5.2 |
 | AIXM 5.1 or 5.1.1 namespaces, a root other than `message:AIXMBasicMessage` | — | refused | at the root, with the namespace named (AIXM 5.1.1 is the sibling adapter `aixm511`; the binding is real in both directions: `tests/test_cdm_aixm52_adapter.py::test_the_version_binding_is_real_in_both_directions`) |
 | egress | — | refused | ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## DIS 7 Entity State PDU (IEEE 1278.1-2012 subset) — ingest and egress
+
+Adapter #21, `adapters/dis7.py` on `adapters/dis7_codec.py`, bidirectional, the sixth adapter to
+declare `residual: structured`, and the profile is the Entity State subset only (protocol
+version 7, PDU type 1, protocol family 1, one PDU of 144 to 4224 octets): nothing else of the
+protocol is read. No IEEE certification is claimed and the IEEE text was not consulted: the layout authority
+is open-dis-python, `https://github.com/open-dis/open-dis-python`, commit
+`732b6655bb47e34ccc73722eefe0f4706fd0032f` (BSD-2-Clause). No compatibility with a particular
+simulator is claimed. The state instant, the session and the synthetic flag are the caller's,
+never read from the octets or the clock. Fixtures: `fixtures/dis7/`; pin record:
+`fixtures/dis7/spec/dis7_pin.json`.
+
+| DIS 7 Entity State PDU | CDM field | Status | Notes |
+|---|---|---|---|
+| `header` (its eight members) | `Entity.residual` | `dis7 1.0.0 · residual` | Octets 0, 2 and 3 must be 7, 1 and 1. The timestamp is kept and is never converted to an instant |
+| `header.exercise_id`, `entity_id` | `Entity.entity_id`, `SourceId.system`, `SourceId.external_id`, `SourceRef.original_id` | `dis7 1.0.0` | The system is `DIS7:<session>:<exercise_id>` and the external id is `site:application:entity` in unpadded decimal. The entity id is a uuid5 over both |
+| the caller's time context | `Entity.valid_from`, `SourceRef.observed_at`, `SourceRef.transformations` | `dis7 1.0.0` | The instant is normalised to UTC. Octets without a time context are refused `E_CONTEXT_TIME`, and the clock is never read |
+| `force_id` | `Entity.affiliation` | `dis7 1.0.0` | The affiliation is UNKNOWN for every value |
+| `entity_type` | `Entity.entity_type` | `dis7 1.0.0` | The type is PLATFORM when the kind is 1 and UNKNOWN otherwise |
+| `position_ecef_m` | `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `dis7 1.0.0` | Projected to WGS84, with the height above the ellipsoid. The exact zero vector gives no position |
+| `velocity_mps` under dead-reckoning algorithm 2, 3, 4 or 5 | `Entity.kinematics`, `Kinematics.speed_mps`, `Kinematics.course_deg`, `Kinematics.climb_mps` | `dis7 1.0.0` | Resolved east-north-up. The course is null at zero speed or at a pole, and under any other algorithm there are no kinematics |
+| `alternative_entity_type`, `orientation_radians`, `appearance`, `dead_reckoning_hex`, `marking_hex`, `capabilities`, `variable_parameters_hex` | `Entity.residual` | `dis7 1.0.0 · residual` | Kept as sent and never interpreted; only the first dead-reckoning octet is read. The variable parameters are 0 to 255 opaque 16-octet records |
+| the whole PDU | `Entity.residual`, `SourceRef.source_hash` | `dis7 1.0.0 · residual` | `residual.data` holds exactly `pdu`, `wire_hex`, `time_context`, `session`, `synthetic` and `source_hash` |
+| an unchanged Entity back to its PDU | `Entity.residual` | `dis7 1.0.0 · egress` | Replay writes the octets of `wire_hex`, byte for byte. An edited Entity is refused `E_REPLAY_SHAPE`, `E_REPLAY_PROVENANCE` or `E_REPLAY_CHANGED` |
+| any header other than 7, 1, 1: DIS 6, Fire, Detonation, Collision, Entity State Update (type 67), radio, simulation management | — | refused | Refused `E_HEADER_UNSUPPORTED` at `byte[0]`, `byte[2]` or `byte[3]` |
+| a truncated, extended or concatenated PDU; more than 4224 octets | — | refused | A length disagreement is refused `E_LENGTH_MISMATCH`; more than 4224 octets is refused `E_INPUT_LIMIT` |
 
 ## Gaps, and what each one costs
 

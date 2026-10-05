@@ -14,7 +14,8 @@ import pathlib
 import jsonschema
 import pytest
 
-from synapse_cdm import harness, schemas
+from synapse_cdm import evidence, harness, schemas
+from synapse_cdm.adapter import json_nesting_depth
 from synapse_cdm.adapters.dis7_codec import decode_pdu
 
 from tests import dis7_support
@@ -24,7 +25,7 @@ ENTITY_SCHEMA = REPO / "schemas" / "entity.schema.json"
 
 SCHEMA_NAMES = ("dis7-context", "dis7-entity", "dis7-envelope", "dis7-pdu", "dis7-residual")
 
-# Copied from /Users/admin/Documents/cc/dis7-run/bundle/MANIFEST.json, never computed from the
+# Copied from the handoff bundle's MANIFEST.json (SC DIS7 SPEC 001 v1.0), never computed from the
 # vendored files.
 BUNDLE_MANIFEST = {
     "vectors/equator_eastbound.context.json": ("e0bbd2dae2e53a1b94227a1aff32e88a3ba3df4efee1be651b231c6da83b3271", 207),
@@ -270,3 +271,291 @@ def test_support_helpers():
         dis7_support.patch(raw, 144, b"\x00")
     with pytest.raises(ValueError):
         dis7_support.vector_json("equator_eastbound", "golden")
+
+
+FIXTURE_NAMES = sorted(f"{stem}{ext}" for stem in dis7_support.STEMS for ext in (".dis", ".parsed.json"))
+GOLDEN_NAMES = sorted(f"{stem}{ext}" for stem in dis7_support.STEMS
+                      for ext in (".cdm.json", ".parsed.cdm.json"))
+MALFORMED_NAMES = sorted(["wrong_protocol_version.dis", "pdu_type_67.dis", "truncated_by_one_byte.dis",
+                          "one_trailing_byte.dis", "envelope_unknown_key.json"])
+# The `bytes` member of each entry in the bundle's `vectors/index.json`, in STEMS order.
+DIS_LENGTHS = (144, 144, 160)
+
+
+@pytest.mark.parametrize("stem", dis7_support.STEMS)
+def test_top_level_fixtures_are_byte_identical_to_the_vendored_vectors(stem):
+    fixtures = dis7_support.FIXTURES
+    assert (fixtures / f"{stem}.dis").read_bytes() == dis7_support.vector_bytes(stem)
+    assert ((fixtures / f"{stem}.parsed.json").read_bytes()
+            == (dis7_support.VECTORS / f"{stem}.envelope.json").read_bytes())
+    assert len((fixtures / f"{stem}.dis").read_bytes()) == DIS_LENGTHS[dis7_support.STEMS.index(stem)]
+
+
+def test_the_fixture_directory_has_exactly_the_planned_layout():
+    fixtures = dis7_support.FIXTURES
+    selected = [p.name for p in harness.select_fixtures(fixtures)]
+    assert selected == FIXTURE_NAMES
+    assert not [name for name in selected if name.startswith(("truncated", "malformed"))]
+    assert sorted(p.name for p in (fixtures / "golden").glob("*.cdm.json")) == GOLDEN_NAMES
+    for directory in (fixtures, fixtures / "malformed"):
+        assert (directory / "README.md").is_file()
+        assert (directory / "PROVENANCE.json").is_file()
+
+
+def test_no_json_under_the_fixture_directory_nests_deeper_than_sixteen():
+    # 16 is harness.LOADER_MAX_DEPTH (64) divided by 4, the rule every fixture directory keeps.
+    measured = 0
+    for path in dis7_support.FIXTURES.rglob("*.json"):
+        assert json_nesting_depth(path.read_text(encoding="utf-8")) <= 16, path.name
+        measured += 1
+    assert measured >= 25
+
+
+def test_the_two_provenance_records_list_exactly_the_selected_files():
+    fixtures = dis7_support.FIXTURES
+    top = evidence.read_provenance(fixtures)
+    assert top.directory == "dis7"
+    assert [row.file for row in top.fixtures] == FIXTURE_NAMES
+    malformed = evidence.read_provenance(fixtures / "malformed")
+    assert malformed.directory == "dis7/malformed"
+    assert [row.file for row in malformed.fixtures] == MALFORMED_NAMES
+    for row in (*top.fixtures, *malformed.fixtures):
+        assert row.synthetic is True
+        assert row.classification == "PUBLIC"
+        assert row.operational_data is False
+        assert row.personal_data is False
+
+
+# ---------------------------------------------------------------------------------------------
+# Emitted output against the contract schemas, and the stage-2 differential (requirement R12)
+# ---------------------------------------------------------------------------------------------
+
+S = dis7_support.seed()
+MAX = dis7_support.patch(dis7_support.patch(S, 19, b"\xff"), 8, b"\x10\x80") + bytes(4080)
+HOST_HASH = "c958233bda22e82385788584e0297d0e264ee2a0db94dc32838141925155ef1a"
+
+
+def _emitted_corpus():
+    """(label, adapter, input) for every emitted shape the schemas must admit."""
+    fa = dis7_support.fixture_adapter
+    corpus = []
+    for stem in dis7_support.STEMS:
+        corpus.append((f"{stem}.dis", fa(), dis7_support.vector_bytes(stem)))
+        corpus.append((f"{stem}.envelope", fa(),
+                       copy.deepcopy(dis7_support.vector_json(stem, "envelope"))))
+    corpus += [
+        ("255 records", fa(), MAX),
+        ("algorithm 9", fa(), dis7_support.patch(S, 88, b"\x09")),
+        ("zero vector", fa(), dis7_support.patch(S, 48, bytes(24))),
+        ("not synthetic", fa(synthetic=False), S),
+        ("host hash", fa(source_hash={"algorithm": "sha256", "value": HOST_HASH}), S),
+    ]
+    return corpus
+
+
+def test_r12_emitted_entities_validate_against_the_profile_and_base_schemas():
+    profile = _schema("dis7-entity")
+    published = json.loads(ENTITY_SCHEMA.read_text())
+    corpus = _emitted_corpus()
+    assert len(corpus) == 11
+    for label, adapter, raw in corpus:
+        dump = adapter.to_cdm(raw)[0].model_dump(mode="json")
+        assert _errors(profile, dump) == [], label
+        assert _errors(published, dump) == [], label
+
+
+def test_r12_emitted_residuals_validate_and_rebuild_a_valid_envelope():
+    residual_schema = _schema("dis7-residual")
+    envelope_schema = _schema("dis7-envelope")
+    for label, adapter, raw in _emitted_corpus():
+        entity = adapter.to_cdm(raw)[0]
+        data = entity.model_dump(mode="json")["residual"]["data"]
+        assert _errors(residual_schema, data) == [], label
+        envelope = {"pdu": data["pdu"], "wire_hex": data["wire_hex"], "time_context": data["time_context"]}
+        assert _errors(envelope_schema, envelope) == [], label
+        assert adapter.to_cdm(envelope)[0] == entity, label
+
+
+def test_r12_schema_oracles_can_fail():
+    dump = copy.deepcopy(dis7_support.vector_json("equator_eastbound", "expected"))[0]
+    dump["affiliation"] = "FRIENDLY"
+    assert _errors(_schema("dis7-entity"), dump) != []
+    data = copy.deepcopy(dis7_support.vector_json("equator_eastbound", "expected"))[0]["residual"]["data"]
+    data["extra"] = 1
+    assert _errors(_schema("dis7-residual"), data) != []
+    envelope = copy.deepcopy(dis7_support.vector_json("equator_eastbound", "envelope"))
+    envelope["extra"] = 1
+    assert _errors(_schema("dis7-envelope"), envelope) != []
+
+
+_ENVELOPE_KEYS = ("pdu", "wire_hex", "time_context")
+_PDU_KEYS = ("header", "entity_id", "force_id", "entity_type", "alternative_entity_type",
+             "velocity_mps", "position_ecef_m", "orientation_radians", "appearance",
+             "dead_reckoning_hex", "marking_hex", "capabilities", "variable_parameters_hex")
+_HEADER_KEYS = ("protocol_version", "exercise_id", "pdu_type", "protocol_family", "timestamp",
+                "length", "status", "padding")
+_ARRAYS = ("entity_id", "entity_type", "alternative_entity_type", "velocity_mps", "position_ecef_m",
+           "orientation_radians")
+
+
+def _node(envelope, dotted):
+    *parents, last = dotted.split(".")
+    node = envelope
+    for name in parents:
+        node = node[name]
+    return node, last
+
+
+def _set(dotted, value):
+    def edit(envelope):
+        node, last = _node(envelope, dotted)
+        node[last] = copy.deepcopy(value)
+    return edit
+
+
+def _drop(dotted):
+    def edit(envelope):
+        node, last = _node(envelope, dotted)
+        del node[last]
+    return edit
+
+
+def _apply(dotted, change):
+    def edit(envelope):
+        node, last = _node(envelope, dotted)
+        node[last] = change(node[last])
+    return edit
+
+
+def _differential_corpus():
+    """(class, label, edit) for the 106 envelopes of the stage-2 differential."""
+    nan, inf = float("nan"), float("inf")
+    rows = []
+    for where in ("", "pdu.", "pdu.header.", "time_context."):
+        rows.append(("extra", f"{where}extra", _set(f"{where}extra", 1)))
+    for dotted in (*_ENVELOPE_KEYS, *(f"pdu.{key}" for key in _PDU_KEYS),
+                   *(f"pdu.header.{key}" for key in _HEADER_KEYS), "time_context.instant",
+                   "time_context.basis"):
+        rows.append(("omit", dotted, _drop(dotted)))
+    for dotted, value in (("pdu.force_id", "1"), ("pdu.header.exercise_id", None),
+                          ("pdu.entity_id", "7:11:1"), ("pdu.velocity_mps", [0.0, None, 0.0]),
+                          ("pdu.velocity_mps", ["0.0", 25.0, 0.0]), ("time_context.instant", 5),
+                          ("time_context.basis", 5), ("time_context", []), ("pdu", []),
+                          ("wire_hex", 5), ("pdu.marking_hex", 5)):
+        rows.append(("type", f"{dotted}={value!r}", _set(dotted, value)))
+    for dotted, value in (("pdu.force_id", True), ("pdu.header.pdu_type", True),
+                          ("pdu.velocity_mps", [False, 25.0, 0.0])):
+        rows.append(("bool", f"{dotted}={value!r}", _set(dotted, value)))
+    for dotted, value in (("pdu.force_id", 256), ("pdu.force_id", -1), ("pdu.header.exercise_id", 256),
+                          ("pdu.entity_id", [65536, 11, 1]), ("pdu.appearance", 4294967296),
+                          ("pdu.header.length", 143), ("pdu.header.length", 4225),
+                          ("pdu.header.timestamp", -1)):
+        rows.append(("range", f"{dotted}={value!r}", _set(dotted, value)))
+    for dotted, value in (("pdu.header.protocol_version", 6), ("pdu.header.pdu_type", 67),
+                          ("pdu.header.protocol_family", 2)):
+        rows.append(("const", f"{dotted}={value!r}", _set(dotted, value)))
+    for key in _ARRAYS:
+        rows.append(("width", f"{key} short", _apply(f"pdu.{key}", lambda items: items[:-1])))
+        rows.append(("width", f"{key} long", _apply(f"pdu.{key}", lambda items: items + [items[-1]])))
+    for key in ("dead_reckoning_hex", "marking_hex"):
+        rows.append(("width", f"{key} short", _apply(f"pdu.{key}", lambda text: text[:-1])))
+        rows.append(("width", f"{key} long", _apply(f"pdu.{key}", lambda text: text + "0")))
+    for label, value in (("one record of 31", ["0" * 31]), ("one record of 33", ["0" * 33]),
+                         ("256 records", ["00" * 16] * 256)):
+        rows.append(("width", label, _set("pdu.variable_parameters_hex", value)))
+    rows.append(("hex", "marking_hex upper", _apply("pdu.marking_hex", str.upper)))
+    rows.append(("hex", "wire_hex upper", _apply("wire_hex", str.upper)))
+    rows.append(("hex", "wire_hex odd", _apply("wire_hex", lambda text: text + "0")))
+    rows.append(("hex", "wire_hex space", _apply("wire_hex", lambda text: text[:-2] + " 0")))
+    rows.append(("hex", "wire_hex 286", _apply("wire_hex", lambda text: text[:286])))
+    rows.append(("hex", "wire_hex 8450", _apply("wire_hex", lambda text: text + "00" * 4081)))
+    rows.append(("accept", "unchanged", _apply("wire_hex", lambda text: text)))
+    rows.append(("accept", "integral velocity", _set("pdu.velocity_mps", [0, 25, 0])))
+    rows.append(("accept", "negative zero velocity", _set("pdu.velocity_mps", [-0.0, 25.0, 0.0])))
+    rows.append(("later", "force_id 2", _set("pdu.force_id", 2)))
+    rows.append(("later", "wire octet 2 = 43",
+                 _apply("wire_hex", lambda text: text[:4] + "43" + text[6:])))
+    for instant in ("not-a-time", "2026-04-29T06:15:00", "2026-04-29T06:15:00.0000Z",
+                    "2026-04-29t06:15:00z", "2026-04-29 06:15:00Z"):
+        rows.append(("CR-03", f"instant {instant}", _set("time_context.instant", instant)))
+    for basis in ("", " ", "x" * 1025):
+        rows.append(("CR-03", f"basis of {len(basis)}", _set("time_context.basis", basis)))
+    rows.append(("CR-05", "velocity NaN", _set("pdu.velocity_mps", [nan, 25.0, 0.0])))
+    rows.append(("CR-05", "position inf", _set("pdu.position_ecef_m", [6378257.0, inf, 0.0])))
+    rows.append(("CR-05", "orientation -inf", _set("pdu.orientation_radians", [0.5, -0.25, -inf])))
+    for instant in ("2016-12-31T23:59:60Z", "2026-02-30T00:00:00Z", "2026-04-29T24:00:00Z",
+                    "0000-01-01T00:00:00Z", "2026-04-29T06:15:00+24:00"):
+        rows.append(("CR-01", f"instant {instant}", _set("time_context.instant", instant)))
+    for dotted, value in (("pdu.header.protocol_version", 7.0), ("pdu.header.exercise_id", 42.0),
+                          ("pdu.force_id", 1.0), ("pdu.entity_id", [7.0, 11.0, 1.0]),
+                          ("pdu.appearance", 305419896.0)):
+        rows.append(("CR-06", f"{dotted}={value!r}", _set(dotted, value)))
+    return rows
+
+
+_CLASS_COUNTS = {"extra": 4, "omit": 26, "type": 11, "bool": 3, "range": 8, "const": 3, "width": 19,
+                 "hex": 6, "accept": 3, "later": 2, "CR-03": 8, "CR-05": 3, "CR-01": 5, "CR-06": 5}
+
+
+# CR-01, CR-03, CR-05, CR-06
+def test_r12_stage2_verdict_equals_the_envelope_schema_except_enumerated_divergences():
+    """The adapter's stage-2 verdict against `dis7-envelope.schema.json`, envelope by envelope.
+
+    This test alone builds `jsonschema.Draft202012Validator(schema)` with no `format_checker`:
+    `format` then stays an annotation, so the verdict cannot depend on optional packages. The
+    corpus holds JSON-shaped values only (no tuples, CR-29) and no basis made only of the
+    engine-dependent white-space code points (CR-07).
+    """
+    from synapse_cdm.adapters.dis7 import Dis7Error
+
+    validator = jsonschema.Draft202012Validator(_schema("dis7-envelope"))
+    adapter = dis7_support.fixture_adapter(time_context=None)
+    rows = _differential_corpus()
+    assert len(rows) == 106
+    counts = {}
+    for kind, _, _ in rows:
+        counts[kind] = counts.get(kind, 0) + 1
+    assert counts == _CLASS_COUNTS
+    assert len({(kind, label) for kind, label, _ in rows}) == 106
+
+    schema_ok, outcome = {}, {}
+    for kind, label, edit in rows:
+        envelope = copy.deepcopy(dis7_support.vector_json("equator_eastbound", "envelope"))
+        edit(envelope)
+        key = (kind, label)
+        schema_ok[key] = not any(True for _ in validator.iter_errors(envelope))
+        try:
+            adapter.to_cdm(copy.deepcopy(envelope))
+        except Dis7Error as error:
+            outcome[key] = (error.code, error.path)
+        else:
+            outcome[key] = ("ACCEPT", None)
+
+    expected_pairs = {
+        ("later", "force_id 2"): ("E_TWIN_WIRE_MISMATCH", "pdu.force_id"),
+        ("later", "wire octet 2 = 43"): ("E_HEADER_UNSUPPORTED", "byte[2]"),
+        ("CR-05", "velocity NaN"): ("E_TWIN_SCHEMA", "pdu.velocity_mps[0]"),
+        ("CR-05", "position inf"): ("E_TWIN_SCHEMA", "pdu.position_ecef_m[1]"),
+        ("CR-05", "orientation -inf"): ("E_TWIN_SCHEMA", "pdu.orientation_radians[2]"),
+    }
+    for key in schema_ok:
+        kind, label = key
+        if kind in ("extra", "omit", "type", "bool", "range", "const", "width", "hex"):
+            assert schema_ok[key] is False, key
+            assert outcome[key][0] == "E_TWIN_SCHEMA", (key, outcome[key])
+        elif kind in ("accept", "CR-06"):
+            assert schema_ok[key] is True, key
+            assert outcome[key] == ("ACCEPT", None), (key, outcome[key])
+        elif kind == "CR-03":
+            assert schema_ok[key] is False, key
+            want = "time_context.instant" if label.startswith("instant") else "time_context.basis"
+            assert outcome[key] == ("E_CONTEXT_TIME", want), (key, outcome[key])
+        elif kind == "CR-01":
+            assert schema_ok[key] is True, key
+            assert outcome[key] == ("E_CONTEXT_TIME", "time_context.instant"), (key, outcome[key])
+        else:
+            assert schema_ok[key] is True, key
+            assert outcome[key] == expected_pairs[key], (key, outcome[key])
+
+    divergent = {key for key in schema_ok if schema_ok[key] != (outcome[key][0] != "E_TWIN_SCHEMA")}
+    assert divergent == {key for key in schema_ok if key[0] in ("CR-03", "CR-05")}

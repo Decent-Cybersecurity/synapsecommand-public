@@ -37,7 +37,8 @@ repository. Every check below is a property of the installed artefact:
     schemas    the published schemas can be regenerated and re-checked from anywhere
     harness    every adapter the tree registers replays green with no --fixtures argument
                at all — the roster derived, never a count typed here
-    scripts    the cdm-harness, cdm-schemas, cdm-conformance and synapse entry points work
+    scripts    the cdm-harness, cdm-schemas, cdm-conformance, synapse and synapse-dis7 entry
+               points work, the last one read as bytes
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package
 
@@ -241,6 +242,15 @@ PACKAGE_ONLY_TESTS = (
     # `test_cdm_dis7_geodesy.py` needs only the installed package and the three packaged vectors
     # it reads through `tests/dis7_support.py`.
     "test_cdm_dis7_geodesy.py",
+    # `test_cdm_dis7_replay.py` reads the packaged vectors through the package and spawns only
+    # `sys.executable`.
+    "test_cdm_dis7_replay.py",
+    # `test_cdm_dis7_adapter.py` reads the vendored vectors through the package.
+    "test_cdm_dis7_adapter.py",
+    # `test_cdm_dis7_cli.py` is package-only: it runs `python -m synapse_cdm.dis7_host` with the
+    # interpreter under test, reads the packaged vectors through `synapse_cdm.__file__` and
+    # writes only under `tmp_path`, so against a wheel it exercises the command a consumer got.
+    "test_cdm_dis7_cli.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -303,6 +313,9 @@ REPO_BOUND_TESTS = {
     "test_cdm_evidence.py": "schemas/evidence/evidence.schema.json and manifests/<id>.json at the repository root — an evidence record embeds the PUBLISHED manifest and validates against the PUBLISHED schema, and neither publication is inside the wheel (the same reason test_cdm_manifests.py is here). The provenance half is package-bound and would run against a wheel, but a module is decided as a whole and its repository half cannot",
     "test_cdm_manifests.py": "manifests/ and schemas/manifests/ at the repository root — both are PUBLICATIONS of what the package declares and neither is inside the wheel (M's ruling F1.4: manifests are framework-level interoperability artefacts and the wheel carries the generator, not a second copy of the payload), so against an installed wheel this module would have no files to compare the declarations with",
     "test_cdm_dis7_trace.py": "AST over the tests/test_cdm_dis7_*.py modules as files in the tree: the traceability ratchet binds the contract's case ids to test functions in the repository's tests directory, which the wheel does not carry",
+    "test_cdm_dis7_reference.py": "pytest.ini's marker registration at the repository root, and the pinned open-dis-python checkout that SYNAPSE_CDM_OPENDIS_DIR names, driven through git and a child interpreter by tests/dis7_reference_support.py — neither is inside the wheel, and an installed wheel has no marker file for this module to be right about",
+    "test_cdm_dis7_mutation.py": "gates/dis7_mutation.py and the DIS7 test modules under tests/, run against a patched temporary copy of packages/cdm — neither the gate nor the test modules ship in the wheel",
+    "test_cdm_dis7_benchmark.py": "gates/dis7_benchmark.py, which the wheel does not carry — the reduced benchmark loads that gate by path from the repository",
 }
 
 def source_roster() -> tuple[str, ...]:
@@ -402,6 +415,18 @@ def must(result: subprocess.CompletedProcess, what: str) -> str:
                      f"      stdout: {result.stdout.strip()[-2000:]}\n"
                      f"      stderr: {result.stderr.strip()[-2000:]}")
     return result.stdout
+
+
+def run_bytes(argv: list[str], *, cwd: pathlib.Path | None = None,
+              env: dict | None = None) -> subprocess.CompletedProcess:
+    """`run` without the text decoding, for a script whose stdout is octets.
+
+    `synapse-dis7 replay` writes a PDU, and a PDU is not text: octet 9 of a 144-octet Entity
+    State PDU is 0x90, which no strict UTF-8 read survives. Exit classes are read from
+    `returncode` by the caller, because `must` fails every non-zero exit and three of the four
+    classes checked are non-zero on purpose.
+    """
+    return subprocess.run(argv, cwd=cwd, env=env, capture_output=True)
 
 
 def make_venv(path: pathlib.Path) -> pathlib.Path:
@@ -646,6 +671,79 @@ def check_harness(python: pathlib.Path, outside: pathlib.Path,
     return (f"{len(adapters)} adapters x 2 schema modes, {total} fixture verdicts, 0 failed")
 
 
+def check_dis7_script(scripts: pathlib.Path, outside: pathlib.Path) -> str:
+    """`synapse-dis7` from the clean venv, on a vector the WHEEL carries [CR-33, case A12].
+
+    Every call goes through `run_bytes`: the decode writes JSON, the replay writes the PDU, and
+    the comparison is byte for byte against the packaged octets. A failure names the step, the
+    exit code and the tail of stderr, never stdout, so no PDU octet reaches the report.
+    """
+    tool = str(scripts / "synapse-dis7")
+
+    def fail(step: str, result: subprocess.CompletedProcess, why: str) -> Failed:
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()[-800:]
+        return Failed(f"synapse-dis7 {step}: {why} (exit {result.returncode})\n"
+                      f"      stderr: {stderr}")
+
+    vectors = pathlib.Path(must(run([str(scripts / "python"), "-c",
+                                     "import pathlib, synapse_cdm; print(pathlib.Path("
+                                     "synapse_cdm.__file__).parent / 'fixtures' / 'dis7' / "
+                                     "'vectors')"], cwd=outside),
+                                "locating the packaged DIS 7 vectors").strip())
+    source = vectors / "equator_eastbound.dis"
+    pdu = source.read_bytes()
+    context = json.loads((vectors / "equator_eastbound.context.json").read_text())
+    package_version = must(run([str(scripts / "python"), "-c",
+                                "from synapse_cdm.version import PACKAGE_VERSION; "
+                                "print(PACKAGE_VERSION)"], cwd=outside),
+                           "reading the installed PACKAGE_VERSION").strip()
+
+    result = run_bytes([tool, "--version"], cwd=outside)
+    if result.returncode != 0:
+        raise fail("--version", result, "did not exit 0")
+    for wanted in (b"1.0.0", b"SC DIS7 SPEC 001", package_version.encode()):
+        if wanted not in result.stdout:
+            raise fail("--version", result, f"does not report {wanted.decode()}")
+
+    result = run_bytes([tool, "self-test"], cwd=outside)
+    if result.returncode != 0:
+        raise fail("self-test", result, "did not exit 0")
+
+    decode = [tool, "decode", "--at", context["time_context"]["instant"],
+              "--basis=" + context["time_context"]["basis"], "--session", context["session"]]
+    result = run_bytes(decode + ["--synthetic", "--input", str(source)], cwd=outside)
+    if result.returncode != 0 or not result.stdout:
+        raise fail("decode", result, "did not exit 0 with an Entity array on stdout")
+    entity = outside / "dis7-entity.json"
+    entity.write_bytes(result.stdout)
+
+    result = run_bytes([tool, "replay", "--input", str(entity)], cwd=outside)
+    if result.returncode != 0:
+        raise fail("replay", result, "did not exit 0")
+    if result.stdout != pdu:
+        raise fail("replay", result, f"wrote {len(result.stdout)} octets that are not the "
+                                     f"{len(pdu)} packaged ones")
+
+    truncated = outside / "dis7-truncated.dis"
+    truncated.write_bytes(pdu[:143])
+    result = run_bytes(decode + ["--synthetic", "--input", str(truncated)], cwd=outside)
+    if result.returncode != 3 or result.stdout != b"":
+        raise fail("decode of a truncated PDU", result, "is not exit 3 with nothing on stdout")
+
+    result = run_bytes(decode + ["--synthetic", "--live", "--input", str(source)], cwd=outside)
+    if result.returncode != 2 or result.stdout != b"":
+        raise fail("decode with --synthetic and --live", result,
+                   "is not exit 2 with nothing on stdout")
+
+    result = run_bytes(decode + ["--synthetic", "--input", str(outside / "dis7-absent.dis")],
+                       cwd=outside)
+    if result.returncode != 4 or result.stdout != b"":
+        raise fail("decode of an absent file", result, "is not exit 4 with nothing on stdout")
+
+    return (f"synapse-dis7 --version, self-test, decode and replay ({len(pdu)} octets, "
+            "byte-exact), exit classes 0, 2, 3 and 4")
+
+
 def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
                           schema_dir: pathlib.Path) -> str:
     must(run([str(scripts / "cdm-harness"), "--adapter", "pntmap", "--json"], cwd=outside),
@@ -674,7 +772,8 @@ def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
          "synapse conformance run")
     must(run([str(scripts / "synapse"), "conformance", "list"], cwd=outside),
          "synapse conformance list")
-    return "cdm-harness, cdm-schemas, cdm-conformance and synapse all run"
+    check_dis7_script(scripts, outside)
+    return "cdm-harness, cdm-schemas, cdm-conformance, synapse and synapse-dis7 all run"
 
 
 def check_slice_closure() -> str:

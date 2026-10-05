@@ -537,7 +537,7 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 #: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
 SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52", "ais": "ais", "c2sim": "c2sim", "cat021": "cat021",
                         "cat023": "cat023", "cat034": "cat034", "cat048": "cat048",
-                        "cat062": "cat062", "geojson": "geojson", "geopackage": "geopackage",
+                        "cat062": "cat062", "dis7": "dis7", "geojson": "geojson", "geopackage": "geopackage",
                         "gmti": "gmti", "legion": "legion",
                         "pntmap": "pntmap", "stanag4586": "stanag4586",
                         "stanag4609": "klv", "stanag4676": "nits",
@@ -576,9 +576,9 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
 #: folklore is the window between this commit and the two that ship the adapters.
 #: `dis7` joined on the day `fixtures/dis7/spec/` was created, which is what this half of the map
 #: is for. Its directory is the same string as the adapter name: the directory holds DIS 7 Entity
-#: State payloads and the name is the payload's, not a covering document's. Until the adapter class
-#: lands the directory holds only `spec/`, `vectors/` and `contract/` and no top-level file.
-PLANNED_FIXTURE_DIRS = {"stanag5527": "fft", "dis7": "dis7"}
+#: State payloads and the name is the payload's, not a covering document's. The entry moved to the
+#: shipped half when the class, its top-level fixtures and their goldens landed together.
+PLANNED_FIXTURE_DIRS = {"stanag5527": "fft"}
 
 
 def test_the_thirteen_shipped_adapters_all_have_a_real_fixture_directory():

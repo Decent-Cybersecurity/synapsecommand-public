@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import dataclasses
 import datetime
+import enum
 import inspect
 import struct
 import uuid
@@ -107,6 +108,18 @@ WHITESPACE = [
 ]
 
 
+class _MixinSession(str, enum.Enum):
+    ALPHA = "alpha-1"
+
+
+class _StrEnumSession(enum.StrEnum):
+    ALPHA = "alpha-1"
+
+
+class _PlainSubclass(str):
+    pass
+
+
 def _refused(code: str, path: str, build, *args, **kwargs) -> Dis7Error:
     with pytest.raises(Dis7Error) as caught:
         build(*args, **kwargs)
@@ -185,7 +198,7 @@ def test_t09_n13_refused_instant(instant):
     assert instant not in error.message
 
 
-@pytest.mark.parametrize("instant", N13_NOT_IDS, ids=[f"case{i}" for i in range(len(N13_NOT_IDS))])
+@pytest.mark.parametrize("instant", N13_NOT_IDS, ids=[ascii(value) for value in N13_NOT_IDS])
 def test_t09_n13_refused_instants_that_cannot_be_test_ids(instant):
     error = _instant_refused(instant)
     if isinstance(instant, str) and instant:
@@ -279,3 +292,15 @@ def test_t09_session_bounds_and_alphabet():
         _session_refused(value)
     error = _session_refused("a:b")
     assert "a:b" not in error.message
+
+
+def test_t09_session_refuses_str_subclasses():
+    for value in (_MixinSession.ALPHA, _StrEnumSession.ALPHA, _PlainSubclass("alpha-1")):
+        _session_refused(value)
+
+
+def test_t09_time_context_refuses_str_subclasses():
+    _refused("E_CONTEXT_TIME", "time_context.instant", TimeContext,
+             _PlainSubclass("2026-04-29T06:15:00Z"), "b")
+    _refused("E_CONTEXT_TIME", "time_context.basis", TimeContext,
+             "2026-04-29T06:15:00Z", _PlainSubclass("b"))

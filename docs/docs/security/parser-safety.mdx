@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the nineteen shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the twenty shipped adapters.
 ---
 
 # Parser safety
@@ -10,7 +10,7 @@ description: The five bounds and where they live, the rules an adapter MUST foll
 Every adapter in this repository is handed bytes somebody else produced. This page is the policy
 those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
 KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
-parser's default behaviour is dangerous, and it is enforced today on the nineteen adapters that
+parser's default behaviour is dangerous, and it is enforced today on the twenty adapters that
 ship — since 2026-09-20/21 that roster includes the Part 2 formats it was written for: AIXM 5.1.1
 and 5.2 and C2SIM (XML), GeoPackage (a SQLite database) and GeoJSON.
 
@@ -39,7 +39,7 @@ hardened against a figure the report does not print.
 > `enforced_at` point, and the `test` that proves the refusal.
 
 > A bound **MUST NOT** be described as the format's normative maximum unless the specification
-> actually says so. Fourteen of the nineteen adapters declare an implementation cap and say so in
+> actually says so. Fifteen of the twenty adapters declare an implementation cap and say so in
 > the enum and in the prose; the five ASTERIX categories declare the normative `LEN` field.
 
 Which bound runs before which allocation — size before the depth scan, the depth scan before
@@ -51,7 +51,7 @@ worker and the hosting application each add on top is the subject of
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all nineteen**. `max_depth` is declared and enforced
+`max_input_bytes` is declared and enforced on **all twenty**. `max_depth` is declared and enforced
 on the **five XML readers** — `tak` and `stanag4676` since 2026-09-16, and `c2sim`, `aixm511` and
 `aixm52` since 2026-09-21, the last three inside expat's start-element handler through
 `secure_xml` — on the **five that decode JSON** — `adsb`, `ais`, `legion` and `pntmap`
@@ -59,9 +59,9 @@ since 2026-09-17, `geojson` since 2026-09-20 — and on `geopackage` (the parsed
 accepts; the SQLite octets themselves have no nesting to measure, 2026-09-20).
 `max_objects` is declared and enforced on the five of the adapter expansion (`geojson`,
 `geopackage`, `c2sim`, `aixm511`, `aixm52`), each before the objects it bounds are built, and
-declared absent with a reason on the other fourteen. `max_decompressed_bytes` and
-`max_parse_seconds` are declared absent with a reason on all nineteen, and `max_depth` on the other
-eight; none of those is enforced, and no page here says otherwise.
+declared absent with a reason on the other fifteen. `max_decompressed_bytes` and
+`max_parse_seconds` are declared absent with a reason on all twenty, and `max_depth` on the other
+nine; none of those is enforced, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
 `Adapter.__init_subclass__` wraps each subclass's own `to_cdm`, so the bound is checked before any
@@ -114,7 +114,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 > same number — `stanag4676`'s included, although that reader never descends past what the class
 > model names.
 
-### The nineteen declarations
+### The twenty declarations
 
 | adapter | `max_input_bytes` | kind | where the figure comes from |
 |---|---|---|---|
@@ -137,6 +137,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 | `c2sim` | 4 194 304 | implementation cap | XML; SISO-STD-019-2020 states no maximum message size (`c2sim.C2SIM_MAX_INPUT_BYTES`) |
 | `aixm511` | 16 777 216 | implementation cap | XML; AIXM 5.1.1 states no maximum document size (`aixm511.AIXM511_MAX_INPUT_BYTES`) |
 | `aixm52` | 16 777 216 | implementation cap | XML; AIXM 5.2 states no maximum document size (`aixm52.AIXM52_MAX_INPUT_BYTES`) |
+| `dis7` | 4 224 | implementation cap | one Entity State PDU of this subset is 144 octets plus at most 255 variable parameter records of 16 octets (`dis7_codec.MAX_PDU_BYTES`) |
 
 ## 2. XML
 
@@ -273,7 +274,7 @@ How `geopackage` meets them (`adapters/geopackage.py`, `_Snapshot`):
 > A decode **MUST** be bounded in wall time once `max_parse_seconds` is enforced, and an adapter
 > **MUST** declare the bound or the reason it has none.
 
-None of the nineteen enforces one today, and each says so in its own `absent_because`. The
+None of the twenty enforces one today, and each says so in its own `absent_because`. The
 conformance suite's checks **H** and **N** hold the related property — that a malformed or
 truncated payload is refused *quickly* rather than hanging — with a per-case deadline that is
 **enforced**: since audit finding F03 (2026-09-19) each case runs in a spawned worker process
@@ -288,15 +289,15 @@ Linux-only and is refused where it cannot be enforced — `docs/docs/security/de
 | check | what it asserts |
 |---|---|
 | **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside an enforced deadline in a killable worker; a `.json` payload past the loader's depth bound is refused by the loader, and the layer is recorded |
-| **M** — streaming | `SKIP`, declared inapplicable, for all nineteen — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
+| **M** — streaming | `SKIP`, declared inapplicable, for all twenty — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
 | **N** — parser robustness | a truncated payload at many offsets is refused, inside the same enforced deadline |
 | **O** — resource limits | one octet more than the declared `max_input_bytes` is refused; the payload *at* the bound is not refused by the size guard (`tests/test_cdm_resource_envelope.py`) |
 
-**O is required in CI for all nineteen.** It was a SKIP for all fourteen of the day's adapters until round P5, because
+**O is required in CI for all twenty.** It was a SKIP for all fourteen of the day's adapters until round P5, because
 no adapter declared a bound to check; it is now in the required set for every adapter in the
 sweep, which is what would notice a bound being quietly removed from a manifest.
 
-## 7. The audit: every parser call in the nineteen
+## 7. The audit: every parser call in the twenty
 
 Taken with
 `grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.
@@ -326,3 +327,10 @@ parsing: the adapter re-parses a fragment it has just serialised itself, so the 
 output. And the adapters with no row of their own are not unbounded — they are bounded by the same
 `max_input_bytes`, and they simply reach no parser this audit's grep can find, which is a property
 of hand-written binary codecs rather than a gap in the audit.
+
+### Outside the adapters directory: the DIS 7 codec and host loader
+
+| module | call | reached with | bounded before the call? |
+|---|---|---|---|
+| `dis7_codec` | no general-purpose parser; `decode_pdu` reads fixed offsets | the octets of one PDU | **yes** — 4 224 octets (`MAX_PDU_BYTES`), by the adapter's coded guard before the SDK's wrapper and again in `decode_pdu`; a parsed envelope is held to 16 levels and to acyclicity by the adapter before any field is read |
+| `dis7_host` | `parse_json_text` → the standard-library JSON decoder | the bytes of an envelope or replay document read by `synapse-dis7` | **yes** — 65 536 bytes, then strict UTF-8 (a byte-order mark and NUL refused), then a lexical scan refusing more than 16 levels, all before the decoder; duplicate keys, `NaN`/`Infinity` and numbers that overflow are refused |

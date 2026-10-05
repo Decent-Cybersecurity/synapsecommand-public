@@ -1,0 +1,135 @@
+---
+title: DIS 7 Entity State adapter
+sidebar_label: DIS 7 Entity State
+sidebar_position: 9
+description: How the dis7 adapter turns one DIS 7 Entity State PDU into one Entity and back, what it refuses, and what it does not claim.
+---
+
+# DIS 7 Entity State adapter
+
+## Scope
+
+One DIS 7 Entity State PDU (144 to 4224 bytes) becomes exactly one `Entity`, and `from_cdm` returns
+the original bytes from an unchanged `Entity`. This is an Entity State subset: every other PDU type
+and every other protocol version is refused, it carries no IEEE certification, and it claims no
+compatibility with any particular simulator.
+
+The adapter accepts DIS protocol version 7, PDU type 1 and protocol family 1 only. Its behaviour is
+fixed by a handoff specification, identified by `SC DIS7 SPEC 001 v1.0`, which is not in this
+repository; this page cites acceptance-case ids and schema names instead.
+
+## Mapping
+
+Every row below is checked against the packaged vector `equator_eastbound`, whose expected output
+ships beside it as `equator_eastbound.expected.json`.
+
+| Field | Value |
+|---|---|
+| `entity_id` | derived from the system `DIS7:<session>:<exercise>` and the external id `<site>:<application>:<entity>`, so the same entity in the same session and exercise always gets the same id |
+| `source_ids` | one entry, `system` `DIS7:<session>:<exercise>` and `external_id` `<site>:<application>:<entity>` |
+| `entity_type` | `PLATFORM` only for entity kind 1, else `UNKNOWN` |
+| `affiliation` | `UNKNOWN` for every force id; the force id is preserved in the residual, because a force id says nothing about affiliation without an exercise viewpoint |
+| `position` | the ECEF position projected to WGS 84 latitude, longitude and height above the ellipsoid, `position_source` `ESTIMATED`; null for the zero vector |
+| `kinematics` | speed, course and climb from the world-coordinate velocity, only for dead-reckoning algorithms 2 to 5; course is null at zero speed; nothing is derived from orientation, appearance, marking or capabilities |
+| `valid_from` | the caller's state instant, normalised to UTC; never the DIS timestamp |
+| `confidence`, `quality`, `integrity`, `status`, `symbol` | null |
+| `source` | `adapter` `dis7`, `format_name` `DIS`, `format_version` `7 / IEEE 1278.1-2012 Entity State subset`, `system` `DIS7`, `original_id` `<site>:<application>:<entity>`, `observed_at` the caller's instant, `synthetic` and `source_hash` as supplied, and the transformations applied, in words |
+| `residual` | namespace `DIS`; `data` holds `pdu` (every decoded field), `wire_hex` (the PDU's octets), `time_context` (instant and basis), `session`, `synthetic` and `source_hash` |
+
+## Refusals
+
+Every refusal is a `Dis7Error` with three attributes, `code`, `path` and `message`, and prints as
+`CODE at PATH: message`. The codes are the module constant `CODES`:
+
+`E_INPUT_TYPE`, `E_INPUT_LIMIT`, `E_CONTEXT_SESSION`, `E_CONTEXT_SYNTHETIC`, `E_CONTEXT_TIME`, `E_CONTEXT_CONFLICT`, `E_CONTEXT_HASH`, `E_HEADER_UNSUPPORTED`, `E_LENGTH_MISMATCH`, `E_NONFINITE`, `E_TWIN_SCHEMA`, `E_TWIN_WIRE_MISMATCH`, `E_VALUE_RANGE`, `E_POSITION_DOMAIN`, `E_PROJECTION`, `E_REPLAY_SHAPE`, `E_REPLAY_PROVENANCE`, `E_REPLAY_CHANGED`.
+
+Fire, Detonation, Collision, Entity State Update (PDU type 67), radio, simulation management, DIS 6
+and non-DIS payloads are refused with a coded error, never translated. A PDU over 4224 octets is
+refused before it is interpreted.
+
+## Time and identity
+
+The DIS timestamp is preserved in the residual and never converted to an instant. The state instant
+and its basis come from the caller, as a `TimeContext(instant, basis)`.
+
+- The instant is an RFC 3339 date-time with seconds, at most three fractional digits and an explicit
+  `Z` or numeric offset, normalised to UTC with three fractional digits; `-00:00` is accepted as
+  `Z`.
+- Refused instants: a missing offset, more than three fractional digits, a lowercase `t` or `z`, a
+  space separator, hour 24 and leap seconds, an offset hour over 23 or minute over 59, a day that
+  does not exist in its month, and an instant that normalised to UTC leaves the years 0001 to 9999.
+- The basis is 1 to 1024 characters, preserved verbatim; a basis of whitespace only, or one that is
+  not encodable as UTF-8, is refused.
+- The session matches `[A-Za-z0-9._-]{1,128}`, and `session` and `synthetic` have no default.
+
+Identity is derived from the session, the exercise id and the site, application and entity
+numbers only, so the same entity seen in another session gets another id.
+
+## Replay restrictions
+
+`from_cdm` accepts exactly one unchanged `Entity` produced by this adapter. It refuses:
+
+- `E_REPLAY_SHAPE` for anything that is not a list of exactly one `Entity` with a `DIS` residual of
+  the expected shape;
+- `E_REPLAY_PROVENANCE` when the stored session, synthetic flag, time context or source hash
+  disagree with the adapter's context, or `source` or `source_ids` disagree with the stored PDU;
+- `E_REPLAY_CHANGED` when the stored `wire_hex` and the decoded `pdu` disagree, or any other
+  canonical field was edited.
+
+On success the bytes come from the stored `wire_hex`, never rebuilt from the fields. This is not a
+simulator writer: it cannot produce a PDU from an `Entity` it did not read.
+
+## Command line
+
+`synapse-dis7` is installed with the package. It reads one file, writes stdout, and no file is
+written and no network is touched.
+
+| Command | Flags |
+|---|---|
+| `synapse-dis7 decode` | `--input INPUT --at AT --basis BASIS --session SESSION`, and one of `--synthetic` or `--live`; a basis beginning with `-` is written `--basis=VALUE` |
+| `synapse-dis7 replay` | `--input INPUT`, and optionally `--session SESSION` and one of `--synthetic` or `--live`, each asserting the stored value |
+| `synapse-dis7 self-test` | none; runs the packaged vectors and a sample of refusals offline |
+| `synapse-dis7 --version` | prints the adapter, package and specification identifiers |
+
+`decode` accepts a PDU file of up to 4224 bytes, and `replay` an Entity document of up to 65536
+bytes; a larger file is refused before it is interpreted. `--live` only sets the canonical flag and
+authenticates nothing.
+
+| Exit code | Meaning |
+|---|---|
+| 0 | success |
+| 2 | usage, or a context flag refused |
+| 3 | rejected data, including a failed self-test |
+| 4 | file or output I/O failure |
+
+## Limitations
+
+- Entity State subset only; every other PDU type and protocol version is refused.
+- No IEEE certification is claimed. The IEEE text was not consulted; the layout authority is
+  open-dis-python at commit `732b6655bb47e34ccc73722eefe0f4706fd0032f` (BSD-2-Clause).
+- An OpenDIS comparison exists as an opt-in test and an exercise report; no report ships.
+- Maturity levels L5 and L6, `external_exercise` and `normative-verified` are not declared.
+- The conformance verdict covers the packaged fixtures only: the generic tools build the adapter
+  with the fixtures' own context and refuse a caller-supplied fixture directory for it.
+
+## Reference check
+
+From a clone, with a checkout of open-dis-python at the pinned commit:
+
+```bash
+SYNAPSE_CDM_OPENDIS_DIR=<checkout at the pin> python -m pytest -q -rs -m reference tests/test_cdm_dis7_reference.py
+```
+
+With the variable unset, the live half skips as `BLOCKED_EXTERNAL_EVIDENCE`, which is not a pass.
+
+## Regenerating generated files
+
+| Generated file | Command |
+|---|---|
+| `manifests/dis7.json` | `python -m synapse_cdm.manifests --out manifests` |
+| the support matrix | `python -m synapse_cdm.support_matrix --out docs/docs/cdm/support-matrix.mdx` |
+| the current-contracts block | `python gates/current_contracts.py --write` |
+| the goldens | `python -m synapse_cdm.harness --adapter dis7 --schemas schemas --update-golden` |
+| the three PDUs | `python build_fixtures.py <open-dis-python checkout>`, run in the package's `fixtures/dis7/spec/` directory; it compares and never writes |
+| the mutation matrix | `python gates/dis7_mutation.py --out FILE` |
+| the benchmark report | `python gates/dis7_benchmark.py --out FILE` |

@@ -52,7 +52,10 @@ almost anywhere, because the way you check the assertions below is by mutating t
 reverting — which is exactly the edit pattern the stale `.pyc` defeats. The mutation run for this
 module needed `__pycache__` cleared by hand between cases before it was moved to this form.
 """
+import ast
+import json
 import pathlib
+import sys
 import types
 
 import pytest
@@ -186,3 +189,69 @@ def test_ci_runs_the_whole_gate_on_every_push_and_this_module_says_so():
     assert "--export-dist" not in executable, (
         "ci.yml exports a distribution; the CI reading needs the verdict and not the bytes, and "
         "an exported dist/ on every push is an artefact nobody asked for")
+
+
+def _function(tree: ast.Module, name: str) -> ast.FunctionDef:
+    found = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name]
+    assert len(found) == 1, f"gates/wheel_install.py defines {len(found)} top-level {name}()"
+    return found[0]
+
+
+def test_t15_a12_the_gate_reads_a_scripts_output_as_bytes(gate):
+    """`run_bytes` hands back the octets a script wrote, undecoded [CR-33, case A12].
+
+    0x90 is octet 9 of both 144-octet DIS 7 vectors and 0xA0 octet 9 of the 160-octet one: the
+    octets a text-mode read cannot decode, and the reason the gate's `run()` cannot read a
+    `synapse-dis7 replay`. The exit code is 3 so the helper is shown not to judge it.
+    """
+    result = gate.run_bytes([sys.executable, "-c",
+                             "import sys; sys.stdout.buffer.write(bytes([0x07, 0x2A, 0x90, 0xA0, "
+                             "0xFF])); sys.exit(3)"])
+    assert result.stdout == b"\x07\x2a\x90\xa0\xff"
+    assert result.returncode == 3
+    assert isinstance(result.stderr, bytes)
+
+
+def test_t15_a12_the_dis7_script_runs_inside_the_scripts_check_and_the_gate_keeps_thirteen_checks():
+    """The `synapse-dis7` check lives inside `scripts` and adds no check name of its own.
+
+    The gate's thirteen checks are counted in `export_dist`'s docstring and in the CI test above;
+    a fourteenth would move both, so case A12 rides in the check whose question it answers —
+    whether the installed entry points run.
+    """
+    tree = ast.parse(GATE_PATH.read_text())
+    scripts_check = _function(tree, "check_console_scripts")
+    called = {node.func.id for node in ast.walk(scripts_check)
+              if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)}
+    assert "check_dis7_script" in called, \
+        "check_console_scripts no longer calls check_dis7_script, so the wheel gate stops running " \
+        "synapse-dis7 in its clean venv and case A12 loses its evidence"
+    names = {node.args[0].value for node in ast.walk(_function(tree, "gate"))
+             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+             and node.func.attr == "check" and node.args
+             and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str)}
+    assert names == {"build", "closure", "manifest", "licences", "prose", "install", "metadata",
+                     "import", "resources", "schemas", "harness", "scripts", "slice"}, sorted(names)
+
+
+def test_t15_a12_the_dis7_script_check_passes_against_this_environment(gate, tmp_path):
+    """The check itself, run against the interpreter running this suite.
+
+    The wheel gate runs it against a clean venv; here it runs against whichever environment holds
+    this suite, which proves the steps and their exit classes and leaves the decoded Entity array
+    behind to be read. The two literals are the equator vector's: `[0].entity_id` of
+    `vectors/equator_eastbound.expected.json`, and its `sha256` in `vectors/index.json` [CR-18].
+    """
+    scripts = pathlib.Path(sys.executable).parent
+    assert (scripts / "synapse-dis7").exists()
+    detail = gate.check_dis7_script(scripts, tmp_path)
+    assert "synapse-dis7" in detail
+    entities = json.loads((tmp_path / "dis7-entity.json").read_bytes())
+    assert isinstance(entities, list) and len(entities) == 1
+    assert entities[0]["entity_id"] == "d55bb6da-5e94-5583-a12b-249da222ab37"
+    assert entities[0]["source"]["source_hash"] == {
+        "algorithm": "sha256",
+        "value": "c958233bda22e82385788584e0297d0e264ee2a0db94dc32838141925155ef1a",
+    }
+    assert (tmp_path / "dis7-truncated.dis").stat().st_size == 143
+    assert not (tmp_path / "dis7-absent.dis").exists()

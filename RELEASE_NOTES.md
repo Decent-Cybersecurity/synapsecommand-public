@@ -178,14 +178,10 @@ the five.
   release step against the local tag before it is pushed, as it has since 2.1.2; it is refused
   without a tag, which is the reading the release commit records before the tag exists.
 
-## Nineteen adapters, all harness-verified
+## Nineteen adapters at 3.1.1, all harness-verified — and one more in the tree since
 
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas --json`, run over the roster
-with no `--fixtures` at this commit, and every verdict read from the run. The table is the live
-registry — `python -m synapse_cdm.harness --list-adapters` prints `19 adapters registered` and
-`adapter.discover()` and `adapter.roster()` each return the same nineteen names — and
-`tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. Declared maturity and claim status are read from `manifests/<name>.json`.
+with no `--fixtures` at this commit, and every verdict read from the run. The table is the live registry, and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both directions to agree. At `v3.1.1` `python -m synapse_cdm.harness --list-adapters` prints `19 adapters registered` and `adapter.discover()` and `adapter.roster()` each return the same nineteen names. The row marked **post-3.1.1** landed in the tree after that tag and is in no release: `PACKAGE_VERSION` still reads `3.1.1`, the next number is the release round's to type, and that row's verdict count is this tree's harness reading. Every other figure in this section is the `3.1.1` artefact's and does not include that row. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -208,6 +204,7 @@ directions to agree. Declared maturity and claim status are read from `manifests
 | `c2sim` | bidirectional | 10 | L4 | VERIFIED (new in the 3.1.0 arc) |
 | `aixm511` | ingest | 10 | L3 | VERIFIED (new in the 3.1.0 arc) |
 | `aixm52` | ingest | 10 | L3 | VERIFIED (new in the 3.1.0 arc) |
+| `dis7` | bidirectional | 6 | L4 | VERIFIED (**post-3.1.1**, in no release) |
 
 **580 fixture verdicts, 0 failed** across the nineteen, against the published 3.0.0 schemas —
 the 538 that 3.0.1 shipped, unchanged, plus 42 from the five new sets; `gates/wheel_install.py`

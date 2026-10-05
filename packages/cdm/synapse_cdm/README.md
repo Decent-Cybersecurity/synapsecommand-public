@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Nineteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Twenty integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -8,9 +8,9 @@ ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar se
 messages, ASTERIX category 062 SDPS system track messages, ASTERIX category 023 CNS/ATM
 ground station and service status reports, STANAG 4586 Edition 3 DLI air-vehicle telemetry,
 GeoJSON (RFC 7946), OGC GeoPackage 1.4.0, C2SIM (SISO-STD-019/020-2020), AIXM 5.1.1 with the
-Digital NOTAM Event Schema 2.0, and AIXM 5.2.
-Without a canonical model in the middle, nineteen
-adapters means one hundred and seventy-one translations and nineteen private notions of "a contact".
+Digital NOTAM Event Schema 2.0, AIXM 5.2, and the DIS 7 Entity State PDU subset (IEEE 1278.1-2012).
+Without a canonical model in the middle, twenty
+adapters means one hundred and ninety translations and twenty private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -37,6 +37,7 @@ With one, an adapter is a thin translator and nothing else.
 | [`c2sim`](adapters/c2sim.py) 1.0.0 | bidirectional | SISO-STD-019-2020 C2SIM Core with the SISO-STD-020-2020 Land Operations extension, schema package C2SIMArtifacts v1.0.1 — initialisation (entities, organisations, forces, physical state), a `MoveToLocation` / `HoldInPlace` order and position / observation / status reports → `Entity`, `Track`, `Event` (`PLAN_INJECT` under the `c2sim-order/1` payload contract) and `PlanObject`; back to a schema-valid message from the typed block and the residual, on its own tested codec layer ([`c2sim_codec`](adapters/c2sim_codec.py)). Time in three forms kept as stated, a simulation time resolved only against the caller's `ExerciseClock`, and affiliation read as the own side's stated relation, never inferred. The exercise client (`examples/c2sim/exercise_client.py`) is opt-in and the only thing here that opens a socket |
 | [`aixm511`](adapters/aixm511.py) 1.0.0 | ingest | AIXM 5.1.1 (April 2016) — Airspace, AirportHeliport, Runway, RunwayDirection, Navaid and NavaidEquipment, DesignatedPoint, Route, RouteSegment, Taxiway and the NOTAM feature, plus the Digital NOTAM Event Schema 2.0.m — **one `Entity` per time slice**, the feature's `gml:identifier` its identity and the slice's `gml:validTime` its validity, the `aixm-timeslice/1` block beside a structured residual; an Airspace's drawable slices become `PlanObject` areas; the four pinned Digital NOTAM scenario profiles are read into `attributes.dnotam`, and nothing is resolved against a baseline — `synapse_cdm.aixm_resolve` does that from explicit prior state. XLinks are classified and never fetched, on the shared secure `pyexpat` reader ([`secure_xml`](secure_xml.py)) and the shared codec ([`aixm_codec`](adapters/aixm_codec.py)) |
 | [`aixm52`](adapters/aixm52.py) 1.0.0 | ingest | AIXM 5.2 (schema release 5.2.0, 17 January 2025) — the same families on the 5.2 property tables, read by `aixm511`'s `AixmAdapterBase` under its own `Profile`: the 5.2 namespaces, the added and removed properties held to both schemas by a test, `aixm_version: "5.2"` in the block, and a 5.1.1 document refused as the wrong version. **Digital NOTAM is declared NOT available on 5.2** — no Event schema targets it — rather than claimed |
+| [`dis7`](adapters/dis7.py) 1.0.0 | bidirectional | DIS 7 Entity State PDUs — the Entity State subset of IEEE 1278.1-2012 only: protocol version 7, PDU type 1, protocol family 1, 144 to 4224 octets → one `Entity` per PDU, the position projected from ECEF to WGS 84 and the whole PDU kept in a structured residual; an unchanged `Entity` → the original PDU, **byte for byte**, on its own tested codec layer ([`dis7_codec`](adapters/dis7_codec.py)). Every other PDU type and protocol version is refused with a coded error; the state instant is the caller's, never the DIS timestamp or a clock |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -334,12 +335,12 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — thirteen of the nineteen
+clone. Every adapter that declares an egress direction was affected — fourteen of the twenty
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
-2026-09-16 each emitted something the check could not parse as JSON, and the two that shipped since
-(`geojson`, `c2sim`) declared theirs from the start. The second
+2026-09-16 each emitted something the check could not parse as JSON, and the three that shipped since
+(`geojson`, `c2sim`, `dis7`) declared theirs from the start. The second
 of the two repairs that paragraph named was taken: the harness compares the emitted bytes itself,
-under the tolerance each class declares in `ROUNDTRIP_TOLERANCE` — octet for octet for the nine
+under the tolerance each class declares in `ROUNDTRIP_TOLERANCE` — octet for octet for the ten
 binary and line-oriented codecs, and by re-ingest (`values`) for the XML emitters, whose format
 cannot promise octet order, and for the one JSON emitter the harness compares by value anyway —
 and prints the declaration with every report. The tests in `tests/` still
@@ -379,9 +380,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's nineteen adapters it is 342 against 171.
+   contradiction. At today's twenty adapters it is 380 against 190.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that nineteen adapters cannot grow nineteen slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that twenty adapters cannot grow twenty slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
@@ -769,6 +770,42 @@ is either pinned to a derivation or exempt on a ground recorded beside it.
 
 None of them is something the six checks can produce, and that is the point of writing them
 down here: a green harness run is a floor.
+
+## DIS 7 Entity State: the `dis7` adapter
+
+One DIS 7 Entity State PDU (144 to 4224 bytes) becomes exactly one `Entity`, and `from_cdm` returns
+the original bytes from an unchanged `Entity`. This is an Entity State subset: every other PDU type
+and every other protocol version is refused, it carries no IEEE certification, and it claims no
+compatibility with any particular simulator.
+
+The adapter takes its context explicitly:
+
+```python
+from synapse_cdm.adapters.dis7 import Dis7Adapter, TimeContext
+
+adapter = Dis7Adapter(session="exercise-alpha", synthetic=True, time_context=TimeContext("2026-04-29T06:15:00.000Z", "exercise clock, supplied by the operator"))
+entities = adapter.to_cdm(pdu_bytes)
+assert adapter.from_cdm(entities) == pdu_bytes
+```
+
+`session` and `synthetic` have no default: omitting either is refused with a coded error, and the
+state instant and its basis come from the caller, never from the DIS timestamp or a clock.
+
+The same round trip from a shell, with `synapse-dis7`:
+
+```bash
+synapse-dis7 decode --input state.dis --at 2026-04-29T06:15:00.000Z --basis "exercise clock" --session exercise-alpha --synthetic > entity.json
+synapse-dis7 replay --input entity.json > replayed.dis
+synapse-dis7 self-test
+synapse-dis7 --version
+```
+
+Exit codes: `0` success, `2` usage or context flags, `3` rejected data, `4` file or output I/O.
+The command reads one file, writes stdout and writes no file.
+
+The adapter and the command are not part of the published 3.1.1 distribution; they ship with the
+first release after it. A build made from this tree before that release also reports 3.1.1. The
+reference page is https://docs.synapsecommand.com/cdm/dis7.
 
 ## Layout
 

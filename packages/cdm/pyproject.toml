@@ -43,7 +43,7 @@ keywords = [
 ]
 classifiers = [
     # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
-    # exactly one voice: nineteen adapters shipped and harness-verified, the Adapter contract
+    # exactly one voice: twenty adapters shipped and harness-verified, the Adapter contract
     # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
     # tree does not have.
     "Development Status :: 5 - Production/Stable",
@@ -137,13 +137,20 @@ Changelog = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/
 cdm-harness = "synapse_cdm.harness:main"
 cdm-schemas = "synapse_cdm.schemas:main"
 cdm-conformance = "synapse_cdm.conformance:main"
-# `synapse` joined 2026-09-07 with the Synapse Conformance Suite (F2.4). It is the one entry
-# point NOT spelled `cdm-*`, because SOIF §19 spells the command it must answer to —
-# `synapse conformance run --adapter cat021` — and a console script whose name a specification
-# fixes is not a naming choice this repository gets to make. The three above are unchanged; a
-# collision on a caller's PATH is documented rather than defended against, because renaming it
-# would leave the specification's own command line unrunnable.
+# `synapse` joined 2026-09-07 with the Synapse Conformance Suite (F2.4). It was the one entry
+# point NOT spelled `cdm-*` until `synapse-dis7` joined below (corrected 2026-10-04): SOIF §19
+# spells the command it must answer to — `synapse conformance run --adapter cat021` — and a
+# console script whose name a specification fixes is not a naming choice this repository gets to
+# make. The three above are unchanged; a collision on a caller's PATH is documented rather than
+# defended against, because renaming it would leave the specification's own command line
+# unrunnable.
 synapse = "synapse_cdm.suite:main"
+# `synapse-dis7` joined 2026-10-04 with the DIS 7 Entity State adapter's offline host command:
+# decode, replay, self-test and --version. It reads one file and writes stdout; it opens no
+# socket and writes no file. The spelling is fixed the way `synapse` is: acceptance case A12
+# runs the command under this name from a clean install, and the name comes from the adapter's
+# handoff specification, identified by `SC DIS7 SPEC 001 v1.0`, which is not in this repository.
+synapse-dis7 = "synapse_cdm.dis7_host:main"
 
 # ---------------------------------------------------------------------------------------------
 # LINT, AND WHY THE RULE SET IS THIS SMALL. Added 2026-09-08 by SOIF Part 1 round P7, for §50's
@@ -250,7 +257,7 @@ include = ["synapse_cdm*"]
 # any file that is neither shipped nor in a stated do-not-ship class.
 #
 # SHIPS
-#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, nineteen adapters.
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, twenty adapters.
 #   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
 #                                      partner writing an adapter reads; MIGRATIONS is also what
 #                                      tells them what `schema_version` will and will not do.
