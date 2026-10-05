@@ -7,13 +7,16 @@ here decodes its output. The child imports the package the parent imported, thro
 from __future__ import annotations
 
 import ast
+import gc
 import hashlib
+import io
 import json
 import os
 import pathlib
 import shutil
 import subprocess
 import sys
+import tracemalloc
 
 import pytest
 
@@ -108,6 +111,7 @@ def test_t15_a12_source_hash_is_the_sha256_of_the_file_bytes(tmp_path):
     assert doc[0]["residual"]["data"]["source_hash"] == digest
 
 
+# CR-17
 def test_t15_a12_live_sets_synthetic_false_and_replay_asserts_flags(tmp_path):
     stdout = _accepted(_decode(tmp_path, seed(), EQUATOR, *_context_flags(EQUATOR, "--live")))
     doc = json.loads(stdout)
@@ -119,6 +123,20 @@ def test_t15_a12_live_sets_synthetic_false_and_replay_asserts_flags(tmp_path):
              "E_REPLAY_PROVENANCE at [0].residual.data.synthetic: ")
     _refused(_replay_doc(tmp_path, stdout, "--session", "other"), 3,
              "E_REPLAY_PROVENANCE at [0].residual.data.session: ")
+
+
+# CR-17
+def test_t15_a12_replay_binds_session_and_classification_from_the_document(tmp_path):
+    flags = _context_flags(EQUATOR, "--live")
+    flags[5] = "exercise-7"
+    stdout = _accepted(_decode(tmp_path, seed(), EQUATOR, *flags))
+    assert _accepted(_replay_doc(tmp_path, stdout)) == seed()
+    doc = json.loads(stdout)
+    doc[0]["residual"]["data"]["session"] = "other"
+    _refused(_replay_doc(tmp_path, doc), 3, "E_REPLAY_PROVENANCE at [0].source_ids: ")
+    doc = json.loads(stdout)
+    doc[0]["residual"]["data"]["synthetic"] = True
+    _refused(_replay_doc(tmp_path, doc), 3, "E_REPLAY_PROVENANCE at [0].source.synthetic: ")
 
 
 def test_t15_a12_maximal_pdu_round_trips(tmp_path):
@@ -156,12 +174,14 @@ def test_t15_a12_non_ascii_basis_round_trips(tmp_path):
     assert _accepted(_replay_doc(tmp_path, stdout)) == seed()
 
 
+# CR-18
 def test_t15_a12_self_test_passes():
     lines = _accepted(_cli("self-test")).decode("utf-8").splitlines()
     assert lines[-1] == "self-test: 16 checks, 0 failed"
     assert sum(line.startswith("PASS ") for line in lines) == 16
 
 
+# CR-18
 def test_t15_a12_self_test_fails_on_a_changed_vector(tmp_path, capsysbinary, monkeypatch):
     root = tmp_path / "dis7"
     shutil.copytree(VECTORS, root / "vectors")
@@ -174,6 +194,13 @@ def test_t15_a12_self_test_fails_on_a_changed_vector(tmp_path, capsysbinary, mon
     assert b"FAIL decode equator_eastbound: mismatch" in lines
     assert b"FAIL envelope equator_eastbound: mismatch" in lines
     assert out.endswith(b"self-test: 16 checks, 2 failed\n")
+
+
+# CR-34
+def test_t15_a12_help_description_names_what_each_command_reads():
+    description = dis7_host._parser().description
+    assert "reads one file" not in description
+    assert "decode and replay read the one --input file and self-test the packaged vectors" in description
 
 
 def test_t15_a12_version():
@@ -211,6 +238,7 @@ USAGE_CASES = {
 }
 
 
+# CR-18
 @pytest.mark.parametrize("case", sorted(USAGE_CASES))
 def test_t15_a12_usage_errors_exit_2(case):
     result = _cli(*USAGE_CASES[case])
@@ -241,6 +269,7 @@ FLAG_CASES = {
 }
 
 
+# CR-18
 @pytest.mark.parametrize("case", sorted(FLAG_CASES))
 def test_t15_a12_flag_context_errors_exit_2(case):
     args, prefix = FLAG_CASES[case]
@@ -256,6 +285,7 @@ DECODE_REFUSALS = {
 }
 
 
+# CR-18
 @pytest.mark.parametrize("case", sorted(DECODE_REFUSALS))
 def test_t15_a12_decode_refusals_exit_3(case, tmp_path):
     make, prefix = DECODE_REFUSALS[case]
@@ -271,7 +301,63 @@ def test_t15_a12_replay_input_bound(size, tmp_path):
     if size == 65536:
         assert _accepted(result) == vector_bytes(EQUATOR)
     else:
-        _refused(result, 3, "E_INPUT_LIMIT at $: ")
+        assert result.returncode == 3 and result.stdout == b""
+        assert result.stderr == b"E_INPUT_LIMIT at $: input is at least 65537 octets; the limit is 65536\n"
+
+
+_SPARSE = 64 * 1024 * 1024
+
+
+def _peak_during_main(argv):
+    """Exit status of `dis7_host.main(argv)` and the traced allocation peak above the start."""
+    started = not tracemalloc.is_tracing()
+    if started:
+        tracemalloc.start()
+    try:
+        tracemalloc.reset_peak()
+        base = tracemalloc.get_traced_memory()[0]
+        status = dis7_host.main(argv)
+        return status, tracemalloc.get_traced_memory()[1] - base
+    finally:
+        if started:
+            tracemalloc.stop()
+
+
+def _sparse_file(path):
+    with open(path, "wb") as handle:
+        handle.truncate(_SPARSE)
+    return str(path)
+
+
+# R24: an oversize file is refused after a bounded read, never after reading it whole
+def test_t15_a12_decode_oversize_read_is_bounded(tmp_path, capsysbinary):
+    status, peak = _peak_during_main(["decode", "--input", _sparse_file(tmp_path / "big.dis"),
+                                      *_context_flags(EQUATOR)])
+    out = capsysbinary.readouterr()
+    assert status == 3
+    assert out.out == b""
+    assert out.err == b"E_INPUT_LIMIT at $: input is at least 4225 octets; the limit is 4224\n"
+    assert peak < 1024 * 1024, peak
+
+
+def test_t15_a12_replay_oversize_read_is_bounded(tmp_path, capsysbinary):
+    status, peak = _peak_during_main(["replay", "--input", _sparse_file(tmp_path / "big.json")])
+    out = capsysbinary.readouterr()
+    assert status == 3
+    assert out.out == b""
+    assert out.err == b"E_INPUT_LIMIT at $: input is at least 65537 octets; the limit is 65536\n"
+    assert peak < 1024 * 1024, peak
+
+
+# D-01: a size refusal names the size it knows, which for a bounded read is a floor
+def test_t15_a12_replay_of_a_much_larger_file_names_the_floor(tmp_path):
+    path = tmp_path / "entity.json"
+    path.write_bytes((VECTORS / f"{EQUATOR}.expected.json").read_bytes())
+    with open(path, "r+b") as handle:
+        handle.truncate(1_000_000)
+    result = _cli("replay", "--input", str(path))
+    assert result.returncode == 3 and result.stdout == b""
+    assert result.stderr == b"E_INPUT_LIMIT at $: input is at least 65537 octets; the limit is 65536\n"
 
 
 def _null_members(node, prefix=""):
@@ -295,6 +381,7 @@ def _without(doc, path):
     return doc
 
 
+# CR-16
 @pytest.mark.parametrize("stem", STEMS)
 def test_t15_a12_replay_refuses_each_absent_null_member(stem, tmp_path):
     doc = vector_json(stem, "expected")
@@ -355,6 +442,7 @@ REPLAY_REFUSALS = {
 }
 
 
+# CR-16, CR-18, CR-25, CR-27
 @pytest.mark.parametrize("case", sorted(REPLAY_REFUSALS))
 def test_t15_a12_replay_refusals_exit_3(case, tmp_path):
     make, prefix = REPLAY_REFUSALS[case]
@@ -388,6 +476,7 @@ def _unreadable(kind, tmp_path):
     return str(fifo)
 
 
+# CR-18
 @pytest.mark.parametrize("kind", ["missing", "directory", "fifo"])
 @pytest.mark.parametrize("command", ["decode", "replay"])
 def test_t15_a12_unreadable_input_exits_4(command, kind, tmp_path):
@@ -400,6 +489,53 @@ def test_t15_a12_unreadable_input_exits_4(command, kind, tmp_path):
     _refused(result, 4, "synapse-dis7: cannot read --input: ")
 
 
+_SWAP_AFTER_CHECK = """
+import os, sys
+from synapse_cdm import dis7_host
+path = sys.argv[1]
+real_stat = os.stat
+def stat_then_swap(name, *args, **kwargs):
+    result = real_stat(name, *args, **kwargs)
+    if os.fspath(name) == path:
+        os.remove(path)
+        os.mkfifo(path)
+    return result
+dis7_host.os.stat = stat_then_swap
+try:
+    dis7_host._read_bounded(path, 10)
+except OSError as error:
+    print(error)
+"""
+
+
+# PLAN 4.8: a FIFO renamed onto the path after the type check is refused, never waited on
+def test_t15_a12_fifo_swapped_in_after_the_type_check_is_refused(tmp_path):
+    regular = tmp_path / "input"
+    regular.write_bytes(b"x" * 20)
+    child = subprocess.run([sys.executable, "-c", _SWAP_AFTER_CHECK, str(regular)],
+                           capture_output=True, timeout=30, env=ENV)
+    assert child.returncode == 0, child.stderr
+    assert child.stdout == b"not a regular file\n"
+
+
+# R24: the bounded read asks the file for no more than `limit + 1` octets in all
+@pytest.mark.parametrize("limit", [dis7_host.MAX_PDU_BYTES, dis7_host.MAX_JSON_BYTES])
+def test_t15_a12_read_bounded_reads_no_more_than_the_bound(limit, tmp_path, monkeypatch):
+    path = tmp_path / "big.bin"
+    path.write_bytes(bytes(range(256)) * 4096)
+    sizes = []
+    real_read = os.read
+
+    def spy(fd, size):
+        sizes.append(size)
+        return real_read(fd, size)
+
+    monkeypatch.setattr(dis7_host.os, "read", spy)
+    data = dis7_host._read_bounded(str(path), limit)
+    assert data == path.read_bytes()[: limit + 1]
+    assert sizes and sum(sizes) <= limit + 1, sizes
+
+
 BROKEN_PIPE_CASES = {
     "version": ["--version"],
     "self-test": ["self-test"],
@@ -408,6 +544,7 @@ BROKEN_PIPE_CASES = {
 }
 
 
+# CR-18
 @pytest.mark.parametrize("case", sorted(BROKEN_PIPE_CASES))
 def test_t15_a12_broken_pipe_exits_4(case):
     r, w = os.pipe()
@@ -427,6 +564,40 @@ def test_t15_a12_broken_pipe_exits_4(case):
     assert b"Traceback" not in err
 
 
+HELP_CASES = {"help": ["--help"], "decode-help": ["decode", "--help"]}
+
+
+# PLAN 4.8: argparse's help is flushed inside the handler, so a broken pipe is exit 4, not 120
+@pytest.mark.parametrize("case", sorted(HELP_CASES))
+def test_t15_a12_help_into_a_broken_pipe_exits_4(case):
+    r, w = os.pipe()
+    os.close(r)
+    try:
+        child = subprocess.Popen(
+            [sys.executable, "-m", "synapse_cdm.dis7_host", *HELP_CASES[case]],
+            stdout=w, stderr=subprocess.PIPE, env=ENV)
+    finally:
+        os.close(w)
+    _, err = child.communicate(timeout=60)
+    assert child.returncode == 4, err
+    lines = err.split(b"\n")
+    assert len(lines) == 2 and lines[1] == b"", err
+    assert lines[0].startswith(b"synapse-dis7: cannot write output: ")
+    assert b"Exception ignored" not in err
+    assert b"Traceback" not in err
+
+
+# PLAN 4.8: with stdout closed the help is an output failure, not help text on stderr
+@pytest.mark.parametrize("case", sorted(HELP_CASES))
+def test_t15_a12_help_with_closed_stdout_exits_4(case):
+    result = subprocess.run(
+        [sys.executable, "-m", "synapse_cdm.dis7_host", *HELP_CASES[case]],
+        stdout=None, stderr=subprocess.PIPE, timeout=60, env=ENV,
+        preexec_fn=lambda: os.close(1))
+    assert result.returncode == 4, result.stderr
+    assert result.stderr == b"synapse-dis7: cannot write output: stdout is closed\n"
+
+
 @pytest.mark.parametrize("case", sorted(BROKEN_PIPE_CASES))
 def test_t15_a12_closed_stdout_exits_4(case):
     result = subprocess.run(
@@ -443,6 +614,61 @@ def test_t15_a12_closed_stdout_and_stderr_exits_4(case):
         [sys.executable, "-m", "synapse_cdm.dis7_host", *BROKEN_PIPE_CASES[case]],
         stdout=None, stderr=None, timeout=60, env=ENV,
         preexec_fn=lambda: (os.close(1), os.close(2)))
+    assert result.returncode == 4
+
+
+def test_t15_emit_closes_the_redirect_descriptor(monkeypatch):
+    closed = open(os.devnull, "w")
+    closed.close()
+    monkeypatch.setattr(sys, "stdout", closed)
+    stderr = io.StringIO()
+    monkeypatch.setattr(sys, "stderr", stderr)
+    gc.collect()
+    before = len(os.listdir("/dev/fd"))
+    assert dis7_host._emit(b"x") == 4
+    assert stderr.getvalue().startswith("synapse-dis7: cannot write output: ")
+    assert len(os.listdir("/dev/fd")) == before
+
+
+def _failed_stderr_run(cmd, kind, stdout=subprocess.PIPE):
+    if kind == "closed":
+        return subprocess.run(cmd, stdout=stdout, env=ENV, timeout=60,
+                              preexec_fn=lambda: os.close(2))
+    r, w = os.pipe()
+    os.close(r)
+    try:
+        return subprocess.run(cmd, stdout=stdout, stderr=w, env=ENV, timeout=60)
+    finally:
+        os.close(w)
+
+
+FAILED_STDERR_USAGE = {"bogus": ["bogus"], "decode-no-argument": ["decode"], "none": []}
+
+
+@pytest.mark.parametrize("kind", ["closed", "broken"])
+@pytest.mark.parametrize("command", ["replay-missing", "decode-version-6",
+                                     *sorted(FAILED_STDERR_USAGE)])
+def test_t15_a12_failed_stderr_keeps_exit_class(command, kind, tmp_path):
+    if command in FAILED_STDERR_USAGE:
+        args, expected = FAILED_STDERR_USAGE[command], 2
+    elif command == "replay-missing":
+        args, expected = ["replay", "--input", str(tmp_path / "missing.json")], 4
+    else:
+        path = _write(tmp_path / "input.dis", patch(seed(), 0, b"\x06"))
+        args, expected = ["decode", "--input", path, *_context_flags(EQUATOR)], 3
+    result = _failed_stderr_run([sys.executable, "-m", "synapse_cdm.dis7_host", *args], kind)
+    assert result.returncode == expected
+    assert result.stdout == b""
+
+
+def test_t15_a12_failed_stdout_and_failed_stderr_exit_4():
+    r, w = os.pipe()
+    os.close(r)
+    try:
+        result = _failed_stderr_run([sys.executable, "-m", "synapse_cdm.dis7_host", "--version"],
+                                    "broken", stdout=w)
+    finally:
+        os.close(w)
     assert result.returncode == 4
 
 
@@ -482,15 +708,17 @@ def test_t15_a12_host_module_import_rules():
                     and node.func.attr == "open" and isinstance(node.func.value, ast.Name) \
                     and node.func.value.id == "os":
                 os_opens.append((function.name, node))
-    assert len(os_opens) == 1
+    assert sorted(name for name, _ in os_opens) == ["_emit", "_read_bounded"]
     assert sum(isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                and node.func.attr == "open" and isinstance(node.func.value, ast.Name)
-               and node.func.value.id == "os" for node in ast.walk(tree)) == 1
-    name, call = os_opens[0]
-    assert name == "_emit"
-    first = call.args[0]
+               and node.func.value.id == "os" for node in ast.walk(tree)) == 2
+    calls = dict(os_opens)
+    first = calls["_emit"].args[0]
     assert isinstance(first, ast.Attribute) and first.attr == "devnull" \
         and isinstance(first.value, ast.Name) and first.value.id == "os"
+    reader = next(node for node in tree.body
+                  if isinstance(node, ast.FunctionDef) and node.name == "_read_bounded")
+    assert "O_NONBLOCK" in ast.unparse(reader)
     child = subprocess.run(
         [sys.executable, "-c",
          "import sys, synapse_cdm.dis7_host; print('synapse_cdm.evidence' in sys.modules)"],

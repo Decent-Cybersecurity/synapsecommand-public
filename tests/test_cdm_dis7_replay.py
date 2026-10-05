@@ -234,6 +234,17 @@ def test_t12_text_oversized_integer_literal(data):
     assert type(result[0]) is int
 
 
+def test_t12_text_oversized_integer_literal_does_not_depend_on_the_interpreter_limit():
+    before = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(0)
+    try:
+        for data in (b"[" + b"9" * 4301 + b"]", b"[-" + b"9" * 4300 + b"]"):
+            _text_refusal(data, E_TWIN_SCHEMA, "$")
+        assert parse_json_text(b"[" + b"9" * 4300 + b"]") == [int("9" * 4300)]
+    finally:
+        sys.set_int_max_str_digits(before)
+
+
 # CR-11
 @pytest.mark.parametrize("data", (
     pytest.param(b"", id="empty"),
@@ -258,6 +269,15 @@ def test_t12_text_unparseable(data):
 ))
 def test_t12_text_argument_must_be_bytes(data):
     _text_refusal(data, E_INPUT_TYPE, "$")
+
+
+class _BytesSubclass(bytes):
+    pass
+
+
+# D-10: the argument must be bytes itself; a subclass may override what the loader calls
+def test_t12_text_bytes_subclass_is_refused():
+    _text_refusal(_BytesSubclass(b"{}"), E_INPUT_TYPE, "$")
 
 
 def test_t12_text_plain_document():
@@ -822,6 +842,8 @@ _SHAPE_ROWS = (
     ("synthetic-int", _data_edit(_stored("synthetic", 1)), "[0].residual.data.synthetic"),
     ("instant-space", _data_edit(_stored_time("instant", "2026-04-29 06:15:00Z")),
      "[0].residual.data.time_context.instant"),
+    ("instant-four-digits", _data_edit(_stored_time("instant", "2026-04-29T06:15:00.0000Z")),
+     "[0].residual.data.time_context.instant"),
     ("basis-empty", _data_edit(_stored_time("basis", "")), "[0].residual.data.time_context.basis"),
     ("basis-long", _data_edit(_stored_time("basis", "x" * 1025)),
      "[0].residual.data.time_context.basis"),
@@ -841,6 +863,20 @@ def test_t11_residual_shape_defect_is_refused(edit, path):
     entity = _entity()
     edit(entity)
     _replay_refused([entity], E_REPLAY_SHAPE, path)
+
+
+# R20: the comparison is exact in type as well as value. The models validate on assignment, so
+# these type-only edits go through `__dict__`.
+def test_t11_type_only_edits_are_refused():
+    entity = _entity()
+    entity.source.__dict__["record_index"] = False
+    _replay_refused([entity], E_REPLAY_PROVENANCE, "[0].source.record_index")
+    entity = _entity()
+    entity.source.__dict__["synthetic"] = 1
+    _replay_refused([entity], E_REPLAY_PROVENANCE, "[0].source.synthetic")
+    entity = _entity()
+    entity.__dict__["affiliation"] = "UNKNOWN"
+    _replay_refused([entity], E_REPLAY_CHANGED, "[0].affiliation")
 
 
 @pytest.mark.parametrize("kind", ("self-loop", "deep-list", "header-loop", "velocity-ring"))
@@ -1142,9 +1178,32 @@ _RANGE_ROWS = (
     ("alternative-extra-high", "pdu.alternative_entity_type[6]", 256),
     ("appearance-high", "pdu.appearance", 4294967296),
     ("capabilities-negative", "pdu.capabilities", -1),
+    ("padding-high", "pdu.header.padding", 256),
+    ("padding-negative", "pdu.header.padding", -1),
+    ("protocol-version-high", "pdu.header.protocol_version", 8),
+    ("pdu-type-zero", "pdu.header.pdu_type", 0),
+    ("protocol-family-zero", "pdu.header.protocol_family", 0),
+    ("status-negative", "pdu.header.status", -1),
+    ("entity-id-negative", "pdu.entity_id[1]", -1),
+    ("category-negative", "pdu.entity_type[3]", -1),
+    ("alternative-kind-negative", "pdu.alternative_entity_type[0]", -1),
+    ("appearance-negative", "pdu.appearance", -1),
+    ("capabilities-high", "pdu.capabilities", 4294967296),
+    ("entity-id-application-high", "pdu.entity_id[1]", 65536),
+    ("entity-id-entity-high", "pdu.entity_id[2]", 65536),
+    ("domain-high", "pdu.entity_type[1]", 256),
+    ("category-high", "pdu.entity_type[3]", 256),
+    ("subcategory-high", "pdu.entity_type[4]", 256),
+    ("alternative-subcategory-high", "pdu.alternative_entity_type[4]", 256),
+    ("specific-high", "pdu.entity_type[5]", 256),
     ("velocity-nan", "pdu.velocity_mps[0]", math.nan),
     ("position-inf", "pdu.position_ecef_m[2]", math.inf),
     ("orientation-minus-inf", "pdu.orientation_radians[1]", -math.inf),
+    ("alternative-domain-high", "pdu.alternative_entity_type[1]", 256),
+    ("alternative-country-high", "pdu.alternative_entity_type[2]", 65536),
+    ("alternative-category-high", "pdu.alternative_entity_type[3]", 256),
+    ("alternative-specific-high", "pdu.alternative_entity_type[5]", 256),
+    ("timestamp-negative", "pdu.header.timestamp", -1),
 )
 
 
@@ -1186,6 +1245,62 @@ def test_t12_n18_hex_syntax_and_wire_hex_length(edit, path):
     envelope = _envelope()
     edit(envelope)
     _refused(envelope, E_TWIN_SCHEMA, path)
+
+
+# CR-26
+@pytest.mark.parametrize("member,value", [
+    pytest.param(member, value, id=label) for label, member, value in _RANGE_ROWS])
+def test_t11_residual_range_constant_and_non_finite_is_shape(member, value):
+    entity = _entity()
+    _with(entity.residual.data, member, value)
+    _replay_refused([entity], E_REPLAY_SHAPE, _STORED + member)
+
+
+# CR-26
+@pytest.mark.parametrize("stem,edit,path", [
+    pytest.param(stem, edit, path, id=label) for label, stem, edit, path in _width_rows()])
+def test_t11_residual_width_one_short_or_one_long_is_shape(stem, edit, path):
+    entity = _entity(stem)
+    edit(entity.residual.data["pdu"])
+    _replay_refused([entity], E_REPLAY_SHAPE, _STORED + path)
+
+
+# CR-26
+@pytest.mark.parametrize("member,value,path", [
+    pytest.param(member, value, path, id=label) for label, member, value, path in _WRONG_TYPE_ROWS])
+def test_t11_residual_wrong_type_or_boolean_is_shape(member, value, path):
+    entity = _entity()
+    _with(entity.residual.data, member, value)
+    _replay_refused([entity], E_REPLAY_SHAPE, _STORED + path)
+
+
+# CR-26
+@pytest.mark.parametrize("edit,path", [
+    pytest.param(edit, path, id=label) for label, edit, path in _HEX_ROWS])
+def test_t11_residual_hex_syntax_and_wire_hex_length_is_shape(edit, path):
+    entity = _entity()
+    edit(entity.residual.data)
+    _replay_refused([entity], E_REPLAY_SHAPE, _STORED + path)
+
+
+_DIGEST = HASH_RECORD["value"]
+
+
+# CR-26
+@pytest.mark.parametrize("value,path", (
+    pytest.param({"algorithm": "md5", "value": _DIGEST}, "source_hash.algorithm", id="md5"),
+    pytest.param({"algorithm": "sha256", "value": _DIGEST, "extra": 1}, "source_hash",
+                 id="third-member"),
+    pytest.param({"algorithm": "sha256"}, "source_hash", id="no-value"),
+    pytest.param({"algorithm": "sha256", "value": _DIGEST.upper()}, "source_hash.value",
+                 id="uppercase"),
+    pytest.param({"algorithm": "sha256", "value": _DIGEST[:-1]}, "source_hash.value", id="63"),
+    pytest.param(_DIGEST, "source_hash", id="string"),
+))
+def test_t11_residual_source_hash_shape_defect_is_refused(value, path):
+    entity = _entity(source_hash=dict(HASH_RECORD))
+    entity.residual.data["source_hash"] = value
+    _replay_refused([entity], E_REPLAY_SHAPE, _STORED + path)
 
 
 def _prototype_envelope():
@@ -1333,6 +1448,13 @@ def _two(*edits):
         e, "pdu.force_id", 2)), E_TWIN_WIRE_MISMATCH, "pdu.force_id", id="two-mismatches"),
     pytest.param(_two(lambda e: _with(e, "pdu.header.status", 256), lambda e: _with(
         e, "pdu.force_id", 256)), E_TWIN_SCHEMA, "pdu.header.status", id="two-ranges"),
+    pytest.param(_two(lambda e: _with(e, "pdu.force_id", 2), lambda e: _with(
+        e, "pdu.header.exercise_id", 43)), E_TWIN_WIRE_MISMATCH, "pdu.header.exercise_id",
+        id="header-before-members"),
+    pytest.param(_two(lambda e: _with(e, "wire_hex", 5), lambda e: _with(
+        e, "pdu.force_id", "x")), E_TWIN_SCHEMA, "pdu.force_id", id="pdu-before-wire-hex"),
+    pytest.param(_two(lambda e: _with(e, "time_context", "x"), lambda e: _with(
+        e, "wire_hex", 5)), E_TWIN_SCHEMA, "wire_hex", id="wire-hex-before-time-context"),
 ))
 def test_t12_member_order_does_not_change_the_diagnostic(edit, code, path):
     adapter = _adapter()
@@ -1354,6 +1476,41 @@ def test_t12_structure_is_refused_before_the_wire_is_read(edit, code, path):
     envelope = _envelope()
     edit(envelope)
     _refused(envelope, code, path)
+
+
+def _unprojectable(envelope):
+    """Wire and twin rewritten together to position [1, 1, 1]: only stage 9 refuses."""
+    wire = dis7_support.patch(bytes.fromhex(envelope["wire_hex"]), 48,
+                              struct.pack(">3d", 1.0, 1.0, 1.0))
+    envelope["wire_hex"] = wire.hex()
+    envelope["pdu"]["position_ecef_m"] = [1.0, 1.0, 1.0]
+    return envelope
+
+
+# R21: stage 8 (the time context's value and its conflict) is judged before stage 9 (projection)
+@pytest.mark.parametrize("member,value,keywords,code,path", (
+    pytest.param("instant", "2026-02-30T00:00:00Z", {"time_context": None},
+                 "E_CONTEXT_TIME", "time_context.instant", id="bad-instant"),
+    pytest.param("basis", " ", {"time_context": None},
+                 "E_CONTEXT_TIME", "time_context.basis", id="bad-basis"),
+    pytest.param("instant", LATER, {},
+                 "E_CONTEXT_CONFLICT", "time_context.instant", id="conflicting-instant"),
+    pytest.param("basis", BASIS + "x", {},
+                 "E_CONTEXT_CONFLICT", "time_context.basis", id="conflicting-basis"),
+))
+def test_t12_time_context_is_judged_before_the_projection(member, value, keywords, code, path):
+    def refused(envelope, want_code, want_path):
+        with pytest.raises(Dis7Error) as raised:
+            _adapter(**keywords).to_cdm(envelope)
+        assert (raised.value.code, raised.value.path) == (want_code, want_path)
+        lines = _adapter(**keywords).validate_source(envelope)
+        assert len(lines) == 1
+        assert lines[0].startswith(f"{want_code} at {want_path}: ")
+
+    refused(_unprojectable(_envelope()), "E_POSITION_DOMAIN", "byte[48]")
+    envelope = _unprojectable(_envelope())
+    envelope["time_context"][member] = value
+    refused(envelope, code, path)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -1455,3 +1612,180 @@ def test_t03_n20_shared_container_is_measured_at_its_deepest_use(order):
             _too_deep(envelope)
         else:
             _within(10, lambda env=envelope: _refused(env, E_TWIN_SCHEMA, "pdu.velocity_mps[0]"))
+
+
+# R21, PLAN 4.2: a member is read once and only the checked value is used, so a mapping whose
+# second read of one key differs neither leaks a foreign exception nor changes the result.
+
+class _FlipOnSecondRead(dict):
+    """A dict whose second and later reads of `key` return `junk`."""
+
+    def __init__(self, source, key, junk):
+        super().__init__(source)
+        self.key, self.junk, self.reads = key, junk, 0
+
+    def __getitem__(self, name):
+        if name == self.key:
+            self.reads += 1
+            if self.reads > 1:
+                return self.junk
+        return dict.__getitem__(self, name)
+
+
+_FLIP_JUNK = {"wire_hex": 12345, "pdu": None, "time_context": 5, "header": None,
+              "entity_id": "x", "variable_parameters_hex": 7}
+
+
+@pytest.mark.parametrize("key", ["wire_hex", "pdu", "time_context"])
+def test_envelope_member_read_twice_differently_is_read_once(key):
+    plain = _adapter().to_cdm(_envelope())[0].model_dump()
+    flipped = _FlipOnSecondRead(_envelope(), key, _FLIP_JUNK[key])
+    assert _adapter().to_cdm(flipped)[0].model_dump() == plain
+    assert _adapter().validate_source(_FlipOnSecondRead(_envelope(), key, _FLIP_JUNK[key])) == []
+
+
+@pytest.mark.parametrize("key", ["header", "entity_id", "variable_parameters_hex"])
+def test_envelope_pdu_member_read_twice_differently_is_read_once(key):
+    plain = _adapter().to_cdm(_envelope())[0].model_dump()
+    envelope = _envelope()
+    envelope["pdu"] = _FlipOnSecondRead(envelope["pdu"], key, _FLIP_JUNK[key])
+    assert _adapter().to_cdm(envelope)[0].model_dump() == plain
+
+
+@pytest.mark.parametrize("key", ["header", "entity_id", "variable_parameters_hex"])
+def test_residual_member_read_twice_differently_is_read_once(key):
+    entity = _entity()
+    data = dict(entity.residual.data)
+    data["pdu"] = _FlipOnSecondRead(data["pdu"], key, _FLIP_JUNK[key])
+    residual = Residual(namespace=entity.residual.namespace, data=data)
+    assert isinstance(residual.data["pdu"], _FlipOnSecondRead)
+    edited = entity.model_copy(update={"residual": residual})
+    assert _adapter().from_cdm([edited]) == dis7_support.seed()
+
+
+@pytest.mark.parametrize("key", ["wire_hex", "pdu", "time_context", "session", "synthetic",
+                                 "source_hash"])
+def test_residual_data_read_twice_differently_is_read_once(key):
+    entity = _entity()
+    junk = _FLIP_JUNK.get(key, 12345)
+    data = _FlipOnSecondRead(entity.residual.data, key, junk)
+    residual = Residual.model_construct(namespace=entity.residual.namespace, data=data)
+    edited = entity.model_copy(update={"residual": residual})
+    assert _adapter().from_cdm([edited]) == dis7_support.seed()
+
+
+# R30: a caller-supplied container whose read raises is refused with the stage's code at the
+# member's path, on the way in and on the way back, never with a foreign exception.
+
+class _RaiseOnRead(dict):
+    """A dict whose every read of `key` raises."""
+
+    def __init__(self, source, key):
+        super().__init__(source)
+        self.key = key
+
+    def __getitem__(self, name):
+        if name == self.key:
+            raise RuntimeError("the read raises")
+        return dict.__getitem__(self, name)
+
+
+class _IterRaises(list):
+    """A list whose iteration raises."""
+
+    def __iter__(self):
+        raise RuntimeError("the iteration raises")
+
+
+def _raise_in(node, path, key):
+    """`node` with the container at the dotted `path` replaced by one whose read of `key` raises,
+    or, when `key` is None, by a list whose iteration raises."""
+    *parents, last = path.split(".") if path else [""]
+    if not path:
+        return _RaiseOnRead(node, key)
+    parent = node
+    for name in parents:
+        parent = parent[name]
+    parent[last] = _IterRaises(parent[last]) if key is None else _RaiseOnRead(parent[last], key)
+    return node
+
+
+_HOSTILE_ENVELOPES = {
+    "envelope-pdu": ("", "pdu", "pdu"),
+    "envelope-wire-hex": ("", "wire_hex", "wire_hex"),
+    "pdu-entity-id": ("pdu", "entity_id", "pdu.entity_id"),
+    "header-pdu-type": ("pdu.header", "pdu_type", "pdu.header.pdu_type"),
+    "time-context-instant": ("time_context", "instant", "time_context.instant"),
+    "entity-type-iteration": ("pdu.entity_type", None, "pdu.entity_type"),
+    "records-iteration": ("pdu.variable_parameters_hex", None, "pdu.variable_parameters_hex"),
+}
+
+
+@pytest.mark.parametrize("case", list(_HOSTILE_ENVELOPES))
+@pytest.mark.parametrize("method", ["to_cdm", "validate_source"])
+def test_t12_envelope_container_whose_read_raises_is_twin_schema(case, method):
+    where, key, path = _HOSTILE_ENVELOPES[case]
+    envelope = _raise_in(_envelope(), where, key)
+    if method == "validate_source":
+        assert _adapter().validate_source(envelope) == [
+            f"{E_TWIN_SCHEMA} at {path}: the member cannot be read"]
+        return
+    with pytest.raises(Exception) as raised:
+        _adapter().to_cdm(envelope)
+    error = raised.value
+    assert type(error) is Dis7Error, repr(error)
+    assert (error.code, error.path) == (E_TWIN_SCHEMA, path)
+
+
+_HOSTILE_RESIDUALS = {
+    "data-pdu": ("", "pdu", "pdu"),
+    "data-source-hash": ("", "source_hash", "source_hash"),
+    "pdu-entity-id": ("pdu", "entity_id", "pdu.entity_id"),
+    "time-context-instant": ("time_context", "instant", "time_context.instant"),
+    "entity-type-iteration": ("pdu.entity_type", None, "pdu.entity_type"),
+}
+
+
+@pytest.mark.parametrize("case", list(_HOSTILE_RESIDUALS))
+@pytest.mark.parametrize("method", ["from_cdm", "encode"])
+def test_t11_residual_container_whose_read_raises_is_shape(case, method):
+    where, key, path = _HOSTILE_RESIDUALS[case]
+    entity = _entity()
+    data = _raise_in(copy.deepcopy(entity.residual.data), where, key)
+    residual = Residual.model_construct(namespace=entity.residual.namespace, data=data)
+    edited = entity.model_copy(update={"residual": residual})
+    with pytest.raises(Exception) as raised:
+        getattr(_adapter(), method)([edited])
+    error = raised.value
+    assert type(error) is Dis7Error, repr(error)
+    assert (error.code, error.path) == ("E_REPLAY_SHAPE", f"[0].residual.data.{path}")
+
+
+class _EqRaises:
+    __hash__ = object.__hash__
+
+    def __eq__(self, other):
+        raise RuntimeError("the comparison raises")
+
+
+_RAISING_COMPARISONS = {
+    "position-without-state": (lambda: {"position": Position.__new__(Position)},
+                               "E_REPLAY_CHANGED", "[0].position"),
+    "source-id-without-state": (lambda: {"source_ids": [SourceId.__new__(SourceId)]},
+                                "E_REPLAY_PROVENANCE", "[0].source_ids"),
+    "source-id-eq-raises": (lambda: {"source_ids": [_EqRaises()]},
+                            "E_REPLAY_PROVENANCE", "[0].source_ids"),
+}
+
+
+# R21: a comparison of steps 5 and 6 that raises counts as a difference, never a foreign error
+@pytest.mark.parametrize("case", list(_RAISING_COMPARISONS))
+@pytest.mark.parametrize("method", ["from_cdm", "encode"])
+def test_t11_replay_comparison_that_raises_is_a_coded_refusal(case, method):
+    update, code, path = _RAISING_COMPARISONS[case]
+    edited = _entity().model_copy(update=update())
+    with pytest.raises(Exception) as raised:
+        getattr(_adapter(), method)([edited])
+    error = raised.value
+    assert type(error) is Dis7Error, repr(error)
+    assert (error.code, error.path) == (code, path)

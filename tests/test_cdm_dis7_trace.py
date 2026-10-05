@@ -8,7 +8,10 @@ a module has the key `t<gg>_<case>` (the acceptance sweep); the group label must
 case's group in the contract file. A REQUIREMENT that cases cite is bound when every citing case
 is bound; the nine requirements no case cites are bound by an `R_EVIDENCE` entry. `PENDING`
 lists the unbound ids only: the ratchet fails when a pending id is already bound (stale) and
-when an unbound id is not pending.
+when an unbound id is not pending. Only tests pytest collects bind: module-level functions and
+methods of module-level classes whose name starts with `Test`. R_SUPPLEMENT attaches further test
+ids to requirements that cases cite; it adds evidence and never binds. Case A12 must also be bound
+in tests/test_cdm_gate_rosters.py, the wheel gate's half [CR-33].
 """
 from __future__ import annotations
 
@@ -88,6 +91,21 @@ R_EVIDENCE = {
     ),
 }
 
+R_SUPPLEMENT = {
+    "R12": (
+        "tests/test_cdm_dis7_schema.py::test_r12_emitted_entities_validate_against_the_profile_and_base_schemas",
+        "tests/test_cdm_dis7_schema.py::test_r12_emitted_residuals_validate_and_rebuild_a_valid_envelope",
+        "tests/test_cdm_dis7_schema.py::test_r12_schema_oracles_can_fail",
+        "tests/test_cdm_dis7_schema.py::test_r12_stage2_verdict_equals_the_envelope_schema_except_enumerated_divergences",
+    ),
+    "R17": ("tests/test_cdm_dis7_adapter.py::test_r17_opaque_fields_never_become_status_confidence_or_quality",),
+    "R22": (
+        "tests/test_cdm_dis7_adapter.py::test_r22_duplicate_input_gives_duplicate_output_with_one_identity",
+        "tests/test_cdm_dis7_adapter.py::test_r22_an_earlier_instant_after_a_later_one_keeps_its_own_instant",
+        "tests/test_cdm_dis7_adapter.py::test_r22_marking_bytes_spelling_a_path_open_no_file",
+    ),
+}
+
 
 def _bind(bindings, problems, case_token, group_label, site):
     case = case_token.upper()
@@ -103,48 +121,61 @@ def _bind(bindings, problems, case_token, group_label, site):
     bindings.setdefault(case, []).append(site)
 
 
+def _bind_test_name(bindings, problems, name, site):
+    match = TEST_NAME.match(name)
+    if not match:
+        return
+    group_label = match.group(1)
+    for token in re.findall(r"[an]\d\d", match.group(2)):
+        _bind(bindings, problems, token, group_label, site)
+
+
+def _defines_init(cls: ast.ClassDef) -> bool:
+    """pytest does not collect a `Test*` class that defines `__init__`."""
+    return any(isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
+               and member.name == "__init__" for member in cls.body)
+
+
 def scan_source(source: str, filename: str) -> tuple[dict[str, list[str]], list[str]]:
     bindings: dict[str, list[str]] = {}
     problems: list[str] = []
     tree = ast.parse(source, filename=filename)
 
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            match = TEST_NAME.match(node.name)
-            if not match:
-                continue
-            group_label = match.group(1)
-            tokens = re.findall(r"[an]\d\d", match.group(2))
-            site = f"tests/{filename}::{node.name}"
-            for token in tokens:
-                _bind(bindings, problems, token, group_label, site)
-        elif isinstance(node, ast.Module):
-            for stmt in node.body:
-                if not isinstance(stmt, (ast.Assign, ast.AnnAssign)):
-                    continue
-                targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
-                names = [t.id for t in targets if isinstance(t, ast.Name)]
-                if SWEEP_TABLE not in names:
-                    continue
-                value = stmt.value
-                if not isinstance(value, ast.Dict):
-                    problems.append(f"tests/{filename}::{SWEEP_TABLE} is not a dict literal")
-                    continue
-                for key_node in value.keys:
-                    key = (
-                        key_node.value
-                        if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str)
-                        else None
+    for stmt in tree.body:
+        if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            _bind_test_name(bindings, problems, stmt.name, f"tests/{filename}::{stmt.name}")
+        elif isinstance(stmt, ast.ClassDef) and stmt.name.startswith("Test") \
+                and not _defines_init(stmt):
+            for member in stmt.body:
+                if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    _bind_test_name(
+                        bindings, problems, member.name,
+                        f"tests/{filename}::{stmt.name}::{member.name}",
                     )
-                    if key is None:
-                        problems.append(f"tests/{filename}::{SWEEP_TABLE} has a non-string key")
-                        continue
-                    key_match = SWEEP_KEY.match(key)
-                    if not key_match:
-                        problems.append(f"tests/{filename}::{SWEEP_TABLE}[{key}] is malformed")
-                        continue
-                    site = f"tests/{filename}::{SWEEP_TABLE}[{key}]"
-                    _bind(bindings, problems, key_match.group(2), key_match.group(1), site)
+        elif isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+            targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
+            names = [t.id for t in targets if isinstance(t, ast.Name)]
+            if SWEEP_TABLE not in names:
+                continue
+            value = stmt.value
+            if not isinstance(value, ast.Dict):
+                problems.append(f"tests/{filename}::{SWEEP_TABLE} is not a dict literal")
+                continue
+            for key_node in value.keys:
+                key = (
+                    key_node.value
+                    if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str)
+                    else None
+                )
+                if key is None:
+                    problems.append(f"tests/{filename}::{SWEEP_TABLE} has a non-string key")
+                    continue
+                key_match = SWEEP_KEY.match(key)
+                if not key_match:
+                    problems.append(f"tests/{filename}::{SWEEP_TABLE}[{key}] is malformed")
+                    continue
+                site = f"tests/{filename}::{SWEEP_TABLE}[{key}]"
+                _bind(bindings, problems, key_match.group(2), key_match.group(1), site)
 
     return bindings, problems
 
@@ -161,6 +192,29 @@ def scan_tree() -> tuple[dict[str, list[str]], list[str]]:
     return bindings, problems
 
 
+def _entry_problems(entry: str) -> list[str]:
+    if RUN_ARTEFACT.match(entry):
+        return []
+    stripped = re.sub(r"\[[^\]]*\]$", "", entry)
+    parts = stripped.split("::")
+    if len(parts) != 2 or not parts[0].startswith("tests/"):
+        return [f"{entry}: neither a RUN: artefact nor a tests/<file>::<function> id"]
+    filename, funcname = parts[0][len("tests/"):], parts[1]
+    file_path = REPO_ROOT / "tests" / filename
+    if not file_path.is_file():
+        return [f"{entry}: {parts[0]} does not exist"]
+    tree = ast.parse(file_path.read_text(encoding="utf-8"), filename=str(file_path))
+    names = {
+        n.name for n in tree.body
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    if funcname not in names:
+        return [f"{entry}: {funcname} is not defined in {parts[0]}"]
+    if not funcname.startswith("test"):
+        return [f"{entry}: not a test function"]
+    return []
+
+
 def evidence_problems(evidence) -> list[str]:
     problems: list[str] = []
     for key, entries in evidence.items():
@@ -169,26 +223,37 @@ def evidence_problems(evidence) -> list[str]:
         if len(entries) == 0:
             problems.append(f"{key}: evidence tuple is empty")
         for entry in entries:
-            if RUN_ARTEFACT.match(entry):
-                continue
-            stripped = re.sub(r"\[[^\]]*\]$", "", entry)
-            parts = stripped.split("::")
-            if len(parts) != 2 or not parts[0].startswith("tests/"):
-                problems.append(f"{entry}: neither a RUN: artefact nor a tests/<file>::<function> id")
-                continue
-            filename, funcname = parts[0][len("tests/"):], parts[1]
-            file_path = REPO_ROOT / "tests" / filename
-            if not file_path.is_file():
-                problems.append(f"{entry}: {parts[0]} does not exist")
-                continue
-            tree = ast.parse(file_path.read_text(encoding="utf-8"), filename=str(file_path))
-            names = {
-                n.name for n in ast.walk(tree)
-                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
-            }
-            if funcname not in names:
-                problems.append(f"{entry}: {funcname} is not defined in {parts[0]}")
+            problems.extend(_entry_problems(entry))
     return problems
+
+
+def supplement_problems(supplement) -> list[str]:
+    problems: list[str] = []
+    for key, entries in supplement.items():
+        if key not in REQUIREMENTS or not CITED_BY[key]:
+            problems.append(f"{key}: not a cited requirement")
+        if len(entries) == 0:
+            problems.append(f"{key}: supplement tuple is empty")
+        for entry in entries:
+            if entry.startswith("RUN:"):
+                problems.append(f"{entry}: a supplement names tests only")
+                continue
+            problems.extend(_entry_problems(entry))
+    return problems
+
+
+A12_WHEEL_GATE_SITES = frozenset({
+    "tests/test_cdm_gate_rosters.py::test_t15_a12_the_gate_reads_a_scripts_output_as_bytes",
+    "tests/test_cdm_gate_rosters.py::"
+    "test_t15_a12_the_dis7_script_runs_inside_the_scripts_check_and_the_gate_keeps_thirteen_checks",
+    "tests/test_cdm_gate_rosters.py::test_t15_a12_the_dis7_script_check_passes_against_this_environment",
+})
+
+
+def a12_wheel_gate_problems(roster_source: str) -> list[str]:
+    bindings, problems = scan_source(roster_source, "test_cdm_gate_rosters.py")
+    missing = sorted(A12_WHEEL_GATE_SITES - set(bindings.get("A12", [])))
+    return problems + [f"{site}: missing" for site in missing]
 
 
 def bound_ids(bindings, evidence) -> set[str]:
@@ -250,8 +315,26 @@ def test_the_binder_reads_function_names_methods_and_the_sweep_table():
         "    pass\n"
         "\n"
         "\n"
-        "class Example:\n"
+        "class TestExample:\n"
         "    def test_t03_a02_all_records(self):\n"
+        "        pass\n"
+        "\n"
+        "\n"
+        "class Example:\n"
+        "    def test_t02_n03_x(self):\n"
+        "        pass\n"
+        "\n"
+        "\n"
+        "def outer():\n"
+        "    def test_t02_n04_x():\n"
+        "        pass\n"
+        "\n"
+        "\n"
+        "class TestWithInit:\n"
+        "    def __init__(self):\n"
+        "        pass\n"
+        "\n"
+        "    def test_t02_n05_x(self):\n"
         "        pass\n"
         "\n"
         "\n"
@@ -269,7 +352,9 @@ def test_the_binder_reads_function_names_methods_and_the_sweep_table():
     assert problems == []
     assert bindings["N01"] == ["tests/test_cdm_dis7_example.py::test_t02_n01_n02_header_octets"]
     assert bindings["N02"] == ["tests/test_cdm_dis7_example.py::test_t02_n01_n02_header_octets"]
-    assert bindings["A02"] == ["tests/test_cdm_dis7_example.py::test_t03_a02_all_records"]
+    assert bindings["A02"] == ["tests/test_cdm_dis7_example.py::TestExample::test_t03_a02_all_records"]
+    assert "N03" not in bindings and "N04" not in bindings
+    assert "N05" not in bindings
     assert bindings["N36"] == ["tests/test_cdm_dis7_example.py::SWEEP_BUILDERS[t04_n36]"]
     assert bindings["N12"] == ["tests/test_cdm_dis7_example.py::SWEEP_BUILDERS[t09_n12]"]
 
@@ -346,6 +431,104 @@ def test_the_evidence_check_refuses_what_does_not_resolve():
         {"R01": ("tests/test_cdm_dis7_does_not_exist.py::test_x",)}
     )) == 1
     assert len(evidence_problems({"R01": ("RUN:../outside",)})) == 1
+    assert len(evidence_problems({"R07": ("tests/test_cdm_dis7_adapter.py::check",)})) == 1
+    assert len(evidence_problems({"R07": ("tests/test_cdm_dis7_adapter.py::_envelope",)})) == 1
+
+    def test_nested_only():
+        """Named like a test, but nested, so pytest never collects it."""
+
+    assert test_nested_only() is None
+    assert len(evidence_problems(
+        {"R07": ("tests/test_cdm_dis7_trace.py::test_nested_only",)}
+    )) == 1
+
+
+def test_the_supplement_names_only_cited_requirements_and_every_entry_resolves():
+    assert supplement_problems(R_SUPPLEMENT) == []
+
+
+def test_the_supplement_check_refuses_what_does_not_resolve():
+    clean = R_SUPPLEMENT["R22"][:1]
+    assert supplement_problems({"R22": clean}) == []
+    assert len(supplement_problems({"R01": clean})) == 1
+    assert len(supplement_problems({"R22": ()})) == 1
+    assert len(supplement_problems({"R22": ("RUN:reports/benchmark.json",)})) == 1
+    assert len(supplement_problems(
+        {"R22": ("tests/test_cdm_dis7_adapter.py::test_does_not_exist",)}
+    )) == 1
+    assert len(supplement_problems({"R22": ("tests/test_cdm_dis7_adapter.py::_envelope",)})) == 1
+
+
+def test_every_named_requirement_test_of_a_cited_requirement_is_in_the_supplement():
+    missing = []
+    for path in sorted(TESTS.glob("test_cdm_dis7_*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for stmt in tree.body:
+            if not isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            match = re.match(r"^test_r(\d\d)_", stmt.name)
+            if not match:
+                continue
+            requirement = f"R{match.group(1)}"
+            if requirement in REQUIREMENTS and CITED_BY[requirement]:
+                site = f"tests/{path.name}::{stmt.name}"
+                if site not in R_SUPPLEMENT.get(requirement, ()):
+                    missing.append(site)
+    assert missing == []
+
+
+# CR-33
+def test_cr33_case_a12_is_bound_to_the_wheel_gate_as_well_as_the_cli():
+    bindings, _ = scan_tree()
+    assert any(site.startswith("tests/test_cdm_dis7_cli.py::") for site in bindings["A12"])
+    roster = (TESTS / "test_cdm_gate_rosters.py").read_text(encoding="utf-8")
+    assert a12_wheel_gate_problems(roster) == []
+
+
+def test_cr33_the_wheel_gate_check_can_fail():
+    assert len(a12_wheel_gate_problems("def test_other():\n    pass\n")) == 3
+
+
+# D-28: a test that covers a contract resolution carries a comment naming it on the line above
+# the test (above its first decorator where it has one).
+RESOLUTIONS = tuple(f"CR-{number:02d}" for number in range(1, 36))
+RESOLUTION_TAG = re.compile(r"^#.*\bCR-\d\d")
+
+
+def tagged_resolutions(source: str) -> set[str]:
+    """The resolutions tagged at column 0 on the line above a module-level test function, or
+    above its first decorator; a tag above a fixture, a helper or a nested function counts not."""
+    lines = source.split("\n")
+    found: set[str] = set()
+    for stmt in ast.parse(source).body:
+        if not isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)) \
+                or not stmt.name.startswith("test_"):
+            continue
+        first = min([stmt.lineno] + [decorator.lineno for decorator in stmt.decorator_list])
+        if first >= 2 and RESOLUTION_TAG.match(lines[first - 2]):
+            found.update(re.findall(r"\bCR-\d\d\b", lines[first - 2]))
+    return found
+
+
+def test_every_contract_resolution_is_tagged_above_a_test():
+    found: set[str] = set()
+    for path in sorted(TESTS.glob("test_*.py")):
+        found |= tagged_resolutions(path.read_text(encoding="utf-8"))
+    assert sorted(set(RESOLUTIONS) - found) == []
+
+
+def test_the_resolution_tag_check_can_fail():
+    assert tagged_resolutions("# CR-06, CR-29\n@pytest.mark.x\ndef test_a():\n    pass\n") == {
+        "CR-06", "CR-29",
+    }
+    assert tagged_resolutions("# CR-14\n\ndef test_a():\n    pass\n") == set()
+    assert tagged_resolutions("def test_a():\n    # CR-14\n    helper()\n") == set()
+    assert tagged_resolutions(
+        "# CR-34\n@pytest.fixture(scope=\"module\")\ndef gate():\n    pass\n") == set()
+    assert tagged_resolutions(
+        "def _not_a_test():\n    # CR-34\n    def test_never_collected():\n        pass\n") == set()
+    assert tagged_resolutions(
+        "# CR-34\n@pytest.mark.parametrize(\n    \"x\", [1])\ndef test_a(x):\n    pass\n") == {"CR-34"}
 
 
 # ------------------------------------------------------------------------- completion checks
@@ -519,6 +702,18 @@ def test_completion_claims_guard():
     assert "Entity State subset" in texts["dis7.mdx"]
     claims = {where: claim_sentences(text) for where, text in texts.items()}
     assert claims == {where: [] for where in texts}
+
+
+AVAILABILITY = ("The `dis7` adapter and the `synapse-dis7` command are not part of the published "
+                "3.1.1 distribution; they ship with the first release after it.")
+
+
+def test_completion_availability_is_stated():
+    flat = {where: " ".join(text.split()) for where, text in _claim_texts().items()}
+    assert AVAILABILITY in flat["dis7.mdx"]
+    assert "not part of the published 3.1.1 distribution" in flat["README"]
+    for path in (REPO_ROOT / "README.md", REPO_ROOT / "docs" / "docs" / "intro.mdx"):
+        assert AVAILABILITY in " ".join(path.read_text(encoding="utf-8").split()), path
 
 
 def test_completion_claims_guard_can_fail():

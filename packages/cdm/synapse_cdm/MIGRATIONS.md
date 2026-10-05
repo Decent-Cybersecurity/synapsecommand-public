@@ -514,9 +514,11 @@ measurement.
 
 **What moved inside the distribution: 64 files** — `MIGRATIONS.md` (this section, and the dated
 witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (the
-`dis7` row of the ordinal table, now shipped, and the paragraph under that table), `dis7_codec.py`
-(the error model only: `Dis7Error`, the two input-limit subclasses and the 18 codes),
-`adapters/dis7.py` (the caller time context, the session rule and the identity derivation),
+three `dis7` rows of the status column's table, the `dis7` row of the ordinal table, now shipped,
+the paragraph under that table, and the new DIS 7 Entity State PDU section), `dis7_codec.py`
+(new: the error model with its 18 codes, `decode_pdu`, `encode_pdu`, the header predicate, and the
+projection and kinematics helpers), `adapters/dis7.py` (new: the caller time context, the session
+rule, the identity derivation and `Dis7Adapter`, registered as `dis7`),
 `dis7_host.py` (new: the host boundary's strict JSON text loader `parse_json_text`, and the
 offline host command `synapse-dis7`), `pyproject.toml` (that command's console-script entry),
 `adapter.py`, `harness.py`, `suite.py` and `evidence.py` (the `fixture_instance` hook on `Adapter`
@@ -525,9 +527,11 @@ make now go through it, and their command lines refuse a caller-supplied `--fixt
 adapter that overrides it), `times.py`, `version.py` and `evidence.py` again (the SDK helpers
 and the Adapter API reading of unit 1b, in the paragraph that begins DIS 7 UNIT 1B),
 `__init__.py`, `lossless.py` and `symbology.py`, with `adapter.py`, `version.py` and `pyproject.toml`
-again (docstring and comment counts only: the roster at twenty), the package's `README.md` (counts,
-pair arithmetic and the `dis7` roster row), and 25 new
-files under `fixtures/dis7/`, described in the next paragraph. What the 3.1.1 witness round
+again (docstring and comment counts only: the roster at twenty; the `residual_block` docstring of
+`lossless.py` also names which structured adapters call it), the package's `README.md` (counts,
+pair arithmetic, the `dis7` roster row, the new section on the `dis7` adapter and its command, and
+the refusal of a caller-supplied `--fixtures` for an adapter that overrides `fixture_instance`),
+and 48 new files under `fixtures/dis7/`, described in the paragraphs below. What the 3.1.1 witness round
 touched outside the distribution ships in nothing: the ledger, the witness record and its
 README, the release-pipeline and changelog pages, and two test modules.
 
@@ -586,8 +590,8 @@ and `WGS84_B`, `ecef_to_geodetic`, which projects an ECEF location to latitude, 
 ellipsoidal height by the reference iteration under the cap `PROJECTION_MAX_ITERATIONS`,
 `velocity_to_kinematics`, which turns a world-coordinate velocity into horizontal speed, course
 and climb, and `WORLD_ALGORITHMS`, the dead-reckoning algorithms whose velocity is world
-coordinates. Every refusal is a `Dis7Error` at `byte[48]`. The helpers are called by nothing yet
-and nothing was registered at that step, and no file joined the distribution in this step.
+coordinates. Every refusal is a `Dis7Error` at `byte[48]`. At that step nothing called the helpers
+and nothing was registered, and no file joined the distribution in this step.
 
 **THE DIS 7 HOST LOADER.** `dis7_host.py` is new, a host-boundary module outside `adapters/`, and
 holds one function, `parse_json_text(data)`, with its two bounds `MAX_JSON_BYTES` (65536) and
@@ -595,8 +599,8 @@ holds one function, `parse_json_text(data)`, with its two bounds `MAX_JSON_BYTES
 a NUL, text that is not strict UTF-8, a byte-order mark, text nested past the depth bound, text
 the decoder cannot read, the `NaN` and `Infinity` tokens, numbers that overflow to infinity,
 integer literals over 4300 characters and a repeated key, which it reports at the path of the
-object that repeats it. The decoder is handed the decoded text, never the bytes. Nothing calls
-the loader yet and nothing was registered at that step.
+object that repeats it. The decoder is handed the decoded text, never the bytes. At that step
+nothing called the loader and nothing was registered.
 
 **THE DIS 7 HOST COMMAND.** `dis7_host.py` now also holds `main`, the console script
 `synapse-dis7` that `pyproject.toml` declares beside `synapse`: `decode` writes the one-element
@@ -604,8 +608,8 @@ Entity array of one PDU file as canonical JSON with the SHA-256 of the file byte
 hash, `replay` writes the original PDU octets of a canonical Entity document, `self-test` runs
 the packaged vectors and a sample of refusals offline, and `--version` prints the adapter,
 package and specification identifiers. Exit codes: 0 success, 2 usage and flag-derived context,
-3 rejected data and a failed self-test, 4 file or output I/O. It reads one file, writes stdout
-and stderr only, and opens no socket. A new console script derives MINOR by itself.
+3 rejected data and a failed self-test, 4 file or output I/O. `decode` and `replay` read the one `--input` file and `self-test` the
+packaged vectors; it writes stdout and stderr only, and opens no socket. A new console script derives MINOR by itself.
 
 **THE DIS 7 FIXTURE GENERATOR.** `fixtures/dis7/spec/build_fixtures.py` is new, a script the
 package never imports: it rebuilds the three packaged PDUs from its own literal scenarios through
@@ -619,7 +623,7 @@ changed no existing row.
 **THE DIS 7 TERMS RECORD.** `fixtures/dis7/spec/dis7_terms.json` is new, data the package never
 reads: the licence posture of IEEE 1278.1-2012 as one reading of the publisher's own page, which
 offers the standard by purchase and by subscription, so the declared class `LICENSED` rests on it.
-The maintainer's confirmation of that reading is still open in the record itself. The IEEE text
+The maintainer confirmed that reading and the class on 2026-10-05, and the record says so. The IEEE text
 was not consulted, and the standard is carried neither in this repository nor in the wheel.
 
 **DIS 7 UNIT 1B, SDK HELPERS AND THE ADAPTER API AT 3.1.0, 2026-10-04 — a bytes-level digest, a
@@ -646,7 +650,7 @@ records.
 hook is unchanged.
 
 **Bump ruling.** `synapse_cdm/evidence.py:main` — PATCH: exits 2 on a caller-supplied `--fixtures`
-for a shipped adapter that overrides the hook; no adapter this package ships overrides it, so no
+for a shipped adapter that overrides the hook; no released adapter overrides it, so no
 invocation that ran before is refused.
 
 **Bump ruling.** `synapse_cdm/harness.py:main` — PATCH: builds the adapter through

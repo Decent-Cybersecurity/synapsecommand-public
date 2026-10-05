@@ -217,12 +217,14 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that returned `None` for "nothing left" would make every call site write the same branch. An
     adapter that wants the field absent tests `block.data` and passes `None`.
 
-    FOURTEEN OF THE TWENTY ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
-    ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of Part 1 keep their
-    `attributes` / `payload` parking under `source_extras` and declare `residual: legacy`. This
-    exists for the Part 2 adapters, which declare `residual: structured` — the five of the
-    adapter expansion (`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, 2026-09-20/21) call
-    it — and it existed BEFORE the first of them so that it was written against a helper rather
+    FOURTEEN OF THE TWENTY ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT USE THE CONTAINER THIS
+    RETURNS, and that is ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of
+    Part 1 keep their `attributes` / `payload` parking under `source_extras` and declare
+    `residual: legacy`. This exists for the Part 2 adapters, which declare `residual: structured`.
+    Of the six that do, `geojson` and `geopackage` call it; `c2sim`, `aixm511` and `aixm52`
+    (2026-09-20/21) and `dis7` build their `Residual` directly under the same namespace (`dis7`
+    because its residual is the fixed six-key record of its residual schema, not raw-minus-consumed
+    leftovers). It existed BEFORE the first of them so that it was written against a helper rather
     than against a shape it invents.
     """
     return Residual(namespace=adapter.metadata.format.name, data=residual(raw, consumed))

@@ -456,7 +456,8 @@ def overrides_fixture_instance(adapter_class: type[Adapter]) -> bool:
     `ValueError` it raises is the constructor's own and propagates as it always did. Only an
     override supplies a context, and only an override can refuse on its own account.
     """
-    return adapter_class.fixture_instance.__func__ is not Adapter.fixture_instance.__func__
+    hook = adapter_class.fixture_instance
+    return getattr(hook, "__func__", hook) is not Adapter.fixture_instance.__func__
 
 
 def fixtures_refused_message(reference: str, adapter_class: type[Adapter]) -> str | None:

@@ -2,10 +2,10 @@
 
 The hook is the one construction the harness, the conformance suite (and its spawned parser
 worker) and the evidence generator use to build an adapter for its PACKAGED fixtures. Its default
-is the plain construction, so every shipped adapter behaves exactly as before; an adapter whose
-constructor needs context overrides it. No shipped adapter overrides it yet, so the overriding
-adapter here is a test double (`tests/fixture_instance_double.py`), replayed over a fixture
-directory under `tmp_path`.
+is the plain construction, so every adapter that predates `dis7` behaves exactly as before; an
+adapter whose constructor needs context overrides it. `dis7` is the one shipped adapter that does;
+the overriding adapter here is a test double (`tests/fixture_instance_double.py`), replayed over a
+fixture directory under `tmp_path`.
 """
 
 import ast
@@ -304,6 +304,24 @@ def test_a_refusal_raised_by_the_hook_is_exit_2(command, prefix, tree, capsys):
     assert status == 2
     assert captured.out == ""
     assert captured.err == prefix + "the fixture context is synthetic; synthetic=False is refused\n"
+
+
+@pytest.mark.parametrize("command, prefix", [
+    ("harness", "harness: "),
+    ("conformance", "synapse conformance: "),
+])
+def test_a_staticmethod_hook_is_an_override_and_its_refusal_is_exit_2(command, prefix, tree,
+                                                                     capsys):
+    static = "tests.fixture_instance_double:StaticRefusal"
+    assert harness.overrides_fixture_instance(fixture_instance_double.StaticRefusal) is True
+    if command == "harness":
+        status = harness.main(["--adapter", static, "--fixtures", str(tree)])
+    else:
+        status = suite.main(["conformance", "run", "--adapter", static, "--fixtures", str(tree)])
+    captured = capsys.readouterr()
+    assert status == 2
+    assert captured.out == ""
+    assert captured.err == prefix + "the static hook refuses\n"
 
 
 def test_a_constructor_error_without_an_override_still_propagates(tree, monkeypatch):

@@ -123,6 +123,8 @@ makes conformance something you can prove rather than take on trust.
 pip install synapse-cdm
 ```
 
+The `dis7` adapter and the `synapse-dis7` command are not part of the published 3.1.1 distribution; they ship with the first release after it.
+
 `synapse-cdm` **1.0.0** was published on 2026-08-25 and the upload is recorded, measured and
 closed as ledger entry 5 of [`PUBLICATION.md`](PUBLICATION.md) — including the check that the two
 files on the index are byte-for-byte the two files this repository's wheel gate verified. The

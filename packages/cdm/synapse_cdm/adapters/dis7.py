@@ -228,6 +228,14 @@ def _canonical_equal(provided, expected):
     return type(provided) is type(expected) and provided == expected
 
 
+def _unchanged(provided, expected):
+    """`_canonical_equal`, with a comparison that raises counted as a difference."""
+    try:
+        return _canonical_equal(provided, expected)
+    except Exception:
+        return False
+
+
 # Structure checks (stage 2 of an envelope, step 2 of replay). Each takes the value, its path and
 # the code to refuse with; none echoes a value or a key the caller sent.
 
@@ -272,15 +280,31 @@ def _is_hex(value, width):
     return type(value) is str and len(value) == width and _HEX.fullmatch(value) is not None
 
 
+def _read(read, path, code):
+    """One read of a caller-supplied container. Any `Exception` other than a `Dis7Error` that the
+    read raises is refused as the stage's `code` at `path`; other classes pass through."""
+    try:
+        return read()
+    except Dis7Error:
+        raise
+    except Exception:
+        raise Dis7Error(code, path, "the member cannot be read") from None
+
+
+def _get(value, path, name, code):
+    return _read(lambda: value[name], _member(path, name), code)
+
+
 def _check_object(value, path, code, keys):
     """Rules 1 to 3 at one object: a dict, no key outside `keys`, every key of `keys` present."""
     if not isinstance(value, dict):
         raise Dis7Error(code, path, "the member is not an object")
-    for key in value:
+    present = _read(lambda: list(value), path, code)
+    for key in present:
         if type(key) is not str or key not in keys:
             raise Dis7Error(code, path, "the object has a member outside its schema")
     for key in keys:
-        if key not in value:
+        if key not in present:
             raise Dis7Error(code, _member(path, key), "the required member is absent")
 
 
@@ -290,21 +314,29 @@ def _check_integer(value, path, code, low, high):
 
 
 def _check_array(value, path, code, size):
-    if not isinstance(value, (list, tuple)) or len(value) != size:
+    if not isinstance(value, (list, tuple)) or _read(lambda: len(value), path, code) != size:
         raise Dis7Error(code, path, f"the member is not an array of {size} items")
 
 
 def _check_integer_array(value, path, code, tops):
+    """The checked items as a plain list: the width is checked before the copy, the items on it."""
     _check_array(value, path, code, len(tops))
+    items = _read(lambda: list(value), path, code)
+    _check_array(items, path, code, len(tops))
     for index, top in enumerate(tops):
-        _check_integer(value[index], f"{path}[{index}]", code, 0, top)
+        _check_integer(items[index], f"{path}[{index}]", code, 0, top)
+    return items
 
 
 def _check_number_array(value, path, code):
+    """The checked items as a plain list: the width is checked before the copy, the items on it."""
     _check_array(value, path, code, 3)
+    items = _read(lambda: list(value), path, code)
+    _check_array(items, path, code, 3)
     for index in range(3):
-        if not _is_number(value[index]):
+        if not _is_number(items[index]):
             raise Dis7Error(code, f"{path}[{index}]", "the item is not a finite number")
+    return items
 
 
 def _check_hex(value, path, code, width):
@@ -313,29 +345,51 @@ def _check_hex(value, path, code, width):
 
 
 def _check_pdu(pdu, path, code):
+    """The checked PDU as a plain copy: each member is read once, and only what was checked is
+    kept, so a value that changes between two reads never reaches the decoder."""
     _check_object(pdu, path, code, _PDU_KEYS)
+    twin = {"header": {}}
     header_path = _member(path, "header")
-    header = pdu["header"]
+    header = _get(pdu, path, "header", code)
     _check_object(header, header_path, code, _HEADER_KEYS)
     for name, low, high in _HEADER_RULES:
-        _check_integer(header[name], _member(header_path, name), code, low, high)
-    _check_integer_array(pdu["entity_id"], _member(path, "entity_id"), code, (0xFFFF,) * 3)
-    _check_integer(pdu["force_id"], _member(path, "force_id"), code, 0, 0xFF)
+        value = _get(header, header_path, name, code)
+        _check_integer(value, _member(header_path, name), code, low, high)
+        twin["header"][name] = value
+    twin["entity_id"] = _check_integer_array(_get(pdu, path, "entity_id", code),
+                                             _member(path, "entity_id"), code, (0xFFFF,) * 3)
+    value = _get(pdu, path, "force_id", code)
+    _check_integer(value, _member(path, "force_id"), code, 0, 0xFF)
+    twin["force_id"] = value
     for name in ("entity_type", "alternative_entity_type"):
-        _check_integer_array(pdu[name], _member(path, name), code, _TYPE_TOPS)
+        twin[name] = _check_integer_array(_get(pdu, path, name, code), _member(path, name), code,
+                                          _TYPE_TOPS)
     for name in ("velocity_mps", "position_ecef_m", "orientation_radians"):
-        _check_number_array(pdu[name], _member(path, name), code)
-    _check_integer(pdu["appearance"], _member(path, "appearance"), code, 0, _U32)
-    _check_hex(pdu["dead_reckoning_hex"], _member(path, "dead_reckoning_hex"), code, 80)
-    _check_hex(pdu["marking_hex"], _member(path, "marking_hex"), code, 24)
-    _check_integer(pdu["capabilities"], _member(path, "capabilities"), code, 0, _U32)
+        twin[name] = _check_number_array(_get(pdu, path, name, code), _member(path, name), code)
+    value = _get(pdu, path, "appearance", code)
+    _check_integer(value, _member(path, "appearance"), code, 0, _U32)
+    twin["appearance"] = value
+    for name, width in (("dead_reckoning_hex", 80), ("marking_hex", 24)):
+        value = _get(pdu, path, name, code)
+        _check_hex(value, _member(path, name), code, width)
+        twin[name] = value
+    value = _get(pdu, path, "capabilities", code)
+    _check_integer(value, _member(path, "capabilities"), code, 0, _U32)
+    twin["capabilities"] = value
     records_path = _member(path, "variable_parameters_hex")
-    records = pdu["variable_parameters_hex"]
-    if not isinstance(records, (list, tuple)) or len(records) > codec.MAX_RECORDS:
+    records = _get(pdu, path, "variable_parameters_hex", code)
+    if not isinstance(records, (list, tuple)) \
+            or _read(lambda: len(records), records_path, code) > codec.MAX_RECORDS:
+        raise Dis7Error(code, records_path,
+                        f"the member is not an array of at most {codec.MAX_RECORDS} items")
+    records = _read(lambda: list(records), records_path, code)
+    if len(records) > codec.MAX_RECORDS:
         raise Dis7Error(code, records_path,
                         f"the member is not an array of at most {codec.MAX_RECORDS} items")
     for index, record in enumerate(records):
         _check_hex(record, f"{records_path}[{index}]", code, 2 * codec.RECORD_BYTES)
+    twin["variable_parameters_hex"] = records
+    return twin
 
 
 def _check_wire_hex(value, path, code):
@@ -348,7 +402,7 @@ def _check_wire_hex(value, path, code):
 def _check_time_context(value, path, code, stored):
     _check_object(value, path, code, _CONTEXT_KEYS)
     instant_path, basis_path = _member(path, "instant"), _member(path, "basis")
-    instant, basis = value["instant"], value["basis"]
+    instant, basis = _get(value, path, "instant", code), _get(value, path, "basis", code)
     if type(instant) is not str:
         raise Dis7Error(code, instant_path, "the member is not a string")
     if stored and _STORED_INSTANT.fullmatch(instant) is None:
@@ -359,45 +413,59 @@ def _check_time_context(value, path, code, stored):
                    or all(character in BASIS_WHITESPACE for character in basis)):
         raise Dis7Error(code, basis_path,
                         "the member is not 1 to 1024 characters with one that is not white space")
+    return instant, basis
 
 
 def _check_hash(value, path, code):
-    """`None`, or a plain dict of exactly `algorithm` "sha256" and a 64-character lowercase digest."""
+    """`None`, or a plain dict of exactly `algorithm` "sha256" and a 64-character lowercase digest.
+
+    Returns `None` or the digest, read once."""
     if value is None:
-        return
+        return None
     if type(value) is not dict or len(value) != 2 or any(key not in value for key in _HASH_KEYS):
         raise Dis7Error(code, path, "the source hash is not an object of algorithm and value")
     algorithm = value["algorithm"]
     if type(algorithm) is not str or algorithm != "sha256":
         raise Dis7Error(code, f"{path}.algorithm", "the algorithm is not sha256")
-    if not _is_hex(value["value"], 64):
+    digest = value["value"]
+    if not _is_hex(digest, 64):
         raise Dis7Error(code, f"{path}.value",
                         "the digest is not 64 lowercase hexadecimal characters")
+    return digest
 
 
 def _check_envelope(envelope):
-    """Stage 2: the envelope's structure, refused as `E_TWIN_SCHEMA`."""
+    """Stage 2: the envelope's structure, refused as `E_TWIN_SCHEMA`.
+
+    Each member is read once; returns the checked `(twin, wire_hex, instant, basis)`."""
     _check_object(envelope, "$", E_TWIN_SCHEMA, _ENVELOPE_KEYS)
-    _check_pdu(envelope["pdu"], "pdu", E_TWIN_SCHEMA)
-    _check_wire_hex(envelope["wire_hex"], "wire_hex", E_TWIN_SCHEMA)
-    _check_time_context(envelope["time_context"], "time_context", E_TWIN_SCHEMA, stored=False)
+    pdu, wire_hex, context = (_get(envelope, "$", name, E_TWIN_SCHEMA) for name in _ENVELOPE_KEYS)
+    twin = _check_pdu(pdu, "pdu", E_TWIN_SCHEMA)
+    _check_wire_hex(wire_hex, "wire_hex", E_TWIN_SCHEMA)
+    instant, basis = _check_time_context(context, "time_context", E_TWIN_SCHEMA, stored=False)
+    return twin, wire_hex, instant, basis
 
 
 def _check_residual(data, path):
-    """Replay step 2: a stored residual against the residual schema, refused as `E_REPLAY_SHAPE`."""
+    """Replay step 2: a stored residual against the residual schema, refused as `E_REPLAY_SHAPE`.
+
+    Each member is read once; returns the checked
+    `(twin, wire_hex, instant, basis, session, synthetic, digest)`."""
     _check_object(data, path, E_REPLAY_SHAPE, _RESIDUAL_KEYS)
-    _check_pdu(data["pdu"], _member(path, "pdu"), E_REPLAY_SHAPE)
-    _check_wire_hex(data["wire_hex"], _member(path, "wire_hex"), E_REPLAY_SHAPE)
-    _check_time_context(data["time_context"], _member(path, "time_context"), E_REPLAY_SHAPE,
-                        stored=True)
-    session = data["session"]
+    pdu, wire_hex, context, session, synthetic, stored_hash = (
+        _get(data, path, name, E_REPLAY_SHAPE) for name in _RESIDUAL_KEYS)
+    twin = _check_pdu(pdu, _member(path, "pdu"), E_REPLAY_SHAPE)
+    _check_wire_hex(wire_hex, _member(path, "wire_hex"), E_REPLAY_SHAPE)
+    instant, basis = _check_time_context(context, _member(path, "time_context"), E_REPLAY_SHAPE,
+                                         stored=True)
     if type(session) is not str or _SESSION.fullmatch(session) is None:
         raise Dis7Error(E_REPLAY_SHAPE, _member(path, "session"),
                         "the member is not 1 to 128 ASCII letters, digits, dots, underscores "
                         "or hyphens")
-    if type(data["synthetic"]) is not bool:
+    if type(synthetic) is not bool:
         raise Dis7Error(E_REPLAY_SHAPE, _member(path, "synthetic"), "the member is not a boolean")
-    _check_hash(data["source_hash"], _member(path, "source_hash"), E_REPLAY_SHAPE)
+    digest = _check_hash(stored_hash, _member(path, "source_hash"), E_REPLAY_SHAPE)
+    return twin, wire_hex, instant, basis, session, synthetic, digest
 
 
 def _twin_difference(twin_pdu, wire_pdu):
@@ -423,7 +491,12 @@ def _twin_difference(twin_pdu, wire_pdu):
 # wrapper, so every refusal at this stage carries a code and the path `$`.
 
 def _containers(node):
-    values = node.values() if isinstance(node, dict) else node
+    """The node's container children. A container whose members cannot be read has none here:
+    the structure check reads the same members and refuses them with a code at their path."""
+    try:
+        values = list(node.values() if isinstance(node, dict) else node)
+    except Exception:
+        return iter(())
     return iter([value for value in values if isinstance(value, (dict, list, tuple))])
 
 
@@ -467,9 +540,17 @@ def _guard_input(raw):
     limit = codec.MAX_PDU_BYTES
     if isinstance(raw, (bytes, bytearray, memoryview)):
         try:
-            octets = bytes(raw)          # one copy: a memoryview of any item size is its octets
-        except (ValueError, TypeError, BufferError):      # a released memoryview
+            size = memoryview(raw).nbytes    # measured before the copy (R22)
+        except Exception:
             raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read") from None
+        if size > limit:
+            raise Dis7InputTooLarge("$", f"input is {size} octets; the limit is {limit}")
+        try:
+            octets = bytes(raw)          # one copy: a memoryview of any item size is its octets
+        except Exception:            # a released memoryview, or a subclass whose __bytes__ raises
+            raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read") from None
+        if type(octets) is not bytes:
+            raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read")
         if len(octets) > limit:
             raise Dis7InputTooLarge("$", f"input is {len(octets)} octets; the limit is {limit}")
         return octets
@@ -633,9 +714,21 @@ class Dis7Adapter(Adapter):
         if synthetic is _MISSING or type(synthetic) is not bool:
             raise Dis7Error(E_CONTEXT_SYNTHETIC, "synthetic",
                             "the synthetic flag is required and must be a boolean")
-        if time_context is not None and not isinstance(time_context, TimeContext):
-            raise Dis7Error(E_CONTEXT_TIME, "time_context",
-                            "the time context is neither absent nor a TimeContext")
+        if time_context is not None:
+            if not isinstance(time_context, TimeContext):
+                raise Dis7Error(E_CONTEXT_TIME, "time_context",
+                                "the time context is neither absent nor a TimeContext")
+            # A subclass or an instance whose fields bypassed __post_init__ is checked again
+            # here, and the adapter keeps its own validated copy.
+            instant = _read(lambda: getattr(time_context, "instant", None),
+                            "time_context.instant", E_CONTEXT_TIME)
+            basis = _read(lambda: getattr(time_context, "basis", None),
+                          "time_context.basis", E_CONTEXT_TIME)
+            checked = TimeContext(instant, basis)
+            if checked.instant != instant:
+                raise Dis7Error(E_CONTEXT_TIME, "time_context.instant",
+                                "the time context's instant is not in its normalised form")
+            time_context = checked
         _check_hash(source_hash, "source_hash", E_CONTEXT_HASH)
         super().__init__(clock=clock, synthetic=synthetic)
         self._session = session
@@ -675,15 +768,14 @@ class Dis7Adapter(Adapter):
                                 "octets carry no state instant and the adapter has no time context")
             return [self._entity(pdu, raw.hex(), self._time_context, self._digest)]
         if isinstance(raw, dict):
-            _check_envelope(raw)
-            wire = bytes.fromhex(raw["wire_hex"])
+            twin, wire_hex, instant, basis = _check_envelope(raw)
+            wire = bytes.fromhex(wire_hex)
             pdu = codec.decode_pdu(wire)
-            difference = _twin_difference(raw["pdu"], pdu)
+            difference = _twin_difference(twin, pdu)
             if difference is not None:
                 raise Dis7Error(E_TWIN_WIRE_MISMATCH, f"pdu.{difference}",
                                 "the twin disagrees with the decoded wire")
-            stated = raw["time_context"]
-            context = TimeContext(stated["instant"], stated["basis"])
+            context = TimeContext(instant, basis)
             own = self._time_context
             if own is not None:
                 if own.instant != context.instant:
@@ -773,40 +865,37 @@ class Dis7Adapter(Adapter):
                 or residual.namespace != self.metadata.format.name:
             raise Dis7Error(E_REPLAY_SHAPE, "[0].residual",
                             "the Entity carries no residual of this format")
-        data = residual.data
-        _check_residual(data, _REPLAY_ROOT)
+        (stored_pdu, stored_wire, stored_instant, stored_basis, stored_session, stored_synthetic,
+         stored_digest) = _check_residual(residual.data, _REPLAY_ROOT)
         source = fields["source"]
         if not isinstance(source, SourceRef) \
                 or any(name not in vars(source) for name in _SOURCE_FIELDS):
             raise Dis7Error(E_REPLAY_SHAPE, "[0].source", "the provenance is not a valid record")
-        stored_pdu, stored_wire = data["pdu"], data["wire_hex"]
-        stored_context, stored_hash = data["time_context"], data["source_hash"]
-        stored_digest = None if stored_hash is None else stored_hash["value"]
 
         # Step 3: the stored context, needing no wire.
-        if data["session"] != self._session:
+        if stored_session != self._session:
             raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.session",
                             "the stored session differs from the adapter's")
-        if data["synthetic"] is not self._synthetic:
+        if stored_synthetic is not self._synthetic:
             raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.synthetic",
                             "the stored classification differs from the adapter's")
         own = self._time_context
         if own is not None:
-            if own.instant != stored_context["instant"]:
+            if own.instant != stored_instant:
                 raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.time_context.instant",
                                 "the stored instant differs from the adapter's")
-            if own.basis != stored_context["basis"]:
+            if own.basis != stored_basis:
                 raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.time_context.basis",
                                 "the stored basis differs from the adapter's")
         if self._digest is not None and stored_digest != self._digest:
             raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.source_hash",
                             "the stored source hash differs from the adapter's")
         try:
-            context = TimeContext(stored_context["instant"], stored_context["basis"])
+            context = TimeContext(stored_instant, stored_basis)
         except Dis7Error as error:
             raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.{error.path}",
                             "the stored time context is not valid") from None
-        if context.instant != stored_context["instant"]:
+        if context.instant != stored_instant:
             raise Dis7Error(E_REPLAY_PROVENANCE, f"{_REPLAY_ROOT}.time_context.instant",
                             "the stored instant is not in its normalised form")
 
@@ -828,10 +917,10 @@ class Dis7Adapter(Adapter):
 
         # Step 5: the source block against the reconstruction.
         for name in _SOURCE_FIELDS:
-            if not _canonical_equal(getattr(entity.source, name), getattr(expected.source, name)):
+            if not _unchanged(getattr(entity.source, name), getattr(expected.source, name)):
                 raise Dis7Error(E_REPLAY_PROVENANCE, f"[0].source.{name}",
                                 "the provenance differs from the stored record's")
-        if not _canonical_equal(entity.source_ids, expected.source_ids):
+        if not _unchanged(entity.source_ids, expected.source_ids):
             raise Dis7Error(E_REPLAY_PROVENANCE, "[0].source_ids",
                             "the source identities differ from the stored record's")
 
@@ -839,7 +928,7 @@ class Dis7Adapter(Adapter):
         for name in Entity.model_fields:
             if name in ("source", "source_ids", "residual"):
                 continue
-            if not _canonical_equal(getattr(entity, name), getattr(expected, name)):
+            if not _unchanged(getattr(entity, name), getattr(expected, name)):
                 raise Dis7Error(E_REPLAY_CHANGED, f"[0].{name}",
                                 "the Entity was edited after translation")
         return _replay_bytes(stored_wire)

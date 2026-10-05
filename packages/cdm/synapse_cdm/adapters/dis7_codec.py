@@ -120,11 +120,20 @@ def decode_pdu(raw) -> dict:
     """
     if not isinstance(raw, (bytes, bytearray, memoryview)):
         raise Dis7Error(E_INPUT_TYPE, "$", "input is not a byte sequence")
-    # CR-29: a memoryview of any item size counts as its octets.
+    # CR-29: a memoryview of any item size counts as its octets. The size is read before the
+    # copy, so an oversize buffer is refused without being duplicated (R22).
+    try:
+        size = memoryview(raw).nbytes
+    except Exception:
+        raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read") from None
+    if size > MAX_PDU_BYTES:
+        raise Dis7InputTooLarge("$", f"input is {size} octets; the limit is {MAX_PDU_BYTES}")
     try:
         data = bytes(raw)
-    except (ValueError, TypeError, BufferError):
+    except Exception:                  # a released view, or a subclass whose __bytes__ raises
         raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read") from None
+    if type(data) is not bytes:        # a subclass __bytes__ may return a subclass instance
+        raise Dis7Error(E_INPUT_TYPE, "$", "the buffer cannot be read")
     size = len(data)
     if size > MAX_PDU_BYTES:
         raise Dis7InputTooLarge("$", f"input is {size} octets; the limit is {MAX_PDU_BYTES}")
@@ -177,8 +186,15 @@ def looks_like_entity_state(raw) -> bool:
     if not isinstance(raw, (bytes, bytearray, memoryview)):
         return False
     try:
-        head = bytes(raw[:12])
-    except (ValueError, TypeError, BufferError):   # e.g. a released memoryview
+        if isinstance(raw, memoryview) and raw.ndim != 1 and raw.c_contiguous:
+            # CR-29: a 0-dim view cannot be sliced, and slicing a multi-dimensional view takes
+            # rows; read its first 12 octets as one flat run instead.
+            head = raw.cast("B")[:12].tobytes()
+        else:
+            head = bytes(raw[:12])
+    except Exception:                  # e.g. a released memoryview, or a subclass that raises
+        return False
+    if type(head) is not bytes:
         return False
     return len(head) >= 12 and head[0] == 7 and head[2] == 1 and head[3] == 1
 

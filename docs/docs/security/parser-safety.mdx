@@ -328,7 +328,9 @@ output. And the adapters with no row of their own are not unbounded — they are
 `max_input_bytes`, and they simply reach no parser this audit's grep can find, which is a property
 of hand-written binary codecs rather than a gap in the audit.
 
-### Outside the adapters directory: the DIS 7 codec and host loader
+### The DIS 7 codec and the host loader
+
+`dis7_codec` is in `adapters/` and reaches no parser the grep above finds; `dis7_host` is outside `adapters/`.
 
 | module | call | reached with | bounded before the call? |
 |---|---|---|---|

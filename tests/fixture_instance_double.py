@@ -108,3 +108,14 @@ class ContextDouble(RequiresContext):
         if synthetic is not True:
             raise ContextMissing("the fixture context is synthetic; synthetic=False is refused")
         return cls(clock=clock, context=FIXTURE_CONTEXT, synthetic=True)
+
+
+class StaticRefusal(RequiresContext):
+    """Overrides the hook as a staticmethod that refuses, not as a classmethod."""
+
+    name = "fixture-context-static"
+    metadata = probe_metadata("fixture-context-static", max_input_bytes=MAX_INPUT_BYTES)
+
+    @staticmethod
+    def fixture_instance(clock=None, *, synthetic=True):
+        raise ContextMissing("the static hook refuses")

@@ -12,7 +12,7 @@ description: How the dis7 adapter turns one DIS 7 Entity State PDU into one Enti
 One DIS 7 Entity State PDU (144 to 4224 bytes) becomes exactly one `Entity`, and `from_cdm` returns
 the original bytes from an unchanged `Entity`. This is an Entity State subset: every other PDU type
 and every other protocol version is refused, it carries no IEEE certification, and it claims no
-compatibility with any particular simulator.
+compatibility with any particular simulator. The `dis7` adapter and the `synapse-dis7` command are not part of the published 3.1.1 distribution; they ship with the first release after it.
 
 The adapter accepts DIS protocol version 7, PDU type 1 and protocol family 1 only. Its behaviour is
 fixed by a handoff specification, identified by `SC DIS7 SPEC 001 v1.0`, which is not in this
@@ -81,7 +81,9 @@ simulator writer: it cannot produce a PDU from an `Entity` it did not read.
 
 ## Command line
 
-`synapse-dis7` is installed with the package. It reads one file, writes stdout, and no file is
+`synapse-dis7` is installed with any build of this tree; it is not part of the published 3.1.1
+distribution and ships with the first release after it. `decode` and `replay` read the one
+`--input` file and `self-test` the packaged vectors; the command writes stdout, and no file is
 written and no network is touched.
 
 | Command | Flags |
@@ -106,7 +108,8 @@ authenticates nothing.
 
 - Entity State subset only; every other PDU type and protocol version is refused.
 - No IEEE certification is claimed. The IEEE text was not consulted; the layout authority is
-  open-dis-python at commit `732b6655bb47e34ccc73722eefe0f4706fd0032f` (BSD-2-Clause).
+  open-dis-python (`https://github.com/open-dis/open-dis-python`, BSD-2-Clause) at commit
+  `732b6655bb47e34ccc73722eefe0f4706fd0032f`.
 - An OpenDIS comparison exists as an opt-in test and an exercise report; no report ships.
 - Maturity levels L5 and L6, `external_exercise` and `normative-verified` are not declared.
 - The conformance verdict covers the packaged fixtures only: the generic tools build the adapter

@@ -12,12 +12,14 @@ from __future__ import annotations
 
 import array
 import copy
+import ctypes
 import json
 import math
 import pickle
 import random
 import re
 import struct
+import tracemalloc
 
 import pytest
 
@@ -721,6 +723,68 @@ def test_bytearray_and_memoryview_decode_like_bytes():
     assert decode_pdu(memoryview(seed)) == twin
 
 
+class _RaisingBytes(bytes):
+    def __bytes__(self):
+        raise KeyError("x")
+
+
+class _SelfBytes(bytes):
+    def __bytes__(self):
+        return self
+
+    def __len__(self):
+        raise KeyError("x")
+
+
+class _RaisingByteArray(bytearray):
+    def __getitem__(self, index):
+        raise ZeroDivisionError("evil getitem")
+
+
+class _PlainBytes(bytes):
+    pass
+
+
+# R21: a subclass whose methods raise is a coded refusal or False, never a foreign exception
+def test_bytes_subclasses_that_raise_are_refused_as_input_type():
+    seed = dis7_support.seed()
+    _assert_refused(_RaisingBytes(seed), "E_INPUT_TYPE", "$")
+    _assert_refused(_SelfBytes(seed), "E_INPUT_TYPE", "$")
+    assert looks_like_entity_state(_RaisingByteArray(seed)) is False
+    assert decode_pdu(_PlainBytes(seed)) == decode_pdu(seed)
+
+
+class _Pdu(ctypes.Structure):
+    _fields_ = [("octets", ctypes.c_ubyte * 144)]
+
+
+# CR-29: the predicate reads a 0-dimensional view as its octets, as decode_pdu does
+def test_header_predicate_reads_a_zero_dimensional_view_as_its_octets():
+    seed = dis7_support.seed()
+    view = memoryview(_Pdu.from_buffer_copy(seed))
+    assert view.ndim == 0
+    assert looks_like_entity_state(view) is True
+    assert decode_pdu(view) == decode_pdu(seed)
+    assert looks_like_entity_state(memoryview(seed).cast("B", shape=[12, 12])) is True
+
+
+# R22: the bound is enforced before the buffer is copied
+@pytest.mark.parametrize("kind", ["bytearray", "memoryview"])
+def test_oversize_buffer_is_refused_before_it_is_copied(kind):
+    buffer = bytearray(1 << 24)
+    raw = buffer if kind == "bytearray" else memoryview(buffer)
+    tracemalloc.start()
+    try:
+        with pytest.raises(Dis7Error) as raised:
+            decode_pdu(raw)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert (raised.value.code, raised.value.path) == ("E_INPUT_LIMIT", "$")
+    assert "16777216" in raised.value.message
+    assert peak < 1024 * 1024, peak
+
+
 # No foreign exception (R21)
 
 FUZZ_LENGTHS = (0, 1, 11, 12, 143, 144, 145, 160, 176, 200)
@@ -1159,6 +1223,24 @@ def test_encode_accepts_tuples_and_does_not_mutate_its_argument():
     assert encode_pdu(pdu) == dis7_support.seed()
     assert pdu == before
     assert type(pdu["entity_id"]) is tuple
+
+
+class _Int(int):
+    pass
+
+
+class _Float(float):
+    pass
+
+
+# CR-29
+def test_encode_refuses_int_and_float_subclasses():
+    pdu = _twin()
+    pdu["force_id"] = _Int(pdu["force_id"])
+    _assert_encode_refused(pdu, "E_TWIN_SCHEMA", "force_id")
+    pdu = _twin()
+    pdu["velocity_mps"][0] = _Float(pdu["velocity_mps"][0])
+    _assert_encode_refused(pdu, "E_TWIN_SCHEMA", "velocity_mps[0]")
 
 
 # CR-29

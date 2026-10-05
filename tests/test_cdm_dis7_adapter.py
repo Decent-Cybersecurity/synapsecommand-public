@@ -9,6 +9,7 @@ from __future__ import annotations
 import array
 import ast
 import builtins
+import collections
 import copy
 import dataclasses
 import enum
@@ -25,6 +26,7 @@ import subprocess
 import sys
 import threading
 import time
+import tracemalloc
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
@@ -185,6 +187,79 @@ def test_constructor_checks_run_in_the_frozen_order():
              "E_CONTEXT_TIME", "time_context")
 
 
+class _UncheckedContext(TimeContext):
+    """A TimeContext whose fields never went through `TimeContext.__post_init__`."""
+
+    def __post_init__(self):
+        pass
+
+
+def _setattr_context(instant):
+    context = TimeContext("2026-04-29T06:15:00.000Z", "b")
+    object.__setattr__(context, "instant", instant)
+    return context
+
+
+_BYPASSED_CONTEXTS = {
+    "not_an_instant": (lambda: _UncheckedContext("not an instant", "b"), "time_context.instant"),
+    "not_normalised": (lambda: _UncheckedContext("2026-04-29T06:15:00Z", "b"),
+                       "time_context.instant"),
+    "empty_basis": (lambda: _UncheckedContext("2026-04-29T06:15:00.000Z", ""),
+                    "time_context.basis"),
+    "no_fields": (lambda: TimeContext.__new__(TimeContext), "time_context.instant"),
+    "setattr_after_init": (lambda: _setattr_context("garbage"), "time_context.instant"),
+}
+
+
+# R21: a time context that bypassed its own validation is refused by the constructor
+@pytest.mark.parametrize("form", list(_BYPASSED_CONTEXTS))
+def test_constructor_revalidates_a_time_context_that_bypassed_validation(form):
+    make, path = _BYPASSED_CONTEXTS[form]
+    _refused(lambda: Dis7Adapter(session="run-1", synthetic=True, time_context=make()),
+             "E_CONTEXT_TIME", path)
+
+
+class _InstantRaises(TimeContext):
+    """A TimeContext whose `instant` raises when it is read."""
+
+    @property
+    def instant(self):
+        raise RuntimeError("the instant raises")
+
+
+class _BasisRaises(TimeContext):
+    """A TimeContext whose `basis` raises when it is read."""
+
+    @property
+    def basis(self):
+        raise RuntimeError("the basis raises")
+
+
+def _raising_context(cls, name, value):
+    context = cls.__new__(cls)
+    object.__setattr__(context, name, value)
+    return context
+
+
+# R30: an attribute read of the caller's TimeContext that raises is a coded refusal
+@pytest.mark.parametrize("cls, name, value, path", [
+    (_InstantRaises, "basis", "b", "time_context.instant"),
+    (_BasisRaises, "instant", "2026-04-29T06:15:00.000Z", "time_context.basis"),
+])
+def test_constructor_refuses_a_time_context_whose_read_raises(cls, name, value, path):
+    context = _raising_context(cls, name, value)
+    _refused(lambda: Dis7Adapter(session="run-1", synthetic=True, time_context=context),
+             "E_CONTEXT_TIME", path)
+
+
+def test_constructor_keeps_its_own_copy_of_the_time_context():
+    context = TimeContext("2026-04-29T06:15:00.000Z", "b")
+    adapter = Dis7Adapter(session="run-1", synthetic=True, time_context=context)
+    object.__setattr__(context, "instant", "garbage")
+    assert adapter.validate_source(seed()) == []
+    assert adapter.time_context == TimeContext("2026-04-29T06:15:00.000Z", "b")
+
+
 # CR-21
 def test_fixture_instance_is_the_vector_context_and_refuses_live():
     hooked = Dis7Adapter.fixture_instance(clock=_raising_clock)
@@ -227,6 +302,46 @@ def test_guard_measures_text_before_it_types_it():
         error = _refused(lambda: adapter.to_cdm(value), "E_INPUT_TYPE", "$")
         assert not isinstance(error, InputTooLarge)
     assert adapter.detect(view) is False
+
+
+class _RaisingBytes(bytes):
+    def __bytes__(self):
+        raise KeyError("x")
+
+
+class _SelfBytes(bytes):
+    def __bytes__(self):
+        return self
+
+    def __len__(self):
+        raise KeyError("x")
+
+
+# R21: the guard refuses a bytes subclass whose methods raise with a code, never a foreign error
+def test_guard_refuses_a_bytes_subclass_that_raises_as_input_type():
+    adapter = fixture_adapter()
+    _refused(lambda: adapter.to_cdm(_RaisingBytes(seed())), "E_INPUT_TYPE", "$")
+    for value in (_RaisingBytes(seed()), _SelfBytes(seed())):
+        found = adapter.validate_source(value)
+        assert len(found) == 1 and found[0].startswith("E_INPUT_TYPE at $: "), found
+
+
+# R22: the guard measures a buffer before it copies it
+@pytest.mark.parametrize("kind", ["bytearray", "memoryview"])
+def test_guard_refuses_an_oversize_buffer_before_it_is_copied(kind):
+    adapter = Dis7Adapter(session="run-1", synthetic=True)
+    buffer = bytearray(1 << 24)
+    raw = buffer if kind == "bytearray" else memoryview(buffer)
+    tracemalloc.start()
+    try:
+        with pytest.raises(Dis7Error) as raised:
+            adapter.to_cdm(raw)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert (raised.value.code, raised.value.path) == ("E_INPUT_LIMIT", "$")
+    assert "16777216" in raised.value.message
+    assert peak < 1024 * 1024, peak
 
 
 def test_t03_n20_guard_refuses_seventeen_levels_and_admits_sixteen():
@@ -599,6 +714,14 @@ def _check_pole(sign):
     return check
 
 
+# R15, R16: a negative zero reaching the projection from the wire comes out as positive zero
+def _check_positive_zero_position(entity):
+    assert math.copysign(1.0, entity.position.lat) == 1.0
+    assert math.copysign(1.0, entity.position.lon) == 1.0
+    _position(entity, 0.0, 0.0, 120.0)
+    assert "-0.0" not in json.dumps(entity.model_dump(mode="json")["position"])
+
+
 def _b_t05_a03():
     want = (4030279.376829747, 1155664.0146248138, 4790860.631304157)
     got = geodetic_to_ecef(49, 16, 400)
@@ -610,6 +733,8 @@ def _b_t05_a03():
     for sign in (1.0, -1.0):
         items.append(Accept(f"pole z {sign * POLE_Z}", FA(),
                             P(S, 48, struct.pack(">3d", 0.0, 0.0, sign * POLE_Z)), _check_pole(sign)))
+    items.append(Accept("negative-zero y and z", FA(), P(S, 48, struct.pack(">3d", 6378257.0, -0.0, -0.0)),
+                        _check_positive_zero_position))
     return items
 
 
@@ -666,6 +791,16 @@ _A05_VELOCITIES = (
     ((3.0, 4.0, 4.0), (5.656854249492381, 45.0, 3.0)),
 )
 _A05_ORIENTATIONS = ((0.5, -0.25, 0.125), (0.0, 0.0, 0.0), (3.0, -1.5, 2.5))
+# R16: the rotation uses the PDU's own latitude and longitude. Velocities are exact in binary32;
+# the expected speed, course and climb are literals of the section 9 formulas.
+_A05_ROTATED = (
+    ((49.0, 16.0, 400.0), (3.0, 4.0, 12.0),
+     (5.724457905405613, 31.818826372764903, 11.671785711245695)),
+    ((49.0, 16.0, 400.0), (-7.5, 2.25, -1.5),
+     (5.814228695178816, 46.68106137117068, -5.455020135632796)),
+    ((-45.0, -179.5, 12000.0), (-5.0, -12.0, -2.0),
+     (12.155773963643018, 79.59576892403885, 5.0236599551341605)),
+)
 
 
 def _check_motion(expected, orientation):
@@ -673,6 +808,19 @@ def _check_motion(expected, orientation):
         _kinematics(entity, *expected)
         assert _pdu(entity)["orientation_radians"] == list(orientation)
     return check
+
+
+def _check_rotated(where, expected):
+    def check(entity):
+        _position(entity, *where)
+        _kinematics(entity, *expected)
+        assert _notes(entity) == [N1, N2, ECEF, WORLD]
+    return check
+
+
+def _check_negative_zero_climb(entity):
+    _kinematics(entity, 7.0710678118654755, 225.0, 0.0)
+    assert math.copysign(1.0, entity.kinematics.climb_mps) == 1.0
 
 
 def _check_moving_pole(sign):
@@ -697,6 +845,14 @@ def _b_t07_a05():
         raw = P(P(S, 48, struct.pack(">3d", 0.0, 0.0, sign * POLE_Z)), 36,
                 struct.pack(">3f", 10.0, 0.0, 0.0))
         items.append(Accept(f"moving at pole {sign * 90.0}", FA(), raw, _check_moving_pole(sign)))
+    items.append(Accept("negative-zero climb", FA(), P(S, 36, struct.pack(">3f", -0.0, -5.0, -5.0)),
+                        _check_negative_zero_climb))
+    for where, velocity, expected in _A05_ROTATED:
+        assert struct.unpack(">3f", struct.pack(">3f", *velocity)) == velocity
+        raw = P(P(S, 48, struct.pack(">3d", *geodetic_to_ecef(*where))), 36,
+                struct.pack(">3f", *velocity))
+        items.append(Accept(f"position {where} velocity {velocity}", FA(), raw,
+                            _check_rotated(where, expected)))
     return items
 
 
@@ -830,14 +986,24 @@ def _check_a09(entity):
     assert math.copysign(1.0, _pdu(entity)["velocity_mps"][1]) == -1.0
 
 
+def _check_a09_antimeridian(entity):
+    assert entity.position.lon == -180.0
+    assert math.copysign(1.0, _pdu(entity)["position_ecef_m"][1]) == -1.0
+
+
 # CR-20
 def _b_t10_a09():
     wire = vector_bytes("north_pole_stationary")
     assert wire[40:44] == bytes.fromhex("80000000")
     twin = _envelope("north_pole_stationary")
     twin["pdu"]["velocity_mps"] = [0.0, 0.0, 0.0]
+    west = P(S, 48, struct.pack(">3d", -6378257.0, -0.0, 0.0))
+    west_twin = _envelope()
+    west_twin["wire_hex"] = west.hex()
+    west_twin["pdu"]["position_ecef_m"] = [-6378257.0, 0.0, 0.0]
     return [Accept("north pole octets", FA(), wire, _check_a09),
-            Accept("north pole twin spelling +0", FA(), twin, _check_a09)]
+            Accept("north pole twin spelling +0", FA(), twin, _check_a09),
+            Accept("antimeridian twin spelling +0", FA(), west_twin, _check_a09_antimeridian)]
 
 
 def _check_null_hash(entity):
@@ -905,12 +1071,13 @@ SWEEP_BUILDERS = {
 SWEEP_COUNTS = {
     "t01_a01": 6, "t02_n01": 1, "t02_n02": 1, "t02_n03": 1, "t02_n04": 1, "t02_n05": 1,
     "t02_n06": 144, "t02_n07": 1, "t02_n08": 1, "t03_n09": 3, "t03_a02": 1, "t04_n36": 9,
-    "t04_n48": 9, "t04_n72": 9, "t05_a03": 7, "t05_n11": 5, "t06_a04": 256, "t07_a05": 26,
+    "t04_n48": 9, "t04_n72": 9, "t05_a03": 8, "t05_n11": 5, "t06_a04": 256, "t07_a05": 30,
     "t08_a06": 11, "t09_n12": 1, "t09_n13": 6, "t09_a07": 6, "t09_n14": 3, "t10_a08": 1,
-    "t10_a09": 2, "t13_a10": 1, "t14_a11": 2, "t14_n21": 12,
+    "t10_a09": 3, "t13_a10": 1, "t14_a11": 2, "t14_n21": 12,
 }
 
 
+# CR-13, CR-20
 @pytest.mark.parametrize("key", sorted(SWEEP_BUILDERS))
 def test_acceptance_sweep(key):
     items = SWEEP_BUILDERS[key]()
@@ -933,6 +1100,38 @@ def test_sweep_table_binds_exactly_the_cases_that_reach_the_adapter():
     assert set(SWEEP_COUNTS) == set(SWEEP_BUILDERS)
     assert len(bound) == len(SWEEP_BUILDERS) == 28
     assert set(group) - bound == {"N10", "N15", "N16", "N17", "N18", "N19", "N20", "A12", "A13", "A14"}
+
+
+def test_sweep_items_agree_with_the_contract_expected_and_operation():
+    cases = {case["id"]: case
+             for case in json.loads((CONTRACT / "acceptance-cases.json").read_text(encoding="utf-8"))["cases"]}
+    ieee = {"NaN": math.nan, "positive_infinity": math.inf, "negative_infinity": -math.inf}
+    for key, build in SWEEP_BUILDERS.items():
+        case = cases[key.split("_")[1].upper()]          # "t02_n01" -> "N01"
+        items = build()
+        if case["expected"] == "ACCEPT":
+            assert all(isinstance(item, Accept) for item in items), key
+        else:
+            codes = {item.code for item in items if isinstance(item, (Refuse, RefuseConstruct))}
+            assert codes == set(re.findall(r"E_[A-Z_]+", case["expected"])), key
+        operation = case["operation"]
+        if not isinstance(operation, dict):              # prose operations are checked by review only
+            continue
+        assert case["seed"] == "equator_eastbound", key  # S is seed() == the equator vector
+        ((kind, arg),) = operation.items()
+        raws = [item.raw for item in items]              # only dict-operation cases: all items are Refuse
+        if kind == "replace_byte":
+            assert raws == [P(S, arg["offset"], bytes([arg["value"]]))], key
+        elif kind == "truncate_each_length":
+            assert raws == [S[:n] for n in range(arg["start_inclusive"], arg["end_inclusive"] + 1)], key
+        elif kind == "append_hex":
+            assert raws == [S + bytes.fromhex(arg)], key
+        elif kind == "replace_ieee":
+            fmt = ">f" if arg["width"] == "binary32" else ">d"
+            for name in arg["values"]:
+                assert P(S, arg["offset"], struct.pack(fmt, ieee[name])) in raws, (key, name)
+        else:
+            raise AssertionError(f"{key}: unknown operation {kind}")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1004,6 +1203,26 @@ def test_t09_n14_equal_instants_agree_and_a_different_instant_or_basis_conflicts
     for basis in (BASIS + " ", BASIS[:-1]):
         adapter = FA(time_context=TimeContext("2026-04-29T06:15:00.000Z", basis))
         _refused(lambda: adapter.to_cdm(_envelope()), "E_CONTEXT_CONFLICT", "time_context.basis")
+    adapter = FA(time_context=TimeContext("2026-04-29T07:15:00Z", BASIS + "x"))
+    _refused(lambda: adapter.to_cdm(_envelope()), "E_CONTEXT_CONFLICT", "time_context.instant")
+
+
+# R06, R10, R19: the envelope's own instant in another spelling is normalised
+@pytest.mark.parametrize("own", ("no constructor context", "fixture context"))
+@pytest.mark.parametrize("spelling", ("2026-04-29T08:15:00+02:00", "2026-04-29T06:15:00Z",
+                                      "2026-04-28T20:45:00.0-09:30"))
+def test_t09_n14_envelope_instant_in_another_spelling_is_normalised(spelling, own):
+    adapter = FA(time_context=None) if own == "no constructor context" else FA()
+    envelope = _envelope_instant(spelling)
+    out = adapter.to_cdm(envelope)
+    assert type(out) is list and len(out) == 1
+    dump = out[0].model_dump(mode="json")
+    _same(dump, vector_json("equator_eastbound", "expected")[0])
+    assert dump["valid_from"] == dump["source"]["observed_at"] == "2026-04-29T06:15:00.000Z"
+    assert out[0].residual.data["time_context"]["instant"] == "2026-04-29T06:15:00.000Z"
+    assert adapter.from_cdm(out) == S
+    assert adapter.validate_source(envelope) == []
+    assert envelope["time_context"]["instant"] == spelling
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1327,6 +1546,48 @@ def test_t14_a11_malformed_hash_records_are_refused():
     assert "extra" not in str(error)
 
 
+def test_r21_hash_and_twin_messages_echo_nothing():
+    error = _refused(lambda: FA(source_hash={"algorithm": "sha256", "value": "Zz-not-a-digest"}),
+                     "E_CONTEXT_HASH", "source_hash.value")
+    assert "Zz-not-a-digest" not in str(error)
+    error = _refused(lambda: FA(source_hash={"algorithm": "Zz-not-an-algorithm", "value": HOST_HASH}),
+                     "E_CONTEXT_HASH", "source_hash.algorithm")
+    assert "Zz-not-an-algorithm" not in str(error)
+    envelope = _envelope()
+    envelope["pdu"]["marking_hex"] = "ab" * 12
+    error = _refused(lambda: FA().to_cdm(envelope), "E_TWIN_WIRE_MISMATCH", "pdu.marking_hex")
+    text = str(error)
+    assert "abab" not in text and envelope["wire_hex"][:32] not in text
+    assert envelope["pdu"]["dead_reckoning_hex"] not in text and len(text) < 200
+
+
+class _Int(int):
+    pass
+
+
+class _Float(float):
+    pass
+
+
+class _Dict(dict):
+    pass
+
+
+# CR-29
+def test_cr29_subclass_instances_are_not_the_plain_types():
+    envelope = _envelope()
+    envelope["pdu"]["force_id"] = _Int(1)
+    _refused(lambda: FA().to_cdm(envelope), "E_TWIN_SCHEMA", "pdu.force_id")
+    envelope = _envelope()
+    envelope["pdu"]["velocity_mps"][0] = _Float(envelope["pdu"]["velocity_mps"][0])
+    _refused(lambda: FA().to_cdm(envelope), "E_TWIN_SCHEMA", "pdu.velocity_mps[0]")
+    _refused(lambda: FA(source_hash=_Dict(algorithm="sha256", value=HOST_HASH)), "E_CONTEXT_HASH",
+             "source_hash")
+    envelope = _envelope()
+    envelope["pdu"] = collections.UserDict(envelope["pdu"])
+    _refused(lambda: FA().to_cdm(envelope), "E_TWIN_SCHEMA", "pdu")
+
+
 def test_t14_n21_synthetic_false_is_carried_to_source_and_residual():
     adapter = FA(synthetic=False)
     out = adapter.to_cdm(S)
@@ -1565,6 +1826,21 @@ def test_r07_detect_matrix():
     three = {"pdu": deep, "wire_hex": "", "time_context": {}}
     assert _finishes_within(lambda: adapter.detect(_cyclic())) is False
     assert _finishes_within(lambda: adapter.detect(three)) is False
+    # CR-28, D-12: a three-key envelope with a 7/1/1 header is still False when the depth and
+    # cycle walk fails, so these inputs reach the guard itself.
+    assert adapter.detect(_envelope()) is True
+    cyclic = _envelope()
+    cyclic["time_context"]["loop"] = cyclic
+    assert _finishes_within(lambda: adapter.detect(cyclic)) is False
+    ring = _envelope()
+    ring["pdu"]["velocity_mps"][0] = ring["pdu"]["velocity_mps"]
+    assert _finishes_within(lambda: adapter.detect(ring)) is False
+    over_deep = _envelope()
+    node = over_deep["time_context"]
+    for _ in range(20):
+        node["k"] = {}
+        node = node["k"]
+    assert adapter.detect(over_deep) is False
 
 
 # CR-09

@@ -27,11 +27,12 @@ The module is also the offline host command `synapse-dis7` (`python -m synapse_c
 Exit codes: 0 success; 2 a usage error or a context derived from the flags (`--at`, `--basis`,
 `--session`); 3 rejected data, every `Dis7Error` raised while processing `--input`, and a failed
 self-test; 4 a file or output I/O failure, including a closed output pipe and an `--input` that is
-not a regular file, which is refused before it is opened so that a FIFO cannot block. Diagnostics
-go to stderr, one line each; stdout carries only the result. A basis beginning with `-` must be
-written `--basis=VALUE`. `--live` only sets the canonical flag; it authenticates nothing. No file
-is written and no network is touched. The specification the command implements is a handoff
-document identified by `SC DIS7 SPEC 001 v1.0`; it is not in this repository.
+not a regular file, which is refused without blocking, even for a FIFO renamed onto the path while
+it is read. Diagnostics go to stderr, one line each; stdout carries only the result. A basis
+beginning with `-` must be written `--basis=VALUE`. `--live` only sets the canonical flag; it
+authenticates nothing. No file is written and no network is touched. The specification the
+command implements is a handoff document identified by `SC DIS7 SPEC 001 v1.0`; it is not in this
+repository.
 """
 from __future__ import annotations
 
@@ -148,7 +149,7 @@ def _repeated_key_path(document: object) -> str | None:
 
 def parse_json_text(data: bytes) -> object:
     """The JSON document `data` holds, or a `Dis7Error` naming the first check it fails."""
-    if not isinstance(data, bytes):
+    if type(data) is not bytes:
         raise Dis7Error(E_INPUT_TYPE, "$", "JSON text must be given as bytes")
     if len(data) > MAX_JSON_BYTES:
         raise Dis7InputTooLarge("$", f"input is {len(data)} octets; the limit is {MAX_JSON_BYTES}")
@@ -181,12 +182,29 @@ _NOT_CANONICAL = "the document is not a canonical one-element Entity array"
 def _read_bounded(path: str, limit: int) -> bytes:
     """At most `limit + 1` octets of the regular file `path`; anything else is an `OSError`.
 
-    The file type is checked before the file is opened, so a FIFO or a device cannot block.
+    The type is checked on the path before opening, so a FIFO or a device is not opened, and
+    again on the descriptor actually read, which is opened without blocking, so a FIFO renamed
+    onto the path between the two checks is refused instead of waiting for a writer. Each read
+    asks for no more than the octets still wanted, so no more than `limit + 1` are read.
     """
     if not stat.S_ISREG(os.stat(path).st_mode):
         raise OSError("not a regular file")
-    with open(path, "rb") as handle:
-        return handle.read(limit + 1)
+    flags = (os.O_RDONLY | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_NOCTTY", 0)
+             | getattr(os, "O_BINARY", 0))
+    fd = os.open(path, flags)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise OSError("not a regular file")
+        chunks, wanted = [], limit + 1
+        while wanted:
+            chunk = os.read(fd, wanted)
+            if not chunk:
+                break
+            chunks.append(chunk)
+            wanted -= len(chunk)
+        return b"".join(chunks)
+    finally:
+        os.close(fd)
 
 
 def _emit(data: bytes) -> int:
@@ -203,9 +221,12 @@ def _emit(data: bytes) -> int:
         # Without the redirect the interpreter flushes the same buffer again at exit, reports
         # "Exception ignored" and exits 120.
         try:
+            target = sys.stdout.fileno()
             fd = os.open(os.devnull, os.O_WRONLY)
-            os.dup2(fd, sys.stdout.fileno())
-            os.close(fd)
+            try:
+                os.dup2(fd, target)
+            finally:
+                os.close(fd)
         except (OSError, ValueError, AttributeError):
             pass
         _diagnose("synapse-dis7: cannot write output: "
@@ -214,10 +235,15 @@ def _emit(data: bytes) -> int:
 
 
 def _diagnose(line: str) -> None:
+    stream = sys.stderr
+    if stream is None:
+        return
     try:
-        sys.stderr.write(line + "\n")
+        stream.write(line + "\n")
+        stream.flush()
     except (OSError, ValueError, AttributeError):
-        pass
+        # Without this the interpreter flushes the same line again at exit, fails and exits 120.
+        sys.stderr = None
 
 
 def _fixture_dir() -> pathlib.Path:
@@ -317,6 +343,11 @@ def _cmd_replay(args: argparse.Namespace) -> int:
     except OSError as error:
         _diagnose("synapse-dis7: cannot read --input: " + (error.strerror or str(error)))
         return EXIT_IO
+    if len(data) > MAX_JSON_BYTES:
+        # The read stops one octet past the bound, so the file's size is only known as a floor.
+        _diagnose(str(Dis7InputTooLarge(
+            "$", f"input is at least {len(data)} octets; the limit is {MAX_JSON_BYTES}")))
+        return EXIT_REJECTED
     try:
         raw = _replayed(data, args.session, args.synthetic)
     except Dis7Error as error:
@@ -433,11 +464,32 @@ def _raiser(error: Exception):
     return check
 
 
+class _Parser(argparse.ArgumentParser):
+    """A parser that keeps stdout for the result and stderr for diagnostics (PLAN 4.8).
+
+    With stdout closed it writes no help, and `main` exits 4; argparse would write the help to
+    stderr instead. With stderr closed a usage error writes nothing and exits 2; argparse would
+    write the usage to stdout instead. The sub-parsers take this class from their parent through
+    `add_subparsers`.
+    """
+
+    def print_help(self, file=None):
+        if file is None and sys.stdout is None:
+            return
+        super().print_help(file)
+
+    def error(self, message):
+        if sys.stderr is None:
+            self.exit(EXIT_USAGE)
+        super().error(message)
+
+
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+    parser = _Parser(
         prog="synapse-dis7", allow_abbrev=False,
         description="Offline host command of the DIS 7 Entity State adapter: decode, replay, "
-                    "self-test. It reads one file, writes stdout and writes no file.")
+                    "self-test. decode and replay read the one --input file and self-test the "
+                    "packaged vectors; it writes stdout and writes no file.")
     parser.add_argument("--version", action="store_true",
                         help="print the adapter, package and specification identifiers")
     commands = parser.add_subparsers(dest="command", metavar="{decode,replay,self-test}")
@@ -474,14 +526,38 @@ def _parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     parser = _parser()
-    args = parser.parse_args(argv)
+    try:
+        args = parser.parse_args(argv)
+        if not args.version and args.command is None:
+            parser.error("a command is required: decode, replay or self-test")
+    except SystemExit as stop:
+        if stop.code != 0:
+            # argparse wrote the usage through the text-mode stderr; flush it here, so a failed
+            # write keeps exit 2 and is not the interpreter's exit-time failure with exit 120.
+            try:
+                if sys.stderr is not None:
+                    sys.stderr.flush()
+            except (OSError, ValueError):
+                sys.stderr = None
+            raise
+        if sys.stdout is None:
+            _diagnose("synapse-dis7: cannot write output: stdout is closed")
+            return EXIT_IO
+        # argparse wrote the help through the text-mode stdout; flush it here, so a failed write
+        # is exit 4 and not the interpreter's exit-time "Exception ignored" with exit 120.
+        try:
+            sys.stdout.flush()
+        except (OSError, ValueError) as error:
+            sys.stdout = None
+            _diagnose("synapse-dis7: cannot write output: "
+                      + (getattr(error, "strerror", None) or str(error)))
+            return EXIT_IO
+        raise
     if args.version:
         return _emit((f"adapter {Dis7Adapter.name} {Dis7Adapter.version}\n"
                       f"package synapse-cdm {PACKAGE_VERSION}\n"
                       f"specification {SPECIFICATION_ID} {SPECIFICATION_VERSION}\n")
                      .encode("utf-8"))
-    if args.command is None:
-        parser.error("a command is required: decode, replay or self-test")
     handlers = {"decode": _cmd_decode, "replay": _cmd_replay, "self-test": _cmd_self_test}
     return handlers[args.command](args)
 

@@ -1,6 +1,6 @@
 # DIS 7 adapter — implementation record
 
-This record is the implementation record for the DIS 7 adapter, kept as the work proceeds rather than written after the fact. The contract is the handoff specification identified as `SC DIS7 SPEC 001 v1.0`; it is a handoff document and is not in this repository, and wherever this record says "spec" or cites a specification section or line, it means that document. The work is done in pipeline runs R02 to R25, whose prompts, logs and reports live in a run directory outside the repository. Decisions D1 to D46 and the Frozen contract section quote the plan this pipeline follows and its rulings file; neither is in this repository. In the quoted text `§4.3`, `§4.4`, `§4.5`, `§4.8`, `§4.10` and `§10`, and anything written `PLAN.md §n`, are sections of the plan this pipeline follows: its §4.3, §4.4, §4.5 and §4.10 are reproduced under Frozen contract (Error model and codes, Validation order and paths, Replay order, Mutation seams), its §5 is the table of D12 to D46, its §4.8 is the command-line interface that run R16 writes, and its §10 is a list of risks. `§4 field order`, `§12`, `§16` and "spec lines" refer to the handoff specification.
+This record is the implementation record for the DIS 7 adapter, kept as the work proceeds rather than written after the fact. The contract is the handoff specification identified as `SC DIS7 SPEC 001 v1.0`; it is a handoff document and is not in this repository, and wherever this record says "spec" or cites a specification section or line, it means that document. The work is done in pipeline runs R02 to R28 and R30 (R26, R27, R28 and R30 being the sessions of the follow-up unit WP7, which settles the final review's minor findings and then the review of that settlement; R29 is the release gates' check script on the staged tree and has no session), whose prompts, logs and reports live in a run directory outside the repository. Decisions D1 to D46 and the Frozen contract section quote the plan this pipeline follows and its rulings file; neither is in this repository. In the quoted text `§4.3`, `§4.4`, `§4.5`, `§4.8`, `§4.10` and `§10`, and anything written `PLAN.md §n`, are sections of the plan this pipeline follows: its §4.3, §4.4, §4.5 and §4.10 are reproduced under Frozen contract (Error model and codes, Validation order and paths, Replay order, Mutation seams), its §5 is the table of D12 to D46, its §4.8 is the command-line interface that run R16 writes, and its §10 is a list of risks. `§4 field order`, `§12`, `§16` and "spec lines" refer to the handoff specification.
 
 ## Scope
 
@@ -33,6 +33,8 @@ Branch `soif/dis7-1.0`, created from `main` at commit `c4bba1b6ebfdfe956f6efc2b3
 | `requirements.json` (MANIFEST row) | sha256 `f99821836b1acec262db67e35b75d6bf3e88ddaccf7f551740703a6af2b97cf8`; not tracked (D8) |
 | Vendored vectors and contract files | pinned file by file in `fixtures/dis7/spec/dis7_pin.json` |
 | OpenDIS | https://github.com/open-dis/open-dis-python at commit `732b6655bb47e34ccc73722eefe0f4706fd0032f`, BSD-2-Clause; a test-time reference, never a runtime dependency, never copied from |
+
+The evidence record generated for `dis7` (`python -m synapse_cdm.evidence generate --all`) hashes every file under `fixtures/dis7/` that `evidence.measured_files` returns: every file except dotfiles, any file named `README.md` or `PROVENANCE.json` in any of its directories, and anything under `spec/`. Its `fixture_hashes` lists 39 files: the six top-level fixtures (three `.dis` payloads and their three `.parsed.json` envelopes), the six goldens, the five malformed payloads, and the 22 vendored files under `vectors/` (16) and `contract/` (6). The evidence record therefore lists the vendored files as fixture files although neither the harness nor the conformance suite reads them; their pins against the bundle MANIFEST live only in `spec/dis7_pin.json`.
 
 ## Version register
 
@@ -225,7 +227,7 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 
 ### D54 — A released memoryview is a type error at the root
 
-- **What.** `decode_pdu` given a released `memoryview` raises `E_INPUT_TYPE` at `$`: the one `bytes(raw)` conversion runs inside a handler for `ValueError`, `TypeError` and `BufferError`, which re-raises a `Dis7Error`. `looks_like_entity_state` returns False for it.
+- **What.** `decode_pdu` given a released `memoryview` raises `E_INPUT_TYPE` at `$`: the size read through `memoryview(raw).nbytes` and the one `bytes(raw)` conversion after it each run inside a handler for any `Exception`, which re-raises a `Dis7Error` (the handler was narrower until R26, D93). `looks_like_entity_state` returns False for it.
 - **Why.** The view is bytes-like by type but no octets can be read from it, so no later stage applies; a plain `ValueError` would leak a foreign exception.
 - **Alternatives.** Letting the `ValueError` through (rejected: nothing but a `Dis7Error` may leave `decode_pdu`); `E_LENGTH_MISMATCH` at `byte[0]` (rejected: the input was never measured).
 - **Covering tests.** `test_released_memoryview_is_e_input_type_at_the_root` and `test_r07_header_predicate_matrix` (id `released_memoryview`) in `tests/test_cdm_dis7_codec.py`.
@@ -298,11 +300,11 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **What.** The decoder's integer hook refuses a literal longer than 4300 characters (a private constant) with `ValueError`, which the loader maps to `E_TWIN_SCHEMA` at `$`.
 - **Why.** 4300 is CPython's default integer-string limit; holding it in the module makes the refusal independent of the interpreter's `sys.set_int_max_str_digits` setting, so every supported interpreter refuses the same text.
 - **Alternatives.** Rely on `int()`'s own limit (rejected: it is process-wide and can be raised or disabled by a host); a smaller bound (rejected: no case asks for one, and the wire fields are all far shorter).
-- **Covering tests.** `test_t12_text_oversized_integer_literal`.
+- **Covering tests.** `test_t12_text_oversized_integer_literal`, `test_t12_text_oversized_integer_literal_does_not_depend_on_the_interpreter_limit`.
 
 ### D65 — A released buffer and a lone-surrogate text are type errors at the root of the guard
 
-- **What.** The adapter's coded guard converts bytes-like input once with `bytes(raw)` inside a handler for `ValueError`, `TypeError` and `BufferError`, so a released `memoryview` is `E_INPUT_TYPE` at `$` before the SDK wrapper or the codec runs; text is measured with `surrogatepass`, so a `str` holding a lone surrogate is measured without a `UnicodeEncodeError` and then refused as `E_INPUT_TYPE` at `$` (over the bound it is `E_INPUT_LIMIT` first). D54 covers the codec alone; this extends the same rule to `to_cdm`, `validate_source` and `detect`, which answers False for a released view.
+- **What.** The adapter's coded guard measures bytes-like input through `memoryview(raw).nbytes` and then converts it once with `bytes(raw)`, each inside a handler for any `Exception` (narrower until R26, D93), so a released `memoryview` is `E_INPUT_TYPE` at `$` before the SDK wrapper or the codec runs; text is measured with `surrogatepass`, so a `str` holding a lone surrogate is measured without a `UnicodeEncodeError` and then refused as `E_INPUT_TYPE` at `$` (over the bound it is `E_INPUT_LIMIT` first). D54 covers the codec alone; this extends the same rule to `to_cdm`, `validate_source` and `detect`, which answers False for a released view.
 - **Why.** PLAN.md §4.3 to §4.5 leave it open.
 - **Alternatives.** Letting the guard's `bytes(raw)` raise `ValueError` (rejected: only a `Dis7Error` may leave `to_cdm`); a strict UTF-8 measurement (rejected: it raises on a lone surrogate before the size can be judged).
 - **Covering tests.** `test_guard_measures_text_before_it_types_it` in `tests/test_cdm_dis7_adapter.py`.
@@ -330,14 +332,14 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 
 ### D69 — The replay paths and the replay classification
 
-- **What.** `from_cdm` raises only the three replay codes, in six steps: `E_REPLAY_SHAPE` at `$` (not a list of exactly one Entity), at `[0].residual` (no residual block or a namespace other than `DIS`) and at `[0].residual.data` or a member path below it (the residual schema, with the replay-only rows); `E_REPLAY_PROVENANCE` for the stored context, at `[0].residual.data.session`, `.synthetic`, `.time_context.instant`, `.time_context.basis`, `.source_hash`, with a `TimeContext` refusal re-coded at the path it names and an unnormalised stored instant at `.time_context.instant`; `E_REPLAY_CHANGED` at `[0].residual.data.wire_hex` when the stored wire fails the codec or no longer maps to an Entity, and at `[0].residual.data.pdu.<difference>`; `E_REPLAY_PROVENANCE` at `[0].source.<name>` in the frozen field order and then `[0].source_ids`; `E_REPLAY_CHANGED` at `[0].<field>` in `Entity.model_fields` order. A codec or mapping refusal inside replay is re-coded, never passed through. The residual block is also refused at `[0].residual` when it is not the model's residual type, which a model with assignment validation cannot normally hold. An Entity whose structure bypassed validation (`model_copy(update=...)`, `model_construct`) is refused before any attribute is read: `E_REPLAY_SHAPE` at `[0].<field>` for a model field absent from it (in `Entity.model_fields` order), at `[0].residual` for a residual without its namespace or data, and at `[0].source` for provenance that is not a complete `SourceRef`.
+- **What.** `from_cdm` raises only the three replay codes, also when a caller-supplied container of the residual raises as it is read (R30, D112), in six steps: `E_REPLAY_SHAPE` at `$` (not a list of exactly one Entity), at `[0].residual` (no residual block or a namespace other than `DIS`) and at `[0].residual.data` or a member path below it (the residual schema, with the replay-only rows); `E_REPLAY_PROVENANCE` for the stored context, at `[0].residual.data.session`, `.synthetic`, `.time_context.instant`, `.time_context.basis`, `.source_hash`, with a `TimeContext` refusal re-coded at the path it names and an unnormalised stored instant at `.time_context.instant`; `E_REPLAY_CHANGED` at `[0].residual.data.wire_hex` when the stored wire fails the codec or no longer maps to an Entity, and at `[0].residual.data.pdu.<difference>`; `E_REPLAY_PROVENANCE` at `[0].source.<name>` in the frozen field order and then `[0].source_ids`; `E_REPLAY_CHANGED` at `[0].<field>` in `Entity.model_fields` order. A codec or mapping refusal inside replay is re-coded, never passed through. The residual block is also refused at `[0].residual` when it is not the model's residual type, which a model with assignment validation cannot normally hold. Three forms of an Entity built without validation (`model_copy(update=...)`, `model_construct`) are refused as `E_REPLAY_SHAPE` before the attribute concerned is read: at `[0].<field>` for a model field absent from it (in `Entity.model_fields` order), at `[0].residual` for a residual without its namespace or data, and, after the residual checks, at `[0].source` for provenance that is not a complete `SourceRef`; any other unvalidated value goes through the same steps as a validated one (a `position` given as a dict, for example, is `E_REPLAY_CHANGED` at `[0].position`). A comparison of steps 5 and 6 that raises counts as a difference: `E_REPLAY_PROVENANCE` at `[0].source.<name>` or `[0].source_ids`, and `E_REPLAY_CHANGED` at `[0].<field>` (R26).
 - **Why.** PLAN.md §4.3 to §4.5 leave it open.
 - **Alternatives.** Passing the codec's code through (rejected: CR-15 classifies an undecodable wire as a changed record); a generic dump-and-compare (rejected: §4.5 forbids it, and it hides sub-millisecond edits).
-- **Covering tests.** `test_replay_smoke_refuses_count_edit_and_foreign_session`; the full matrix is in the tests of R14 and R15.
+- **Covering tests.** `test_replay_smoke_refuses_count_edit_and_foreign_session`; the full matrix is in the tests of R14 and R15, and R24 added `test_t11_n17_unvalidated_entity_is_refused` (instances built without validation) and the `entity-subclass` row of `test_t11_n17_wrong_shape_is_refused`. R26 added `test_t11_replay_comparison_that_raises_is_a_coded_refusal`, and R30 `test_t11_residual_container_whose_read_raises_is_shape`.
 
 ### D70 — The signatures of the five seams
 
-- **What.** Five top-level functions, each called by its bare name from the adapter's methods and never bound as a default, a class attribute or an alias: `_assemble_position(lat_deg, lon_deg, hae_m)` returns an ESTIMATED `Position`; `_affiliation(force_id)` returns `UNKNOWN`; `_state_instant(adapter, context)` slices the normalised instant into a UTC-aware `datetime` and reads no clock; `_replay_bytes(wire_hex)` returns `bytes.fromhex(wire_hex)`; `_canonical_equal(provided, expected)` is true when the types are identical and the values equal.
+- **What.** Five top-level functions, each called by its bare name from the adapter's methods and never bound as a default, a class attribute or an alias: `_assemble_position(lat_deg, lon_deg, hae_m)` returns an ESTIMATED `Position`; `_affiliation(force_id)` returns `UNKNOWN`; `_state_instant(adapter, context)` slices the normalised instant into a UTC-aware `datetime` and reads no clock; `_replay_bytes(wire_hex)` returns `bytes.fromhex(wire_hex)`; `_canonical_equal(provided, expected)` is true when the types are identical and the values equal. `from_cdm` calls `_canonical_equal` by its bare name through `_unchanged`, which counts a comparison that raises as a difference, so a replacement at run time is still seen (R26).
 - **Why.** PLAN.md §4.3 to §4.5 leave it open.
 - **Alternatives.** Methods on the class (rejected: a mutation harness replacing a module attribute must reach every caller); bound defaults (rejected: they freeze the original at definition time).
 - **Covering tests.** `test_t01_a01_vector_bytes_equal_expected` (the north-pole vector kills a swapped `_assemble_position`) and `test_replay_smoke_refuses_count_edit_and_foreign_session` (kills an always-true `_canonical_equal`).
@@ -368,7 +370,7 @@ Bundle schemas ship byte-identical; each resolution is logged as a contract defe
 - **What.** The two I/O refusals, both exit 4, are one stderr line each: `synapse-dis7: cannot read --input: <reason>` and `synapse-dis7: cannot write output: <reason>`, where the reason is the operating system's `strerror` or, for a file that is not regular, the words `not a regular file`. Every data and context refusal is instead the `Dis7Error`'s own `CODE at PATH: message` line.
 - **Why.** An I/O failure carries no error code of the contract, and the command's name as a prefix separates it from a coded refusal for a caller who reads stderr; the path the caller gave is not repeated, so nothing from the input is echoed.
 - **Alternatives.** Coding them as `E_INPUT_TYPE` (rejected: the contract's codes describe data, and exit 4 is a different class); a traceback (rejected: a closed pipe would end in exit 120).
-- **Covering tests.** `test_t15_a12_unreadable_input_exits_4` and `test_t15_a12_broken_pipe_exits_4`.
+- **Covering tests.** `test_t15_a12_unreadable_input_exits_4` and `test_t15_a12_broken_pipe_exits_4`; R26 added `test_t15_a12_failed_stderr_keeps_exit_class`, `test_t15_a12_failed_stdout_and_failed_stderr_exit_4` and `test_t15_a12_help_into_a_broken_pipe_exits_4`.
 
 ### D75 — The `--version` format
 
@@ -472,10 +474,10 @@ No retained state was found in the DIS7 modules: the full and the reduced worklo
 
 ### D89 — The terms record is a reading by a tool that does not expose the HTTP status
 
-- **What.** `fixtures/dis7/spec/dis7_terms.json` is written in the reading form, from one WebFetch of the IEEE page for IEEE 1278.1-2012: `http_status` is null and `notes` says the tool did not expose it, `quoted` carries only the words the tool returned (title, status, inactivation date, `Purchase`, `Access via Subscription`), and the maintainer confirmation reads PENDING.
+- **What.** `fixtures/dis7/spec/dis7_terms.json` is written in the reading form, from one WebFetch of the IEEE page for IEEE 1278.1-2012: `http_status` is null and `notes` says the tool did not expose it, `quoted` carries only the words the tool returned (title, status, inactivation date, `Purchase`, `Access via Subscription`), and the maintainer confirmation read PENDING. On 2026-10-05 the maintainer confirmed the reading and the class `LICENSED`; run R28 replaced the two PENDING sentences of `mapping_rule_applied` and `what_this_is` with the confirmation and changed no other member.
 - **Why.** The run allowed exactly one fetch, and the result named the standard, so it counts as a reading; the earlier curl attempt from this machine met a challenge page, which the tool did not.
 - **Alternatives.** The no-reading form (rejected: a page was read); a second fetch by curl to obtain a status (rejected: one fetch only).
-- **Covering tests.** `tests/test_cdm_packaging.py` (the record ships as package data) and the run's exit check of the terms record; the maintainer's confirmation is the open item under `## Remaining gaps`.
+- **Covering tests.** `tests/test_cdm_packaging.py` (the record ships as package data). Run R22's exit check held the record to the PENDING form and refuses the confirmed record by design; since R28 the exit check of run R28 reads the confirmation sentence.
 
 ### D90 — The completion checks treat a docstring-only function as empty
 
@@ -488,8 +490,155 @@ No retained state was found in the DIS7 modules: the full and the reduced worklo
 
 - **What.** `validate_session`, the instant check and the basis check of `TimeContext` require the exact type `str` (`type(value) is not str`), so an `enum.StrEnum` member, a `(str, Enum)` member or any other subclass of `str` is refused with the code and path a non-string gets (`E_CONTEXT_SESSION` at `session`; `E_CONTEXT_TIME` at `time_context.instant` or `time_context.basis`). `validate_session` still returns the very object it was given (D-08).
 - **Why.** The identity is derived from the characters, and a subclass can format differently (`Sess.ALPHA`) or lie about its length and encoding; the replay gate already requires the exact type, so an accepted subclass gave an Entity the same adapter could not replay (final review F-01).
-- **Alternatives.** Converting the value with `str(value)` (rejected: D-08 requires `validate_session` to return the object it was given, and `str()` of a mixin enum member is its name, not its value).
+- **Alternatives.** Converting the value with `str(value)` (rejected: D-08 requires `validate_session` to return the object it was given, and `str()` of a `(str, Enum)` member is its class and member name (`Sess.ALPHA`), not its value).
 - **Covering tests.** `tests/test_cdm_dis7_time_identity.py::test_t09_session_refuses_str_subclasses`, `::test_t09_time_context_refuses_str_subclasses`; the three `session_str_*` rows of `test_constructor_refuses_each_context_defect`.
+
+### D92 — The constructor checks a time context again and keeps its own copy
+
+- **What.** `Dis7Adapter(...)` given a `TimeContext` builds a new `TimeContext(instant, basis)` from the attributes it reads once (absent attributes read as `None`), so an instance whose fields bypassed `__post_init__` (a subclass with an empty `__post_init__`, `TimeContext.__new__(TimeContext)`, `object.__setattr__` on the frozen instance) is refused as `E_CONTEXT_TIME` at `time_context.instant` or `time_context.basis`; a valid instant that is not in its normalised form is refused at `time_context.instant`. The adapter stores the new plain instance, so `time_context` compares equal to a plain `TimeContext` the caller passed (a subclass instance is replaced by a plain one and no longer compares equal), and a later `object.__setattr__` on the caller's object does not reach it (final review F-09).
+- **Why.** R21 requires a coded constructor refusal, and PLAN.md §4.2 says the instance holds only immutable context; before, the first `to_cdm` raised an uncoded `ValueError` or `AttributeError` and `validate_source` raised instead of returning one string.
+- **Alternatives.** Keeping the caller's object after the check (rejected: a later in-place write would reach the adapter).
+- **Covering tests.** `test_constructor_revalidates_a_time_context_that_bypassed_validation` (five forms) and `test_constructor_keeps_its_own_copy_of_the_time_context` in `tests/test_cdm_dis7_adapter.py`; since R30 also `test_constructor_refuses_a_time_context_whose_read_raises` (D112).
+
+### D93 — A bytes-like subclass that raises is a type error, never a foreign exception
+
+- **What.** `decode_pdu` and the adapter's coded guard catch any `Exception` around `memoryview(raw).nbytes` and `bytes(raw)` and refuse it as `E_INPUT_TYPE` at `$`; a conversion that returns anything but the exact type `bytes` (a subclass `__bytes__` returning itself) is refused the same way. `looks_like_entity_state` catches any `Exception` while it reads the first 12 octets and answers False, also when what it read is not the exact type `bytes`. `parse_json_text` requires the exact type `bytes` (D-10), so a subclass is `E_INPUT_TYPE` at `$`. A plain subclass that overrides nothing still decodes like `bytes` (final review F-15).
+- **Why.** R21: no foreign exception may leave the public interface, and the predicate is documented never to raise; a subclass can override `__bytes__`, `__len__` or `__getitem__`.
+- **Alternatives.** Refusing every subclass by type in the codec (rejected: `isinstance` admission of buffers is the contract's, and a plain subclass carries ordinary octets).
+- **Covering tests.** `test_bytes_subclasses_that_raise_are_refused_as_input_type` in `tests/test_cdm_dis7_codec.py`, `test_guard_refuses_a_bytes_subclass_that_raises_as_input_type` in `tests/test_cdm_dis7_adapter.py`, `test_t12_text_bytes_subclass_is_refused` in `tests/test_cdm_dis7_replay.py`.
+
+### D94 — The header predicate reads a multi-dimensional or 0-dimensional view as flat octets
+
+- **What.** `looks_like_entity_state` given a C-contiguous `memoryview` whose `ndim` is not 1 reads `raw.cast("B")[:12]`, so a 0-dimensional view (a `ctypes.Structure`) answers as `decode_pdu` reads it and a multi-dimensional view is not sliced by rows; every other input keeps `bytes(raw[:12])` (final review F-16).
+- **Why.** CR-29: a memoryview is its underlying octets; before, a 0-dimensional view answered False for a buffer `decode_pdu` accepts, and a `[16, 2^24]` view copied 12 rows.
+- **Alternatives.** `raw.tobytes()` for non-contiguous views (rejected: it copies the whole view; the slice of the first dimension is already a C-order prefix).
+- **Covering tests.** `test_header_predicate_reads_a_zero_dimensional_view_as_its_octets` in `tests/test_cdm_dis7_codec.py`.
+
+### D95 — The PDU bound is measured before the buffer is copied
+
+- **What.** `decode_pdu` and the coded guard read `memoryview(raw).nbytes` first and raise `Dis7InputTooLarge` over 4224 octets before `bytes(raw)` runs; the copy is then measured again, as PLAN.md §4.3 step 1 says, which also catches a `bytearray` resized between the two statements. The message names both numbers as before (final review F-17).
+- **Why.** R22 asks for the limits to be enforced before expensive allocation; before, a 16 MiB `bytearray` or `memoryview` was duplicated in memory before it was refused.
+- **Alternatives.** Measuring only the copy (rejected: that is the allocation R22 forbids before the check).
+- **Covering tests.** `test_oversize_buffer_is_refused_before_it_is_copied` in `tests/test_cdm_dis7_codec.py` and `test_guard_refuses_an_oversize_buffer_before_it_is_copied` in `tests/test_cdm_dis7_adapter.py` (traced peak below 1 MiB; memory only, never a duration).
+
+### D96 — Envelope and residual members are read once, and only the checked values are used
+
+- **What.** The structure checks return what they checked: each array helper takes `list(value)` after the width check on the original and checks the items on that copy; `_check_pdu` returns a plain twin built from the values it read once; `_check_time_context` returns `(instant, basis)`; `_check_hash` returns `None` or the digest; `_check_envelope` returns `(twin, wire_hex, instant, basis)` and `_check_residual` the seven checked values. `to_cdm` and `from_cdm` use only those values and never index the caller's mapping again. Check order and diagnostics are unchanged (final review F-19).
+- **Why.** PLAN.md §4.2 says `to_cdm` copies what it keeps once the guard has bounded it, and R21 forbids a foreign exception; a mapping whose second read of a key differed (a dict subclass, or a dict another thread writes) leaked `TypeError` or `ValueError`.
+- **Alternatives.** Copying the whole envelope first (rejected: the widths must be checked before anything is expanded, R13).
+- **Covering tests.** `test_envelope_member_read_twice_differently_is_read_once`, `test_envelope_pdu_member_read_twice_differently_is_read_once`, `test_residual_member_read_twice_differently_is_read_once` and `test_residual_data_read_twice_differently_is_read_once` in `tests/test_cdm_dis7_replay.py`.
+
+### D97 — A failed stderr keeps the exit class
+
+- **What.** `_diagnose` writes and flushes `sys.stderr`; on an `OSError`, `ValueError` or `AttributeError` it sets `sys.stderr` to `None`, and it returns at once when `sys.stderr` is `None`. A refused file or refused data with stderr on a broken pipe therefore exits 4 or 3, not 120 (final review F-20). Since R30 a usage error keeps exit 2 the same way: `main` flushes `sys.stderr` before it re-raises argparse's non-zero `SystemExit` and sets it to `None` on an `OSError` or `ValueError`, and with stderr closed the parser's `error` writes nothing and exits 2, where argparse would write the usage to stdout (adjudication S-03).
+- **Why.** R24 and PLAN.md §4.8 fix the exit classes; the interpreter's exit-time flush of a line left in a failed stderr exits 120.
+- **Alternatives.** Leaving the line buffered (rejected: that is the exit-time flush that fails).
+- **Covering tests.** `test_t15_a12_failed_stderr_keeps_exit_class` (closed and broken stderr, exit 4 and exit 3, and since R30 exit 2 for `bogus`, `decode` without its arguments and no command) and `test_t15_a12_failed_stdout_and_failed_stderr_exit_4` in `tests/test_cdm_dis7_cli.py`.
+
+### D98 — Help output is flushed inside the output handler
+
+- **What.** `main` catches the `SystemExit(0)` argparse raises after `--help`, flushes `sys.stdout`, and on an `OSError` or `ValueError` sets `sys.stdout` to `None`, writes `synapse-dis7: cannot write output: <reason>` and returns 4; a non-zero `SystemExit` is re-raised unchanged. No second `os.open` is added (final review F-21). Since R30, under PLAN.md §4.8 (an output failure is exit 4), `--help` with stdout closed, at the top level and for each command, writes no help text: the parser class `_Parser`, which the sub-parsers take from their parent, overrides `print_help` to write nothing when `sys.stdout` is `None`, and `main` writes `synapse-dis7: cannot write output: stdout is closed` and returns 4. Before, argparse wrote the help to stderr and the command exited 0 (adjudication S-03).
+- **Why.** PLAN.md §4.8: all stdout is flushed inside the handler that maps an I/O failure to exit 4; argparse wrote the help outside `_emit`, and a broken pipe ended in exit 120 with `Exception ignored`.
+- **Alternatives.** Adding the help cases to `BROKEN_PIPE_CASES` (rejected: the closed-stdout tests share that table, and with stdout closed argparse printed the help to stderr and exited 0, a behaviour R26 did not change; R30 changed it, above).
+- **Covering tests.** `test_t15_a12_help_into_a_broken_pipe_exits_4` (`--help`, `decode --help`) and, since R30, `test_t15_a12_help_with_closed_stdout_exits_4` (the same two, exit 4 and nothing on stderr but the one line) in `tests/test_cdm_dis7_cli.py`.
+
+### D99 — The bounded read checks the descriptor it reads and asks for no more than the bound
+
+- **What.** `_read_bounded` keeps the type check on the path, so a FIFO or a device is not opened, then opens the path with `O_RDONLY` and, where the platform has them, `O_NONBLOCK`, `O_NOCTTY` and `O_BINARY`; it refuses a descriptor that `os.fstat` does not report as a regular file with `OSError("not a regular file")`, and reads with `os.read` in a loop that asks for no more than the octets still wanted, `limit + 1` in all (final review F-22 and F-23).
+- **Why.** PLAN.md §4.8: a non-regular `--input` is exit 4 without blocking, also when a FIFO is renamed onto the path between the check and the open; R24 says read at most 4225 bytes, and the buffered reader read 128 KiB on 3.14.
+- **Alternatives.** An unbuffered `open(path, "rb", buffering=0)` (rejected: it still opens a swapped-in FIFO with a blocking open).
+- **Covering tests.** `test_t15_a12_fifo_swapped_in_after_the_type_check_is_refused`, `test_t15_a12_read_bounded_reads_no_more_than_the_bound`, `test_t15_a12_decode_oversize_read_is_bounded` and `test_t15_a12_replay_oversize_read_is_bounded` in `tests/test_cdm_dis7_cli.py`; `test_t15_a12_host_module_import_rules` now expects the two `os.open` calls, in `_emit` and `_read_bounded`.
+
+### D100 — `replay` names the size of an oversize file as a floor
+
+- **What.** `replay` refuses a read of more than 65536 octets itself, before the loader, with `E_INPUT_LIMIT at $: input is at least 65537 octets; the limit is 65536` and exit 3, as `decode` already words its own bound (final review F-24).
+- **Why.** D-01 requires a size refusal to name both numbers; the bounded read stops one octet past the bound, so the loader's `input is 65537 octets` was false for any larger file.
+- **Alternatives.** Measuring the file with `os.fstat` (rejected: the size can change between the measurement and the read).
+- **Covering tests.** `test_t15_a12_replay_input_bound` (the 65537 row asserts the whole line) and `test_t15_a12_replay_of_a_much_larger_file_names_the_floor` in `tests/test_cdm_dis7_cli.py`.
+
+### D101 — A hook overridden as a staticmethod or a plain function is an override
+
+- **What.** `harness.overrides_fixture_instance` compares `getattr(hook, "__func__", hook)` with the default hook's function, so an override that is not a classmethod is recognised and its `ValueError` is exit 2 with the hook's own message, as D-30 says, instead of an `AttributeError` about `__func__` (final review F-42). The bump gate classifies the function as new in this arc, so no ruling is needed.
+- **Why.** D-30 catches the hook's refusal only for an overriding class; the helper raised for any override that has no `__func__`.
+- **Alternatives.** Requiring the hook to be a classmethod (rejected: the base class does not enforce it).
+- **Covering tests.** `test_a_staticmethod_hook_is_an_override_and_its_refusal_is_exit_2` in `tests/test_cdm_fixture_instance.py`, with the double `StaticRefusal` in `tests/fixture_instance_double.py`.
+
+### D102 — The stdout redirect closes its descriptor when it cannot be made
+
+- **What.** `_emit`'s failure branch reads `sys.stdout.fileno()` before it opens the null device, and closes the opened descriptor in a `finally`, so a stdout whose `fileno()` or `dup2` fails leaves no descriptor open (final review F-56).
+- **Why.** Each in-process call with a Python-closed `sys.stdout` leaked one descriptor.
+- **Alternatives.** None that keeps exactly one `os.open` in `_emit`.
+- **Covering tests.** `test_t15_emit_closes_the_redirect_descriptor` in `tests/test_cdm_dis7_cli.py`.
+
+### D103 — The trace ratchet binds only tests pytest collects
+
+- **What.** `scan_source` walks the module body only: a module-level `test_t<gg>_<case>_` function binds, a method binds only inside a module-level class whose name starts with `Test`, and the `SWEEP_BUILDERS` dict literal binds as before; a nested function or a method of any other class binds nothing. `evidence_problems` resolves a `tests/<file>::<function>` entry against module-level functions only (final review F-26). Since R30 a `Test*` class that defines `__init__` binds nothing either, since pytest does not collect it, and an entry of `R_EVIDENCE` or `R_SUPPLEMENT` must name a function whose name starts with `test`; every `R_EVIDENCE` entry of that form already did (adjudication S-08, S-10).
+- **Why.** `pytest.ini` sets no `python_classes`, so only `Test*` classes are collected; a binding by a test pytest never runs kept the ratchet green with no test behind it.
+- **Alternatives.** Collect with pytest itself (rejected: the binder is a function of source text so that its refusals can be witnessed on literal sources).
+- **Covering tests.** `test_the_binder_reads_function_names_methods_and_the_sweep_table` and `test_pending_is_exactly_the_set_of_unbound_ids` in `tests/test_cdm_dis7_trace.py`; since R30 also `test_the_evidence_check_refuses_what_does_not_resolve` (a nested and a helper entry) and `test_the_supplement_check_refuses_what_does_not_resolve` (a helper entry).
+
+### D104 — Supplementary requirement evidence, the wheel-gate half of A12 and the resolution tags are checked
+
+- **What.** `R_SUPPLEMENT` attaches the `test_r12_`, `test_r17_` and `test_r22_` tests to the cited requirements R12, R17 and R22 without binding anything; `supplement_problems` refuses an uncited key, an empty tuple, a `RUN:` entry and an entry that does not resolve, and a completeness test requires every module-level `test_r<nn>_` test of a cited requirement to be listed (F-04). `a12_wheel_gate_problems` requires the three `test_t15_a12_` tests of `tests/test_cdm_gate_rosters.py` (CR-33, F-27) while `bound_ids` and `R_EVIDENCE` stay unchanged. `tagged_resolutions` reads a `# CR-nn` comment directly above a test or its first decorator, and every resolution CR-01 to CR-35 must be tagged so (D-28, F-12). Since R30 the tag counts only at column 0 on the line above a module-level function whose name starts with `test_`, or above its first decorator, read from the parsed module, so a tag above a fixture or a nested function counts not (adjudication S-09).
+- **Why.** A requirement cited by one case was evidenced only by that case's tests, the wheel gate that CR-33 names was outside the ratchet, and seven resolutions had no tag, so each gap could reopen without a red test.
+- **Alternatives.** A `CASE_EVIDENCE` dict folded into `bound_ids` (rejected by the review's own check: the handover reads `bound_ids` and `evidence_problems` as they are); the tags without a check (rejected: nothing would keep them).
+- **Covering tests.** `test_the_supplement_names_only_cited_requirements_and_every_entry_resolves`, `test_the_supplement_check_refuses_what_does_not_resolve`, `test_every_named_requirement_test_of_a_cited_requirement_is_in_the_supplement`, `test_cr33_case_a12_is_bound_to_the_wheel_gate_as_well_as_the_cli`, `test_cr33_the_wheel_gate_check_can_fail`, `test_every_contract_resolution_is_tagged_above_a_test` and `test_the_resolution_tag_check_can_fail` in `tests/test_cdm_dis7_trace.py`.
+
+### D105 — The envelope range rows are the union of both corrections
+
+- **What.** `_RANGE_ROWS` in `tests/test_cdm_dis7_replay.py` gains eighteen rows: the review's eleven, the per-index upper bounds of both independent checks (`entity_id[1]`, `entity_id[2]`, `entity_type[1]`, `[3]`, `[4]`, `[5]`, `alternative_entity_type[4]`), with the two padding rows that F-30 also asks for written once. The same table drives the new stored-residual range test, so every row is judged as `E_TWIN_SCHEMA` on the envelope and as `E_REPLAY_SHAPE` on a stored residual (F-30, F-32). R30 added five rows: the upper bounds of `alternative_entity_type[1]`, `[2]`, `[3]` and `[5]`, and a negative timestamp (adjudication S-07).
+- **Why.** The two checks of F-32 each proposed rows the other lacked; every row passes on the tree and kills a bound no other row kills.
+- **Alternatives.** Either correction alone (rejected: it leaves per-index tops unkilled); a separate residual table (rejected: the finding asks to reuse the envelope tables).
+- **Covering tests.** `test_t12_n18_range_constant_and_non_finite` and `test_t11_residual_range_constant_and_non_finite_is_shape` in `tests/test_cdm_dis7_replay.py`.
+
+### D106 — The error classes' constructors and the size-refusal texts
+
+- **What.** Kit decision D-01: `Dis7Error(code, path, message)`, `Dis7InputTooLarge(path, message)` and `Dis7InputTooDeep(path, message)`; the two subclasses set `E_INPUT_LIMIT` themselves. A size refusal reads `input is {n} octets; the limit is {limit}` in the codec, in the adapter's guard (octets and text) and in the text loader, and the loader's depth refusal reads `the text nests deeper than 16 containers`. The host command reads at most one octet past its bound, so it words an oversize file as a floor: `input is at least {n} octets; the limit is 4224` for `decode` and `input is at least {n} octets; the limit is 65536` for `replay` (D100). Every other refusal message is printed unchanged.
+- **Why.** PLAN.md §4.3 names the classes and the code but not their constructors or their wording; the kit fixed both once for every run.
+- **Alternatives.** Subclasses that take the code as an argument (rejected: an input-limit class could then carry another code).
+- **Covering tests.** `tests/test_cdm_dis7_codec.py::test_r21_too_large_carries_the_limit_code_and_both_base_classes`, `::test_r21_too_deep_carries_the_limit_code_and_both_base_classes`, `::test_r21_errors_survive_copy_and_pickle`, `tests/test_cdm_dis7_adapter.py::test_t03_n09_guard_refuses_4225_octets_in_every_octet_form` and `tests/test_cdm_dis7_replay.py::test_t03_n20_text_65536_bytes_accepted_and_65537_refused`, which assert both numbers rather than the literal wording; `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_input_bound`, `::test_t15_a12_replay_of_a_much_larger_file_names_the_floor` and `::test_t15_a12_decode_oversize_read_is_bounded` assert the command's whole line.
+
+### D107 — TimeContext checks the instant before the basis
+
+- **What.** Kit decision D-08: `TimeContext(instant, basis)` checks the instant first, then the basis; a value that is not a `str` is `E_CONTEXT_TIME` at its own path. `.instant` is always the 24-character form `YYYY-MM-DDTHH:MM:SS.mmmZ`. In an envelope twin, a missing or non-string instant or basis is `E_TWIN_SCHEMA` (stage 2) and a string with a bad value is `E_CONTEXT_TIME` (CR-03). `validate_session` returns the very object it was given or raises `E_CONTEXT_SESSION` at `session`. `TimeContext` equality and hash are the dataclass-generated ones over the normalised instant and the verbatim basis.
+- **Why.** PLAN.md §4.2 and §4.6 fix what `TimeContext` stores, not the order of its checks or its equality.
+- **Alternatives.** Checking the basis first; a hand-written `__eq__`.
+- **Covering tests.** `tests/test_cdm_dis7_time_identity.py::test_t09_n13_instant_is_checked_before_basis`, `::test_t09_n13_refused_instant` (non-string instants), `::test_t09_basis_bounds_in_code_points` (non-string bases), `::test_t09_a07_equivalent_spellings_normalise_to_one_instant` (hash), `::test_t09_time_context_is_frozen_and_equal_by_value` and `::test_t09_session_bounds_and_alphabet`.
+
+### D108 — The malformed set
+
+- **What.** Kit decision D-19: five payloads, all built from the equator vector: `wrong_protocol_version.dis` (`E_HEADER_UNSUPPORTED` at `byte[0]`), `pdu_type_67.dis` (`E_HEADER_UNSUPPORTED` at `byte[2]`), `truncated_by_one_byte.dis` (`E_LENGTH_MISMATCH` at `byte[143]`), `one_trailing_byte.dis` (`E_LENGTH_MISMATCH` at `byte[8]`) and `envelope_unknown_key.json` (`E_TWIN_SCHEMA` at `$`). `fixtures/dis7/malformed/README.md` tables them.
+- **Why.** PLAN.md §4.7 asks for at least two payloads; the codes and paths follow the validation order of PLAN.md §4.4 and cases N01, N02, N06 and N07.
+- **Alternatives.** A duplicate-key document (rejected: the fixture loader would collapse the repeated key before the adapter saw it).
+- **Covering tests.** `tests/test_cdm_dis7_adapter.py::test_the_malformed_set_is_exactly_the_five_stated_payloads`, `::test_t02_n01_malformed_wrong_protocol_version_is_refused`, `::test_t02_n02_malformed_pdu_type_67_is_refused`, `::test_t02_n06_malformed_truncated_by_one_byte_is_refused`, `::test_t02_n07_malformed_one_trailing_byte_is_refused` and `::test_malformed_envelope_with_an_unknown_member_is_refused`.
+
+### D109 — What the host module may import and open
+
+- **What.** Kit decision D-29, as the module stands after R26: `dis7_host.py` never imports `hashlib`, `hmac`, `secrets`, `ssl`, `socket`, `signal`, `resource`, `platform`, `subprocess` or `importlib.metadata`, and has no module-level import of `synapse_cdm.evidence`, `suite` or `harness`, so importing it loads none of them. It calls the builtin `open` nowhere: it reads its input through one read-only, non-blocking `os.open` in `_read_bounded` (D99) and opens `os.devnull` for writing in `_emit` only to stop a failed stdout from being flushed again (D102). It never calls `write_text` or `write_bytes`.
+- **Why.** PLAN.md §4.1 forbids `signal`, `resource` and `platform` and requires attribute access to `evidence`; the `hashlib` ban is the package-wide boundary gate; the module is the only DIS 7 file reader and writes no file.
+- **Alternatives.** None.
+- **Covering tests.** `tests/test_cdm_dis7_replay.py::test_t12_text_host_module_surface_and_imports` (the import list and the modules a plain import loads) and `tests/test_cdm_dis7_cli.py::test_t15_a12_host_module_import_rules` (the import roots, the `evidence` import, the `open` modes and the two `os.open` sites). No test checks `importlib.metadata`, `write_text` or `write_bytes`; that part is held by inspection.
+
+### D110 — Three findings on one paragraph of `### Unreleased` are applied as one wording
+
+- **What.** F-43, F-45 and F-52 each rewrote the count paragraph of `### Unreleased` and the two step sentences of the projection helpers and the host loader. The paragraph takes F-52's corrected wording (the `FORMAT_COVERAGE.md`, `dis7_codec.py`, `adapters/dis7.py` and `README.md` descriptions and 48 new files under `fixtures/dis7/`), the two step sentences take F-45's corrected wording (`At that step nothing called …`), and the count clause stays at 64 files.
+- **Why.** The three replacements overlap on the same strings, so only one can be applied; F-52's is the superset, and F-45's step sentences keep the record's past tense for a step (D71).
+- **Alternatives.** F-43's parentheses (rejected: they leave the README and `FORMAT_COVERAGE.md` descriptions short of what moved).
+- **Covering tests.** `tests/test_cdm_release.py` (the Unreleased file list and its count clause) and `tests/test_cdm_prose_counts.py`.
+
+### D111 — What run R28 left to a later unit
+
+- **What.** Two parts of the text findings are not applied: the availability assertion that F-44 proposes for `tests/test_cdm_dis7_trace.py` (a new test, which this run may not add), and the argparse description of `synapse-dis7` in `dis7_host.py`, which still says the command reads one file (F-60; help text is output, and this run changes no behaviour of the package). Run R30 applied both (adjudication S-18): the description now says that `decode` and `replay` read the one `--input` file and `self-test` the packaged vectors, and the availability sentence is asserted.
+- **Why.** Run R28 changes texts and records only; a new assertion belongs to a test run and a help string to a behaviour run.
+- **Alternatives.** Applying both here (rejected: each would break the run's scope).
+- **Covering tests.** Since R30, `tests/test_cdm_dis7_cli.py::test_t15_a12_help_description_names_what_each_command_reads` and `tests/test_cdm_dis7_trace.py::test_completion_availability_is_stated`.
+
+### D112 — A caller-supplied container whose read raises is refused with the stage's code
+
+- **What.** Each read of a caller-supplied container in the structure checks (a member by key, the key list, an array's length and its items) goes through `_read`: an `Exception` other than `Dis7Error` raised by the read becomes `E_TWIN_SCHEMA` on the way in and `E_REPLAY_SHAPE` on the way back, at the member's path, with the message `the member cannot be read`; `KeyboardInterrupt` and other classes outside `Exception` pass through. The constructor reads the `instant` and `basis` of a caller's `TimeContext` the same way and refuses a raising read as `E_CONTEXT_TIME` at `time_context.instant` or `time_context.basis`. The depth guard treats a container whose members cannot be listed as having no children, so the structure check reads it and refuses it at its path. `_check_object` lists the keys once and judges presence on that list. Nothing else is wrapped, so an error of the adapter's own code stays visible as what it is (adjudication S-05).
+- **Why.** R21: no foreign exception may leave the public interface; a dict or list subclass passes the `isinstance` admission and could raise from `to_cdm`, `validate_source`, `from_cdm` and `encode`, and a `TimeContext` subclass from the constructor. R26 made a bytes-like subclass that raises a coded refusal the same way (D93).
+- **Alternatives.** Admitting only the exact `dict`, `list` and `tuple` (rejected: it changes what the contract admits); wrapping a whole stage in `except Exception` (rejected: it would also re-code a defect of the adapter); refusing in the depth guard at `$` (rejected: the member's path is known only to the structure check).
+- **Covering tests.** `test_t12_envelope_container_whose_read_raises_is_twin_schema` (`to_cdm` and `validate_source`) and `test_t11_residual_container_whose_read_raises_is_shape` (`from_cdm` and `encode`) in `tests/test_cdm_dis7_replay.py`, and `test_constructor_refuses_a_time_context_whose_read_raises` in `tests/test_cdm_dis7_adapter.py`.
 
 ## Frozen contract
 
@@ -747,7 +896,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 - `dis7_host.py` gains the offline host command `synapse-dis7` beside `parse_json_text`: `decode`, `replay`, `self-test` and `--version`, the exit constants 0, 2, 3 and 4, the two specification constants, and the helpers `_read_bounded`, `_emit`, `_diagnose`, `_fixture_dir` and `_same_json`. Importing the module does not load `synapse_cdm.evidence`; `decode` imports it inside the handler for the SHA-256 of the file bytes.
 - `pyproject.toml` declares `synapse-dis7 = "synapse_cdm.dis7_host:main"` with its dated comment, and the comment above `synapse` now says it was the one entry not spelled `cdm-*` until then. The package was reinstalled editable in the three interpreters.
-- `tests/test_cdm_dis7_cli.py` runs the command as a child process with byte comparisons only: 59 passed. It is listed in `PACKAGE_ONLY_TESTS`. The trace table's `PENDING` lost A12, R24 and R28.
+- `tests/test_cdm_dis7_cli.py` runs the command as a child process with byte comparisons only: 91 passed (the count as of R30). It is listed in `PACKAGE_ONLY_TESTS`. The trace table's `PENDING` lost A12, R24 and R28.
 - `### Unreleased` names `pyproject.toml` and the host command; the count clause moved to the new total.
 - `self-test` reports 16 checks over the packaged vectors and four refusals.
 - Not done here: the wheel gate's console-script check (R20), the CLI reference page (R22).
@@ -804,7 +953,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 - The package README gained the section on the `dis7` adapter before `## Layout`: the bounded-subset paragraph, the explicit-context Python example (run once on the packaged equator vector), the `synapse-dis7` commands and exit codes, the availability sentence and the docs address.
 - `docs/docs/cdm/dis7.mdx` is new, with the nine sections the run names; its flags and bounds were taken from `synapse-dis7 --help`, each sub-command's help and the module constants, and its code list was printed from `CODES`. The parser-safety page gained the subsection on the DIS 7 codec and host loader.
-- `fixtures/dis7/spec/dis7_terms.json` is a reading of the publisher's page with the confirmation PENDING (D89); the migration notes' Unreleased section names it and its count clause moved by one.
+- `fixtures/dis7/spec/dis7_terms.json` is a reading of the publisher's page with the confirmation PENDING (D89; confirmed on 2026-10-05, see R28); the migration notes' Unreleased section names it and its count clause moved by one.
 - This record gained the contract-defect log, the SHOULD-deviation log, the dependency and licence inventory and installation, and its version register, optional-extension register, validation, verification, remaining gaps, handoff and the R24 and R25 entries were filled.
 - `tests/test_cdm_dis7_trace.py` carries the completion checks (D90), and `R_EVIDENCE["R30"]` names the two prototype guards. No covering test was missing from the contract-defect log.
 - Not done here: the release gates, the wheel gate and the full suite (R23); the handover directory (R25).
@@ -820,7 +969,7 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 
 - The final review ended in HOLD with three major findings; all three are fixed, each with a regression test that fails on the reviewed tree and passes now.
 - F-01: `validate_session`, the instant check and the basis check in `adapters/dis7.py` require the exact type `str`, so a str subclass (an `enum.StrEnum` member, a `(str, Enum)` member, a plain subclass) is refused with the existing codes and paths (D91). Tests: `test_t09_session_refuses_str_subclasses`, `test_t09_time_context_refuses_str_subclasses` and three `session_str_*` rows of `test_constructor_refuses_each_context_defect`.
-- F-02: `from_cdm` refuses an Entity whose structure bypassed validation as `E_REPLAY_SHAPE` before any attribute is read, at `[0].<field>`, `[0].residual` or `[0].source` (D69). Test: `test_t11_n17_unvalidated_entity_is_refused`, through `from_cdm` and `encode`.
+- F-02: `from_cdm` refuses three forms of an Entity built without validation as `E_REPLAY_SHAPE` instead of raising `AttributeError`, at `[0].<field>`, `[0].residual` or `[0].source` (D69). Test: `test_t11_n17_unvalidated_entity_is_refused`, through `from_cdm` and `encode`.
 - F-03: `dis7_host._emit` answers a closed stdout with exit 4 and `synapse-dis7: cannot write output: stdout is closed`, and `_diagnose` no longer raises when stderr is closed. Tests: `test_t15_a12_closed_stdout_exits_4`, `test_t15_a12_closed_stdout_and_stderr_exits_4`.
 - Minor findings applied: F-08 (readable test ids for the N13 inputs), F-18 (`from_cdm` refuses an Entity subclass at `$`; row `entity-subclass` of `test_t11_n17_wrong_shape_is_refused`), F-48 (the codec's module docstring), F-49 (no local absolute path in this record or the schema test), F-53 (the Verification table carries R22 and R23).
 - Not done here: the other minor findings, listed with their reasons in the run's report; F-40 and F-10 wait for the maintainer.
@@ -828,6 +977,93 @@ The work follows the spec's six work packages (R29) in order, with four sequenci
 ### R25 — handover
 
 Runs after the final commit and changes nothing in the repository; its output is the handover directory in the pipeline's run directory.
+
+### R26 — settle-behaviour
+
+- WP7, first of the four sessions of the unit (R26, R27, R28, R30): the sixteen behaviour findings of the final review that this run owns. Each FIXED finding except F-59, a text correction, has a regression test that fails on the tree as R26 found it (or, for F-25, on a copy with an unbounded read) and passes now.
+- F-09 FIXED: the constructor checks a time context again and keeps its own copy (D92).
+- F-15 FIXED: a bytes-like subclass that raises is `E_INPUT_TYPE` at `$` in `decode_pdu`, the coded guard and `parse_json_text`, and False in the header predicate (D93).
+- F-16 FIXED: the header predicate reads a 0-dimensional or multi-dimensional view as flat octets (D94).
+- F-17 FIXED: the PDU bound is measured through `nbytes` before the copy, in the codec and the guard (D95, D54, D65).
+- F-19 FIXED: envelope and residual members are read once and only the checked values are used (D96).
+- F-20 FIXED: a failed stderr keeps exit 3 and exit 4 (D97, D74).
+- F-21 FIXED: `--help` is flushed inside the output handler, so a broken pipe is exit 4 (D98).
+- F-22 and F-23 FIXED: `_read_bounded` checks the descriptor it reads, opened without blocking, and asks for no more than `limit + 1` octets (D99); `test_t15_a12_host_module_import_rules` now expects the second `os.open`.
+- F-24 FIXED: `replay` names an oversize file's size as a floor (D100).
+- F-25 FIXED: two in-process tests bound the traced allocation of an oversize decode and replay; the CLI module read 81 passed as R26 left it.
+- F-39 BLOCKED: the fix to check O makes the bump gate report `synapse_cdm/suite.py:check_resource_limits` unruled; the change and its test were taken out again, and the proposed ruling waits for the maintainer.
+- F-42 FIXED: an override of the hook that is not a classmethod is recognised (D101).
+- F-56 FIXED: `_emit` closes the redirect descriptor when the redirect cannot be made (D102).
+- F-57 FIXED: a comparison of replay steps 5 and 6 that raises counts as a difference (D69, D70); the seam lines are unchanged.
+- F-59 FIXED: the three sentences of D69 and D91, and the R24 entry's F-02 bullet, say what the code does.
+- No golden, manifest or schema changed; the output of `synapse-dis7` for the packaged vectors is byte-identical; the bump gate still reads MINOR, 3.2.0, nothing unruled; the mutation gate still detects every fault.
+- Not done here: F-39 (blocked, above); the findings of R27 and R28.
+
+### R27 — settle-tests
+
+- WP7, second of the four sessions of the unit: the nineteen test findings of the final review that this run owns. Each FIXED finding's test passes on the tree and fails against the finding's mutant in a scratch copy of the package, or, for the trace-module findings F-04, F-12, F-26 and F-27, against a mutant of the tests in a scratch copy of `tests/`; no file under the package changed.
+- F-04 FIXED: `R_SUPPLEMENT` with its resolution check and completeness test (D104); the handover generator's half is a kit change.
+- F-05 FIXED: `test_sweep_items_agree_with_the_contract_expected_and_operation` ties each sweep entry to the case's `expected` codes and machine-readable `operation`.
+- F-06 FIXED: a negative-zero position item in the A03 sweep and a negative-zero climb item in the A05 sweep.
+- F-07 FIXED: an antimeridian envelope whose twin spells +0 where the wire has -0 in the A09 sweep.
+- F-11 FIXED: `test_t15_a12_replay_binds_session_and_classification_from_the_document` (CR-17).
+- F-12 FIXED: `# CR-nn` tags above the tests of CR-13, CR-16, CR-17, CR-18, CR-27, CR-33 and CR-34, kept by `test_every_contract_resolution_is_tagged_above_a_test` (D104).
+- F-26 FIXED: the binder reads collectable tests only (D103).
+- F-27 FIXED: the wheel-gate half of A12 is checked (D104).
+- F-28 FIXED: three rotated-velocity items in the A05 sweep at latitude and longitude away from zero.
+- F-29 FIXED: `test_t09_n14_envelope_instant_in_another_spelling_is_normalised` (six cases).
+- F-30 FIXED: a four-digit stored instant row and five stored-residual tests over the range, width, wrong-type, hex and source-hash tables (D105).
+- F-31 FIXED: `test_t12_time_context_is_judged_before_the_projection` (four cases).
+- F-32 FIXED: eighteen `_RANGE_ROWS` rows (D105).
+- F-33 FIXED: cyclic, ring and over-deep three-key envelopes in `test_r07_detect_matrix`.
+- F-34 FIXED: `test_r21_hash_and_twin_messages_echo_nothing`.
+- F-35 FIXED: three order rows in `test_t12_member_order_does_not_change_the_diagnostic` and the instant-before-basis conflict in the N14 test.
+- F-36 FIXED: `test_t11_type_only_edits_are_refused`.
+- F-37 FIXED: `test_cr29_subclass_instances_are_not_the_plain_types` and `test_encode_refuses_int_and_float_subclasses`.
+- F-38 FIXED: `test_t12_text_oversized_integer_literal_does_not_depend_on_the_interpreter_limit`, added to D64's covering tests.
+- The trace table's `PENDING` stays empty and `R_EVIDENCE` is unchanged; the CR-17 and CR-26 rows of the contract-resolution table name the new tests; the CLI module read 82 passed as R27 left it.
+- Not done here: the findings of R26 and R28.
+
+### R28 — settle-texts
+
+- WP7, third of the four sessions of the unit: the fifteen text findings of the final review that this run owns, and the maintainer's three answers of 2026-10-05. No behaviour of the package changed.
+- F-10 FIXED: a paragraph under `## Source pins` states what the generated `dis7` evidence record hashes, as observed on a record generated into a scratch directory: 39 files, `README.md` and `PROVENANCE.json` being left out in every directory, not only at the top.
+- F-13 FIXED: the contract-defect log names the tests that fail when CR-03, CR-04, CR-25, CR-29, CR-32 and CR-34 are reversed; the CR-17 row already named R27's test.
+- F-14 FIXED: D106 to D109 record the kit decisions D-01, D-08, D-19 and D-29 (the numbers D91 to D94 that the review proposed were taken by then).
+- F-40 FIXED: the approved clause in the ruling of `synapse_cdm/evidence.py:main`, and the module docstring of `tests/test_cdm_fixture_instance.py`.
+- F-41 FIXED: the package README and the adapter-writer page state the `--fixtures` refusal for an overriding adapter, and the package README's exit-code paragraph names the two further causes of harness exit 2.
+- F-43, F-45 and F-52 FIXED: the count paragraph of `### Unreleased` and two step sentences (D110).
+- F-44 FIXED: the availability sentence in the root README, the docs introduction and the `dis7` page; the proposed test assertion is not added (D111; R30 added it).
+- F-46 FIXED: the residual paragraph of the CDM index page accounts for `dis7`.
+- F-47 FIXED: the parser-safety heading no longer places the codec outside `adapters/`; the kit check that quotes the old heading is a kit change.
+- F-50 FIXED: the `dis7` page cites open-dis-python by URL, licence and commit.
+- F-51 FIXED: the `residual_block` docstring of `lossless.py` names which structured adapters call it.
+- F-54 FIXED: the fix-round bullet under `## SHOULD-deviation log` and the sentence under `## Verification`, whose table gained the rows R24 to R27.
+- F-60 FIXED in the tree's texts (package README, `dis7` page, `pyproject.toml` comment, the host-command paragraph of `### Unreleased`); the argparse description is left (D111; R30 changed it).
+- Terms record: the confirmation sentence and the confirmed clause replace the two PENDING sentences; D89, the R22 entry and `### Unreleased` say so, and the row under `## Remaining gaps` is closed. No pin, provenance record or test hashes the file.
+- Not done here: the findings of R26 and R27; F-39 stays blocked on a bump ruling.
+
+### R30 — settle-final
+
+- WP7, fourth of the four sessions of the unit: the eighteen items of the lead's adjudication of the unit's own review (S-01 to S-18) and the two parts R28 left (D111). Each behaviour change has a regression test that fails on the tree as R30 found it and passes now; each test-only change fails against a named mutant in a scratch copy of the package or of `tests/`.
+- S-01 FIXED: the commit draft's tests paragraph separates the regression tests of a behaviour change from the gap tests, with numbers counted against the WP4-6 commit.
+- S-02 FIXED: the commit draft says that the header predicate answers False for a raising bytes-like subclass.
+- S-03 FIXED: a usage error keeps exit 2 with stderr closed or broken, and `--help` with stdout closed exits 4 with the one diagnostic line (D97, D98).
+- S-04 FIXED: D92 says that a subclass instance no longer compares equal.
+- S-05 FIXED: a caller-supplied container whose read raises is a coded refusal from `to_cdm`, `validate_source`, `from_cdm`, `encode` and the constructor (D112, D69).
+- S-06 FIXED: F-29's two mutants re-expressed for the tree, each defining every name it uses, both killed by the N14 spelling test; the proof is in the run's report.
+- S-07 FIXED: five `_RANGE_ROWS` rows (D105).
+- S-08 FIXED: the evidence check is pinned for a nested function, and a `Test*` class with `__init__` binds nothing (D103).
+- S-09 FIXED: a resolution tag counts only above a module-level test (D104).
+- S-10 FIXED: an `R_SUPPLEMENT` or `R_EVIDENCE` entry must name a test function (D103).
+- S-11 FIXED: the commit draft's texts paragraph names the four texts that say what `decode`, `replay` and `self-test` read.
+- S-12, S-13 and S-14 FIXED: the framing bullets of the R26 and R27 entries and the F-41 bullet of the R28 entry.
+- S-15 FIXED: D89's covering tests.
+- S-16 FIXED: the opening paragraph names the runs of the follow-up unit, and `## Handoff` says how the unit is committed and pushed.
+- S-17 FIXED: `## Remaining gaps` carries the F-39 row; the D111 items are closed, so they have no row.
+- S-18 FIXED: the argparse description of `synapse-dis7` and its test, and the availability test (D111).
+- F-39 stays BLOCKED: no approved ruling exists for `synapse_cdm/suite.py:check_resource_limits`, so `suite.py` is as at the WP4-6 commit.
+- No fixture, golden, manifest or schema changed; the bump gate still reads MINOR, 3.2.0, nothing unruled; the mutation gate still detects every fault; the CLI module reads 91 passed.
 
 ## Validation
 
@@ -913,6 +1149,12 @@ The last line of each verifier report, `RUN/reports/<run id>-verify.md`, that ex
 | R21 | `VERDICT: PASS` |
 | R22 | `VERDICT: PASS` |
 | R23 | `VERDICT: PASS` |
+| R24 | `VERDICT: PASS` |
+| R25 | `VERDICT: PASS` |
+| R26 | `VERDICT: PASS` |
+| R27 | `VERDICT: PASS` |
+
+The table gives each report's final verdict. Runs R02, R03 and R09 first received `VERDICT: FAIL` from their verifier, and runs R01, R03 and R15 first failed their exit check; see the fix-round bullet under `## SHOULD-deviation log`.
 
 
 ## Remaining gaps
@@ -922,7 +1164,7 @@ The last line of each verifier report, `RUN/reports/<run id>-verify.md`, that ex
 | The live OpenDIS reference tests (case A13, requirement R26) need the pinned checkout named by `SYNAPSE_CDM_OPENDIS_DIR`; CI has none, so there they read `BLOCKED_EXTERNAL_EVIDENCE` [F6] | A13 and R26 verified locally only, unavailable in CI; the exercise report names the commit it was re-run on | `SYNAPSE_CDM_OPENDIS_DIR=<checkout at the pin> python -m pytest -q -rs -m reference tests/test_cdm_dis7_reference.py` |
 | Case A12's evidence is the wheel gate's clean-environment run of `gates/wheel_install.py::check_dis7_script` (written in run R20, run by the wheel gate in run R23), not the in-tree CLI test [CR-33] | A12: the installed `synapse-dis7` command behaves as specified | `python gates/wheel_install.py --mutation-check` |
 | Two SDK defects are filed separately and not fixed here [F7(b)]: `adapter.container_depth` never returns on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged root | none of this adapter's claims; the `dis7` adapter holds a parsed envelope to acyclicity itself | `adapter.container_depth` on a dict that contains itself; `evidence.generate` with a fixture directory outside the package |
-| The terms record awaits the maintainer's confirmation of the publisher page's wording and the class | `license_class` `LICENSED`, read from one fetch of the publisher's page | read `fixtures/dis7/spec/dis7_terms.json`, whose confirmation reads PENDING |
+| Conformance check O reads a refusal raised by `Adapter.fixture_instance` while the suite builds the adapter as the adapter refusing the oversized payload (final review F-39); the fix changes `synapse_cdm/suite.py:check_resource_limits` and waits for a bump ruling | check O for an adapter whose overriding hook refuses | `suite.check_resource_limits` over `ContextDouble(clock=clock, context="x", synthetic=False)` from `tests/fixture_instance_double.py` returns PASS with a `ContextMissing` refusal |
 | `Evidence(available=False)` until the release round flips it [F11] | no published evidence badge for the `dis7` adapter | `grep -n '"available"' manifests/dis7.json` |
 
 ## Contract-defect log
@@ -933,8 +1175,8 @@ For the specification owner: every contract resolution CR-01 to CR-35 the plan f
 | --- | --- | --- | --- |
 | CR-01 | Schema instant regex accepts `:60`, Feb 30, hour 24, year 0000, offset `+24:00` | Prose wins; enforced in `TimeContext`; schema shipped unchanged | `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instant`, `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instants_that_cannot_be_test_ids` |
 | CR-02 | Residual schema accepts an unnormalised stored instant | Replay requires the normalised form → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n16_stored_context_edit_is_refused` |
-| CR-03 | Malformed envelope instant/basis: structural or `E_CONTEXT_TIME` | Wrong JSON type or missing key → `E_TWIN_SCHEMA` (stage 2); a string with a bad value → `E_CONTEXT_TIME` (stage 8) | `tests/test_cdm_dis7_replay.py::test_t12_n18_wrong_type_or_boolean` |
-| CR-04 | `encode_pdu` code split (table vs case N10) | Keys, types, array sizes, record count, hex width → `E_TWIN_SCHEMA`; header constants → `E_HEADER_UNSUPPORTED`; length vs records → `E_LENGTH_MISMATCH`; NaN/inf → `E_NONFINITE`; integer range, hex characters, float32 representability → `E_VALUE_RANGE` | `tests/test_cdm_dis7_codec.py::test_encode_reports_defects_in_the_frozen_stage_order` |
+| CR-03 | Malformed envelope instant/basis: structural or `E_CONTEXT_TIME` | Wrong JSON type or missing key → `E_TWIN_SCHEMA` (stage 2); a string with a bad value → `E_CONTEXT_TIME` (stage 8) | `tests/test_cdm_dis7_replay.py::test_t12_n18_wrong_type_or_boolean`, `tests/test_cdm_dis7_schema.py::test_r12_stage2_verdict_equals_the_envelope_schema_except_enumerated_divergences` |
+| CR-04 | `encode_pdu` code split (table vs case N10) | Keys, types, array sizes, record count, hex width → `E_TWIN_SCHEMA`; header constants → `E_HEADER_UNSUPPORTED`; length vs records → `E_LENGTH_MISMATCH`; NaN/inf → `E_NONFINITE`; integer range, hex characters, float32 representability → `E_VALUE_RANGE` | `tests/test_cdm_dis7_codec.py::test_encode_reports_defects_in_the_frozen_stage_order`, `tests/test_cdm_dis7_codec.py::test_t03_n10_256_records_are_refused_as_twin_schema` |
 | CR-05 | Envelope twin value classes | Constants, out-of-range integers, hex width or syntax, `wire_hex` outside 288–8448 characters, non-finite numbers → `E_TWIN_SCHEMA` at stage 2 | `tests/test_cdm_dis7_replay.py::test_t12_n18_range_constant_and_non_finite` |
 | CR-06 | Integral floats for integer fields (`7.0`) | Accepted in twins and `encode_pdu`, following the schema; booleans refused | `tests/test_cdm_dis7_replay.py::test_t12_n18_integral_floats_and_integer_components_are_accepted` |
 | CR-07 | Basis `\S` depends on the regex engine | Whitespace defined as an enumerated code-point set; tests for U+001C, U+0085, U+00A0, U+FEFF | `tests/test_cdm_dis7_time_identity.py::test_t09_basis_whitespace_is_the_enumerated_set` |
@@ -947,7 +1189,7 @@ For the specification owner: every contract resolution CR-01 to CR-35 the plan f
 | CR-14 | N15 vs the code table on "time" | `valid_from`/`valid_to` → `E_REPLAY_CHANGED`; `source.observed_at` and stored time context → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n15_canonical_edit_is_refused` |
 | CR-15 | Non-list replay input; undecodable or edited `wire_hex`/`residual.pdu` | `E_REPLAY_SHAPE` at `$`; `E_REPLAY_CHANGED` | `tests/test_cdm_dis7_replay.py::test_t11_single_view_edit_is_refused` |
 | CR-16 | Null vs absent on replay | Unobservable on model instances. At the CLI JSON boundary a non-canonical document (absent member, non-canonical spelling) → `E_REPLAY_SHAPE` | `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_refuses_each_absent_null_member` |
-| CR-17 | CLI `replay` has no session or classification flags | Bound from the stored residual, so the match is by construction; optional flags, when given, are asserted. Single-copy edits are still caught through `source_ids` and `source.synthetic` | `tests/test_cdm_dis7_cli.py::test_t15_a12_live_sets_synthetic_false_and_replay_asserts_flags` |
+| CR-17 | CLI `replay` has no session or classification flags | Bound from the stored residual, so the match is by construction; optional flags, when given, are asserted. Single-copy edits are still caught through `source_ids` and `source.synthetic` | `tests/test_cdm_dis7_cli.py::test_t15_a12_live_sets_synthetic_false_and_replay_asserts_flags`, `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_binds_session_and_classification_from_the_document` |
 | CR-18 | CLI exit classes; CLI output vs null-hash goldens | §4.8. CLI decode always carries a hash, so self-test compares the API's null-hash output | `tests/test_cdm_dis7_cli.py::test_t15_a12_self_test_passes` |
 | CR-19 | A03 "stated longitudes and heights" appear nowhere normative | Chosen and recorded: (0, 180, 35 786 000), (49, 16, 400), (−45, −179.5, 12 000), (89.999, 34, −100), (−90, 0, 0), plus exact `[0, 0, ±b]` for the pole branch | `tests/test_cdm_dis7_geodesy.py::test_t05_a03_analytical_positions` |
 | CR-20 | A09 and A14 cannot be exercised on the named seed | A09 uses `north_pole_stationary`; mutation killers per §4.10 | `tests/test_cdm_dis7_adapter.py::test_acceptance_sweep` (its item `t10_a09`) |
@@ -955,16 +1197,16 @@ For the specification owner: every contract resolution CR-01 to CR-35 the plan f
 | CR-22 | Spec lines 219 and 221 order replay checks differently | §4.5 order; multi-defect tests at wire bytes 1, 17 and 88 | `tests/test_cdm_dis7_replay.py::test_t11_consistent_wire_and_view_edit_is_provenance` |
 | CR-23 | "RFC 3339" prose permits lowercase `t`/`z`; the schema refuses them | Refused, with the space separator | `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instant`, `tests/test_cdm_dis7_time_identity.py::test_t09_n13_refused_instants_that_cannot_be_test_ids` |
 | CR-24 | `-00:00` offset | Accepted, normalised to `Z` | `tests/test_cdm_dis7_time_identity.py::test_t09_a07_equivalent_spellings_normalise_to_one_instant` |
-| CR-25 | `residual.namespace` ≠ `DIS`; meaning of "Source namespace" in the code table | `E_REPLAY_SHAPE`; "Source namespace" is the scoped identity system in `source_ids` → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n16_source_ids_edit_is_refused` |
-| CR-26 | How much of the residual schema is the replay shape gate | All of it; CR-15 applies only to schema-valid hex | `tests/test_cdm_dis7_replay.py::test_t11_residual_shape_defect_is_refused` |
+| CR-25 | `residual.namespace` ≠ `DIS`; meaning of "Source namespace" in the code table | `E_REPLAY_SHAPE`; "Source namespace" is the scoped identity system in `source_ids` → `E_REPLAY_PROVENANCE` | `tests/test_cdm_dis7_replay.py::test_t11_n16_source_ids_edit_is_refused`, `tests/test_cdm_dis7_replay.py::test_t11_residual_shape_defect_is_refused` |
+| CR-26 | How much of the residual schema is the replay shape gate | All of it; CR-15 applies only to schema-valid hex | `tests/test_cdm_dis7_replay.py::test_t11_residual_shape_defect_is_refused`, `tests/test_cdm_dis7_replay.py::test_t11_residual_range_constant_and_non_finite_is_shape`, `tests/test_cdm_dis7_replay.py::test_t11_residual_width_one_short_or_one_long_is_shape`, `tests/test_cdm_dis7_replay.py::test_t11_residual_wrong_type_or_boolean_is_shape`, `tests/test_cdm_dis7_replay.py::test_t11_residual_hex_syntax_and_wire_hex_length_is_shape`, `tests/test_cdm_dis7_replay.py::test_t11_residual_source_hash_shape_defect_is_refused` |
 | CR-27 | Duplicate key or unparseable JSON in replay's `entity.json` | `E_REPLAY_SHAPE` | `tests/test_cdm_dis7_cli.py::test_t15_a12_replay_refusals_exit_3` |
 | CR-28 | `detect(envelope)` | True only for exactly the three keys and a 7/1/1 header by guarded lookups; False for cyclic, empty, unrelated or over-size input; never raises | `tests/test_cdm_dis7_adapter.py::test_r07_detect_matrix` |
-| CR-29 | Native twin types | `list` and `tuple` for arrays, `dict` only for objects, plain `int`/`float`; `time_context` as `TimeContext` only; `source_hash` as a plain dict; a memoryview of any item size is its underlying octets | `tests/test_cdm_dis7_codec.py::test_t04_a_memoryview_of_72_two_octet_items_decodes_as_its_144_octets` |
+| CR-29 | Native twin types | `list` and `tuple` for arrays, `dict` only for objects, plain `int`/`float`; `time_context` as `TimeContext` only; `source_hash` as a plain dict; a memoryview of any item size is its underlying octets | `tests/test_cdm_dis7_codec.py::test_t04_a_memoryview_of_72_two_octet_items_decodes_as_its_144_octets`, `tests/test_cdm_dis7_replay.py::test_t12_n18_integral_floats_and_integer_components_are_accepted`, `tests/test_cdm_dis7_adapter.py::test_constructor_refuses_each_context_defect` |
 | CR-30 | The note for position-present with a non-world algorithm appears in no vector | Asserted literally for algorithms 0, 1, 6, 9, 255; all four note shapes tested | `tests/test_cdm_dis7_adapter.py::test_t14_a11_note_sequences_for_all_four_shapes` |
 | CR-31 | `validate_source` format | Exactly one `"CODE at PATH: message"` string; the SDK default's type-name prefix is overridden | `tests/test_cdm_dis7_adapter.py::test_r07_validate_source_matrix` |
-| CR-32 | Years below 1000 in `valid_from`/`observed_at` | F7(a) | `tests/test_cdm_adapter_contract.py::test_render_pads_the_year_to_four_digits_for_years_1_and_999` |
+| CR-32 | Years below 1000 in `valid_from`/`observed_at` | F7(a) | `tests/test_cdm_adapter_contract.py::test_render_pads_the_year_to_four_digits_for_years_1_and_999`, `tests/test_cdm_adapter_contract.py::test_render_holds_no_strftime_year_directive` |
 | CR-33 | A12's evidence | The wheel gate's clean-venv run, not the in-tree CLI test | `tests/test_cdm_gate_rosters.py::test_t15_a12_the_dis7_script_check_passes_against_this_environment` |
-| CR-34 | Self-test and wheel report package 3.1.1 although the tag has no dis7 | F11 | `tests/test_cdm_dis7_cli.py::test_t15_a12_version` |
+| CR-34 | Self-test and wheel report package 3.1.1 although the tag has no dis7 | F11 | `tests/test_cdm_dis7_cli.py::test_t15_a12_version`, `tests/test_cdm_packaging.py::test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other` |
 | CR-35 | Is a location written with negative zeros "the exact zero vector"? | Yes, compared by value: position and kinematics null, the zero-vector note, sign bits kept in residual and replay; never `E_POSITION_DOMAIN` | `tests/test_cdm_dis7_geodesy.py::test_t05_n11_origin_and_negative_zero_origin_have_no_projection` |
 
 ## SHOULD-deviation log
@@ -977,6 +1219,7 @@ The handoff specification contains no SHOULD statement beyond its definition of 
 - CR-21: the conformance verdict is defined for the packaged fixtures only, because the generic tools build the adapter with the fixtures' context through `Adapter.fixture_instance` and refuse a caller-supplied fixture directory for it; see D32.
 - The maturity tension [F3]: the handoff specification allows an initial L3 with implemented claim status, while `tests/test_cdm_manifests.py` forces L4 and VERIFIED for a bidirectional `standard-encoding` adapter with `MAPPINGS` and a passing round trip. L4, VERIFIED and LICENSED are declared; L5, L6, `external_exercise` and `normative-verified` are not.
 - The conformance applicability [WP6]: checks I and M are declared inapplicable, and the gate requires `A,B,C,D,E,F,G,H,J,K,L,N,O`.
+- Fix rounds [PLAN sections 6.1 and 10]: the plan allows at most one fix round per work package and stops the work when it fails; the pipeline's driver allowed two per run (`MAX_FIX_ROUNDS` in the run kit). In run R01 the first fix round did not pass the exit check and a second one did. In run R03 the first fix round passed the exit check but not its verifier, because the WP1a commit draft quoted a suite duration that the next run of the suite changed; a second fix round failed on the same line, the driver stopped, the maintainer removed the duration from the draft, and the re-check passed. Runs R02 and R09 each passed after one fix round. In run R15 both fix rounds ended at once on the account's session limit; the driver stopped and the runner was started again.
 
 ## Dependency and licence inventory
 
@@ -1014,6 +1257,8 @@ bash RUN/run.sh postcommit
 bash RUN/run.sh
 git push -u origin soif/dis7-1.0
 ```
+
+The final review's minor findings were then settled in a follow-up unit, WP7: the sessions R26, R27, R28 and R30 and the release gates' check script R29 on the staged tree. The unit is committed on top of the WP4-6 commit, and the branch is pushed again once that commit has passed the post-commit gates.
 
 On HOLD the final review is followed by `bash RUN/run.sh fix-final` before it is run again.
 

@@ -312,7 +312,9 @@ has it.
 are and replays those — so `--adapter pntmap` is the whole command whether you have a clone or
 only a `pip install`. For your adapter, which lives outside the package, the harness will not
 guess at a directory it cannot know: it refuses with exit code `2` rather than reaching for
-`fixtures/<your name>`, which would either miss or, worse, hit ours.
+`fixtures/<your name>`, which would either miss or, worse, hit ours. One exception: for a shipped
+adapter that overrides `Adapter.fixture_instance` (`dis7` today) a caller-supplied `--fixtures` is
+refused with exit code `2`, because the hook supplies the context of the packaged fixtures only.
 
 Six checks per fixture, and **an unrun check reports `SKIP`, never `PASS`** — a capability
 nobody tested must not acquire a green tick.

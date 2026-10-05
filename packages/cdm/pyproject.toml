@@ -146,10 +146,11 @@ cdm-conformance = "synapse_cdm.conformance:main"
 # unrunnable.
 synapse = "synapse_cdm.suite:main"
 # `synapse-dis7` joined 2026-10-04 with the DIS 7 Entity State adapter's offline host command:
-# decode, replay, self-test and --version. It reads one file and writes stdout; it opens no
-# socket and writes no file. The spelling is fixed the way `synapse` is: acceptance case A12
-# runs the command under this name from a clean install, and the name comes from the adapter's
-# handoff specification, identified by `SC DIS7 SPEC 001 v1.0`, which is not in this repository.
+# decode, replay, self-test and --version. `decode` and `replay` read the one --input file and
+# `self-test` the packaged vectors; it writes stdout, opens no socket and writes no file. The
+# spelling is fixed the way `synapse` is: acceptance case A12 runs the command under this name
+# from a clean install, and the name comes from the adapter's handoff specification, identified
+# by `SC DIS7 SPEC 001 v1.0`, which is not in this repository.
 synapse-dis7 = "synapse_cdm.dis7_host:main"
 
 # ---------------------------------------------------------------------------------------------

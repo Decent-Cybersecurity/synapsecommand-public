@@ -56,7 +56,10 @@ python -m synapse_cdm.harness --list-adapters         # the names --adapter take
 
 `--fixtures` is optional for an adapter this package ships: omitted, the harness asks the import
 system where its own fixtures are and replays those, wherever the package is installed. Pass it
-to replay your own set. Both commands also install as `cdm-harness` and `cdm-schemas`.
+to replay your own set. One exception: for a shipped adapter that overrides
+`Adapter.fixture_instance` (`dis7` today) a caller-supplied `--fixtures` is refused with exit `2`,
+because the hook supplies the context of the packaged fixtures only. Both commands also install
+as `cdm-harness` and `cdm-schemas`.
 
 The harness's six checks are the **Synapse Conformance Suite**'s A–F. Nine more — determinism,
 malformed-input refusal, unknown-field preservation, temporal correctness, identity stability,
@@ -271,8 +274,10 @@ Nothing in the harness knows anything about any particular adapter — it resolv
 for adapters the AI adapter factory generates and this repository has never seen.
 
 **Exit codes: `0` every fixture passed, `1` fixtures ran and some failed, `2` the run could not
-happen — no fixture matched, the `--schemas` directory held no schemas, or `--fixtures` was
-omitted for an adapter this package does not ship.** The third one exists because `2` and `1` send a reader to different places — `1` says
+happen — no fixture matched, the `--schemas` directory held no schemas, `--fixtures` was
+omitted for an adapter this package does not ship, `--fixtures` was given for a shipped adapter
+that overrides `fixture_instance`, or that hook refused the invocation (`dis7` under
+`--synthetic false`).** The third one exists because `2` and `1` send a reader to different places — `1` says
 debug the adapter, `2` says fix the path you passed — and because a run that matched nothing used
 to exit `0` with `0 passed, 0 failed`. It does not any more: an absent directory, an empty one and
 one whose only content is a `spec/` subdirectory are the same failure, and the message names the
@@ -801,7 +806,8 @@ synapse-dis7 --version
 ```
 
 Exit codes: `0` success, `2` usage or context flags, `3` rejected data, `4` file or output I/O.
-The command reads one file, writes stdout and writes no file.
+`decode` and `replay` read the one `--input` file and `self-test` the packaged vectors; the command
+writes stdout and writes no file.
 
 The adapter and the command are not part of the published 3.1.1 distribution; they ship with the
 first release after it. A build made from this tree before that release also reports 3.1.1. The

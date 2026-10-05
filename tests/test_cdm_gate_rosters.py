@@ -197,6 +197,7 @@ def _function(tree: ast.Module, name: str) -> ast.FunctionDef:
     return found[0]
 
 
+# CR-33
 def test_t15_a12_the_gate_reads_a_scripts_output_as_bytes(gate):
     """`run_bytes` hands back the octets a script wrote, undecoded [CR-33, case A12].
 
@@ -234,6 +235,7 @@ def test_t15_a12_the_dis7_script_runs_inside_the_scripts_check_and_the_gate_keep
                      "import", "resources", "schemas", "harness", "scripts", "slice"}, sorted(names)
 
 
+# CR-18, CR-33
 def test_t15_a12_the_dis7_script_check_passes_against_this_environment(gate, tmp_path):
     """The check itself, run against the interpreter running this suite.
 
