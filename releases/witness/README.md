@@ -15,7 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json --offline  # every record here
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json releases/witness/3.2.0.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -93,6 +93,27 @@ refused shape (`c5f2b2d1…`, 1 844 bytes) — and verified offline against a `g
 online with `--download`, and over all four records before it was committed. `PUBLICATION.md` entry
 23 records the ruling, the empty comment and the designation. The directory holds four records:
 three built by hand and the pipeline's one.
+
+**`3.2.0.json` is the pipeline's own record again, 2026-10-06 — the fifth execution, and the rule
+followed.** On the `v3.2.0` run
+([37459980438](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/37459980438))
+all six jobs succeeded, the `witness` job included. Its build step read the run's one approval —
+given at 13:19:10Z by `decentcybersecurity` with a comment naming the readiness report at the tagged
+commit, so `review_file` is derived from the comment and designated by nobody — and the `pypi`
+deployment's status history (`waiting` 13:17:47Z, `queued` 13:19:10Z, `in_progress` 13:19:14Z,
+`success` 13:19:41Z), fetched the attestation store by the wheel's digest, and wrote
+`witness-3.2.0.json for v3.2.0 (2 files, 1 approval(s))`. Its verify step, `--download --assets
+assets` with a token, read `VERIFIED witness-3.2.0.json (3.2.0, against the index and Release and
+the assets under assets)`. Its attach step uploaded the file to the Release, where it is the ninth
+asset, 2 188 bytes, sha256 `b0bf6661ab519ff7bdcc87cdf34daa0d2c3d0af77c5b92e387d6c65f9f7277d8`.
+`3.2.0.json` here is that asset byte for byte — the same digest, which `tests/test_cdm_witness.py`
+holds — downloaded by the witness round and verified again in every mode before it was committed:
+offline against the Release download, online with `--download`, with `--download --assets` and a
+token, and offline over all five records. `PUBLICATION.md` entry 24 is the ledger's account. Its
+approval is the second to follow the rule about the approval comment the release procedure has
+carried since 2026-09-17 — `v3.0.1`'s was the first — and the first since the `v3.1.1` approval did
+not. The directory
+holds five records: three built by hand and two the pipeline's.
 
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
@@ -172,6 +193,13 @@ fact, in the witness round, and not named by the approval; it reached the record
 the comment was empty, and gives both digests. The weaker form, twice: a designation says what the
 maintainer holds the approval to have been taken on, where a derived reference says what the
 approver typed.
+
+**What `review_file` means for 3.2.0 — derived, as for 3.0.1 (2026-10-06).** The `pypi` approval of
+the `v3.2.0` run carried the comment *Approved on the readiness report at the release commit:*
+followed by the report's URL at `298ed9b1`, the commit the tag names, so the builder lifted that URL
+into `review_file` from the approval's own words; `--review-file` was not passed, and the record's
+`comment` and `review_file` name the same document. It is the second record in this directory whose
+`review_file` was derived rather than designated.
 
 ## What the verifier does not do
 

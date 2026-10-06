@@ -341,6 +341,24 @@ every mode before it was committed, and `PUBLICATION.md` entry 23 states the des
 empty comment in as many words. The directory holds four records: three built by hand and the
 pipeline's one.
 
+**And on 2026-10-06 the fifth execution succeeded end to end: the `v3.2.0` push, run
+37459980438.** All six of the run's jobs read `success` — gate, build, attest, publish, release and
+witness — which is the reading the sentence above asks for before a witness round commits the
+pipeline's record. Its build step, under the same grants, read the run's one approval — given at
+13:19:10Z by `decentcybersecurity` with the comment *Approved on the readiness report at the
+release commit:* and the readiness report's URL at `298ed9b1`, the commit the tag names, so
+`review_file` is derived from the approval's own words and designated by nobody — and the `pypi`
+deployment's status history, fetched the attestation store by the wheel's digest, was handed
+`--attestation-bundles`, and wrote `witness-3.2.0.json for v3.2.0 (2 files, 1 approval(s))`; its
+verify step, `--download --assets assets` with a token, read `VERIFIED`; its attach step put the
+record on the Release as its ninth asset. The rule this procedure states for the approval — a
+non-empty comment naming what the approval was taken on — was followed, the second time after
+`v3.0.1`'s and the first since `v3.1.1`'s was not. The witness round downloaded that asset, verified it again offline against
+the Release download, online with `--download` and over all five records, and committed it as
+`releases/witness/3.2.0.json` — the same bytes, sha256 `b0bf6661…`, held by digest in
+`tests/test_cdm_witness.py`; `PUBLICATION.md` entry 24 is the ledger's account. The directory holds
+five records: three built by hand and two the pipeline's.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -498,6 +516,12 @@ push, run 35695633330, built `witness-3.1.1.json` and its verify step refused it
 designated `--review-file`, under the ruling `PUBLICATION.md` entry 23 records. The directory
 holds four records: three built by hand and one by the pipeline.
 
+**Also 2026-10-06: the fifth execution succeeded, on a non-empty comment.** The `v3.2.0` push, run
+37459980438, built, verified and attached `witness-3.2.0.json`, its approval comment naming the
+readiness report at the commit the tag names, and `releases/witness/3.2.0.json` is that asset byte
+for byte. The directory holds five records: three built by hand and two by the pipeline.
+`PUBLICATION.md` entry 24 is the measurement.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -509,6 +533,29 @@ sentence above is kept as the design it stated; the verifier's header says, mode
 now true of it.
 
 ## History
+
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.2.0`, and `3.2.0` is what the index serves — `PUBLICATION.md` entry 24 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated witness paragraphs in the release procedure and the pipeline section, and the index note in
+the 3.2.0 section being what moved in it. Everything else the round touched ships in nothing: the
+ledger, the witness record and its README, the release-pipeline and changelog pages, the DIS 7
+implementation record, and two test modules.
+
+**THE 3.2.0 WITNESS ROUND's RECORD, 2026-10-06 — the record is the pipeline's own, for the second
+time.** Run 37459980438's `witness` job built `witness-3.2.0.json`, its verify step read `VERIFIED`
+with `--download --assets assets` and a token, and its attach step put it on the Release, because
+the `pypi` approval carried a non-empty comment naming the readiness report at the commit the tag
+names. `releases/witness/3.2.0.json` is that Release asset byte for byte, verified by
+`gates/witness_verify.py` offline against the Release download, online with `--download`, and over
+all five records, before it was committed. Ledger entry 24 records the upload and the readings
+behind it; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` holds the
+record by digest among the pipeline's. Nothing in the distribution moved except this file, and
+`PACKAGE_VERSION` still reads `3.2.0`.
 
 ### 3.2.0 — 2026-10-06 — the DIS 7 Entity State adapter: `dis7` lands as #21 with its offline host command `synapse-dis7`, the roster moves nineteen to twenty, the Adapter contract gains `fixture_instance`, and no wire contract moves
 
@@ -524,7 +571,8 @@ clause stops being true at this commit and the other two stay true until an uplo
 `12f0a3e88277f0ef35c2ad5a0a36617251724249` this paragraph was written in; it names the commit one
 after it, which adds four floors to the documentation site's `overrides` and moves nothing in the
 distribution but this section (the paragraph that begins THE DOCS AUDIT AT THE RELEASE), so
-`PACKAGE_VERSION` reads `3.2.0` there as here.
+`PACKAGE_VERSION` reads `3.2.0` there as here. **Measured after the upload, 2026-10-06:** `3.2.0` is what the
+index serves since 13:19:37Z, and `PUBLICATION.md` entry 24 is the measurement.
 
 **THE PACKAGE VERSION MOVED 3.1.1 -> 3.2.0 ON 2026-10-06, AND THE NUMBER IS THE DERIVED FLOOR.**
 `gates/bump_derivation.py` reads the arc from `v3.1.1` and derives MINOR with nothing unruled: the

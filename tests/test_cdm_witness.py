@@ -631,6 +631,18 @@ def test_every_witness_path_the_documents_quote_exists():
 # maintainer designated afterwards, as `2.2.0.json` was; `PUBLICATION.md` entry 23 says so. The
 # roster below grows by that name and nothing else in this section moves: the three paragraphs
 # still say what run 35514833652 did, and each now also says what run 35695633330 did.
+#
+# 2026-10-06: THE FIFTH RECORD LANDED, AND IT IS THE PIPELINE'S AGAIN. Run 37459980438 (`v3.2.0`)
+# was the job's fifth execution on a tag push and its second success end to end: the build step
+# wrote `witness-3.2.0.json for v3.2.0 (2 files, 1 approval(s))` off an approval whose comment
+# named the readiness report at the tagged commit, the verify step read `VERIFIED` with `--download
+# --assets assets` and a token, and the attach step put the record on the Release as its ninth
+# asset. It is the second record the pipeline produced, and the second approval since the rule
+# about the approval comment was written down (2026-09-17) that followed it at the approval —
+# `v3.0.1`'s was the first, `v3.1.1`'s did not. The witness round downloaded that asset, verified it again offline and online, and
+# committed it as `releases/witness/3.2.0.json` — the same bytes, held below by digest beside
+# `3.0.1.json`. The hand-built roster does not move, and the three paragraphs each also say what
+# run 37459980438 did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
@@ -661,10 +673,11 @@ ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bun
 #: The records the three paragraphs describe as hand-built, and the reading each rests on.
 HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]
 
-#: The record the paragraphs describe as the pipeline's own, by the digest of the Release asset
-#: run 35514833652 attached — so a re-built or edited file under this name is refused, and the
+#: The records the paragraphs describe as the pipeline's own, by the digest of the Release asset
+#: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0 — so a re-built or edited file under this name is refused, and the
 #: word "pipeline's" in three documents is a claim about bytes and not about intent.
-PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd"}
+PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd",
+                  "3.2.0.json": "b0bf6661ab519ff7bdcc87cdf34daa0d2c3d0af77c5b92e387d6c65f9f7277d8"}
 
 #: The run whose witness job succeeded first, and the one it was refused on before it.
 FIRST_SUCCESS_RUN = "35514833652"
@@ -689,7 +702,7 @@ def test_the_witness_statements_hold_while_the_directory_is_two_hand_built_recor
     for name, digest in PIPELINE_BUILT.items():
         actual = hashlib.sha256((WITNESS_DIR / name).read_bytes()).hexdigest()
         assert actual == digest, (
-            f"{name} hashes to {actual}, and the Release asset run {FIRST_SUCCESS_RUN} attached "
+            f"{name} hashes to {actual}, and the Release asset its run attached "
             f"hashes to {digest}. The three paragraphs call this record the pipeline's own, which is "
             "a claim about these bytes; a record rebuilt or edited under this name is a different "
             "claim and needs different sentences")

@@ -272,3 +272,11 @@ symptom, and it is the one this refusal exists for.
   `--review-file` the maintainer designated afterwards, and `PUBLICATION.md` entry 23 says so. Four
   records, three of them hand-built; the rule about the approval comment is in the release
   procedure, and this is the second time it was not followed.
+  On `v3.2.0` — run 37459980438, 2026-10-06 — all six jobs succeeded: the `pypi` approval carried a
+  comment naming the readiness report at the tagged commit, the build step wrote the record with
+  `review_file` derived from it, the verify step read `VERIFIED` with `--download --assets assets`
+  and a token, and the attach step put `witness-3.2.0.json` on the Release as its ninth asset;
+  `releases/witness/3.2.0.json` is the fifth committed record and the pipeline's own, byte for byte,
+  held by digest, and `PUBLICATION.md` entry 24 is the measurement. Five records, three of them
+  hand-built and two the pipeline's; the rule about the approval comment was followed at the
+  approval, the second time after `v3.0.1`'s and the first since `v3.1.1`'s was not.
