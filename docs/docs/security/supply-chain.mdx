@@ -87,11 +87,13 @@ The npm reading is one: `npm ci` from the committed `docs/package-lock.json`, th
 critical advisory not derived from `security/exceptions/` — and, last in the same job, the
 site's own `npm run ci`, so a lock that clears an advisory and breaks the build is not green.
 Where an advisory sits in a package reachable only under `@docusaurus/*`, the repair is a floor
-in `docs/package.json`'s `overrides` (ten today — six until 2026-09-17, each for a high
+in `docs/package.json`'s `overrides` (fourteen today — six until 2026-09-17, each for a high
 advisory, then a seventh for the one moderate advisory this job had reported on every
-push and by its own rule never blocked, `uuid`'s, and since 2026-10-05 three more,
+push and by its own rule never blocked, `uuid`'s, since 2026-10-05 three more,
 `brace-expansion`, `http-cache-semantics` and `joi`, for four high advisories that had fixed
-versions), never `npm audit fix`, which downgraded `qs`
+versions, and since 2026-10-06 four more, `compression`, `proxy-addr`, `source-map-js` and
+`tinypool`, for five high or critical advisories the job named on the 3.2.0 release
+commit, each with a fixed version; ten until 2026-10-06), never `npm audit fix`, which downgraded `qs`
 into its vulnerable range when it was tried; the dated reason for each pin is in
 `packages/cdm/synapse_cdm/MIGRATIONS.md`, and `tests/test_cdm_security_policy.py` holds this
 count and `SECURITY.md`'s row to the block itself.
@@ -147,7 +149,10 @@ those three parsers. `docs/package.json` now pins `image-size` at `^2.0.4` in `o
 `npm audit` over the committed lock read zero high or critical advisories — and, from
 2026-09-17, when `uuid` took the seventh floor, zero advisories at any severity. On 2026-10-05 it
 read eight advisories, five of them high; after the three floors of that date it reads three:
-`braces`'s, excepted, a moderate one and a low one. `pip-audit --strict`
+`braces`'s, excepted, a moderate one and a low one. On 2026-10-06, on the 3.2.0 release
+commit, it read nine, five of them high or critical and not excepted, in `compression`,
+`proxy-addr`, `source-map-js` and `tinypool`; after the four floors of that date it reads four:
+`braces`'s, excepted, two moderate ones and a low one. `pip-audit --strict`
 reported *No known vulnerabilities found* on 2026-09-08, and no Python finding and no CodeQL
 finding has ever been excepted. (Until 2026-09-16 this paragraph still read as it had on
 2026-09-08, and was false for the eight days the two files existed.)

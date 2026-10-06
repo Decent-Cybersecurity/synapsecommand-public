@@ -144,11 +144,19 @@ exchange with a partner system is asserted.
   installed `synapse-dis7` in its clean environment, and two gates of the arc's own,
   `gates/dis7_mutation.py` and `gates/dis7_benchmark.py`, hold the adapter's seams and its
   resource behaviour.
-* **The documentation site's `npm audit` is clear of blocking advisories.** Three `overrides`
-  entries in `docs/package.json` move `brace-expansion`, `http-cache-semantics` and `joi` past
-  their advisories, and `security/exceptions/GHSA-vfj7-8cjw-p6xm.json` excepts `braces`, which
-  has no fixed release, until 2026-12-04, with the maintainer as owner. It is a build-time
-  dependency of the documentation site and ships in nothing.
+* **The documentation site's `npm audit` is clear of blocking advisories.** `docs/package.json`
+  carries fourteen `overrides` entries: seven from before this release's work, three of
+  2026-10-05 — `brace-expansion` (GHSA-6j4f-fj2g-mc7p, GHSA-qhr7-859c-m2p7),
+  `http-cache-semantics` (GHSA-ch52-4w7c-c8xp) and `joi` (GHSA-6h2x-m376-mqjq) — and four of
+  2026-10-06 — `compression ^1.8.2` (GHSA-vc2v-76pw-4v95), `proxy-addr ^2.0.8`
+  (GHSA-jqcg-44mw-7w3h), `source-map-js ^1.2.2` (GHSA-68fv-2mgg-jv7q) and `tinypool ^2.1.2`
+  (GHSA-85c8-ppgw-ccpr, GHSA-5gmw-xhrv-c9v3), a major above the one `@docusaurus/core` declares,
+  with which the site builds. `security/exceptions/GHSA-vfj7-8cjw-p6xm.json`, the one exception,
+  excepts `braces`, which has no fixed release, until 2026-12-04, with the maintainer as owner.
+  All of it is build-time dependency of the documentation site and ships in nothing. (Corrected
+  2026-10-06: the release commit's bullet named three `overrides` entries; the job named five
+  further advisories on that commit, and the four floors that clear them land one commit
+  after it, the commit `v3.2.0` names.)
 * **Two SDK defects found on the way are recorded and not fixed here:** `adapter.container_depth`
   does not return on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises
   `ValueError` for a directory outside the packaged root. Neither touches a claim of this

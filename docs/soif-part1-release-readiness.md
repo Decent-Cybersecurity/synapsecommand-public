@@ -835,6 +835,22 @@ branch created from that tip; its subject begins `Release 3.2.0` and its hash is
 written here, for the reason the paragraph above gives. The tag that names 3.2.0 is to be placed
 on it after `main` is fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-10-06, the docs audit at the release.** The release commit exists now:
+**`12f0a3e88277f0ef35c2ad5a0a36617251724249`** (`Release 3.2.0`), pushed on `soif/release-3.2.0`.
+On it `CI` run 37425184014 read the four suite, gates and manifests jobs red on the nine
+tag-conditional tests only, nine failed in each, and the job `npm audit over docs/` red on five
+high or critical advisories that the GitHub advisory database reviewed between
+2026-10-05T22:49Z and 2026-10-05T23:31Z, after run 37383304553's audit job had passed:
+`GHSA-85c8-ppgw-ccpr` and `GHSA-5gmw-xhrv-c9v3` (`tinypool`), `GHSA-jqcg-44mw-7w3h` (`proxy-addr`),
+`GHSA-vc2v-76pw-4v95` (`compression`) and `GHSA-68fv-2mgg-jv7q` (`source-map-js`); `CodeQL` run
+37425183962 on the same commit succeeded. So the sentence above that places the tag on the release
+commit is corrected by this one: on the maintainer's answer of 2026-10-06, the tag that names
+3.2.0 is to be placed on the commit that carries this paragraph, one after the release commit,
+which adds the four `overrides` floors that clear those advisories and corrects the texts that
+called the audit clear (`MIGRATIONS.md`'s 3.2.0 section, the paragraph that begins THE DOCS AUDIT
+AT THE RELEASE); that tag contains every commit named in this section. The release commit is not
+rewritten, and its hash is written here because it is no longer the commit that carries this file.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1024,13 +1040,33 @@ advisories on the arc: three `overrides` entries (`brace-expansion`, `http-cache
 `joi`) and one time-bounded exception, `security/exceptions/GHSA-vfj7-8cjw-p6xm.json` for `braces`,
 which has no fixed release, owned by the maintainer and expiring on 2026-12-04 — from the next
 day the suite goes red on it until somebody acts (`MIGRATIONS.md`'s 3.2.0 section, the paragraph that begins THE
-DOCS AUDIT). The arc's remaining gaps (`docs/dis7-implementation.md`): the live OpenDIS tests
+DOCS AUDIT). (Corrected 2026-10-06: true of the arc's tip and not of the release commit, on
+which the job named five further advisories; the paragraph of that date below has the reading and
+the four floors, `compression`, `proxy-addr`, `source-map-js` and `tinypool`, that clear them.) The arc's remaining gaps (`docs/dis7-implementation.md`): the live OpenDIS tests
 above; case A12's evidence being the wheel gate's clean-environment run of the installed
 `synapse-dis7` rather than the in-tree command test; and the two SDK defects. The row it carried for
 `evidence.available` on `dis7` is closed by this release commit, which flips the field with a
 sentence that names no version. **What is NOT
 claimed:** external interoperability — no simulator, partner exchange or certification for
 `dis7`; the IEEE 1278.1-2012 text was not consulted. No §58 line and no blocker.
+
+**Re-qualification, 2026-10-06, the docs audit at the release: the verdict is `ready for PR`
+(3.2.0), read on the commit section 18's paragraph of this date names, one after the release
+commit.** That commit changes no file of the distribution: it adds four `overrides` entries to
+`docs/package.json` — `compression ^1.8.2` (`GHSA-vc2v-76pw-4v95`, high), `proxy-addr ^2.0.8`
+(`GHSA-jqcg-44mw-7w3h`, critical), `source-map-js ^1.2.2` (`GHSA-68fv-2mgg-jv7q`, high) and
+`tinypool ^2.1.2` (`GHSA-85c8-ppgw-ccpr` and `GHSA-5gmw-xhrv-c9v3`, critical) — so the block
+holds fourteen, refreshes the lock, in which exactly those four packages move, and corrects the
+texts. `tinypool` is a forced major: `@docusaurus/core` declares `^1.0.2` and the lock installs
+2.2.0; the site's own `npm run ci` passes, and a build forced through the worker pool that is
+the one place Docusaurus loads `tinypool` produced the same files under 1.1.1 and 2.2.0. The
+docs `npm audit` is clear of blocking advisories on this commit, read with the job's own steps
+over the committed lock: `advisories: 4; excepted and present: ['GHSA-vfj7-8cjw-p6xm']`, `OK`,
+with the one exception for `braces` as above. All of it is build-time dependency of the
+documentation site and ships in nothing. The tree was rehearsed as for the release commit: the
+same tree committed in a throwaway clone at a local annotated `v3.2.0`, where the full suite,
+`--mutation-check` and the commit-message gate pass, and the build job's package test from the
+exported wheel. No §58 line and no blocker.
 
 ## 20. Blockers
 
@@ -1071,6 +1107,14 @@ empty list,
 and nothing in section 15 or in the arc's own remaining gaps (the OpenDIS comparison CI does not
 run, case A12's evidence route, two SDK defects outside this adapter's claims) rises to a blocker.
 The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-06, the docs audit at the release: none.** `CI` run 37425184014 on
+the release commit was red on the job `npm audit over docs/`, five advisories reviewed into the
+advisory database after the arc's green run, and on the nine tag-conditional tests, which a tag on the tree resolves. The
+commit section 18's paragraph of this date names clears the first with four floors; with them the
+job's decision step reads `OK`, and the tag-conditional set reads zero failed at a local annotated
+`v3.2.0` in a throwaway clone. That commit has not been pushed, so no `CI` run on it is quoted
+here. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

@@ -332,7 +332,7 @@ def test_every_floor_the_docs_manifest_pins_is_named_in_the_policy_and_counted_o
         "docs/package.json's `overrides` block is not alphabetical; every record since round PB "
         "writes it that way, and a reader looking for a pin expects to find it where it sorts")
     words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-             "ten", "eleven", "twelve"]
+             "ten", "eleven", "twelve", "thirteen", "fourteen"]
     count = words[len(overrides)]
     body = POLICY.read_text()
     table = body[body.index("## Controls"):body.index("## Handling a report")]

@@ -520,13 +520,18 @@ measured fact about an upload rather than about this tree, so it is recorded in 
 ledger by the round that watched the upload and is not asserted here before it has happened. The
 paragraph this replaces said that nothing in the section was in a release, that the newest release
 tag was `v3.1.1` and that `3.1.1` was what the index served (`PUBLICATION.md` entry 23) — the first
-clause stops being true at this commit and the other two stay true until an upload changes them.
+clause stops being true at this commit and the other two stay true until an upload changes them. **Corrected 2026-10-06:** the tag `v3.2.0` does not name the release commit
+`12f0a3e88277f0ef35c2ad5a0a36617251724249` this paragraph was written in; it names the commit one
+after it, which adds four floors to the documentation site's `overrides` and moves nothing in the
+distribution but this section (the paragraph that begins THE DOCS AUDIT AT THE RELEASE), so
+`PACKAGE_VERSION` reads `3.2.0` there as here.
 
 **THE PACKAGE VERSION MOVED 3.1.1 -> 3.2.0 ON 2026-10-06, AND THE NUMBER IS THE DERIVED FLOOR.**
 `gates/bump_derivation.py` reads the arc from `v3.1.1` and derives MINOR with nothing unruled: the
 pre-step's `--json` reported `pending.unruled` as the empty list and `pending.number` as `3.2.0`
 before any number was typed, and `--mutation-check` reads `1 check, 0 failed` on this tree from
-the moment the tag names it (until then the gate reads its rulings under the pending heading this
+the moment the tag names it (**corrected 2026-10-06:** the tag names the next commit's tree, which
+adds no unit to the arc, and the reading is taken there; until then the gate reads its rulings under the pending heading this
 commit removed and refuses eleven UNRULED — the transitional reading every release commit since
 2.0.0 records, and the release round reads the green at the tag). The floor comes from the public
 names the records below added and from nothing removed — the `Adapter` subclass `Dis7Adapter` with
@@ -616,7 +621,12 @@ touched outside the distribution ships in nothing: the ledger, the witness recor
 README, the release-pipeline and changelog pages, and two test modules. What the release
 preparation of 2026-10-05 touched outside the distribution ships in nothing either:
 `docs/package.json` and `docs/package-lock.json`, the exception file under `security/exceptions/`
-and the security documents, in the paragraph that begins THE DOCS AUDIT.
+and the security documents, in the paragraph that begins THE DOCS AUDIT. **Added 2026-10-06:** the docs audit at
+the release, one commit after the release commit, adds no file to the set and moves inside it only
+this section; what it touched outside the distribution ships in nothing: `docs/package.json` and
+`docs/package-lock.json`, `SECURITY.md`, the supply-chain page, `RELEASE_NOTES.md`, the readiness
+report, the implementation record and `tests/test_cdm_security_policy.py`, in the paragraph that
+begins THE DOCS AUDIT AT THE RELEASE.
 
 **THE DIS 7 CONTRACT IS VENDORED AHEAD OF THE ADAPTER.** `dis7` held a name, an ordinal row and a
 fixture directory in the Phase 1 state until its class, fixtures and goldens landed. The contract
@@ -816,6 +826,51 @@ overrides row says ten entries and names each, its npm audit row gains this date
 exceptions row says one file; the supply-chain page's count reads ten; that page's exceptions
 paragraph, `security/README.md` and `security/exceptions/README.md` say one exception, each beside
 a dated correction of the sentence that said none.
+
+**THE DOCS AUDIT AT THE RELEASE, 2026-10-06 — four floors, all outside the distribution.** The
+`docs-audit` job was red on the release commit `12f0a3e88277f0ef35c2ad5a0a36617251724249` (`CI` run
+37425184014), the one job red there for a reason a tag does not resolve. Its enforcing step over
+the committed lock read `advisories: 9; excepted and present: ['GHSA-vfj7-8cjw-p6xm']` and five
+BLOCKING advisories, every one reviewed into the GitHub advisory database after the arc's audit job
+had passed on 2026-10-05 (run 37383304553): `GHSA-85c8-ppgw-ccpr` (`tinypool` `<2.1.2`, critical,
+fixed 2.1.2, published 2026-10-05T22:49Z), `GHSA-5gmw-xhrv-c9v3` (`tinypool` `<=2.1.0`, critical,
+fixed 2.1.1, published 2026-10-05T22:50Z), `GHSA-vc2v-76pw-4v95` (`compression` `<1.8.2`, high,
+fixed 1.8.2, published 2026-10-05T23:28Z), `GHSA-jqcg-44mw-7w3h` (`proxy-addr` `>=1.1.0 <2.0.8`,
+critical, fixed 2.0.8, published 2026-10-05T23:30Z) and `GHSA-68fv-2mgg-jv7q` (`source-map-js`
+`>=1.0.0 <1.2.2`, high, fixed 1.2.2, published 2026-09-18T18:31Z and reviewed 2026-10-05T23:31Z,
+the instant from which `npm audit` reports it). The second `tinypool` advisory is the one the
+maintainer's question did not list; the same floor clears it. On the maintainer's answer of
+2026-10-06 the repair is a follow-up commit on `soif/release-3.2.0` with the tag on it — not a
+fresh release branch from a commit on the arc, not a ruling that the job stays red with the tag on
+the release commit, and not a hold. **THE FLOORS.** Four `overrides` entries in
+`docs/package.json`, alphabetical among the ten already there, each at the lowest version that
+clears its advisories: `compression ^1.8.2`, `proxy-addr ^2.0.8`, `source-map-js ^1.2.2` and
+`tinypool ^2.1.2`. `npm install --package-lock-only --prefix docs` moved the lock by those four
+entries and nothing else: `compression` 1.8.1 → 1.8.2 (which now also declares `destroy` 1.2.0,
+already in the lock), `proxy-addr` 2.0.7 → 2.0.8, `source-map-js` 1.2.1 → 1.2.2 and `tinypool`
+1.1.1 → 2.2.0, a caret resolving to the newest release in its range. **THE FORCED MAJOR.**
+`@docusaurus/core@3.10.2` declares `tinypool ^1.0.2`. Between 1.1.1 and 2.2.0 the project's
+release notes list Node 18 dropped, a CPU count taken from `availableParallelism`, the two
+security fixes, a serialization option for the `child_process` runtime, CommonJS references
+removed and a URL accepted as the worker filename; Docusaurus loads `tinypool` by a dynamic
+`import()`, on Node 22 as `.node-version` pins it, with the `worker_threads` runtime, and only when
+its static-site generation uses a worker pool, which it does not for a site of this size unless
+told to. `npm --prefix docs run ci` exits 0 (the schema pages CURRENT, the typecheck, the build and
+the admonition check), and a build forced through the pool wrote the same files byte for byte under
+`tinypool` 1.1.1 and 2.2.0. **READINGS, with the job's own steps over the new lock:**
+`gates/codeql_gate.py --emit-pip-audit-ignores` prints `--ignore-vuln GHSA-vfj7-8cjw-p6xm`; the
+enforcing step reads `advisories: 4; excepted and present: ['GHSA-vfj7-8cjw-p6xm']; excepted and
+absent: []` and `OK`, the other three being `fast-uri`'s moderate `GHSA-hrr3-gc8f-f4qj`,
+`postcss-selector-parser`'s moderate `GHSA-rj75-hqrm-r3gf` and `serialize-javascript`'s low
+`GHSA-gfhx-hw2g-v5hg`, below the floor; `npm audit --json` counts critical 0, high 28 (`braces`'s
+excepted advisory and the packages that inherit it), moderate 14 and low 1, against critical 16,
+high 16, moderate 14 and low 1 before. **AND THE TAG MOVES ONE COMMIT.** The tag `v3.2.0` names
+this commit, one after the release commit `12f0a3e88277f0ef35c2ad5a0a36617251724249`, which is not
+rewritten; its texts stand as written, and the sentences of this section that this commit makes
+false carry a dated correction where they stand. `SECURITY.md`'s overrides row says fourteen
+entries and names each and its npm audit row gains this date's reading; the supply-chain page's
+count reads fourteen; the release notes' audit bullet and the readiness report's 3.2.0 verdict are
+corrected in the same dated form.
 
 **THE 3.1.1 WITNESS ROUND's RECORD, 2026-09-22 — the record is hand-built, for the second time on
 an empty approval comment.** Run 35695633330's `witness` job built `witness-3.1.1.json` and was
