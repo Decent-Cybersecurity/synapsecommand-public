@@ -204,7 +204,7 @@ jobs:
         # syft reads THE ENVIRONMENT the gated wheel was installed into — not the wheel file,
         # which catalogues as one package with no dependencies, and not the runner's own
         # environment, which carries the `test` extra and would describe the runner.
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c  # v0.24.3
         with:
           path: ${{ env.CLEAN_VENV }}
           format: spdx-json
@@ -213,7 +213,7 @@ jobs:
           upload-release-assets: false
 
       - name: SBOM — CycloneDX, from the same syft run
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c  # v0.24.3
         with:
           path: ${{ env.CLEAN_VENV }}
           format: cyclonedx-json

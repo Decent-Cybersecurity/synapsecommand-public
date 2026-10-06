@@ -540,11 +540,14 @@ now true of it.
 release tag is `v3.2.0`, and `3.2.0` is what the index serves — `PUBLICATION.md` entry 24 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, and the index note in
-the 3.2.0 section being what moved in it. Everything else the round touched ships in nothing: the
-ledger, the witness record and its README, the release-pipeline and changelog pages, the DIS 7
-implementation record, and two test modules.
+**What moved inside the distribution: two files** — `MIGRATIONS.md`, this section, the dated
+witness paragraphs in the release procedure and the pipeline section, and the index note in the
+3.2.0 section being what moved in it, and, since the dependency records of 2026-10-06 below,
+`pyproject.toml`, whose `[lint]` pin is the first record's one line. Everything else the witness
+round touched ships in nothing: the ledger, the witness record and its README, the
+release-pipeline and changelog pages, the DIS 7 implementation record, and two test modules; the
+docs and action records below move `docs/package.json`, its lock, `SECURITY.md`, the supply-chain
+page, the security-policy test module and two workflows, none of which ships either.
 
 **THE 3.2.0 WITNESS ROUND's RECORD, 2026-10-06 — the record is the pipeline's own, for the second
 time.** Run 37459980438's `witness` job built `witness-3.2.0.json`, its verify step read `VERIFIED`
@@ -556,6 +559,84 @@ all five records, before it was committed. Ledger entry 24 records the upload an
 behind it; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` holds the
 record by digest among the pipeline's. Nothing in the distribution moved except this file, and
 `PACKAGE_VERSION` still reads `3.2.0`.
+
+**THE DEPENDENCY RECORDS, 2026-10-06 — the five open Dependabot proposals, landed by hand as one
+signed-off unit.** Dependabot opened #7 and #8 on 2026-09-21, #11 on 2026-10-05, and #12 and #13
+on 2026-10-06. None of them is merged from its branch: `CONTRIBUTING.md` requires every commit on
+`main` to be signed off, which a Dependabot commit is not, this tree repeats the pinned versions in
+sentences a branch that edits only the pin leaves false, and #7's lock diff is against a lock three
+refreshes old. Each change is made here instead, with those sentences, and the five proposals are
+superseded by this unit rather than merged. Three records follow, one per kind of pin.
+
+**THE RUFF RECORD, 2026-10-06 — the `[lint]` pin moves 0.16.7 -> 0.16.9, Dependabot's #8 landed
+by hand, and every reading the pin is measured with is re-taken and holds.** Unit:
+`pyproject.toml:optional-dependencies`, which the gate names and cannot decide from the table, for
+the reason the audit's ruff record of 2026-09-17 in the 2.2.0 section gives: a pin moving in place
+is a constraint moving, not the extra gaining or losing a member, and the question is whether the
+new constraint breaks an existing install. It does not. The extra keeps its one member and its
+exact-pin shape, `ruff==X.Y.Z`, which `tests/test_cdm_lint_stage.py` requires and from which no
+assertion derives a number; nothing in the package imports ruff, so no consumer's resolution
+moves. What the pin exists to hold constant — the rule set the two workflows read, `E9,F,E7,W`
+over the legacy baseline since the widening of 2026-09-20 — was read under 0.16.7 and again under
+0.16.9, and every reading is the same: `--show-settings` prints the same output, which enables the
+same 63 rules; `E9` alone still enables exactly one rule, `io-error` (E902); the workflows'
+command, `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests`, reads `All
+checks passed!`; `--select F` reports nothing over the baseline; and with `lint.per-file-ignores`
+emptied the configured set counts the 32 findings the baseline lists, 13 F841, 6 E741, 6 F541, 4
+E702, 2 W291 and 1 E731. So the number moved and the reading did not, which is the PATCH row's "a
+pin record moves". `pyproject.toml` gains a dated paragraph beside the pin saying so.
+
+**Bump ruling.** `pyproject.toml:optional-dependencies` — PATCH: the `[lint]` extra's one pin
+moves `ruff==0.16.7` -> `ruff==0.16.9` in place; the extra's shape, its member count and the rule
+set the workflows read from it are measured unchanged under the new version, and nothing
+importable moved.
+
+**WHAT STAYS DATED.** Every other `0.16.6` and `0.16.7` in the tree is a reading taken with that
+version and stands as written: `pyproject.toml`'s 2026-09-16 paragraphs, its 2026-09-17 move
+paragraph and its 2026-09-20 widening and baseline comments; the lint comment in `publish.yml` and
+the release-pipeline page's 2026-09-16 correction; this file's 2.2.0 records; the readiness
+report's re-derivation of the `F` count; the audit remediation report's three 0.16.7 readings and
+the adapter-expansion implementation record's environment line; and
+`tests/test_cdm_lint_stage.py`'s docstring and its comment-filter self-test. The live sentences —
+CONTRIBUTING.md's "the one version `pyproject.toml` pins" and the release-pipeline page's "the
+version the package's `[lint]` extra pins" — name no number and move with the pin.
+
+**THE DOCS RECORD, 2026-10-06 — Dependabot's #7, #12 and #13 landed by hand: five ranges move in
+`docs/package.json`, one floor joins them for an advisory none of the five proposals touches, and
+the lock moves seven packages.** `react` and `react-dom` move `^19.0.0` ->
+`^19.3.0` and `@types/react` the same in `devDependencies` (#7); in `overrides`,
+`serialize-javascript` moves `^7.1.1` -> `^7.1.2` (#12, the first patched version for its low
+`GHSA-gfhx-hw2g-v5hg`) and `fast-uri` `^3.1.7` -> `^3.1.8` (#13, the first patched version for its
+moderate `GHSA-hrr3-gc8f-f4qj`). The lock is refreshed here with `npm install --package-lock-only`
+and not taken from #7: `react` and `react-dom` 19.2.8 -> 19.3.0, `@types/react` 19.2.18 -> 19.3.0,
+`scheduler` 0.27.0 -> 0.28.0 (`react-dom` 19.3.0 asks for `^0.28.0`), `fast-uri` 3.1.7 -> 3.1.8 and
+`serialize-javascript` 7.1.1 -> 7.1.2 for the five proposals' ranges, and `shell-quote` 1.10.0 ->
+1.12.0 for the floor below, and nothing else; `npm ci` installs from it and `npm run ci` builds the
+site. The floor: the GitHub advisory database published `GHSA-pqg4-j6r4-53mv` on 2026-10-06 at
+13:40:36Z, `shell-quote` `>= 1.8.4, < 1.11.0`, critical, first patched version 1.11.0, in a package
+reachable only through `webpack-dev-server`'s `launch-editor` under `@docusaurus/core@3.10.2`,
+whose declared `^1.8.4` already admits the fix. It is not one of the five proposals; it is here
+because the `docs-audit` job runs on every push to `main`, and `main`'s tip carries 1.10.0. The
+repair is the one the maintainer's ruling of 2026-09-07 — a high or critical advisory blocks — has
+taken for every such advisory with a fixed release, an `overrides` floor at the first patched
+version, alphabetical among the others: `shell-quote ^1.11.0`, which the lock resolves to 1.12.0,
+the newest release inside it. The overrides block now holds fifteen entries; `SECURITY.md`'s row,
+which spells each floor, moves the two raised floors and names the new one, the supply-chain
+page's count moves with it, and `tests/test_cdm_security_policy.py`'s number words reach fifteen.
+The `docs-audit` job's own steps over the lock read, before: `npm audit --json` low 1, moderate 14,
+high 28, critical 1, five advisories, the decision BLOCKING on `GHSA-pqg4-j6r4-53mv`; after: low 0,
+moderate 13, high 28, critical 0, two advisories, `excepted and present: ['GHSA-vfj7-8cjw-p6xm']`
+and `OK` — the other is `postcss-selector-parser`'s moderate `GHSA-rj75-hqrm-r3gf`, below the
+floor, and every high is `braces`'s excepted advisory or a dependent inheriting it. Nothing in
+this record is inside the distribution.
+
+**THE ACTION RECORD, 2026-10-06 — Dependabot's #11 landed by hand: `anchore/sbom-action` moves
+v0.24.2 -> v0.24.3 at its four sites.** `publish.yml` and `rc-build.yml` each pin the action
+twice, for the SPDX and the CycloneDX step, and all four `uses:` lines now name
+`66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c  # v0.24.3`, the commit the annotated tag `v0.24.3` of
+`anchore/sbom-action` dereferences to, read off the GitHub API before it was written. No fifth
+site pins the action; the syft version recorded with round PS's SBOM readings of 2026-09-08 is a
+reading and stands. Nothing in this record is inside the distribution.
 
 ### 3.2.0 — 2026-10-06 — the DIS 7 Entity State adapter: `dis7` lands as #21 with its offline host command `synapse-dis7`, the roster moves nineteen to twenty, the Adapter contract gains `fixture_instance`, and no wire contract moves
 

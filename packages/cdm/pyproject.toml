@@ -103,7 +103,15 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # set enables E902 and F821 and nothing else; the workflows' command reads `All checks passed!`
 # over `packages/cdm gates tests`; and `--select F` still counts 13 F841 and 8 F541. Every reading
 # below was taken with 0.16.6 and every one of them holds at 0.16.7, so none is re-dated.
-lint = ["ruff==0.16.7"]
+#
+# MOVED 0.16.7 -> 0.16.9 ON 2026-10-06, Dependabot's #8 landed by hand, for the same reason. The
+# set had been widened to `E9,F,E7,W` since the last move, so that is what was re-read under 0.16.9
+# with `--show-settings`: the configured set enables the same 63 rules, and `E9` alone still enables
+# exactly one, `io-error` (E902); the workflows' command reads `All checks passed!` over
+# `packages/cdm gates tests`; `--select F` reports nothing over the legacy baseline; and with the
+# baseline emptied the set still counts the 32 findings it lists, rule for rule. Every reading
+# below was taken with 0.16.6 or 0.16.7 and every one of them holds at 0.16.9, so none is re-dated.
+lint = ["ruff==0.16.9"]
 # The normative-validation extra, added 2026-09-20 by the adapter-expansion arc (Phase 0,
 # docs/adapter-expansion-implementation.md, decision D5). `synapse_cdm/normative_binding.py` has
 # imported `lxml` under an explicit normative mode since F05 without any extra declaring it, so

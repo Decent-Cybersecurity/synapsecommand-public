@@ -87,13 +87,15 @@ The npm reading is one: `npm ci` from the committed `docs/package-lock.json`, th
 critical advisory not derived from `security/exceptions/` — and, last in the same job, the
 site's own `npm run ci`, so a lock that clears an advisory and breaks the build is not green.
 Where an advisory sits in a package reachable only under `@docusaurus/*`, the repair is a floor
-in `docs/package.json`'s `overrides` (fourteen today — six until 2026-09-17, each for a high
+in `docs/package.json`'s `overrides` (fifteen today — six until 2026-09-17, each for a high
 advisory, then a seventh for the one moderate advisory this job had reported on every
 push and by its own rule never blocked, `uuid`'s, since 2026-10-05 three more,
 `brace-expansion`, `http-cache-semantics` and `joi`, for four high advisories that had fixed
 versions, and since 2026-10-06 four more, `compression`, `proxy-addr`, `source-map-js` and
 `tinypool`, for five high or critical advisories the job named on the 3.2.0 release
-commit, each with a fixed version; ten until 2026-10-06), never `npm audit fix`, which downgraded `qs`
+commit, each with a fixed version, and later that day a fifteenth, `shell-quote`, for the
+critical advisory the database published after that reading; ten until 2026-10-06 and fourteen
+until the `shell-quote` floor), never `npm audit fix`, which downgraded `qs`
 into its vulnerable range when it was tried; the dated reason for each pin is in
 `packages/cdm/synapse_cdm/MIGRATIONS.md`, and `tests/test_cdm_security_policy.py` holds this
 count and `SECURITY.md`'s row to the block itself.
