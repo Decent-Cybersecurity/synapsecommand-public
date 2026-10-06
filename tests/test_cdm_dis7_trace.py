@@ -704,14 +704,14 @@ def test_completion_claims_guard():
     assert claims == {where: [] for where in texts}
 
 
-AVAILABILITY = ("The `dis7` adapter and the `synapse-dis7` command are not part of the published "
-                "3.1.1 distribution; they ship with the first release after it.")
+AVAILABILITY = ("The `dis7` adapter and the `synapse-dis7` command are part of the distribution "
+                "built from this tree; no release before 3.2.0 carries them.")
 
 
 def test_completion_availability_is_stated():
     flat = {where: " ".join(text.split()) for where, text in _claim_texts().items()}
     assert AVAILABILITY in flat["dis7.mdx"]
-    assert "not part of the published 3.1.1 distribution" in flat["README"]
+    assert "part of the distribution built from this tree; no release before 3.2.0 carries them" in flat["README"]
     for path in (REPO_ROOT / "README.md", REPO_ROOT / "docs" / "docs" / "intro.mdx"):
         assert AVAILABILITY in " ".join(path.read_text(encoding="utf-8").split()), path
 

@@ -596,6 +596,31 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/lossless.py:parse_path",
         "synapse_cdm/lossless.py:render_path",
         "synapse_cdm/suite.py:check_temporal"},
+    # The twelfth row, written IN the 3.2.0 release commit (2026-10-06) from the gate's own
+    # `derive(snapshot_at("v3.1.1"), snapshot_at(None))` on that tree — the 2.2.0, 3.0.0 and 3.1.0
+    # route, so that the tag needs no re-tag for it. The eleven are the DIS 7 arc's
+    # (`docs/dis7-implementation.md`): `Adapter` gaining `fixture_instance`, the callers in
+    # `evidence.py`, `harness.py` and `suite.py` that now build through it (check O's own step
+    # among them, final review F-39), `times.render`'s four-digit year and the
+    # `ADAPTER_API_VERSION` constant. Every one is ruled in MIGRATIONS.md's `### 3.2.0` section,
+    # and the release commit adds no unit: its `version.py` edit is the assignment the gate
+    # excludes plus docstring and comment lines, `MIGRATIONS.md` is the shipped-document row, and
+    # the `dis7` class body whose `evidence.available` flips is a unit the arc added. The arc's 212
+    # signals (62 MINOR, 150 PATCH) — the `Dis7Adapter` subclass, its codec, the host module and
+    # its console script, the `dis7` fixture set and the new public names — derive the MINOR the
+    # number types.
+    ("v3.1.1", "v3.2.0"): {
+        "synapse_cdm/adapter.py:Adapter",
+        "synapse_cdm/evidence.py:generate",
+        "synapse_cdm/evidence.py:main",
+        "synapse_cdm/harness.py:main",
+        "synapse_cdm/suite.py:_fresh",
+        "synapse_cdm/suite.py:_sweep",
+        "synapse_cdm/suite.py:_worker_main",
+        "synapse_cdm/suite.py:check_resource_limits",
+        "synapse_cdm/suite.py:main",
+        "synapse_cdm/times.py:render",
+        "synapse_cdm/version.py:ADAPTER_API_VERSION"},
 }
 
 

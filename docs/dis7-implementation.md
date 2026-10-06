@@ -43,7 +43,7 @@ The evidence record generated for `dis7` (`python -m synapse_cdm.evidence genera
 | IEEE edition | IEEE 1278.1-2012 (DIS 7), Entity State subset; the IEEE text was not consulted, the layout authority is open-dis-python at the pin. |
 | OpenDIS commit | `732b6655bb47e34ccc73722eefe0f4706fd0032f`. |
 | Repository commit | `c4bba1b6ebfdfe956f6efc2b3a81a04db2b4bb5b`. |
-| Package version | 3.1.1. |
+| Package version | 3.1.1 at the baseline; 3.2.0 in the release commit drafted by run R32. |
 | CDM schema version | 3.0.0. |
 | Adapter API version | 3.0.0 at the baseline; 3.1.0 from run R05. |
 | Adapter version | 1.0.0. |
@@ -654,6 +654,41 @@ No retained state was found in the DIS7 modules: the full and the reduced worklo
 - **Alternatives.** A floor at `^1.1.21` for `brace-expansion`, which READINESS.md suggested (rejected: the run asks for the lowest version that clears each named advisory, and the caret resolves to 1.1.21 anyway); `npm audit fix` (rejected: the repository's own record shows it downgrading `qs` into its vulnerable range); a written ruling that the advisories do not block (not chosen by the maintainer); the owner as the security mailbox, as the two `image-size` exceptions had it (rejected: the ruling names the maintainer as owner, and the schema asks for a handle or an address of the person who answers for it).
 - **Covering tests.** `tests/test_cdm_security_policy.py::test_every_floor_the_docs_manifest_pins_is_named_in_the_policy_and_counted_on_the_page` and the module `tests/test_cdm_security_exceptions.py`, which validates the new file against the schema and fails the suite the day after its expiry; the job's own decision step, re-run over the new lock, reads `OK`.
 
+### D115 — The `dis7` evidence sentence names no version
+
+- **What.** The limitation beside `evidence.available` on the `dis7` adapter says the field is true because every published distribution that carries the adapter has a Release to which the pipeline attaches the records of every shipped adapter; it names no version and no asset file.
+- **Why.** The five sentences the 3.1.0 release commit wrote name `evidence-3.1.0.tar.gz` on a Release that never existed, because that tag was refused; a sentence that names no version stays true whatever happens to any one tag.
+- **Alternatives.** The 3.1.0 form naming `3.2.0` and `evidence-3.2.0.tar.gz` (rejected for that reason); leaving the field false (rejected: `tests/test_cdm_evidence.py` requires true for every adapter the newest tag carries).
+- **Covering tests.** `tests/test_cdm_evidence.py::test_evidence_available_is_true_on_every_shipped_adapter` (red without the tag, green at a local `v3.2.0`) and `test_the_field_the_prose_and_the_manifest_all_state_the_same_availability`.
+
+### D116 — The availability sentence states what holds for any build of the tree
+
+- **What.** The README, the package README, the introduction page and the `dis7` page say the adapter and `synapse-dis7` are part of the distribution built from this tree and that no release before 3.2.0 carries them; the package README adds that `synapse-dis7 --version` prints the package version of the build it runs from.
+- **Why.** The package README becomes the PyPI page of the release; the old sentence named 3.1.1 as the published distribution and said a build reports 3.1.1, both false for 3.2.0. The new wording stays true if a tag is refused and a corrective number follows.
+- **Alternatives.** "They ship in synapse-cdm 3.2.0" (rejected: false on the PyPI page of a corrective if `v3.2.0` were refused).
+- **Covering tests.** `tests/test_cdm_dis7_trace.py::test_completion_availability_is_stated` and `tests/test_cdm_release.py::test_no_document_says_a_shipped_feature_is_still_unreleased`.
+
+### D117 — The dates of the release texts are the day the release commit is made
+
+- **What.** The 3.2.0 heading of `MIGRATIONS.md`, the changelog paragraph, the `VERSIONING.md` note, the `version.py` comments, the packaging docstring, the readiness paragraphs and the retired-rows comment carry the day of the release commit, 2026-10-06; drafted on 2026-10-05, they were re-dated at the commit.
+- **Why.** The 3.1.0 and 3.1.1 sections carry the day of their release commit (3.1.1's tag followed the next day), and a line that says the version MOVED ON a day is false for any other day; no test compares any of these dates with the commit, the tag or the clock.
+- **Alternatives.** Leaving the date for the maintainer to type at the commit (rejected: the section heading's form requires a date); keeping the drafting day (rejected: the commit is made on a later day, and the shipped `MIGRATIONS.md` and `version.py` would state a move on a day nothing moved).
+- **Covering tests.** None compares the date; `tests/test_cdm_release.py` and the bump gate read the heading by its `### 3.2.0` prefix only.
+
+### D118 — Two holding-state sentences of the rolled section are put into the past tense
+
+- **What.** The unit 1B paragraph and the 3.1.1 witness paragraph said `PACKAGE_VERSION` "still reads `3.1.1`"; they now say it read `3.1.1` at that step and at that round.
+- **Why.** Inside the 3.2.0 section, at a tree whose constant reads 3.2.0, the present tense is false; the D71 rule for holding-state sentences applies.
+- **Alternatives.** Leaving them (rejected: false at the release commit).
+- **Covering tests.** None names the sentences; `tests/test_cdm_release.py`'s carrier and section checks read the section around them.
+
+### D119 — The security-exceptions docstring needed no change
+
+- **What.** The run named the module docstring of `tests/test_cdm_security_exceptions.py` as stale; WP8 had already corrected both sentences with a dated correction, so nothing changed.
+- **Why.** The docstring reads one exception file, `GHSA-vfj7-8cjw-p6xm.json`, and one parametrised case today, which is the tree.
+- **Alternatives.** None.
+- **Covering tests.** `tests/test_cdm_security_exceptions.py`.
+
 ## Frozen contract
 
 ### Public API
@@ -1082,11 +1117,20 @@ Runs after the final commit and changes nothing in the repository; its output is
 ### R31 — arc-release-prep
 
 - WP8, the one session of the unit: the two changes the maintainer decided on 2026-10-05 must land on `soif/dis7-1.0` before a release commit is drafted, on this branch because `main` moves once, at the release.
-- F-39 FIXED: check O builds the adapter in a step of its own and reports a refusal raised while building as FAIL (D113); the approved ruling is under `### Unreleased`; the new test fails on the tree as R31 found it and passes now; the bump gate reads a pending MINOR with nothing unruled; every shipped adapter still reads CONFORMANT under the CI job's required sets.
+- F-39 FIXED: check O builds the adapter in a step of its own and reports a refusal raised while building as FAIL (D113); the approved ruling is under the pending heading (corrected in R32: the release commit rolled that section, and the ruling now sits in the 3.2.0 section); the new test fails on the tree as R31 found it and passes now; the bump gate reads a pending MINOR with nothing unruled; every shipped adapter still reads CONFORMANT under the CI job's required sets.
 - AUDIT FIXED: three `overrides` entries and a lock refresh that moved those three packages only, and the exception for `braces` (D114); the job's decision step reads `OK` with the exception derived, the two security test modules pass, and `npm --prefix docs run ci` exits 0.
 - The R26, R28 and R30 entries carry a correction sentence for F-39, and its `## Remaining gaps` row is closed.
 - No fixture, golden, manifest or schema changed; `### Unreleased` still counts 64 files inside the distribution, since every new path of this run is outside it.
 - Not done here: the release itself (the version, the roll of `### Unreleased`, the release notes, the evidence flag of `dis7`), which the maintainer's answers leave to the release round.
+
+### R32 — release-commit
+
+- REL, the release commit for 3.2.0, drafted and staged on `soif/release-3.2.0` on top of the WP8 commit and not committed: the commit, the tag, the push and the upload are the maintainer's.
+- The release-state set on the 3.1.0 model: `PACKAGE_VERSION` 3.2.0 with its live readings in `version.py`; the pending section of `MIGRATIONS.md` rolled into `### 3.2.0` with its opening paragraphs and the eleven bump rulings inside it, the introduction's two numbers and the two tag commands; `RELEASE_NOTES.md` for 3.2.0 with every count read from this tree; the tag commands in `README.md` and `VERSIONING.md`, the latter's package figure and a dated note under §4; the changelog paragraph; the current-contracts page regenerated; the packaging literals; the retired notes rows of the prose-count sweep; the `UNRULED_HISTORICAL_ARCS` row for `("v3.1.1", "v3.2.0")` at eleven units; the readiness report's 3.2.0 paragraphs in §18, §19 and §20.
+- The `dis7` adapter declares `evidence.available` true with a sentence that names no version (D115), and its manifest and the support matrix are regenerated; the availability sentence in both READMEs and on the introduction and `dis7` pages says what holds for the 3.2.0 distribution (D116), and the trace test asserts it. The evidence row of `## Remaining gaps` is closed.
+- On the staged tree without a tag the full suite reads `9 failed, 8673 passed, 202 skipped`, every failure a member of the tag-conditional set; the same tree committed in a throwaway clone at a local annotated `v3.2.0` reads `8683 passed, 201 skipped`, the bump gate's `--mutation-check` reads `1 check, 0 failed` and the commit-message gate `clean`. The build job's package test from the exported wheel, outside the repository, reads every adapter CONFORMANT with J held, and `synapse-dis7 self-test` exits 0.
+- `docs/soif-part1-release-readiness.md` §18 to §20 carry the release's re-qualification, in the maintainer's ownership as a draft; the release notes are a draft in the same sense.
+- Not done here: the commit, the push, the tag, the `pypi` approval, the docs deploy and the witness round, all the maintainer's acts after the release review.
 
 ## Validation
 
@@ -1186,8 +1230,7 @@ The table gives each report's final verdict. Runs R02, R03 and R09 first receive
 | --- | --- | --- |
 | The live OpenDIS reference tests (case A13, requirement R26) need the pinned checkout named by `SYNAPSE_CDM_OPENDIS_DIR`; CI has none, so there they read `BLOCKED_EXTERNAL_EVIDENCE` [F6] | A13 and R26 verified locally only, unavailable in CI; the exercise report names the commit it was re-run on | `SYNAPSE_CDM_OPENDIS_DIR=<checkout at the pin> python -m pytest -q -rs -m reference tests/test_cdm_dis7_reference.py` |
 | Case A12's evidence is the wheel gate's clean-environment run of `gates/wheel_install.py::check_dis7_script` (written in run R20, run by the wheel gate in run R23), not the in-tree CLI test [CR-33] | A12: the installed `synapse-dis7` command behaves as specified | `python gates/wheel_install.py --mutation-check` |
-| Two SDK defects are filed separately and not fixed here [F7(b)]: `adapter.container_depth` never returns on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged root | none of this adapter's claims; the `dis7` adapter holds a parsed envelope to acyclicity itself | `adapter.container_depth` on a dict that contains itself; `evidence.generate` with a fixture directory outside the package |
-| `Evidence(available=False)` until the release round flips it [F11] | no published evidence badge for the `dis7` adapter | `grep -n '"available"' manifests/dis7.json` |
+| Two SDK defects are recorded here and in the release notes, carried by no GitHub issue, and not fixed in this arc [F7(b)]: `adapter.container_depth` never returns on a cyclic dict, and `evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged root | none of this adapter's claims; the `dis7` adapter holds a parsed envelope to acyclicity itself | `adapter.container_depth` on a dict that contains itself; `evidence.generate` with a fixture directory outside the package |
 
 ## Contract-defect log
 
@@ -1295,4 +1338,4 @@ The handover artefacts are untracked, are assembled under `RUN/handover/` and in
 | OpenDIS exercise report | `python -m tests.dis7_reference_support --exercise-out DIR`, with `SYNAPSE_CDM_OPENDIS_DIR` naming the pinned checkout, then `python -m synapse_cdm.evidence exercise --adapter dis7 --spec DIR/opendis.json --slug opendis-732b6655 --out DIR` |
 | gate logs and junit reports | `bash RUN/run.sh postcommit` |
 
-The release round is described here and not run in this arc: the version number is the one `python gates/bump_derivation.py --json` derives, `evidence.available` flips to true for the `dis7` adapter in the release commit, the tag is pushed, and the publish pipeline builds and publishes the distribution. Until then the package still reads 3.1.1.
+The release round is described here and not run in this arc: the version number is the one `python gates/bump_derivation.py --json` derives, `evidence.available` flips to true for the `dis7` adapter in the release commit, the tag is pushed, and the publish pipeline builds and publishes the distribution. Until the release commit the package read 3.1.1; the release commit run R32 drafted on `soif/release-3.2.0` types 3.2.0 and flips the field, and the commit, the tag, the push and the upload stay the maintainer's acts.

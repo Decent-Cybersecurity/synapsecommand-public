@@ -289,7 +289,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the state instant is supplied by the caller with its basis; the DIS timestamp is preserved and never converted. Affiliation is UNKNOWN for every force ID, and velocity is projected only for dead reckoning algorithms 2 to 5
 - egress replays the original octets of an unchanged Entity only; a fresh or edited Entity is refused
 - `fixture_instance` supplies the packaged fixtures' context (session `unnamed`, synthetic, the vectors' state instant and basis) and refuses `synthetic=False`. The harness and the conformance suite construct through it, so their verdict is defined for the packaged fixtures only; PDUs from another exercise need a caller-built adapter
-- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `geojson` — GeoJSON
 

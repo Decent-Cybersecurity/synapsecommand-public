@@ -11,13 +11,14 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.1.1` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.2.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
 corrective — a package PATCH the wire contract had no part in — see those two sections; a MINOR
 apart at the 3.1.0 release of 2026-09-21 for the ordinary reason, and a PATCH further by the 3.1.1
-corrective the same day, a second package PATCH for a release pipeline's refusal.)
+corrective the same day, a second package PATCH for a release pipeline's refusal; two MINORs apart
+at the 3.2.0 release of 2026-10-06, the second for the ordinary reason again.)
 
 ## What each bump means
 
@@ -206,7 +207,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.1.1 -m "..."                           # annotated, never lightweight
+git tag -a v3.2.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -256,7 +257,10 @@ holds to one text. The 3.1.1 section under History is the record.
 The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
 `twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
 OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary and in the
-job log; the GitHub release itself is still made by a person, with `gh release create`, from those.
+job log; the GitHub release itself is made by the workflow's `release` job after the upload, with
+`gh release create --verify-tag` and the notes `synapse release-notes` renders from those; nobody
+creates it by hand, and a Release made by hand under the tag's name makes that job fail after the
+PyPI upload has happened.
 
 **At the approval: the `pypi` hold MUST be released with a non-empty comment — added
 2026-09-17, because an empty one is what stopped the 2.2.0 witness job.** `gates/witness_verify.py`
@@ -444,7 +448,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.1.1 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.2.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -506,13 +510,87 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.2.0 — 2026-10-06 — the DIS 7 Entity State adapter: `dis7` lands as #21 with its offline host command `synapse-dis7`, the roster moves nineteen to twenty, the Adapter contract gains `fixture_instance`, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.1.1`, and `3.1.1` is what the index serves — `PUBLICATION.md` entry 23 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: 64 files** — `MIGRATIONS.md` (this section, and the dated
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.2.0` at this
+commit, in `version.py`, and the tag `v3.2.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release, that the newest release
+tag was `v3.1.1` and that `3.1.1` was what the index served (`PUBLICATION.md` entry 23) — the first
+clause stops being true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.1.1 -> 3.2.0 ON 2026-10-06, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.1.1` and derives MINOR with nothing unruled: the
+pre-step's `--json` reported `pending.unruled` as the empty list and `pending.number` as `3.2.0`
+before any number was typed, and `--mutation-check` reads `1 check, 0 failed` on this tree from
+the moment the tag names it (until then the gate reads its rulings under the pending heading this
+commit removed and refuses eleven UNRULED — the transitional reading every release commit since
+2.0.0 records, and the release round reads the green at the tag). The floor comes from the public
+names the records below added and from nothing removed — the `Adapter` subclass `Dis7Adapter` with
+its codec module `dis7_codec.py`, the host module `dis7_host.py` and its console script
+`synapse-dis7`, the `dis7` fixture set, `evidence.digest_bytes`, the two `harness` helpers
+`overrides_fixture_instance` and `fixtures_refused_message`, and `Adapter.fixture_instance` —
+and the eleven units the table cannot decide (`Adapter` itself, the callers that build through the
+new hook, `times.render` and the `ADAPTER_API_VERSION` constant) are every one ruled in this
+section's `**Bump ruling.**` paragraphs, which the gate reads from this section from the moment
+the tag exists. Over the arc the gate's table decides 212 signals, 62 MINOR and 150 PATCH, and the eleven
+rulings decide the rest (`--json` at the tag lists 223). So the floor and
+the number are one number and no Version ruling is needed or present. It is the first number since the tagged-never-published 3.1.0 that
+moved for what the distribution carries rather than for what a workflow refused. `SCHEMA_VERSION` does
+not move and stays at `3.0.0`: no model, no enum, no published schema and no golden of the
+nineteen that predate the arc moved (`python -m synapse_cdm.schemas --check` reads CURRENT at
+3.0.0, and `git diff v3.1.1 -- schemas/` is empty), and the two axes are two MINORs apart.
+`ADAPTER_API_VERSION` stays at the `3.1.0` the arc gave it for `fixture_instance`, and
+`MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release
+put them.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-06 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, the introduction's two-number sentence, and the two
+tag-command examples in the procedure and in the pipeline section; `RELEASE_NOTES.md`, rewritten
+for this release with every count derived; `README.md`'s tag example and its availability
+sentence for the `dis7` adapter; `VERSIONING.md`'s package-version figure, its tag-command example
+and a dated note under §4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated paragraph;
+`docs/docs/current-contracts.mdx`, regenerated; the availability sentence on the documentation
+site's introduction and `dis7` pages; the two version literals `tests/test_cdm_packaging.py` pins;
+the retired `RELEASE_NOTES.md` exemption rows in `tests/test_cdm_prose_counts.py`; the
+availability sentence `tests/test_cdm_dis7_trace.py` asserts; the readiness report's
+re-qualification; and the twelfth `UNRULED_HISTORICAL_ARCS` row in
+`tests/test_cdm_bump_derivation.py`, for `("v3.1.1", "v3.2.0")` at eleven units — the same eleven
+this section rules, compared set to set, written before the tag exists by the 2.2.0 and 3.0.0
+route (the raw derivation from `v3.1.1` to the working tree, to which this commit adds no unit:
+its `version.py` edit is the assignment the gate excludes plus docstring and comment lines,
+`MIGRATIONS.md` is the shipped-document row, and the `dis7` class body is a unit the arc ADDED).
+No adapter's translation, no schema, no fixture and no dependency moves in this commit. One
+declaration moves with the release and not with the arc: `dis7` landed declaring
+`evidence.available: false` — "it becomes true at the first release that attaches them", its own
+words — and `tests/test_cdm_evidence.py` holds the field to the newest tag's tree, so this commit
+flips it to `true` with a sentence beside it that names no version: the release pipeline attaches
+the records of every shipped adapter to the Release of the version it publishes, so every
+published distribution carrying the adapter has its records retrievable, whatever happens to any
+one tag. `manifests/dis7.json` and the support matrix are regenerated. Inside the distribution the
+transition touches `MIGRATIONS.md`, `version.py`, `adapters/dis7.py` and the package's
+`README.md` (the availability sentence), all already inside the count the next paragraph states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Two things the
+release notes say and this section repeats because they are the honest boundary of the arc: no
+interoperability with any simulator and no IEEE certification is claimed for `dis7` — it reads the
+Entity State subset its handoff specification defines, its record's `independent_endpoint`
+category is ABSENT, and the comparison with the pinned OpenDIS reference is an opt-in test that CI
+does not run — and two SDK defects the arc found (`adapter.container_depth` on a cyclic input,
+`evidence.generate` with a fixture directory outside the package) are recorded and not fixed here.
+
+**What moved inside the distribution: 64 files** — the DIS 7 arc and the 3.1.1 witness round
+before it, the release transition adding no file to the set. `MIGRATIONS.md` (this section and its
+roll, the introduction's two-number sentence, the two tag-command examples, and the dated
 witness paragraphs and the index note the 3.1.1 witness round wrote), `FORMAT_COVERAGE.md` (the
 three `dis7` rows of the status column's table, the `dis7` row of the ordinal table, now shipped,
 the paragraph under that table, and the new DIS 7 Entity State PDU section), `dis7_codec.py`
@@ -641,7 +719,7 @@ zero-pad a year below 1000; the output for years 1000 to 9999 is byte-identical 
 moved. `version.py`: `ADAPTER_API_VERSION` moves `3.0.0` → `3.1.0` for
 `Adapter.fixture_instance`, an addition whose default is the construction the SDK performed
 before it existed, so a MINOR on that axis by `VERSIONING.md` §3's own row; `SCHEMA_VERSION`
-stays `3.0.0` and `PACKAGE_VERSION` still reads `3.1.1`. `VERSIONING.md` §2, `ARCHITECTURE.md`
+stays `3.0.0` and `PACKAGE_VERSION` read `3.1.1` at that step. `VERSIONING.md` §2, `ARCHITECTURE.md`
 §1.2 and the generated block of the current-contracts page state the new reading.
 
 **Bump ruling.** `synapse_cdm/adapter.py:Adapter` — MINOR: the class gains the classmethod
@@ -749,7 +827,7 @@ commit — verified by `gates/witness_verify.py` offline against the Release dow
 upload and the readings behind it, states the empty comment and the designation, and closes entry
 22; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` names the
 record among the hand-built ones. Nothing in the distribution moved except this file, and
-`PACKAGE_VERSION` still reads `3.1.1`.
+`PACKAGE_VERSION` read `3.1.1` at that round.
 
 ### 3.1.1 — 2026-09-21 — the corrective of the tagged-never-published 3.1.0: the release workflow's package test requires what its gate requires, and holds check J off the declaration the way the gate does
 

@@ -49,7 +49,7 @@ With one, an adapter is a thin translator and nothing else.
 pip install synapse-cdm
 
 python -m synapse_cdm.harness --adapter pntmap        # replays the fixtures that came with it
-python -m synapse_cdm.schemas --out ./schemas         # writes the eight JSON Schemas, anywhere
+python -m synapse_cdm.schemas --out ./schemas         # writes the nine JSON Schemas, anywhere
 
 python -m synapse_cdm.harness --list-adapters         # the names --adapter takes
 ```
@@ -809,9 +809,9 @@ Exit codes: `0` success, `2` usage or context flags, `3` rejected data, `4` file
 `decode` and `replay` read the one `--input` file and `self-test` the packaged vectors; the command
 writes stdout and writes no file.
 
-The adapter and the command are not part of the published 3.1.1 distribution; they ship with the
-first release after it. A build made from this tree before that release also reports 3.1.1. The
-reference page is https://docs.synapsecommand.com/cdm/dis7.
+The adapter and the command are part of the distribution built from this tree; no release before
+3.2.0 carries them, and `synapse-dis7 --version` prints the package version of the build it runs
+from. The reference page is https://docs.synapsecommand.com/cdm/dis7.
 
 ## Layout
 

@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.1.1   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.2.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -87,7 +87,12 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   build job refused it at the package test — the sweep from
                                   the installed wheel still required check J, which two of
                                   the new adapters declare inapplicable — so the package took
-                                  a fourth corrective PATCH the wire contract had no part in.)
+                                  a fourth corrective PATCH the wire contract had no part in.
+                                  And on 2026-10-06, at 3.2.0 against 3.0.0, for the ordinary
+                                  reason again: the DIS 7 arc added the ``dis7`` adapter, its
+                                  host command and ``Adapter.fixture_instance``, and moved no
+                                  model, enum or published schema, so the package took a MINOR
+                                  the wire contract had no part in.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -140,8 +145,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.1.1`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
-twelfth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.2.0`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
+thirteenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -207,7 +212,15 @@ whose sweep from the installed wheel still carried J in ``--require``; ``geojson
 and the step was the twin the adapter expansion's phase 7 did not move. The package took a fourth
 corrective PATCH the wire contract had no part in, and the two numbers read 3.1.1 and 3.0.0. Four
 of the eight partings in this file's life are now release-pipeline defects, and this one, like
-3.0.1's, depended on nothing about the ref. MIGRATIONS.md's 3.1.1 section is the record.)
+3.0.1's, depended on nothing about the ref. MIGRATIONS.md's 3.1.1 section is the record.
+**Corrected a tenth time 2026-10-06, the 3.2.0 release, and the parting is two MINORs wide, the
+second for the ordinary reason**: the DIS 7 arc since ``v3.1.1`` added the ``Dis7Adapter``
+subclass with its codec, the host module ``dis7_host`` and its console script ``synapse-dis7``,
+the ``dis7`` fixture set, ``evidence.digest_bytes`` and ``Adapter.fixture_instance``, and removed
+nothing; ``gates/bump_derivation.py`` derived MINOR over it with nothing unruled once
+MIGRATIONS.md's eleven rulings in the 3.2.0 section are read. The schema moved by nothing: no
+model, no enum, no published schema and no golden of the nineteen changed, and the two numbers
+read 3.2.0 and 3.0.0. MIGRATIONS.md's 3.2.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -450,7 +463,18 @@ SCHEMA_VERSION = "3.0.0"
 #: the gate requires and holds J by the gate's own block, and `tests/test_cdm_trusted_publishing.py`
 #: holds every sweep in both workflows to it. Neither 2.1.0, 2.1.1, 3.0.0 nor 3.1.0 reached the
 #: index; all four tags stay.
-PACKAGE_VERSION = "3.1.1"
+#: Moved 3.1.1 -> 3.2.0 on 2026-10-06, a MINOR, and this one IS the derived floor — the ordinary
+#: reason, as 3.1.0 was: the DIS 7 arc since `v3.1.1` (`docs/dis7-implementation.md`) adds the
+#: `Dis7Adapter` subclass, registered as `dis7`, with its codec module, the host module
+#: `dis7_host.py` and its console script `synapse-dis7`, the `dis7` fixture set,
+#: `evidence.digest_bytes` and `Adapter.fixture_instance`, and removes nothing; the roster moves
+#: nineteen -> twenty. `gates/bump_derivation.py` derives MINOR over that arc with nothing unruled
+#: once MIGRATIONS.md's eleven rulings in the 3.2.0 section are read, so the gate's floor and this
+#: number are one number and no Version ruling is needed. `SCHEMA_VERSION` stays at 3.0.0: no
+#: model, enum, published schema or golden of the nineteen moved. `ADAPTER_API_VERSION` stays at
+#: the 3.1.0 the arc gave it, and `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay
+#: where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.2.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

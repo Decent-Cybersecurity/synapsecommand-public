@@ -815,6 +815,26 @@ whose subject begins `Release 3.1.1`; its hash is deliberately not written here,
 the paragraph above gives. The tag that names 3.1.1 is to be placed on it after `main` is
 fast-forwarded to it, and contains every commit named above.
 
+**Re-qualification, 2026-10-06, the 3.2.0 release commit.** `v3.1.1` was placed on `184a1e3`
+and published (`PUBLICATION.md` entry 23). This report also describes the DIS 7 arc on
+`soif/dis7-1.0`, seven commits after `c4bba1b` (`main`'s tip, the 3.1.1 witness commit) and none
+on `main`: `b7ac176dcec54ec70f79e8232ef836381080d072` (WP1a, the contract freeze),
+`179cb49fdebe12f2fde2c8b8b0669b56119c7d59` (WP1b, the SDK freeze),
+`1c4f83b6dc1bd45be625297e4055b98db2b68908` (WP2, the codec),
+`0407e31f81a827c2212663051271c589daa4c6e7` (WP3, time, identity and projection),
+`9ed9aceec07e27c78119bc95abf88f944664c7a9` (WP4 to WP6, the adapter, its command and the roster),
+`f9343529d347e67dcace24bdcd3905f7e448f6b2` (WP7, the review follow-up) and
+**`6fe32fb847d40702240f61ef3da858a0138bc388`** (WP8, the F-39 fix and the docs audit), the tip of
+that branch at the time of writing, on which `CI` run 37383304553 (a `push` event,
+2026-10-05T22:34:12Z) read `success` on all eleven jobs — the suite, gates and manifests on Python
+3.11, 3.12, 3.13 and 3.14; lint; the wheel gate; the conformance sweep; evidence records,
+provenance and badges; gitleaks; pip-audit; and `npm audit` over `docs/` — and `CodeQL` run
+37383304435 succeeded. `git merge-base --is-ancestor c4bba1b 6fe32fb` exits 0, so `main` can be
+fast-forwarded to it. The release commit itself sits on `soif/release-3.2.0`, a
+branch created from that tip; its subject begins `Release 3.2.0` and its hash is deliberately not
+written here, for the reason the paragraph above gives. The tag that names 3.2.0 is to be placed
+on it after `main` is fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -971,6 +991,47 @@ sentence beside `evidence.available` on the five new adapter modules names 3.1.0
 its own last clause: the Release that first carries their records is 3.1.1's. No §58 line and no
 blocker.
 
+**Re-qualification, 2026-10-06, the 3.2.0 release: the verdict is `ready for PR` (3.2.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.2.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.1.1` as `{"kind": "MINOR", "number": "3.2.0", "unruled": []}` before the number was
+typed, and `--mutation-check` reads `1 check, 0 failed` at a local `v3.2.0` on the release tree)
+and leaves `SCHEMA_VERSION` **3.0.0**, the manifest schema 2.1.0 and the evidence schema 2.0.0
+where the 3.0.0 release put them; `ADAPTER_API_VERSION` reads 3.1.0, moved in the arc for
+`Adapter.fixture_instance` and ruled MINOR in `MIGRATIONS.md`'s 3.2.0 section. What was verified
+on the release tree, as for 3.1.0 and 3.1.1: the suite in the working tree, read by subtracting
+the tag-conditional set test by test; the same tree committed in a throwaway clone at a local
+annotated `v3.2.0`, where the full suite, `--mutation-check` and the commit-message gate pass;
+`schemas --check`, `manifests --check`, the support-matrix and current-contracts checks CURRENT;
+ruff; the wheel gate, and the build job's package test reproduced from the exported wheel in a
+clean venv away from the repository, every adapter of the roster CONFORMANT with J held; the
+notes rendered by the release job's own command; and the docs build. The `dis7` evidence
+categories, as generated on this tree: `internal_fixture` and `self_round_trip` PRESENT,
+`independent_expected`, `normative_schema` and `independent_endpoint` ABSENT. **What is judged,
+each with its source.** Final review F-39 is fixed under the bump ruling the maintainer approved
+on 2026-10-05: conformance check O builds the adapter in a step of its own and reports a refusal
+raised while building as FAIL (`MIGRATIONS.md`'s 3.2.0 section, the paragraph that begins CHECK
+O, and `tests/test_cdm_fixture_instance.py`). The OpenDIS reference tests
+(`tests/test_cdm_dis7_reference.py`, case A13 and requirement R26) compare the adapter with
+open-dis-python at the pinned commit through the checkout `SYNAPSE_CDM_OPENDIS_DIR` names; no
+workflow sets it, so in CI they record `BLOCKED_EXTERNAL_EVIDENCE` and do not run — the
+comparison is a local reading only (`docs/dis7-implementation.md`, Remaining gaps). The two SDK
+defects the record names — `adapter.container_depth` does not return on a cyclic dict, and
+`evidence.generate(name, fixtures=DIR)` raises `ValueError` for a directory outside the packaged
+root — are recorded there and in the release notes, not fixed in this arc, and carried by no
+GitHub issue; neither touches a claim of this release. The docs `npm audit` is clear of blocking
+advisories on the arc: three `overrides` entries (`brace-expansion`, `http-cache-semantics`,
+`joi`) and one time-bounded exception, `security/exceptions/GHSA-vfj7-8cjw-p6xm.json` for `braces`,
+which has no fixed release, owned by the maintainer and expiring on 2026-12-04 — from the next
+day the suite goes red on it until somebody acts (`MIGRATIONS.md`'s 3.2.0 section, the paragraph that begins THE
+DOCS AUDIT). The arc's remaining gaps (`docs/dis7-implementation.md`): the live OpenDIS tests
+above; case A12's evidence being the wheel gate's clean-environment run of the installed
+`synapse-dis7` rather than the in-tree command test; and the two SDK defects. The row it carried for
+`evidence.available` on `dis7` is closed by this release commit, which flips the field with a
+sentence that names no version. **What is NOT
+claimed:** external interoperability — no simulator, partner exchange or certification for
+`dis7`; the IEEE 1278.1-2012 text was not consulted. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1002,6 +1063,14 @@ its own release workflow and not by any §56 item: the gate job that runs §56's
 tagged commit passed every one of them, and the tree it judged is the tree this commit carries
 plus `MIGRATIONS.md`, `version.py` and the workflow's repair. The pre-step's `pending.unruled` is
 the empty list. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-06, the 3.2.0 release: none.** No §56 item is red on the arc section
+18's paragraph of this date names, `CI` run 37383304553 is green on its tip on all eleven jobs and
+`CodeQL` run 37383304435 on the same commit succeeded, the pre-step's `pending.unruled` is the
+empty list,
+and nothing in section 15 or in the arc's own remaining gaps (the OpenDIS comparison CI does not
+run, case A12's evidence route, two SDK defects outside this adapter's claims) rises to a blocker.
+The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

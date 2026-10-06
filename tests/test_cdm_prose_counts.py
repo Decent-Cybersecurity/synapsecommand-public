@@ -2297,21 +2297,13 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('PUBLICATION.md',
      'fifty-eight members, an `evidence.json` for each of the nineteen adapters the sweep names — `aixm511`, `aixm52`, `c2sim`,',
      "the publication ledger's dated record of a release run: what a named run printed or carried on its day; a record of a past run, which does not move when the tree does"),
-    ('RELEASE_NOTES.md',
-     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 19 shipped adapters at manifest schema 2.1.0`. `ADAPTER_API_VERSION`,',
-     "named subset — the roster OF the released version these notes describe; dis7 is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'release commit records before the tag exists. # Nineteen adapters at 3.1.1, all harness-verified — and one more',
-     "named subset — the roster OF the released version these notes describe; dis7 is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'synapse_cdm.harness --list-adapters` prints `19 adapters registered` and `adapter.discover()` and `adapter.roster()`',
-     "named subset — the roster OF the released version these notes describe; dis7 is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'reads the same roster off the installed wheel as `19 adapters, 599 fixture files` and `19 adapters x 2 schema',
-     "named subset — the roster OF the released version these notes describe; dis7 is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'wheel as `19 adapters, 599 fixture files` and `19 adapters x 2 schema modes, 1160 fixture verdicts, 0 failed`.',
-     "named subset — the roster OF the released version these notes describe; dis7 is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    # RETIRED IN THE 3.2.0 RELEASE COMMIT (2026-10-06), the 3.1.0 retirement's shape again. Five
+    # rows here exempted RELEASE_NOTES.md's roster sentences while the notes described the 3.1.1
+    # artefact (a roster of nineteen) beside one row marked as postdating it. The 3.2.0 notes
+    # describe an artefact that IS the tree — twenty rows, no row marked as postdating the
+    # release — so the sentences state the roster, are checked by comparison, and need no row;
+    # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
+    # job. The retired bytes are not quoted here.
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),
