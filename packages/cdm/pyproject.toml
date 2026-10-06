@@ -111,7 +111,7 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # `packages/cdm gates tests`; `--select F` reports nothing over the legacy baseline; and with the
 # baseline emptied the set still counts the 32 findings it lists, rule for rule. Every reading
 # below was taken with 0.16.6 or 0.16.7 and every one of them holds at 0.16.9, so none is re-dated.
-lint = ["ruff==0.16.9"]
+lint = ["ruff==0.16.10"]
 # The normative-validation extra, added 2026-09-20 by the adapter-expansion arc (Phase 0,
 # docs/adapter-expansion-implementation.md, decision D5). `synapse_cdm/normative_binding.py` has
 # imported `lxml` under an explicit normative mode since F05 without any extra declaring it, so
