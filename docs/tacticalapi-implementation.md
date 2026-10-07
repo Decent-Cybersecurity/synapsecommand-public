@@ -501,7 +501,7 @@ on no other (added 2026-10-04, final verification, item 22).
 | `capabilities.limits` | `max_input_bytes`, `max_depth`, `max_objects` declared as implementation caps, each enforced before objects are built and tested at the bound and one past it; the other two absent with reasons. The values and their bases are the constants `MAX_INPUT_BYTES`, `MAX_DEPTH`, `MAX_OBJECTS` in `tacticalapi_codec.py`; `MAX_UNKNOWN_FIELDS` and `MAX_CARRIED_COPY_CHARS`, which the manifest has no field for, are declared beside `max_objects`, and the `resource-limits` limitation names both |
 | `MAX_CARRIED_COPY_CHARS` | 16 × 2^20 = 16 777 216, the bound of §4's carried message-level data, in characters of compact JSON text with ASCII escaping, across all the elements of a message. Basis: four times the 4 MiB message ceiling `MAX_INPUT_BYTES` rests on; the `message` member of an ordinary successful snapshot is 200 characters of that text (230 for a stream update; its `type_url` and header about 100), so 10 000 such elements use about an eighth of it (a snapshot) to just under a seventh (a stream update). Without it a 4 MiB `error_message` on 10 000 elements would serialise to some 40 GiB. The measure is the JSON text since 2026-10-04 (final verification, item 14): the earlier one counted every number as one and every string by its characters, and a dict-form twin read from 3.6 million characters of JSON text (740 integers of 4 300 digits under a response-level key) measured inside the bound and serialised to some 64 billion; a string of control characters writes six characters for each. With integers held to the 64-bit range (§2.2), every value's measure is the text it adds to every Entity (added 2026-10-04, final verification), and to every Event that carries it since 2026-10-06 (§5.9) |
 | `residual` | `structured`, with a `MAPPINGS` ledger |
-| `evidence.available` | `false` until the first release that attaches the adapter's evidence records (limitation `evidence-availability`, renamed 2026-10-06 from `evidence-not-available`, which named the out-of-tree project) |
+| `evidence.available` | `true` since the 3.3.0 release commit (changed 2026-10-07), with the limitation `evidence-availability` in the form `dis7`'s took at 3.2.0, which names no version: the release pipeline attaches the records of every shipped adapter to the Release of the version it publishes. `false` from the landing until then, "until the first release that attaches the adapter's evidence records" (the limitation renamed 2026-10-06 from `evidence-not-available`, which named the out-of-tree project) |
 
 Limitations to declare (structured entries; none uses the word "provisional"):
 `blue-force-read-side-only`, `capture-envelope`, `pinned-commit-v0`, `coordinate-unit-not-stated`,
@@ -717,7 +717,9 @@ wheel's copy to it.
 
 For the maintainer; each is outside what the adapter may change or decide (each is the host
 package's), and this file says where each was found. Moved here from the out-of-tree project's
-README on 2026-10-06.
+README on 2026-10-06. (Noted 2026-10-07, the 3.3.0 release: `MIGRATIONS.md`'s 3.3.0 section and
+the release notes record the five items after `container_depth` below as known and not fixed, in
+the form 3.2.0 used for its two; none is fixed in the release.)
 
 - Resolved in synapse-cdm 3.2.0 (noted 2026-10-06; MIGRATIONS.md 3.2.0, "DIS 7 UNIT 1B" and the
   bump ruling for `times.py:render`): up to 3.1.1, `synapse_cdm.times.render` wrote the year
@@ -1252,3 +1254,25 @@ this file maps them, and this file with them. What changed beyond the paths:
    generated block, which it still reproduces byte for byte. The comment-literal tool's prose
    check and the literal scan of `tests/test_cdm_tacticalapi_contract_text.py` read the adapter's
    own files (`ARC_FILES`), not the whole repository.
+
+**2026-10-07, the release: synapse-cdm 3.3.0.** The release commit, drafted on top of the landing
+commit `d5e19ae`, types `PACKAGE_VERSION` 3.3.0 at the derivation gate's floor and changes this
+adapter in one place:
+
+1. **`evidence.available` is true (§6).** The field flips with the release that attaches the
+   adapter's records, as the landing's limitation said it would, and the limitation
+   `evidence-availability` now states the form `dis7`'s took at 3.2.0, which names no version:
+   the release pipeline generates the records of every shipped adapter and attaches them to the
+   GitHub Release of the version it publishes, so every published distribution that carries the
+   adapter has its records retrievable. `manifests/tacticalapi.json` and the support matrix were
+   regenerated, and the three assertions of `tests/test_cdm_tacticalapi_adapter.py` that read the
+   declaration moved with it.
+2. **The availability sentence.** The repository's README, the package README, the introduction
+   page and the adapter's page say that the adapter is part of the distribution built from this
+   tree and that no release before 3.3.0 carries it, which stays true if a tag is refused and a
+   corrective number follows.
+3. **The open items are in the release's record.** `MIGRATIONS.md`'s 3.3.0 section and the
+   release notes record the five items under "Open items" after `container_depth` as known and not
+   fixed, as 3.2.0 recorded `container_depth` on a cyclic input.
+
+No rule of §1 to §5, §7 or §8 moved, and no fixture, golden or line of the codec.

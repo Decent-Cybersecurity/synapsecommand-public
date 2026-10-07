@@ -842,8 +842,8 @@ name says which published contract the adapter reads. The field table the adapte
 field names, field numbers and enum values derived from the contract's interface definition
 files, which the Eclipse Public License 2.0 governs; `NOTICE` states the derivation.
 
-The `tacticalapi` adapter is not part of the published 3.2.0 distribution; it ships with the first
-release after it. The reference page is https://docs.synapsecommand.com/cdm/tacticalapi.
+The `tacticalapi` adapter is part of the distribution built from this tree; no release before
+3.3.0 carries it. The reference page is https://docs.synapsecommand.com/cdm/tacticalapi.
 
 ## Layout
 

@@ -11,14 +11,15 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.2.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.3.0` and `SCHEMA_VERSION` is `3.0.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
 corrective — a package PATCH the wire contract had no part in — see those two sections; a MINOR
 apart at the 3.1.0 release of 2026-09-21 for the ordinary reason, and a PATCH further by the 3.1.1
 corrective the same day, a second package PATCH for a release pipeline's refusal; two MINORs apart
-at the 3.2.0 release of 2026-10-06, the second for the ordinary reason again.)
+at the 3.2.0 release of 2026-10-06, the second for the ordinary reason again; three MINORs apart
+at the 3.3.0 release of 2026-10-07, the third for the ordinary reason too.)
 
 ## What each bump means
 
@@ -207,7 +208,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.2.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.3.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -466,7 +467,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.2.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.3.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -534,39 +535,126 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.3.0 — 2026-10-07 — the TacticalAPI blue-force read side: `tacticalapi` lands as #22 on its own wire reader, the roster moves twenty to twenty-one, the `[lint]` extra's ruff pin moves under a ruling, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.2.0`, and `3.2.0` is what the index serves — `PUBLICATION.md` entry 24 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.3.0` at this
+commit, in `version.py`, and the tag `v3.3.0` is to name the commit that carries this release
+state. What the index actually serves is a measured fact about an upload rather than about this
+tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that watched the upload and is
+not asserted here before it has happened. The paragraph this replaces said that nothing in the
+section was in a release, that the newest release tag was `v3.2.0` and that `3.2.0` was what the
+index served (`PUBLICATION.md` entry 24) — the first clause stops being true at this commit and the
+other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.2.0 -> 3.3.0 ON 2026-10-07, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.2.0` and derives MINOR with nothing unruled: the
+pre-step's `--json` reported `pending.unruled` as the empty list and `pending.number` as `3.3.0`
+before any number was typed, and `--mutation-check` reads `1 check, 0 failed` on this tree from
+the moment the tag names it (until then the gate reads its rulings under the pending heading this
+commit removed and refuses one UNRULED — the transitional reading every release commit whose arc
+carries a ruling records, and the release round reads the green at the tag). The floor comes from the public
+names the records below added and from nothing removed — the `Adapter` subclass
+`TacticalapiAdapter` with its wire reader `tacticalapi_codec.py` and the `tacticalapi` fixture set —
+and the one unit the table cannot decide, `pyproject.toml:optional-dependencies` (the `[lint]`
+extra's ruff pin, in the paragraph that begins THE RUFF RECORD), is ruled in this section's
+`**Bump ruling.**` paragraph, which the gate reads from this section from the moment the tag
+exists. Over the arc the gate's table decides 186 signals, 102 MINOR and 84 PATCH, and the one
+ruling decides the rest (`--json` at the tag lists 187). So the floor and the number are one
+number and no Version ruling is needed or present. It is the second number in a row that moved for
+what the distribution carries. `SCHEMA_VERSION` does not move and stays at `3.0.0`: no model, no
+enum, no published schema and no golden of the twenty that predate the arc moved (`python -m
+synapse_cdm.schemas --check` reads CURRENT at 3.0.0, and `git diff v3.2.0 -- schemas/` is empty),
+and the two axes are three MINORs apart. `ADAPTER_API_VERSION` stays at `3.1.0`, and
+`MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release
+put them.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-07 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, the introduction's two-number sentence, and the two
+tag-command examples in the procedure and in the pipeline section; `RELEASE_NOTES.md`, rewritten
+for this release with every count derived; `README.md`'s tag example and its availability
+sentence for the `tacticalapi` adapter; `VERSIONING.md`'s package-version figure, its tag-command
+example and a dated note under §4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated
+paragraph; `docs/docs/current-contracts.mdx`, regenerated; the availability sentence on the
+documentation site's introduction and `tacticalapi` pages; the two version literals
+`tests/test_cdm_packaging.py` pins; the retired `RELEASE_NOTES.md` exemption rows in
+`tests/test_cdm_prose_counts.py`; the three assertions of `tests/test_cdm_tacticalapi_adapter.py`
+that read the adapter's evidence declaration; the readiness report's re-qualification; the
+release entry of the implementation record `docs/tacticalapi-implementation.md`; and the
+thirteenth `UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`, for
+`("v3.2.0", "v3.3.0")` at one unit — the same one this section rules, compared set to set,
+written before the tag exists by the 2.2.0, 3.0.0 and 3.2.0 route (the raw derivation from
+`v3.2.0` to the working tree, to which this commit adds no unit: its `version.py` edit is the
+assignment the gate excludes plus docstring and comment lines, `MIGRATIONS.md` and the package's
+`README.md` are shipped documents, and the `tacticalapi` class body is a unit the arc ADDED). No
+adapter's translation, no schema, no fixture and no dependency moves in this commit. One
+declaration moves with the release and not with the arc: `tacticalapi` landed declaring
+`evidence.available: false` — "it becomes true at the first release that attaches them", its own
+words — and `tests/test_cdm_evidence.py` holds the field to the newest tag's tree, so this commit
+flips it to `true` with a sentence beside it that names no version, the form `dis7`'s took at
+3.2.0: the release pipeline attaches the records of every shipped adapter to the Release of the
+version it publishes, so every published distribution carrying the adapter has its records
+retrievable, whatever happens to any one tag. `manifests/tacticalapi.json` and the support matrix
+are regenerated. Inside the distribution the transition touches `MIGRATIONS.md`, `version.py`,
+`adapters/tacticalapi.py` and the package's `README.md` (the availability sentence), all already
+inside the count the next paragraph but one states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Two things the
+release notes say and this section repeats because they are the honest boundary of the arc: no
+TacticalAPI server, client or captured message has been exercised and no interoperability with
+any system is claimed for `tacticalapi` — it reads the blue-force read side of the interface
+definition files pinned at upstream commit `58661c9`, which stay outside the repository, its
+record's `independent_endpoint` category is ABSENT, and this repository is not affiliated with the
+interface's publisher — and five open items the arc recorded in the implementation record are
+recorded here and not fixed: `adapter.wire_size` raises `UnicodeEncodeError` for a `str` holding a
+lone surrogate before any adapter can refuse it; `adapter.wire_size` and `adapter.container_depth`
+take a value's type from `isinstance`, so an in-process object whose `__class__` claims octets,
+text, a `dict` or a `list` raises there; the adapter's `validate_source` writes a refusal's text
+whole; no test raises a plain `ValueError` on the path of `validate_source` that handles one; and a
+released `memoryview` leaves the codec's entry points, and the host's `wire_size`, with Python's
+own `ValueError` and no reason code. The record's other open item on the host's input measure,
+`adapter.container_depth` on a cyclic input, is the 3.2.0 section's.
 
 **What moved inside the distribution: 124 files** — the 3.2.0 witness round, the dependency records
-and the TacticalAPI arc, all of 2026-10-06. `MIGRATIONS.md` (this section; the dated witness
-paragraphs in the release procedure and the pipeline section and the index note in the 3.2.0
-section, which the witness round wrote; and the second condition of the release procedure, which the
-arc moved to twenty-one harnesses), `FORMAT_COVERAGE.md` (the two `tacticalapi` rows of the status
-column's table, the `tacticalapi` row of the ordinal table with the dated sentence under it, and the
-new section on the TacticalAPI blue-force read side), `tacticalapi_codec.py` (new: the contract's
-embedded field table, the wire reader, the twin, the typed block and the 31 reason codes),
-`adapters/tacticalapi.py` (new: `TacticalapiAdapter`, registered as `tacticalapi`), `__init__.py`,
-`adapter.py`, `lossless.py`, `symbology.py` and `version.py` (docstring and comment counts only: the
-roster at twenty-one; the `residual_block` docstring of `lossless.py` also names `tacticalapi` among
-the structured adapters that build their `Residual` directly), `pyproject.toml` (the `[lint]` pin,
-which is the one line of the ruff record below, and the two comments the arc moved to twenty-one
-adapters), the package's `README.md` (counts, pair arithmetic, the `tacticalapi` roster row and the
-new section on the `tacticalapi` adapter), the `NOTICE` beside `pyproject.toml` (the paragraph
-stating the derivation of the embedded field table, byte-identical to the repository's copy), and
-112 new files under `fixtures/tacticalapi/`, named in the paragraph that begins THE TACTICALAPI
-FIXTURE SET. What the 3.2.0 witness round touched outside the distribution ships in nothing: the
-ledger, the witness record and its README, the release-pipeline and changelog pages, the DIS 7
-implementation record, and two test modules. The docs and action records below move
-`docs/package.json`, its lock, `SECURITY.md`, the supply-chain page, the security-policy test module
-and two workflows, none of which ships either. What the TacticalAPI arc touched outside the
-distribution ships in nothing either: the manifest `manifests/tacticalapi.json`, the support matrix
-and the new documentation page, the implementation record `docs/tacticalapi-implementation.md`, the
-root documents and the documentation site's counts, the root `NOTICE`, `.gitattributes`, the three
-gate modules `gates/tacticalapi_field_table.py`, `gates/tacticalapi_contract_comments.py` and
-`gates/protoc_text.py`, the wheel gate's lists and its licences check, and the test modules.
+and the TacticalAPI arc, all of 2026-10-06, the release transition of 2026-10-07 adding no file to
+the set. `MIGRATIONS.md` (this section and its roll, the introduction's two-number sentence and the
+two tag-command examples; the dated witness paragraphs in the release procedure and the pipeline
+section and the index note in the 3.2.0 section, which the witness round wrote; and the second
+condition of the release procedure, which the arc moved to twenty-one harnesses),
+`FORMAT_COVERAGE.md` (the two `tacticalapi` rows of the status column's table, the `tacticalapi`
+row of the ordinal table with the dated sentence under it, and the new section on the TacticalAPI
+blue-force read side), `tacticalapi_codec.py` (new: the contract's embedded field table, the wire
+reader, the twin, the typed block and the 31 reason codes), `adapters/tacticalapi.py` (new:
+`TacticalapiAdapter`, registered as `tacticalapi`; at the release, its `evidence.available`
+declaration and the limitation beside it), `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py` and `version.py` (docstring and comment counts only: the roster at twenty-one; the
+`residual_block` docstring of `lossless.py` also names `tacticalapi` among the structured adapters
+that build their `Residual` directly; and, at the release, `version.py`'s constant, its dated
+comment and its live readings), `pyproject.toml` (the `[lint]` pin, which is the one line of the
+ruff record below, and the two comments the arc moved to twenty-one adapters), the package's
+`README.md` (counts, pair arithmetic, the `tacticalapi` roster row and the new section on the
+`tacticalapi` adapter, whose availability sentence the release rewrote), the `NOTICE` beside
+`pyproject.toml` (the paragraph stating the derivation of the embedded field table,
+byte-identical to the repository's copy), and 112 new files under `fixtures/tacticalapi/`, named in
+the paragraph that begins THE TACTICALAPI FIXTURE SET. What the 3.2.0 witness round touched outside
+the distribution ships in nothing: the ledger, the witness record and its README, the
+release-pipeline and changelog pages, the DIS 7 implementation record, and two test modules. The
+docs and action records below move `docs/package.json`, its lock, `SECURITY.md`, the supply-chain
+page, the security-policy test module and two workflows, none of which ships either. What the
+TacticalAPI arc touched outside the distribution ships in nothing either: the manifest
+`manifests/tacticalapi.json`, the support matrix and the new documentation page, the implementation
+record `docs/tacticalapi-implementation.md`, the root documents and the documentation site's counts,
+the root `NOTICE`, `.gitattributes`, the three gate modules `gates/tacticalapi_field_table.py`,
+`gates/tacticalapi_contract_comments.py` and `gates/protoc_text.py`, the wheel gate's lists and its
+licences check, and the test modules. What the release transition touched outside the distribution
+ships in nothing either, and the paragraph that begins THE RELEASE TRANSITION ITSELF names it.
 
 **THE 3.2.0 WITNESS ROUND's RECORD, 2026-10-06 — the record is the pipeline's own, for the second
 time.** Run 37459980438's `witness` job built `witness-3.2.0.json`, its verify step read `VERIFIED`
@@ -577,7 +665,7 @@ names. `releases/witness/3.2.0.json` is that Release asset byte for byte, verifi
 all five records, before it was committed. Ledger entry 24 records the upload and the readings
 behind it; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` holds the
 record by digest among the pipeline's. Nothing in the distribution moved except this file, and
-`PACKAGE_VERSION` still reads `3.2.0`.
+`PACKAGE_VERSION` read `3.2.0` at that round.
 
 **THE DEPENDENCY RECORDS, 2026-10-06 — the five open Dependabot proposals, landed by hand as one
 signed-off unit.** Dependabot opened #7 and #8 on 2026-09-21, #11 on 2026-10-05, and #12 and #13
@@ -673,8 +761,10 @@ keyword-only `affiliation`; a symbol only from a MIL-STD-2525D numeric code; a c
 `STATUS_CHANGE` event with no `valid_to`; the licence class `OPEN`; the Eclipse Public License 2.0
 for the embedded field table; the name kept without seeking the publisher's consent; and export
 control ruled unaffected. This repository is not affiliated with the interface's publisher, and no
-server, client or captured message has been exercised. `evidence.available` is false until the first
-release that attaches the adapter's records, and its structured limitation says so.
+server, client or captured message has been exercised. `evidence.available` was false until the
+first release that attaches the adapter's records, and its structured limitation said so; the
+release transition flips it (corrected 2026-10-07, at the release: the sentence was true of every
+commit before it).
 
 **EVERY TACTICALAPI OBJECT CARRIES A RESIDUAL, 2026-10-06.** Out of tree the adapter attached no
 residual to an `Event`, nor to an `Entity` with nothing unknown, and `tests/test_cdm_lossless.py`

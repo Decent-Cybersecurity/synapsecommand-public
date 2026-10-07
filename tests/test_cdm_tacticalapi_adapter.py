@@ -1573,7 +1573,8 @@ def test_the_declaration_is_section_6():
     assert meta.capabilities.unknown_fields is UnknownFields.PRESERVED
     assert "residual.data.unknown" in meta.capabilities.unknown_fields_basis
     assert meta.residual is Residual.STRUCTURED
-    assert meta.evidence.available is False
+    # True since 2026-10-07, the 3.3.0 release commit; false from the landing until then.
+    assert meta.evidence.available is True
     assert (meta.profiles, meta.payload_adapter, meta.constituents,
             meta.limitations_empty_reason) == ([], None, [], None)
     assert cls.TRANSFORMS == {}
@@ -1592,10 +1593,16 @@ def test_the_limitations_are_section_6s_structured_entries():
     assert not [entry.id for entry in limitations if "provisional" in entry.summary.lower()]
     by_id = {entry.id: entry.summary for entry in limitations}
     # Renamed 2026-10-06 at the landing from `evidence-not-available`, which named the
-    # out-of-tree project: the pre-release form `dis7` used until its release.
+    # out-of-tree project: the pre-release form `dis7` used until its release. Flipped
+    # 2026-10-07 in the 3.3.0 release commit to the form `dis7`'s took at 3.2.0, which names no
+    # version, so it stays true whatever happens to any one tag.
     assert by_id["evidence-availability"] == (
-        "`evidence.available` is false because no published Release carries this adapter's "
-        "records yet; it becomes true at the first release that attaches them")
+        "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
+        "untracked and unpackaged, CI generates the set on every run, and the release pipeline "
+        "generates the records for every shipped adapter and attaches them to the GitHub Release "
+        "of the version it publishes. `evidence.available` is true because every published "
+        "distribution that carries this adapter has that Release, so its records are retrievable "
+        "by a third party; it says nothing about what the wheel contains")
     # Reworded 2026-10-06 (R5): the north reference is an assumption stated on every mapped
     # value, no longer a reason the course is unmapped.
     course = by_id["course-reference-not-stated"]
@@ -1613,7 +1620,7 @@ def test_the_manifest_the_package_generates_for_this_class_is_the_published_one(
     jsonschema.Draft202012Validator(schemas.manifest_schema()).validate(published)
     assert published["adapter"] == TacticalapiAdapter.metadata.model_dump(mode="json")
     assert published["adapter"]["maturity"]["level"] == "L3"
-    assert published["adapter"]["evidence"] == {"available": False}
+    assert published["adapter"]["evidence"] == {"available": True}
     assert is_shipped(TacticalapiAdapter)
     assert manifests.generate()["tacticalapi"] == published
     committed = json.loads((ROOT / "manifests" / "tacticalapi.json").read_text(encoding="utf-8"))

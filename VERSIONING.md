@@ -87,7 +87,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.2.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.3.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
@@ -321,6 +321,18 @@ schema stays 3.0.0 (no model, enum or published schema moved; `schemas --check` 
 Adapter API stays at the 3.1.0 the arc gave it for `fixture_instance`, and the manifest and
 evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and the profiles did not move.
 
+**Dated note, 2026-10-07: the release after 3.2.0 is `3.3.0`, a MINOR for the ordinary reason.**
+The TacticalAPI arc since `v3.2.0` (`docs/tacticalapi-implementation.md`) added the
+`TacticalapiAdapter` subclass, registered as `tacticalapi` — the roster twenty → twenty-one — with
+its wire reader `tacticalapi_codec.py` and the `tacticalapi` fixture set, and removed nothing; the
+dependency unit before it moved the `[lint]` extra's ruff pin in place.
+`gates/bump_derivation.py` derives MINOR over the arc with nothing unruled once `MIGRATIONS.md`'s
+one ruling in the 3.3.0 section, for that pin, is read, and the release commit types that floor.
+The CDM schema stays 3.0.0 (no model, enum or published schema moved; `schemas --check`
+CURRENT), the Adapter API stays 3.1.0 (no member of the contract moved; the new adapter implements
+it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and the
+profiles did not move.
+
 ---
 
 ## 5. Main advancement
@@ -353,7 +365,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.2.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.3.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

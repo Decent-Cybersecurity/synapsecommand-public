@@ -2321,23 +2321,14 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     # release — so the sentences state the roster, are checked by comparison, and need no row;
     # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
     # job. The retired bytes are not quoted here.
-    # ADDED 2026-10-06 (the TacticalAPI arc, adapter #22), the shape the dis7 landing used: the
-    # notes still describe the 3.2.0 artefact, a roster of twenty, beside one row marked as
-    # postdating it, so the five counts below state a named subset and not the roster. Two of them
-    # share one sentence and one quotation, so four rows cover five counts. The release commit that
-    # rewrites the notes retires all four, and the guard above goes red on any it leaves behind.
-    ('RELEASE_NOTES.md',
-     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 20 shipped adapters at manifest schema 2.1.0`. `ADAPTER_API_VERSION`',
-     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'the `dis7` adapter holds a parsed envelope to acyclicity itself. # Twenty adapters at 3.2.0, all harness-verified — and one more',
-     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'At `v3.2.0` `python -m synapse_cdm.harness --list-adapters` prints `20 adapters registered`.',
-     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'reads the same roster off the installed wheel as `20 adapters, 606 fixture files` and `20 adapters x 2 schema modes, 1172 fixture verdicts, 0 failed`.',
-     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    # ADDED 2026-10-06 (the TacticalAPI arc, adapter #22), the shape the dis7 landing used, and
+    # RETIRED IN THE 3.3.0 RELEASE COMMIT (2026-10-07), the 3.2.0 retirement's shape again. Four
+    # rows here exempted RELEASE_NOTES.md's five roster counts while the notes described the 3.2.0
+    # artefact (a roster of twenty) beside one row marked as postdating it. The 3.3.0 notes
+    # describe an artefact that IS the tree — twenty-one rows, no row marked as postdating the
+    # release — so the sentences state the roster, are checked by comparison, and need no row;
+    # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
+    # job. The retired bytes are not quoted here.
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),

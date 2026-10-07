@@ -851,6 +851,24 @@ called the audit clear (`MIGRATIONS.md`'s 3.2.0 section, the paragraph that begi
 AT THE RELEASE); that tag contains every commit named in this section. The release commit is not
 rewritten, and its hash is written here because it is no longer the commit that carries this file.
 
+**Re-qualification, 2026-10-07, the 3.3.0 release commit.** `v3.2.0` was placed on `298ed9b`
+and published (`PUBLICATION.md` entry 24). `main` then moved twice by fast-forward, through the
+3.2.0 witness round **`00f2c91c4045c810a9cabe72bdbaf18350c20534`** and the dependency unit
+**`6bc4805c2a200bec326359ec064e47480586d62d`**, the five Dependabot proposals landed by hand as
+one signed-off commit, which is the tip of `main` and of `origin/main` at the time of writing.
+This report also describes the TacticalAPI arc on `soif/tacticalapi-1.0`, one commit after
+`6bc4805` and none on `main`: **`d5e19ae4e14ff49e58d1d183bd783e5f66aee54a`** (the landing of
+`tacticalapi`, the roster twenty to twenty-one), the tip of that branch at the time of writing, on
+which `CI` run 37609462483 (a `push` event, 2026-10-07T10:45:07Z) read `success` on all eleven
+jobs — the suite, gates and manifests on Python 3.11, 3.12, 3.13 and 3.14; lint; the wheel gate;
+the conformance sweep; evidence records, provenance and badges; gitleaks; pip-audit; and
+`npm audit` over `docs/` — and `CodeQL` run 37609462487 succeeded.
+`git merge-base --is-ancestor 6bc4805 d5e19ae` exits 0, so `main` can be fast-forwarded to it.
+The release commit itself sits on `soif/release-3.3.0`, a branch created from that tip; its
+subject begins `Release 3.3.0` and its hash is deliberately not written here, for the reason the
+paragraph above gives. The tag that names 3.3.0 is to be placed on it after `main` is
+fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1068,6 +1086,57 @@ same tree committed in a throwaway clone at a local annotated `v3.2.0`, where th
 `--mutation-check` and the commit-message gate pass, and the build job's package test from the
 exported wheel. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-07, the 3.3.0 release: the verdict is `ready for PR` (3.3.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.3.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.2.0` as `{"kind": "MINOR", "number": "3.3.0", "unruled": []}` on the arc's tip before
+the number was typed) and leaves `SCHEMA_VERSION` **3.0.0**, `ADAPTER_API_VERSION` 3.1.0, the
+manifest schema 2.1.0 and the evidence schema 2.0.0 where they were. The one unit the gate's table
+cannot decide, `pyproject.toml:optional-dependencies` — the `[lint]` extra's ruff pin the
+dependency unit moved — is ruled PATCH in `MIGRATIONS.md`'s 3.3.0 section by the ruling the
+maintainer approved with that unit, so on the release commit without its tag the gate reads its
+rulings under the pending heading the roll removed and refuses that one unit, and the six bump
+tests join the tag-conditional set, nine tests in all. What was verified on the release tree
+before it was committed: the suite in the working tree and in a throwaway clone with the
+release state applied, each read by subtracting the tag-conditional set test by test;
+`schemas --check`, `manifests --check`, the support-matrix and current-contracts checks CURRENT;
+the provenance and pin-path gates; ruff 0.16.9, the pin; the contract-text checks against the
+pinned interface definition files; the notes rendered by the release job's own command; the same
+tree committed in a throwaway clone at a local annotated `v3.3.0`, where the full suite read
+9891 passed, 211 skipped and 0 failed, `gates/bump_derivation.py --mutation-check` read `1 check,
+0 failed` and the commit-message gate read clean; the wheel gate, `13 checks, 0 failed` on the
+wheel and sdist it exported and the fixture-less mutant refused by five of them; and the docs
+build, `npm run ci` green. Read by the release round and not here: the build job's package test
+reproduced from the exported wheel in a clean venv away from the repository with
+`SYNAPSE_CDM_TACTICALAPI_PROTO_DIR` unset, and CI and CodeQL on the pushed release commit. The
+`tacticalapi` evidence categories, as
+generated on this tree: `internal_fixture` PRESENT, `self_round_trip` NOT_APPLICABLE (the adapter
+is ingest only), `independent_expected`, `normative_schema` and `independent_endpoint` ABSENT.
+**What is judged, each with its source.** The maintainer's rulings of 2026-10-06 on the adapter
+(`docs/tacticalapi-implementation.md`, the rulings table): the licence class `OPEN` (R7); the
+Eclipse Public License 2.0 for the embedded field table (R8), stated in both copies of `NOTICE`
+and asserted offline by `tests/test_cdm_packaging.py` and in the installed wheel by the wheel
+gate's `licences` check, while the wheel's licence metadata stays `Apache-2.0`; the name
+`tacticalapi` kept without seeking the publisher's written consent (R9); and export control ruled
+unaffected (R10). The two contract tests that need the pinned files and `protoc` — the builder's
+byte-for-byte reproduction of the generated fixtures and the embedded field table against the
+pinned descriptor — record `BLOCKED_EXTERNAL_EVIDENCE` in CI, which sets no
+`SYNAPSE_CDM_TACTICALAPI_PROTO_DIR`, so that comparison is a local reading only. The five open
+items the record names — `adapter.wire_size` raising `UnicodeEncodeError` for a `str` holding a
+lone surrogate before any adapter can refuse it; `adapter.wire_size` and
+`adapter.container_depth` taking a value's type from `isinstance`; the adapter's
+`validate_source` writing a refusal's text whole; no test on the path of `validate_source` that
+handles a plain `ValueError`; and a released `memoryview` leaving Python's own `ValueError` with
+no reason code — are recorded there, in `MIGRATIONS.md`'s 3.3.0 section and in the release notes,
+and not fixed in this arc; none touches a claim of this release. The docs `npm audit`: the
+dependency unit's floors stand, with the one time-bounded exception for `braces`, owned by the
+maintainer and expiring on 2026-12-04 (`MIGRATIONS.md`'s 3.3.0 section, the paragraph that begins
+THE DOCS RECORD); the job's reading on the release commit is CI's on the push, and a red there is
+the maintainer's to rule on, as it was at 3.2.0. **What is NOT claimed:** external
+interoperability — no TacticalAPI server, client or captured message has been exercised, and the
+repository is not affiliated with the interface's publisher; the pinned interface definition files
+are carried neither in the repository nor in the wheel. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1115,6 +1184,13 @@ commit section 18's paragraph of this date names clears the first with four floo
 job's decision step reads `OK`, and the tag-conditional set reads zero failed at a local annotated
 `v3.2.0` in a throwaway clone. That commit has not been pushed, so no `CI` run on it is quoted
 here. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-07, the 3.3.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set of nine, which a tag on the
+tree resolves, and nothing in section 15 or in the arc's own open items (the contract comparison
+CI does not run, five items outside this adapter's claims) rises to a blocker. The machine-readable
+statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

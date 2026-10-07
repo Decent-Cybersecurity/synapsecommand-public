@@ -393,6 +393,12 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     with its codec and host command, its fixture set, `evidence.digest_bytes` and
     `Adapter.fixture_instance` added, nothing removed, eleven ruled units — and the schema moved by
     nothing: the numbers are `3.2.0` and `3.0.0`.
+
+    **AND ON 2026-10-07 THE GAP WIDENED TO THREE MINORS, THE THIRD FOR THE ORDINARY REASON TOO.**
+    The TacticalAPI arc's release commit typed `3.3.0` at the derivation gate's floor — the
+    `tacticalapi` adapter on its wire reader with its fixture set added, nothing removed, one ruled
+    unit (the dependency unit's `[lint]` pin) — and the schema moved by nothing: the numbers are
+    `3.3.0` and `3.0.0`.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -412,12 +418,12 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.2.0", "3.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.3.0", "3.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "3.2.0 and 3.0.0. They are two MINORs apart since 2026-10-06, the 3.2.0 release — the DIS 7 "
-        "arc added the dis7 adapter, its host command and Adapter.fixture_instance and moved no "
-        "model, enum, schema or golden, so the package took a MINOR the wire contract had no part "
-        "in, for the ordinary reason — so the sweep above is quiet and kept for the day a schema "
+        "3.3.0 and 3.0.0. They are three MINORs apart since 2026-10-07, the 3.3.0 release — the "
+        "TacticalAPI arc added the tacticalapi adapter on its wire reader and moved no model, "
+        "enum, schema or golden, so the package took a MINOR the wire contract had no part in, "
+        "for the ordinary reason — so the sweep above is quiet and kept for the day a schema "
         "change closes the gap. If you bumped one of them just now: that is the expected event, "
         "and the fix is to update this assertion to the two numbers you now mean, not to re-link "
         "them"

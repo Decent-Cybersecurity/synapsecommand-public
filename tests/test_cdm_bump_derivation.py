@@ -621,6 +621,20 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/suite.py:main",
         "synapse_cdm/times.py:render",
         "synapse_cdm/version.py:ADAPTER_API_VERSION"},
+    # The thirteenth row, written IN the 3.3.0 release commit (2026-10-07) from the gate's own
+    # `derive(snapshot_at("v3.2.0"), snapshot_at(None))` on that tree — the 2.2.0, 3.0.0 and 3.2.0
+    # route, so that the tag needs no re-tag for it. The one unit is the dependency unit's: the
+    # `[lint]` extra's ruff pin moved in place, 0.16.7 -> 0.16.9, which the table cannot decide,
+    # ruled PATCH in MIGRATIONS.md's `### 3.3.0` section. The TacticalAPI arc adds none: the
+    # adapter, its codec and its fixture set are units it ADDED, and its roster edits to existing
+    # modules are docstring and comment lines. The release commit adds no unit either: its
+    # `version.py` edit is the assignment the gate excludes plus docstring and comment lines,
+    # `MIGRATIONS.md` and the package's `README.md` are shipped documents, and the `tacticalapi`
+    # class body whose `evidence.available` flips is a unit the arc added. The arc's 186 signals
+    # (102 MINOR, 84 PATCH) — the `TacticalapiAdapter` subclass, its codec and the `tacticalapi`
+    # fixture set among them — derive the MINOR the number types.
+    ("v3.2.0", "v3.3.0"): {
+        "pyproject.toml:optional-dependencies"},
 }
 
 
