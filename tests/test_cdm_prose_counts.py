@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty adapters
-cannot grow twenty slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-one adapters
+cannot grow twenty-one slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -74,6 +74,14 @@ _UNITS = {
 }
 _TENS = {"twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70,
          "eighty": 80, "ninety": 90}
+
+#: A roster count as these sentences spell it: one word, or a tens word and a unit joined by one
+#: hyphen. WIDENED 2026-10-06 (the TacticalAPI arc, adapter #22): the roster reached twenty-one,
+#: the first count this repository has had to spell with a hyphen, and every anchored pattern
+#: below captured `[a-z]+` — so "twenty-one" matched nowhere, or matched as "one". `spelled()`
+#: already parses the form; only the capture was narrower than the grammar it feeds. Defined here,
+#: above `SITES`, because `SITES` and `SELF_SITES` are built when the module is imported.
+ROSTER_WORD = r"[A-Za-z]+(?:-[a-z]+)?"
 
 
 def spelled(word: str) -> int:
@@ -177,37 +185,37 @@ class Site:
 SITES: tuple[Site, ...] = (
     # The five arithmetic sites the sweep had to fix, in the order the sweep found them.
     Site("README.md", "the shipped-adapter sentence",
-         r"\*\*(?P<n>[A-Za-z]+)\s+integration adapters are shipped and harness-verified\*\*"),
+         rf"\*\*(?P<n>{ROSTER_WORD})\s+integration adapters are shipped and harness-verified\*\*"),
     Site("README.md", "the pair-arithmetic sentence",
          r"N adapters means N\(N−1\)/2 translations and N private notions of \"a contact\" — "
-         r"(?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>[a-z]+) as of today",
+         rf"(?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>{ROSTER_WORD}) as of today",
          translations_group="t"),
     Site("docs/docs/intro.mdx", "the shipped-adapter sentence",
-         r"(?P<n>[A-Za-z]+) integration adapters are shipped and harness-verified —"),
+         rf"(?P<n>{ROSTER_WORD}) integration adapters are shipped and harness-verified —"),
     Site("docs/docs/intro.mdx", "the pair-arithmetic sentence",
          r"N adapters means N\(N−1\)/2 translations and N private notions of what "
-         r"\"a contact\" is — (?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>[a-z]+) as of today",
+         rf"\"a contact\" is — (?P<t>[a-z]+(?:[ -][a-z]+)*?) and (?P<n>{ROSTER_WORD}) as of today",
          translations_group="t"),
     Site("packages/cdm/synapse_cdm/README.md", "the shipped-adapter sentence",
-         r"(?P<n>[A-Za-z]+) integration adapters are shipped: PNTMAP"),
+         rf"(?P<n>{ROSTER_WORD}) integration adapters are shipped: PNTMAP"),
     Site("packages/cdm/synapse_cdm/README.md", "the pair-arithmetic sentence",
-         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
-         r"(?P<n2>[a-z]+) private notions of \"a contact\"",
+         rf"(?P<n>{ROSTER_WORD}) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
+         rf"(?P<n2>{ROSTER_WORD}) private notions of \"a contact\"",
          count_groups=("n", "n2"), translations_group="t"),
     Site("packages/cdm/synapse_cdm/__init__.py", "the shipped-adapter sentence",
-         r"(?P<n>[A-Za-z]+) integration adapters are shipped \(PNTMAP"),
+         rf"(?P<n>{ROSTER_WORD}) integration adapters are shipped \(PNTMAP"),
     Site("packages/cdm/synapse_cdm/__init__.py", "the pair-arithmetic sentence",
-         r"(?P<n>[a-z]+) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
-         r"(?P<n2>[a-z]+) private notions of \"a contact\"",
+         rf"(?P<n>{ROSTER_WORD}) adapters means (?P<t>[a-z]+(?:[ -][a-z]+)*?) translations and "
+         rf"(?P<n2>{ROSTER_WORD}) private notions of \"a contact\"",
          count_groups=("n", "n2"), translations_group="t"),
     # The double-count sentence, in both files that carry it. THE reason this module exists:
     # 94c000a had to repair "seven adapters cannot grow six slightly different opinions".
     Site("docs/docs/cdm/entity.mdx", "the double-count opinions sentence",
-         r"in one place so (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly "
+         rf"in one place so (?P<n>{ROSTER_WORD}) adapters cannot grow (?P<n2>{ROSTER_WORD}) slightly "
          r"different opinions",
          count_groups=("n", "n2")),
     Site("packages/cdm/synapse_cdm/symbology.py", "the double-count opinions sentence",
-         r"so that (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly different "
+         rf"so that (?P<n>{ROSTER_WORD}) adapters cannot grow (?P<n2>{ROSTER_WORD}) slightly different "
          r"opinions",
          count_groups=("n", "n2")),
     # And the sweep protocol's QUOTATION of that sentence, which was two adapters behind the
@@ -217,14 +225,14 @@ SITES: tuple[Site, ...] = (
     # restatement of the same fact — the defect this round found in `SELF_SITES`'s first row, in a
     # second file, on the same sentence.
     Site("packages/cdm/synapse_cdm/README.md", "the protocol's quotation of that sentence",
-         r"both carry \"so that (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly "
+         rf"both carry \"so that (?P<n>{ROSTER_WORD}) adapters cannot grow (?P<n2>{ROSTER_WORD}) slightly "
          r"different opinions\"",
          count_groups=("n", "n2")),
     # A SEVENTH site, added by the CAT034 round's stale-count sweep rather than by a repair.
     # It had never drifted; it had simply never been guarded, and it is the first thing a
     # contributor reads. See the note above `test_the_allowlist_covers_every_site_the_sweep_...`.
     Site("CONTRIBUTING.md", "the shipped-adapter sentence",
-         r"the contract layer that (?P<n>[a-z]+) integration adapters translate into"),
+         rf"the contract layer that (?P<n>{ROSTER_WORD}) integration adapters translate into"),
     # The EIGHTH, and this one arrived the way the first six did — by being WRONG. The SDK
     # close-out sweep found `version.py` arguing the 1.0.0-not-0.x ruling from "ten adapters are
     # shipped and harness-verified, the `Adapter` contract has been stable across all NINE of
@@ -232,8 +240,8 @@ SITES: tuple[Site, ...] = (
     # because it reads as prose either way and because nothing here covered the file. It is a
     # double-count site and it is registered as one.
     Site("packages/cdm/synapse_cdm/version.py", "the contract-stability sentence",
-         r"(?P<n>[a-z]+) adapters are shipped and harness-verified, the ``Adapter`` contract "
-         r"has been stable across all (?P<n2>[a-z]+) of them",
+         rf"(?P<n>{ROSTER_WORD}) adapters are shipped and harness-verified, the ``Adapter`` contract "
+         rf"has been stable across all (?P<n2>{ROSTER_WORD}) of them",
          count_groups=("n", "n2")),
 )
 
@@ -922,8 +930,8 @@ class SelfSite:
 SELF_SITES: tuple[SelfSite, ...] = (
     # The stale one, and the reason this section exists.
     SelfSite("the header's quotation of the double-count sentence",
-             r"both carry the count TWICE in one clause — \"so that (?P<n>[a-z]+) adapters cannot "
-             r"grow (?P<n2>[a-z]+) slightly different opinions\"",
+             rf"both carry the count TWICE in one clause — \"so that (?P<n>{ROSTER_WORD}) adapters "
+             rf"cannot grow (?P<n2>{ROSTER_WORD}) slightly different opinions\"",
              lambda: len(shipped_adapters()), groups=("n", "n2")),
     SelfSite("the check-count section's statement of how long _COLUMNS is",
              r"`harness\._COLUMNS` has (?P<n>[A-Z]+) entries",
@@ -1167,7 +1175,7 @@ PKG_README_SITES: tuple[ReadmeSite, ...] = (
     # load-bearing prose and has to be as right as the accepted one.
     ReadmeSite(
         "step 2's worked divergence between the two pair conventions",
-        r"At today's (?P<n>[a-z]+) adapters it is (?P<ordered>\d+) against (?P<unordered>\d+)\.",
+        rf"At today's (?P<n>{ROSTER_WORD}) adapters it is (?P<ordered>\d+) against (?P<unordered>\d+)\.",
         {
             "n": _roster,
             "ordered": lambda: _roster() * (_roster() - 1),
@@ -1180,7 +1188,8 @@ PKG_README_SITES: tuple[ReadmeSite, ...] = (
     # next adapter like any roster count, so it is derived rather than written.
     ReadmeSite(
         "the fourth register entry's count of adapters with an egress direction",
-        r"affected — (?P<n>[a-z]+) of the (?P<roster>[a-z]+) shipped adapters, every one of which",
+        rf"affected — (?P<n>[a-z]+) of the (?P<roster>{ROSTER_WORD}) shipped adapters, every one of "
+        r"which",
         {
             "n": lambda: len([c for c in shipped_adapters().values()
                               if c.direction != "ingest"]),
@@ -1562,7 +1571,7 @@ def test_the_roster_table_and_the_shipped_adapter_sentence_agree():
         f"the roster table lists a name twice: "
         f"{sorted(n for n in set(tabled) if tabled.count(n) > 1)}"
     )
-    match = re.search(r"(?P<n>[A-Za-z]+) integration adapters are shipped:", flat(text))
+    match = re.search(rf"(?P<n>{ROSTER_WORD}) integration adapters are shipped:", flat(text))
     assert match, "the shipped-adapter sentence has moved; SITES has the anchored form"
     assert spelled(match.group("n")) == len(tabled), (
         f"{PKG_README_PATH} says {match.group('n')!r} integration adapters are shipped and its "
@@ -1694,10 +1703,18 @@ def test_the_reference_adapter_the_readme_calls_the_shortest_is_the_shortest():
 #: The lowest number this sweep will look at. See narrowing 2 above.
 ROSTER_FLOOR = 5
 
+#: WIDENED 2026-10-06 (the TacticalAPI arc, adapter #22): a tens word joined to a unit by one
+#: hyphen is one number, tried BEFORE the bare words so the compound is preferred over its own
+#: first half — the ordering `_NUMBER_WORD` already gives `COUNTED_NOUN`. Until this date the
+#: pattern read "twenty-one adapters" as `twenty`, which would have ruled every correct sentence
+#: stale and every unedited "twenty adapters" correct. Measured on 00f2c91 before the edit and
+#: again on 6bc4805: the widened pattern reads every hit the narrow one reads, with the same number.
+_COMPOUND = rf"(?:{'|'.join(_TENS)})-(?:one|two|three|four|five|six|seven|eight|nine)"
+
 #: A number qualifying the roster's noun, spelled or in digits. See narrowing 1 above.
 ROSTER_COUNT = re.compile(
-    rf"(?<![\w-])(?P<num>{_NUMBER_WORD}|\d{{1,3}})(?:[ -][a-z]+){{0,2}}[ -](?:adapters|harnesses)"
-    r"(?![\w])",
+    rf"(?<![\w-])(?P<num>{_COMPOUND}|{_NUMBER_WORD}|\d{{1,3}})(?:[ -][a-z]+){{0,2}}[ -]"
+    r"(?:adapters|harnesses)(?![\w])",
     re.I,
 )
 
@@ -2304,6 +2321,23 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     # release — so the sentences state the roster, are checked by comparison, and need no row;
     # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
     # job. The retired bytes are not quoted here.
+    # ADDED 2026-10-06 (the TacticalAPI arc, adapter #22), the shape the dis7 landing used: the
+    # notes still describe the 3.2.0 artefact, a roster of twenty, beside one row marked as
+    # postdating it, so the five counts below state a named subset and not the roster. Two of them
+    # share one sentence and one quotation, so four rows cover five counts. The release commit that
+    # rewrites the notes retires all four, and the guard above goes red on any it leaves behind.
+    ('RELEASE_NOTES.md',
+     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 20 shipped adapters at manifest schema 2.1.0`. `ADAPTER_API_VERSION`',
+     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'the `dis7` adapter holds a parsed envelope to acyclicity itself. # Twenty adapters at 3.2.0, all harness-verified — and one more',
+     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'At `v3.2.0` `python -m synapse_cdm.harness --list-adapters` prints `20 adapters registered`.',
+     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'reads the same roster off the installed wheel as `20 adapters, 606 fixture files` and `20 adapters x 2 schema modes, 1172 fixture verdicts, 0 failed`.',
+     "named subset — the roster OF the released version these notes describe; tacticalapi is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),
@@ -2579,7 +2613,7 @@ def test_the_divergent_fixture_dirs_are_what_the_registry_declares():
     same = len(shipped) - len(divergent)
     note = flat(COMMENT_MARKER.sub("", (PKG / "adapter.py").read_text()))
     match = re.search(
-        r"which is true of (?P<n>[a-z]+) of the (?P<roster>[a-z]+) shipped adapters — "
+        rf"which is true of (?P<n>[a-z]+) of the (?P<roster>{ROSTER_WORD}) shipped adapters — "
         r"(?P<list>.*?), and the split below",
         note)
     assert match, (

@@ -1,0 +1,14 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse",
+  "header": {
+    "success": true
+  },
+  "updated_blue_forces": [
+    {
+      "identity": {
+        "uuid_identity": "af3012b2-9c6e-5748-961b-48f15a82528b"
+      },
+      "is_deleted": true
+    }
+  ]
+}

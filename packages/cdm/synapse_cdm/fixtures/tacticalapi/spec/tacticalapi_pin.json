@@ -1,0 +1,629 @@
+{
+  "what_this_is": "The provenance record for every TacticalAPI payload under fixtures/tacticalapi/: the contract the payloads are written to, the INDEPENDENT IMPLEMENTATION that wrote them (protoc), how each file was produced, its SHA-256 and byte count, and where protoc's own readings live, so the decoder's twin is never the only oracle for what a payload holds. House style follows fixtures/c2sim/spec/c2sim_pin.json of this package. No node here pairs a local path with a hash, deliberately: this record pins fixtures, which are the repository's own files, and the contract is not carried here.",
+  "adapter": {
+    "name": "tacticalapi",
+    "ordinal": 22,
+    "direction": "ingest",
+    "fixture_directory": "tacticalapi",
+    "message_types": [
+      "rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+      "rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse"
+    ]
+  },
+  "contract": {
+    "package": "rheinmetall.tactical_api.v0",
+    "edition": "upstream commit 58661c9c5de7db1b944a37f6ed05fe16c603cd0e; the upstream repository has no tag and no release, so the edition is the commit",
+    "files": [
+      "rheinmetall/tactical_api/v0/blue_force_tracking_service.proto",
+      "rheinmetall/tactical_api/v0/blue_force_types.proto",
+      "rheinmetall/tactical_api/v0/own_pose_service.proto",
+      "rheinmetall/tactical_api/v0/position_types.proto",
+      "rheinmetall/tactical_api/v0/service_types.proto",
+      "rheinmetall/tactical_api/v0/situation_object_locations.proto",
+      "rheinmetall/tactical_api/v0/situation_object_types.proto",
+      "rheinmetall/tactical_api/v0/situation_object_updates.proto",
+      "rheinmetall/tactical_api/v0/situation_service.proto",
+      "rheinmetall/tactical_api/v0/types.proto"
+    ],
+    "terms": "The file headers offer two licences, the Eclipse Public License 2.0 or a BSD-style licence, and the upstream repository's licence file holds the Eclipse Public License 2.0 alone. The maintainer ruled on 2026-10-06 that the Eclipse Public License 2.0 governs the files, as that licence file states, and the headers' BSD-style alternative is not taken (docs/tacticalapi-implementation.md of the repository, R8). The upstream README also reserves the publisher's names; the maintainer ruled on 2026-10-06 to keep the interface name without seeking written consent, accepting the risk that reservation names (R9). The upstream README notes that export-control law may apply to using the files; the maintainer ruled on 2026-10-06 that this adapter, which holds field names, numbers and enum values of the publicly published interface and no upstream software or interface definition text, is not a controlled item, and nothing here is classified (R10). Nothing of the files is copied here: payloads hold invented values, and the adapter holds the contract's names and numbers only.",
+    "carried_here": false,
+    "why_not_carried": "The files are held outside every repository under the SYNAPSE_CDM_TACTICALAPI_PROTO_DIR hook, with their record proto_pin.json, and synapse_cdm.normative_binding.resolve verifies each one's SHA-256 against that record before protoc reads any of them. The payloads need no file of the contract to be read: the decoder embeds the field table, and the tests that need protoc report BLOCKED_EXTERNAL_EVIDENCE without it."
+  },
+  "independent_implementation": {
+    "tool": "protoc, with the google/protobuf well-known types that ship with it",
+    "version": "libprotoc 36.2",
+    "taken_on": "2026-10-04",
+    "commands": [
+      "protoc -I\"$SYNAPSE_CDM_TACTICALAPI_PROTO_DIR\" -I<protoc include> --encode=google.protobuf.Any <the ten pinned files> google/protobuf/any.proto < sources/<case>.txtpb > <payload, before any append or surgery>",
+      "protoc -I\"$SYNAPSE_CDM_TACTICALAPI_PROTO_DIR\" -I<protoc include> --decode=google.protobuf.Any <the ten pinned files> google/protobuf/any.proto < <payload> > independent/<case>.any.txtpb",
+      "protoc -I\"$SYNAPSE_CDM_TACTICALAPI_PROTO_DIR\" -I<protoc include> --decode=<the type the type_url names> <the ten pinned files> google/protobuf/any.proto < <the octets of the Any's value> > independent/<case>.value.txtpb"
+    ],
+    "what_it_shows": "protoc wrote every octet of every payload except those a case appends, cuts or rewrites, and the lengths re-encoded around them (listed below per file). independent/ holds protoc's reading of every payload it can read: the envelope (type_url and the value's octets) and the value decoded as the type the type_url names. tests/test_cdm_tacticalapi_fixtures.py reads each twin against those readings and against the source literal, convention by convention of section 2.2 of docs/tacticalapi-implementation.md."
+  },
+  "fixtures_are_synthetic": "Every source is a literal in spec/build_fixtures.py, written on 2026-10-04. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is an invented point in a Baltic exercise area off the Courland coast or, where a zero latitude is the point, on the equator in the Gulf of Guinea, and no file derives from any recorded message.",
+  "regenerate": "python spec/build_fixtures.py, run beside this record with protoc and the pinned contract present; --check regenerates everything in memory and names every file that differs, is missing or is extra. golden/ is the harness's and is not compared. tests/test_cdm_tacticalapi_fixtures.py re-derives every hash below from the files on disk on every run, without protoc.",
+  "fixtures": [
+    {
+      "file": "awkward_symbols_and_codes.binpb",
+      "sha256": "5062bde96370bdf18edb26c2ce67cadf9d805fd8779b0dccc361a4c46cd35977",
+      "bytes": 351
+    },
+    {
+      "file": "awkward_symbols_and_codes.parsed.json",
+      "sha256": "9252e79ae8b01713630ed0bc5accef22c7babd293199657cd9e1df6c083df51c",
+      "bytes": 1629
+    },
+    {
+      "file": "awkward_zeros.binpb",
+      "sha256": "f7cbe4d4973a44d0a6269435a85dc1b7d3bc142eddd468b3ca71af8b6e3bb7ac",
+      "bytes": 197
+    },
+    {
+      "file": "awkward_zeros.parsed.json",
+      "sha256": "9d6efdfc624e6de03d1f1895a6b0c0664388aceb72518fe553dd89543893b392",
+      "bytes": 1166
+    },
+    {
+      "file": "delta_with_deletion.binpb",
+      "sha256": "cb8b24f8c304a9ff7a9b1323f057b54eaea5e95c19545c3298f43bf0f22c333b",
+      "bytes": 238
+    },
+    {
+      "file": "delta_with_deletion.parsed.json",
+      "sha256": "8eaf84cf681d233395619a78b753c0e78ff7eefddad3ced420e6082ea962e32b",
+      "bytes": 1047
+    },
+    {
+      "file": "snapshot_three_forces.binpb",
+      "sha256": "66f50bebd82dfc5ef1b51bd6ddcddeb042da2d3071f9fab4034b5b3e8ec9d9ba",
+      "bytes": 494
+    },
+    {
+      "file": "snapshot_three_forces.parsed.json",
+      "sha256": "3d84bd8bfadd3fcb0af6acabe4398de3f421ca56dcafa0e31125491de4806fd7",
+      "bytes": 2546
+    },
+    {
+      "file": "snapshot_with_unknown_fields.binpb",
+      "sha256": "89d676a5498fdd3a2b4040ec2b84f678d3bc83e96b386abac93f3d665c4c337b",
+      "bytes": 211,
+      "appended_by_hand": [
+        {
+          "at": "",
+          "number": 3,
+          "wire_type": 2,
+          "hex": "4558455243495345204e4f544520414c504841"
+        },
+        {
+          "at": "header",
+          "number": 3,
+          "wire_type": 0,
+          "hex": "02"
+        },
+        {
+          "at": "blue_forces[0]",
+          "number": 11,
+          "wire_type": 0,
+          "hex": "01"
+        },
+        {
+          "at": "blue_forces[1].point_location.geo_point",
+          "number": 6,
+          "wire_type": 0,
+          "hex": "03"
+        }
+      ]
+    },
+    {
+      "file": "snapshot_with_unknown_fields.parsed.json",
+      "sha256": "19dc20fe669edbfbf46a496a3ee4e5608a70165a2cac27e463417087e65d5b6d",
+      "bytes": 1375
+    }
+  ],
+  "cases": {
+    "what": "accepted counterexamples the harness never selects, each read by name in the tests",
+    "files": [
+      {
+        "file": "cases/unknown_field_carried.binpb",
+        "sha256": "89d676a5498fdd3a2b4040ec2b84f678d3bc83e96b386abac93f3d665c4c337b",
+        "bytes": 211,
+        "appended_by_hand": [
+          {
+            "at": "",
+            "number": 3,
+            "wire_type": 2,
+            "hex": "4558455243495345204e4f544520414c504841"
+          },
+          {
+            "at": "header",
+            "number": 3,
+            "wire_type": 0,
+            "hex": "02"
+          },
+          {
+            "at": "blue_forces[0]",
+            "number": 11,
+            "wire_type": 0,
+            "hex": "01"
+          },
+          {
+            "at": "blue_forces[1].point_location.geo_point",
+            "number": 6,
+            "wire_type": 0,
+            "hex": "03"
+          }
+        ]
+      },
+      {
+        "file": "cases/unknown_field_carried.parsed.json",
+        "sha256": "19dc20fe669edbfbf46a496a3ee4e5608a70165a2cac27e463417087e65d5b6d",
+        "bytes": 1375
+      },
+      {
+        "file": "cases/empty_geo_point.binpb",
+        "sha256": "d48ee45b9179ea0f27e6f8696e4ab16c65f43ebf5ba8d26ec224ea68c8d533ff",
+        "bytes": 119
+      },
+      {
+        "file": "cases/empty_geo_point.parsed.json",
+        "sha256": "bc09d2a52052102121670366f82f03e5c5451b07c792191dfda2e4b4feafc367",
+        "bytes": 395
+      },
+      {
+        "file": "cases/empty_successful_response.binpb",
+        "sha256": "4d61066b8bfe2571dc542ce6230606f930ed6996415652b6d9e18fcc19f707ae",
+        "bytes": 77
+      },
+      {
+        "file": "cases/empty_successful_response.parsed.json",
+        "sha256": "f796ff398aea0f9dbd6f419b48de71b627c790ddc5ab4febd66f740bedc34a5b",
+        "bytes": 126
+      },
+      {
+        "file": "cases/deleted_without_timestamps.binpb",
+        "sha256": "d3ad390df5bd5b9515ccd3404ad6a7f976d95860de972a47068a242c98a9a46d",
+        "bytes": 132
+      },
+      {
+        "file": "cases/deleted_without_timestamps.parsed.json",
+        "sha256": "1bafd4d50a512e8d2398c9b1982e73706d41af5c85d6387806e52f8895f6d1e7",
+        "bytes": 299
+      },
+      {
+        "file": "cases/duplicate_identity.binpb",
+        "sha256": "e2422f48eca2f85e9a45a6d9a94e347026f3471e69a95f7ada381d29ca589638",
+        "bytes": 196
+      },
+      {
+        "file": "cases/duplicate_identity.parsed.json",
+        "sha256": "c1f4e3aa9ccc891eccef187ef1968a16e2b444f92a26cd0efcb0197e32e2e5e8",
+        "bytes": 851
+      },
+      {
+        "file": "cases/d_code_second_set_zero.binpb",
+        "sha256": "433c953f6827ca0219920a6c019c1ee49d339348792d0d6673a1dd00b4bcae19",
+        "bytes": 136
+      },
+      {
+        "file": "cases/d_code_second_set_zero.parsed.json",
+        "sha256": "03479014b1cbbdef90579d72d79ac9ca365943194a1c7e3f278eaa8075281886",
+        "bytes": 692
+      },
+      {
+        "file": "cases/unknown_fields_without_carrier.binpb",
+        "sha256": "8894d4d394b8ac665442a11a89b5b84b5fb490f3cf06569883d4ef2849d1cdf4",
+        "bytes": 111,
+        "appended_by_hand": [
+          {
+            "at": "",
+            "number": 3,
+            "wire_type": 2,
+            "hex": "4558455243495345204e4f544520425241564f"
+          },
+          {
+            "at": "header",
+            "number": 3,
+            "wire_type": 0,
+            "hex": "01"
+          }
+        ]
+      },
+      {
+        "file": "cases/unknown_fields_without_carrier.parsed.json",
+        "sha256": "2aa0e343aa240ecbb45742f7afa8f9618eb09e1692f2d94c5ba0725332e0020d",
+        "bytes": 371
+      },
+      {
+        "file": "cases/error_message_without_carrier.binpb",
+        "sha256": "ce3d22b139571bbe36a5e7362b216077c76b43a19f25efc416413a3f99d8cbfb",
+        "bytes": 118
+      },
+      {
+        "file": "cases/error_message_without_carrier.parsed.json",
+        "sha256": "eb60d767e75f06832e8a5b8f105e189980b2721f9cec979ddafe027be0a87af0",
+        "bytes": 188
+      }
+    ]
+  },
+  "malformed": {
+    "what": "refusal payloads for the conformance suite's check H; the reason code each is refused with, and whether the decoder or the adapter refuses it, is tested in tests/test_cdm_tacticalapi_fixtures.py against README.md",
+    "files": [
+      {
+        "file": "malformed/truncated_varint.binpb",
+        "sha256": "adab080840a429d13573ebd994e9718315c25e56b82c575a51753a48c7073869",
+        "bytes": 106,
+        "made_by": "the last octet of the blue force's last_contact_time, the final octet of its seconds varint, removed, and the three enclosing lengths (the Timestamp, the blue force, the Any's value) re-encoded one shorter, so every length is honest and the varint alone runs out",
+        "refused_with": "truncated-varint",
+        "refused_by": "decoder",
+        "protoc_reading": "protoc reads the envelope (independent/truncated_varint.any.txtpb) and refuses the value as rheinmetall.tactical_api.v0.GetBlueForcesResponse (exit status 1)"
+      },
+      {
+        "file": "malformed/length_past_end.binpb",
+        "sha256": "922fe39f28acfd70932e3a1ef3dd599cce2a70bee3b16308de8a6f35e9ba1a76",
+        "bytes": 113,
+        "made_by": "the last eight octets (the longitude's double) cut off, as a capture cut short; the Any's value still declares them",
+        "refused_with": "length-exceeds-input",
+        "refused_by": "decoder",
+        "protoc_reading": "protoc --decode=google.protobuf.Any refuses the payload (exit status 1)"
+      },
+      {
+        "file": "malformed/wire_type_mismatch.binpb",
+        "sha256": "76c7c281e928187a9df55addcc4e5415081e0826ad195f3ad19644f8d1ff5a52",
+        "bytes": 117,
+        "made_by": "the geo_point's latitude (field 1, a double, wire type 1) rewritten as the 32-bit float of the same value (tag 0x0d, wire type 5, four octets), and the three enclosing lengths re-encoded four shorter",
+        "refused_with": "wire-type-mismatch",
+        "refused_by": "decoder",
+        "protoc_reading": "protoc reads both: independent/wire_type_mismatch.any.txtpb and independent/wire_type_mismatch.value.txtpb"
+      },
+      {
+        "file": "malformed/unsupported_message_type.binpb",
+        "sha256": "427107f75f696dd42f63c3ceaf97f4221118e05687e4c8fae84e52e7157f39b5",
+        "bytes": 85,
+        "made_by": "protoc's own encoding of the source, unchanged",
+        "refused_with": "unsupported-message-type",
+        "refused_by": "decoder",
+        "protoc_reading": "protoc reads both: independent/unsupported_message_type.any.txtpb and independent/unsupported_message_type.value.txtpb"
+      },
+      {
+        "file": "malformed/success_false.binpb",
+        "sha256": "45ee55d4401a3315b1da2c69d45b1eeca2efc3817d37e0fabe333266cf61d7cc",
+        "bytes": 134,
+        "made_by": "protoc's own encoding of the source, unchanged",
+        "refused_with": "response-not-successful",
+        "refused_by": "adapter",
+        "protoc_reading": "protoc reads both: independent/success_false.any.txtpb and independent/success_false.value.txtpb"
+      },
+      {
+        "file": "malformed/blue_force_without_identity.binpb",
+        "sha256": "a761a115bfd13536745062ed0809ac32ed45ca49824c87530aea67b5ccd4ed91",
+        "bytes": 142,
+        "made_by": "protoc's own encoding of the source, unchanged",
+        "refused_with": "blue-force-without-identity",
+        "refused_by": "adapter",
+        "protoc_reading": "protoc reads both: independent/blue_force_without_identity.any.txtpb and independent/blue_force_without_identity.value.txtpb"
+      },
+      {
+        "file": "malformed/two_oneof_members.binpb",
+        "sha256": "3ae2804183c10632ea5f57adbe5fdc957e6872475ac9ee9941912a4837887f14",
+        "bytes": 102,
+        "made_by": "an int32_identity (field 3, varint 407) appended to the identity after its string_identity, and the three enclosing lengths (the identity, the blue force, the Any's value) re-encoded",
+        "refused_with": "multiple-oneof-members",
+        "refused_by": "decoder",
+        "protoc_reading": "protoc reads both: independent/two_oneof_members.any.txtpb and independent/two_oneof_members.value.txtpb"
+      },
+      {
+        "file": "malformed/latitude_91.binpb",
+        "sha256": "2adce3f2983515c5955080febc5b4114f7d7ef23ef4bfa4fd42c2d89aa3557df",
+        "bytes": 131,
+        "made_by": "protoc's own encoding of the source, unchanged",
+        "refused_with": "coordinate-out-of-range",
+        "refused_by": "adapter",
+        "protoc_reading": "protoc reads both: independent/latitude_91.any.txtpb and independent/latitude_91.value.txtpb"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "file": "sources/awkward_symbols_and_codes.txtpb",
+      "sha256": "f7829cf10ee6c1f377615f8855408cb4bc36deac59aef42fa1f9d4b9c012e0a7",
+      "bytes": 1878
+    },
+    {
+      "file": "sources/awkward_zeros.txtpb",
+      "sha256": "c08f0c8fbc9eda29748dd42c1cd0bca04e12f1a53ef80251db24418c9340fcdc",
+      "bytes": 2064
+    },
+    {
+      "file": "sources/blue_force_without_identity.txtpb",
+      "sha256": "e38c61f785ebb62e56348344a049e7facef7ea5d8eb94110a2a70a28722fe45d",
+      "bytes": 497
+    },
+    {
+      "file": "sources/d_code_second_set_zero.txtpb",
+      "sha256": "a2fb5443d7ebf5ba507750a690f2a5070276d98e44ad06d9062f857a7f41eeb4",
+      "bytes": 811
+    },
+    {
+      "file": "sources/deleted_without_timestamps.txtpb",
+      "sha256": "54f3d9f744653c9698f7d38fd57e61b77b9749270fea240a19df1e9359ecec02",
+      "bytes": 327
+    },
+    {
+      "file": "sources/delta_with_deletion.txtpb",
+      "sha256": "dc460d4c9fed9417bb958a3b758f9f68f2eba896b8d9dc9343cd2d9865df49ba",
+      "bytes": 1343
+    },
+    {
+      "file": "sources/duplicate_identity.txtpb",
+      "sha256": "c82c2388ed9e80d3eeffbb30e723ebd322b9d26983578d4236feb9700d6c83ae",
+      "bytes": 840
+    },
+    {
+      "file": "sources/empty_geo_point.txtpb",
+      "sha256": "d33bbde90d9d83e6e5594d3e1ef2d0313fd483ad4ce378243123c33c9308d1cb",
+      "bytes": 460
+    },
+    {
+      "file": "sources/empty_successful_response.txtpb",
+      "sha256": "a79bee966ed28523ebd5e0b676d09e8a32068b17cd42992e835b0414401c6870",
+      "bytes": 159
+    },
+    {
+      "file": "sources/error_message_without_carrier.txtpb",
+      "sha256": "c3aeab634925157b520b946d0d0138b66504175298cf89857bd66b1eb29c5afe",
+      "bytes": 364
+    },
+    {
+      "file": "sources/latitude_91.txtpb",
+      "sha256": "4350f6bc302c917db49e3c8f2dc5d83865885e6e11130f491345a122fe6241d2",
+      "bytes": 457
+    },
+    {
+      "file": "sources/length_past_end.txtpb",
+      "sha256": "9e7de564155dedf3082c88b7e997ae5f7778a41c0e2b57a448caa63b68bc04ed",
+      "bytes": 403
+    },
+    {
+      "file": "sources/snapshot_three_forces.txtpb",
+      "sha256": "84dadaee373828b02e6ac58f274bf01a69b3255139d601ea0000849f208483b7",
+      "bytes": 2944
+    },
+    {
+      "file": "sources/snapshot_with_unknown_fields.txtpb",
+      "sha256": "e9806c610a92b2fadee9085e8c757b894c83c7304996975d20002305a91fba3e",
+      "bytes": 1082
+    },
+    {
+      "file": "sources/success_false.txtpb",
+      "sha256": "bef44053a00c2b2d3c2b164338412581b775444acbf297c9fe06fdbbc3f09538",
+      "bytes": 507
+    },
+    {
+      "file": "sources/truncated_varint.txtpb",
+      "sha256": "12f578280fb93a3dfd5818b9520070ab402b7751e047bc52b091a638e878ec67",
+      "bytes": 324
+    },
+    {
+      "file": "sources/two_oneof_members.txtpb",
+      "sha256": "f082a02b6932592803b96b7322d37d274c6940b1af8736c85e2b3863103ed48a",
+      "bytes": 282
+    },
+    {
+      "file": "sources/unknown_field_carried.txtpb",
+      "sha256": "e9806c610a92b2fadee9085e8c757b894c83c7304996975d20002305a91fba3e",
+      "bytes": 1082
+    },
+    {
+      "file": "sources/unknown_fields_without_carrier.txtpb",
+      "sha256": "81bec8fd821f23bf3290bedbd76e9fde092a8d7b723574f51d2676b17cef50fe",
+      "bytes": 378
+    },
+    {
+      "file": "sources/unsupported_message_type.txtpb",
+      "sha256": "36329c15901060d6c8322746aed10e818370ef63171fba01b5ed89f7dd59b02e",
+      "bytes": 215
+    },
+    {
+      "file": "sources/wire_type_mismatch.txtpb",
+      "sha256": "faf079eb5294a436f8252aa98c11e8116dc9514ff408aeab6f5fb8577b005782",
+      "bytes": 396
+    }
+  ],
+  "independent": [
+    {
+      "file": "independent/awkward_symbols_and_codes.any.txtpb",
+      "sha256": "f6f38826637f893a46c5816546d9c1a89d7f40a88eacf71b118ee92f3b9e4008",
+      "bytes": 730
+    },
+    {
+      "file": "independent/awkward_symbols_and_codes.value.txtpb",
+      "sha256": "ef91295c37c030a7b1b0b2a2436bf22cc0bffeb85f91ed0b4a849138de969b4c",
+      "bytes": 1317
+    },
+    {
+      "file": "independent/awkward_zeros.any.txtpb",
+      "sha256": "a8539c683231657b5aa6fc797c7b2351df36cf9b17d1a258c8527aa4800830d4",
+      "bytes": 456
+    },
+    {
+      "file": "independent/awkward_zeros.value.txtpb",
+      "sha256": "ba685089a07ae0179caed3a3515bcc584029e687806be221f9add7aa801d7dcf",
+      "bytes": 895
+    },
+    {
+      "file": "independent/blue_force_without_identity.any.txtpb",
+      "sha256": "ddcf1d586587f6a81cca6cf447d3a3b96280f2ca01c48335a7445a75c18164d5",
+      "bytes": 254
+    },
+    {
+      "file": "independent/blue_force_without_identity.value.txtpb",
+      "sha256": "137eddd3365af2a7a74f6e6d0e4b3f1012842bce02537b34a56ff0ec26f177ec",
+      "bytes": 311
+    },
+    {
+      "file": "independent/d_code_second_set_zero.any.txtpb",
+      "sha256": "c88d5ac9af90085b68c57bfcbce60b811e42d4cac9b5bbab04298cdd523fc3d3",
+      "bytes": 304
+    },
+    {
+      "file": "independent/d_code_second_set_zero.value.txtpb",
+      "sha256": "99369232794007d4101af91cade75c71925a808f5232f40e9472ea693bc32e85",
+      "bytes": 473
+    },
+    {
+      "file": "independent/deleted_without_timestamps.any.txtpb",
+      "sha256": "2bb7e2106c19465bf22cd2a58af1fccce0df2d00512f96cd54fda3a60cf54d43",
+      "bytes": 169
+    },
+    {
+      "file": "independent/deleted_without_timestamps.value.txtpb",
+      "sha256": "f1b87fac3cda6aec778ab9b9ea4520a56dd04be1fb7a189a3037b8063a961758",
+      "bytes": 145
+    },
+    {
+      "file": "independent/delta_with_deletion.any.txtpb",
+      "sha256": "7a2364da670b74983d8cd00aaed2ee8e093bd95692339e57967f6cd46e456701",
+      "bytes": 520
+    },
+    {
+      "file": "independent/delta_with_deletion.value.txtpb",
+      "sha256": "4e921951ebc8130d0fb0bff97900c1280e6d6aae1ce04e2587eb5d56b5be4fb5",
+      "bytes": 868
+    },
+    {
+      "file": "independent/duplicate_identity.any.txtpb",
+      "sha256": "4cefe740c84999429f31ed78666b95098ce53be5e6abf29669d38d847ae4e8b9",
+      "bytes": 371
+    },
+    {
+      "file": "independent/duplicate_identity.value.txtpb",
+      "sha256": "4a269651731ac3bb9d4b722578eaea1e7da081cda8f4034deba2433b2b0bc026",
+      "bytes": 614
+    },
+    {
+      "file": "independent/empty_geo_point.any.txtpb",
+      "sha256": "b0535c53e4d0d5fcdf084df0dc8b6149dada159b9f7a3840d786db15b51dfefd",
+      "bytes": 216
+    },
+    {
+      "file": "independent/empty_geo_point.value.txtpb",
+      "sha256": "c3ca54a82d7416b5fdb53981a7b3749ad1dd333b7d4c32d8a9a9acf34e10ec8f",
+      "bytes": 247
+    },
+    {
+      "file": "independent/empty_successful_response.any.txtpb",
+      "sha256": "f3ee30cf76d53391bcc8b20a6a6911de2a28fef6ec05fdf012d7dcab4a568011",
+      "bytes": 106
+    },
+    {
+      "file": "independent/empty_successful_response.value.txtpb",
+      "sha256": "6aa60a90bb7b43445e8197bfc9574853c46b54e6049e7ba72445324effd0f127",
+      "bytes": 27
+    },
+    {
+      "file": "independent/error_message_without_carrier.any.txtpb",
+      "sha256": "97280392fb4271b33da902cef6cc4b0d5d8218878b19ada321ab3f7e4e046f33",
+      "bytes": 149
+    },
+    {
+      "file": "independent/error_message_without_carrier.value.txtpb",
+      "sha256": "3be9bd4e291d69c7fc90e50ac2dc09279e082692f3271a556d63ec05e292fe2e",
+      "bytes": 100
+    },
+    {
+      "file": "independent/latitude_91.any.txtpb",
+      "sha256": "b8fa5e513ea7fb056505686f3946af1664a9186e7270c7d75da47a61c945dadc",
+      "bytes": 234
+    },
+    {
+      "file": "independent/latitude_91.value.txtpb",
+      "sha256": "9084e83e4a6f7937c717da0880af11dff0055d85069ac74e80737db9cc5ad5dd",
+      "bytes": 306
+    },
+    {
+      "file": "independent/snapshot_three_forces.any.txtpb",
+      "sha256": "13332520fdca13a34613ea5957916b4e5e7a76096f905b211bfea0359e727662",
+      "bytes": 1131
+    },
+    {
+      "file": "independent/snapshot_three_forces.value.txtpb",
+      "sha256": "666e8e1616abdf81f2487f8cdc2dff362b41c1d132d9214b847dc177028a48aa",
+      "bytes": 2215
+    },
+    {
+      "file": "independent/snapshot_with_unknown_fields.any.txtpb",
+      "sha256": "8add1b9809dc1c732dd7d4d0845ab5a0b1f2c28ad0c68a3fa8179aecbae53880",
+      "bytes": 457
+    },
+    {
+      "file": "independent/snapshot_with_unknown_fields.value.txtpb",
+      "sha256": "cf7c147e51285d1f0adc6b94fbf691a0fedb4738f768c3d22232b6aeba09483f",
+      "bytes": 705
+    },
+    {
+      "file": "independent/success_false.any.txtpb",
+      "sha256": "44c06169b04ca6b17d9d95108dfd24445b966e7b2395290a91231d82e6b0a142",
+      "bytes": 207
+    },
+    {
+      "file": "independent/success_false.value.txtpb",
+      "sha256": "9714f93d94e53564d02259eb2fe5c393752e97a4fccc429ec0bffd92d45b02bf",
+      "bytes": 195
+    },
+    {
+      "file": "independent/truncated_varint.any.txtpb",
+      "sha256": "4a095ee75ec044215e6cc75baed18194356b489551e3d5df5caae88bf9d8c634",
+      "bytes": 172
+    },
+    {
+      "file": "independent/two_oneof_members.any.txtpb",
+      "sha256": "f38e546c513cfa856d0cc9f005999b213b1b63f9476b6282b983cdf237b40791",
+      "bytes": 156
+    },
+    {
+      "file": "independent/two_oneof_members.value.txtpb",
+      "sha256": "c309fd4c646fd3c8f6f06c9ef26d93d2912529eeb9430aa27a45d59ba560d6ae",
+      "bytes": 84
+    },
+    {
+      "file": "independent/unknown_field_carried.any.txtpb",
+      "sha256": "8add1b9809dc1c732dd7d4d0845ab5a0b1f2c28ad0c68a3fa8179aecbae53880",
+      "bytes": 457
+    },
+    {
+      "file": "independent/unknown_field_carried.value.txtpb",
+      "sha256": "cf7c147e51285d1f0adc6b94fbf691a0fedb4738f768c3d22232b6aeba09483f",
+      "bytes": 705
+    },
+    {
+      "file": "independent/unknown_fields_without_carrier.any.txtpb",
+      "sha256": "bd0cf27e989512e3a2a4e239f357c5e9e459b1921cd6905046cba57a384f1560",
+      "bytes": 152
+    },
+    {
+      "file": "independent/unknown_fields_without_carrier.value.txtpb",
+      "sha256": "96b4ce35088d94ff8687475f019fbf89afbcb5a412e62449a9fbe22c86504f1b",
+      "bytes": 59
+    },
+    {
+      "file": "independent/unsupported_message_type.any.txtpb",
+      "sha256": "bd600600af01a2c22cb9c399c962af2dffe270e5e78af71bbdca088d45907151",
+      "bytes": 114
+    },
+    {
+      "file": "independent/unsupported_message_type.value.txtpb",
+      "sha256": "6aa60a90bb7b43445e8197bfc9574853c46b54e6049e7ba72445324effd0f127",
+      "bytes": 27
+    },
+    {
+      "file": "independent/wire_type_mismatch.any.txtpb",
+      "sha256": "5f624a10a7d574c66feee9e3953df57e83b4d201be494b2d143efcafe17b56e6",
+      "bytes": 196
+    },
+    {
+      "file": "independent/wire_type_mismatch.value.txtpb",
+      "sha256": "55875fbfc4480fc711cef5d2a2da64bbb9a54bc39bd39fa5b8b06616761bd974",
+      "bytes": 196
+    }
+  ]
+}

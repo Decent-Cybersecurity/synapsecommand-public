@@ -1,0 +1,86 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true
+  },
+  "blue_forces": [
+    {
+      "identity": {
+        "uuid_identity": "7e0789f0-8823-5bcb-b121-3278650b625b"
+      },
+      "last_contact_time": "2026-09-29T06:00:00Z",
+      "callsign": "EXERCISE COBRA 6",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_MIL2525_D",
+        "numeric_identifier": {
+          "first_ten_digits": "1013100015",
+          "second_ten_digits": "1211000000"
+        }
+      },
+      "blue_force_type": {
+        "is_leader": true
+      },
+      "own_blue_force": true,
+      "point_location": {
+        "name": "EXERCISE COBRA CP",
+        "location_time": "2026-09-29T05:59:55.250Z",
+        "geo_point": {
+          "latitude_coordinate": 57.2154,
+          "longitude_coordinate": 20.8732,
+          "vertical_distance": 31.5,
+          "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_WGS84_REFERENCE_ELLIPSOID",
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        }
+      },
+      "associated_organization_unit_identity": {
+        "string_identity": "EXERCISE-BN-3"
+      }
+    },
+    {
+      "identity": {
+        "string_identity": "EXERCISE-VEH-201"
+      },
+      "last_contact_time": "2026-09-29T06:00:02.123456789Z",
+      "callsign": "EXERCISE G\u00c4DDA 2",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_MIL2525_C",
+        "string_identifier": "SFGPEVC--------"
+      },
+      "blue_force_type": {
+        "is_vehicle": true
+      },
+      "point_location": {
+        "location_time": "2026-09-29T06:00:01.987654321Z",
+        "geo_point": {
+          "latitude_coordinate": 57.1987,
+          "longitude_coordinate": 20.9415,
+          "vertical_distance": 4.25,
+          "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_MEAN_SEA_LEVEL",
+          "measurement_code": "MEASUREMENT_CODE_INS"
+        },
+        "course": 247.5,
+        "speed": 8.75
+      }
+    },
+    {
+      "identity": {
+        "int32_identity": 30517
+      },
+      "last_contact_time": "2026-09-29T05:59:20.500Z",
+      "blue_force_type": {
+        "is_unmanned": true
+      },
+      "point_location": {
+        "location_time": "2026-09-29T05:59:19Z",
+        "geo_point": {
+          "latitude_coordinate": 57.2402,
+          "longitude_coordinate": 20.8019,
+          "measurement_code": "MEASUREMENT_CODE_ESTIMATE"
+        }
+      },
+      "mount_host": {
+        "string_identity": "EXERCISE-VEH-201"
+      }
+    }
+  ]
+}

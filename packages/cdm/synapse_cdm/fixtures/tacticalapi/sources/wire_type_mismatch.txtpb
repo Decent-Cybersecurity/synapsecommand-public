@@ -1,0 +1,17 @@
+# Before surgery: one blue force with a latitude that a 32-bit float holds exactly.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-403"
+    }
+    point_location {
+      geo_point {
+        latitude_coordinate: 57.5
+        longitude_coordinate: 21
+      }
+    }
+  }
+}

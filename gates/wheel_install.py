@@ -30,7 +30,8 @@ repository. Every check below is a property of the installed artefact:
 
     closure    every test module is decided: it judges the package, or it judges the repository
     manifest   the wheel's file set equals what git tracks under the package, both directions
-    licences   LICENSE and NOTICE are in .dist-info/licenses/, byte-identical to the originals
+    licences   LICENSE and NOTICE are in .dist-info/licenses/, byte-identical to the originals,
+               and NOTICE states the EPL-2.0 derivation of the tacticalapi field table
     metadata   importlib.metadata reports the distribution and PACKAGE_VERSION
     import     synapse_cdm imports, from site-packages and not from the tree
     resources  every shipped adapter's fixtures resolve through importlib.resources
@@ -316,6 +317,14 @@ REPO_BOUND_TESTS = {
     "test_cdm_dis7_reference.py": "pytest.ini's marker registration at the repository root, and the pinned open-dis-python checkout that SYNAPSE_CDM_OPENDIS_DIR names, driven through git and a child interpreter by tests/dis7_reference_support.py — neither is inside the wheel, and an installed wheel has no marker file for this module to be right about",
     "test_cdm_dis7_mutation.py": "gates/dis7_mutation.py and the DIS7 test modules under tests/, run against a patched temporary copy of packages/cdm — neither the gate nor the test modules ship in the wheel",
     "test_cdm_dis7_benchmark.py": "gates/dis7_benchmark.py, which the wheel does not carry — the reduced benchmark loads that gate by path from the repository",
+    # The TacticalAPI landing (2026-10-06): the adapter's five test modules each import one of its
+    # build-time gates under gates/ and read its record, docs/tacticalapi-implementation.md, at
+    # the repository root, or read the repository's own copies of its files; none of that ships.
+    "test_cdm_tacticalapi_adapter.py": "docs/tacticalapi-implementation.md and manifests/tacticalapi.json at the repository root, and gates/protoc_text.py, which reads protoc's readings of the payloads — the adapter's record, its published manifest and the reader, none of which the wheel carries",
+    "test_cdm_tacticalapi_codec.py": "gates/tacticalapi_field_table.py, which regenerates the codec's field table from the pinned contract, and docs/tacticalapi-implementation.md at the repository root — neither ships in the wheel",
+    "test_cdm_tacticalapi_fixtures.py": "gates/protoc_text.py and gates/tacticalapi_field_table.py, and docs/tacticalapi-implementation.md at the repository root — the text-format reader, the field-table generator and the adapter's record, none of which the wheel carries",
+    "test_cdm_tacticalapi_tools.py": "gates/protoc_text.py, gates/tacticalapi_field_table.py and gates/tacticalapi_contract_comments.py, the adapter's build-time gates, which the wheel does not carry",
+    "test_cdm_tacticalapi_contract_text.py": "gates/tacticalapi_contract_comments.py, tests/tacticalapi_comment_digests.json, docs/tacticalapi-implementation.md and the repository's NOTICE, read as the repository's own files, with the module sets of three other test modules — none of them ships in the wheel",
 }
 
 def source_roster() -> tuple[str, ...]:
@@ -476,6 +485,21 @@ def check_manifest(wheel: pathlib.Path) -> str:
     return f"{len(shipped)} files, equal to git in both directions"
 
 
+#: What the wheel's NOTICE must state about the `tacticalapi` codec's field table, phrase by phrase,
+#: read with its line breaks folded (added 2026-10-06, the TacticalAPI landing). The maintainer
+#: ruled that day that the Eclipse Public License 2.0 governs the interface definition files the
+#: table is derived from (R8, `docs/tacticalapi-implementation.md`) and that NOTICE is the whole
+#: of that ruling's consequence for the wheel's licence metadata, which stays `Apache-2.0`; so the
+#: statement is part of what the `licences` check asserts, and no check is added for it.
+#: `tests/test_cdm_packaging.py` holds both NOTICE copies in the tree to the same phrases.
+NOTICE_DERIVATION = (
+    "The field table embedded in packages/cdm/synapse_cdm/adapters/tacticalapi_codec.py is "
+    "derived from the interface definition files of github.com/Rheinmetall/tacticalapi at "
+    "commit 58661c9",
+    "the Eclipse Public License 2.0 (EPL-2.0) governs those files",
+)
+
+
 def check_licences(wheel: pathlib.Path) -> str:
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
@@ -487,7 +511,14 @@ def check_licences(wheel: pathlib.Path) -> str:
                              "wheel on an index is a redistribution")
             if archive.read(entries[0]) != (REPO / name).read_bytes():
                 raise Failed(f"the wheel's {name} differs from the repository's")
-    return "LICENSE and NOTICE present and byte-identical"
+            if name == "NOTICE":
+                folded = " ".join(archive.read(entries[0]).decode("utf-8").split())
+                missing = [phrase for phrase in NOTICE_DERIVATION if phrase not in folded]
+                if missing:
+                    raise Failed("the wheel's NOTICE does not state the EPL-2.0 derivation of the "
+                                 f"tacticalapi codec's field table: missing {missing}")
+    return ("LICENSE and NOTICE present and byte-identical; NOTICE states the field table's "
+            "EPL-2.0 derivation")
 
 
 def check_no_repo_paths(wheel: pathlib.Path) -> str:

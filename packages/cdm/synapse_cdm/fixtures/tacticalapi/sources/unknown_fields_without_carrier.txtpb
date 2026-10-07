@@ -1,0 +1,8 @@
+# A successful response with no blue force. After protoc wrote it, two fields this contract revision
+# does not define were appended by hand (UNKNOWN_FIELDS_WITHOUT_CARRIER_APPENDS): one on the
+# response, one on the header. No element exists to carry them.
+[type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse] {
+  header {
+    success: true
+  }
+}

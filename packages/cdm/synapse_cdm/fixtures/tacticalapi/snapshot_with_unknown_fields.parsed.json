@@ -1,0 +1,63 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true,
+    "@unknown": [
+      {
+        "number": 3,
+        "wire_type": 0,
+        "hex": "02"
+      }
+    ]
+  },
+  "blue_forces": [
+    {
+      "identity": {
+        "string_identity": "EXERCISE-VEH-310"
+      },
+      "last_contact_time": "2026-09-29T07:00:00Z",
+      "point_location": {
+        "location_time": "2026-09-29T06:59:59Z",
+        "geo_point": {
+          "latitude_coordinate": 57.1502,
+          "longitude_coordinate": 20.7655,
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        }
+      },
+      "@unknown": [
+        {
+          "number": 11,
+          "wire_type": 0,
+          "hex": "01"
+        }
+      ]
+    },
+    {
+      "identity": {
+        "int32_identity": 311
+      },
+      "point_location": {
+        "location_time": "2026-09-29T07:00:01.005Z",
+        "geo_point": {
+          "latitude_coordinate": 57.1611,
+          "longitude_coordinate": 20.7701,
+          "measurement_code": "MEASUREMENT_CODE_GPS",
+          "@unknown": [
+            {
+              "number": 6,
+              "wire_type": 0,
+              "hex": "03"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "@unknown": [
+    {
+      "number": 3,
+      "wire_type": 2,
+      "hex": "4558455243495345204e4f544520414c504841"
+    }
+  ]
+}

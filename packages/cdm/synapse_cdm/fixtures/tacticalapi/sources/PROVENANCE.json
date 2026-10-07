@@ -1,0 +1,174 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "tacticalapi/sources",
+  "fixtures": [
+    {
+      "file": "awkward_symbols_and_codes.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "awkward_zeros.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "blue_force_without_identity.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "d_code_second_set_zero.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "deleted_without_timestamps.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "delta_with_deletion.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "duplicate_identity.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "empty_geo_point.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "empty_successful_response.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "error_message_without_carrier.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "latitude_91.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "length_past_end.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "snapshot_three_forces.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "snapshot_with_unknown_fields.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "success_false.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "truncated_varint.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "two_oneof_members.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "unknown_field_carried.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "unknown_fields_without_carrier.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "unsupported_message_type.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    },
+    {
+      "file": "wire_type_mismatch.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The text-format sources protoc encoded into every payload of this set, written on 2026-10-04 by `spec/build_fixtures.py` from its own literals. Each names its message type in the expanded Any form and holds invented values only: names with EXERCISE, UUIDs that are uuid5 of EXERCISE names, positions in a Baltic exercise area or on the equator."
+    }
+  ]
+}

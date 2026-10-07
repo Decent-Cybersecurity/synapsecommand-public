@@ -1,0 +1,48 @@
+header {
+  success: true
+}
+updated_blue_forces {
+  identity {
+    int64_identity: 9007199254740993
+  }
+  last_contact_time {
+    seconds: 1790662500
+  }
+  callsign {
+    value: "EXERCISE VIPER 3"
+  }
+  blue_force_type {
+    is_vehicle: true
+    is_unmanned: true
+  }
+  point_location {
+    location_time {
+      seconds: 1790662499
+      nanos: 1000
+    }
+    geo_point {
+      latitude_coordinate: 57.3011
+      longitude_coordinate: 21.0544
+      vertical_distance {
+        value: 120
+      }
+      vertical_distance_reference_code: VERTICAL_DISTANCE_REFERENCE_CODE_PRESSURE_DATUM_QNH
+      measurement_code: MEASUREMENT_CODE_GPS
+    }
+    course {
+      value: 12.5
+    }
+    speed {
+      value: 22.5
+    }
+  }
+}
+updated_blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-201"
+  }
+  last_contact_time {
+    seconds: 1790662470
+  }
+  is_deleted: true
+}

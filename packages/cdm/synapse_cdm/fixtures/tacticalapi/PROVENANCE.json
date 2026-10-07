@@ -1,0 +1,86 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "tacticalapi",
+  "fixtures": [
+    {
+      "file": "awkward_symbols_and_codes.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "awkward_symbols_and_codes.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "awkward_zeros.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "awkward_zeros.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "delta_with_deletion.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "delta_with_deletion.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "snapshot_three_forces.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "snapshot_three_forces.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "snapshot_with_unknown_fields.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    },
+    {
+      "file": "snapshot_with_unknown_fields.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic TacticalAPI response payloads written on 2026-10-04 by `spec/build_fixtures.py`: protoc encoded each, wrapped in google.protobuf.Any, from a text source the script holds as its own literal (copied to `sources/`), one has fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered the `.parsed.json` twin beside each. Every name carries the word EXERCISE, every UUID is the uuid5 of an EXERCISE name, every position is invented, and nothing derives from recorded data; hashes and the protoc commands are in `spec/tacticalapi_pin.json`, and protoc's own reading of every payload is under `independent/`, against which `tests/test_cdm_tacticalapi_fixtures.py` holds every twin."
+    }
+  ]
+}

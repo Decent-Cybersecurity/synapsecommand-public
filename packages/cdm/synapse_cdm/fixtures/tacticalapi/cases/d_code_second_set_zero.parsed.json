@@ -1,0 +1,28 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true
+  },
+  "blue_forces": [
+    {
+      "identity": {
+        "int32_identity": 330
+      },
+      "last_contact_time": "2026-09-29T07:07:00Z",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_MIL2525_D",
+        "numeric_identifier": {
+          "first_ten_digits": "1013100015"
+        }
+      },
+      "point_location": {
+        "location_time": "2026-09-29T07:06:59Z",
+        "geo_point": {
+          "latitude_coordinate": 57.1777,
+          "longitude_coordinate": 20.8888,
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        }
+      }
+    }
+  ]
+}

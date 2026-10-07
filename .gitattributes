@@ -69,3 +69,13 @@ packages/cdm/synapse_cdm/fixtures/dis7/contract/** -text
 # compared byte for byte with the vendored vectors they are built from, so they stay as checked in.
 packages/cdm/synapse_cdm/fixtures/dis7/*.parsed.json -text
 packages/cdm/synapse_cdm/fixtures/dis7/malformed/*.json -text
+
+# TacticalAPI blue-force responses: serialized protobuf (`.binpb`), raw binary, marked explicitly
+# for the reason every entry above gives. Added 2026-10-06 in the commit that lands the adapter.
+# The whole fixture directory is held out of line-ending conversion as well: its pin
+# (`fixtures/tacticalapi/spec/tacticalapi_pin.json`) records the SHA-256 of every payload, source,
+# reading and twin, and `spec/build_fixtures.py --check` compares every generated file, the
+# provenance records and the pin included, byte for byte, so a checkout that rewrote one byte
+# would fail both.
+*.binpb -text -diff
+packages/cdm/synapse_cdm/fixtures/tacticalapi/** -text

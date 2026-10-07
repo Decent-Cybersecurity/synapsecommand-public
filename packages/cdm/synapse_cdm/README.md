@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Twenty integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Twenty-one integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -8,9 +8,10 @@ ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar se
 messages, ASTERIX category 062 SDPS system track messages, ASTERIX category 023 CNS/ATM
 ground station and service status reports, STANAG 4586 Edition 3 DLI air-vehicle telemetry,
 GeoJSON (RFC 7946), OGC GeoPackage 1.4.0, C2SIM (SISO-STD-019/020-2020), AIXM 5.1.1 with the
-Digital NOTAM Event Schema 2.0, AIXM 5.2, and the DIS 7 Entity State PDU subset (IEEE 1278.1-2012).
-Without a canonical model in the middle, twenty
-adapters means one hundred and ninety translations and twenty private notions of "a contact".
+Digital NOTAM Event Schema 2.0, AIXM 5.2, the DIS 7 Entity State PDU subset (IEEE 1278.1-2012),
+and the TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`).
+Without a canonical model in the middle, twenty-one
+adapters means two hundred and ten translations and twenty-one private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -38,6 +39,7 @@ With one, an adapter is a thin translator and nothing else.
 | [`aixm511`](adapters/aixm511.py) 1.0.0 | ingest | AIXM 5.1.1 (April 2016) — Airspace, AirportHeliport, Runway, RunwayDirection, Navaid and NavaidEquipment, DesignatedPoint, Route, RouteSegment, Taxiway and the NOTAM feature, plus the Digital NOTAM Event Schema 2.0.m — **one `Entity` per time slice**, the feature's `gml:identifier` its identity and the slice's `gml:validTime` its validity, the `aixm-timeslice/1` block beside a structured residual; an Airspace's drawable slices become `PlanObject` areas; the four pinned Digital NOTAM scenario profiles are read into `attributes.dnotam`, and nothing is resolved against a baseline — `synapse_cdm.aixm_resolve` does that from explicit prior state. XLinks are classified and never fetched, on the shared secure `pyexpat` reader ([`secure_xml`](secure_xml.py)) and the shared codec ([`aixm_codec`](adapters/aixm_codec.py)) |
 | [`aixm52`](adapters/aixm52.py) 1.0.0 | ingest | AIXM 5.2 (schema release 5.2.0, 17 January 2025) — the same families on the 5.2 property tables, read by `aixm511`'s `AixmAdapterBase` under its own `Profile`: the 5.2 namespaces, the added and removed properties held to both schemas by a test, `aixm_version: "5.2"` in the block, and a 5.1.1 document refused as the wrong version. **Digital NOTAM is declared NOT available on 5.2** — no Event schema targets it — rather than claimed |
 | [`dis7`](adapters/dis7.py) 1.0.0 | bidirectional | DIS 7 Entity State PDUs — the Entity State subset of IEEE 1278.1-2012 only: protocol version 7, PDU type 1, protocol family 1, 144 to 4224 octets → one `Entity` per PDU, the position projected from ECEF to WGS 84 and the whole PDU kept in a structured residual; an unchanged `Entity` → the original PDU, **byte for byte**, on its own tested codec layer ([`dis7_codec`](adapters/dis7_codec.py)). Every other PDU type and protocol version is refused with a coded error; the state instant is the caller's, never the DIS timestamp or a clock |
+| [`tacticalapi`](adapters/tacticalapi.py) 1.0.0 | ingest | TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`, upstream commit `58661c9`) — one `GetBlueForcesResponse` snapshot or one `SubscribeBlueForceEventsResponse` stream update, as a serialized `google.protobuf.Any` or its dict twin → one `Entity` and one `Event` (`TRACK_UPDATE`, or `STATUS_CHANGE` for a deleted entry) **per blue force**, in list order, the entry carried whole in the `tacticalapi-blueforce/1` typed block and every field the contract does not name in a structured residual, on its own tested wire reader ([`tacticalapi_codec`](adapters/tacticalapi_codec.py)). **Affiliation is `UNKNOWN` unless the caller supplies one** — the message carries no affiliation field — and a symbol is taken only from a MIL-STD-2525D numeric code. Encodings a lenient protobuf parser would repair are refused by name; gRPC framing and the stream stay with the caller |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -340,7 +342,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fourteen of the twenty
+clone. Every adapter that declares an egress direction was affected — fourteen of the twenty-one
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the three that shipped since
 (`geojson`, `c2sim`, `dis7`) declared theirs from the start. The second
@@ -385,10 +387,10 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's twenty adapters it is 380 against 190.
+   contradiction. At today's twenty-one adapters it is 420 against 210.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that twenty adapters cannot grow twenty slightly
-   different opinions", and commit 94c000a had to repair that sentence half-updated —
+   `docs/docs/cdm/entity.mdx` both carry "so that twenty-one adapters cannot grow twenty-one
+   slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
    a private name key, and it had been undercounting itself by one adapter since adapter #6. A
@@ -812,6 +814,36 @@ writes stdout and writes no file.
 The adapter and the command are part of the distribution built from this tree; no release before
 3.2.0 carries them, and `synapse-dis7 --version` prints the package version of the build it runs
 from. The reference page is https://docs.synapsecommand.com/cdm/dis7.
+
+## TacticalAPI blue-force read side: the `tacticalapi` adapter
+
+One TacticalAPI blue-force response (`rheinmetall.tactical_api.v0`, upstream commit `58661c9`) —
+a `GetBlueForcesResponse` snapshot or a `SubscribeBlueForceEventsResponse` stream update, as a
+serialized `google.protobuf.Any` or its dict twin — becomes one `Entity` and one `Event` per blue
+force, in list order. The adapter is ingest only: it holds no session, reads no network and keeps
+nothing between two calls, so a stream is a sequence of calls and gRPC framing stays with the
+caller.
+
+```python
+from synapse_cdm.adapters.tacticalapi import TacticalapiAdapter
+from synapse_cdm.enums import Affiliation
+
+adapter = TacticalapiAdapter(affiliation=Affiliation.FRIENDLY)
+objects = adapter.to_cdm(any_bytes)    # Entity, Event, Entity, Event, ...
+```
+
+The message carries no affiliation field, so every Entity is `UNKNOWN` unless the caller supplies
+one of the four `Affiliation` members, keyword-only, as above; anything else is refused when the
+adapter is built, and a supplied affiliation is compared with nothing in the message. A symbol
+becomes `Entity.symbol` only when it is a MIL-STD-2525D numeric code, and nothing is converted.
+
+This repository is not affiliated with, endorsed by or reviewed by the interface's publisher; the
+name says which published contract the adapter reads. The field table the adapter carries holds
+field names, field numbers and enum values derived from the contract's interface definition
+files, which the Eclipse Public License 2.0 governs; `NOTICE` states the derivation.
+
+The `tacticalapi` adapter is not part of the published 3.2.0 distribution; it ships with the first
+release after it. The reference page is https://docs.synapsecommand.com/cdm/tacticalapi.
 
 ## Layout
 

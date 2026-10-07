@@ -1,0 +1,20 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse",
+  "header": {
+    "success": true,
+    "@unknown": [
+      {
+        "number": 3,
+        "wire_type": 0,
+        "hex": "01"
+      }
+    ]
+  },
+  "@unknown": [
+    {
+      "number": 3,
+      "wire_type": 2,
+      "hex": "4558455243495345204e4f544520425241564f"
+    }
+  ]
+}

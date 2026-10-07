@@ -1,0 +1,36 @@
+# One identity twice in one message, ten seconds and a few metres apart.
+[type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse] {
+  header {
+    success: true
+  }
+  updated_blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-305"
+    }
+    point_location {
+      location_time {
+        seconds: 1790665500
+      }
+      geo_point {
+        latitude_coordinate: 57.205
+        longitude_coordinate: 20.9001
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+    }
+  }
+  updated_blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-305"
+    }
+    point_location {
+      location_time {
+        seconds: 1790665510
+      }
+      geo_point {
+        latitude_coordinate: 57.2071
+        longitude_coordinate: 20.9033
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+    }
+  }
+}

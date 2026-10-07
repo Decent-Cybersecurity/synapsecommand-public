@@ -1,0 +1,467 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN: the message carries no affiliation field. The BlueForceTracking service's own definition names the members of this list blue forces, which is a statement about the service and not a field of the message, so the adapter asserts no affiliation from it or from the deployment context a message arrives in; nothing is read from a symbol code. A caller that knows the affiliation supplies it: TacticalapiAdapter(affiliation=...) (R3, ruled 2026-10-06)",
+      "entity_id_basis": "identity.uuid_identity: the blue force's own identity, keyed as <member>:<value> so two members holding one value stay two identities",
+      "entity_type_basis": "UNKNOWN: blue_force_type sets neither is_vehicle nor is_unmanned true; a proto3 bool has no presence, so false and unset are one reading and 'not a vehicle' is not readable as a person or a unit",
+      "position_basis": "point_location.geo_point latitude_coordinate and longitude_coordinate, read as WGS 84 decimal degrees: the contract states the ellipsoid and no angular unit (limitation coordinate-unit-not-stated)",
+      "position_source_basis": "GNSS: geo_point.measurement_code MEASUREMENT_CODE_GPS (2)",
+      "symbol_basis": "symbol.numeric_identifier with symbol_catalog SYMBOL_CATALOG_MIL2525_D: first_ten_digits followed by second_ten_digits zero-padded to ten digits, not rewritten",
+      "tacticalapi": {
+        "blue_force": {
+          "associated_organization_unit_identity": {
+            "string_identity": "EXERCISE-BN-3"
+          },
+          "blue_force_type": {
+            "is_leader": true
+          },
+          "callsign": "EXERCISE COBRA 6",
+          "identity": {
+            "uuid_identity": "7e0789f0-8823-5bcb-b121-3278650b625b"
+          },
+          "last_contact_time": "2026-09-29T06:00:00Z",
+          "own_blue_force": true,
+          "point_location": {
+            "geo_point": {
+              "latitude_coordinate": 57.2154,
+              "longitude_coordinate": 20.8732,
+              "measurement_code": "MEASUREMENT_CODE_GPS",
+              "vertical_distance": 31.5,
+              "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_WGS84_REFERENCE_ELLIPSOID"
+            },
+            "location_time": "2026-09-29T05:59:55.250Z",
+            "name": "EXERCISE COBRA CP"
+          },
+          "symbol": {
+            "numeric_identifier": {
+              "first_ten_digits": "1013100015",
+              "second_ten_digits": "1211000000"
+            },
+            "symbol_catalog": "SYMBOL_CATALOG_MIL2525_D"
+          }
+        },
+        "contract": "tacticalapi-blueforce/1",
+        "message": {
+          "header": {
+            "success": true
+          },
+          "index": 0,
+          "list": "blue_forces",
+          "type": "rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+          "type_url": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse"
+        }
+      },
+      "valid_from_basis": "point_location.location_time"
+    },
+    "confidence": null,
+    "entity_id": "f726d2e0-25e0-5961-acdf-6926b3ee7fba",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 31.5,
+      "lat": 57.2154,
+      "lon": 20.8732,
+      "position_source": "GNSS",
+      "vertical": {
+        "reference": "HAE",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 31.5
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "uuid_identity:7e0789f0-8823-5bcb-b121-3278650b625b",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null,
+    "symbol": "10131000151211000000",
+    "valid_from": "2026-09-29T05:59:55.250Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "68198114-b459-5678-88dc-92eee95153b4",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        20.8732,
+        57.2154
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-29T05:59:55.250Z",
+    "oes": null,
+    "payload": {
+      "contract": "tacticalapi-blueforce/1",
+      "event_id_basis": "identity.uuid_identity + observed_at as rendered: one report of one blue force at one instant",
+      "observed_at_basis": "point_location.location_time",
+      "severity_basis": "INFO: the contract carries no urgency field; INFO is the format's silence"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "f726d2e0-25e0-5961-acdf-6926b3ee7fba"
+    ],
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "uuid_identity:7e0789f0-8823-5bcb-b121-3278650b625b",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN: the message carries no affiliation field. The BlueForceTracking service's own definition names the members of this list blue forces, which is a statement about the service and not a field of the message, so the adapter asserts no affiliation from it or from the deployment context a message arrives in; nothing is read from a symbol code. A caller that knows the affiliation supplies it: TacticalapiAdapter(affiliation=...) (R3, ruled 2026-10-06)",
+      "course_basis": "point_location.course in degrees as stated, read as degrees true: the contract states degrees and no north reference, so the north reference is ASSUMED true, which Kinematics.course_deg means (limitation course-reference-not-stated; R5, ruled 2026-10-06)",
+      "entity_id_basis": "identity.string_identity: the blue force's own identity, keyed as <member>:<value> so two members holding one value stay two identities",
+      "entity_type_basis": "PLATFORM: blue_force_type.is_vehicle true",
+      "position_basis": "point_location.geo_point latitude_coordinate and longitude_coordinate, read as WGS 84 decimal degrees: the contract states the ellipsoid and no angular unit (limitation coordinate-unit-not-stated)",
+      "position_source_basis": "INERTIAL: geo_point.measurement_code MEASUREMENT_CODE_INS (3)",
+      "symbol_basis": "not promoted: symbol_catalog SYMBOL_CATALOG_MIL2525_C; only a SYMBOL_CATALOG_MIL2525_D numeric code becomes Entity.symbol, no converter exists for another catalog and none is written, and the symbol stays in the typed block",
+      "tacticalapi": {
+        "blue_force": {
+          "blue_force_type": {
+            "is_vehicle": true
+          },
+          "callsign": "EXERCISE G\u00c4DDA 2",
+          "identity": {
+            "string_identity": "EXERCISE-VEH-201"
+          },
+          "last_contact_time": "2026-09-29T06:00:02.123456789Z",
+          "point_location": {
+            "course": 247.5,
+            "geo_point": {
+              "latitude_coordinate": 57.1987,
+              "longitude_coordinate": 20.9415,
+              "measurement_code": "MEASUREMENT_CODE_INS",
+              "vertical_distance": 4.25,
+              "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_MEAN_SEA_LEVEL"
+            },
+            "location_time": "2026-09-29T06:00:01.987654321Z",
+            "speed": 8.75
+          },
+          "symbol": {
+            "string_identifier": "SFGPEVC--------",
+            "symbol_catalog": "SYMBOL_CATALOG_MIL2525_C"
+          }
+        },
+        "contract": "tacticalapi-blueforce/1",
+        "message": {
+          "header": {
+            "success": true
+          },
+          "index": 1,
+          "list": "blue_forces",
+          "type": "rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+          "type_url": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse"
+        }
+      },
+      "valid_from_basis": "point_location.location_time"
+    },
+    "confidence": null,
+    "entity_id": "2b5b0ab6-df93-5704-85bd-ed8c4be103fb",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 247.5,
+      "speed_mps": 8.75
+    },
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.1987,
+      "lon": 20.9415,
+      "position_source": "INERTIAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 4.25
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "string_identity:EXERCISE-VEH-201",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-09-29T06:00:01.987Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "d97046c3-d0f2-571c-8c11-c57138cf5964",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        20.9415,
+        57.1987
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-29T06:00:01.987Z",
+    "oes": null,
+    "payload": {
+      "contract": "tacticalapi-blueforce/1",
+      "event_id_basis": "identity.string_identity + observed_at as rendered: one report of one blue force at one instant",
+      "observed_at_basis": "point_location.location_time",
+      "severity_basis": "INFO: the contract carries no urgency field; INFO is the format's silence"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2b5b0ab6-df93-5704-85bd-ed8c4be103fb"
+    ],
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "string_identity:EXERCISE-VEH-201",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN: the message carries no affiliation field. The BlueForceTracking service's own definition names the members of this list blue forces, which is a statement about the service and not a field of the message, so the adapter asserts no affiliation from it or from the deployment context a message arrives in; nothing is read from a symbol code. A caller that knows the affiliation supplies it: TacticalapiAdapter(affiliation=...) (R3, ruled 2026-10-06)",
+      "entity_id_basis": "identity.int32_identity: the blue force's own identity, keyed as <member>:<value> so two members holding one value stay two identities",
+      "entity_type_basis": "PLATFORM: blue_force_type.is_unmanned true",
+      "position_basis": "point_location.geo_point latitude_coordinate and longitude_coordinate, read as WGS 84 decimal degrees: the contract states the ellipsoid and no angular unit (limitation coordinate-unit-not-stated)",
+      "position_source_basis": "MANUAL: geo_point.measurement_code MEASUREMENT_CODE_ESTIMATE (4)",
+      "symbol_basis": "no symbol: the element states none, and none is derived from the affiliation (R4, ruled 2026-10-06)",
+      "tacticalapi": {
+        "blue_force": {
+          "blue_force_type": {
+            "is_unmanned": true
+          },
+          "identity": {
+            "int32_identity": 30517
+          },
+          "last_contact_time": "2026-09-29T05:59:20.500Z",
+          "mount_host": {
+            "string_identity": "EXERCISE-VEH-201"
+          },
+          "point_location": {
+            "geo_point": {
+              "latitude_coordinate": 57.2402,
+              "longitude_coordinate": 20.8019,
+              "measurement_code": "MEASUREMENT_CODE_ESTIMATE"
+            },
+            "location_time": "2026-09-29T05:59:19Z"
+          }
+        },
+        "contract": "tacticalapi-blueforce/1",
+        "message": {
+          "header": {
+            "success": true
+          },
+          "index": 2,
+          "list": "blue_forces",
+          "type": "rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+          "type_url": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse"
+        }
+      },
+      "valid_from_basis": "point_location.location_time"
+    },
+    "confidence": null,
+    "entity_id": "de06ae33-eb22-5ddd-9289-cfd6a10306e3",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.2402,
+      "lon": 20.8019,
+      "position_source": "MANUAL",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "int32_identity:30517",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-09-29T05:59:19.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "09ce4f4b-4b2b-528d-8295-a14a3bf663e6",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        20.8019,
+        57.2402
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-09-29T05:59:19.000Z",
+    "oes": null,
+    "payload": {
+      "contract": "tacticalapi-blueforce/1",
+      "event_id_basis": "identity.int32_identity + observed_at as rendered: one report of one blue force at one instant",
+      "observed_at_basis": "point_location.location_time",
+      "severity_basis": "INFO: the contract carries no urgency field; INFO is the format's silence"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "de06ae33-eb22-5ddd-9289-cfd6a10306e3"
+    ],
+    "residual": {
+      "data": {
+        "unknown": []
+      },
+      "namespace": "TacticalAPI"
+    },
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tacticalapi",
+      "adapter_version": "1.0.0",
+      "format_name": "TacticalAPI",
+      "format_version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "TacticalAPI",
+      "transformations": []
+    },
+    "source_ids": [
+      {
+        "external_id": "int32_identity:30517",
+        "system": "TacticalAPI"
+      }
+    ],
+    "status": null
+  }
+]

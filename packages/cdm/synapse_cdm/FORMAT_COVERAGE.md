@@ -66,6 +66,8 @@ run is a guess with a table around it.
 | `dis7 1.0.0` | implemented by `adapters/dis7.py` on the codec in `adapters/dis7_codec.py`, with a binary fixture, its parsed twin and a golden file |
 | `dis7 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`) under `residual.data`; names no gap |
 | `dis7 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `tacticalapi 1.0.0` | implemented by `adapters/tacticalapi.py` on the wire reader in `adapters/tacticalapi_codec.py`, with a binary fixture, its parsed twin and a golden file (landed 2026-10-06) |
+| `tacticalapi 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`, `Event.residual`) at its own relative path under `residual.data.response` (the message and its header) or `residual.data.blue_force` (the element's, on the Entity only), and is listed with the path of the message that held it in `residual.data.unknown`, which every Entity and every Event carries, `[]` when nothing is unknown — the seventh adapter to use the container; names no gap (landed 2026-10-06) |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -272,6 +274,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 19 | `aixm511` | shipped | `adapters/aixm511.py`, whose docstring opens by claiming adapter #19 (ingest only, the fourth `residual: structured` adapter), this document's AIXM 5.1.1 section, `fixtures/aixm511/spec/aixm511_pin.json`, `fixtures/aixm511/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter whose objects are TIME SLICES of a feature** — one Entity per `aixm:timeSlice`, the feature's `gml:identifier` its stable identity, the slice's `gml:validTime` its validity, and nothing resolved against a baseline (the separate `aixm_resolve` does that, from explicit prior state) — the first to share a codec (`aixm_codec.py`) with the AIXM 5.2 adapter that does not exist yet, parameterised by the namespaces each version owns, and since phase 5 the reader of the Digital NOTAM Event Schema 2.0.m on the same documents (the four pinned scenario profiles, `attributes.dnotam`)
 | 20 | `aixm52` | shipped | `adapters/aixm52.py`, whose docstring opens by claiming adapter #20 (ingest only, the fifth `residual: structured` adapter), this document's AIXM 5.2 section, `fixtures/aixm52/spec/aixm52_pin.json`, `fixtures/aixm52/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter that is a second profile on another adapter's reader**: `aixm511.AixmAdapterBase` (abstract, registers no name) reads both versions from a `Profile` — namespaces, pinned property paths, the parsed twin's list-shape table, the ElevatedPoint group — so a 5.2 structure that differs from 5.1.1 is mapped by its own table row and never by a namespace substitution; Digital NOTAM is declared NOT available on 5.2 (no Event schema targets it) rather than claimed |
 | 21 | `dis7` | shipped | `adapters/dis7.py`, whose docstring claims the ordinal, and `fixtures/dis7/README.md`. One DIS 7 Entity State PDU becomes one `Entity`, and the unchanged Entity gives the original octets back. The row was at Phase 1 while only the vendored vectors, the contract files and `fixtures/dis7/spec/dis7_pin.json` existed; the class, the harness fixtures and their goldens landed together |
+| 22 | `tacticalapi` | shipped | `adapters/tacticalapi.py`, whose docstring claims the ordinal, `fixtures/tacticalapi/README.md` and `fixtures/tacticalapi/spec/tacticalapi_pin.json`, which records it beside the adapter's name. One TacticalAPI blue-force response becomes an `Entity` and an `Event` per blue force, ingest only, the seventh `residual: structured` adapter. Built and verified out of tree against the contract at upstream commit `58661c9` before it landed on 2026-10-06; the class, the fixture set, its goldens and its tests landed together, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -285,6 +288,8 @@ ordinal — the same reason `test_cdm_prose_counts.py` exists for the adapter *c
 reason the STANAG 4609 pin rows are asserted as one composite string rather than three substrings.
 `dis7` at #21 was a second Phase 1 row from the round that vendored its vectors until its class,
 fixtures and goldens landed together, which returned the count to one.
+`tacticalapi` at #22 landed on 2026-10-06 with its class, fixtures, goldens and tests in one
+change and was never at Phase 1 here, so the count stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -14970,6 +14975,47 @@ never read from the octets or the clock. Fixtures: `fixtures/dis7/`; pin record:
 | an unchanged Entity back to its PDU | `Entity.residual` | `dis7 1.0.0 · egress` | Replay writes the octets of `wire_hex`, byte for byte. An edited Entity is refused `E_REPLAY_SHAPE`, `E_REPLAY_PROVENANCE` or `E_REPLAY_CHANGED` |
 | any header other than 7, 1, 1: DIS 6, Fire, Detonation, Collision, Entity State Update (type 67), radio, simulation management | — | refused | Refused `E_HEADER_UNSUPPORTED` at `byte[0]`, `byte[2]` or `byte[3]` |
 | a truncated, extended or concatenated PDU; more than 4224 octets | — | refused | A length disagreement is refused `E_LENGTH_MISMATCH`; more than 4224 octets is refused `E_INPUT_LIMIT` |
+
+## TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`, commit 58661c9) — ingest only
+
+Adapter #22, `adapters/tacticalapi.py` on `adapters/tacticalapi_codec.py`, ingest only, the
+seventh adapter to declare `residual: structured`, landed 2026-10-06. It reads the two read-side
+responses of the blue-force tracking service, `GetBlueForcesResponse` and
+`SubscribeBlueForceEventsResponse`, one per call, as a serialized `google.protobuf.Any` or its
+parsed twin, and nothing else of the contract. The wire reader embeds the contract's field table,
+field names, field numbers and enum values only, derived from the interface definition files at
+upstream commit `58661c9`, which has no tag or release; the Eclipse Public License 2.0 governs
+those files (`NOTICE`). No server, client or captured message has been exercised, and this
+repository is not affiliated with the interface's publisher. The adapter's record, rulings and
+open items are in the repository's `docs/tacticalapi-implementation.md`. Fixtures:
+`fixtures/tacticalapi/`; pin record: `fixtures/tacticalapi/spec/tacticalapi_pin.json`.
+
+| TacticalAPI blue-force response | CDM field | Status | Notes |
+|---|---|---|---|
+| `header.success` absent or false | — | refused | Refused `response-not-successful`, quoting `error_message` when one is present |
+| `header.error_message` on a successful response | `Entity.attributes` | `tacticalapi 1.0.0` | Kept in the typed block `tacticalapi-blueforce/1`, in its `message` member, with the type name, the `type_url`, the list name and the element's index |
+| each element of `blue_forces` / `updated_blue_forces` | `Entity.attributes` | `tacticalapi 1.0.0` | The element whole, known fields only, values as stated, in the typed block's `blue_force` member. One Entity and then one Event per element, in list order; two elements with one identity are both kept |
+| `identity` (its one set member) | `Entity.entity_id`, `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `tacticalapi 1.0.0` | System `TacticalAPI`, external id `<member>:<value>`, so the text `7` and the integer `7` stay two identities; nothing is trimmed or case-folded. No member set is refused `blue-force-without-identity`, an empty string `empty-identity` |
+| `point_location.location_time`, `last_contact_time` | `Entity.valid_from`, `Event.observed_at` | `tacticalapi 1.0.0` | The location time, else the last contact time, else the injected clock; a Timestamp of seconds 0 and nanos 0 is passed over like an absent one, and `valid_from_basis` / `observed_at_basis` say which applied |
+| the receipt | `Event.received_at` | `tacticalapi 1.0.0` | Always the injected clock, read once per message |
+| (no affiliation field) | `Entity.affiliation` | `tacticalapi 1.0.0` | `UNKNOWN`, unless the caller passes one of the four members as `TacticalapiAdapter(affiliation=...)` (R3, ruled 2026-10-06); never read from a symbol, and a supplied one is compared with nothing in the message |
+| `blue_force_type.is_vehicle`, `blue_force_type.is_unmanned` | `Entity.entity_type` | `tacticalapi 1.0.0` | PLATFORM when either is true, else UNKNOWN with its basis: a false `bool` and an unset one are the same octets |
+| `symbol`, MIL-STD-2525D numeric form | `Entity.symbol` | `tacticalapi 1.0.0` | The first set followed by the second zero-padded to ten digits, not rewritten (R4, ruled 2026-10-06). Any other symbol stays in the typed block, and none is derived |
+| `point_location.geo_point.latitude_coordinate`, `.longitude_coordinate` | `Entity.position`, `Position.lat`, `Position.lon`, `Event.geometry` | `tacticalapi 1.0.0` | WGS 84 decimal degrees, the unit inferred (the contract states none). No position when neither coordinate is on the wire, because proto3 cannot tell an unset pair from 0°N 0°E; out of range is refused `coordinate-out-of-range` |
+| `point_location.geo_point.vertical_distance` with `vertical_distance_reference_code` | `Position.vertical`, `Position.alt_m` | `tacticalapi 1.0.0` | Metres under the reference the code names; `alt_m` only for the ellipsoid code 11. No datum conversion |
+| `point_location.geo_point.measurement_code` | `Position.position_source` | `tacticalapi 1.0.0` | GPS → GNSS, INS → INERTIAL, ESTIMATE → MANUAL, any other code → ESTIMATED with the code in `position_source_basis` |
+| `point_location.speed` | `Entity.kinematics`, `Kinematics.speed_mps` | `tacticalapi 1.0.0` | Metres per second as stated; a negative speed is refused `negative-speed` |
+| `point_location.course` in [0, 360) | `Kinematics.course_deg` | `tacticalapi 1.0.0` | Degrees as stated, the north reference assumed true and said so in `course_basis` (R5, ruled 2026-10-06). A course of 360 or outside the range stays in the typed block, not normalised |
+| `is_deleted` true | `Entity.status`, `Event.event_type` | `tacticalapi 1.0.0` | State `is_deleted` in the namespace `TacticalAPI` and a `STATUS_CHANGE` event; no `valid_to` is invented (R6, ruled 2026-10-06). Otherwise no status and a `TRACK_UPDATE` |
+| the report the element is | `Event.severity`, `Event.related_entities`, `Event.payload`, `Event.source_ids` | `tacticalapi 1.0.0` | Severity INFO (the contract carries no urgency); the Entity as the related entity; the payload holds the contract name and the bases; the identity as on the Entity |
+| the element's index in its list | `SourceRef.record_index` | `tacticalapi 1.0.0` | 0-based, on the Entity and on its Event alike |
+| `callsign`, `own_blue_force`, `blue_force_type.is_leader`, `point_location.name`, `mount_host`, `associated_organization_unit_identity` | `Entity.attributes` | `tacticalapi 1.0.0` | Typed block only; no canonical field, and no entity is derived for a mount host or an organisation unit |
+| message- and header-level fields the contract does not name | `Entity.residual`, `Event.residual` | `tacticalapi 1.0.0 · residual` | At their own paths under `residual.data.response` and listed in `residual.data.unknown`, on every Entity and every Event of the message; every copy counts against the two carried-copy bounds |
+| the element's fields the contract does not name | `Entity.residual` | `tacticalapi 1.0.0 · residual` | Under `residual.data.blue_force` and listed in `residual.data.unknown`, on that element's Entity only |
+| nothing unknown | `Entity.residual`, `Event.residual` | `tacticalapi 1.0.0 · residual` | `residual.data.unknown` is `[]`, so every object carries a residual whose data is never empty (2026-10-06, the landing) |
+| any other message of the contract, any other `type_url` | — | refused | Refused `unsupported-message-type` or `malformed-type-url`, the `type_url` quoted |
+| a singular field twice, two members of one oneof, a named field with another wire type, an out-of-range varint | — | refused | Refused `repeated-singular-field`, `multiple-oneof-members`, `wire-type-mismatch`, `value-out-of-range` or `varint-too-long`; nothing a lenient protobuf parser would repair is repaired |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
 
 ## Gaps, and what each one costs
 

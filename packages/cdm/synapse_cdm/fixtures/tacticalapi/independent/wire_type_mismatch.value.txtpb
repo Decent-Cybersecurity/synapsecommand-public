@@ -1,0 +1,14 @@
+header {
+  success: true
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-403"
+  }
+  point_location {
+    geo_point {
+      longitude_coordinate: 21
+      1: 0x42660000
+    }
+  }
+}

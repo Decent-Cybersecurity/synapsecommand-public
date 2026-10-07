@@ -1,0 +1,7 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true,
+    "error_message": "EXERCISE partial: 3 units unreachable"
+  }
+}

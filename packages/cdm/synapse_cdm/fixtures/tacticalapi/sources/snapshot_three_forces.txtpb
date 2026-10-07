@@ -1,0 +1,118 @@
+# A snapshot (GetBlueForces) of three blue forces in a Baltic exercise area, keyed by three of the
+# four identity kinds (a uuid, a string, an int32). The first carries a MIL-STD-2525D numeric symbol
+# and a height on the WGS 84 ellipsoid; the second a 2525C string symbol, a height at mean sea
+# level and a non-ASCII callsign; the third is unmanned, mounted on the second, with no height.
+# Fractional seconds in 3 and 9 digits.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      uuid_identity: "7e0789f0-8823-5bcb-b121-3278650b625b"
+    }
+    last_contact_time {
+      seconds: 1790661600
+    }
+    callsign {
+      value: "EXERCISE COBRA 6"
+    }
+    symbol {
+      symbol_catalog: SYMBOL_CATALOG_MIL2525_D
+      numeric_identifier {
+        first_ten_digits: 1013100015
+        second_ten_digits: 1211000000
+      }
+    }
+    blue_force_type {
+      is_leader: true
+    }
+    own_blue_force: true
+    point_location {
+      name {
+        value: "EXERCISE COBRA CP"
+      }
+      location_time {
+        seconds: 1790661595
+        nanos: 250000000
+      }
+      geo_point {
+        latitude_coordinate: 57.2154
+        longitude_coordinate: 20.8732
+        vertical_distance {
+          value: 31.5
+        }
+        vertical_distance_reference_code: VERTICAL_DISTANCE_REFERENCE_CODE_WGS84_REFERENCE_ELLIPSOID
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+    }
+    associated_organization_unit_identity {
+      string_identity: "EXERCISE-BN-3"
+    }
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-201"
+    }
+    last_contact_time {
+      seconds: 1790661602
+      nanos: 123456789
+    }
+    callsign {
+      value: "EXERCISE G\303\204DDA 2"
+    }
+    symbol {
+      symbol_catalog: SYMBOL_CATALOG_MIL2525_C
+      string_identifier: "SFGPEVC--------"
+    }
+    blue_force_type {
+      is_vehicle: true
+    }
+    point_location {
+      location_time {
+        seconds: 1790661601
+        nanos: 987654321
+      }
+      geo_point {
+        latitude_coordinate: 57.1987
+        longitude_coordinate: 20.9415
+        vertical_distance {
+          value: 4.25
+        }
+        vertical_distance_reference_code: VERTICAL_DISTANCE_REFERENCE_CODE_MEAN_SEA_LEVEL
+        measurement_code: MEASUREMENT_CODE_INS
+      }
+      course {
+        value: 247.5
+      }
+      speed {
+        value: 8.75
+      }
+    }
+  }
+  blue_forces {
+    identity {
+      int32_identity: 30517
+    }
+    last_contact_time {
+      seconds: 1790661560
+      nanos: 500000000
+    }
+    blue_force_type {
+      is_unmanned: true
+    }
+    point_location {
+      location_time {
+        seconds: 1790661559
+      }
+      geo_point {
+        latitude_coordinate: 57.2402
+        longitude_coordinate: 20.8019
+        measurement_code: MEASUREMENT_CODE_ESTIMATE
+      }
+    }
+    mount_host {
+      string_identity: "EXERCISE-VEH-201"
+    }
+  }
+}

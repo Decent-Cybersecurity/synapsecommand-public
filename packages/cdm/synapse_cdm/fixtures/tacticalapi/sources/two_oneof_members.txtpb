@@ -1,0 +1,11 @@
+# Before surgery: one blue force whose identity holds a string_identity and nothing else.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-407"
+    }
+  }
+}

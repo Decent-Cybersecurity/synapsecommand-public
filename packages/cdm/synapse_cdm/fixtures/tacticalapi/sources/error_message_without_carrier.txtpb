@@ -1,0 +1,10 @@
+# A successful snapshot with no blue force whose header states an error message: no element
+# exists to carry the text, so the adapter refuses the message rather than drop it.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+    error_message {
+      value: "EXERCISE partial: 3 units unreachable"
+    }
+  }
+}

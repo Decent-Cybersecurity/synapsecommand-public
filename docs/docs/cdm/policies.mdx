@@ -133,10 +133,13 @@ because the first version of `lossless.residual()` was the latter and it turned 
 into two keys named `affected_constellations[0]` and `affected_constellations[1]` — the never-drop
 rule satisfied in the letter, and a consumer that could no longer read the field as a list.
 
-**Fourteen of the twenty adapters in this repository do not use the container, and that is ruled
+**Fourteen of the twenty-one adapters in this repository do not use the container, and that is ruled
 rather than pending.** The fourteen of Part 1 keep their `attributes` / `payload` parking under
 `source_extras` and declare `residual: legacy` in their manifests. The information is already
 preserved; only the placement would change, and paying for that with every golden file and every
 downstream consumer buys nothing a reader can use. Every Part 2 adapter declares
-`residual: structured` and calls `lossless.residual_block()` — the five of the adapter expansion
-(`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`) are the first.
+`residual: structured` and carries its leftovers in the container under its own format's
+namespace — the five of the adapter expansion (`geojson`, `geopackage`, `c2sim`, `aixm511`,
+`aixm52`) are the first. `geojson` and `geopackage` build it with `lossless.residual_block()`;
+`c2sim`, `aixm511`, `aixm52`, `dis7` and `tacticalapi` build their `Residual` directly under the
+same namespace.

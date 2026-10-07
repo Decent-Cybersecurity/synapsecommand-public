@@ -1,0 +1,18 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true
+  },
+  "blue_forces": [
+    {
+      "identity": {
+        "string_identity": "EXERCISE-VEH-320"
+      },
+      "last_contact_time": "2026-09-29T07:01:00Z",
+      "point_location": {
+        "location_time": "2026-09-29T07:00:58Z",
+        "geo_point": {}
+      }
+    }
+  ]
+}

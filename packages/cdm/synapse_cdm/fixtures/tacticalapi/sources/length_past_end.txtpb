@@ -1,0 +1,17 @@
+# Before surgery: one blue force whose last field is the longitude of its geo_point.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-402"
+    }
+    point_location {
+      geo_point {
+        latitude_coordinate: 57.255
+        longitude_coordinate: 20.991
+      }
+    }
+  }
+}

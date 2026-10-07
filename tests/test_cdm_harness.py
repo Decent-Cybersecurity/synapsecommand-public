@@ -541,7 +541,7 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
                         "gmti": "gmti", "legion": "legion",
                         "pntmap": "pntmap", "stanag4586": "stanag4586",
                         "stanag4609": "klv", "stanag4676": "nits",
-                        "tak": "tak"}
+                        "tacticalapi": "tacticalapi", "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
 #:

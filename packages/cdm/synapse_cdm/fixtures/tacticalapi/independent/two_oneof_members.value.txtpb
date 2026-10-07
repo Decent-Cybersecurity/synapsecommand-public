@@ -1,0 +1,8 @@
+header {
+  success: true
+}
+blue_forces {
+  identity {
+    int32_identity: 407
+  }
+}

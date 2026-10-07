@@ -1,0 +1,41 @@
+header {
+  success: true
+  3: 2
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-310"
+  }
+  last_contact_time {
+    seconds: 1790665200
+  }
+  point_location {
+    location_time {
+      seconds: 1790665199
+    }
+    geo_point {
+      latitude_coordinate: 57.1502
+      longitude_coordinate: 20.7655
+      measurement_code: MEASUREMENT_CODE_GPS
+    }
+  }
+  11: 1
+}
+blue_forces {
+  identity {
+    int32_identity: 311
+  }
+  point_location {
+    location_time {
+      seconds: 1790665201
+      nanos: 5000000
+    }
+    geo_point {
+      latitude_coordinate: 57.1611
+      longitude_coordinate: 20.7701
+      measurement_code: MEASUREMENT_CODE_GPS
+      6: 3
+    }
+  }
+}
+3: "EXERCISE NOTE ALPHA"

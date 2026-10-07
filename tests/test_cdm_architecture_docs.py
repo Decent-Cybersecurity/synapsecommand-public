@@ -43,8 +43,13 @@ DOCS = (ARCHITECTURE, VERSIONING, INTEROPERABILITY)
 NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
                 "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
                 "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
-                "nineteen": 19, "twenty": 20}
-_NUMBER_WORD = "|".join(NUMBER_WORDS)
+                "nineteen": 19, "twenty": 20,
+                # Added 2026-10-06 (the TacticalAPI arc, adapter #22): the roster reached
+                # twenty-one, the first count this module has had to read with a hyphen. The
+                # alternation below is built longest first so the compound is tried before its
+                # own first half, which is `tests/test_cdm_prose_counts.py`'s `_NUMBER_WORD` rule.
+                "twenty-one": 21}
+_NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 
 def stated(word: str) -> int:

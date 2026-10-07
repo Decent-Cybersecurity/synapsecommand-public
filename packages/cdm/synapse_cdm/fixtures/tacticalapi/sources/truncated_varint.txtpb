@@ -1,0 +1,14 @@
+# Before surgery: one blue force whose last field is its last_contact_time.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-401"
+    }
+    last_contact_time {
+      seconds: 1790665800
+    }
+  }
+}

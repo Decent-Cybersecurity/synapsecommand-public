@@ -1,0 +1,21 @@
+# A geo_point that is present and empty: neither coordinate is on the wire, so there is no position.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-320"
+    }
+    last_contact_time {
+      seconds: 1790665260
+    }
+    point_location {
+      location_time {
+        seconds: 1790665258
+      }
+      geo_point {
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+header {
+  success: true
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-408"
+  }
+  point_location {
+    location_time {
+      seconds: 1790666020
+    }
+    geo_point {
+      latitude_coordinate: 91
+      longitude_coordinate: 20.95
+      measurement_code: MEASUREMENT_CODE_GPS
+    }
+  }
+}

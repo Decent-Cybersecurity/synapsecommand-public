@@ -39,6 +39,7 @@ The division is deliberate and is the one `tests/test_cdm_getting_started.py` al
 suite asserts the agreement between declarations, and the end-to-end claim is a gate that
 installs the artefact.
 """
+import ast
 import glob
 import pathlib
 import re
@@ -246,6 +247,37 @@ def test_the_copy_beside_the_package_is_byte_identical_to_the_original(name):
         "either half — a wheel carrying a different licence text from the repository it came "
         "from is worse than one carrying none"
     )
+
+
+#: What both NOTICE copies state about the `tacticalapi` codec's field table. Same phrases as the
+#: wheel gate's `NOTICE_DERIVATION`, which the test below also reads in the gate's own text.
+NOTICE_DERIVATION = (
+    "The field table embedded in packages/cdm/synapse_cdm/adapters/tacticalapi_codec.py is "
+    "derived from the interface definition files of github.com/Rheinmetall/tacticalapi at "
+    "commit 58661c9",
+    "the Eclipse Public License 2.0 (EPL-2.0) governs those files",
+)
+
+
+@pytest.mark.parametrize("copy", ["NOTICE", "packages/cdm/NOTICE"])
+def test_both_notice_copies_state_the_epl_derivation_of_the_tacticalapi_field_table(copy):
+    """The half of the wheel gate's `licences` assertion that is decidable offline (added
+    2026-10-06, the TacticalAPI landing). The maintainer ruled that day that the Eclipse Public
+    License 2.0 governs the interface definition files the `tacticalapi` codec's field table is
+    derived from (R8, `docs/tacticalapi-implementation.md`), and that NOTICE carries that
+    consequence while the wheel's licence metadata stays `Apache-2.0`. Both copies state it, and
+    the wheel gate states the same phrases, so a reworded NOTICE fails here before a build."""
+    folded = " ".join((REPO / copy).read_text(encoding="utf-8").split())
+    for phrase in NOTICE_DERIVATION:
+        assert phrase in folded, f"{copy} does not state: {phrase!r}"
+    gate = ast.parse((REPO / "gates" / "wheel_install.py").read_text(encoding="utf-8"))
+    stated = [ast.literal_eval(node.value) for node in gate.body
+              if isinstance(node, ast.Assign) and [getattr(target, "id", None)
+                                                    for target in node.targets]
+              == ["NOTICE_DERIVATION"]]
+    assert stated == [NOTICE_DERIVATION], (
+        "gates/wheel_install.py's NOTICE_DERIVATION and this module's differ, so the wheel gate "
+        f"and this test would hold NOTICE to two statements: {stated}")
 
 
 # ------------------------------------------------------------------ the two version numbers

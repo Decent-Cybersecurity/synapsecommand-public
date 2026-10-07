@@ -1,0 +1,167 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no compressed payload: it is handed one already-received message, and any transport compression is undone by the caller before the message reaches it",
+          "max_parse_seconds": "no wall-clock bound is enforced: runtime code reads no clock but the injected one, and the byte, object, unknown-field and carried-copy bounds make every walk of the decoder and of this module linear in a bounded input read from octets or JSON text (a dict whose containers an in-process caller shares is walked as the tree it stands for; docs/tacticalapi-implementation.md \u00a76 states that cost); the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "a dict is measured by the base class: `Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` before this class's `to_cdm` runs and refuses with `InputTooDeep`; `tacticalapi_codec.validate_twin` counts the same containers and refuses `nesting-too-deep`, and `tacticalapi_codec.decode` refuses a bytes-form twin on the object that would cross the bound, before it is built",
+            "kind": "implementation_cap",
+            "source": "The contract's closure has no recursive message and an unknown wire field is carried as octets, so the bytes form's twin nests at most 7 containers; the dict form's unknown keys carry arbitrary JSON. 64 (`MAX_DEPTH`, `adapters/tacticalapi_codec.py`) is the harness loader's own bound and the figure the JSON-reading adapters of synapse_cdm declare, counted in containers as `adapter.container_depth` counts them. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_tacticalapi_adapter.py::test_max_depth_admits_the_bound_and_refuses_one_past"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused with `InputTooLarge` before any decoder of this package runs; `tacticalapi_codec.decode` reads the same bound off the octets again and refuses `input-too-large` for a direct caller",
+            "kind": "implementation_cap",
+            "source": "The contract states no maximum message size. 4 MiB plus 1 KiB (`MAX_INPUT_BYTES`, `adapters/tacticalapi_codec.py`) is chosen on 2026-10-04: 4 MiB is the default ceiling on a received message in the common gRPC implementations, so a larger response does not reach a default-configured client, and the KiB is for the Any envelope around the response. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`tacticalapi_codec` counts the elements on the wire, or the list's length in the dict form, before any element is decoded and refuses `too-many-objects`; it counts unknown fields as it carries them and refuses `too-many-unknown-fields`, and `TacticalapiAdapter.to_cdm` counts the carried copies, refusing with the same code, then measures the carried message-level data once and refuses `carried-copies-too-large`, all before any object is built",
+            "kind": "implementation_cap",
+            "source": "The contract states no maximum number of blue forces in one response. 10 000 elements of `blue_forces` or `updated_blue_forces` (`MAX_OBJECTS`, `adapters/tacticalapi_codec.py`), each becoming an Entity and an Event, so 20 000 CDM objects \u2014 the figure both in-tree AIXM adapters bound one message to. Two caps the manifest schema has no field for are declared beside it: `MAX_UNKNOWN_FIELDS` (65 536), the unknown fields carried for one input in either form, counting a message- or header-level field once for every Entity and once for every Event that carries it; and `MAX_CARRIED_COPY_CHARS` (16 777 216), the characters of compact JSON text, with ASCII escaping, that the message-level data every Entity and every Event carries (the typed block's message member, on the Entity, and the message- and header-level unknown fields, in both places each object holds them) adds to all the objects of one message: four times the 4 MiB message ceiling `max_input_bytes` rests on. A dict-form integer outside the 64-bit range is refused, so no number is longer than twenty digits. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_tacticalapi_adapter.py::test_max_objects_admits_the_bound_and_refuses_one_past"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 4195328,
+        "max_objects": 10000,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+        "rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse"
+      ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "a protobuf field number the pinned contract does not name, at any level but inside the four well-known types (where it is refused), is carried with its number, wire type and raw octets, and a dict-form key the contract does not name is carried with its value; both sit in the structured residual of every Entity they concern, at their own path under `residual.data.response` or `residual.data.blue_force`, and are listed under `residual.data.unknown` with the path of the message that held them, and every Event carries the message- and header-level ones the same way; `validate_source` names each one. An enum number the contract does not name is kept as the number",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "TacticalAPI",
+      "version": "rheinmetall.tactical_api.v0, commit 58661c9 (2026-09-01); no tag or release exists"
+    },
+    "id": "tacticalapi",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "blue-force-read-side-only",
+        "notes": null,
+        "severity": null,
+        "summary": "reads the two read-side responses of the BlueForceTracking service, GetBlueForcesResponse and SubscribeBlueForceEventsResponse, and nothing else: every other message of the contract (own pose, situation objects, every request, the write-side blue-force messages) and every type outside it is refused `unsupported-message-type`, naming the two. Ingest only; no encoder exists",
+        "unsupported_paths": []
+      },
+      {
+        "id": "capture-envelope",
+        "notes": null,
+        "severity": null,
+        "summary": "the unit of ingest is one response wrapped in google.protobuf.Any (bytes) or its twin (dict), because a serialized message does not name its own type. gRPC framing, calls, sessions, stream bookkeeping and keep-alive timing are not read and not held: the caller receives each message and hands it over, and a stream is a sequence of calls",
+        "unsupported_paths": []
+      },
+      {
+        "id": "pinned-commit-v0",
+        "notes": null,
+        "severity": null,
+        "summary": "written against rheinmetall.tactical_api.v0 at upstream commit 58661c9 (2026-09-01), which has no tag or release; the embedded field table is generated from protoc's descriptor of those pinned files. A field a later revision adds is carried as an unknown field; a new upstream commit is a new pin and a new adapter version, never a silent update",
+        "unsupported_paths": []
+      },
+      {
+        "id": "coordinate-unit-not-stated",
+        "notes": null,
+        "severity": null,
+        "summary": "the contract places the point on the WGS 84 ellipsoid and states no angular unit for latitude_coordinate and longitude_coordinate; they are read as decimal degrees, inferred from every other angle in the contract, not stated by it",
+        "unsupported_paths": []
+      },
+      {
+        "id": "course-reference-not-stated",
+        "notes": null,
+        "severity": null,
+        "summary": "point_location.course is in degrees with no stated north reference, and `Kinematics.course_deg` means degrees true: a course in [0, 360) is mapped to `course_deg` with the north reference ASSUMED true, an assumption `course_basis` states on every Entity it is applied to (R5, ruled 2026-10-06). A course outside that range, 360 included, is not mapped and not normalised; it stays in the typed block and `validate_source` names it",
+        "unsupported_paths": []
+      },
+      {
+        "id": "symbol-2525d-only",
+        "notes": null,
+        "severity": null,
+        "summary": "`Entity.symbol` is set only from a MIL-STD-2525D numeric code (catalog SYMBOL_CATALOG_MIL2525_D, first set 1 000 000 000 to 9 999 999 999, second set 0 to 9 999 999 999), unrewritten. Every other symbol \u2014 another catalog, the string form, a set out of range \u2014 is carried in the typed block unconverted and named by `validate_source`; no symbol is derived from the affiliation (R4, ruled 2026-10-06)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "proto3-zero-indistinguishable",
+        "notes": null,
+        "severity": null,
+        "summary": "proto3 writes no scalar holding its default, so an unset coordinate pair and 0\u00b0N 0\u00b0E are the same bytes and a false bool reads as an unset one. A geo_point with neither coordinate on the wire yields no position, one with a single coordinate on the wire reads the other as 0.0 and `position_basis` says so, and `blue_force_type` flags that are not true give `entity_type` UNKNOWN, never a person or a unit. Likewise a Timestamp holding seconds 0 and nanos 0 (1970-01-01T00:00:00Z) is what a default-constructed one serialises to, so neither point_location.location_time nor last_contact_time holding it is read as a source time: the next choice stands, the basis says the zero Timestamp was passed over, `validate_source` names it, and its text stays in the typed block",
+        "unsupported_paths": []
+      },
+      {
+        "id": "non-canonical-encoding-refused",
+        "notes": null,
+        "severity": null,
+        "summary": "encodings a lenient protobuf parser accepts and repairs are refused by name: a singular field twice, two members of one oneof, a named field with another wire type, an int32 or enum varint outside 32 bits, a bool other than 0 or 1, a varint whose tenth octet sets bits past the 64th, a tag written in more than five octets, and a field the well-known types Any, Timestamp, StringValue and DoubleValue do not define. Nothing is repaired",
+        "unsupported_paths": []
+      },
+      {
+        "id": "source-time-optional",
+        "notes": null,
+        "severity": null,
+        "summary": "the read side marks no time field mandatory: `valid_from` and `observed_at` come from point_location.location_time, else last_contact_time, else the receipt instant from the injected clock, a zero Timestamp being passed over (proto3-zero-indistinguishable), and `valid_from_basis` and `observed_at_basis` say which. The CDM renders instants to the millisecond; the source text stays whole in the typed block. A deleted element gets no `valid_to`: the contract says only that the blue force is no longer present (R6, ruled 2026-10-06)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-endpoint-exercised",
+        "notes": null,
+        "severity": null,
+        "summary": "no TacticalAPI server, client or captured message has been exercised. Every payload is synthetic, and every one starts as protoc's own encoding of a text source against the pinned files; none was written from scratch by hand. Fourteen are protoc's bytes unchanged. Seven were changed afterwards by the fixture builder: three have hand-encoded fields appended, and four refusal payloads are protoc's bytes after one byte surgery each. protoc's own readings of the payloads are the only independent oracle",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      },
+      {
+        "id": "resource-limits",
+        "notes": null,
+        "severity": null,
+        "summary": "of the five resource limits this adapter enforces three \u2014 `max_input_bytes`, `max_depth` and `max_objects`, each an implementation cap declared with its basis and refused before any object is built \u2014 plus two the manifest has no field for, declared beside `max_objects`: `MAX_UNKNOWN_FIELDS` (65 536 carried unknown fields per input) and `MAX_CARRIED_COPY_CHARS` (16 777 216 characters of compact JSON text, with ASCII escaping, of the message-level data carried across all the Entities and Events of one message, each copy counted). `max_decompressed_bytes` and `max_parse_seconds` are absent, each with its reason in `capabilities.limits.absent_because`",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter tacticalapi` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so there is no egress direction for information to be lost in and the roundtrip check is inapplicable rather than absent (ARCHITECTURE.md \u00a73.6, rule 4). A rung passed vacuously is not a rung declared, so the declaration stops at the last one positively verified.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "TacticalAPI blue-force read side",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.0.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

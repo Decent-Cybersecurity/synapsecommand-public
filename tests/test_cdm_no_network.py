@@ -9,7 +9,7 @@ function body (`ast.walk`, the same reading `tests/test_cdm_boundary.py` takes o
 
 The static half alone would still be a claim about spelling. So the dynamic half REMOVES the
 capability — `socket.socket` is replaced with something that raises — and runs the conformance
-suite over the whole roster underneath it. Twenty adapters translate every fixture they ship,
+suite over the whole roster underneath it. Twenty-one adapters translate every fixture they ship,
 the fifteen checks run, and the sweep exits 0 with no socket in the process able to be opened.
 
 WHAT IS DELIBERATELY NOT ASSERTED
@@ -97,7 +97,7 @@ def test_the_whole_roster_conforms_with_no_socket_available(monkeypatch, capsys)
     # those would depend on pytest's import order.
     names = sorted(name for name, cls in roster().items()
                    if cls.__module__.startswith("synapse_cdm.adapters."))
-    assert len(names) == 20, names
+    assert len(names) == 21, names
     # The required set is CI's (`ci.yml`, the conformance job), derived per adapter exactly as
     # that loop derives it: J is dropped only where the adapter declares the structured
     # limitation `no-source-time` — a format that states no instant emits no timestamp under a

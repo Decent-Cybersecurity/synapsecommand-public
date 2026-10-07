@@ -1,0 +1,134 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "tacticalapi/cases",
+  "fixtures": [
+    {
+      "file": "d_code_second_set_zero.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "d_code_second_set_zero.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "deleted_without_timestamps.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "deleted_without_timestamps.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "duplicate_identity.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "duplicate_identity.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "empty_geo_point.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "empty_geo_point.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "empty_successful_response.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "empty_successful_response.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "error_message_without_carrier.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "error_message_without_carrier.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_field_carried.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_field_carried.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_fields_without_carrier.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_fields_without_carrier.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic accepted counterexamples written on 2026-10-04 by `spec/build_fixtures.py`, read by name in the tests and never selected by the harness: protoc encoded each from the script's own text literal, two have fields appended by hand that protoc's text form cannot state (fields this contract revision does not define, listed in `spec/tacticalapi_pin.json`), and the package's decoder rendered each twin. Every name carries EXERCISE and nothing derives from recorded data."
+    }
+  ]
+}

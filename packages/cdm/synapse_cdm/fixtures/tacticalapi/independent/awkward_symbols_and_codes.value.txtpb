@@ -1,0 +1,67 @@
+header {
+  success: true
+}
+updated_blue_forces {
+  identity {
+    uuid_identity: "11819efc-c7e5-50b0-8aa4-ad2c6f420c17"
+  }
+  last_contact_time {
+    seconds: 1790664300
+  }
+  symbol {
+    symbol_catalog: SYMBOL_CATALOG_MIL2525_C
+    string_identifier: "SFGPUCR-------"
+  }
+  point_location {
+    location_time {
+      seconds: 1790664299
+      nanos: 750000000
+    }
+    geo_point {
+      latitude_coordinate: 57.412
+      longitude_coordinate: 21.1876
+      vertical_distance {
+        value: 15
+      }
+      vertical_distance_reference_code: 12
+      measurement_code: 7
+    }
+  }
+}
+updated_blue_forces {
+  identity {
+    string_identity: "EXERCISE-RME-12"
+  }
+  callsign {
+    value: "EXERCISE KESTREL 5"
+  }
+  symbol {
+    symbol_catalog: SYMBOL_CATALOG_RME
+    string_identifier: "EXERCISE-RME-SYMBOL-77"
+  }
+  point_location {
+    location_time {
+      seconds: 1790664303
+    }
+    geo_point {
+      latitude_coordinate: 57.3855
+      longitude_coordinate: 21.221
+      measurement_code: MEASUREMENT_CODE_LRS
+    }
+  }
+}
+updated_blue_forces {
+  identity {
+    int64_identity: 4400000000017
+  }
+  last_contact_time {
+    seconds: 1790664290
+  }
+  symbol {
+    symbol_catalog: SYMBOL_CATALOG_MIL2525_D
+    numeric_identifier {
+      first_ten_digits: 1012100015
+      second_ten_digits: 1211000000
+    }
+  }
+}

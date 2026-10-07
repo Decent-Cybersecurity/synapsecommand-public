@@ -206,8 +206,12 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # phase 4 (2026-09-21): `aixm511` is the fourth; fourteen-and-four.
     # phase 6 (2026-09-21): `aixm52` is the fifth; fourteen-and-five.
     # the DIS 7 arc: `dis7` is the sixth; fourteen-and-six.
-    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "dis7", "geojson", "geopackage"]
-    assert len(roster) == 20
+    # the TacticalAPI arc (2026-10-06): `tacticalapi` is the seventh; fourteen-and-seven. Every
+    # object it makes carries a residual with data, which the sweep below asserts of it as of the
+    # six before it.
+    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "dis7", "geojson",
+                                                 "geopackage", "tacticalapi"]
+    assert len(roster) == 21
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

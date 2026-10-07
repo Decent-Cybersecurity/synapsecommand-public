@@ -135,7 +135,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All twenty harnesses are green**, and at least one of them run against the INSTALLED
+2. **All twenty-one harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -540,14 +540,33 @@ now true of it.
 release tag is `v3.2.0`, and `3.2.0` is what the index serves — `PUBLICATION.md` entry 24 is the
 measurement.
 
-**What moved inside the distribution: two files** — `MIGRATIONS.md`, this section, the dated
-witness paragraphs in the release procedure and the pipeline section, and the index note in the
-3.2.0 section being what moved in it, and, since the dependency records of 2026-10-06 below,
-`pyproject.toml`, whose `[lint]` pin is the first record's one line. Everything else the witness
-round touched ships in nothing: the ledger, the witness record and its README, the
-release-pipeline and changelog pages, the DIS 7 implementation record, and two test modules; the
-docs and action records below move `docs/package.json`, its lock, `SECURITY.md`, the supply-chain
-page, the security-policy test module and two workflows, none of which ships either.
+**What moved inside the distribution: 124 files** — the 3.2.0 witness round, the dependency records
+and the TacticalAPI arc, all of 2026-10-06. `MIGRATIONS.md` (this section; the dated witness
+paragraphs in the release procedure and the pipeline section and the index note in the 3.2.0
+section, which the witness round wrote; and the second condition of the release procedure, which the
+arc moved to twenty-one harnesses), `FORMAT_COVERAGE.md` (the two `tacticalapi` rows of the status
+column's table, the `tacticalapi` row of the ordinal table with the dated sentence under it, and the
+new section on the TacticalAPI blue-force read side), `tacticalapi_codec.py` (new: the contract's
+embedded field table, the wire reader, the twin, the typed block and the 31 reason codes),
+`adapters/tacticalapi.py` (new: `TacticalapiAdapter`, registered as `tacticalapi`), `__init__.py`,
+`adapter.py`, `lossless.py`, `symbology.py` and `version.py` (docstring and comment counts only: the
+roster at twenty-one; the `residual_block` docstring of `lossless.py` also names `tacticalapi` among
+the structured adapters that build their `Residual` directly), `pyproject.toml` (the `[lint]` pin,
+which is the one line of the ruff record below, and the two comments the arc moved to twenty-one
+adapters), the package's `README.md` (counts, pair arithmetic, the `tacticalapi` roster row and the
+new section on the `tacticalapi` adapter), the `NOTICE` beside `pyproject.toml` (the paragraph
+stating the derivation of the embedded field table, byte-identical to the repository's copy), and
+112 new files under `fixtures/tacticalapi/`, named in the paragraph that begins THE TACTICALAPI
+FIXTURE SET. What the 3.2.0 witness round touched outside the distribution ships in nothing: the
+ledger, the witness record and its README, the release-pipeline and changelog pages, the DIS 7
+implementation record, and two test modules. The docs and action records below move
+`docs/package.json`, its lock, `SECURITY.md`, the supply-chain page, the security-policy test module
+and two workflows, none of which ships either. What the TacticalAPI arc touched outside the
+distribution ships in nothing either: the manifest `manifests/tacticalapi.json`, the support matrix
+and the new documentation page, the implementation record `docs/tacticalapi-implementation.md`, the
+root documents and the documentation site's counts, the root `NOTICE`, `.gitattributes`, the three
+gate modules `gates/tacticalapi_field_table.py`, `gates/tacticalapi_contract_comments.py` and
+`gates/protoc_text.py`, the wheel gate's lists and its licences check, and the test modules.
 
 **THE 3.2.0 WITNESS ROUND's RECORD, 2026-10-06 — the record is the pipeline's own, for the second
 time.** Run 37459980438's `witness` job built `witness-3.2.0.json`, its verify step read `VERIFIED`
@@ -637,6 +656,105 @@ twice, for the SPDX and the CycloneDX step, and all four `uses:` lines now name
 `anchore/sbom-action` dereferences to, read off the GitHub API before it was written. No fifth
 site pins the action; the syft version recorded with round PS's SBOM readings of 2026-09-08 is a
 reading and stands. Nothing in this record is inside the distribution.
+
+**THE TACTICALAPI ADAPTER LANDS AS #22, 2026-10-06 — the roster moves twenty to twenty-one.**
+`adapters/tacticalapi.py` is new and holds `TacticalapiAdapter`, registered as `tacticalapi`, ingest
+only, on the new wire reader `adapters/tacticalapi_codec.py`: one TacticalAPI blue-force response
+(`rheinmetall.tactical_api.v0` at upstream commit `58661c9`), a `GetBlueForcesResponse` or a
+`SubscribeBlueForceEventsResponse`, as a serialized `google.protobuf.Any` or as its parsed twin,
+becomes one `Entity` and one `Event` per blue force, in list order. It holds no session and reads no
+network, so a stream is a sequence of calls. The adapter was built and verified out of tree first
+and lands with the maintainer's rulings of 2026-10-06 applied, which the implementation record
+`docs/tacticalapi-implementation.md` lists one by one: the scope as built (the blue-force read side,
+ingest only, L3 declared); the binding `standard-encoding` with the `capture-envelope` limitation
+and the claim `VERIFIED`; affiliation `UNKNOWN` unless the caller supplies one through the
+keyword-only `affiliation`; a symbol only from a MIL-STD-2525D numeric code; a course in [0, 360) as
+`course_deg` with the north reference assumed true; a deleted entry as a status and a
+`STATUS_CHANGE` event with no `valid_to`; the licence class `OPEN`; the Eclipse Public License 2.0
+for the embedded field table; the name kept without seeking the publisher's consent; and export
+control ruled unaffected. This repository is not affiliated with the interface's publisher, and no
+server, client or captured message has been exercised. `evidence.available` is false until the first
+release that attaches the adapter's records, and its structured limitation says so.
+
+**EVERY TACTICALAPI OBJECT CARRIES A RESIDUAL, 2026-10-06.** Out of tree the adapter attached no
+residual to an `Event`, nor to an `Entity` with nothing unknown, and `tests/test_cdm_lossless.py`
+holds every object of every harness-selected fixture of a `residual: structured` adapter to a
+residual with data. The maintainer chose the minimal record on 2026-10-06: every `Entity` and every
+`Event` carries a residual under the namespace `TacticalAPI` whose data always holds `unknown`, the
+list of the unknown fields the object carries (empty when there are none), with `response` and, on
+an `Entity`, `blue_force` when the message or the element holds such a field; an `Event` carries the
+message-level part of its `Entity`'s. The ten goldens were written again by the harness for that
+residual alone and read path by path against the earlier ones, and an `Event`'s copies count against
+`MAX_UNKNOWN_FIELDS` and `MAX_CARRIED_COPY_CHARS` beside its `Entity`'s. The adapter is a new unit,
+so the change needs no bump ruling.
+
+**THE LICENCE OF THE EMBEDDED FIELD TABLE, 2026-10-06.** The field table in `tacticalapi_codec.py`
+holds field names, field numbers and enum values only, derived from the contract's interface
+definition files at upstream commit `58661c9`, and the maintainer ruled that the Eclipse Public
+License 2.0 governs those files. `NOTICE` gains one paragraph stating the derivation, in both
+copies, which stay byte-identical; the files themselves are not carried, and
+`fixtures/tacticalapi/spec/tacticalapi_pin.json` names them with their commit and their terms. The
+wheel's licence metadata does not move (`license` stays `Apache-2.0`, `license-files` stays
+`LICENSE` and `NOTICE`); the wheel gate's licences check now also asserts the derivation in the
+wheel's `NOTICE`, and `tests/test_cdm_packaging.py` asserts it offline in both copies.
+
+**THE TACTICALAPI FIXTURE SET, 2026-10-06.** 112 files joined `fixtures/tacticalapi/`. Every payload
+is synthetic and was first encoded by protoc from a text source against the pinned interface
+definition files, which the generator finds through `SYNAPSE_CDM_TACTICALAPI_PROTO_DIR` and never
+copies. At the top level, the five harness payloads and their parsed twins:
+`awkward_symbols_and_codes.binpb`, `awkward_symbols_and_codes.parsed.json`, `awkward_zeros.binpb`,
+`awkward_zeros.parsed.json`, `delta_with_deletion.binpb`, `delta_with_deletion.parsed.json`,
+`snapshot_three_forces.binpb`, `snapshot_three_forces.parsed.json`,
+`snapshot_with_unknown_fields.binpb` and `snapshot_with_unknown_fields.parsed.json`, with
+`README.md` and `PROVENANCE.json`. Under `golden/`, the harness's output over each, written again on
+2026-10-06 for the residual: `awkward_symbols_and_codes.cdm.json`,
+`awkward_symbols_and_codes.parsed.cdm.json`, `awkward_zeros.cdm.json`,
+`awkward_zeros.parsed.cdm.json`, `delta_with_deletion.cdm.json`,
+`delta_with_deletion.parsed.cdm.json`, `snapshot_three_forces.cdm.json`,
+`snapshot_three_forces.parsed.cdm.json`, `snapshot_with_unknown_fields.cdm.json` and
+`snapshot_with_unknown_fields.parsed.cdm.json`. Under `cases/`, the accepted counterexamples the
+tests read by name, each payload with its twin: `d_code_second_set_zero.binpb`,
+`d_code_second_set_zero.parsed.json`, `deleted_without_timestamps.binpb`,
+`deleted_without_timestamps.parsed.json`, `duplicate_identity.binpb`,
+`duplicate_identity.parsed.json`, `empty_geo_point.binpb`, `empty_geo_point.parsed.json`,
+`empty_successful_response.binpb`, `empty_successful_response.parsed.json`,
+`error_message_without_carrier.binpb`, `error_message_without_carrier.parsed.json`,
+`unknown_field_carried.binpb`, `unknown_field_carried.parsed.json`,
+`unknown_fields_without_carrier.binpb` and `unknown_fields_without_carrier.parsed.json`, with
+`PROVENANCE.json`. Under `malformed/`, the refusal payloads of the conformance suite's check H:
+`blue_force_without_identity.binpb`, `latitude_91.binpb`, `length_past_end.binpb`,
+`success_false.binpb`, `truncated_varint.binpb`, `two_oneof_members.binpb`,
+`unsupported_message_type.binpb` and `wire_type_mismatch.binpb`, with `PROVENANCE.json`. Under
+`sources/`, the text source of every payload: `awkward_symbols_and_codes.txtpb`,
+`awkward_zeros.txtpb`, `blue_force_without_identity.txtpb`, `d_code_second_set_zero.txtpb`,
+`deleted_without_timestamps.txtpb`, `delta_with_deletion.txtpb`, `duplicate_identity.txtpb`,
+`empty_geo_point.txtpb`, `empty_successful_response.txtpb`, `error_message_without_carrier.txtpb`,
+`latitude_91.txtpb`, `length_past_end.txtpb`, `snapshot_three_forces.txtpb`,
+`snapshot_with_unknown_fields.txtpb`, `success_false.txtpb`, `truncated_varint.txtpb`,
+`two_oneof_members.txtpb`, `unknown_field_carried.txtpb`, `unknown_fields_without_carrier.txtpb`,
+`unsupported_message_type.txtpb` and `wire_type_mismatch.txtpb`, with `PROVENANCE.json`. Under
+`independent/`, protoc's own reading of every payload it can read, the envelope and the wrapped
+message apart: `awkward_symbols_and_codes.any.txtpb`, `awkward_symbols_and_codes.value.txtpb`,
+`awkward_zeros.any.txtpb`, `awkward_zeros.value.txtpb`, `blue_force_without_identity.any.txtpb`,
+`blue_force_without_identity.value.txtpb`, `d_code_second_set_zero.any.txtpb`,
+`d_code_second_set_zero.value.txtpb`, `deleted_without_timestamps.any.txtpb`,
+`deleted_without_timestamps.value.txtpb`, `delta_with_deletion.any.txtpb`,
+`delta_with_deletion.value.txtpb`, `duplicate_identity.any.txtpb`, `duplicate_identity.value.txtpb`,
+`empty_geo_point.any.txtpb`, `empty_geo_point.value.txtpb`, `empty_successful_response.any.txtpb`,
+`empty_successful_response.value.txtpb`, `error_message_without_carrier.any.txtpb`,
+`error_message_without_carrier.value.txtpb`, `latitude_91.any.txtpb`, `latitude_91.value.txtpb`,
+`snapshot_three_forces.any.txtpb`, `snapshot_three_forces.value.txtpb`,
+`snapshot_with_unknown_fields.any.txtpb`, `snapshot_with_unknown_fields.value.txtpb`,
+`success_false.any.txtpb`, `success_false.value.txtpb`, `truncated_varint.any.txtpb`,
+`two_oneof_members.any.txtpb`, `two_oneof_members.value.txtpb`, `unknown_field_carried.any.txtpb`,
+`unknown_field_carried.value.txtpb`, `unknown_fields_without_carrier.any.txtpb`,
+`unknown_fields_without_carrier.value.txtpb`, `unsupported_message_type.any.txtpb`,
+`unsupported_message_type.value.txtpb`, `wire_type_mismatch.any.txtpb` and
+`wire_type_mismatch.value.txtpb`, with `PROVENANCE.json`. Under `spec/`: `build_fixtures.py`, the
+generator, a script the package never imports, which with `--check` regenerates the set in memory
+and writes nothing, and `tacticalapi_pin.json`, the SHA-256 and size of every file with the pinned
+files' commit and terms. On 2026-10-06 its `--check`, with protoc and the pinned files, read 100
+generated files compared with the tree, 0 differing, missing or extra.
 
 ### 3.2.0 — 2026-10-06 — the DIS 7 Entity State adapter: `dis7` lands as #21 with its offline host command `synapse-dis7`, the roster moves nineteen to twenty, the Adapter contract gains `fixture_instance`, and no wire contract moves
 

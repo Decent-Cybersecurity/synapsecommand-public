@@ -1,0 +1,72 @@
+# Zeros that are values. Every one below is on the wire except the latitude: protoc writes no
+# proto3 scalar holding its default, so `latitude_coordinate: 0` never reaches the wire and a
+# reader sees the longitude alone. The wrappers (error_message, callsign, vertical_distance,
+# course, speed) and blue_force_type are messages, so each is written present and empty;
+# int32_identity is a oneof member, so its 0 is written too. Fractional seconds in 9 digits.
+# The second blue force's location_time is a present, empty Timestamp: seconds 0 and nanos 0,
+# what a default-constructed Timestamp serialises to, which is not read as a source time. Its
+# course is 360, the full turn: the first's course 0 is a course the CDM holds, and 360 is not
+# (course_deg holds 0 up to but not including 360), so it is not mapped and nothing turns it to 0.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+    error_message {
+      value: ""
+    }
+  }
+  blue_forces {
+    identity {
+      int32_identity: 0
+    }
+    last_contact_time {
+      seconds: 1790663400
+    }
+    callsign {
+      value: ""
+    }
+    blue_force_type {
+      is_vehicle: false
+    }
+    point_location {
+      location_time {
+        seconds: 1790663399
+        nanos: 1
+      }
+      geo_point {
+        latitude_coordinate: 0
+        longitude_coordinate: 9.25
+        vertical_distance {
+          value: 0
+        }
+        vertical_distance_reference_code: VERTICAL_DISTANCE_REFERENCE_CODE_TOPOGRAPHIC_SURFACE
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+      course {
+        value: 0
+      }
+      speed {
+        value: 0
+      }
+    }
+  }
+  blue_forces {
+    identity {
+      string_identity: "EXERCISE-VEH-341"
+    }
+    last_contact_time {
+      seconds: 1790663460
+    }
+    point_location {
+      location_time {
+      }
+      geo_point {
+        latitude_coordinate: 57.1333
+        longitude_coordinate: 20.9222
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+      course {
+        value: 360
+      }
+    }
+  }
+}

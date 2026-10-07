@@ -1,0 +1,18 @@
+header {
+  success: true
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-320"
+  }
+  last_contact_time {
+    seconds: 1790665260
+  }
+  point_location {
+    location_time {
+      seconds: 1790665258
+    }
+    geo_point {
+    }
+  }
+}

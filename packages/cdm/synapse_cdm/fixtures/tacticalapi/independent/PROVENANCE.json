@@ -1,0 +1,318 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "tacticalapi/independent",
+  "fixtures": [
+    {
+      "file": "awkward_symbols_and_codes.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "awkward_symbols_and_codes.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "awkward_zeros.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "awkward_zeros.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "blue_force_without_identity.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "blue_force_without_identity.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "d_code_second_set_zero.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "d_code_second_set_zero.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "deleted_without_timestamps.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "deleted_without_timestamps.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "delta_with_deletion.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "delta_with_deletion.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "duplicate_identity.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "duplicate_identity.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "empty_geo_point.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "empty_geo_point.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "empty_successful_response.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "empty_successful_response.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "error_message_without_carrier.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "error_message_without_carrier.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "latitude_91.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "latitude_91.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "snapshot_three_forces.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "snapshot_three_forces.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "snapshot_with_unknown_fields.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "snapshot_with_unknown_fields.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "success_false.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "success_false.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "truncated_varint.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "two_oneof_members.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "two_oneof_members.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unknown_field_carried.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unknown_field_carried.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unknown_fields_without_carrier.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unknown_fields_without_carrier.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unsupported_message_type.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "unsupported_message_type.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "wire_type_mismatch.any.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    },
+    {
+      "file": "wire_type_mismatch.value.txtpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "protoc's own reading of the written payloads, taken on 2026-10-04 by `spec/build_fixtures.py`: `<case>.any.txtpb` is `protoc --decode=google.protobuf.Any` of the whole payload and `<case>.value.txtpb` is `protoc --decode` of the envelope's value as the type its type_url names. `tests/test_cdm_tacticalapi_fixtures.py` reads every twin against them, so the decoder is not its own oracle. Everything read is synthetic."
+    }
+  ]
+}

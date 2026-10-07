@@ -89,3 +89,19 @@ each — and every one carries the notice the licence requires verbatim, as the
 comment at the top of the file. The extracts are the independent inputs of the
 aixm511 adapter's `independent_expected` evidence category and are not part of
 the Work's authorship; their provenance is fixtures/aixm511/independent/PROVENANCE.json.
+
+INTERFACE DEFINITIONS A FIELD TABLE IS DERIVED FROM, AND THEIR LICENCE
+
+Added 2026-10-06, the TacticalAPI arc. The field table embedded in
+packages/cdm/synapse_cdm/adapters/tacticalapi_codec.py is derived from the
+interface definition files of github.com/Rheinmetall/tacticalapi at commit
+58661c9, and the Eclipse Public License 2.0 (EPL-2.0) governs those files, as
+that repository's licence file states. The maintainer ruled so on 2026-10-06;
+the other licence the files' own headers offer is not taken. The table holds
+field names, field numbers and enum values only, generated from protoc's
+descriptor of the pinned files. No other text of those files, no comment and no
+header, is in this repository or in its history, and the files themselves are
+not part of the Work: they are named, with their commit and their terms, in
+packages/cdm/synapse_cdm/fixtures/tacticalapi/spec/tacticalapi_pin.json, and
+are not carried. No tracked file carries a notice of theirs, so the list of
+third-party notice carriers above is unchanged.

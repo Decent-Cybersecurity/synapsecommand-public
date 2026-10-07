@@ -1,0 +1,32 @@
+# A 2525D numeric code whose second set of ten digits is all zeros: protoc writes no int64 holding
+# 0, so `second_ten_digits` is absent from the wire, and an absent set reads 0.
+[type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse] {
+  header {
+    success: true
+  }
+  blue_forces {
+    identity {
+      int32_identity: 330
+    }
+    last_contact_time {
+      seconds: 1790665620
+    }
+    symbol {
+      symbol_catalog: SYMBOL_CATALOG_MIL2525_D
+      numeric_identifier {
+        first_ten_digits: 1013100015
+        second_ten_digits: 0
+      }
+    }
+    point_location {
+      location_time {
+        seconds: 1790665619
+      }
+      geo_point {
+        latitude_coordinate: 57.1777
+        longitude_coordinate: 20.8888
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "tacticalapi/malformed",
+  "fixtures": [
+    {
+      "file": "blue_force_without_identity.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "latitude_91.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "length_past_end.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "success_false.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "truncated_varint.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "two_oneof_members.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "unsupported_message_type.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    },
+    {
+      "file": "wire_type_mismatch.binpb",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payloads built on 2026-10-04 by `spec/build_fixtures.py`: four are protoc's own encoding of a message the adapter refuses for what it says, and four are protoc's bytes changed by one described byte surgery, since protoc will not write malformed data. The surgery, the reason code and protoc's own verdict on each are in `spec/tacticalapi_pin.json` and README.md. Nothing derives from recorded data and none is claimed as independent evidence."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+header {
+  success: true
+  error_message {
+  }
+}
+blue_forces {
+  identity {
+    int32_identity: 0
+  }
+  last_contact_time {
+    seconds: 1790663400
+  }
+  callsign {
+  }
+  blue_force_type {
+  }
+  point_location {
+    location_time {
+      seconds: 1790663399
+      nanos: 1
+    }
+    geo_point {
+      longitude_coordinate: 9.25
+      vertical_distance {
+      }
+      vertical_distance_reference_code: VERTICAL_DISTANCE_REFERENCE_CODE_TOPOGRAPHIC_SURFACE
+      measurement_code: MEASUREMENT_CODE_GPS
+    }
+    course {
+    }
+    speed {
+    }
+  }
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-341"
+  }
+  last_contact_time {
+    seconds: 1790663460
+  }
+  point_location {
+    location_time {
+    }
+    geo_point {
+      latitude_coordinate: 57.1333
+      longitude_coordinate: 20.9222
+      measurement_code: MEASUREMENT_CODE_GPS
+    }
+    course {
+      value: 360
+    }
+  }
+}

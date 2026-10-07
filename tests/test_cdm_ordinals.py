@@ -118,6 +118,7 @@ SWEPT = (
     "packages/cdm/synapse_cdm/fixtures/aixm511/dnotam/README.md",
     "packages/cdm/synapse_cdm/fixtures/aixm52/README.md",
     "packages/cdm/synapse_cdm/fixtures/dis7/README.md",
+    "packages/cdm/synapse_cdm/fixtures/tacticalapi/README.md",
     "docs/docs/writing-an-adapter.mdx",
     # RELEASE_NOTES.md joined the sweep when adapter #10 landed on `main` after 1.1.0 and the notes
     # grew a section saying so. A release note is the one document a consumer is most likely to

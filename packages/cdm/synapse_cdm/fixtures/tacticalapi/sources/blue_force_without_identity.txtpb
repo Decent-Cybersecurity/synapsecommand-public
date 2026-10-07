@@ -1,0 +1,21 @@
+# A blue force with a callsign and a position and no identity.
+[type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse] {
+  header {
+    success: true
+  }
+  updated_blue_forces {
+    callsign {
+      value: "EXERCISE NOMAD 6"
+    }
+    point_location {
+      location_time {
+        seconds: 1790665960
+      }
+      geo_point {
+        latitude_coordinate: 57.2333
+        longitude_coordinate: 20.9555
+        measurement_code: MEASUREMENT_CODE_GPS
+      }
+    }
+  }
+}

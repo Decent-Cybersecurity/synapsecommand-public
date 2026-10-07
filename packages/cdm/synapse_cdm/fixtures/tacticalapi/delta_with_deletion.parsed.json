@@ -1,0 +1,38 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse",
+  "header": {
+    "success": true
+  },
+  "updated_blue_forces": [
+    {
+      "identity": {
+        "int64_identity": "9007199254740993"
+      },
+      "last_contact_time": "2026-09-29T06:15:00Z",
+      "callsign": "EXERCISE VIPER 3",
+      "blue_force_type": {
+        "is_vehicle": true,
+        "is_unmanned": true
+      },
+      "point_location": {
+        "location_time": "2026-09-29T06:14:59.000001Z",
+        "geo_point": {
+          "latitude_coordinate": 57.3011,
+          "longitude_coordinate": 21.0544,
+          "vertical_distance": 120.0,
+          "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_PRESSURE_DATUM_QNH",
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        },
+        "course": 12.5,
+        "speed": 22.5
+      }
+    },
+    {
+      "identity": {
+        "string_identity": "EXERCISE-VEH-201"
+      },
+      "last_contact_time": "2026-09-29T06:14:30Z",
+      "is_deleted": true
+    }
+  ]
+}

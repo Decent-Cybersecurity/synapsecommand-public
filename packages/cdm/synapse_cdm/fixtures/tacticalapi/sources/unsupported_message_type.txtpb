@@ -1,0 +1,6 @@
+# The write side's response, which has the same header: a type outside the two the adapter reads.
+[type.googleapis.com/rheinmetall.tactical_api.v0.AddOrUpdateBlueForcesResponse] {
+  header {
+    success: true
+  }
+}

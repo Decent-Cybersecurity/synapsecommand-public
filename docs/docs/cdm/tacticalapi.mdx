@@ -1,0 +1,118 @@
+---
+title: TacticalAPI blue-force read side adapter
+sidebar_label: TacticalAPI blue force
+sidebar_position: 10
+description: How the tacticalapi adapter turns one TacticalAPI blue-force response into an Entity and an Event per blue force, what it refuses, and what it does not claim.
+---
+
+# TacticalAPI blue-force read side adapter
+
+## Scope
+
+One already-received response of the TacticalAPI blue-force tracking service
+(`rheinmetall.tactical_api.v0`, upstream commit `58661c9`) becomes one `Entity` and one `Event`
+per blue force, in list order. Two message types are read: `GetBlueForcesResponse`, a snapshot,
+and `SubscribeBlueForceEventsResponse`, one update of a stream. Every other message of the
+contract, and every other type, is refused by name. The adapter is ingest only, and no encoder
+exists. It holds no session, reads no network and keeps nothing between two calls, so a stream is
+a sequence of calls. This repository is not affiliated with, endorsed by or reviewed by the
+interface's publisher; the name says which published contract the adapter reads.
+
+The `tacticalapi` adapter is not part of the published 3.2.0 distribution; it ships with the first
+release after it.
+
+## Input
+
+The unit of ingest is one response wrapped in `google.protobuf.Any`, as octets, or its twin, the
+dict a `.parsed.json` fixture holds: the same message with the contract's own field names, the
+`type_url` under `@type` and every field the contract does not name under `@unknown`. gRPC framing
+is not read; the caller receives each message and hands it over. Both forms go through one twin,
+so they give the same objects.
+
+## Mapping
+
+Every row below is checked against the packaged fixture `snapshot_three_forces` and its golden.
+
+| Field | Value |
+|---|---|
+| `entity_id` | derived from the system `TacticalAPI` and the external id `<member>:<value>` of the blue force's identity, so the text `7` and the integer `7` stay two identities; nothing is trimmed or case-folded |
+| `source_ids` | one entry, system `TacticalAPI` and external id `<member>:<value>` |
+| `entity_type` | `PLATFORM` when the blue force type marks a vehicle or an unmanned system, else `UNKNOWN` |
+| `affiliation` | `UNKNOWN`, with a basis saying the message carries no affiliation field. A caller that knows better passes one of the four `Affiliation` members as `TacticalapiAdapter(affiliation=...)`, and every Entity then carries it with a basis saying the caller supplied it; anything else is refused when the adapter is built |
+| `symbol` | set only from a MIL-STD-2525D numeric code, unrewritten; every other symbol stays in the typed block, and none is derived |
+| `position` | latitude and longitude as WGS 84 decimal degrees when at least one coordinate is on the wire; the vertical distance under its reference code, with `alt_m` only above the ellipsoid; `position_source` from the measurement code |
+| `kinematics` | the speed in metres per second, and a course in `[0, 360)` as `course_deg`, the north reference assumed true and said so in `course_basis`; a course outside that range is not mapped and stays in the typed block |
+| `valid_from` | the location time, else the last contact time, else the receipt instant from the injected clock; a zero Timestamp is passed over, and `valid_from_basis` says which applied |
+| `status` | for a deleted entry, the state `is_deleted` in the namespace `TacticalAPI`; no `valid_to` is invented |
+| `attributes.tacticalapi` | the typed block `tacticalapi-blueforce/1`: the message the entry came from and the entry exactly as stated |
+| `residual` | namespace `TacticalAPI`, on every Entity: every field the contract does not name, at its own path under `residual.data.response` (message and header) or `residual.data.blue_force` (the entry), and listed in `residual.data.unknown` with the path of the message that held it; `unknown` is an empty list when nothing is unknown |
+| the `Event` | `TRACK_UPDATE`, or `STATUS_CHANGE` for a deleted entry; severity `INFO`; the position as its geometry; the Entity as its related entity; a residual holding the message-level part of its Entity's (`response` when present, and `unknown` listing the message- and header-level entries) |
+
+## Refusals
+
+Every refusal is a `TacticalapiRefused`, a `ValueError` whose `code` attribute is the reason code
+and whose message begins with it. The codes are the codec's `REASON_CODES`, 31 of them: 23 the
+decoder raises and 8 the adapter raises. A payload over the declared byte bound is refused by the
+base class with `InputTooLarge` before the decoder runs, and a dict nested past the depth bound
+with `InputTooDeep`. Encodings a lenient protobuf parser accepts and repairs — a singular field
+twice, two members of one oneof, a named field with another wire type, an out-of-range varint —
+are refused by name, and nothing is repaired.
+
+## Bounds
+
+| Bound | Value | Kind |
+|---|---|---|
+| `max_input_bytes` | 4 195 328 (4 MiB plus 1 KiB for the envelope) | implementation cap |
+| `max_depth` | 64 containers | implementation cap |
+| `max_objects` | 10 000 blue forces in one response | implementation cap |
+| `MAX_UNKNOWN_FIELDS` | 65 536 carried unknown fields per input, a message- or header-level field counted on every Entity and every Event that carries it | implementation cap, declared beside `max_objects` |
+| `MAX_CARRIED_COPY_CHARS` | 16 777 216 characters of message-level data carried by all the objects of one message, every copy counted | implementation cap, declared beside `max_objects` |
+
+`max_decompressed_bytes` and `max_parse_seconds` are absent, each with its reason in the manifest.
+
+## Limitations
+
+- The blue-force read side only, ingest only. Maturity L3 is declared; L4 is not, because there is
+  no egress direction for information to be lost in.
+- Written against upstream commit `58661c9`, which has no tag or release. A field a later revision
+  adds is carried as an unknown field; a new commit is a new pin and a new adapter version.
+- The contract states no angular unit for the coordinates and no north reference for the course;
+  both are read as stated above and each basis says so.
+- proto3 writes no scalar that holds its default, so an unset coordinate pair and 0°N 0°E are the
+  same octets: a point with neither coordinate on the wire gives no position.
+- No TacticalAPI server, client or captured message has been exercised. Every payload is synthetic,
+  and protoc's own readings of the payloads are the only independent oracle.
+- `fixture_instance` is not overridden, so the packaged fixtures replay with no caller affiliation
+  and the goldens hold `UNKNOWN`.
+
+## The field table and its licence
+
+The field table in `adapters/tacticalapi_codec.py` is derived from the contract's interface
+definition files at commit `58661c9`, which the Eclipse Public License 2.0 governs, as the
+maintainer ruled on 2026-10-06. It holds field names, field numbers and enum values only. No other
+text of those files is in this repository, and the files are not carried: the pin record
+`fixtures/tacticalapi/spec/tacticalapi_pin.json` names them with their commit and their terms, and
+both copies of `NOTICE` state the derivation. The adapter's full record, its rulings and its open
+items are in the repository's `docs/tacticalapi-implementation.md`.
+
+## Pinned contract check
+
+From a clone, with the ten pinned files and their record `proto_pin.json` in one directory and
+`protoc` on the path:
+
+```bash
+SYNAPSE_CDM_TACTICALAPI_PROTO_DIR=<directory holding the pinned files> python -m pytest -q -rs tests/test_cdm_tacticalapi_fixtures.py tests/test_cdm_tacticalapi_codec.py
+```
+
+With the variable unset, or without `protoc`, the tests that need them skip as
+`BLOCKED_EXTERNAL_EVIDENCE`, which is not a pass.
+
+## Regenerating generated files
+
+| Generated file | Command |
+|---|---|
+| `manifests/tacticalapi.json` | `python -m synapse_cdm.manifests --out manifests` |
+| the support matrix | `python -m synapse_cdm.support_matrix --out docs/docs/cdm/support-matrix.mdx` |
+| the current-contracts block | `python gates/current_contracts.py --write` |
+| the goldens | `python -m synapse_cdm.harness --adapter tacticalapi --schemas schemas --update-golden` |
+| the payloads, twins and protoc readings | `python build_fixtures.py --check`, run in the package's `fixtures/tacticalapi/spec/` directory with `protoc` and the pinned files; it compares and writes nothing |

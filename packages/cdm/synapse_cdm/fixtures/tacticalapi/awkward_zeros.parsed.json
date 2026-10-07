@@ -1,0 +1,43 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.GetBlueForcesResponse",
+  "header": {
+    "success": true,
+    "error_message": ""
+  },
+  "blue_forces": [
+    {
+      "identity": {
+        "int32_identity": 0
+      },
+      "last_contact_time": "2026-09-29T06:30:00Z",
+      "callsign": "",
+      "blue_force_type": {},
+      "point_location": {
+        "location_time": "2026-09-29T06:29:59.000000001Z",
+        "geo_point": {
+          "longitude_coordinate": 9.25,
+          "vertical_distance": 0.0,
+          "vertical_distance_reference_code": "VERTICAL_DISTANCE_REFERENCE_CODE_TOPOGRAPHIC_SURFACE",
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        },
+        "course": 0.0,
+        "speed": 0.0
+      }
+    },
+    {
+      "identity": {
+        "string_identity": "EXERCISE-VEH-341"
+      },
+      "last_contact_time": "2026-09-29T06:31:00Z",
+      "point_location": {
+        "location_time": "1970-01-01T00:00:00Z",
+        "geo_point": {
+          "latitude_coordinate": 57.1333,
+          "longitude_coordinate": 20.9222,
+          "measurement_code": "MEASUREMENT_CODE_GPS"
+        },
+        "course": 360.0
+      }
+    }
+  ]
+}

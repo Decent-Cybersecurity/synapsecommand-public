@@ -1,0 +1,13 @@
+header {
+  error_message {
+    value: "EXERCISE feed unavailable"
+  }
+}
+blue_forces {
+  identity {
+    string_identity: "EXERCISE-VEH-405"
+  }
+  last_contact_time {
+    seconds: 1790665900
+  }
+}

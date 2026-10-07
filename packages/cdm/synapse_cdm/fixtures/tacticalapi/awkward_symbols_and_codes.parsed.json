@@ -1,0 +1,59 @@
+{
+  "@type": "type.googleapis.com/rheinmetall.tactical_api.v0.SubscribeBlueForceEventsResponse",
+  "header": {
+    "success": true
+  },
+  "updated_blue_forces": [
+    {
+      "identity": {
+        "uuid_identity": "11819efc-c7e5-50b0-8aa4-ad2c6f420c17"
+      },
+      "last_contact_time": "2026-09-29T06:45:00Z",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_MIL2525_C",
+        "string_identifier": "SFGPUCR-------"
+      },
+      "point_location": {
+        "location_time": "2026-09-29T06:44:59.750Z",
+        "geo_point": {
+          "latitude_coordinate": 57.412,
+          "longitude_coordinate": 21.1876,
+          "vertical_distance": 15.0,
+          "vertical_distance_reference_code": 12,
+          "measurement_code": 7
+        }
+      }
+    },
+    {
+      "identity": {
+        "string_identity": "EXERCISE-RME-12"
+      },
+      "callsign": "EXERCISE KESTREL 5",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_RME",
+        "string_identifier": "EXERCISE-RME-SYMBOL-77"
+      },
+      "point_location": {
+        "location_time": "2026-09-29T06:45:03Z",
+        "geo_point": {
+          "latitude_coordinate": 57.3855,
+          "longitude_coordinate": 21.221,
+          "measurement_code": "MEASUREMENT_CODE_LRS"
+        }
+      }
+    },
+    {
+      "identity": {
+        "int64_identity": "4400000000017"
+      },
+      "last_contact_time": "2026-09-29T06:44:50Z",
+      "symbol": {
+        "symbol_catalog": "SYMBOL_CATALOG_MIL2525_D",
+        "numeric_identifier": {
+          "first_ten_digits": "1012100015",
+          "second_ten_digits": "1211000000"
+        }
+      }
+    }
+  ]
+}

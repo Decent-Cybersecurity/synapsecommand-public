@@ -162,10 +162,10 @@ exchange with a partner system is asserted.
   `ValueError` for a directory outside the packaged root. Neither touches a claim of this
   release; the `dis7` adapter holds a parsed envelope to acyclicity itself.
 
-## Twenty adapters at 3.2.0, all harness-verified
+## Twenty adapters at 3.2.0, all harness-verified — and one more in the tree since
 
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas --json`, run over the roster
-with no `--fixtures` on this tree, and every verdict read from the run. The table is the live registry, and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both directions to agree. `python -m synapse_cdm.harness --list-adapters` prints `20 adapters registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+with no `--fixtures` on this tree, and every verdict read from the run. The table is the live registry, and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both directions to agree. At `v3.2.0` `python -m synapse_cdm.harness --list-adapters` prints `20 adapters registered`. The row marked **post-3.2.0** landed in the tree on 2026-10-06, after that tag, and is in no release: `PACKAGE_VERSION` still reads `3.2.0`, the next number is the release round's to type, and that row's verdict count is this tree's harness reading. Every other figure in this section is the `3.2.0` artefact's and does not include that row. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -189,6 +189,7 @@ with no `--fixtures` on this tree, and every verdict read from the run. The tabl
 | `aixm511` | ingest | 10 | L3 | VERIFIED |
 | `aixm52` | ingest | 10 | L3 | VERIFIED |
 | `dis7` | bidirectional | 6 | L4 | VERIFIED (new in the 3.2.0 arc) |
+| `tacticalapi` | ingest | 10 | L3 | VERIFIED (**post-3.2.0**, in no release) |
 
 **586 fixture verdicts, 0 failed** across the twenty, against the published 3.0.0 schemas — the
 580 that 3.1.1 shipped, unchanged, plus 6 from the new set; `gates/wheel_install.py` reads the
