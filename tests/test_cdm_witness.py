@@ -643,6 +643,18 @@ def test_every_witness_path_the_documents_quote_exists():
 # committed it as `releases/witness/3.2.0.json` — the same bytes, held below by digest beside
 # `3.0.1.json`. The hand-built roster does not move, and the three paragraphs each also say what
 # run 37459980438 did.
+#
+# 2026-10-08: THE SIXTH RECORD LANDED, AND IT IS THE PIPELINE'S FOR THE THIRD TIME. Run 37618296352
+# (`v3.3.0`) was the job's sixth execution on a tag push and its third success end to end: the build
+# step wrote `witness-3.3.0.json for v3.3.0 (2 files, 1 approval(s))` off an approval whose comment
+# named the readiness report at the tagged commit, the verify step read `VERIFIED` with `--download
+# --assets assets` and a token, and the attach step put the record on the Release as its ninth
+# asset. It is the third record the pipeline produced, and the third approval since the rule about
+# the approval comment was written down (2026-09-17) that followed it at the approval — after
+# `v3.0.1`'s and `v3.2.0`'s. The witness round downloaded that asset, verified it again offline and
+# online, and committed it as `releases/witness/3.3.0.json` — the same bytes, held below by digest
+# beside `3.0.1.json` and `3.2.0.json`. The hand-built roster does not move, and the three
+# paragraphs each also say what run 37618296352 did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
@@ -674,10 +686,11 @@ ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bun
 HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]
 
 #: The records the paragraphs describe as the pipeline's own, by the digest of the Release asset
-#: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0 — so a re-built or edited file under this name is refused, and the
+#: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0, run 37618296352 for 3.3.0 — so a re-built or edited file under this name is refused, and the
 #: word "pipeline's" in three documents is a claim about bytes and not about intent.
 PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd",
-                  "3.2.0.json": "b0bf6661ab519ff7bdcc87cdf34daa0d2c3d0af77c5b92e387d6c65f9f7277d8"}
+                  "3.2.0.json": "b0bf6661ab519ff7bdcc87cdf34daa0d2c3d0af77c5b92e387d6c65f9f7277d8",
+                  "3.3.0.json": "55c8c01ac0b1601b8cbb58e8f234cb09f2578d4b471d7f2653cf9ce68736303b"}
 
 #: The run whose witness job succeeded first, and the one it was refused on before it.
 FIRST_SUCCESS_RUN = "35514833652"

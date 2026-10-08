@@ -1276,3 +1276,30 @@ adapter in one place:
    fixed, as 3.2.0 recorded `container_depth` on a cyclic input.
 
 No rule of §1 to §5, §7 or §8 moved, and no fixture, golden or line of the codec.
+
+**2026-10-08, the witness round: synapse-cdm 3.3.0 is on the index.** The tag `v3.3.0` (tag object
+`aaf8f6e06f9c086aec159e1c3008f0a5e8081f2c`) names the release commit
+`e3acf780bb25bcb4649b15c100445a25f961a2fa`, and the Release workflow run 37618296352 on its push
+read all six jobs `success`. The `pypi` approval was given by `decentcybersecurity` at 07:53:54Z on
+2026-10-08 (the deployment's `queued` status), the day after the tag was pushed, with a comment
+naming the readiness report at `e3acf780`; the index took the wheel at 07:54:17Z and the sdist at
+07:54:20Z, digests `3201f2ac…` and `5d678dbe…`, the ones `SHA256SUMS` names and the served bytes
+re-hash to; Release 406565996 was published at 07:54:48Z with nine assets. What the round recorded
+for this adapter:
+
+1. **The adapter's evidence record is on the Release (§6).** The Release's evidence bundle,
+   `evidence-3.3.0.tar.gz`, carries `evidence/tacticalapi/1.0.0/evidence.json` among its twenty-one
+   `evidence.json` records, which is what the declaration `evidence.available: true` and the
+   limitation `evidence-availability` say; the gate job's conformance sweep and the build job's
+   package test from the installed wheel each read `21 of 21 CONFORMANT`, and the sweep attached
+   to the Release reads `tacticalapi` CONFORMANT with E and M SKIP and every other check PASS.
+2. **The witness record is the pipeline's own.** The `witness` job built, verified and attached
+   `witness-3.3.0.json`, and the witness round committed it unchanged as
+   `releases/witness/3.3.0.json` (2 188 bytes, sha256
+   `55c8c01ac0b1601b8cbb58e8f234cb09f2578d4b471d7f2653cf9ce68736303b`), wrote `PUBLICATION.md`
+   entry 25, dated the witness paragraphs, and reopened the pending section in `MIGRATIONS.md`.
+   The record was not rebuilt with the builder: the pipeline's record was accepted, and a rebuilt
+   one would be a different claim (the 3.0.1 and 3.2.0 precedent).
+
+No rule of §1 to §8 moved, and no fixture, golden or line of the codec or the adapter; the open
+items stand as the release recorded them.

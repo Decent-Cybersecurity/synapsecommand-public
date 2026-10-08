@@ -360,6 +360,25 @@ the Release download, online with `--download` and over all five records, and co
 `tests/test_cdm_witness.py`; `PUBLICATION.md` entry 24 is the ledger's account. The directory holds
 five records: three built by hand and two the pipeline's.
 
+**And on 2026-10-08 the sixth execution succeeded end to end: the `v3.3.0` push, run
+37618296352.** All six of the run's jobs read `success` — gate, build, attest, publish, release and
+witness — which is the reading the sentence above asks for before a witness round commits the
+pipeline's record. Its build step, under the same grants, read the run's one approval — given at
+07:53:54Z on 2026-10-08, the day after the tag was pushed, by `decentcybersecurity` with the comment
+*Approved on the readiness report at the release commit:* and the readiness report's URL at
+`e3acf780`, the release commit and the commit the tag names, so `review_file` is derived from the
+approval's own words and designated by nobody — and the `pypi` deployment's status history, fetched
+the attestation store by the wheel's digest, was handed `--attestation-bundles`, and wrote
+`witness-3.3.0.json for v3.3.0 (2 files, 1 approval(s))`; its verify step, `--download --assets
+assets` with a token, read `VERIFIED`; its attach step put the record on the Release as its ninth
+asset. The rule this procedure states for the approval — a non-empty comment naming what the
+approval was taken on — was followed, the third time, after `v3.0.1`'s and `v3.2.0`'s. The witness
+round downloaded that asset, verified it again offline against the Release download, online with
+`--download` and over all six records, and committed it as `releases/witness/3.3.0.json` — the same
+bytes, sha256 `55c8c01a…`, held by digest in `tests/test_cdm_witness.py`; `PUBLICATION.md` entry 25
+is the ledger's account. The directory holds six records: three built by hand and three the
+pipeline's.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -523,6 +542,12 @@ readiness report at the commit the tag names, and `releases/witness/3.2.0.json` 
 for byte. The directory holds five records: three built by hand and two by the pipeline.
 `PUBLICATION.md` entry 24 is the measurement.
 
+**Also 2026-10-08: the sixth execution succeeded, on a non-empty comment again.** The `v3.3.0`
+push, run 37618296352, built, verified and attached `witness-3.3.0.json`, its approval comment
+naming the readiness report at the commit the tag names, and `releases/witness/3.3.0.json` is that
+asset byte for byte. The directory holds six records: three built by hand and three by the
+pipeline. `PUBLICATION.md` entry 25 is the measurement.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -535,6 +560,29 @@ now true of it.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.3.0`, and `3.3.0` is what the index serves — `PUBLICATION.md` entry 25 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated witness paragraphs in the release procedure and the pipeline section, and the index note in
+the 3.3.0 section being what moved in it. Everything else the round touched ships in nothing: the
+ledger, the witness record and its README, the release-pipeline and changelog pages, the TacticalAPI
+implementation record, and two test modules.
+
+**THE 3.3.0 WITNESS ROUND's RECORD, 2026-10-08 — the record is the pipeline's own, for the third
+time.** Run 37618296352's `witness` job built `witness-3.3.0.json`, its verify step read `VERIFIED`
+with `--download --assets assets` and a token, and its attach step put it on the Release, because
+the `pypi` approval carried a non-empty comment naming the readiness report at the commit the tag
+names. `releases/witness/3.3.0.json` is that Release asset byte for byte, verified by
+`gates/witness_verify.py` offline against the Release download, online with `--download`, and over
+all six records, before it was committed. Ledger entry 25 records the upload and the readings
+behind it; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` holds the
+record by digest among the pipeline's. Nothing in the distribution moved except this file, and
+`PACKAGE_VERSION` still reads `3.3.0`.
+
 ### 3.3.0 — 2026-10-07 — the TacticalAPI blue-force read side: `tacticalapi` lands as #22 on its own wire reader, the roster moves twenty to twenty-one, the `[lint]` extra's ruff pin moves under a ruling, and no wire contract moves
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
@@ -546,7 +594,8 @@ tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that watched t
 not asserted here before it has happened. The paragraph this replaces said that nothing in the
 section was in a release, that the newest release tag was `v3.2.0` and that `3.2.0` was what the
 index served (`PUBLICATION.md` entry 24) — the first clause stops being true at this commit and the
-other two stay true until an upload changes them.
+other two stay true until an upload changes them. **Measured after the upload, 2026-10-08:** `3.3.0` is what the
+index serves since 07:54:20Z, and `PUBLICATION.md` entry 25 is the measurement.
 
 **THE PACKAGE VERSION MOVED 3.2.0 -> 3.3.0 ON 2026-10-07, AND THE NUMBER IS THE DERIVED FLOOR.**
 `gates/bump_derivation.py` reads the arc from `v3.2.0` and derives MINOR with nothing unruled: the
