@@ -1303,3 +1303,13 @@ for this adapter:
 
 No rule of §1 to §8 moved, and no fixture, golden or line of the codec or the adapter; the open
 items stand as the release recorded them.
+
+**2026-10-08, the docs deploy: the site served 3.3.0.** The maintainer deployed the documentation
+site built from `a476f74`, the witness commit and `main`'s tip, as deployment `c6718d44`, whose deploy
+stage ended at 10:43:16Z. That day `docs.synapsecommand.com` served it byte for byte on every page the
+deploy record compared — the five probe pages, the current-contracts page and the adapter's own page,
+`/cdm/tacticalapi/`, at the instants `PUBLICATION.md` entry 25 records: the adapter's page answered
+with the local build's page where the deployment before it, `bd0c1d8b`, answered 404, and the
+changelog page's last `package is at` sentence read 3.3.0. `PUBLICATION.md` ledger entry 8 carries
+the deployment's row and entry 25 the act's record. No rule of §1 to §8 moved, and no fixture,
+golden or line of the codec or the adapter.
