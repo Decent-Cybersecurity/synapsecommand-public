@@ -1,0 +1,329 @@
+{
+  "type": "object",
+  "properties": {
+    "profile": {
+      "const": "sc-link16-gateway/1.0.0"
+    },
+    "record_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "gateway_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sequence": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})$"
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "time_basis": {
+      "type": "string",
+      "enum": [
+        "SOURCE",
+        "RESOLVED_SOURCE",
+        "EXERCISE"
+      ]
+    },
+    "time_evidence": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "realm": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "origin_scope": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "reporter": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "track_number": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "incarnation": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})$"
+    },
+    "message_family": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "native_profile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "AIR",
+        "SURFACE",
+        "SUBSURFACE",
+        "LAND",
+        "UNKNOWN"
+      ]
+    },
+    "entity_kind": {
+      "type": "string",
+      "enum": [
+        "PLATFORM",
+        "UNIT",
+        "FACILITY",
+        "UNKNOWN"
+      ]
+    },
+    "identity": {
+      "type": "string",
+      "enum": [
+        "FRIENDLY",
+        "HOSTILE",
+        "NEUTRAL",
+        "UNKNOWN",
+        "PENDING",
+        "ASSUMED_FRIEND",
+        "SUSPECT",
+        "OTHER"
+      ]
+    },
+    "identity_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "position": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "observed_at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "lat_deg": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lon_deg": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "method": {
+              "type": "string",
+              "enum": [
+                "GNSS",
+                "INERTIAL",
+                "MANUAL",
+                "ESTIMATED",
+                "SENSOR",
+                "UNKNOWN"
+              ]
+            },
+            "vertical": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "m",
+                        "ft",
+                        "FL"
+                      ]
+                    },
+                    "reference": {
+                      "type": "string",
+                      "enum": [
+                        "HAE",
+                        "MSL",
+                        "AGL",
+                        "BARO",
+                        "FL",
+                        "UNKNOWN"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "reference"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "observed_at",
+            "lat_deg",
+            "lon_deg",
+            "method",
+            "vertical"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kinematics": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "observed_at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            "speed_mps": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "course_deg": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMaximum": 360
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "climb_mps": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "observed_at",
+            "speed_mps",
+            "course_deg",
+            "climb_mps"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "quality_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "security_context": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "source_fields": {
+      "type": "object"
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "profile",
+    "record_id",
+    "gateway_id",
+    "session_id",
+    "sequence",
+    "received_at",
+    "effective_at",
+    "time_basis",
+    "time_evidence",
+    "tenant",
+    "realm",
+    "synthetic",
+    "origin_scope",
+    "reporter",
+    "track_number",
+    "incarnation",
+    "message_family",
+    "native_profile",
+    "domain",
+    "entity_kind",
+    "identity",
+    "identity_code",
+    "position",
+    "kinematics",
+    "quality_code",
+    "security_context",
+    "source_fields",
+    "extensions"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:sc-link16-gateway:report:1.0.0",
+  "title": "SC Link16 Gateway report 1.0.0 internal profile"
+}

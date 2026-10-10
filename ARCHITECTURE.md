@@ -362,7 +362,7 @@ free-form dictionary; the source-identifying container of §5 is P3's addition.
 
 **LANDED 2026-09-08, round P3.** `models.Residual{namespace, data}` and
 `lossless.residual_block(adapter, raw, consumed)` exist. What has NOT changed is §5's Part 1
-stance: the fourteen of the twenty-one adapters shipped here that predate Part 2 keep the
+stance: the fourteen of the twenty-two adapters shipped here that predate Part 2 keep the
 `attributes` / `payload` parking and keep declaring `residual: legacy`, so no golden moved for
 residual placement. The container is there for Part 2 — the five of the adapter expansion
 (`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, 2026-09-20/21) are the first to declare
@@ -479,7 +479,7 @@ standard's vocabulary it belongs to. A consumer MUST NOT promote a residual valu
 field, and a later adapter MUST NOT read another adapter's residual as an input.
 
 **The Part 1 stance for the adapters already shipped, ruled and stated rather than left to a later
-round to discover.** Fourteen of the twenty-one adapters in this repository park their leftovers today
+round to discover.** Fourteen of the twenty-two adapters in this repository park their leftovers today
 in `Entity.attributes` / `Event.payload` via `lossless.residual()`, under `source_extras`. They KEEP
 that placement through Part 1 and declare it in their manifests as `residual: legacy`. Every Part 2
 adapter uses the structured container. The goldens are therefore NOT rewritten for residual

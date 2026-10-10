@@ -403,8 +403,11 @@ def test_alt_m_and_accuracy_m_stay_none_even_when_a_position_exists():
     assert entity.position.alt_m is None, "MSL is not the ellipsoid; the geoid needs a model"
     assert entity.position.accuracy_m is None, "a per-axis sigma in a local grid is not 1-sigma"
     assert entity.position.position_source is PositionSource.ESTIMATED
-    assert "NONE of them names a sensor measurement" in \
-        entity.attributes["position_source_basis"]
+    basis = entity.attributes["position_source_basis"]
+    # Since 2026-10-10 (CDM 3.1.0) the enum has SENSOR; the basis says the member was missing
+    # when the adapter shipped, that it now exists, and that the adapter keeps ESTIMATED.
+    assert "NONE of them named a sensor measurement" in basis
+    assert "adds it as SENSOR" in basis and "keeps ESTIMATED" in basis
 
 
 def test_event_geometry_is_never_populated():

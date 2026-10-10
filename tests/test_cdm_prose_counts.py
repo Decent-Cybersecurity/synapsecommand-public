@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-one adapters
-cannot grow twenty-one slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-two adapters
+cannot grow twenty-two slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2329,6 +2329,29 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     # release — so the sentences state the roster, are checked by comparison, and need no row;
     # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
     # job. The retired bytes are not quoted here.
+    # ADDED 2026-10-10 (the Link 16 gateway arc, `link16_gateway`), the TacticalAPI landing's shape
+    # again. Four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the 3.3.0
+    # artefact (a roster of twenty-one) beside one row marked as postdating it; the release commit
+    # that carries the adapter retires them. Two more are permanent: MIGRATIONS.md's record of the
+    # 3.3.0 arc says what that arc moved to twenty-one, which is history and is not edited.
+    ('RELEASE_NOTES.md',
+     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 21 shipped adapters at manifest schema 2.1.0`.',
+     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     '# Twenty-one adapters at 3.3.0, all harness-verified — and one more',
+     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'At `v3.3.0` `python -m synapse_cdm.harness --list-adapters` prints `21 adapters registered`.',
+     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'read `21 adapters, 617 fixture files` and `21 adapters x 2 schema modes, 1192 fixture verdicts, 0 failed`',
+     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'condition of the release procedure, which the arc moved to twenty-one harnesses)',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'and the two comments the arc moved to twenty-one adapters)',
+     'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),

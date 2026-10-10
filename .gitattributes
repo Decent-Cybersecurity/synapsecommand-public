@@ -79,3 +79,12 @@ packages/cdm/synapse_cdm/fixtures/dis7/malformed/*.json -text
 # would fail both.
 *.binpb -text -diff
 packages/cdm/synapse_cdm/fixtures/tacticalapi/** -text
+
+# SC Link16 Gateway reports (the `link16_gateway` adapter): JSON reports, their octet twins
+# (`.bin`, raw bytes, some deliberately malformed) and the handoff's reference projections. Added
+# 2026-10-10 in the change that lands the adapter. Its pin
+# (`fixtures/link16_gateway/spec/link16_gateway_pin.json`) records the SHA-256 of every handoff
+# file carried byte-identical, so the whole directory is held out of line-ending conversion: a
+# checkout that rewrote one byte would fail the pin test and the octet fixtures alike.
+*.bin -text -diff
+packages/cdm/synapse_cdm/fixtures/link16_gateway/** -text

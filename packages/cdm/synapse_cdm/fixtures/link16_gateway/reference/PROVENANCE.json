@@ -1,0 +1,60 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "link16_gateway/reference",
+  "fixtures": [
+    {
+      "file": "air_flight_level.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/air_flight_level.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_msl.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/air_msl.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_sensor.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/air_sensor.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "land_unknown_position.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/land_unknown_position.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "subsurface_unknown_method.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/subsurface_unknown_method.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "surface_zero.cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of golden/surface_zero.cdm.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026): the handoff reference mapper's projection of the synthetic example of the same stem, kept as a semantic oracle that the mapping test compares against (it states schema_version 4.0.0 and the spaced system name, which this repository does not use; the test names both). Not re-stamped.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    }
+  ]
+}

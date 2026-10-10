@@ -8,7 +8,7 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Twenty-one integration adapters are shipped and harness-verified — PNTMAP
+Twenty-two integration adapters are shipped and harness-verified — PNTMAP
 GNSS alerts, TAK / Cursor-on-Target (bidirectional), AIS / NMEA 0183
 AIVDM (bidirectional), ADS-B 1090ES extended squitter (bidirectional),
 Picogrid Legion Platform API v3, ASTERIX category 021 ADS-B target
@@ -25,11 +25,12 @@ byte-exact), STANAG 4586 Edition 3 DLI air-vehicle telemetry
 (ingest), GeoJSON / RFC 7946 (bidirectional), OGC GeoPackage 1.4.0
 (ingest), SISO-STD-019/020 C2SIM (bidirectional), AIXM 5.1.1 with the
 Digital NOTAM Event Schema 2.0 (ingest), AIXM 5.2 (ingest), the DIS 7 Entity State PDU subset
-(bidirectional, byte-exact) and the TacticalAPI blue-force read side (ingest).
+(bidirectional, byte-exact), the TacticalAPI blue-force read side (ingest) and the SC Link16
+Gateway report (bidirectional).
 
 Without a canonical model in the middle, N adapters means N(N−1)/2
 translations and N private notions of what "a contact" is — two hundred
-and ten and twenty-one as of today — and the integration layer becomes the place
+and thirty-one and twenty-two as of today — and the integration layer becomes the place
 where meaning is quietly lost. With one, an adapter is a thin
 translator and nothing else.
 
@@ -180,6 +181,8 @@ The `dis7` adapter and the `synapse-dis7` command are part of the distribution b
 
 The `tacticalapi` adapter is part of the distribution built from this tree; no release before 3.3.0 carries it.
 
+The `link16_gateway` adapter is not part of the published 3.3.0 distribution; it ships with the first release after it.
+
 **1.0.0** was published on 2026-08-25 — ledger entry 5 of
 [`PUBLICATION.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/PUBLICATION.md)
 — and every upload since is measured there as an entry of its own; the
@@ -190,7 +193,7 @@ contributor's install and is documented in
 [`CONTRIBUTING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/CONTRIBUTING.md).
 A consumer never needs a clone.
 
-Everything it needs comes with it. The twenty-one shipped adapters' **fixtures are part of the
+Everything it needs comes with it. The twenty-two shipped adapters' **fixtures are part of the
 package**, so the harness runs against the payloads those adapters are verified on without a
 repository anywhere:
 

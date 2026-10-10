@@ -392,7 +392,7 @@ Measurement codes:
 | 2 | GPS | `GNSS` | |
 | 3 | INS | `INERTIAL` | |
 | 4 | ESTIMATE | `MANUAL` | The contract's code for a position a person entered by judgement rather than measured |
-| 0, 1, 5, any other number, or code absent | UNSPECIFIED, UNKNOWN, LRS, unnamed | `ESTIMATED` | `position_source` is required and has four members, none meaning unknown or laser-ranged; the basis states the source's own code (`tak` precedent) |
+| 0, 1, 5, any other number, or code absent | UNSPECIFIED, UNKNOWN, LRS, unnamed | `ESTIMATED` | `position_source` is required and has four members, none meaning unknown or laser-ranged; the basis states the source's own code (`tak` precedent). Dated 2026-10-10: that was true when this adapter shipped; CDM 3.1.0 adds `UNKNOWN` and `SENSOR`, and the adapter keeps `ESTIMATED` for these codes until a release re-labels it, its basis saying so since the same date |
 
 ### 5.6 Kinematics
 

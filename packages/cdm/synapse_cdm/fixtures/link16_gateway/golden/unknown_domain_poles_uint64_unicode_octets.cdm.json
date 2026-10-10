@@ -1,0 +1,178 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "2ec2d3ed-5c40-54a5-8dfa-5736f1b47cdd",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 90.0,
+      "speed_mps": 125.0
+    },
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 90.0,
+      "lon": 180.0,
+      "position_source": "INERTIAL",
+      "vertical": null
+    },
+    "quality": {
+      "accuracy_m": null,
+      "confidence": null,
+      "source_quality": "SYNTHETIC-GRADE-A",
+      "uncertainty": {}
+    },
+    "residual": {
+      "data": {
+        "report": {
+          "domain": "UNKNOWN",
+          "effective_at": "2026-10-04T12:00:00.000Z",
+          "entity_kind": "UNKNOWN",
+          "extensions": {
+            "vendor.example/1": {
+              "flag": true,
+              "n": 0.5
+            }
+          },
+          "gateway_id": "synthetic-gateway-1",
+          "identity": "FRIENDLY",
+          "identity_code": "SYNTHETIC-CODE-7",
+          "incarnation": "18446744073709551615",
+          "kinematics": {
+            "climb_mps": null,
+            "course_deg": 90,
+            "observed_at": "2026-10-04T12:00:00.000Z",
+            "speed_mps": 125
+          },
+          "message_family": "J3.2",
+          "native_profile": "SYNTHETIC-NO-NATIVE-CODEC",
+          "origin_scope": "exercise-source-1",
+          "position": {
+            "lat_deg": 90,
+            "lon_deg": 180,
+            "method": "INERTIAL",
+            "observed_at": "2026-10-04T12:00:00.000Z",
+            "vertical": null
+          },
+          "profile": "sc-link16-gateway/1.0.0",
+          "quality_code": "SYNTHETIC-GRADE-A",
+          "realm": "test-only",
+          "received_at": "2026-10-04T12:00:00.125Z",
+          "record_id": "10000000-0000-4000-8000-000000000006",
+          "reporter": "SIMULATED-REPORTER",
+          "security_context": "SYNTHETIC-UNCLASSIFIED",
+          "sequence": "18446744073709551615",
+          "session_id": "22222222-2222-4222-8222-222222222222",
+          "source_fields": {
+            "fixture": true,
+            "nested": {
+              "\"q\"": {},
+              "a.b": [
+                1,
+                "two",
+                null,
+                false
+              ],
+              "empty": {},
+              "list": []
+            },
+            "note": "SYNTHETIC test fixture: open keys and Unicode",
+            "\u00fcn\u00efcode-key": "v\u00e4lue \u2603"
+          },
+          "synthetic": true,
+          "tenant": "demo",
+          "time_basis": "SOURCE",
+          "time_evidence": "Explicit synthetic fixture exercise clock",
+          "track_number": "TN-\u00e9-\u2603"
+        }
+      },
+      "namespace": "SC Link16 Gateway"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "link16_gateway",
+      "adapter_version": "1.0.0",
+      "format_name": "SC Link16 Gateway",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "10000000-0000-4000-8000-000000000006",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_LINK16_GATEWAY",
+      "transformations": [
+        "identity: UUID5 over scoped track instance"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"demo\",\"test-only\",true,\"exercise-source-1\",\"TN-\\u00e9-\\u2603\",\"18446744073709551615\"]",
+        "system": "Link16Track"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T12:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "2ec2d3ed-5c40-54a5-8dfa-5736f1b47cdd",
+    "integrity": null,
+    "object_kind": "track",
+    "quality": {
+      "accuracy_m": null,
+      "confidence": null,
+      "source_quality": "SYNTHETIC-GRADE-A",
+      "uncertainty": {}
+    },
+    "residual": {
+      "data": {
+        "record_id": "10000000-0000-4000-8000-000000000006"
+      },
+      "namespace": "SC Link16 Gateway"
+    },
+    "samples": [
+      {
+        "observed_at": "2026-10-04T12:00:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 90.0,
+          "lon": 180.0,
+          "position_source": "INERTIAL",
+          "vertical": null
+        }
+      }
+    ],
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "link16_gateway",
+      "adapter_version": "1.0.0",
+      "format_name": "SC Link16 Gateway",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "10000000-0000-4000-8000-000000000006",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_LINK16_GATEWAY",
+      "transformations": [
+        "identity: UUID5 over scoped track instance"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"demo\",\"test-only\",true,\"exercise-source-1\",\"TN-\\u00e9-\\u2603\",\"18446744073709551615\"]",
+        "system": "Link16Track"
+      }
+    ],
+    "status": null,
+    "track_id": "643ffe9a-71ab-5670-9392-a60aedbb53a6",
+    "track_quality": null
+  }
+]

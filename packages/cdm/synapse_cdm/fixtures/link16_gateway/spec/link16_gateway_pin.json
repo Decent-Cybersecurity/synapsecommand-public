@@ -1,0 +1,129 @@
+{
+  "what_this_is": "The pin record for the link16_gateway fixture set: the SHA-256 and byte count of every file of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026) that this repository carries, and of the specification it does not carry. This is INTERNAL GATEWAY EVIDENCE for an interface this repository defines; it is not normative Link 16 or JREAP C evidence, and none of these files is a native byte vector.",
+  "adapter": {
+    "name": "link16_gateway",
+    "direction": "bidirectional",
+    "fixture_directory": "link16_gateway"
+  },
+  "handoff": {
+    "identifier": "SynapseCommand JREAP C and Link 16 engineering handoff",
+    "version": "1.0.0",
+    "date": "2026-10-04",
+    "contract": "SC Link16 Gateway 1.0.0 (profile sc-link16-gateway/1.0.0)",
+    "carried_here": "in part",
+    "why_not_carried": "The specification is a handoff document and is not in this repository; its six synthetic examples, six reference projections and three contract schemas are the parts carried, byte-identical, and contributed under Apache-2.0 by the maintainer who commissioned the handoff. The reference mapper and its tests are not carried."
+  },
+  "files": [
+    {
+      "file": "examples/air_flight_level.json",
+      "sha256": "c6ceb372baec8886188f528d909466bc9ac8a8a2e41665edcbeb15cce4991fc5",
+      "bytes": 1383,
+      "carried_here": true,
+      "carried_as": "link16_gateway/air_flight_level.json"
+    },
+    {
+      "file": "examples/air_msl.json",
+      "sha256": "c2be9406fbb78768cc2b9efa25eb1fd14b31814d180d07a596be8df8cd3d44ba",
+      "bytes": 1389,
+      "carried_here": true,
+      "carried_as": "link16_gateway/air_msl.json"
+    },
+    {
+      "file": "examples/air_sensor.json",
+      "sha256": "699ec20ac2587e1ca52cf4b77b7d32bfef51170c3425c8308966a30bd56831cf",
+      "bytes": 1388,
+      "carried_here": true,
+      "carried_as": "link16_gateway/air_sensor.json"
+    },
+    {
+      "file": "examples/land_unknown_position.json",
+      "sha256": "571cf28bf58f709652d009def83b1f4c0d5c2368be15f854b1cd06aa2221fc43",
+      "bytes": 1068,
+      "carried_here": true,
+      "carried_as": "link16_gateway/land_unknown_position.json"
+    },
+    {
+      "file": "examples/subsurface_unknown_method.json",
+      "sha256": "542c888e8bf4ca14ad16406cd61725547ee95e56e5390d71d24becb31eb0ec74",
+      "bytes": 1276,
+      "carried_here": true,
+      "carried_as": "link16_gateway/subsurface_unknown_method.json"
+    },
+    {
+      "file": "examples/surface_zero.json",
+      "sha256": "c02982c02ba78bcea96cd94ce37764f4708763023afaecc72a0d0795c5822104",
+      "bytes": 1312,
+      "carried_here": true,
+      "carried_as": "link16_gateway/surface_zero.json"
+    },
+    {
+      "file": "golden/air_flight_level.cdm.json",
+      "sha256": "aefa6f172e90304236749b1306c562b42f7a96fb3b64593c1a8a4b05fc81872f",
+      "bytes": 4936,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/air_flight_level.cdm.json"
+    },
+    {
+      "file": "golden/air_msl.cdm.json",
+      "sha256": "bef09e32d39b9eeee42400b4a1fc939e62d04c3c026a48585b3b8dc54624a538",
+      "bytes": 4954,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/air_msl.cdm.json"
+    },
+    {
+      "file": "golden/air_sensor.cdm.json",
+      "sha256": "87a36692e9af467b6b772f5007d268793e1e55b0dfe0774c77de4fff1b7e7619",
+      "bytes": 5081,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/air_sensor.cdm.json"
+    },
+    {
+      "file": "golden/land_unknown_position.cdm.json",
+      "sha256": "59cbb696ba033d7f296b2f2bd41dce2772e0a514c409a959d7343603d23f8f85",
+      "bytes": 2718,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/land_unknown_position.cdm.json"
+    },
+    {
+      "file": "golden/subsurface_unknown_method.cdm.json",
+      "sha256": "e6c1cff25d6357a01c71d88f4cf0be9ece457c621aaa4e7adc58fcb22d3e27ad",
+      "bytes": 4625,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/subsurface_unknown_method.cdm.json"
+    },
+    {
+      "file": "golden/surface_zero.cdm.json",
+      "sha256": "b4e87e798c194f3da47fb9a61ff1dea4b71fcb7d0f6ef890bd7b7eaff109b4d3",
+      "bytes": 4651,
+      "carried_here": true,
+      "carried_as": "link16_gateway/reference/surface_zero.cdm.json"
+    },
+    {
+      "file": "report.schema.json",
+      "sha256": "57bb6d391652d571ddfce93e656368ee4f4ddb5e0f6c1a0cabb3eb989f8a7301",
+      "bytes": 7336,
+      "carried_here": true,
+      "carried_as": "schemas/link16_gateway/report.schema.json at the repository root (not in the wheel)"
+    },
+    {
+      "file": "notice.schema.json",
+      "sha256": "600cf575c074d768601ebf8f11e27278a5ead029117069be4371a5d40e02ea55",
+      "bytes": 5209,
+      "carried_here": true,
+      "carried_as": "schemas/link16_gateway/notice.schema.json at the repository root (not in the wheel)"
+    },
+    {
+      "file": "api.schema.json",
+      "sha256": "0e23e3eb858713e8dc9d01aed826cb9c7a79747afe708fdf02dfd1ba2f306542",
+      "bytes": 7040,
+      "carried_here": true,
+      "carried_as": "schemas/link16_gateway/api.schema.json at the repository root (not in the wheel)"
+    },
+    {
+      "file": "SynapseCommand_JREAP_C_Link16_Engineering_Specification.docx",
+      "sha256": "c7049509fd1572c130e14e749b90f7ac950791904cafa229787b0f0fb77a592c",
+      "bytes": 63401,
+      "carried_here": false
+    }
+  ]
+}

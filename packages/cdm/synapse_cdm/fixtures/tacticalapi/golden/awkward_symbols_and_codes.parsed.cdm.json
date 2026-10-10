@@ -6,7 +6,7 @@
       "entity_id_basis": "identity.uuid_identity: the blue force's own identity, keyed as <member>:<value> so two members holding one value stay two identities",
       "entity_type_basis": "UNKNOWN: the element has no blue_force_type; a proto3 bool has no presence, so false and unset are one reading and 'not a vehicle' is not readable as a person or a unit",
       "position_basis": "point_location.geo_point latitude_coordinate and longitude_coordinate, read as WGS 84 decimal degrees: the contract states the ellipsoid and no angular unit (limitation coordinate-unit-not-stated)",
-      "position_source_basis": "ESTIMATED: geo_point.measurement_code 7, a number the contract does not name; position_source is required and none of its four members means unknown or laser-ranged, so the understating ESTIMATED stands and the code stays in the typed block",
+      "position_source_basis": "ESTIMATED: geo_point.measurement_code 7, a number the contract does not name; position_source is required and, when this adapter shipped, none of its four members meant unknown or laser-ranged, so the understating ESTIMATED stands and the code stays in the typed block; CDM 3.1.0 (2026-10-10) adds UNKNOWN and SENSOR, and this adapter keeps ESTIMATED until a release re-labels it",
       "symbol_basis": "not promoted: symbol_catalog SYMBOL_CATALOG_MIL2525_C; only a SYMBOL_CATALOG_MIL2525_D numeric code becomes Entity.symbol, no converter exists for another catalog and none is written, and the symbol stays in the typed block",
       "tacticalapi": {
         "blue_force": {
@@ -155,7 +155,7 @@
       "entity_id_basis": "identity.string_identity: the blue force's own identity, keyed as <member>:<value> so two members holding one value stay two identities",
       "entity_type_basis": "UNKNOWN: the element has no blue_force_type; a proto3 bool has no presence, so false and unset are one reading and 'not a vehicle' is not readable as a person or a unit",
       "position_basis": "point_location.geo_point latitude_coordinate and longitude_coordinate, read as WGS 84 decimal degrees: the contract states the ellipsoid and no angular unit (limitation coordinate-unit-not-stated)",
-      "position_source_basis": "ESTIMATED: geo_point.measurement_code MEASUREMENT_CODE_LRS (5); position_source is required and none of its four members means unknown or laser-ranged, so the understating ESTIMATED stands and the code stays in the typed block",
+      "position_source_basis": "ESTIMATED: geo_point.measurement_code MEASUREMENT_CODE_LRS (5); position_source is required and, when this adapter shipped, none of its four members meant unknown or laser-ranged, so the understating ESTIMATED stands and the code stays in the typed block; CDM 3.1.0 (2026-10-10) adds UNKNOWN and SENSOR, and this adapter keeps ESTIMATED until a release re-labels it",
       "symbol_basis": "not promoted: symbol_catalog SYMBOL_CATALOG_RME; only a SYMBOL_CATALOG_MIL2525_D numeric code becomes Entity.symbol, no converter exists for another catalog and none is written, and the symbol stays in the typed block",
       "tacticalapi": {
         "blue_force": {

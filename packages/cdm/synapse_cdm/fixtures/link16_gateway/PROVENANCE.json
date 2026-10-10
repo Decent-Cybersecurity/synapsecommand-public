@@ -1,0 +1,141 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "link16_gateway",
+  "fixtures": [
+    {
+      "file": "air_flight_level.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/air_flight_level.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_hae_feet_gnss_hostile.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_hae_metres_friendly.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_msl.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/air_msl.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_sensor.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/air_sensor.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_sensor_octets.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Byte-identical copy of air_sensor.json (itself the handoff's synthetic example), kept as a .bin so the harness hands the adapter OCTETS and the strict octet path runs on a positive report; written on 2026-10-10.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "air_south_pole_antimeridian_resolved.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "land_agl_assumed_friend_earlier_components.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "land_unknown_position.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/land_unknown_position.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "subsurface_unit_other_depth_unknown_reference.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "subsurface_unknown_method.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/subsurface_unknown_method.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "surface_baro_pending_null_quality.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "surface_zero.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report, byte-identical to examples/surface_zero.json of the SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0 (4 October 2026), whose README states every example is synthetic and that TEST-0001 is an internal synthetic identifier; no native bytes, no capture, values invented. Its sha256 is in spec/link16_gateway_pin.json.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "unknown_domain_poles_uint64_unicode.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC Link16 Gateway 1.0.0 report written on 2026-10-10 for the link16_gateway adapter's landing: the handoff's synthetic air_sensor example with the fields named in README.md edited to exercise one mapping row each; every value is invented, every name says SYNTHETIC or TEST, no native bytes and no capture.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    },
+    {
+      "file": "unknown_domain_poles_uint64_unicode_octets.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The compact UTF-8 encoding (raw multi-byte characters, no escapes) of unknown_domain_poles_uint64_unicode.json, written on 2026-10-10 so the octet path reads non-ASCII text; synthetic, values invented.",
+      "standard_ref": "link16_gateway/spec/link16_gateway_pin.json"
+    }
+  ]
+}

@@ -1126,6 +1126,80 @@ def test_an_adapter_on_an_intermediate_base_is_seen_and_an_unrelated_class_is_no
     assert seen == {"one", "two", "direct"}, seen
 
 
+# ------------------------------------------- a roster move is attributed to its own module only
+#
+# ADDED 2026-10-10. `_module_roster_moves` read the adapter sets across ALL modules, so a new
+# adapter module "explained" a functional edit in every other changed module under `adapters/`.
+# On the Link 16 gateway arc that turned three PATCH rulings for edits in three existing adapter
+# modules into stale rulings the gate refused, once the new module was staged. The repair credits
+# each adapter name to the module whose class declares it; these four arcs hold it both ways, on
+# synthetic snapshots so that no ruling in the real `MIGRATIONS.md` can decide them.
+
+_TAK = "synapse_cdm/adapters/tak.py"
+_NEWFMT = "synapse_cdm/adapters/newfmt.py"
+
+
+def _tak(gate, step: int) -> bytes:
+    """An existing adapter module with one private function whose body the arc may change."""
+    return (gate._adapter("TakAdapter", "tak")
+            + f"\n\ndef _position(value):\n    return value + {step}\n".encode())
+
+
+def _roster_arc(gate, *, edit: bool, add: bool) -> tuple[dict[str, bytes], dict[str, bytes]]:
+    before = {_TAK: _tak(gate, 1)}
+    after = {_TAK: _tak(gate, 2 if edit else 1)}
+    if add:
+        after[_NEWFMT] = gate._adapter("NewfmtAdapter", "newfmt")
+    return before, after
+
+
+def test_a_new_adapter_module_does_not_explain_an_edit_in_another_and_its_ruling_is_read(
+        gate, tmp_path, monkeypatch):
+    """(a) A new adapter module beside a ruled functional edit in an existing one: read, not stale."""
+    monkeypatch.setattr(gate, "MIGRATIONS", gate.MIGRATIONS)
+    _migrations(gate, tmp_path, "## History\n\n### Unreleased\n\n"
+                f"**Bump ruling.** `{_TAK}:_position` — PATCH: a translation fix, and no "
+                "caller's behaviour moves.\n")
+    raw = gate.derive(*_roster_arc(gate, edit=True, add=True))
+    assert {a.unit for a in raw.ambiguities} == {f"{_TAK}:_position"}, (
+        "the edit in tak.py was explained by the adapter added in newfmt.py — the cross-module "
+        f"attribution repaired on 2026-10-10: {[(s.kind, s.unit) for s in raw.signals]}")
+    ruled, recorded = gate.apply_rulings(raw, "Unreleased")
+    assert recorded == {f"{_TAK}:_position": "PATCH"}
+    assert ruled.ambiguities == []
+    assert ruled.floor == "MINOR"
+    assert ("MINOR", f"{_NEWFMT}:NewfmtAdapter") in {(s.kind, s.unit) for s in ruled.signals}
+
+
+def test_a_roster_only_move_still_derives_minor_with_no_unit_left_unruled(gate):
+    """(b) A new adapter module and no other edit: MINOR from the new module, nothing ambiguous."""
+    derived = gate.derive(*_roster_arc(gate, edit=False, add=True))
+    assert derived.ambiguities == []
+    assert derived.floor == "MINOR"
+    assert {s.unit for s in derived.signals if s.kind == "MINOR"} == {f"{_NEWFMT}:NewfmtAdapter"}
+    assert not [s for s in derived.signals if s.unit.startswith(_TAK)]
+
+
+def test_the_same_edit_without_a_ruling_is_reported_unruled(gate):
+    """(c) The functional edit of (a) with no ruling anywhere: the gate refuses it as UNRULED."""
+    before, after = _roster_arc(gate, edit=True, add=True)
+    derived = gate.derive(before, after)
+    assert [a.unit for a in derived.ambiguities] == [f"{_TAK}:_position"]
+    assert gate.run_fixture(before, after, (1, 2, 0), "1.3.0") == "UNRULED"
+
+
+def test_a_roster_move_in_the_same_module_still_explains_its_edit(gate):
+    """What per-module attribution keeps: an adapter added IN tak.py explains tak.py's edit."""
+    before = {_TAK: _tak(gate, 1)}
+    after = {_TAK: _tak(gate, 2) + b'\n\nclass TakTwoAdapter(Adapter):\n    name = "tak2"\n'}
+    derived = gate.derive(before, after)
+    assert derived.ambiguities == []
+    explained = {s.unit: s for s in derived.signals}[f"{_TAK}:_position"]
+    assert explained.kind == "MINOR"
+    assert "roster move in the same module" in explained.reason
+    assert "['tak2']" in explained.reason
+
+
 def test_the_gates_check_roster_is_the_harnesss_own(gate):
     """`_COLUMNS`, not the `_check_*` names — see the note above for the subset this replaced."""
     from synapse_cdm import harness

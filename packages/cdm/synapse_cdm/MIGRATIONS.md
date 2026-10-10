@@ -136,7 +136,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All twenty-one harnesses are green**, and at least one of them run against the INSTALLED
+2. **All twenty-two harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -566,11 +566,160 @@ now true of it.
 release tag is `v3.3.0`, and `3.3.0` is what the index serves — `PUBLICATION.md` entry 25 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, and the index note in
-the 3.3.0 section being what moved in it. Everything else the round touched ships in nothing: the
-ledger, the witness record and its README, the release-pipeline and changelog pages, the TacticalAPI
-implementation record, and two test modules.
+**What moved inside the distribution: 119 files** — for the 3.3.0 witness round, `MIGRATIONS.md`,
+this section, the dated witness paragraphs in the release procedure and the pipeline section, and
+the index note in the 3.3.0 section being what moved in it; for the CDM 3.1.0 landing of
+2026-10-10 below, `enums.py`, `FORMAT_COVERAGE.md`, `adapters/asterix_cat034.py` (one comment),
+`adapters/asterix_cat048.py`, `adapters/stanag4609.py`, `adapters/tacticalapi.py`,
+`fixtures/dis7/spec/dis7_pin.json` (one dated sentence; its digests are unchanged) and 28 golden
+files written again by `python -m synapse_cdm.harness --adapter <name> --update-golden` and read,
+each moving only its basis line or lines — one per object that states the basis, so two in the
+four files that hold two such objects — and no `schema_version`: under `fixtures/klv/golden/`,
+for the
+`stanag4609` basis string, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.cdm.json`, `a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.cdm.json`, `every_row_of_the_minimum_set_reported_in_one_packet.cdm.json`, `every_row_of_the_minimum_set_reported_in_one_packet.parsed.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.cdm.json`, `the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json` and `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`; under `fixtures/tacticalapi/golden/`, for the `tacticalapi` basis
+string, `awkward_symbols_and_codes.cdm.json` and `awkward_symbols_and_codes.parsed.cdm.json`;
+and, for the `link16_gateway` landing of the same day, the new adapter module
+`adapters/link16_gateway.py`, its row and section in `FORMAT_COVERAGE.md`, the harness count of
+the release procedure's second condition in `MIGRATIONS.md`, the roster count in
+the docstrings and comments of `README.md`, `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py`, `version.py` and `pyproject.toml`, the binding legend in `support_matrix.py`, the
+rendering of structured limitations in `release_notes.py` (both ruled below), and the new fixture
+directory `fixtures/link16_gateway/`: its `README.md`, three `PROVENANCE.json` records, the pin
+record `spec/link16_gateway_pin.json` (named `link16_gateway_pin.json` in the directory), and,
+at the top level, under `golden/`, `malformed/` and `reference/`, `air_flight_level.cdm.json`, `air_flight_level.json`, `air_hae_feet_gnss_hostile.cdm.json`, `air_hae_feet_gnss_hostile.json`, `air_hae_metres_friendly.cdm.json`, `air_hae_metres_friendly.json`, `air_msl.cdm.json`, `air_msl.json`, `air_sensor.cdm.json`, `air_sensor.json`, `air_sensor_octets.bin`, `air_sensor_octets.cdm.json`, `air_south_pole_antimeridian_resolved.cdm.json`, `air_south_pole_antimeridian_resolved.json`, `byte_order_mark.bin`, `component_after_effective.json`, `course_360.json`, `depth_33.bin`, `duplicate_key.bin`, `february_30.json`, `flight_level_unit_reference_mismatch.json`, `hour_24_component.json`, `identifier_trailing_newline.json`, `infinity_literal.bin`, `integer_not_double_exact.bin`, `invalid_utf8.bin`, `land_agl_assumed_friend_earlier_components.cdm.json`, `land_agl_assumed_friend_earlier_components.json`, `land_unknown_position.cdm.json`, `land_unknown_position.json`, `latitude_out_of_range.json`, `live_report_under_synthetic.json`, `lone_surrogate_escape.bin`, `missing_origin_scope.json`, `missing_required_key.json`, `nan_literal.bin`, `nodes_10001.bin`, `non_ascii_digit_timestamp.json`, `number_as_string.json`, `number_overflow.bin`, `number_underflow.bin`, `partial_coordinates.json`, `second_60_component.json`, `second_60_effective_at.json`, `sequence_above_uint64.json`, `subsurface_unit_other_depth_unknown_reference.cdm.json`, `subsurface_unit_other_depth_unknown_reference.json`, `subsurface_unknown_method.cdm.json`, `subsurface_unknown_method.json`, `surface_baro_pending_null_quality.cdm.json`, `surface_baro_pending_null_quality.json`, `surface_zero.cdm.json`, `surface_zero.json`, `timestamp_without_milliseconds.json`, `top_level_array.bin`, `unknown_domain_poles_uint64_unicode.cdm.json`, `unknown_domain_poles_uint64_unicode.json`, `unknown_domain_poles_uint64_unicode_octets.bin`, `unknown_domain_poles_uint64_unicode_octets.cdm.json`, `unknown_nested_key.json`, `unknown_top_level_key.json` and `uppercase_record_id.json`.
+Everything else the witness round touched ships in nothing: the ledger, the witness record and its
+README, the release-pipeline and changelog pages, the TacticalAPI implementation record, and two
+test modules. Everything else this arc touched ships in nothing either: the four object schemas
+under `schemas/` (`cdm_object`, `entity`, `plan_object`, `track`; `event` carries no `Position`)
+and the three gateway schemas published under `schemas/link16_gateway/`,
+`manifests/link16_gateway.json`, the five schema-reference pages, the regenerated support matrix
+and six other documentation pages, the adapter's new documentation page
+`docs/docs/cdm/link16-gateway.mdx` and its implementation record
+`docs/link16-gateway-implementation.md`, the root `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`,
+`SECURITY.md`, `RELEASE_NOTES.md` and `.gitattributes`, the wheel gate's comment and module lists
+in `gates/wheel_install.py`, the bump gate's attribution repair in `gates/bump_derivation.py`
+(below), the DIS 7 and TacticalAPI implementation records, the adapter's three new test modules
+and fourteen others whose literals or assertions moved.
+
+**THE CDM 3.1.0 LANDING, 2026-10-10 — `PositionSource` gains `SENSOR` and `UNKNOWN`, the published
+schemas are re-exported from the models, and the number is not typed in this tree.** The landing
+carries the two members, and a dated paragraph of the class docstring that is the published
+description of the vocabulary, with `SCHEMA_VERSION` still `3.0.0`, in the form of the 3.0.0
+landing: `tests/test_cdm_version_matrix.py` holds `SCHEMA_VERSION` to the newest frozen contract,
+and freezing 3.1.0 records the release tag and `SELF`, which no landing commit can supply. The
+files under `schemas/` are therefore re-exported by `python -m synapse_cdm.schemas --out schemas`
+under the 3.0.0 label — they say `x-cdm-schema-version: 3.0.0` while holding two values the frozen
+3.0.0 contract refuses, and they are MISLABELLED until the release commit types 3.1.0 — so this
+branch is not to be fast-forwarded to `main` before the release commit, because the docs site serves
+`main`'s tip. The DIS 7 entity pin now names the frozen 3.0.0 copy, which never moves, instead of the
+published entity schema (`tests/test_cdm_dis7_schema.py`, dated). The three runtime basis strings
+that said the enum had four members are dated, every adapter keeps the member it wrote, and no
+shipped adapter is re-labelled. Three facts wait on the number, and each is a statement about this
+tree rather than a red test: the files under `schemas/` are mislabelled, as above; the
+`link16_gateway` adapter's default projection stamps the declared `SCHEMA_VERSION`, `3.0.0`, on an
+Entity or a Track whose position method is `SENSOR` or `UNKNOWN`, which the frozen 3.0.0 contract
+refuses; and its `cdm_schema=SCHEMA_VERSION` selects the 3.0.0 compatibility projection, because
+the two spellings name the same version until the release commit. The handoff's REQ012 asks for a
+CDM 4.0.0, and it is not followed (ruled 2026-10-10): the rule table at the top of this file and
+VERSIONING.md §3.2 class an added enum member as a MINOR, the proposal entry for this very member
+at the end of this file already called it one, and a consumer that cannot read the two members is
+served by the compatibility projection, which the frozen 3.0.0 contract accepts, rather than by a
+new major. The release commit does the rest in one act: it types `SCHEMA_VERSION` 3.1.0 and
+`PACKAGE_VERSION` 3.4.0, re-exports `schemas/`, re-stamps every golden, manifest and generated page,
+freezes the 3.1.0 contract under `tests/frozen/cdm/3.1.0/` with `SELF` provenance, extends
+`KNOWN_CONTRACTS` and the version matrix, re-derives the DIS 7 vendored entity profile from the
+3.1.0 entity schema, and writes the bump and version rulings.
+
+**THE `link16_gateway` LANDING, 2026-10-10 — the SC Link16 Gateway translator:
+`link16_gateway` lands as #23, and the roster moves twenty-one to twenty-two.** The adapter reads
+one report of SC Link16 Gateway 1.0.0, the internal JSON interface of the SynapseCommand JREAP C
+and Link 16 engineering handoff 1.0.0, and writes an Entity and, when the report carries a
+position, a one-sample Track. It parses no JREAP C or Link 16 bytes and claims no native
+interoperability; by default its egress rebuilds the report from its own objects, and in export
+mode it builds one report from an Entity the report contract can represent, under an
+`ExportContext` the runtime supplies, and it transmits nothing in either mode.
+The fixture set `fixtures/link16_gateway/` carries the handoff's
+six reports and its six reference projections byte-identical, seven synthetic reports and two
+octet twins written for the adapter, 32 refused reports under `malformed/`, 15 goldens, three
+`PROVENANCE.json` records and the pin record. The handoff's three schemas are published under
+`schemas/link16_gateway/`, and its schemas, examples and reference projections are contributed
+under this repository's Apache-2.0 licence, as the maintainer commissioned them. The registry
+name is the first with an underscore, so `tests/test_cdm_ordinals.py` widens its two name patterns
+to admit one (dated in the module): before the edit the narrow and the widened patterns bind the
+same sites, and after row 23 the sweep still fails a stale pairing, a second row naming the same
+adapter and a renamed row; a repeated ordinal number is not caught, before the widening as after
+it. The deviations from the handoff's specification, each recorded in
+`docs/link16-gateway-implementation.md` and stated on the adapter's documentation page: CDM 3.1.0
+rather than REQ012's 4.0.0 (above); `source.system` is the one token `SC_LINK16_GATEWAY` rather
+than REQ081's spaced name, because `--list-adapters` prints whitespace-separated columns; REQ085's
+ledger covers every leaf, and three projections its grammar cannot state are asserted by the
+adapter's tests instead of declared; REQ084's HAE-feet conversion is followed although the
+description of `Position.vertical` says the vertical is never converted; a missing `origin_scope`
+is `SCHEMA_INVALID` at the adapter, REQ071's `IDENTITY_SCOPE_UNRESOLVED` being the runtime's; the
+adapter is stricter than the handoff's reference mapper on timestamps, identifiers, UUID case and
+numbers; REQ082's feet-to-metres transformation is recorded only when the converted height reached
+an emitted position; and REQ010's test modules carry this repository's `test_cdm_` prefix. The
+record and the page also list, from 2026-10-10, the deviations the runtime bridge realises when it
+lands: its distribution name `synapse-link16-bridge` rather than REQ003's `sc_link16_bridge`; an
+audited operator command that also releases a quarantined reuse (I03); the reporting-authority half
+of a drop, not claimed (REQ105); the cursor read as strictly after the committed one; and the
+configuration's schema default, 3.1.0 rather than 4.0.0. The binding is
+`provisional-internal-profile` with the claim status `PROVISIONAL`, and the legend ruling below
+says what that binding now covers. The documentation page `docs/docs/cdm/link16-gateway.mdx` is
+the contract of the export mode. The merge hold above covers this landing as well: the page and
+the roster are published from `main`'s tip, and only the release commit makes them true of a
+version anybody can install.
+
+**Bump ruling.** `synapse_cdm/enums.py:PositionSource` — MINOR: two members, `SENSOR` and `UNKNOWN`,
+are added to a closed vocabulary and none is removed or renamed — the CDM table's "an enum member
+added" row; the class docstring gains a dated paragraph and moves nothing else.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter` — PATCH: the wording
+of one basis string, `position_source_basis`, which said the enum had no member for a sensor
+measurement and now says it had none when the adapter shipped and has `SENSOR` since CDM 3.1.0; the
+adapter still writes `ESTIMATED` and nothing else in the class moved.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — PATCH: the wording of one
+basis string, `position_source`, which listed four members and now lists six; the adapter still
+writes `GNSS` for a GPS/INS blend and nothing else in the class moved.
+
+**Bump ruling.** `synapse_cdm/adapters/tacticalapi.py:_position` — PATCH: the wording of one basis
+suffix, which said none of the enum's four members meant unknown and now dates that and says the
+adapter keeps `ESTIMATED`; the mapping table and every returned member are unchanged.
+
+**Bump ruling.** `synapse_cdm/support_matrix.py:render` — PATCH: one dated clause of the generated
+page's binding legend, saying that `provisional-internal-profile` also covers a wire form this
+repository defines itself and for which no external normative binding exists (added 2026-10-10,
+for `link16_gateway`); the page's structure, its columns and every row's derivation are unchanged.
+
+**Bump ruling.** `synapse_cdm/release_notes.py:known_limitations` — PATCH: a structured limitation is
+rendered as its `summary` (then a `statement`) instead of the dict's Python repr, which the renderer
+produced for every such limitation until it was repaired on 2026-10-10; the returned shape, the
+plain-string case and every other section of the notes are unchanged.
+
+**The bump gate's roster-move attribution was made per module on 2026-10-10.** Until then
+`gates/bump_derivation.py` explained a functional edit in any module under `adapters/` by an
+adapter added or removed anywhere in the distribution, so staging `adapters/link16_gateway.py` made
+the three adapter-module edits ruled above read as explained by a roster move none of them was part
+of, and the gate refused their PATCH rulings as stale. Since 2026-10-10 a roster move explains an
+edit only in the module whose own class declares the added or removed name, which is the
+attribution the gate's docstring already stated; `tests/test_cdm_bump_derivation.py` holds it both
+ways on synthetic arcs, and every released arc still derives the number it shipped. The three
+rulings above stand as written. `gates/` is outside the distribution, so the repair owes no Bump
+ruling of its own.
+
+**ARCS IN FLIGHT ON OLDER BASES, 2026-10-10.** Work begun on a base older than these two landings —
+another adapter, or another sibling distribution — rebases onto the release that carries them,
+synapse-cdm 3.4.0 with CDM 3.1.0, and re-pins and re-stamps there when it lands. A vendored copy of
+a file under `schemas/` no longer matches the published one, which holds the two new members and is
+labelled 3.1.0 from the release commit on; a test that asserts the schema version is 3.0.0 breaks;
+every golden such an arc wrote is re-stamped 3.1.0; the 3.1.0 contract's `SELF` provenance is
+resolved to the release tag's names before any next package bump; ordinal 23 is taken, so the next
+adapter is ordinal 24; and the `ROOTS` tuple of `tests/test_cdm_version_floor.py` and the workflow
+inventory clause of ARCHITECTURE.md §7, in the form the sibling distribution
+`synapse-link16-bridge` gives them when it lands in this arc, are what such an arc rebases onto.
+The DIS 7 adapter's vendored entity profile is re-derived at the release commit from the 3.1.0
+entity schema.
 
 **THE 3.3.0 WITNESS ROUND's RECORD, 2026-10-08 — the record is the pipeline's own, for the third
 time.** Run 37618296352's `witness` job built `witness-3.3.0.json`, its verify step read `VERIFIED`
@@ -13782,7 +13931,8 @@ is worth stating.
 
   One gap it opens is a schema question rather than a parking key, and it is the entry above:
   `PositionSource` has no member for a sensor measurement, so a derived radar fix is written
-  `ESTIMATED`.
+  `ESTIMATED`. (Dated 2026-10-10: CDM 3.1.0 adds that member as `SENSOR`, and `cat048` keeps
+  `ESTIMATED` — see the CDM 3.1.0 landing record of 2026-10-10.)
 
   **Three commits, and the row set came first.** `70b8c07` wrote the row set as a specification
   with `not yet` in every status column and no code; `7e13f27` amended it under review, reversing
@@ -13840,7 +13990,9 @@ is worth stating.
 
   **What the CDM had was otherwise enough, and one existing decision earned its keep in a new way:
   `Position` requiring `position_source`.** A surveyed radar head is none of `GNSS`, `INERTIAL` or
-  `ESTIMATED`; `MANUAL` is recorded as the least-wrong of four rather than as a fit, and §5.2.12's
+  `ESTIMATED`; `MANUAL` is recorded as the least-wrong of four rather than as a fit (four members
+  when written; `SENSOR` and `UNKNOWN` joined on 2026-10-10, CDM 3.1.0, and neither is a surveyed
+  site), and §5.2.12's
   "accuracy of at least 2.3844 metres" is parked as a quantisation step rather than written into
   `accuracy_m`, because reporting a resolution as an accuracy claims the station knows where it is
   to 2.4 m when the document says only that it cannot say so more finely.
@@ -14398,6 +14550,11 @@ evidence that was missing when they were first written down:
     converted with a known site, is not an estimate, and every future sensor format will hit the
     same wall. Adding a member is a MINOR bump; naming it is the work, because it has to
     distinguish a *measurement in a sensor frame* from a *fix* without becoming a modality list.
+    **Implemented 2026-10-10, CDM 3.1.0:** `PositionSource.SENSOR` — a position a source reports
+    as an explicit sensor or surveillance solution that is none of the four older methods — with
+    `PositionSource.UNKNOWN` beside it, both added for the Link 16 gateway adapter's REQ011. The
+    rest of this bullet, the measurement carried as a measurement in a sensor frame, stays
+    proposed, and no shipped adapter was re-labelled.
 
 - **A vocabulary for the life of a track** — `FORMAT_COVERAGE.md` gaps 26 and 27, proposed as one
   change because they are the two ends of one missing concept, and both come from CAT048 reversing

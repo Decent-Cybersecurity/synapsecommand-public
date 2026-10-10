@@ -1,0 +1,262 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "link16_gateway/malformed",
+  "fixtures": [
+    {
+      "file": "byte_order_mark.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "component_after_effective.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "course_360.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "depth_33.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "duplicate_key.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "february_30.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "flight_level_unit_reference_mismatch.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "hour_24_component.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "identifier_trailing_newline.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "infinity_literal.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "integer_not_double_exact.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "invalid_utf8.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "latitude_out_of_range.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "live_report_under_synthetic.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "lone_surrogate_escape.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "missing_origin_scope.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "missing_required_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "nan_literal.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "nodes_10001.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "non_ascii_digit_timestamp.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "number_as_string.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "number_overflow.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "number_underflow.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "partial_coordinates.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "second_60_component.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "second_60_effective_at.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "sequence_above_uint64.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "timestamp_without_milliseconds.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "top_level_array.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_nested_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "unknown_top_level_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    },
+    {
+      "file": "uppercase_record_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-10: the handoff's synthetic air_sensor example with one described defect (README.md lists each file, its defect and the refusal code the adapter test expects); .bin where the defect is in the octets and a parsed dict could not carry it. Nothing derives from recorded data."
+    }
+  ]
+}

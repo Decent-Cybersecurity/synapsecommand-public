@@ -48,7 +48,8 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
                 # twenty-one, the first count this module has had to read with a hyphen. The
                 # alternation below is built longest first so the compound is tried before its
                 # own first half, which is `tests/test_cdm_prose_counts.py`'s `_NUMBER_WORD` rule.
-                "twenty-one": 21}
+                # Added 2026-10-10 (the Link 16 gateway arc): twenty-two, the roster's next count.
+                "twenty-one": 21, "twenty-two": 22}
 _NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 

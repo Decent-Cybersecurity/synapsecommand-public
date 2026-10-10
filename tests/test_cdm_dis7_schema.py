@@ -3,6 +3,8 @@
 The bundle this contract was vendored from is a handoff document set identified by
 `SC DIS7 SPEC 001 v1.0` and is not in this repository. This module reads one repository file
 beyond the vendored tree, the published `schemas/entity.schema.json`, and nothing else.
+Since 2026-10-10 it reads two: the entity-schema pin also reads the frozen CDM 3.0.0 entity
+schema, `tests/frozen/cdm/3.0.0/entity.schema.json` (the Link 16 gateway arc; see the pin test).
 """
 from __future__ import annotations
 
@@ -22,6 +24,10 @@ from tests import dis7_support
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 ENTITY_SCHEMA = REPO / "schemas" / "entity.schema.json"
+#: The frozen CDM 3.0.0 entity schema — the bytes the bundle's `cdm-entity.schema.json` equals.
+#: Read only by the pin test below (2026-10-10); every validation here keeps using the published
+#: `ENTITY_SCHEMA`.
+FROZEN_3_0_0_ENTITY_SCHEMA = REPO / "tests" / "frozen" / "cdm" / "3.0.0" / "entity.schema.json"
 
 SCHEMA_NAMES = ("dis7-context", "dis7-entity", "dis7-envelope", "dis7-pdu", "dis7-residual")
 
@@ -102,8 +108,16 @@ def test_pin_every_vendored_file_matches_the_record_and_the_bundle_manifest(file
     assert rows[file] == BUNDLE_MANIFEST[file]
 
 
-def test_pin_cdm_entity_schema_is_the_published_entity_schema():
-    digest = hashlib.sha256(ENTITY_SCHEMA.read_bytes()).hexdigest()
+# 2026-10-10, the Link 16 gateway arc: `schemas/entity.schema.json` gained two `PositionSource`
+# members (SENSOR, UNKNOWN; CDM 3.1.0), so its digest no longer equals the bundle's. The bundle's
+# `cdm-entity.schema.json` is byte-identical to the frozen 3.0.0 contract, which never moves, and
+# that copy is what this pin now reads; the test was named
+# `test_pin_cdm_entity_schema_is_the_published_entity_schema` until then. Mutation reading, the
+# same day: one byte changed in a scratch copy of `tests/frozen/cdm/3.0.0/entity.schema.json`
+# makes this test fail on the digest, and `tests/test_cdm_version_matrix.py` independently holds
+# that file to `tests/frozen/cdm/MANIFEST.json`.
+def test_pin_cdm_entity_schema_is_the_frozen_3_0_0_entity_schema():
+    digest = hashlib.sha256(FROZEN_3_0_0_ENTITY_SCHEMA.read_bytes()).hexdigest()
     assert digest == CDM_ENTITY_SHA256
     pin = _pin()
     assert pin["cdm_entity_schema"]["sha256"] == CDM_ENTITY_SHA256

@@ -921,7 +921,9 @@ def _station_position(items: dict) -> tuple[Position | None, dict]:
     return Position(
         lat=lat, lon=lon, alt_m=alt,
         # MANUAL. A surveyed station location is none of GNSS, INERTIAL or ESTIMATED, and the
-        # row set records this as the least-wrong of four rather than as a fit.
+        # row set records this as the least-wrong of four rather than as a fit (four members when
+        # it was written; SENSOR and UNKNOWN joined on 2026-10-10, CDM 3.1.0, and neither is a
+        # surveyed site).
         position_source=PositionSource.MANUAL,
         # None. §5.2.12's "accuracy of at least 2.3844 metres" is the QUANTISATION STEP of the
         # encoding, not a measurement uncertainty; it is parked instead.

@@ -42,11 +42,20 @@ class PositionSource(StrEnum):
     jamming over an area, every GNSS-sourced position inside that area becomes suspect and
     every INERTIAL or MANUAL one does not — a distinction that is impossible to make after
     the fact if the adapter flattened them all to "position".
+
+    SENSOR and UNKNOWN were added on 2026-10-10, CDM 3.1.0 — a MINOR by MIGRATIONS.md's table,
+    since a member is added and none is removed. SENSOR is a position a source reports as an
+    explicit sensor or surveillance solution that is none of GNSS, INERTIAL, MANUAL or
+    ESTIMATED; UNKNOWN is a position whose source does not state how it was obtained — a member
+    rather than a null, so that "not stated" is recorded as a fact. Neither re-labels anything:
+    an adapter that shipped before 3.1.0 keeps the member it wrote, with its own basis.
     """
     GNSS = "GNSS"
     INERTIAL = "INERTIAL"
     MANUAL = "MANUAL"
     ESTIMATED = "ESTIMATED"
+    SENSOR = "SENSOR"
+    UNKNOWN = "UNKNOWN"
 
 
 class EventType(StrEnum):

@@ -56,7 +56,7 @@
     ]
   },
   "cdm_entity_schema": {
-    "what": "the bundle's schemas/cdm-entity.schema.json is NOT vendored: it is byte-identical to this repository's published schemas/entity.schema.json",
+    "what": "the bundle's schemas/cdm-entity.schema.json is NOT vendored: it is byte-identical to the frozen CDM 3.0.0 entity schema (tests/frozen/cdm/3.0.0/entity.schema.json). Dated 2026-10-10: until then this sentence named this repository's published schemas/entity.schema.json, which held the same bytes; the Link 16 gateway arc added the PositionSource members SENSOR and UNKNOWN to the published schema that day, and the frozen 3.0.0 contract, which never moves, is the copy the bundle's file equals. The sha256 and byte count below are unchanged.",
     "bundle_file": "schemas/cdm-entity.schema.json",
     "sha256": "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a",
     "bytes": 32824

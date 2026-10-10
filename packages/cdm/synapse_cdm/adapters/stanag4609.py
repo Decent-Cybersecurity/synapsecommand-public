@@ -1337,9 +1337,10 @@ class Stanag4609Adapter(Adapter):
         basis["position_source"] = (
             "GNSS, and the enum has no member that says what the document says. §8.13.1: "
             "'Generated from GPS/INS information and based on the WGS84 coordinate system.' "
-            "PositionSource offers GNSS, INERTIAL, MANUAL and ESTIMATED, and a GPS/INS blend is "
-            "none of them exactly — GNSS is the member naming the source the document names "
-            "first, and ESTIMATED would understate a fix that really is a satellite solution. "
+            "PositionSource offers GNSS, INERTIAL, MANUAL, ESTIMATED and, since CDM 3.1.0 "
+            "(2026-10-10), SENSOR and UNKNOWN, and a GPS/INS blend is none of them exactly — "
+            "GNSS is the member naming the source the document names first, and ESTIMATED "
+            "would understate a fix that really is a satellite solution. "
             "The blend is recorded here rather than resolved")
         return Position(
             lat=lat, lon=lon, alt_m=alt,

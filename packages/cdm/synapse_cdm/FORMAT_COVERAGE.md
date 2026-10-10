@@ -68,6 +68,9 @@ run is a guess with a table around it.
 | `dis7 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 | `tacticalapi 1.0.0` | implemented by `adapters/tacticalapi.py` on the wire reader in `adapters/tacticalapi_codec.py`, with a binary fixture, its parsed twin and a golden file (landed 2026-10-06) |
 | `tacticalapi 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`, `Event.residual`) at its own relative path under `residual.data.response` (the message and its header) or `residual.data.blue_force` (the element's, on the Entity only), and is listed with the path of the message that held it in `residual.data.unknown`, which every Entity and every Event carries, `[]` when nothing is unknown — the seventh adapter to use the container; names no gap (landed 2026-10-06) |
+| `link16_gateway 1.0.0` | implemented by `adapters/link16_gateway.py`, which holds the gateway contract's strict parser and validator in the same module, with a JSON fixture (an octet twin beside two of them) and a golden file (landed 2026-10-10) |
+| `link16_gateway 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`) at its own path under `residual.data.report`, which holds the whole validated report; the Track's residual holds the record identifier; names no gap (landed 2026-10-10) |
+| `link16_gateway 1.0.0 · egress` | implemented in the `from_cdm()` direction: the same report reconstructed from this adapter's own objects (the default mode), or one report built from an Entity the report contract can represent, under a runtime-supplied `ExportContext` (landed 2026-10-10) |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -275,6 +278,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 20 | `aixm52` | shipped | `adapters/aixm52.py`, whose docstring opens by claiming adapter #20 (ingest only, the fifth `residual: structured` adapter), this document's AIXM 5.2 section, `fixtures/aixm52/spec/aixm52_pin.json`, `fixtures/aixm52/README.md` and `docs/adapter-expansion-implementation.md`. **The first adapter that is a second profile on another adapter's reader**: `aixm511.AixmAdapterBase` (abstract, registers no name) reads both versions from a `Profile` — namespaces, pinned property paths, the parsed twin's list-shape table, the ElevatedPoint group — so a 5.2 structure that differs from 5.1.1 is mapped by its own table row and never by a namespace substitution; Digital NOTAM is declared NOT available on 5.2 (no Event schema targets it) rather than claimed |
 | 21 | `dis7` | shipped | `adapters/dis7.py`, whose docstring claims the ordinal, and `fixtures/dis7/README.md`. One DIS 7 Entity State PDU becomes one `Entity`, and the unchanged Entity gives the original octets back. The row was at Phase 1 while only the vendored vectors, the contract files and `fixtures/dis7/spec/dis7_pin.json` existed; the class, the harness fixtures and their goldens landed together |
 | 22 | `tacticalapi` | shipped | `adapters/tacticalapi.py`, whose docstring claims the ordinal, `fixtures/tacticalapi/README.md` and `fixtures/tacticalapi/spec/tacticalapi_pin.json`, which records it beside the adapter's name. One TacticalAPI blue-force response becomes an `Entity` and an `Event` per blue force, ingest only, the seventh `residual: structured` adapter. Built and verified out of tree against the contract at upstream commit `58661c9` before it landed on 2026-10-06; the class, the fixture set, its goldens and its tests landed together, so the row had no Phase 1 in this table |
+| 23 | `link16_gateway` | shipped | `adapters/link16_gateway.py`, whose docstring claims the ordinal, and `fixtures/link16_gateway/README.md`. One SC Link16 Gateway 1.0.0 report (an internal JSON contract defined in this repository, not JREAP C and not Link 16 bytes) becomes one `Entity` and, when its position is present and projected, one single-sample `Track`; bidirectional (mirror reconstruction, and export under a runtime-supplied context), the eighth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-10, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -290,6 +294,8 @@ reason the STANAG 4609 pin rows are asserted as one composite string rather than
 fixtures and goldens landed together, which returned the count to one.
 `tacticalapi` at #22 landed on 2026-10-06 with its class, fixtures, goldens and tests in one
 change and was never at Phase 1 here, so the count stays at one.
+`link16_gateway` at #23 landed on 2026-10-10 the same way, with its class, fixtures,
+goldens and tests in one change and never at Phase 1 here, so the count still stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -6384,7 +6390,15 @@ matter.
   jamming that a GNSS fix does not. It is also not a lie in the narrow sense: what reaches
   `Position` is a *computed* product of a measurement, an injected site and possibly a pressure
   altitude. `attributes.position_source_basis` records all of that, and the missing enum member
-  is a 1.1.0 candidate rather than a schema change.
+  is a 1.1.0 candidate rather than a schema change. **Dated 2026-10-10:** the member exists now —
+  CDM 3.1.0 adds `PositionSource.SENSOR`, with `UNKNOWN` beside it — and this adapter keeps
+  `ESTIMATED`, because re-labelling a shipped adapter's output is a decision of its own and not
+  part of that MINOR; the basis string says so since the same date. The Link 16 gateway
+  specification that asked for the member says, in its REQ011, "Do not label radar derived
+  positions GNSS or ESTIMATED merely to satisfy validation", and this settlement is in tension with
+  that sentence: `ESTIMATED` was chosen when no truer member existed, and it was ruled on
+  2026-10-10 that no shipped adapter is re-labelled in the release that carries CDM 3.1.0, so the
+  tension stands, named, until a release of its own re-labels `cat048`.
 - **I048/042 is still parked, and the reason survives the reversal.** Its origin "coincides with
   the radar head position", so a site would in principle place it too — but **which of two
   transforms produced it is signalled in a different item**, `TCC` in I048/170, and the projection
@@ -7133,7 +7147,7 @@ the only severity this format raises.
 | `I048/040` + injected site + a height | `Position.lat` / `Position.lon` | `cat048 1.0.0` | the geodesic direct solution from the site, distance `sqrt(RHO² − Δh²)`, bearing `THETA` on WGS-84. Asserted to invert back to `RHO` and `THETA` within the item's own LSBs — 1/256 NM and 360/2¹⁶ ° |
 | no injected site | `Entity.position` | `cat048 1.0.0` | `None`, and the polar values parked. `attributes.position_basis` says no site was injected — the first draft's behaviour, retained as the default rather than as the rule |
 | injected site, **no usable height** | `Entity.position` | `cat048 1.0.0` | `None`, with the missing height named in the basis. **The record is not refused** — it is translatable, and a `Δh = 0` assumption misplaces a target at FL350 overhead by 10.7 km. Settlement 3 |
-| *(derived)* | `Position.position_source` | `cat048 1.0.0` | `ESTIMATED`. **`PositionSource` has no member for a sensor measurement** — `GNSS`, `INERTIAL`, `MANUAL`, `ESTIMATED` — and `ESTIMATED` is the only one that is not an outright false statement about a computed product of a measurement, an injected site and possibly a pressure altitude. It also answers the enum's own purpose correctly: a radar fix is not `GNSS` and survives jamming. `attributes.position_source_basis` records it; the missing member is a 1.1.0 candidate, not a schema change here |
+| *(derived)* | `Position.position_source` | `cat048 1.0.0` | `ESTIMATED`. **`PositionSource` has no member for a sensor measurement** — `GNSS`, `INERTIAL`, `MANUAL`, `ESTIMATED` — and `ESTIMATED` is the only one that is not an outright false statement about a computed product of a measurement, an injected site and possibly a pressure altitude. It also answers the enum's own purpose correctly: a radar fix is not `GNSS` and survives jamming. `attributes.position_source_basis` records it; the missing member is a 1.1.0 candidate, not a schema change here. **Dated 2026-10-10:** CDM 3.1.0 adds it as `SENSOR`; this row keeps `ESTIMATED` (Settlement 3), in named tension with the Link 16 gateway specification's REQ011 ("Do not label radar derived positions GNSS or ESTIMATED merely to satisfy validation"), because no shipped adapter is re-labelled in the release that carries CDM 3.1.0 |
 | *(none)* | `Position.alt_m` | `cat048 1.0.0` | `None` even when a `Position` exists. I048/110 is **mean-sea-level** referenced and `alt_m` is metres above the WGS-84 ellipsoid; the geoid separation needs a model nothing here carries. The height **difference** used for the slant correction is a different quantity, and the geoid largely cancels across a sensor-to-target baseline |
 | *(none)* | `Position.accuracy_m` | `cat048 1.0.0` | `None`. I048/210's per-axis σ are "within the local grid system", collapsing them into one horizontal figure is a modelling choice, and the derivation adds unbounded error of its own. **Gap 17** |
 | *(none)* | `Event.geometry` | `cat048 1.0.0` | `None`. The position lives on the `Entity`, as for every other point-target adapter here; `Event.geometry` is for footprints |
@@ -7301,7 +7315,7 @@ view and never the wire.
 | `Event.event_id` | keyed on the identity **and** `observed_at` | An address or a track number repeats on every scan, so an id keyed on it alone would collapse a whole flight into one event |
 | `Entity.source_ids` at step 2 | a report-scoped derived id | A report with no aircraft address states no identity at all, and `source_ids` is required |
 | `Position.lat` / `Position.lon` | the geodesic solution from an **injected** site | The format states range and bearing and never the origin. Settlement 3 — and the arithmetic is this adapter's, which is the one place in this row set where that is true |
-| `Position.position_source` | `ESTIMATED` | `PositionSource` has no member for a sensor measurement |
+| `Position.position_source` | `ESTIMATED` | `PositionSource` has no member for a sensor measurement (until CDM 3.1.0, 2026-10-10, which adds `SENSOR`; the adapter keeps `ESTIMATED`) |
 
 ### Where the specification is ambiguous or contradicts itself
 
@@ -12323,7 +12337,7 @@ every other adapter in this repository and it decides the object shape.
 | `I034/010` NOTE | *(no field)* | `cat034 1.0.0` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the same URL `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation** rather than by analogy |
 | `I034/120` | `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `cat034 1.0.0` | §5.2.12. Latitude and longitude from the two 24-bit two's-complement fields at 180/2²³ degrees; the altitude from the signed 16-bit height at 1 m above the WGS 84 ellipsoid. **The only item in this category that produces a `Position`**, and settlement 2 is about what is *not* done with it |
 | `I034/120` | `Position.accuracy_m` | `cat034 1.0.0` | `None`. §5.2.12 states "an accuracy of at least 2.3844 metres" — that is the **quantisation step** of the encoding, not a measurement uncertainty, and reporting a resolution as an accuracy claims the station knows where it is to 2.4 m when the document says only that it cannot say so more finely. **Parked as `attributes.position_quantisation_m`** |
-| `I034/120` | `Position.position_source` | `cat034 1.0.0` | `MANUAL`. A surveyed station location, which is what a data-source position is, is none of GNSS, INERTIAL or ESTIMATED. Recorded as the least-wrong of four rather than as a fit |
+| `I034/120` | `Position.position_source` | `cat034 1.0.0` | `MANUAL`. A surveyed station location, which is what a data-source position is, is none of GNSS, INERTIAL or ESTIMATED. Recorded as the least-wrong of four rather than as a fit (four when written; `SENSOR` and `UNKNOWN` joined on 2026-10-10, CDM 3.1.0, and neither is a surveyed site) |
 
 ### Row set — message type, and the seven records that are one shape
 
@@ -12432,7 +12446,7 @@ limit every adapter here has.
 | `Entity.affiliation` | `UNKNOWN`, always | Nothing in the category states one, and here it is not even a decision |
 | `Event.received_at` | the injected clock | Never the wall clock, never the source's time |
 | `Entity.entity_type` | `SENSOR` | The station is the object. The one row where this category picks an enum value confidently |
-| `Position.position_source` | `MANUAL` | Recorded as the least-wrong of four, not as a fit |
+| `Position.position_source` | `MANUAL` | Recorded as the least-wrong of four, not as a fit (four when written; `SENSOR` and `UNKNOWN` joined on 2026-10-10, CDM 3.1.0, and neither is a surveyed site) |
 
 ### Where the specification is ambiguous or contradicts itself
 
@@ -13019,7 +13033,11 @@ sometimes *upstream* of it and never what the item states; `INERTIAL` and `MANUA
 wrong. `ESTIMATED` is the only one of the four that is true of every `I062/105`, and
 `attributes.position_basis` records that the underlying technologies are named separately in
 `I062/290` and in the REF's contributing-sensor lists — so a consumer can see that a track was
-ADS-B-only without this adapter having relabelled the estimate as a GNSS fix.
+ADS-B-only without this adapter having relabelled the estimate as a GNSS fix. (Dated 2026-10-10:
+"the four" were the four members when this was written; CDM 3.1.0 adds `SENSOR` and `UNKNOWN`. A
+tracker's calculated position is arguably a surveillance solution in `SENSOR`'s sense, and `cat062`
+keeps `ESTIMATED` in the release that carries CDM 3.1.0, because no shipped adapter is re-labelled
+with that MINOR.)
 
 **`Position.accuracy_m` is set from `I062/500` SF#3 when it is present, and this is the FIRST
 adapter in this repository where a source states a positional standard deviation in the CDM's own
@@ -15017,6 +15035,43 @@ open items are in the repository's `docs/tacticalapi-implementation.md`. Fixture
 | a singular field twice, two members of one oneof, a named field with another wire type, an out-of-range varint | — | refused | Refused `repeated-singular-field`, `multiple-oneof-members`, `wire-type-mismatch`, `value-out-of-range` or `varint-too-long`; nothing a lenient protobuf parser would repair is repaired |
 | egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
 
+## SC Link16 Gateway 1.0.0 report (internal contract `sc-link16-gateway/1.0.0`) — ingest and egress
+
+Adapter #23, `adapters/link16_gateway.py`, bidirectional, the eighth adapter to declare
+`residual: structured`, landed 2026-10-10. It reads one report of SC Link16 Gateway 1.0.0, an
+internal JSON interface this repository defines and publishes under `schemas/link16_gateway/` in
+the repository: one complete track snapshot that a gateway outside this package has already
+decoded from its own traffic. It is not JREAP C and not Link 16; no native frame, message or
+J-series word is read or written, and no native interoperability is claimed. The handoff that
+specifies it and the rulings on it are in the repository's `docs/link16-gateway-implementation.md`
+and `docs/docs/cdm/link16-gateway.mdx`. Fixtures: `fixtures/link16_gateway/`; pin record:
+`fixtures/link16_gateway/spec/link16_gateway_pin.json`.
+
+| SC Link16 Gateway report | CDM field | Status | Notes |
+|---|---|---|---|
+| the identity tuple `tenant`, `realm`, `synthetic`, `origin_scope`, `track_number`, `incarnation` | `Entity.entity_id`, `Entity.source_ids`, `SourceId.system`, `SourceId.external_id`, `Track.track_id` | `link16_gateway 1.0.0` | System `Link16Track`, external id the tuple as compact ASCII-escaped JSON in that order; both identifiers are uuid5 over it. Reporter, session, gateway, record, sequence and receipt time never enter it |
+| `entity_kind` | `Entity.entity_type` | `link16_gateway 1.0.0` | PLATFORM, UNIT, FACILITY and UNKNOWN by name |
+| `identity` | `Entity.affiliation` | `link16_gateway 1.0.0` | FRIENDLY, HOSTILE and NEUTRAL by name; UNKNOWN, PENDING, ASSUMED_FRIEND, SUSPECT and OTHER give UNKNOWN, the token kept in the residual and never written to `attributes` |
+| `position.lat_deg`, `position.lon_deg` | `Entity.position`, `Position.lat`, `Position.lon`, `Track.samples[].position` | `link16_gateway 1.0.0` | Copied; 0 and the poles and the antimeridian are values. A null position gives no position and no Track |
+| `position.method` | `Position.position_source` | `link16_gateway 1.0.0` | By name, SENSOR and UNKNOWN included (CDM 3.1.0 members). Under the 3.0.0 compatibility projection those two give no position and no Track, marked `POSITION_NOT_PROJECTED_CDM3` |
+| `position.vertical` HAE in metres | `Position.vertical`, `Position.alt_m` | `link16_gateway 1.0.0` | Copied, and `alt_m` is the same metres |
+| `position.vertical` HAE in feet | `Position.vertical.value`, `Position.vertical.unit`, `Position.alt_m` | `link16_gateway 1.0.0` | Converted to metres at 0.3048 in both, the conversion listed in `SourceRef.transformations`; the feet stay in the residual |
+| `position.vertical` MSL, AGL, BARO, FL or UNKNOWN | `Position.vertical` | `link16_gateway 1.0.0` | As stated, never converted; `alt_m` is null. A subsurface depth is never turned into a negative height |
+| `position.observed_at` | `Track.samples[].observed_at` | `link16_gateway 1.0.0` | The position's own instant, which may precede the snapshot's |
+| `kinematics.speed_mps`, `.course_deg`, `.climb_mps` | `Entity.kinematics`, `Kinematics.speed_mps`, `Kinematics.course_deg`, `Kinematics.climb_mps` | `link16_gateway 1.0.0` | Copied with their nulls; `kinematics.observed_at` has no canonical home and stays in the residual |
+| `effective_at` | `Entity.valid_from`, `SourceRef.observed_at` | `link16_gateway 1.0.0` | The snapshot's instant, never `received_at` |
+| `record_id` | `SourceRef.original_id`, `Track.residual` | `link16_gateway 1.0.0` | Exact text; the Track's residual holds it |
+| `quality_code` | `Entity.quality.source_quality` | `link16_gateway 1.0.0` | Exact text when not null; confidence, accuracy and uncertainty stay unset |
+| `synthetic` | `SourceRef.synthetic` | `link16_gateway 1.0.0` | Must equal the constructor's flag, else `SYNTHETIC_MISMATCH` |
+| the whole report, every leaf (`profile`, the envelope, `domain`, `message_family`, `native_profile`, `identity_code`, `security_context`, `source_fields`, `extensions` included) | `Entity.residual` | `link16_gateway 1.0.0 · residual` | Under `residual.data.report`, validated and whole, nulls included |
+| this adapter's own Entity and Track | `Entity.residual` | `link16_gateway 1.0.0 · egress` | The default mode gives the preserved report back after re-projecting it and requiring equality with the objects given; any difference is `CDM_SOURCE_CONFLICT` |
+| an Entity the report contract can represent, and an optional one-sample Track, with an `ExportContext` | `Entity.position`, `Entity.kinematics`, `Entity.valid_from`, `Entity.quality.source_quality` | `link16_gateway 1.0.0 · egress` | One report; the envelope, the destination identity tuple and the times come from the context. A height the destination cannot carry is refused or omitted with a loss record, never converted or zeroed |
+| a report with an unknown key, a wrong type or a value outside the contract | — | refused | `SCHEMA_INVALID`, naming the path and the schema keyword, never the value |
+| duplicate keys, a byte order mark, invalid UTF-8, a non-finite or inexact number, a lone surrogate | — | refused | `JSON_INVALID` (octets only for the first four) |
+| a timestamp that is not a calendar instant, or a component time after `effective_at` | — | refused | `TIME_UNRESOLVED`; second 60, hour 24 and February 30 are refused on every interpreter |
+| more than 1 MiB, deeper than 32 or more than 10 000 nodes | — | refused | `LIMIT_EXCEEDED`; past the manifest's 1 MiB or 64 the base class refuses first |
+| a lifecycle notice, a list of reports, a stream | — | refused | One report per call; notices are the runtime bridge's and never reach the adapter |
+
 ## Gaps, and what each one costs
 
 1. **No canonical name.** A CoT callsign and a 4676 track number are the strings an operator
@@ -16264,6 +16319,9 @@ open items are in the repository's `docs/tacticalapi-implementation.md`. Fixture
    - **`PositionSource` has no member for a sensor measurement.** `GNSS`, `INERTIAL`, `MANUAL`,
      `ESTIMATED`. Settlement 3 writes `ESTIMATED` because it is the only one that is not an
      outright false statement, but a radar return is a measurement and the enum cannot say so.
+     **Closed 2026-10-10 for the enum half only:** CDM 3.1.0 adds `PositionSource.SENSOR`, so the
+     enum can now say so; `cat048` keeps `ESTIMATED` in this release, and the sensor-frame half of
+     this gap — a measurement carried as a measurement, against a named sensor — stays open.
    - **I048/042 and I048/210 stay in `attributes` regardless.** The Cartesian components and the
      per-axis standard deviations are expressed "within the local grid system", and which grid is
      signalled by `TCC` in a different item — so even with a site injected they are uncarryable.

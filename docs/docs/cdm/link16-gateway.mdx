@@ -1,0 +1,417 @@
+---
+title: SC Link16 Gateway translator
+sidebar_label: SC Link16 Gateway
+sidebar_position: 11
+description: How the link16_gateway adapter turns one SC Link16 Gateway 1.0.0 report into an Entity and an optional one-sample Track, the contract of its export mode, what it refuses, and what it does not claim.
+---
+
+# SC Link16 Gateway translator
+
+## Scope
+
+SC Link16 Gateway 1.0.0 is an internal JSON interface this repository defines. One report is one
+complete track snapshot that a gateway outside this package has already decoded from its own
+native traffic. The `link16_gateway` adapter reads that report and translates it into the CDM, and
+it builds a report back from CDM objects in two egress modes. It is the public translator of the
+SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0, and nothing more:
+
+- it is **not** JREAP C and **not** Link 16. It parses no JREAP C frame, no Link 16 message and
+  no J-series word, and it produces none;
+- the gateway contract is **not** a NATO standard, and no normative document binds it. The
+  manifest declares the binding `provisional-internal-profile` and the claim status `PROVISIONAL`,
+  and a green gate proves agreement with this internal profile only;
+- it holds no socket, no store, no clock, no cache, no traffic policy and no cryptography, and it
+  transmits nothing in either mode;
+- the runtime half — the gateway API, durable state, lifecycle, time handling, egress permission,
+  the synthetic provider and the native provider boundary — is not part of this package. It is
+  the separate distribution `synapse-link16-bridge`, built from `packages/link16_bridge/` in the
+  repository and kept outside the adapter registry; its requirement matrix is
+  `packages/link16_bridge/docs/requirements-matrix.md` there. Native JREAP C and Link 16 traffic
+  belongs to a provider behind that boundary, which refuses with `BLOCKED_EXTERNAL_EVIDENCE` until
+  a normative profile, independent byte vectors and a witnessed peer test exist.
+
+Out of scope here: native framing and quantisation, history accumulation, track fusion, identity
+reuse resolution, lifecycle notices, transmission and every weapons or engagement feature.
+
+## The gateway contract
+
+A report is one JSON object with exactly 28 keys, all required, and no other key at any level
+except inside `source_fields` and `extensions`, the contract's two open objects. The JSON Schema
+2020-12 document that states it structurally is published in the repository at
+`schemas/link16_gateway/report.schema.json`, beside `notice.schema.json` (the lifecycle notices,
+which the runtime reads and this adapter refuses) and `api.schema.json` (the gateway API's
+messages). The adapter carries the report schema as the module literal `REPORT_SCHEMA`, because
+the wheel carries no `schemas/` directory, and a repository-bound test holds the literal equal to
+the published file. Every report carries `profile` = `sc-link16-gateway/1.0.0` (`PROFILE`).
+
+| Field | Rule | Meaning |
+|---|---|---|
+| `profile` | the constant `sc-link16-gateway/1.0.0` | contract version |
+| `record_id` | UUID in canonical lowercase 8-4-4-4-12 form | gateway delivery record identity |
+| `gateway_id` | identifier: `[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}`, anchored | configured gateway identity |
+| `session_id` | UUID, canonical lowercase | delivery session; never identity |
+| `sequence` | decimal string without leading zeroes, at most 2^64−1 | per-session sequence |
+| `received_at` | `YYYY-MM-DDTHH:mm:ss.sssZ` on a strict calendar | instant the gateway accepted the native report |
+| `effective_at` | same form | time of the state this snapshot represents |
+| `time_basis` | `SOURCE`, `RESOLVED_SOURCE` or `EXERCISE` | how `effective_at` was obtained; no receipt fallback |
+| `time_evidence` | 1 to 512 characters | source field or reconstruction reference |
+| `tenant`, `realm` | identifier | tenant and approved track-number scope |
+| `synthetic` | boolean, no default | exercise and live separation |
+| `origin_scope` | identifier | track-number issuing or ownership scope |
+| `reporter` | 1 to 128 characters | reporting participant as received |
+| `track_number` | 1 to 64 characters, never parsed as a number | the provider's spelling |
+| `incarnation` | decimal string, at most 2^64−1 | generation of a reused track number |
+| `message_family` | 1 to 32 characters | provenance label only |
+| `native_profile` | 1 to 128 characters | the selected native profile identifier |
+| `domain` | `AIR`, `SURFACE`, `SUBSURFACE`, `LAND`, `UNKNOWN` | provider-asserted domain |
+| `entity_kind` | `PLATFORM`, `UNIT`, `FACILITY`, `UNKNOWN` | provider-asserted class |
+| `identity` | `FRIENDLY`, `HOSTILE`, `NEUTRAL`, `UNKNOWN`, `PENDING`, `ASSUMED_FRIEND`, `SUSPECT`, `OTHER` | gateway identity token |
+| `identity_code` | string of 1 to 128 characters, or null | the original source code |
+| `position` | object or null | `observed_at`, `lat_deg` in `[-90, 90]`, `lon_deg` in `[-180, 180]`, `method` (`GNSS`, `INERTIAL`, `MANUAL`, `ESTIMATED`, `SENSOR`, `UNKNOWN`), `vertical` (object or null: finite `value`, `unit` `m`, `ft` or `FL`, `reference` `HAE`, `MSL`, `AGL`, `BARO`, `FL` or `UNKNOWN`; the unit `FL` with the reference `FL` and only with it) |
+| `kinematics` | object or null | `observed_at`, `speed_mps` (at least 0, or null), `course_deg` (in `[0, 360)`, or null), `climb_mps` (finite, or null) |
+| `quality_code` | string of 1 to 128 characters, or null | the original quality grade |
+| `security_context` | identifier | configured policy label reference |
+| `source_fields` | JSON object | every decoded source field |
+| `extensions` | JSON object | versioned additions |
+
+`position.observed_at` and `kinematics.observed_at` are at or before `effective_at`.
+
+## Input
+
+One report per call, as UTF-8 JSON octets (`bytes`, `bytearray` or `memoryview`) or as the
+`dict` a caller has already parsed. Text, a list, a number and a subclass of either form are
+refused as `JSON_INVALID`; a stream, NDJSON and the lifecycle notices are refused too. Octets are
+read strictly: a byte order mark, invalid UTF-8, a duplicate key, `NaN` or `Infinity`, a lone
+surrogate, a number that overflows or underflows a double to zero, and an integer that no double
+holds exactly are each `JSON_INVALID`. Four of those defects — duplicate keys, a byte order mark,
+invalid UTF-8 and non-finite literals — exist only in octets: the caller of the dict form has
+already lost them, so the dict form is checked for what a dict can still show (key and value
+types, lone surrogates, non-finite floats, inexact integers). The runtime bridge always passes
+octets. The adapter is built with `synthetic` (default `True`), and a report whose `synthetic`
+differs is `SYNTHETIC_MISMATCH`.
+
+## Mapping
+
+A report becomes `[Entity]`, or `[Entity, Track]` when its position is present and projected.
+Every row is checked against the packaged fixtures, their goldens and the handoff's own reference
+projections.
+
+| Report | CDM |
+|---|---|
+| the identity tuple `[tenant, realm, synthetic, origin_scope, track_number, incarnation]` | serialised as compact JSON in that fixed order, non-ASCII escaped; `source_ids[0]` = system `Link16Track`, that text as `external_id`; `entity_id` and `track_id` are the package's UUID5 of it under `Link16Track` (kinds `entity` and `track`) |
+| `reporter`, `session_id`, `gateway_id`, `record_id`, `sequence`, `received_at` | provenance only, never identity: a reconnect or a relaying participant keeps both identifiers |
+| `entity_kind` | `Entity.entity_type`, the same member |
+| `identity` | `Entity.affiliation`: `FRIENDLY`, `HOSTILE` and `NEUTRAL` as they are; `UNKNOWN`, `PENDING`, `ASSUMED_FRIEND`, `SUSPECT` and `OTHER` become `UNKNOWN` |
+| `position.lat_deg`, `lon_deg` | `Entity.position.lat` and `lon`, and the Track sample's position |
+| `position.method` | `Position.position_source`, the same member |
+| `position.vertical` | `Position.vertical` and `alt_m`, as the next section says |
+| `kinematics` speed, course, climb | `Entity.kinematics`, nulls kept; `kinematics.observed_at` stays in the residual |
+| `effective_at` | `Entity.valid_from` and `SourceRef.observed_at`; never `received_at` |
+| `position.observed_at` | `Track.samples[0].observed_at` |
+| `record_id` | `SourceRef.original_id` |
+| `quality_code` | `Quality.source_quality` when not null; no confidence, track quality or uncertainty |
+| the whole validated report | `Entity.residual`, namespace `SC Link16 Gateway`, at `data.report`, nulls and open objects included |
+| the record identity | `Track.residual.data.record_id` |
+
+`SourceRef` carries the system `SC_LINK16_GATEWAY`, the adapter `link16_gateway` 1.0.0, the format
+name `SC Link16 Gateway` and version 1.0.0, the report's `synthetic`, `source_hash` null and the
+ordered `transformations` that actually occurred: `identity: UUID5 over scoped track instance`
+always; `identity: finer source affiliation projected to UNKNOWN` for a finer token;
+`vertical: HAE feet converted to metres using 0.3048` when a converted height reached an emitted
+position; `POSITION_NOT_PROJECTED_CDM3: source method is unrepresentable` under the compatibility
+projection. `symbol`, `confidence`, `valid_to`, `status` and `integrity` stay null and
+`attributes` empty: no symbol profile is defined for this contract, and the domain, the identity
+token, the track-number spelling, the quality code and the exercise flags stay in the residual.
+
+## Vertical and the HAE-feet conversion
+
+| Stated vertical | `Position.vertical` | `alt_m` |
+|---|---|---|
+| null | null | null |
+| `HAE` in metres | as stated | the same value |
+| `HAE` in feet | the value times 0.3048, in metres, reference `HAE` | the same metres |
+| `MSL`, `AGL`, `BARO`, `FL` or `UNKNOWN` | as stated, unit and value unconverted | null |
+
+The feet stay in `residual.data.report.position.vertical`. No geoid, terrain or pressure
+conversion is made, a subsurface depth is never turned into a negative height, and a missing
+height is never a zero. The HAE-feet row departs from the description of `Position.vertical`,
+which says the vertical is never converted: the position model lets `alt_m` stand only beside an
+HAE vertical in metres, and the contract asks for `alt_m` whenever the height is ellipsoidal, so
+the vertical is converted rather than the height dropped. The tension is stated, not hidden; the
+manifest's limitation `hae-feet-converted` says the same.
+
+## Position methods and the 3.0.0 compatibility projection
+
+`SENSOR` and `UNKNOWN` are members of `PositionSource` from CDM 3.1.0. `SENSOR` is a position a
+source reports as an explicit sensor or surveillance solution that is none of the four older
+methods; `UNKNOWN` is a position whose source does not say how it was obtained. The adapter
+writes the report's method as it is and never relabels it.
+
+The constructor's `cdm_schema` selects the projection. `None` is the full projection, stamped
+with the installed package's `SCHEMA_VERSION`. `"3.0.0"` is the compatibility projection for a
+consumer restricted to CDM 3.0.0: a report whose method is `SENSOR` or `UNKNOWN` yields an Entity
+with `position` null and no Track, the transformation `POSITION_NOT_PROJECTED_CDM3`, and the
+report still whole in the residual; every other report projects in full with its Track; every
+object is stamped `3.0.0`. The installed `SCHEMA_VERSION` is accepted as well and means the same as
+`None` whenever it is not `3.0.0`. The conformance suite judges the default projection only.
+
+## Egress: mirror and export
+
+`from_cdm` has two modes, chosen when the adapter is built, and neither transmits anything: it
+returns one report as a `dict`.
+
+### Mirror (the default)
+
+`Link16GatewayAdapter()` reconstructs the report from this adapter's own Entity and, when the
+projection produced one, its one-sample Track. It accepts `[Entity]` or `[Entity, Track]` of
+exactly those types, an Entity whose `source.adapter` is `link16_gateway` and whose residual is
+namespace `SC Link16 Gateway` with `data` holding exactly `report`, that report valid, and its
+`synthetic` equal to the adapter's. It then projects the preserved report again under the same
+`cdm_schema` and compares every field of every object for exact equality (declared tolerance 0).
+Every refusal is `CDM_SOURCE_CONFLICT`, its path the first CDM path that differs; a path stops at
+`attributes`, `residual`, `uncertainty` and `data`, whose keys come from a payload. The conformance
+suite builds the adapter without an `ExportContext`, so its egress evidence is mirror
+reconstruction; the manifest's limitation `egress-evidence-is-mirror` says so.
+
+### Export: the contract
+
+`Link16GatewayAdapter(mode="export", export_context=ExportContext(...))` builds one gateway report
+from a CDM Entity and an optional one-sample Track. **This section is the contract of export
+mode.** The runtime prepares the `ExportContext` after it has authorised the export; the adapter
+reads no residual, no clock and no other adapter's data, and a bare CDM object never supplies
+track numbering, message family, security context or reporting authority.
+
+`ExportContext` is a frozen dataclass. Each field is checked when it is built against the rule of
+the report field it fills; a failure raises `ValueError` (or `TypeError` for a wrong type) with
+the message `link16_gateway configuration: export_context.FIELD — RULE`, which names the field and
+the rule and never the value.
+
+| Field | Type and rule | Fills |
+|---|---|---|
+| `record_id` | `str`, canonical lowercase UUID | `record_id` |
+| `gateway_id` | `str`, identifier | `gateway_id` |
+| `session_id` | `str`, canonical lowercase UUID | `session_id` |
+| `sequence` | `str`, decimal without leading zeroes, at most 2^64−1 | `sequence` |
+| `received_at` | `str`, `YYYY-MM-DDTHH:mm:ss.sssZ` on a strict calendar | `received_at` |
+| `time_basis` | `str`, `SOURCE`, `RESOLVED_SOURCE` or `EXERCISE` | `time_basis` |
+| `time_evidence` | `str`, 1 to 512 characters | `time_evidence` |
+| `tenant`, `realm`, `origin_scope` | `str`, identifier | the destination-allocated identity tuple |
+| `synthetic` | `bool` | `synthetic` |
+| `track_number` | `str`, 1 to 64 characters | `track_number` |
+| `incarnation` | `str`, decimal, at most 2^64−1 | `incarnation` |
+| `reporter` | `str`, 1 to 128 characters | `reporter`, the reporting authority |
+| `message_family` | `str`, 1 to 32 characters | `message_family`, a family the provider supports |
+| `native_profile` | `str`, 1 to 128 characters | `native_profile` |
+| `domain` | `str`, one of the five domains | `domain` (the CDM has none) |
+| `security_context` | `str`, identifier | `security_context` |
+| `source_field_profile` | `str`, 1 to 128 characters | `extensions["sc-link16-export/1"].source_field_profile` |
+| `source_fields` | `dict`, a bounded JSON object (below) | `source_fields` |
+| `provenance` | `dict`, a bounded JSON object (below) | `extensions["sc-link16-export/1"].provenance` |
+| `position_observed_at` | `str` timestamp, or `None` | `position.observed_at` |
+| `kinematics_observed_at` | `str` timestamp, or `None` | `kinematics.observed_at` |
+| `vertical_forms` | tuple of `(unit, reference)` pairs the report's vertical can state; empty means the destination carries no height; duplicates collapse | which heights may be emitted |
+| `vertical_required` | `bool`, default `False` | whether the destination form needs a height |
+
+Every text field must also be valid Unicode scalar values. `source_fields` and `provenance` are
+stored as their compact JSON text, so nothing can change a frozen context through a nested
+object; `source_fields_object()` and `provenance_object()` return a fresh copy each time.
+
+**Which bound is checked where.** When the context is built, each of the two objects alone is held
+to the contract's limits at the place it lands in an emitted report: depth 31 for `source_fields`
+(one container, the report, above it) and depth 29 for `provenance` (three above it: the report,
+`extensions` and `extensions["sc-link16-export/1"]`), at most 10 000 JSON value nodes, and at most
+1 048 576 octets of compact UTF-8. The depth check is sufficient: a context that builds never
+fails an export on one field's depth. The node and octet checks are necessary, not sufficient: the
+rest of the report takes nodes and octets too, so a field near either limit can build and still be
+refused at export. What no single field shows — the two objects together, or either with the rest
+of the report, over the node or octet bound — is checked at export, when the assembled report
+passes the contract's own parser and validator again (the self-check); an excess is refused there
+as `LIMIT_EXCEEDED` with an empty loss record, and nothing is returned.
+
+**Where each report field comes from.**
+
+| Report field | Source |
+|---|---|
+| `profile` | the constant |
+| envelope, identity tuple, `reporter`, `message_family`, `native_profile`, `domain`, `security_context`, `source_fields` | the `ExportContext` |
+| `effective_at` | `Entity.valid_from`, rendered to the millisecond |
+| `entity_kind` | `Entity.entity_type`: `PLATFORM`, `UNIT`, `FACILITY` or `UNKNOWN` |
+| `identity` | `Entity.affiliation`, one of the four canonical tokens; a finer token is never reconstructed |
+| `identity_code` | null: a finer identity code is never reconstructed |
+| `quality_code` | `Entity.quality.source_quality`, verbatim; null when the Entity states no grade; refused as `VALUE_NOT_REPRESENTABLE` when it is not 1 to 128 characters of Unicode scalar values |
+| `position` | null when the Entity has none; else `observed_at` from `position_observed_at`, `lat_deg` and `lon_deg` from the position, `method` from `position_source`, `vertical` by the vertical rule |
+| `kinematics` | null when the Entity has none; else `observed_at` from `kinematics_observed_at` and the three values with their nulls |
+| `extensions` | exactly `sc-link16-export/1`: `source_field_profile`, `provenance`, `losses` |
+
+Replaced by design, and therefore not losses: `entity_id`, `track_id`, `source_ids`, `source`,
+`residual` and `schema_version` — the destination's identity tuple is the context's.
+
+**Time rules.** `effective_at` is `Entity.valid_from`; a non-zero sub-millisecond part is cut and
+recorded as a `TRUNCATED` loss. `position.observed_at` and `kinematics.observed_at` are the
+context's explicit export times, never derived. An Entity position with no `position_observed_at`
+is refused; motion with no `kinematics_observed_at` is omitted. A component time after
+`effective_at` fails the self-check as `TIME_UNRESOLVED`.
+
+**The vertical rule.** The height is `Position.vertical` when present, else `alt_m` alone as metres
+`HAE`. When its `(unit, reference)` pair is in `vertical_forms` it is emitted as it is, with no
+conversion of any kind. When its reference is not offered at all the loss is
+`ALTITUDE_DATUM_UNSUPPORTED`; when the reference is offered but not in this unit it is
+`VALUE_NOT_REPRESENTABLE`. Either is `REFUSED` when `vertical_required` is true, and otherwise
+`OMITTED` with `vertical` null. A position with no height under `vertical_required` is refused as
+`VALUE_NOT_REPRESENTABLE`. A height is never zero-filled, and no geoid service is called.
+
+**List rules.** `from_cdm` accepts a list of one Entity, first, and at most one Track. Each of these
+is refused as `CDM_SOURCE_CONFLICT`: another shape or type, a Track whose `track_id` equals the
+Entity's id, a Track whose `entity_id` is not the Entity's, a Track with other than one sample, a
+Track beside an Entity with no position, a sample position different from the Entity's, and a
+sample time different from `position_observed_at`. The adapter's `synthetic`, the context's and
+every object's `source.synthetic` must agree, else `SYNTHETIC_MISMATCH`. A runtime that exports
+history calls the adapter once per chosen sample with a matching Entity and a new context; the
+adapter never picks a sample itself. An Entity with `valid_to` set, and an `entity_type` the
+contract has no member for, are refused as `VALUE_NOT_REPRESENTABLE`.
+
+**Losses.** Every canonical value the report cannot carry is a loss entry `path`, `code`,
+`disposition` and `rule`, where `path` is `entity.…` or `track.…` and nothing is a value.
+`OMITTED` and `TRUNCATED` entries ride inside the report at
+`extensions["sc-link16-export/1"].losses`, in the order found. A `REFUSED` entry raises
+`Link16GatewayRefusal` whose `losses` holds every entry found so far, the refused one last, and
+nothing is returned. Always `OMITTED` when set: `entity.position.accuracy_m`,
+`entity.position.vertical.uncertainty`, each object's `quality.confidence`, `quality.accuracy_m`,
+`quality.uncertainty`, `status` and `integrity`, `entity.confidence`, `entity.symbol`,
+`entity.attributes`, `entity.ontology_types` and `track.track_quality`. The Entity's
+`quality.source_quality` is `quality_code`; a Track's is carried by it when the two are equal and
+is otherwise `OMITTED`, since the report carries one grade, the Entity's. A non-finite number the
+export would write — a coordinate, the emitted height, a motion value — is refused as
+`VALUE_NOT_REPRESENTABLE` at its own path (`entity.kinematics.climb_mps`, say) with its loss
+record, before the self-check; a value the export does not write (motion with no
+`kinematics_observed_at`, a height the destination does not carry) is not checked. Finally the
+assembled report passes the contract's own validation, so an export never returns a report the
+ingest side would refuse.
+
+## Refusals
+
+Every refusal is `Link16GatewayRefusal`, a `ValueError` with the attributes `code`, `path` and
+`rule`, and the message `CODE: path — rule`, with `(report)` as the path of the whole document.
+The path is the schema's own spelling of a place in the report (or, in egress, in the CDM
+objects), and the rule is a fixed phrase or a JSON Schema keyword: no part of the message is ever a
+value taken from the payload. Past the manifest's bounds the base class refuses first, with
+`InputTooLarge` or `InputTooDeep`. Construction errors of the adapter and of `ExportContext` begin
+`link16_gateway configuration:`.
+
+The contract's error table has eighteen codes (`CODES`). The adapter raises eight of them
+(`ADAPTER_CODES`):
+
+| Code | Raised when |
+|---|---|
+| `JSON_INVALID` | the input is not one strict JSON text or a JSON-valued dict |
+| `SCHEMA_INVALID` | the schema refuses it, a UUID is not canonical lowercase, a counter is above 2^64−1, `FL` is not paired, or `origin_scope` is missing |
+| `LIMIT_EXCEEDED` | above 1 048 576 octets, depth 32 or 10 000 JSON value nodes, inside the manifest's bounds |
+| `SYNTHETIC_MISMATCH` | the report's or the export's synthetic flags disagree with the adapter's |
+| `TIME_UNRESOLVED` | a timestamp has the wrong shape, is not a calendar instant, or a component time is after `effective_at` |
+| `CDM_SOURCE_CONFLICT` | a mirror or export input disagrees with the rules above |
+| `ALTITUDE_DATUM_UNSUPPORTED` | an export height in a datum the destination does not carry, when refused |
+| `VALUE_NOT_REPRESENTABLE` | an export value the report cannot carry, when refused: among them a non-finite number, at its own path, and a quality grade `quality_code` cannot hold |
+
+The other ten belong to the runtime and are never raised here: `SECURITY_CONTEXT_MISMATCH`,
+`IDENTITY_SCOPE_UNRESOLVED`, `REUSE_AMBIGUOUS`, `UNSUPPORTED_MESSAGE`, `UNSUPPORTED_FIELD_FORM`,
+`NATIVE_PROFILE_INCOMPLETE`, `DUPLICATE_CONFLICT`, `CURSOR_EXPIRED`, `STREAM_GAP` and
+`SEND_OUTCOME_UNKNOWN`.
+
+## Bounds
+
+Two layers. The manifest's bounds are enforced by the base class before this module's parser
+runs: 1 048 576 octets (`max_input_bytes`) and 64 containers (`max_depth`, the parser-safety
+bound the base class enforces, at least eight times the deepest document this adapter ships, and
+the figure most JSON-reading adapters declare), refused as `InputTooLarge` and `InputTooDeep`. Inside them the contract's own limits are enforced as
+`LIMIT_EXCEEDED`: 1 048 576 octets again for a direct caller and for a dict (by its compact UTF-8
+encoding), depth 32, and 10 000 JSON value nodes, counting containers and the root and not keys.
+Both declared bounds are implementation caps of this interface, not the normative maximum of any
+external standard. `max_objects`, `max_decompressed_bytes` and `max_parse_seconds` are absent, each
+with its reason in the manifest. The `ExportContext` bounds are in the export section above.
+
+## Where the adapter is stricter than the handoff's reference mapper
+
+The handoff carries a reference mapper as an oracle, which this repository does not vendor. The
+adapter is stricter in these places, each with a negative fixture under `malformed/`:
+
+- all four timestamps — `received_at`, `effective_at` and both component times — are read with an
+  ASCII-only pattern and built on a strict calendar, refusing second 60, hour 24 and 30 February;
+  the reference checks only the two envelope times this way and compares the component times as
+  text, so it accepts a leap second or an hour 24 in a component time;
+- the schema's `\d` is read as ECMA-262 reads it, `[0-9]`: a non-ASCII decimal digit is refused;
+- a timestamp whose shape is wrong (a non-ASCII digit, no milliseconds) is `TIME_UNRESOLVED`, the
+  code the contract gives every time it cannot read, not `SCHEMA_INVALID`;
+- identifier patterns are anchored as ECMA-262 anchors them, so a trailing newline is refused;
+- `record_id` and `session_id` are accepted only in canonical lowercase form;
+- a number that overflows a double, a non-zero number that underflows to zero and an integer no
+  double holds exactly are `JSON_INVALID`; a decimal fraction is read as the nearest double;
+- the feet-to-metres transformation is recorded only when the converted height reached an emitted
+  position, never under the compatibility projection's omission;
+- a missing `origin_scope` is `SCHEMA_INVALID` here, because the schema requires the key; the
+  contract's `IDENTITY_SCOPE_UNRESOLVED` belongs to the runtime, which checks scope approval.
+
+One stated tension remains: the description of the `Affiliation` enumeration says finer source
+wording is kept in `attributes`, and this contract forbids using `attributes` that way, so the
+identity token is kept in the residual instead (the limitation `affiliation-four`).
+
+## Deviations from the handoff
+
+Each is recorded, with its ruling, in the repository's `docs/link16-gateway-implementation.md`:
+
+- **REQ003, the runtime's name.** The runtime is the distribution `synapse-link16-bridge`, imported as `synapse_link16_bridge`, not `sc_link16_bridge`: this repository's distributions are named `synapse-*`.
+- **REQ010, the test module names.** `tests/test_cdm_link16_gateway_identity.py` and `tests/test_cdm_link16_gateway_mapping.py` carry the repository's `test_cdm_` prefix.
+- **REQ012, the version.** CDM 3.1.0, a MINOR, not 4.0.0: the repository's versioning rules class an added enum member as a MINOR, and a 3.0.0-only consumer is served by the compatibility projection.
+- **REQ071, missing scope.** A missing `origin_scope` is `SCHEMA_INVALID` at the adapter, where the schema requires the key; `IDENTITY_SCOPE_UNRESOLVED` is the runtime's code for a scope it has not approved.
+- **REQ081, `source.system`.** The one token `SC_LINK16_GATEWAY` rather than the spaced name, because `--list-adapters` prints whitespace-separated columns; `format_name` keeps `SC Link16 Gateway`.
+- **REQ082, the feet transformation.** Recorded only when a converted height reached an emitted position; the reference mapper records it under the compatibility projection's omission too.
+- **REQ084 against `Position.vertical`.** The specification is followed, and the description of `Position.vertical` ("never converted") is contradicted for HAE in feet (the section on the vertical above, and the manifest's limitation `hae-feet-converted`).
+- **REQ085, the wording.** Every leaf is covered, but three projections the ledger grammar cannot state are asserted by the adapter's tests instead of declared in `MAPPINGS`, and the compatibility projection is outside the ledger.
+- **The reference mapper's leniency.** The section above on where the adapter is stricter.
+- **I03, the operator release.** Besides a provider report at a higher incarnation, an audited operator command releases a quarantined reuse; the specification says "await provider resolution". Realised in the runtime bridge.
+- **REQ105, the reporting-authority half.** Notices carry no reporter, so the authority half of a drop cannot be checked: not claimed. Realised in the runtime bridge.
+- **The cursor's "inclusive contents after".** Read as strictly after the committed cursor. Realised in the runtime bridge.
+- **The configuration's `cdm_schema_version` default.** The specification's 4.0.0 target is 3.1.0 here, and the list is explicit. Realised in the runtime bridge.
+
+## Limitations and what is not claimed
+
+- The wire form is an internal profile defined here, bound to no normative document; the claim
+  status is `PROVISIONAL` and the licence class `OPEN`. The contract — the three schemas and this
+  page — is published in this repository under Apache-2.0.
+- No native JREAP C or Link 16 interoperability is implemented or claimed, and neither is native
+  radio participation, encryption, anti-jam behaviour, spectrum authorisation, national
+  accreditation or NATO certification. Gateway network security and radio terminal security are
+  separate assurance boundaries.
+- Release acceptance has four stages, each reported on its own: the internal gateway translation
+  implemented; a native codec verified against specified evidence; interoperability exercised
+  with a named peer; deployment in a named authorised environment. Only the first is claimed, and
+  passing it awards none of the others. No numerical quality score is given anywhere.
+- `kinematics.observed_at` has no home on `Kinematics` and stays in the residual.
+- Every packaged fixture is synthetic; none is a capture and none is a native byte vector.
+- `evidence.available` is declared by the manifest, which says when it changes.
+
+## Fixtures, the pin record and regenerating
+
+The fixture directory `fixtures/link16_gateway/` holds the harness fixtures (the handoff's six
+reports byte-identical, synthetic reports written for this adapter and two octet twins), the
+adapter's goldens under `golden/`, the handoff's six reference projections under `reference/`
+(byte-identical, kept as a semantic oracle and never re-stamped), the refused reports under
+`malformed/`, a `PROVENANCE.json` per covered directory, and the pin record
+`spec/link16_gateway_pin.json`, which lists every handoff file carried here and the three
+published schemas by SHA-256 and size and says it is internal gateway evidence and not normative
+Link 16 evidence. The directory's `README.md` describes every file.
+
+| Generated file | Command |
+|---|---|
+| the goldens | `python -m synapse_cdm.harness --adapter link16_gateway --schemas schemas --update-golden` |
+| `manifests/link16_gateway.json` | `python -m synapse_cdm.manifests --out manifests` |
+| the support matrix | `python -m synapse_cdm.support_matrix --out docs/docs/cdm/support-matrix.mdx` |
+
+The conformance suite:
+
+```bash
+python -m synapse_cdm.suite conformance run --adapter link16_gateway --schemas schemas
+```
+
+The adapter's full record — the requirement and acceptance
+dispositions, the rulings, the deviations and the open items — is the repository's
+`docs/link16-gateway-implementation.md`.

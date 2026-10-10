@@ -1,0 +1,175 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "fbaab310-0fe0-5c9f-ade3-4d81fb6b3f71",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 2.5,
+      "course_deg": 90.0,
+      "speed_mps": 125.0
+    },
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 1524.0,
+      "lat": 48.15,
+      "lon": 17.11,
+      "position_source": "GNSS",
+      "vertical": {
+        "reference": "HAE",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 1524.0
+      }
+    },
+    "quality": {
+      "accuracy_m": null,
+      "confidence": null,
+      "source_quality": "SYNTHETIC-GRADE-A",
+      "uncertainty": {}
+    },
+    "residual": {
+      "data": {
+        "report": {
+          "domain": "AIR",
+          "effective_at": "2026-10-04T12:00:00.000Z",
+          "entity_kind": "PLATFORM",
+          "extensions": {},
+          "gateway_id": "synthetic-gateway-1",
+          "identity": "FRIENDLY",
+          "identity_code": null,
+          "incarnation": "0",
+          "kinematics": {
+            "climb_mps": 2.5,
+            "course_deg": 90,
+            "observed_at": "2026-10-04T12:00:00.000Z",
+            "speed_mps": 125
+          },
+          "message_family": "J3.2",
+          "native_profile": "SYNTHETIC-NO-NATIVE-CODEC",
+          "origin_scope": "exercise-source-1",
+          "position": {
+            "lat_deg": 48.15,
+            "lon_deg": 17.11,
+            "method": "GNSS",
+            "observed_at": "2026-10-04T12:00:00.000Z",
+            "vertical": {
+              "reference": "HAE",
+              "unit": "m",
+              "value": 1524.0
+            }
+          },
+          "profile": "sc-link16-gateway/1.0.0",
+          "quality_code": "SYNTHETIC-GRADE-A",
+          "realm": "test-only",
+          "received_at": "2026-10-04T12:00:00.125Z",
+          "record_id": "10000000-0000-4000-8000-000000000001",
+          "reporter": "SIMULATED-REPORTER",
+          "security_context": "SYNTHETIC-UNCLASSIFIED",
+          "sequence": "0",
+          "session_id": "22222222-2222-4222-8222-222222222222",
+          "source_fields": {
+            "fixture": true,
+            "note": "SYNTHETIC test fixture; no native bytes or normative numeric codes"
+          },
+          "synthetic": true,
+          "tenant": "demo",
+          "time_basis": "EXERCISE",
+          "time_evidence": "Explicit synthetic fixture exercise clock",
+          "track_number": "TEST-0001"
+        }
+      },
+      "namespace": "SC Link16 Gateway"
+    },
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "link16_gateway",
+      "adapter_version": "1.0.0",
+      "format_name": "SC Link16 Gateway",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "10000000-0000-4000-8000-000000000001",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_LINK16_GATEWAY",
+      "transformations": [
+        "identity: UUID5 over scoped track instance"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"demo\",\"test-only\",true,\"exercise-source-1\",\"TEST-0001\",\"0\"]",
+        "system": "Link16Track"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T12:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "fbaab310-0fe0-5c9f-ade3-4d81fb6b3f71",
+    "integrity": null,
+    "object_kind": "track",
+    "quality": {
+      "accuracy_m": null,
+      "confidence": null,
+      "source_quality": "SYNTHETIC-GRADE-A",
+      "uncertainty": {}
+    },
+    "residual": {
+      "data": {
+        "record_id": "10000000-0000-4000-8000-000000000001"
+      },
+      "namespace": "SC Link16 Gateway"
+    },
+    "samples": [
+      {
+        "observed_at": "2026-10-04T12:00:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 1524.0,
+          "lat": 48.15,
+          "lon": 17.11,
+          "position_source": "GNSS",
+          "vertical": {
+            "reference": "HAE",
+            "uncertainty": null,
+            "unit": "m",
+            "value": 1524.0
+          }
+        }
+      }
+    ],
+    "schema_version": "3.0.0",
+    "source": {
+      "adapter": "link16_gateway",
+      "adapter_version": "1.0.0",
+      "format_name": "SC Link16 Gateway",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "10000000-0000-4000-8000-000000000001",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_LINK16_GATEWAY",
+      "transformations": [
+        "identity: UUID5 over scoped track instance"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"demo\",\"test-only\",true,\"exercise-source-1\",\"TEST-0001\",\"0\"]",
+        "system": "Link16Track"
+      }
+    ],
+    "status": null,
+    "track_id": "5d6324f0-8ab3-5fdb-b8e5-d9081c92471b",
+    "track_quality": null
+  }
+]

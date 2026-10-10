@@ -193,13 +193,22 @@ def known_limitations(manifests_dir: pathlib.Path,
 
     These are not this module's judgement about the package. Each one is a sentence an adapter's
     own manifest carries, and it is reproduced under the adapter that carries it.
+
+    A structured limitation (`{"id", "summary"}`, the manifest's form since the ruling of
+    2026-09-07) is rendered as its `summary` — REPAIRED 2026-10-10: this read only a `statement`
+    key, which no manifest carries, and fell back to the dict's Python repr, so every structured
+    limitation was rendered as `{'id': …}`. `statement` is still read after `summary`.
     """
     out = []
     for path in sorted(manifests_dir.glob("*.json")):
         adapter = json.loads(path.read_text(encoding="utf-8"))["adapter"]
         stated = []
         for item in adapter.get("limitations") or []:
-            stated.append(item if isinstance(item, str) else item.get("statement", str(item)))
+            if isinstance(item, str):
+                stated.append(item)
+                continue
+            text = item.get("summary", item.get("statement"))
+            stated.append(text if isinstance(text, str) else str(item))
         if stated:
             out.append({"id": adapter["id"], "limitations": stated})
     if extra is not None and extra.is_file():

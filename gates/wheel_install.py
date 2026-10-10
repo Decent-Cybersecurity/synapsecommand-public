@@ -232,7 +232,10 @@ PACKAGE_ONLY_TESTS = (
     # — `fixtures/dis7/vectors/`, `fixtures/dis7/contract/` and `fixtures/dis7/spec/dis7_pin.json`
     # — ships in the wheel and is reached through `synapse_cdm.__file__`. The one repository file
     # it reads, the published `schemas/entity.schema.json`, is anchored on the test module's own
-    # `__file__`, the way `test_cdm_gmtif_adapter.py` anchors its schemas directory.
+    # `__file__`, the way `test_cdm_gmtif_adapter.py` anchors its schemas directory. Since
+    # 2026-10-10 (the Link 16 gateway arc) it reads a second one, the frozen CDM 3.0.0 entity
+    # schema `tests/frozen/cdm/3.0.0/entity.schema.json`, for the entity-schema pin, anchored the
+    # same way.
     "test_cdm_dis7_schema.py",
     # `test_cdm_dis7_codec.py` reads the error model only, and, through the package, the
     # vendored contract file (`fixtures/dis7/contract/acceptance-cases.json`).
@@ -252,6 +255,13 @@ PACKAGE_ONLY_TESTS = (
     # interpreter under test, reads the packaged vectors through `synapse_cdm.__file__` and
     # writes only under `tmp_path`, so against a wheel it exercises the command a consumer got.
     "test_cdm_dis7_cli.py",
+    # `test_cdm_link16_gateway_adapter.py` is package-only (2026-10-10, the Link 16 gateway arc):
+    # it reads the adapter, its packaged fixtures under `fixtures/link16_gateway/` and the schemas
+    # `synapse_cdm.schemas.generate()` returns in memory, all through `synapse_cdm.__file__`.
+    "test_cdm_link16_gateway_adapter.py",
+    # `test_cdm_link16_gateway_identity.py` is package-only (2026-10-10): the adapter and its
+    # packaged fixtures are all it reads.
+    "test_cdm_link16_gateway_identity.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -325,6 +335,8 @@ REPO_BOUND_TESTS = {
     "test_cdm_tacticalapi_fixtures.py": "gates/protoc_text.py and gates/tacticalapi_field_table.py, and docs/tacticalapi-implementation.md at the repository root — the text-format reader, the field-table generator and the adapter's record, none of which the wheel carries",
     "test_cdm_tacticalapi_tools.py": "gates/protoc_text.py, gates/tacticalapi_field_table.py and gates/tacticalapi_contract_comments.py, the adapter's build-time gates, which the wheel does not carry",
     "test_cdm_tacticalapi_contract_text.py": "gates/tacticalapi_contract_comments.py, tests/tacticalapi_comment_digests.json, docs/tacticalapi-implementation.md and the repository's NOTICE, read as the repository's own files, with the module sets of three other test modules — none of them ships in the wheel",
+    # Added 2026-10-10 (the Link 16 gateway arc).
+    "test_cdm_link16_gateway_mapping.py": "tests/frozen/cdm/3.0.0/ and the published schemas/link16_gateway/ at the repository root, neither of which the wheel carries",
 }
 
 def source_roster() -> tuple[str, ...]:

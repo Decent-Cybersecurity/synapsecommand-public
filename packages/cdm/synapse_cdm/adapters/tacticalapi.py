@@ -1158,9 +1158,11 @@ def _position(element: dict, where: str) -> tuple[Position | None, str, str | No
         source_basis = (f"{source.value}: geo_point.measurement_code "
                         f"{_stated(stated, MEASUREMENT_CODES)}")
     if code not in POSITION_SOURCE:
-        source_basis += ("; position_source is required and none of its four members means "
-                         "unknown or laser-ranged, so the understating ESTIMATED stands and the "
-                         "code stays in the typed block")
+        source_basis += ("; position_source is required and, when this adapter shipped, none of "
+                         "its four members meant unknown or laser-ranged, so the understating "
+                         "ESTIMATED stands and the code stays in the typed block; CDM 3.1.0 "
+                         "(2026-10-10) adds UNKNOWN and SENSOR, and this adapter keeps ESTIMATED "
+                         "until a release re-labels it")
     position = Position(lat=lat, lon=lon, alt_m=alt_m, position_source=source,
                         vertical=vertical)
     return position, basis, source_basis

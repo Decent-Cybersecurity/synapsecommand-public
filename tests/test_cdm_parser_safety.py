@@ -229,7 +229,7 @@ def test_the_deepest_shipped_document_is_inside_the_declared_bound_and_translate
 
 #: The adapters whose `to_cdm` decodes JSON text. Derived below, from the syntax tree, so a sixth
 #: would be swept without an edit here and a comment that mentions the call would not.
-JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "c2sim", "geojson", "legion", "pntmap", "tak")
+JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "c2sim", "geojson", "legion", "link16_gateway", "pntmap", "tak")
 
 
 def _decodes_json(tree: ast.Module) -> bool:
@@ -266,7 +266,7 @@ def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
         if any(by_module.get(m, False) for m in modules):
             decoding.add(name)
     assert sorted(decoding) == list(JSON_ADAPTERS), sorted(decoding)
-    assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "c2sim", "geojson", "legion", "pntmap", "tak"}, \
+    assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "c2sim", "geojson", "legion", "link16_gateway", "pntmap", "tak"}, \
         "the modules that call the decoder themselves; aixm52 inherits it"
 
 

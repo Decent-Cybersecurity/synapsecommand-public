@@ -17,7 +17,7 @@ description: "JSON Schema reference for CDMObject (the union)."
 | Source file | `schemas/cdm_object.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:3.0.0:cdm_object` |
 | CDM schema version | `3.0.0` |
-| SHA-256 of source | `02328749f45a17571e609aa547b048befef5f4201424715cd1ed069ee6956182` |
+| SHA-256 of source | `7692dd6442b5902f9aaff1d4c3f1b8f6d691d524421b09e71f2be1bb61fd1ec5` |
 
 ## The union
 
@@ -613,6 +613,13 @@ jamming over an area, every GNSS-sourced position inside that area becomes suspe
 every INERTIAL or MANUAL one does not — a distinction that is impossible to make after
 the fact if the adapter flattened them all to "position".
 
+SENSOR and UNKNOWN were added on 2026-10-10, CDM 3.1.0 — a MINOR by MIGRATIONS.md's table,
+since a member is added and none is removed. SENSOR is a position a source reports as an
+explicit sensor or surveillance solution that is none of GNSS, INERTIAL, MANUAL or
+ESTIMATED; UNKNOWN is a position whose source does not state how it was obtained — a member
+rather than a null, so that "not stated" is recorded as a fact. Neither re-labels anything:
+an adapter that shipped before 3.1.0 keeps the member it wrote, with its own basis.
+
 Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
 
 member rather than a null wherever the enum has one.
@@ -623,6 +630,8 @@ member rather than a null wherever the enum has one.
 | `INERTIAL` |
 | `MANUAL` |
 | `ESTIMATED` |
+| `SENSOR` |
+| `UNKNOWN` |
 
 ### Quality
 

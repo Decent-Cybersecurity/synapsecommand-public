@@ -209,9 +209,11 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # the TacticalAPI arc (2026-10-06): `tacticalapi` is the seventh; fourteen-and-seven. Every
     # object it makes carries a residual with data, which the sweep below asserts of it as of the
     # six before it.
+    # the Link 16 gateway arc (2026-10-10): `link16_gateway` is the eighth; fourteen-and-eight. Its
+    # Entity carries the whole report and its Track the record identifier, never an empty `data`.
     assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "dis7", "geojson",
-                                                 "geopackage", "tacticalapi"]
-    assert len(roster) == 21
+                                                 "geopackage", "link16_gateway", "tacticalapi"]
+    assert len(roster) == 22
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

@@ -1,0 +1,246 @@
+{
+  "type": "object",
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sequence": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})$"
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "realm": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "origin_scope": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "security_context": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "track_number": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "incarnation": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,19})$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "DROP_SOURCE",
+        "REKEY",
+        "GAP",
+        "RESET_SCOPE"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "old_identity": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "realm": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "origin_scope": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "track_number": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,19})$"
+        }
+      },
+      "required": [
+        "tenant",
+        "realm",
+        "synthetic",
+        "origin_scope",
+        "track_number",
+        "incarnation"
+      ],
+      "additionalProperties": false
+    },
+    "new_identity": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "realm": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "synthetic": {
+          "type": "boolean"
+        },
+        "origin_scope": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "track_number": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "incarnation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,19})$"
+        }
+      },
+      "required": [
+        "tenant",
+        "realm",
+        "synthetic",
+        "origin_scope",
+        "track_number",
+        "incarnation"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "record_id",
+    "session_id",
+    "sequence",
+    "received_at",
+    "effective_at",
+    "tenant",
+    "realm",
+    "synthetic",
+    "origin_scope",
+    "security_context",
+    "track_number",
+    "incarnation",
+    "operation",
+    "reason"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "REKEY"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "old_identity",
+          "new_identity"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "old_identity"
+              ]
+            },
+            {
+              "required": [
+                "new_identity"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "enum": [
+              "GAP",
+              "RESET_SCOPE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "track_number": {
+            "type": "null"
+          },
+          "incarnation": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "track_number": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "incarnation": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,19})$"
+          }
+        }
+      }
+    }
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:sc-link16-gateway:notice:1.0.0"
+}

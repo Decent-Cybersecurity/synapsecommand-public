@@ -537,14 +537,26 @@ def _adapter_names(trees: list[ast.Module] | ast.Module) -> set[str]:
     classes = _adapter_classes(trees) - {"Adapter"}    # the base declares the slot, not a name
     found = set()
     for tree in trees:
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.ClassDef) or node.name not in classes:
-                continue
-            for stmt in node.body:
-                if (isinstance(stmt, ast.Assign) and _unit_name(stmt) == "name"
-                        and isinstance(stmt.value, ast.Constant)
-                        and isinstance(stmt.value.value, str)):
-                    found.add(stmt.value.value)
+        found |= _names_declared_in(tree, classes)
+    return found
+
+
+def _names_declared_in(tree: ast.Module, classes: set[str]) -> set[str]:
+    """The `name = "…"` literals that ONE module's own adapter classes declare (2026-10-10).
+
+    `classes` is resolved across the whole snapshot by `_adapter_classes`, because a base may live
+    in another module; the literal is credited to the module whose class states it, which is what
+    lets `_module_roster_moves` attribute a roster move to the module it happened in.
+    """
+    found = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef) or node.name not in classes:
+            continue
+        for stmt in node.body:
+            if (isinstance(stmt, ast.Assign) and _unit_name(stmt) == "name"
+                    and isinstance(stmt.value, ast.Constant)
+                    and isinstance(stmt.value.value, str)):
+                found.add(stmt.value.value)
     return found
 
 
@@ -625,6 +637,7 @@ class Surface:
     modules: dict[str, dict[str, str]]     # path -> functional units
     public: dict[str, set[str]]            # path -> public top-level names
     adapters: set[str]
+    adapters_by_module: dict[str, set[str]]    # path -> the adapter names its own classes declare
     flags: set[str]
     exit_codes: set[str]
     checks: set[str]
@@ -645,6 +658,7 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
     schema_version = None
 
     trees: list[ast.Module] = []
+    parsed: dict[str, ast.Module] = {}
     for path, blob in snapshot.items():
         if not path.endswith(".py"):
             continue
@@ -655,6 +669,7 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
         public[path] = {n for n in units if _public(n)}
         tree = _parse(blob)
         trees.append(tree)
+        parsed[path] = tree
         if path == f"{PKG}/harness.py":
             flags |= _harness_flags(tree)
             exits |= _harness_exit_codes(tree)
@@ -667,6 +682,11 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
 
     # Across the modules, not per module: an adapter's base may live in another file.
     adapters |= _adapter_names(trees)
+    # Since 2026-10-10 the same reading per module as well: the bases resolved across the modules
+    # as above, each name credited to the module whose class declares it (`_module_roster_moves`).
+    classes = _adapter_classes(trees) - {"Adapter"}
+    by_module = {path: names for path, tree in parsed.items()
+                 if (names := _names_declared_in(tree, classes))}
 
     fixture_sets = {path.split("/")[2] for path in snapshot
                     if path.startswith(f"{PKG}/fixtures/") and len(path.split("/")) > 3}
@@ -684,7 +704,8 @@ def read_surface(snapshot: dict[str, bytes]) -> Surface:
         required = set(project.get("dependencies", []))
         scripts = set(project.get("scripts", {}))
 
-    return Surface(modules=modules, public=public, adapters=adapters, flags=flags,
+    return Surface(modules=modules, public=public, adapters=adapters,
+                   adapters_by_module=by_module, flags=flags,
                    exit_codes=exits, checks=checks, fixture_sets=fixture_sets,
                    schema_version=schema_version, python_floor=floor,
                    optional_deps=optional, required_deps=required, entry_points=scripts)
@@ -903,7 +924,16 @@ def _module_roster_moves(path: str, old: Surface, new: Surface) -> list[Signal]:
                                     f"{word} is removed ({sorted(removed)}) — the MAJOR row "
                                     "names a harness exit code or flag outright"))
     if path.startswith(f"{PKG}/adapters/"):
-        added, removed = new.adapters - old.adapters, old.adapters - new.adapters
+        # PER MODULE SINCE 2026-10-10, as this docstring always said it was. The sets
+        # were read across ALL modules, so a roster change in one module explained a functional
+        # edit in another: adding one adapter module turned every changed body under `adapters/`
+        # into "explained by a roster move in the same module", and the PATCH rulings recorded for
+        # three unrelated adapter edits were refused as stale. A move counts here only when the
+        # roster itself moved AND the name is declared in this module at the end that has it.
+        mine_old = old.adapters_by_module.get(path, set())
+        mine_new = new.adapters_by_module.get(path, set())
+        added = (new.adapters - old.adapters) & (mine_new - mine_old)
+        removed = (old.adapters - new.adapters) & (mine_old - mine_new)
         if added:
             moves.append(Signal("MINOR", f"{path}:registry",
                                 f"an adapter is added ({sorted(added)}) — the MINOR row, verbatim"))

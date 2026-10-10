@@ -233,6 +233,24 @@ def test_the_limitations_come_from_the_manifests_themselves():
         assert all(isinstance(item, str) and item for item in entry["limitations"])
 
 
+def test_a_structured_limitation_renders_as_its_summary_and_never_as_a_dict(tmp_path, notes,
+                                                                             sweep):
+    """REPAIRED 2026-10-10 (the Link 16 gateway arc): a structured limitation was rendered as its
+    Python repr, because only a `statement` key was read and no manifest has one."""
+    manifests = tmp_path / "manifests"
+    manifests.mkdir()
+    (manifests / "a.json").write_text(json.dumps({"adapter": {"id": "a", "limitations": [
+        "a plain sentence", {"id": "structured", "summary": "a structured sentence"},
+        {"statement": "an older keyed sentence"}]}}), encoding="utf-8")
+    assert release_notes.known_limitations(manifests) == [
+        {"id": "a", "limitations": ["a plain sentence", "a structured sentence",
+                                    "an older keyed sentence"]}]
+    for entry in release_notes.known_limitations(MANIFESTS):
+        for text in entry["limitations"]:
+            assert "{'" not in text, (entry["id"], text[:80])
+    assert "{'id'" not in render(notes, sweep)
+
+
 def test_the_conformance_summary_covers_every_adapter_in_the_sweep(sweep):
     letters, rows = release_notes.conformance_summary(sweep)
     assert letters == ["A", "E"]

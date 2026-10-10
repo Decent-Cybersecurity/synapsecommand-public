@@ -158,10 +158,10 @@ exchange with any system is asserted.
   touches a claim of this release: four need an input only an in-process caller can build, and
   the fifth is a test the arc did not write.
 
-## Twenty-one adapters at 3.3.0, all harness-verified
+## Twenty-one adapters at 3.3.0, all harness-verified — and one more in the tree since
 
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas --json`, run over the roster
-with no `--fixtures` on this tree, and every verdict read from the run. The table is the live registry, and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both directions to agree. `python -m synapse_cdm.harness --list-adapters` prints `21 adapters registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+with no `--fixtures` on this tree, and every verdict read from the run. The table is the live registry, and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both directions to agree. At `v3.3.0` `python -m synapse_cdm.harness --list-adapters` prints `21 adapters registered`. The row marked **post-3.3.0** landed in the tree on 2026-10-10, after that tag, and is in no release. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -186,6 +186,7 @@ with no `--fixtures` on this tree, and every verdict read from the run. The tabl
 | `aixm52` | ingest | 10 | L3 | VERIFIED |
 | `dis7` | bidirectional | 6 | L4 | VERIFIED |
 | `tacticalapi` | ingest | 10 | L3 | VERIFIED (new in the 3.3.0 arc) |
+| `link16_gateway` | bidirectional | 15 | L4 | PROVISIONAL (**post-3.3.0**, in no release) |
 
 **596 fixture verdicts, 0 failed** across the twenty-one, against the published 3.0.0 schemas —
 the 586 that 3.2.0 shipped, unchanged, plus 10 from the new set. The two readings the wheel gate

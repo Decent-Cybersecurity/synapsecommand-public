@@ -84,7 +84,9 @@ def shipped() -> dict:
 
 
 ADAPTERS = sorted(shipped())
-JSON_ADAPTERS = ("adsb", "ais", "legion", "pntmap", "tak")
+#: `link16_gateway` joined 2026-10-10 (the Link 16 gateway arc): it decodes JSON octets itself, so
+#: the inclusive depth bound and the size-before-depth order are run on it as well.
+JSON_ADAPTERS = ("adsb", "ais", "legion", "link16_gateway", "pntmap", "tak")
 XML_ADAPTERS = ("stanag4676", "tak")
 
 

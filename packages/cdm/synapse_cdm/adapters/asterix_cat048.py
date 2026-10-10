@@ -1305,12 +1305,13 @@ def _derive_position(items: dict, site: tuple[float, float, float] | None) -> tu
         # cancels across a sensor-to-target baseline — so using Δh and declining alt_m is one
         # consistent position rather than two.
         alt_m=None,
-        # `PositionSource` offers GNSS, INERTIAL, MANUAL and ESTIMATED, and none of them names a
-        # sensor measurement. ESTIMATED is the only one that is not an outright false statement
-        # about a computed product of a measurement, an injected site and possibly a pressure
-        # altitude — and it answers the enum's own purpose correctly, since a radar fix is not
-        # GNSS and survives jamming a GNSS fix does not. The missing member is a 1.1.0
-        # candidate; gap 24.
+        # `PositionSource` offered GNSS, INERTIAL, MANUAL and ESTIMATED when this adapter shipped,
+        # and none of them names a sensor measurement. ESTIMATED is the only one that is not an
+        # outright false statement about a computed product of a measurement, an injected site
+        # and possibly a pressure altitude — and it answers the enum's own purpose correctly,
+        # since a radar fix is not GNSS and survives jamming a GNSS fix does not; gap 24.
+        # 2026-10-10: CDM 3.1.0 adds SENSOR, the member this comment called missing; the adapter
+        # keeps ESTIMATED, since re-labelling its output is its own decision.
         position_source=PositionSource.ESTIMATED,
         # I048/210's per-axis σ are "within the local grid system"; collapsing them into one
         # horizontal figure is a modelling choice, and this derivation adds error nothing in
@@ -1829,13 +1830,16 @@ class AsterixCat048Adapter(Adapter):
         attributes["position_basis"] = position_basis
         if position_basis.get("derived"):
             attributes["position_source_basis"] = (
-                "ESTIMATED. PositionSource offers GNSS, INERTIAL, MANUAL and ESTIMATED and "
-                "NONE of them names a sensor measurement. ESTIMATED is the only value that is "
-                "not an outright false statement about what reaches Position here — a computed "
-                "product of a measurement, an injected site and possibly a pressure altitude — "
-                "and it answers the enum's own stated purpose correctly, since a radar fix is "
-                "not GNSS and survives jamming a GNSS fix does not. The missing member is a "
-                "1.1.0 candidate rather than a schema change; gap 24")
+                "ESTIMATED. When this adapter shipped, PositionSource offered GNSS, INERTIAL, "
+                "MANUAL and ESTIMATED and NONE of them named a sensor measurement, and ESTIMATED "
+                "was the only value that is not an outright false statement about what reaches "
+                "Position here — a computed product of a measurement, an injected site and "
+                "possibly a pressure altitude — and it answers the enum's own stated purpose "
+                "correctly, since a radar fix is not GNSS and survives jamming a GNSS fix does "
+                "not. The missing member was recorded as a 1.1.0 candidate; CDM 3.1.0 "
+                "(2026-10-10) adds it as SENSOR, and this adapter keeps ESTIMATED, because "
+                "re-labelling a shipped adapter's output is its own decision and not part of "
+                "that MINOR; gap 24")
         if course_basis:
             attributes["course_basis"] = course_basis
 

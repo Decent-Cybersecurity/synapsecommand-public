@@ -130,7 +130,15 @@ CLAIM = re.compile(r"[Aa]dapters?\s+#(\d+)")
 #: A backticked registry name within fourteen characters of an ordinal, either order. Fourteen
 #: covers " at ", " keeps ", " is held for " and not much else, which is the point: a wider window
 #: starts pairing an ordinal with whatever adapter the sentence mentions next.
-NEAR = re.compile(r"`([a-z0-9]+)`[^`#\n]{0,14}#(\d+)")
+#: WIDENED 2026-10-10 (the Link 16 gateway arc, DECISIONS L-03): the name class admits `_`, because
+#: the registry name `link16_gateway` (REQ010's spelling) is the first with an underscore, and the
+#: narrow class could not read it at all. Measured on the arc's staged base before the edit: narrow
+#: and widened bind identically (22 rows, 82 bound, 114 unbound, the same two digests), so no site
+#: changed its reading. After row 23 the sweep still fails a stale pairing (`link16_gateway` at #22
+#: written in FORMAT_COVERAGE.md or RELEASE_NOTES.md), a second row naming the same adapter and a
+#: renamed row; a hyphenated name is still a collection error. A repeated ordinal NUMBER is not
+#: caught, before the widening as after it (`series()` builds a dict).
+NEAR = re.compile(r"`([a-z0-9_]+)`[^`#\n]{0,14}#(\d+)")
 
 #: ONE DIRECTION ONLY, adapter first. The reverse — `#N` then a backticked name — was tried and
 #: removed: "which gave #12 after `cat048` at #11" contains both pairings and the reverse direction
@@ -177,7 +185,8 @@ def series() -> dict[int, tuple[str, str]]:
         if not m:
             continue
         ordinal, name_cell, state_cell = int(m.group(1)), m.group(2), m.group(3)
-        names = re.findall(r"`([a-z0-9]+)`", name_cell)
+        # WIDENED 2026-10-10 with `NEAR` above (L-03), for the same name and with the same reading.
+        names = re.findall(r"`([a-z0-9_]+)`", name_cell)
         assert len(names) == 1, f"ordinal row {ordinal} names {names}, expected exactly one"
         # RESERVED is tested FIRST and the order is load-bearing. No row carries it today — #9
         # was the only one and its reservation was made good — but the branch stays, because the
