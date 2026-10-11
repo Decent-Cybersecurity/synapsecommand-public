@@ -1,0 +1,68 @@
+# Packaging for synapse-link16-bridge, the runtime half of the SC Link16 Gateway 1.0.0 integration:
+# the gateway API client, the synthetic provider and its loopback server, durable ingest, state,
+# freshness, lifecycle, egress permission and the native provider boundary. It is a separate
+# distribution beside synapse-cdm and outside the adapter registry; the translator it calls is the
+# `link16_gateway` adapter of synapse-cdm.
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapse-link16-bridge"
+dynamic = ["version"]
+description = "The runtime bridge between an SC Link16 Gateway 1.0.0 API and the SynapseCommand Canonical Data Model (synthetic provider included; no native JREAP C or Link 16 codec)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+# Byte copies of the repository-root files: a wheel is a redistribution and has to carry them.
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Decent Cybersecurity s.r.o." }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent",
+]
+# The CDM release that carries the `link16_gateway` adapter and the PositionSource members SENSOR
+# and UNKNOWN; below the next package major. Everything else at runtime is the standard library
+# (sqlite3, http.server, http.client, ssl, hmac).
+dependencies = ["synapse-cdm>=3.4.0,<4"]
+
+[project.scripts]
+synapse-link16-bridge = "synapse_link16_bridge.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Source = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Issues = "https://github.com/Decent-Cybersecurity/synapsecommand-public/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "synapse_link16_bridge._version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["synapse_link16_bridge*"]
+
+[tool.pytest.ini_options]
+# This table is what makes `packages/link16_bridge` the rootdir; without it pytest climbs to the
+# repository's pytest.ini, which neither collects these tests nor puts the package on the path.
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-p", "no:cacheprovider", "--strict-markers", "--strict-config"]
+filterwarnings = ["error"]
+markers = [
+    "native: a native JREAP C or Link 16 row; skipped with BLOCKED_EXTERNAL_EVIDENCE and the gate that unblocks it",
+    "wheel: builds and installs this distribution's wheel; needs pip and setuptools in the interpreter",
+    "process: spawns a bridge process that dies by os._exit (the crash tests)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9", "F", "E7", "W"]

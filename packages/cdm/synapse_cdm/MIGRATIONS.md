@@ -599,7 +599,9 @@ and six other documentation pages, the adapter's new documentation page
 `SECURITY.md`, `RELEASE_NOTES.md` and `.gitattributes`, the wheel gate's comment and module lists
 in `gates/wheel_install.py`, the bump gate's attribution repair in `gates/bump_derivation.py`
 (below), the DIS 7 and TacticalAPI implementation records, the adapter's three new test modules
-and fourteen others whose literals or assertions moved.
+and fourteen others whose literals or assertions moved; and, from 2026-10-11, the sibling
+distribution under `packages/link16_bridge/` with its workflow `gateway-bridge.yml`, the two roots
+it adds to `tests/test_cdm_version_floor.py`, and one sentence of the boundary page (below).
 
 **THE CDM 3.1.0 LANDING, 2026-10-10 — `PositionSource` gains `SENSOR` and `UNKNOWN`, the published
 schemas are re-exported from the models, and the number is not typed in this tree.** The landing
@@ -669,6 +671,28 @@ says what that binding now covers. The documentation page `docs/docs/cdm/link16-
 the contract of the export mode. The merge hold above covers this landing as well: the page and
 the roster are published from `main`'s tip, and only the release commit makes them true of a
 version anybody can install.
+
+**THE `synapse-link16-bridge` LANDING, 2026-10-11 — the runtime half of the gateway, as a
+sibling distribution.** `packages/link16_bridge/` holds a second distribution,
+`synapse-link16-bridge` 1.0.0 (import `synapse_link16_bridge`, command `synapse-link16-bridge`),
+whose runtime dependencies are `synapse-cdm` 3.4.0 or later and below 4, and the standard
+library. It reads SC Link16 Gateway report batches over the gateway API, checks every record
+against its configured channel, hands each report's octets to the `link16_gateway` adapter, keeps
+dispositions, identities, history, freshness, lifecycle, an outbox and an audit trail in one
+SQLite file per channel, delivers CDM objects to a sink at least once, exports only what its
+deployment configuration permits, and ships a synthetic provider with a loopback server; its
+native provider boundary refuses with `BLOCKED_EXTERNAL_EVIDENCE`, and it claims no native
+interoperability. Nothing of it ships in the `synapse-cdm` wheel, and it is outside the adapter
+registry. It is part of the tag and of the Release's source archives, it installs from the tag
+with `pip install` of a `git+` URL naming `#subdirectory=packages/link16_bridge` after
+`synapse-cdm` is installed from the index, and no upload of it to the package index is made in
+this release (creating a second project there is the maintainer's act). Its workflow
+`.github/workflows/gateway-bridge.yml` runs its offline tests on push only. Two facts wait on the
+release commit: its dependency floor names 3.4.0, which this tree types only there, so `pip
+check` reports the floor unmet until then; and its end-to-end test of the full CDM 3.1.0
+projection is skipped, version-pending, until `SCHEMA_VERSION` reads 3.1.0. The count clause
+above is unchanged by this landing: inside `packages/cdm/` it moves this file only, which the
+clause already counts. Its requirement matrix is `packages/link16_bridge/docs/requirements-matrix.md`.
 
 **Bump ruling.** `synapse_cdm/enums.py:PositionSource` — MINOR: two members, `SENSOR` and `UNKNOWN`,
 are added to a closed vocabulary and none is removed or renamed — the CDM table's "an enum member

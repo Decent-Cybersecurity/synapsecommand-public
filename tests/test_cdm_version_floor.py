@@ -249,7 +249,9 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 #: Every root the gate parses, in one tuple, because `discover()` and the size check below both
 #: read it. They used to carry the same three-element literal each, which is two lists to keep in
 #: step for one fact — and the closure test exists precisely to catch a root nobody added.
-ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO / "examples")
+ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO / "examples",
+         REPO / "packages" / "link16_bridge" / "synapse_link16_bridge",
+         REPO / "packages" / "link16_bridge" / "tests")
 
 
 def discover() -> list[pathlib.Path]:
@@ -276,6 +278,14 @@ def discover() -> list[pathlib.Path]:
     a demonstration is run by a reader on whatever interpreter they have — the one-command,
     self-checking proof of a cross-format translation is the last file that should meet a
     `SyntaxError` on the floor the project declares.
+
+    `packages/link16_bridge/synapse_link16_bridge` and `packages/link16_bridge/tests` joined the
+    same way on 2026-10-11, with the separate `synapse-link16-bridge` distribution beside the CDM:
+    the closure test failed on the change that put its first module there. IN SCOPE, because that
+    distribution declares the same 3.11 floor in its own `pyproject.toml` and its tests run on the
+    interpreters it declares. The two directories are named rather than `packages/link16_bridge`
+    itself, so a virtualenv or a build directory created in the distribution root cannot put the
+    walk and the size check below out of step.
     """
     out = []
     for root in ROOTS:

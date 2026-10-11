@@ -457,6 +457,15 @@ repository. The boundary is enforced over the package sources by `tests/test_cdm
 import of private code, no reasoner, no graph database, no message broker, no model SDK, no crypto
 in the contract layer.
 
+**The runtime half of a gateway lives outside the registry (2026-10-11).** The `link16_gateway`
+adapter translates one SC Link16 Gateway report and decides nothing: which channel a record must
+belong to, what state an identity is in, whether an export is permitted, and the durable record
+of each are runtime decisions. They live in the separate distribution `synapse-link16-bridge`
+(`packages/link16_bridge/`), which calls the adapter and is not an `Adapter` subclass, so it is
+outside the adapter registry and outside the boundary test above, and is judged by its own tests
+(the handoff's REQ181: no transport adapter is registered). Its policy is exact-match configuration,
+not a classification-policy engine or a cross-domain guard.
+
 ### 4.7 SKIP, once, for all six
 
 A check that does not apply to an adapter reports **SKIP**, never PASS, and the report states which
@@ -550,14 +559,16 @@ diffs and chain hashes compare.
 ## 7. CI layout
 
 **What exists today — rewritten 2026-09-16, because the paragraph it replaces said "exactly one
-workflow" and five exist.** `.github/workflows/` holds `publish.yml`, the release pipeline, on
+workflow" and five exist (six since 2026-10-11, with gateway-bridge.yml).** `.github/workflows/` holds `publish.yml`, the release pipeline, on
 `push:` of a tag matching `v*` and on `workflow_dispatch` (the dispatch trigger exists so the
 gate-and-build half is runnable against any branch without publishing anything; the irreversible
 jobs are guarded on the ref being a tag); `ci.yml`, the workflow that can fail on a branch, on
 `push` to `main` and to `soif/**` and on `pull_request` against any branch; `codeql.yml`, on the
 same pushes, on pull requests against `main` and `soif/**` only, and on a weekly schedule;
-`dependency-review.yml`, on pull requests against `main` and `soif/**` only; and `rc-build.yml`, a
-`workflow_dispatch` release-candidate build that publishes nothing.
+`dependency-review.yml`, on pull requests against `main` and `soif/**` only; `gateway-bridge.yml`
+(added 2026-10-11), the `synapse-link16-bridge` package's offline tests on each Python version it
+supports, on `push` to `main` and to `soif/**` only; and `rc-build.yml`, a `workflow_dispatch`
+release-candidate build that publishes nothing.
 
 **Why `ci.yml` exists, and it was a design constraint rather than a complaint.** Before it, a push
 to a branch started no workflow. Every "CI MUST fail if …" clause in this campaign — a missing or

@@ -1,0 +1,83 @@
+# The synapse-link16-bridge package's offline tests, on every Python version the package supports.
+#
+# WHAT THE JOB RUNS
+# -----------------
+# `packages/link16_bridge` is a separate distribution, `synapse-link16-bridge`, with its own test
+# command, and the root `pytest.ini` collects `tests/` only, so `ci.yml` does not run it. On each
+# interpreter the package's classifiers declare (3.11 to 3.14, the matrix below) this job installs
+# the CDM from this checkout with its test and lint extras, then the bridge editable without
+# dependencies, then setuptools for the installed-wheel test, runs ruff with the bridge's own rule
+# set, and runs the bridge's single offline command from `packages/link16_bridge`, each line
+# exactly as `packages/link16_bridge/README.md` writes it.
+# `packages/link16_bridge/tests/test_bridge_release.py` holds this file to that document, to the
+# classifiers, and to the triggers, permissions and pins below.
+#
+# WHICH CDM IT TESTS AGAINST
+# --------------------------
+# The `synapse-cdm` of this checkout, editable: the bridge's dependency floor names the CDM
+# release that carries the `link16_gateway` adapter, and the tree it is tested with is the tree
+# that release is cut from. `--no-deps` keeps pip from resolving that floor against the index.
+#
+# WHAT IT DOES NOT RUN
+# --------------------
+# Nothing native: the `native` tests skip with BLOCKED_EXTERNAL_EVIDENCE and name the gate that
+# unblocks each. The performance gate (F01) needs the rig the specification names and runs there
+# by hand; no timing from this job is evidence for it.
+#
+# WHY IT IS PUSH-ONLY
+# -------------------
+# A `pull_request` trigger would make this job a check context that the required-check rulesets
+# under `docs/governance/rulesets/` must then name (`tests/test_cdm_governance.py` derives them
+# from every pull-request job). Whether this job becomes a required check is the maintainer's
+# decision and not this file's, so it runs on the same pushes as `ci.yml` and on nothing else: no
+# pull request, no schedule, no dispatch.
+#
+# ACTIONS PINNED BY SHA, the same two actions at the same commits as `ci.yml`
+# (`tests/test_cdm_security_policy.py` requires a full commit SHA of every workflow).
+name: Gateway bridge package
+
+on:
+  push:
+    branches:
+      - main
+      - 'soif/**'
+
+# Read-only, and nothing here widens it: the job publishes nothing and needs no token, and the
+# checkout keeps no credential.
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    name: synapse-link16-bridge offline tests (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      # A red on one interpreter must not cancel the reading on the others.
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install the CDM from this checkout, then the bridge
+        run: |
+          set -euo pipefail
+          python -m pip install -e "packages/cdm[test,lint]"
+          python -m pip install --no-deps -e packages/link16_bridge
+          python -m pip install "setuptools>=77"
+
+      - name: Lint with the bridge's rule set
+        run: ruff check --config packages/link16_bridge/pyproject.toml packages/link16_bridge
+
+      - name: The package's single offline command
+        working-directory: packages/link16_bridge
+        run: python -m pytest

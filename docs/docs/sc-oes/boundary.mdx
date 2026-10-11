@@ -60,6 +60,13 @@ ontology instances and customer infrastructure; classification-policy and cross-
 enforcement; federation implementation; private model orchestration; and proprietary evaluation
 datasets.
 
+The one runtime published here, added 2026-10-11, is the separate distribution
+`synapse-link16-bridge` under `packages/link16_bridge/`: it delivers SC Link16 Gateway reports into
+the CDM and applies only the exact-match channel, label-set and export rules its deployment
+configuration names, which is neither a classification-policy engine nor a cross-domain guard;
+the boundary tests below, which read the `synapse-cdm` package, do not apply to it, and it has its
+own tests.
+
 The principle in one line: **open the language, own the intelligence.** A third-party developer
 must be able to implement SC-OES correctly using only this repository, without access to any
 proprietary code — and that is the property the rest of this page is about keeping true.
