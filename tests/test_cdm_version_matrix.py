@@ -67,6 +67,10 @@ both grounds. The handoff's REQ012 read that refusal as a reason for a 4.0.0; it
 WRITER_NEWER refusal every minor of every major carries, and MIGRATIONS.md's table classes an
 added member as a MINOR. The `SELF` record is valid only while `PACKAGE_VERSION` is 3.4.0, so the
 round after the release resolves it to the commit `v3.4.0` names before any next package bump.
+Resolved 2026-10-16 by the 3.4.0 witness round: the manifest now records
+`af4c21a4e11762613c8d7a90e62022caa4d4ebab`, which `git rev-list -n1 v3.4.0` reads — the release
+commit itself — so the 3.1.0 row is held by the `rev-list` branch as every older contract's is, and
+the `SELF` slot is free for the next freeze.
 """
 from __future__ import annotations
 

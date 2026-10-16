@@ -620,3 +620,41 @@ applied (counts only; the readiness report's section 19 names the rest):
   pinned egress inputs by their pins, and the handoff's reference projections at their own 4.0.0.
   Section 10's release readings are taken on this tree; the tag, the upload and the witness round
   are the release round's, recorded after the fact.
+- **2026-10-16, the release and the witness round: synapse-cdm 3.4.0 is on the index.** The release
+  commit `af4c21a4e11762613c8d7a90e62022caa4d4ebab` is the commit `main` points at on GitHub; on its
+  `main` push `CI` run 38839912488 read the four suite, gates and manifests jobs red on the nine
+  tag-conditional tests only, nine failed in each, and every other job `success`, and `CodeQL` run
+  38839912509 and `Gateway bridge package` run 38839912523 read `success`. The annotated tag `v3.4.0` (tag object
+  `35db70e0b559c041b6bb4d5368f4f5dd35e00d93`) names that commit, and the Release workflow run
+  38840201037 on its push, at 02:23:44Z, read all six jobs `success`, the gate job's condition 1
+  `10358 passed, 213 skipped` with none failed. The `pypi` approval was given by `decentcybersecurity`
+  at 03:42:44Z (the deployment's `queued` status), the day the tag was pushed, with a comment naming
+  the readiness report at `af4c21a4`; the index took the wheel at 03:42:59Z and the sdist at
+  03:43:01Z, digests `9149b787…` and `0717f193…`, the ones `SHA256SUMS` names and the served bytes
+  re-hash to; Release 414513884 was published at 03:43:26Z with nine assets. What the round recorded
+  for this adapter and its contract:
+
+  1. **The adapter's evidence record is on the Release.** The Release's evidence bundle,
+     `evidence-3.4.0.tar.gz`, carries `evidence/link16_gateway/1.0.0/evidence.json` among its
+     twenty-two `evidence.json` records, which is what the declaration `evidence.available: true` and
+     the limitation `evidence-availability` say; the gate job's conformance sweep and the build job's
+     package test from the installed wheel each read `22 of 22 CONFORMANT`, and the sweep attached
+     to the Release reads `link16_gateway` CONFORMANT with I and M SKIP and every other check PASS.
+  2. **The witness record is the pipeline's own.** The `witness` job built, verified and attached
+     `witness-3.4.0.json`, and the witness round committed it unchanged as
+     `releases/witness/3.4.0.json` (2 188 bytes, sha256
+     `05b93eacc299bc0a82d54753c926a7d37e4a94aa13df176c9ba1ce98d75cdd10`), wrote `PUBLICATION.md`
+     entry 26, dated the witness paragraphs, and reopened the pending section in the migration
+     notes. The record was not rebuilt with the builder: the pipeline's record was accepted, and a
+     rebuilt one would be a different claim (the 3.0.1, 3.2.0 and 3.3.0 precedent).
+  3. **The 3.1.0 contract's `SELF` provenance is resolved.** `tests/frozen/cdm/MANIFEST.json` now
+     records `af4c21a4e11762613c8d7a90e62022caa4d4ebab` for CDM 3.1.0, the commit
+     `git rev-list -n1 v3.4.0` reads and the release commit itself, the form the 3.0.0 contract's
+     record took at 3.0.1; `tests/test_cdm_version_matrix.py` holds it by that branch and re-derives
+     every frozen digest from `git show v3.4.0:<path>`, so P03's frozen contract is the tagged bytes.
+  4. **The bridge distribution is in the tag and not on the index.** `synapse-link16-bridge` 1.0.0
+     is in the tree `v3.4.0` names and in the Release's source archives; the Release carries no asset
+     of it, and `GET /pypi/synapse-link16-bridge/json` answers 404 (L-11).
+
+  No row of sections 5 to 8 moved, and no fixture, golden or line of the adapter or the bridge; the
+  open items stand as the release recorded them.

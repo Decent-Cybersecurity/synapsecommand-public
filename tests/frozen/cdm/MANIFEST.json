@@ -1,5 +1,5 @@
 {
-  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0, and package 3.0.0 typed CDM 3.0.0 in the same commit that froze it (written SELF there, resolved to the tagged commit once v3.0.0 existed; v3.0.0 released nothing and 3.0.1 ships the bytes). Package 3.4.0 typed CDM 3.1.0 in the commit that froze it on 2026-10-11 (SELF until the round after the release resolves it to the commit v3.4.0 names, before any next package bump). Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
+  "_comment": "Historical CDM wire contracts frozen from this repository's own release tags, keyed by the schema_version each file declares. The package tag is provenance only: 2.2.0 shipped CDM 2.1.0, and package 3.0.0 typed CDM 3.0.0 in the same commit that froze it (written SELF there, resolved to the tagged commit once v3.0.0 existed; v3.0.0 released nothing and 3.0.1 ships the bytes). Package 3.4.0 typed CDM 3.1.0 in the commit that froze it on 2026-10-11 (written SELF there, resolved on 2026-10-16 by the witness round to the commit v3.4.0 names, which is the release commit itself). Files are byte-identical to `git show <tag>:schemas/<kind>.schema.json` and are never edited; tests/test_cdm_version_matrix.py re-derives every sha256.",
   "contracts": {
     "2.0.0": {
       "files": {
@@ -166,8 +166,8 @@
         }
       },
       "provenance": {
-        "commit": "SELF",
-        "commit_note": "Frozen IN the release commit as SELF, because a file cannot carry the hash of the commit that contains it; the commit v3.4.0 names is that commit, and tests/test_cdm_version_matrix.py proves the freeze from the tag's own tree once the tag exists. Frozen 2026-10-11, the 3.4.0 release commit, for CDM 3.1.0: PositionSource gained SENSOR and UNKNOWN (a MINOR).",
+        "commit": "af4c21a4e11762613c8d7a90e62022caa4d4ebab",
+        "commit_note": "Frozen IN the release commit (af4c21a) as SELF on 2026-10-11, because a file cannot carry the hash of the commit that contains it; resolved 2026-10-16 by the witness round to the commit tag v3.4.0 names, af4c21a, which is the release commit itself, the form every older contract's record has. CDM 3.1.0: PositionSource gained SENSOR and UNKNOWN (a MINOR). tests/test_cdm_version_matrix.py re-derives every digest from `git show v3.4.0:<path>`.",
         "tag": "v3.4.0"
       }
     }
