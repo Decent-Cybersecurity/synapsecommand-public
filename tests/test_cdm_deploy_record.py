@@ -490,6 +490,9 @@ NUMBER_WORDS = {
     # the mutation guard below, which spells one more than the live count, asked for a word this
     # table did not have. Five more, so the next four deploys do not each need this edit.
     26: "twenty-six", 27: "twenty-seven", 28: "twenty-eight", 29: "twenty-nine", 30: "thirty",
+    # Extended 2026-10-16 for the same reason, when the 3.4.0 docs deploy made the live count thirty
+    # and the mutation guard asked for thirty-one. Five more again.
+    31: "thirty-one", 32: "thirty-two", 33: "thirty-three", 34: "thirty-four", 35: "thirty-five",
 }
 
 

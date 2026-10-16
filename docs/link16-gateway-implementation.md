@@ -658,3 +658,13 @@ applied (counts only; the readiness report's section 19 names the rest):
 
   No row of sections 5 to 8 moved, and no fixture, golden or line of the adapter or the bridge; the
   open items stand as the release recorded them.
+- **2026-10-16, the docs deploy: the site serves 3.4.0.** The documentation site built from
+  `75868e5`, the witness commit and `main`'s tip, was deployed as `aea2e9d4`, whose deploy stage ended
+  at 04:21:48Z. That day `docs.synapsecommand.com` served it byte for byte on every page the deploy
+  record compared — the five probe pages, the current-contracts page and the adapter's own page,
+  `/cdm/link16-gateway/`, at the instants `PUBLICATION.md` entry 26 records: the adapter's page
+  answered with the local build's page where the deployment before it, `c6718d44`, answers 404, the
+  changelog page's last `package is at` sentence reads 3.4.0, and the current-contracts page states
+  CDM schema 3.1.0. `PUBLICATION.md` ledger entry 8 carries the deployment's row and entry 26 the
+  act's record. No row of sections 5 to 8 moved, and no fixture, golden or line of the adapter or the
+  bridge.
