@@ -847,6 +847,17 @@ files, which the Eclipse Public License 2.0 governs; `NOTICE` states the derivat
 The `tacticalapi` adapter is part of the distribution built from this tree; no release before
 3.3.0 carries it. The reference page is https://docs.synapsecommand.com/cdm/tacticalapi.
 
+## SC Link16 Gateway translator: the `link16_gateway` adapter
+
+One report of SC Link16 Gateway 1.0.0 — an internal JSON interface this repository defines, not
+JREAP C and not Link 16 — becomes one `Entity` and, when the report carries a position, a
+one-sample `Track`. The adapter parses no JREAP C or Link 16 bytes, claims no native
+interoperability and transmits nothing; the runtime half of the gateway is the separate
+distribution `synapse-link16-bridge`, which this wheel does not carry.
+
+The `link16_gateway` adapter is part of the distribution built from this tree; no release before
+3.4.0 carries it. The reference page is https://docs.synapsecommand.com/cdm/link16-gateway.
+
 ## Layout
 
 Repository root, then the package:

@@ -2154,10 +2154,10 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
      "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
     ('packages/cdm/synapse_cdm/fixtures/dis7/contract/dis7-entity.schema.json',
      "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
-     "the bundle's profile overlay of the published Entity schema, vendored byte-identical and pinned by SHA-256 in `fixtures/dis7/spec/dis7_pin.json`: it repeats the published contract's own description of `Residual` (see the `schemas/entity.schema.json` rows above), a named subset and bytes this repository may not reword"),
+     "the bundle's profile overlay of the published Entity schema, vendored from the bundle (byte-identical until 2026-10-11, re-derived since from the CDM 3.1.0 entity schema with the bundle's overlay) and pinned by SHA-256 in `fixtures/dis7/spec/dis7_pin.json`: it repeats the published contract's own description of `Residual` (see the `schemas/entity.schema.json` rows above), a named subset and bytes this repository may not reword"),
     ('packages/cdm/synapse_cdm/fixtures/dis7/contract/dis7-entity.schema.json',
      'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
-     "the bundle's profile overlay of the published Entity schema, vendored byte-identical and pinned by SHA-256 in `fixtures/dis7/spec/dis7_pin.json`: it repeats the published contract's own description of `Residual` (see the `schemas/entity.schema.json` rows above), a named subset and bytes this repository may not reword"),
+     "the bundle's profile overlay of the published Entity schema, vendored from the bundle (byte-identical until 2026-10-11, re-derived since from the CDM 3.1.0 entity schema with the bundle's overlay) and pinned by SHA-256 in `fixtures/dis7/spec/dis7_pin.json`: it repeats the published contract's own description of `Residual` (see the `schemas/entity.schema.json` rows above), a named subset and bytes this repository may not reword"),
     ('schemas/event.schema.json',
      "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
      "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
@@ -2227,6 +2227,33 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('tests/frozen/cdm/3.0.0/track.schema.json',
      'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
      "the published contract's own description of `Residual` — written once in `models.py`, rendered into `schemas/*.json`, the frozen 2.1.0 and 3.0.0 copies under `tests/frozen/cdm/` and the schema-reference pages: a named subset (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance) and bytes the 3.0.0 freeze holds; rewording them is a CDM-schema PATCH the adapter expansion does not take"),
+    # ADDED 2026-10-11 (the 3.4.0 release commit): the 3.1.0 freeze copies the published schemas byte
+    # for byte, so the two rows each published schema carries are carried by its frozen copy too, as
+    # the 3.0.0 freeze's were.
+    ('tests/frozen/cdm/3.1.0/entity.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/entity.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/event.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/event.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/plan_object.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/plan_object.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/track.schema.json',
+     "destroying the reader's ability to see a list.\\n\\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE",
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
+    ('tests/frozen/cdm/3.1.0/track.schema.json',
+     'None = nothing was left over, or \\u2014 for the fourteen adapters shipped before this container',
+     "the frozen CDM 3.1.0 copy of the published contract's own description of `Residual` (added 2026-10-11 by the 3.4.0 release commit, which froze 3.1.0 under `tests/frozen/cdm/3.1.0/` byte for byte from `schemas/`): the same named subset as the `schemas/*.json` and frozen 2.1.0 and 3.0.0 rows above (the fourteen adapters that shipped before the container existed, ARCHITECTURE.md §5's Part 1 stance), in bytes the 3.1.0 freeze holds and `tests/test_cdm_version_matrix.py` pins by digest"),
     ('tests/test_cdm_adapter_contract.py',
      'passed in and it is not guessed. That is what let all fourteen shipped adapters gain `source.format_name` and',
      'past-tense narrative of round P3, in the test that holds what that round added'),
@@ -2330,22 +2357,15 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
     # job. The retired bytes are not quoted here.
     # ADDED 2026-10-10 (the Link 16 gateway arc, `link16_gateway`), the TacticalAPI landing's shape
-    # again. Four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the 3.3.0
-    # artefact (a roster of twenty-one) beside one row marked as postdating it; the release commit
-    # that carries the adapter retires them. Two more are permanent: MIGRATIONS.md's record of the
-    # 3.3.0 arc says what that arc moved to twenty-one, which is history and is not edited.
-    ('RELEASE_NOTES.md',
-     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 21 shipped adapters at manifest schema 2.1.0`.',
-     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     '# Twenty-one adapters at 3.3.0, all harness-verified — and one more',
-     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'At `v3.3.0` `python -m synapse_cdm.harness --list-adapters` prints `21 adapters registered`.',
-     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
-    ('RELEASE_NOTES.md',
-     'read `21 adapters, 617 fixture files` and `21 adapters x 2 schema modes, 1192 fixture verdicts, 0 failed`',
-     "named subset — the roster OF the released version these notes describe; link16_gateway is the row marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    # again, and RETIRED IN THE 3.4.0 RELEASE COMMIT (2026-10-11), the 3.3.0 retirement's shape.
+    # Four rows here exempted RELEASE_NOTES.md's roster counts while the notes described the 3.3.0
+    # artefact (a roster of twenty-one) beside one row marked as postdating it. The 3.4.0 notes
+    # describe an artefact that IS the tree — twenty-two rows, no row marked as postdating the
+    # release — so the sentences state the roster, are checked by comparison, and need no row;
+    # the guard above goes red on leftover rows the moment the notes are rewritten, which is its
+    # job. The retired bytes are not quoted here. The two rows below, added the same day, are
+    # permanent: MIGRATIONS.md's record of the 3.3.0 arc says what that arc moved to twenty-one,
+    # which is history and is not edited.
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      'condition of the release procedure, which the arc moved to twenty-one harnesses)',
      'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),

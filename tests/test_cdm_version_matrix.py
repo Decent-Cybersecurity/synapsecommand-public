@@ -51,6 +51,22 @@ weaker: once the tag exists, the tagged tree's `schemas/<kind>.schema.json` AND 
 must both be the frozen bytes, and the tagged `version.py` must claim the contract. `SELF` is
 admitted for the CURRENT contract only, under the tag `v{PACKAGE_VERSION}`. Without the tag,
 the digest test stands, as it always has.
+
+THE 3.1.0 CONTRACT, FROZEN IN THE COMMIT THAT TYPED IT (2026-10-11)
+---------------------------------------------------------------------
+The 3.4.0 release commit typed CDM 3.1.0 and froze it here with `SELF` provenance under the tag
+`v3.4.0`, in the 3.0.0 form above. 3.1.0 is a MINOR of major 3: `PositionSource` gained
+`SENSOR` and `UNKNOWN` and nothing else moved, so it is the first time the current major holds
+two frozen contracts, and the within-major evidence now exists on both majors — 2.0.0 -> 2.1.0
+for properties, 3.0.0 -> 3.1.0 for enum values (`CURRENT_PREVIOUS`). New reader, old writer: a
+3.0.0 document of every kind is accepted by the frozen 3.1.0 schema and by the models, and the
+helper says SUPPORTED. Old reader, new writer: a 3.1.0 document whose `position_source` is one of
+the added members is refused by the frozen 3.0.0 schema, by its closed `enum` — no property was
+added, so `additionalProperties` is not what refuses it — and the helper says REFUSED, naming
+both grounds. The handoff's REQ012 read that refusal as a reason for a 4.0.0; it is the
+WRITER_NEWER refusal every minor of every major carries, and MIGRATIONS.md's table classes an
+added member as a MINOR. The `SELF` record is valid only while `PACKAGE_VERSION` is 3.4.0, so the
+round after the release resolves it to the commit `v3.4.0` names before any next package bump.
 """
 from __future__ import annotations
 
@@ -80,6 +96,12 @@ OLDEST, CURRENT = CONTRACTS[0], CONTRACTS[-1]
 #: WRITER_NEWER evidence is stated on now that CURRENT is a major away from both.
 PREVIOUS = max(c for c in CONTRACTS if c.split(".")[0] == OLDEST.split(".")[0])
 assert OLDEST < PREVIOUS < CURRENT, CONTRACTS
+#: The newest frozen contract of CURRENT's major below CURRENT: the within-major pair of the
+#: current major, since CDM 3.1.0 (2026-10-11) froze the first minor of major 3. None while the
+#: current major has one frozen contract — the state 3.0.0 was in from 2026-09-20 to 2026-10-11.
+CURRENT_PREVIOUS = max((c for c in CONTRACTS
+                        if c.split(".")[0] == CURRENT.split(".")[0] and c != CURRENT),
+                       default=None)
 #: A freeze taken in the release commit its tag names records this instead of a commit hash.
 SELF = "SELF"
 
@@ -309,6 +331,88 @@ def test_the_helper_does_not_promise_the_old_reader_the_new_document():
         result = version.assess(CURRENT, older)
         assert result.verdict is Verdict.REFUSED and result.direction is Direction.WRITER_NEWER
         assert "major" in result.basis
+
+
+# --- within the current major: the 3.0.0 -> 3.1.0 pair, since 2026-10-11 -----------------------
+
+#: The `PositionSource` members CDM 3.1.0 added. A frozen 3.0.0 reader refuses them by its closed
+#: `enum`, not by `additionalProperties` — the second refusal ground `assess()` names.
+ADDED_IN_3_1_0 = ("SENSOR", "UNKNOWN")
+
+
+def _descendants(error):
+    for child in error.context or ():
+        yield child
+        yield from _descendants(child)
+
+
+def _positioned(kind: str, member: str) -> dict:
+    """A current writer's document of `kind` whose positions say `member`."""
+    from synapse_cdm.enums import PositionSource
+    from synapse_cdm.models import Position, Route, TrackSample, Waypoint
+    position = Position(lat=57.0, lon=21.0, position_source=PositionSource(member))
+    if kind == "entity":
+        return _document(kind, position=position)
+    if kind == "track":
+        return _document(kind, samples=[TrackSample(position=position, observed_at=T0)])
+    route = Route(waypoints=[Waypoint(position=position, sequence=0),
+                             Waypoint(position=position.model_copy(update={"lat": 57.5}),
+                                      sequence=1)])
+    return _document(kind, route=route)
+
+
+def test_the_current_major_holds_a_previous_minor_and_it_is_the_one_the_release_froze_beside():
+    assert (CURRENT_PREVIOUS, CURRENT) == ("3.0.0", "3.1.0"), CONTRACTS
+    assert ADDED_IN_3_1_0 == ("SENSOR", "UNKNOWN")
+    for kind in ("entity", "plan_object", "track"):
+        old = _frozen(CURRENT_PREVIOUS, kind)["$defs"]["PositionSource"]["enum"]
+        new = _frozen(CURRENT, kind)["$defs"]["PositionSource"]["enum"]
+        assert old == ["GNSS", "INERTIAL", "MANUAL", "ESTIMATED"], kind
+        assert new == [*old, *ADDED_IN_3_1_0], kind
+    # and nothing else moved between the two contracts but the label, the enum and its prose
+    for kind in sorted(KINDS):
+        old, new = _frozen(CURRENT_PREVIOUS, kind), _frozen(CURRENT, kind)
+        assert set(old["properties"]) == set(new["properties"]), kind
+        assert set(old.get("$defs", {})) == set(new.get("$defs", {})), kind
+
+
+@pytest.mark.parametrize("kind", sorted(KINDS))
+def test_a_previous_minor_document_is_accepted_by_the_current_contract(kind):
+    """READER_NEWER within the current major: a document of the frozen previous minor's shape
+    validates under that frozen schema, under the frozen current one and under the models."""
+    assert CURRENT_PREVIOUS is not None, CONTRACTS
+    document = _document(kind)
+    document["schema_version"] = CURRENT_PREVIOUS
+    assert not _refusals(_validator(CURRENT_PREVIOUS, kind), document), kind
+    assert not _refusals(_validator(CURRENT, kind), document), kind
+    assert not _refusals(_current_validator(kind), document), kind
+    assert KINDS[kind].model_validate(document).schema_version == CURRENT_PREVIOUS
+    result = version.assess(CURRENT_PREVIOUS, CURRENT)
+    assert result.verdict is Verdict.SUPPORTED and result.direction is Direction.READER_NEWER
+    assert version.compatible(CURRENT_PREVIOUS, CURRENT) is True
+
+
+@pytest.mark.parametrize("member", ADDED_IN_3_1_0)
+@pytest.mark.parametrize("kind", ["entity", "plan_object", "track"])
+def test_a_current_document_with_an_added_member_is_refused_by_the_previous_minor(kind, member):
+    """WRITER_NEWER within the current major: the frozen previous minor refuses the new values by
+    its closed enum, the current contract accepts them, and the helper says REFUSED."""
+    document = _positioned(kind, member)
+    assert not _refusals(_validator(CURRENT, kind), document)
+    assert not _refusals(_current_validator(kind), document)
+    refusals = _refusals(_validator(CURRENT_PREVIOUS, kind), document)
+    assert refusals, f"the frozen {CURRENT_PREVIOUS} {kind} schema accepted {member}"
+    # The refusal sits under a nullable `anyOf` on entity and plan_object, so its leaf is read
+    # from the error's context: the closed enum is the ground, not a missing branch.
+    leaves = [leaf.message for error in _validator(CURRENT_PREVIOUS, kind).iter_errors(document)
+              for leaf in [error, *_descendants(error)]]
+    assert any(f"'{member}' is not one of" in m for m in leaves), leaves
+    assert not any("Additional properties are not allowed" in m for m in leaves), leaves
+    result = version.assess(CURRENT, CURRENT_PREVIOUS)
+    assert result.verdict is Verdict.REFUSED and result.direction is Direction.WRITER_NEWER
+    assert "closed enum" in result.basis and "additionalProperties" in result.basis
+    assert "enum value" in result.reason
+    assert version.compatible(CURRENT, CURRENT_PREVIOUS) is False
 
 
 # --- the relationships nobody has evidence for ------------------------------------------------

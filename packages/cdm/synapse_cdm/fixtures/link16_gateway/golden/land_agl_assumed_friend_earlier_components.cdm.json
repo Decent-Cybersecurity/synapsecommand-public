@@ -85,7 +85,7 @@
       },
       "namespace": "SC Link16 Gateway"
     },
-    "schema_version": "3.0.0",
+    "schema_version": "3.1.0",
     "source": {
       "adapter": "link16_gateway",
       "adapter_version": "1.0.0",
@@ -147,7 +147,7 @@
         }
       }
     ],
-    "schema_version": "3.0.0",
+    "schema_version": "3.1.0",
     "source": {
       "adapter": "link16_gateway",
       "adapter_version": "1.0.0",

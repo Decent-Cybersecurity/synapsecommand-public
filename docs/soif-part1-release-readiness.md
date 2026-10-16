@@ -869,6 +869,28 @@ subject begins `Release 3.3.0` and its hash is deliberately not written here, fo
 paragraph above gives. The tag that names 3.3.0 is to be placed on it after `main` is
 fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-10-11, the 3.4.0 release commit.** `v3.3.0` was placed on
+**`e3acf780bb25bcb4649b15c100445a25f961a2fa`** and published (`PUBLICATION.md` entry 25). `main`
+then moved twice by fast-forward, through the 3.3.0 witness round
+**`a476f74f07e33603f022d780433c32b7160915ae`** and the docs-deploy commit
+**`6a620be773717842911a534d8ce0dca306f39ec8`**, which is the tip of `main` and of `origin/main` at
+the time of writing. This report also describes the Link 16 gateway arc on `soif/link16-1.0`, two
+commits after `6a620be` and none on `main`: **`416d22097339e5324d511d8f0b867028288b9c52`** (the
+landing of `link16_gateway` and of the CDM 3.1.0 members, the roster twenty-one to twenty-two), on
+which `CI` run 38094348851 read `success` and `CodeQL` run 38094348895 succeeded, and
+**`49ad0ff480d647f7cc0cb358bd7bfbfe412a43d9`** (the landing of the sibling distribution
+`synapse-link16-bridge`), the tip of that branch at the time of writing, on which `CI` run
+38108491948 (a `push` event, 2026-10-11T03:28:29Z) read `success` on all eleven jobs — the
+suite, gates and manifests on Python 3.11, 3.12, 3.13 and 3.14; lint; the wheel gate; the
+conformance sweep; evidence records, provenance and badges; gitleaks; pip-audit; and `npm audit`
+over `docs/` — the bridge's own workflow, `Gateway bridge package` run 38108491977,
+read `success` on Python 3.11, 3.12, 3.13 and 3.14, and `CodeQL` run 38108491939 succeeded.
+`git merge-base --is-ancestor 6a620be 49ad0ff` exits 0, so `main` can be fast-forwarded to it.
+The release commit itself sits on `soif/release-3.4.0`, a branch created from that tip; its
+subject begins `Release 3.4.0` and its hash is deliberately not written here, for the reason the
+section's first paragraph gives. The tag that names 3.4.0 is to be placed on it after `main`
+is fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1137,6 +1159,55 @@ interoperability — no TacticalAPI server, client or captured message has been 
 repository is not affiliated with the interface's publisher; the pinned interface definition files
 are carried neither in the repository nor in the wheel. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-11, the 3.4.0 release: the verdict is `ready for PR` (3.4.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.4.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.3.0` as `{"kind": "MINOR", "number": "3.4.0", "unruled": []}` on the arc's tip before
+the number was typed) and, for the first time since 3.0.0, moves the wire contract:
+`SCHEMA_VERSION` **3.1.0**, a MINOR on its own table, because `PositionSource` gained `SENSOR` and
+`UNKNOWN` and nothing was removed, renamed or narrowed; the handoff's 4.0.0 is not followed, as
+`MIGRATIONS.md`'s 3.4.0 section records. The 3.1.0 contract is frozen under
+`tests/frozen/cdm/3.1.0/` with `SELF` provenance under `v3.4.0`, `KNOWN_CONTRACTS` gains it, and
+`tests/test_cdm_version_matrix.py` shows the 3.0.0/3.1.0 pair in both directions on the frozen
+bytes. `ADAPTER_API_VERSION` 3.1.0, the manifest schema 2.1.0 and the evidence schema 2.0.0 stay
+where they were. The eight units the gate's table cannot decide — six the landings ruled and
+`version.py:KNOWN_CONTRACTS` (MINOR) and `version.py:assess` (PATCH, wording) — are ruled in
+`MIGRATIONS.md`'s 3.4.0 section, so on the release commit without its tag the gate reads its
+rulings under the pending heading the roll removed and refuses those eight units, and the bump
+tests join the tag-conditional set. What was verified on the release tree before it was
+committed: the full suite, read by subtracting the tag-conditional set test by test; `schemas
+--check` CURRENT at 3.1.0, `manifests --check` CURRENT for the twenty-two shipped adapters, the
+support-matrix and current-contracts checks CURRENT; the pin-path and parks-table gates; ruff
+0.16.9, the pin, on the package, the gates, the tests and the bridge; the re-stamp read as
+stamp-only, `git diff -U0` under `fixtures/` showing no other changed line in this commit; the DIS 7
+modules and `gates/dis7_mutation.py`, its control green and 9 of 9 mutations detected; the bridge's
+own suite, with its full-projection test running now that `SCHEMA_VERSION` reads 3.1.0; the same
+tree committed in a throwaway clone at a local annotated `v3.4.0`, where the full suite read 0
+failed, `gates/bump_derivation.py --mutation-check` read `1 check, 0 failed` and `--json` read
+nothing pending and nothing unruled; the wheel gate, `13 checks, 0 failed` on the wheel and sdist it
+exported and the fixture-less mutant refused; the build job's package test reproduced from that
+wheel in a clean venv away from the repository; and the docs build, `npm run ci` green. Read by the
+release round and not here: CI and CodeQL on the pushed release commit, and everything about the
+upload. The `link16_gateway` evidence categories, as generated on this tree: `internal_fixture`
+and `self_round_trip` PRESENT, `independent_expected`, `normative_schema` and
+`independent_endpoint` ABSENT. **What is judged, each with its source.** The maintainer's rulings
+of 2026-10-10 (`docs/link16-gateway-implementation.md` section 4: U-01 to U-07) and the lead's
+rulings L-01 to L-18 recorded there: CDM 3.1.0 and package 3.4.0 in one release (L-02); the
+registry name with an underscore and the ordinals gate widened to admit it (L-03); the one-token
+`source.system` (L-04); the binding `provisional-internal-profile`, the claim `PROVISIONAL` and the
+licence class `OPEN`, the handoff's schemas, examples and projections contributed under Apache-2.0
+(L-05); the limits and refusal codes (L-06); the two egress modes and `ExportContext` (L-07); the
+ledger's form (L-08); the HAE-feet conversion (L-09); strictness beyond the reference mapper
+(L-10); the bridge as a sibling distribution not uploaded to the index in this release (L-11); the
+native boundary (L-12); F01 not run here (L-13). Every requirement and acceptance row ends in the
+record with evidence or an explicit disposition, and no numerical score is given. **What is NOT
+claimed:** native JREAP C or Link 16 interoperability, conformance or certification — the adapter
+reads an internal interface defined in this repository, and the native provider boundary refuses
+with `BLOCKED_EXTERNAL_EVIDENCE` until the gates the record names are met; the bridge on the
+package index — it reaches the Release as source in the tag; and the performance target F01, which
+is NOT_RUN, because the rig it names is Linux x86_64 and this tree's readings were taken on other
+machines. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1191,6 +1262,13 @@ check read on the release tree is green outside the tag-conditional set of nine,
 tree resolves, and nothing in section 15 or in the arc's own open items (the contract comparison
 CI does not run, five items outside this adapter's claims) rises to a blocker. The machine-readable
 statement below is unchanged.
+
+**Re-qualification, 2026-10-11, the 3.4.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set, which a tag on the tree
+resolves, and nothing in section 15 or in the arc's own open items (the native rows blocked on
+external evidence, F01 on its named rig, four recorded items outside this adapter's claims) rises to a
+blocker. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

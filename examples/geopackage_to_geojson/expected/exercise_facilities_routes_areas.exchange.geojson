@@ -55,7 +55,7 @@
         "sc:object_id": "ac7fb0f8-eb2c-57b2-ac34-e6fd1d55222b",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -102,7 +102,7 @@
         "sc:object_id": "2109c393-c454-5fbf-a2df-3a4e5881f52f",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -149,7 +149,7 @@
         "sc:object_id": "7e7d9796-d01d-5289-bf14-fa0ea42a5761",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -177,7 +177,7 @@
         "sc:object_id": "2914ee22-ea25-5e4f-a1b9-79475921dcff",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -205,7 +205,7 @@
         "sc:object_id": "2fe280ea-c7ea-5472-b332-d71e68509870",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -233,7 +233,7 @@
         "sc:object_id": "17e7ed11-8152-5c9d-ae9b-166446e32219",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -270,7 +270,7 @@
         "sc:object_id": "78431a9f-b71d-516b-b198-9d8106597023",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -303,7 +303,7 @@
         "sc:object_id": "58d2e7f8-9f49-57d4-9979-2ab3efc8e99a",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [
@@ -336,7 +336,7 @@
         "sc:object_id": "8f1889bb-d6c7-513c-bced-b036fb86242e",
         "sc:object_kind": "plan_object",
         "sc:object_type": "ANNOTATION",
-        "sc:schema_version": "3.0.0",
+        "sc:schema_version": "3.1.0",
         "sc:source_adapter": "geopackage",
         "sc:source_adapter_version": "1.0.0",
         "sc:source_ids": [

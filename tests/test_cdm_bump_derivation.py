@@ -635,6 +635,28 @@ UNRULED_HISTORICAL_ARCS = {
     # fixture set among them — derive the MINOR the number types.
     ("v3.2.0", "v3.3.0"): {
         "pyproject.toml:optional-dependencies"},
+    # The fourteenth row, written IN the 3.4.0 release commit (2026-10-11) from the gate's own
+    # `derive(snapshot_at("v3.3.0"), snapshot_at(None))` on that tree — the 2.2.0, 3.0.0, 3.2.0 and
+    # 3.3.0 route, so that the tag needs no re-tag for it. Eight units, each ruled in
+    # MIGRATIONS.md's `### 3.4.0` section: the CDM 3.1.0 landing's `PositionSource` (two members
+    # added, MINOR) and the three basis strings it dated (cat048, stanag4609, tacticalapi, PATCH);
+    # the `link16_gateway` landing's binding legend in `support_matrix.render` and the repaired
+    # rendering of structured limitations in `release_notes.known_limitations` (both PATCH); and
+    # the release commit's own two, `version.KNOWN_CONTRACTS` (3.1.0 joined, MINOR) and the wording
+    # of `version.assess` (PATCH). The adapter, its `ExportContext` and its fixture set are units
+    # the arc ADDED, and the class body whose `evidence.available` flips is one of them; the
+    # schema move itself is the `SCHEMA_VERSION` signal, not an ambiguity. The arc's 725 signals
+    # (35 MINOR, 690 PATCH, the re-stamped goldens among the PATCH) derive the MINOR the number
+    # types, and the schema MINOR is at least a package MINOR on its own account.
+    ("v3.3.0", "v3.4.0"): {
+        "synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter",
+        "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+        "synapse_cdm/adapters/tacticalapi.py:_position",
+        "synapse_cdm/enums.py:PositionSource",
+        "synapse_cdm/release_notes.py:known_limitations",
+        "synapse_cdm/support_matrix.py:render",
+        "synapse_cdm/version.py:KNOWN_CONTRACTS",
+        "synapse_cdm/version.py:assess"},
 }
 
 

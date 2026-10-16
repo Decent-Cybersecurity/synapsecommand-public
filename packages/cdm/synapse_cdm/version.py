@@ -47,10 +47,10 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.3.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.4.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
-    CDM schema            3.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
+    CDM schema            3.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
                                   every serialised object, governed by ``MIGRATIONS.md``.
                                   (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
                                   only. The package did not follow it for two days and then did,
@@ -97,7 +97,15 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   TacticalAPI arc added the ``tacticalapi`` adapter on its wire
                                   reader with its fixture set, and moved no model, enum or
                                   published schema, so the package took a MINOR the wire
-                                  contract had no part in.)
+                                  contract had no part in. And on 2026-10-11, the 3.4.0
+                                  release, the wire contract moved for the first time since
+                                  3.0.0, a MINOR on its own table: ``PositionSource`` gained
+                                  ``SENSOR`` and ``UNKNOWN`` for the ``link16_gateway`` adapter
+                                  and nothing was removed, so the schema read 3.1.0, and the
+                                  package took 3.4.0 for that adapter and that schema MINOR
+                                  together — a schema MINOR obliges at least a package MINOR,
+                                  and here the package's floor was a MINOR on its own account
+                                  as well.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -150,8 +158,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.3.0`` and ``SCHEMA_VERSION`` is ``3.0.0``, and this paragraph is the
-fourteenth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.4.0`` and ``SCHEMA_VERSION`` is ``3.1.0``, and this paragraph is the
+fifteenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -234,7 +242,14 @@ unit before it moved the ``[lint]`` extra's pin. ``gates/bump_derivation.py`` de
 the arc with nothing unruled once MIGRATIONS.md's one ruling in the 3.3.0 section, for that pin,
 is read. The schema moved by nothing: no model, no enum, no published schema and no golden of the
 twenty changed, and the two numbers read 3.3.0 and 3.0.0. MIGRATIONS.md's 3.3.0 section is the
-record.)
+record. **Corrected a twelfth time 2026-10-11, the 3.4.0 release, and the parting stays three
+MINORs wide because both numbers moved a MINOR, the schema for the first time since 3.0.0**: the
+Link 16 gateway arc since ``v3.3.0`` added the ``Link16GatewayAdapter`` subclass, registered as
+``link16_gateway``, with its fixture set, and removed nothing, and it moved the wire contract
+3.0.0 -> 3.1.0 — ``PositionSource`` gained ``SENSOR`` and ``UNKNOWN``, MIGRATIONS.md's "an enum
+member added" row. ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled
+once MIGRATIONS.md's rulings in the 3.4.0 section are read, and the two numbers read 3.4.0 and
+3.1.0. MIGRATIONS.md's 3.4.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -391,7 +406,15 @@ from typing import NamedTuple
 #: `required` list grew and no enum member went; `assess("2.1.0", "3.0.0")` reads REFUSED both
 #: ways by the different-major rule, and the 2.1.0 contract stays frozen under
 #: `tests/frozen/cdm/2.1.0/` beside this one under `tests/frozen/cdm/3.0.0/`.
-SCHEMA_VERSION = "3.0.0"
+#: MOVED 3.0.0 -> 3.1.0 on 2026-10-11, a MINOR, by the 3.4.0 release commit: `PositionSource`
+#: gained `SENSOR` and `UNKNOWN` (the Link 16 gateway handoff's REQ011; the members landed in the
+#: models on 2026-10-10 with this line still at 3.0.0, the 3.0.0 landing's form) and nothing was
+#: removed, renamed or narrowed — MIGRATIONS.md's "an enum member added" row. The handoff's
+#: REQ012 asked for 4.0.0 and is not followed: a frozen 3.0.0 reader refuses a 3.1.0 document
+#: that carries one of the two members, by its closed `enum`, and accepts one that does not —
+#: the WRITER_NEWER refusal `assess()` states for every minor, not a MAJOR. The 3.1.0 contract is
+#: frozen under `tests/frozen/cdm/3.1.0/` beside 3.0.0, with `SELF` provenance under `v3.4.0`.
+SCHEMA_VERSION = "3.1.0"
 
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
@@ -499,7 +522,17 @@ SCHEMA_VERSION = "3.0.0"
 #: stays at 3.0.0: no model, enum, published schema or golden of the twenty moved.
 #: `ADAPTER_API_VERSION` stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and
 #: `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
-PACKAGE_VERSION = "3.3.0"
+#: Moved 3.3.0 -> 3.4.0 on 2026-10-11, a MINOR, and this one IS the derived floor — for two
+#: reasons at once: the Link 16 gateway arc since `v3.3.0` (`docs/link16-gateway-implementation.md`)
+#: adds the `Link16GatewayAdapter` subclass, registered as `link16_gateway`, with its fixture set,
+#: and removes nothing — the roster moves twenty-one -> twenty-two — and it moves `SCHEMA_VERSION`
+#: 3.0.0 -> 3.1.0 (above), and a schema MINOR is at least a package MINOR. `gates/bump_derivation.py`
+#: derives MINOR over that arc with nothing unruled once MIGRATIONS.md's rulings in the 3.4.0
+#: section are read, so the gate's floor and this number are one number and no Version ruling is
+#: needed. The sibling distribution `synapse-link16-bridge` under `packages/link16_bridge/` has a
+#: version of its own and is outside this one. `ADAPTER_API_VERSION` stays at 3.1.0, and
+#: `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.4.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
@@ -665,7 +698,10 @@ class Compatibility(NamedTuple):
 #: of DIFFERENT majors are listed side by side and are still REFUSED for each other: the tuple
 #: is evidence within a major, and the major rule is decided before it is consulted. 3.0.0 joined
 #: on 2026-09-20, frozen in the release commit `v3.0.0` names (the manifest's `SELF` provenance).
-KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0", "3.0.0")
+#: 3.1.0 joined on 2026-10-11, frozen in the release commit `v3.4.0` names (the manifest's `SELF`
+#: provenance), and is the first minor of major 3: the 3.0.0/3.1.0 pair is the first within-major
+#: pair of this major the matrix holds evidence for.
+KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0", "3.0.0", "3.1.0")
 
 _MATRIX = "tests/test_cdm_version_matrix.py"
 _FROZEN = "tests/frozen/cdm/MANIFEST.json"
@@ -687,8 +723,11 @@ def assess(written_with: str, read_by: str = SCHEMA_VERSION) -> Compatibility:
       re-run on every suite;
     * WRITER_NEWER, both contracts known — REFUSED. Every published CDM schema carries
       `additionalProperties: false`, so a document carrying a property the older contract does
-      not know — populated OR explicitly null — is rejected by it. The old helper promised the
-      opposite ("a 1.0.0 reader accepts a 1.2.0 object") and the frozen 2.0.0 schemas refute it;
+      not know — populated OR explicitly null — is rejected by it, and every enum it publishes is
+      closed, so a document carrying an enum value the older contract does not list is rejected
+      too (the second ground since 3.1.0, 2026-10-11, whose `PositionSource` gained two members
+      and no property). The old helper promised the opposite ("a 1.0.0 reader accepts a 1.2.0
+      object") and the frozen 2.0.0 schemas refute it;
     * a MINOR of this major that is not in `KNOWN_CONTRACTS`, on either side — UNKNOWN. Nothing
       has been frozen, nothing has been demonstrated, and `compatible()` reads it as False.
 
@@ -734,14 +773,17 @@ def assess(written_with: str, read_by: str = SCHEMA_VERSION) -> Compatibility:
             written_with, read_by, Verdict.SUPPORTED, direction,
             basis=f"{_MATRIX}: frozen {w_contract} documents of every kind validate under the "
                   f"{r_contract} models and schema",
-            reason=f"a {read_by} reader accepts {written_with} documents: the additions since "
-                   f"{w_contract} are optional and the frozen matrix shows it")
+            reason=f"a {read_by} reader accepts {written_with} documents: what was added since "
+                   f"{w_contract} is optional properties or new enum values, which an older "
+                   f"document does not carry, and the frozen matrix shows it")
     return Compatibility(
         written_with, read_by, Verdict.REFUSED, direction,
         basis=f"{_MATRIX}: the frozen {r_contract} schemas carry additionalProperties: false "
-              f"and reject the properties {w_contract} introduced, populated or null",
+              f"and closed enums, and reject what {w_contract} introduced — a property, "
+              f"populated or null, or an enum value",
         reason=f"a {read_by} reader refuses {written_with} documents that carry any property "
-               f"introduced since {r_contract}; the document is not rewritten or downgraded")
+               f"or enum value introduced since {r_contract}; the document is not rewritten or "
+               f"downgraded")
 
 
 def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:

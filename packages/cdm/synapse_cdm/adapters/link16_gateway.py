@@ -1043,9 +1043,14 @@ class Link16GatewayAdapter(Adapter):
             ),
             Limitation(
                 id="evidence-availability",
-                summary="`evidence.available` is false because no published Release carries "
-                        "this adapter's records yet; it becomes true at the first release that "
-                        "attaches them",
+                summary="the evidence RECORD for this adapter is not IN the distribution: "
+                        "`evidence/` is untracked and unpackaged, CI generates the set on every "
+                        "run, and the release pipeline generates the records for every shipped "
+                        "adapter and attaches them to the GitHub Release of the version it "
+                        "publishes. `evidence.available` is true because every published "
+                        "distribution that carries this adapter has that Release, so its records "
+                        "are retrievable by a third party; it says nothing about what the wheel "
+                        "contains",
             ),
             Limitation(
                 id="resource-limits",
@@ -1060,7 +1065,7 @@ class Link16GatewayAdapter(Adapter):
         residual=Residual.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     #: The contract states "roundtrip tolerance is values" for the internal JSON profile.

@@ -8,7 +8,8 @@ table and the fixture README by hand. The handoff's own reference projections, c
 
 REPO-BOUND: it reads `tests/frozen/cdm/3.0.0/` (the frozen compatibility contract), the published
 `schemas/link16_gateway/` copies and `FORMAT_COVERAGE.md` through the repository, none of which
-the wheel carries beside the package.
+the wheel carries beside the package; and, since the 3.4.0 release commit (2026-10-11), the frozen
+3.1.0 contract under `tests/frozen/cdm/3.1.0/`, which P03 is held to.
 """
 from __future__ import annotations
 
@@ -33,6 +34,8 @@ PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 SET = PKG / "fixtures" / "link16_gateway"
 REFERENCE = SET / "reference"
 FROZEN_3_0_0 = REPO / "tests" / "frozen" / "cdm" / "3.0.0"
+#: The contract the release commit froze on 2026-10-11, when it typed CDM 3.1.0.
+FROZEN_3_1_0 = REPO / "tests" / "frozen" / "cdm" / "3.1.0"
 PUBLISHED = REPO / "schemas" / "link16_gateway"
 
 HANDOFF = ("air_flight_level", "air_msl", "air_sensor", "land_unknown_position",
@@ -182,6 +185,32 @@ def test_sensor_and_unknown_methods_project_under_cdm_3_1():
                 == []
     assert PositionSource("SENSOR") is PositionSource.SENSOR
     assert PositionSource("UNKNOWN") is PositionSource.UNKNOWN
+
+
+def test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract():
+    """P03 under the frozen contract (2026-10-11, the 3.4.0 release commit): the full projection
+    of a SENSOR and an UNKNOWN report — the default, stamped with the declared `SCHEMA_VERSION` —
+    validates against the frozen 3.1.0 entity and track schemas, the bytes the release froze, and
+    the same objects are refused by the frozen 3.0.0 ones, by the method alone."""
+    assert SCHEMA_VERSION == "3.1.0"
+    frozen_3_1_0 = {kind: schemas.validator_for(json.loads(
+        (FROZEN_3_1_0 / f"{kind}.schema.json").read_text())) for kind in ("entity", "track")}
+    for name, method in (("air_sensor.json", "SENSOR"), ("subsurface_unknown_method.json",
+                                                          "UNKNOWN")):
+        entity, track = project(name)
+        for obj in (entity, track):
+            assert obj["schema_version"] == "3.1.0"
+            assert list(frozen_3_1_0[obj["object_kind"]].iter_errors(obj)) == [], name
+            refusals = [e for e in _frozen(obj["object_kind"]).iter_errors(obj)]
+            assert refusals, name
+            leaves = []
+            for error in refusals:
+                pending = [error]
+                while pending:
+                    node = pending.pop()
+                    leaves.append(node.message)
+                    pending.extend(node.context or ())
+            assert any(f"'{method}' is not one of" in m for m in leaves), (name, leaves)
 
 
 def _frozen(kind: str):

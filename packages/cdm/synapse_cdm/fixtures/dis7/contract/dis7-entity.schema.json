@@ -221,12 +221,14 @@
       "type": "object"
     },
     "PositionSource": {
-      "description": "How the position was obtained. Load-bearing in a GNSS-denied environment.\n\nThis is the field that lets a commander tell a fix from a guess. When PNTMAP reports\njamming over an area, every GNSS-sourced position inside that area becomes suspect and\nevery INERTIAL or MANUAL one does not \u2014 a distinction that is impossible to make after\nthe fact if the adapter flattened them all to \"position\".",
+      "description": "How the position was obtained. Load-bearing in a GNSS-denied environment.\n\nThis is the field that lets a commander tell a fix from a guess. When PNTMAP reports\njamming over an area, every GNSS-sourced position inside that area becomes suspect and\nevery INERTIAL or MANUAL one does not \u2014 a distinction that is impossible to make after\nthe fact if the adapter flattened them all to \"position\".\n\nSENSOR and UNKNOWN were added on 2026-10-10, CDM 3.1.0 \u2014 a MINOR by MIGRATIONS.md's table,\nsince a member is added and none is removed. SENSOR is a position a source reports as an\nexplicit sensor or surveillance solution that is none of GNSS, INERTIAL, MANUAL or\nESTIMATED; UNKNOWN is a position whose source does not state how it was obtained \u2014 a member\nrather than a null, so that \"not stated\" is recorded as a fact. Neither re-labels anything:\nan adapter that shipped before 3.1.0 keeps the member it wrote, with its own basis.",
       "enum": [
         "GNSS",
         "INERTIAL",
         "MANUAL",
-        "ESTIMATED"
+        "ESTIMATED",
+        "SENSOR",
+        "UNKNOWN"
       ],
       "title": "PositionSource",
       "type": "string"
@@ -664,7 +666,7 @@
       "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
     },
     "schema_version": {
-      "default": "3.0.0",
+      "default": "3.1.0",
       "description": "Semver of the CDM this object was written against.",
       "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
       "title": "Schema Version",
@@ -741,7 +743,7 @@
   ],
   "title": "Entity",
   "type": "object",
-  "x-cdm-schema-version": "3.0.0",
+  "x-cdm-schema-version": "3.1.0",
   "allOf": [
     {
       "properties": {
@@ -764,7 +766,7 @@
           "type": "null"
         },
         "schema_version": {
-          "const": "3.0.0"
+          "const": "3.1.0"
         },
         "object_kind": {
           "const": "entity"

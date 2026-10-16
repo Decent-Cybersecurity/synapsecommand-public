@@ -5,6 +5,14 @@ The bundle this contract was vendored from is a handoff document set identified 
 beyond the vendored tree, the published `schemas/entity.schema.json`, and nothing else.
 Since 2026-10-10 it reads two: the entity-schema pin also reads the frozen CDM 3.0.0 entity
 schema, `tests/frozen/cdm/3.0.0/entity.schema.json` (the Link 16 gateway arc; see the pin test).
+
+Since 2026-10-11, the 3.4.0 release commit, four vendored files are no longer the bundle's bytes:
+the CDM schema moved 3.0.0 -> 3.1.0, so the entity profile `contract/dis7-entity.schema.json` is
+re-derived from the published 3.1.0 entity schema with the bundle's overlay (its `schema_version`
+const moved to 3.1.0), and the three `vectors/*.expected.json` are re-stamped 3.1.0.
+`BUNDLE_MANIFEST` stays the bundle's record; `DERIVED` below holds those four files' digests in
+this tree, and `test_the_entity_profile_is_the_published_entity_schema_with_the_bundle_overlay`
+holds the derivation itself.
 """
 from __future__ import annotations
 
@@ -16,7 +24,7 @@ import pathlib
 import jsonschema
 import pytest
 
-from synapse_cdm import evidence, harness, schemas
+from synapse_cdm import evidence, harness, schemas, version
 from synapse_cdm.adapter import json_nesting_depth
 from synapse_cdm.adapters.dis7_codec import decode_pdu
 
@@ -59,6 +67,19 @@ BUNDLE_MANIFEST = {
 }
 CDM_ENTITY_SHA256 = "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a"
 
+#: The four vendored files the 3.4.0 release commit moved on 2026-10-11, and their digests in
+#: this tree (sha256, bytes), read from the files that commit wrote and copied here, never
+#: computed. Every other vendored file is still the bundle's bytes, `BUNDLE_MANIFEST`'s values.
+DERIVED = {
+    "vectors/equator_eastbound.expected.json": ("60e0dbe98c4d09f7fb9ab9ca090703faa69b50278099c118ea131675b406c9da", 3430),
+    "vectors/north_pole_stationary.expected.json": ("3fb1f20a57ab7be1155cd7a333160fc20e644c5823b4f37662b732685549b256", 3437),
+    "vectors/unprojectable_with_extensions.expected.json": ("0a51146b0fd010513ac03150ed42881143befda3c6bf93a69f10a56ed130d22c", 3251),
+    "contract/dis7-entity.schema.json": ("41ffda593b05a4dd28c7a9492108007dbb48e306c5beef0b87c9a908a7910a40", 49161),
+}
+#: The overlay's one value the derivation moves: the bundle's profile pins the CDM version it was
+#: written against, 3.0.0, and the re-derived profile pins 3.1.0.
+BUNDLE_SCHEMA_VERSION_CONST = "3.0.0"
+
 
 def _schema(name: str) -> dict:
     return json.loads((dis7_support.CONTRACT / f"{name}.schema.json").read_text())
@@ -97,15 +118,80 @@ def test_pin_record_lists_exactly_the_vendored_files():
     assert found == set(BUNDLE_MANIFEST)
 
 
+# 2026-10-11, the 3.4.0 release commit: a file in `DERIVED` is held to its derived digest, and
+# its pin row to both the derived digest and the bundle's (`bundle_sha256`, `bundle_bytes`, a
+# dated `derived` note); every other file is held to the bundle's digest exactly as before, and
+# its row carries no derived fields.
 @pytest.mark.parametrize("file", sorted(BUNDLE_MANIFEST))
 def test_pin_every_vendored_file_matches_the_record_and_the_bundle_manifest(file):
     data = (dis7_support.FIXTURES / file).read_bytes()
     measured = (hashlib.sha256(data).hexdigest(), len(data))
-    assert measured == BUNDLE_MANIFEST[file]
     pin = _pin()
-    rows = {row["file"]: (row["sha256"], row["bytes"])
-            for row in pin["vectors"]["files"] + pin["contract"]["files"]}
-    assert rows[file] == BUNDLE_MANIFEST[file]
+    rows = {row["file"]: row for row in pin["vectors"]["files"] + pin["contract"]["files"]}
+    row = rows[file]
+    if file in DERIVED:
+        assert measured == DERIVED[file]
+        assert measured != BUNDLE_MANIFEST[file]
+        assert (row["sha256"], row["bytes"]) == DERIVED[file]
+        assert (row["bundle_sha256"], row["bundle_bytes"]) == BUNDLE_MANIFEST[file]
+        assert "2026-10-11" in row["derived"] and "3.1.0" in row["derived"]
+    else:
+        assert measured == BUNDLE_MANIFEST[file]
+        assert (row["sha256"], row["bytes"]) == BUNDLE_MANIFEST[file]
+        assert set(row) == {"file", "sha256", "bytes"}
+
+
+def test_the_derived_set_is_exactly_the_files_the_cdm_version_moves():
+    """The four files of `DERIVED` and nothing else carry the CDM version the package declares."""
+    assert set(DERIVED) <= set(BUNDLE_MANIFEST)
+    carrying = set()
+    for file in BUNDLE_MANIFEST:
+        text = (dis7_support.FIXTURES / file).read_bytes().decode("latin-1")
+        if f'"{version.SCHEMA_VERSION}"' in text:
+            carrying.add(file)
+    assert carrying == set(DERIVED)
+
+
+# 2026-10-11, the 3.4.0 release commit: the entity profile is the published entity schema without
+# its `$id`, plus the profile's own `$id`, plus the bundle's `allOf` overlay with one value moved
+# — the `schema_version` const, the bundle's 3.0.0 -> the declared `SCHEMA_VERSION`. Both halves
+# are held: a byte changed anywhere in the base part fails the first comparison, and a byte
+# changed anywhere in the overlay but that const fails the second, which compares with the
+# overlay of the frozen 3.0.0 base the bundle wrote it against (the frozen 3.0.0 entity schema
+# plus the same overlay at 3.0.0 is exactly the bundle's file: its digest is `BUNDLE_MANIFEST`'s).
+# Mutation reading, 2026-10-11, in the worktree and restored: the overlay's `object_kind` const
+# changed by one byte, and separately one byte of the base part's `position_source` description,
+# each fail this test and the pin test's `contract/dis7-entity.schema.json` case.
+def test_the_entity_profile_is_the_published_entity_schema_with_the_bundle_overlay():
+    raw = (dis7_support.CONTRACT / "dis7-entity.schema.json").read_bytes()
+    profile = json.loads(raw)
+    published = json.loads(ENTITY_SCHEMA.read_text())
+    assert profile["$id"] == "urn:synapsecommand:dis7:spec:1.0:entity"
+    base = {k: v for k, v in profile.items() if k not in ("$id", "allOf")}
+    assert base == {k: v for k, v in published.items() if k != "$id"}
+    assert list(profile) == [*published, "allOf"]
+    overlay = copy.deepcopy(profile["allOf"])
+    assert overlay[0]["properties"]["schema_version"] == {"const": version.SCHEMA_VERSION}
+    overlay[0]["properties"]["schema_version"] = {"const": BUNDLE_SCHEMA_VERSION_CONST}
+    frozen = json.loads(FROZEN_3_0_0_ENTITY_SCHEMA.read_text())
+    bundle = {k: (profile["$id"] if k == "$id" else frozen[k]) for k in frozen}
+    bundle["allOf"] = overlay
+    rebuilt = (json.dumps(bundle, indent=2, ensure_ascii=True) + "\n").encode()
+    assert (hashlib.sha256(rebuilt).hexdigest(), len(rebuilt)) == \
+        BUNDLE_MANIFEST["contract/dis7-entity.schema.json"]
+    # and the serialisation is the bundle's own: re-dumping the profile reproduces its bytes
+    assert (json.dumps(profile, indent=2, ensure_ascii=True) + "\n").encode() == raw
+
+
+def test_the_vectors_are_the_bundle_vectors_re_stamped_and_nothing_else():
+    for file in DERIVED:
+        if not file.startswith("vectors/"):
+            continue
+        text = (dis7_support.FIXTURES / file).read_text()
+        assert text.count(f'"schema_version": "{version.SCHEMA_VERSION}"') == 1, file
+        back = text.replace(f'"schema_version": "{version.SCHEMA_VERSION}"',
+                            f'"schema_version": "{BUNDLE_SCHEMA_VERSION_CONST}"').encode()
+        assert (hashlib.sha256(back).hexdigest(), len(back)) == BUNDLE_MANIFEST[file], file
 
 
 # 2026-10-10, the Link 16 gateway arc: `schemas/entity.schema.json` gained two `PositionSource`

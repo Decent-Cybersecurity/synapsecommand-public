@@ -402,7 +402,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - `Entity.symbol` is null: no symbol profile is defined for this contract, and `confidence`, `valid_to` and `attributes` stay unset too
 - the conformance suite builds this adapter without an ExportContext, so its egress evidence (check E) is mirror reconstruction of the same report; export mode is judged by this adapter's own tests, and `docs/docs/cdm/link16-gateway.mdx` is its contract. Neither mode transmits anything
 - every packaged fixture is synthetic and labelled so; none is a capture and none is a native byte vector. The six reports of the engineering handoff are carried byte-identical, and its six projections are kept under reference/ as a semantic oracle
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 - of the five resource limits the manifest has fields for, two are declared with their bases — `max_input_bytes` and `max_depth` — and three are absent with their reasons in `capabilities.limits.absent_because`; inside them the contract's own depth 32 and node bound of 10 000 are enforced as LIMIT_EXCEEDED
 
 ### `pntmap` — PNTMAP

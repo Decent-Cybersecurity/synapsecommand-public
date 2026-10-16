@@ -106,7 +106,7 @@ def render() -> str:
     lines.append("")
     lines.append("Every pair `version.assess(written_with, read_by)` answers for, as it answers "
                  "today. The basis names the frozen-schema matrix test or the "
-                 "`additionalProperties: false` rule the verdict rests on.")
+                 "`additionalProperties: false` and closed-enum rules the verdict rests on.")
     lines.append("")
     verdict_rows = []
     for writer in version.KNOWN_CONTRACTS:

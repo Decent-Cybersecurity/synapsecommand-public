@@ -23,6 +23,10 @@ to `vectors/<name>.expected.json` by `tests/test_cdm_dis7_adapter.py`.
 
 - `malformed/` — five refusal payloads for the conformance suite's check H; its README names each.
 - `vectors/` — the bundle's vectors, verbatim. `contract/` — its schemas and acceptance cases.
+  Verbatim but for four files since 2026-10-11, when the 3.4.0 release commit moved the CDM
+  schema to 3.1.0: `contract/dis7-entity.schema.json` is re-derived from the 3.1.0 entity
+  schema with the bundle's overlay, and the three `vectors/*.expected.json` are re-stamped
+  3.1.0; `spec/dis7_pin.json` records the bundle's digests and the derived ones side by side.
 - `spec/` — the pin record `dis7_pin.json`, `build_fixtures.py` (it regenerates the three PDUs
   through the pinned open-dis-python checkout, compares them with `vectors/` and writes nothing)
   and the other specification-side files. Nothing in a subdirectory is replayed by the harness.

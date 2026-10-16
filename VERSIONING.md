@@ -87,8 +87,8 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.3.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.0.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.4.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
 | Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `MANIFEST_SCHEMA_VERSION` |
@@ -333,6 +333,21 @@ CURRENT), the Adapter API stays 3.1.0 (no member of the contract moved; the new 
 it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and the
 profiles did not move.
 
+**Dated note, 2026-10-11: the release after 3.3.0 is `3.4.0`, a MINOR, and the CDM schema moves a
+MINOR with it, 3.0.0 → 3.1.0.** The Link 16 gateway arc since `v3.3.0`
+(`docs/link16-gateway-implementation.md`) added the `Link16GatewayAdapter` subclass, registered as
+`link16_gateway` — the roster twenty-one → twenty-two — with its fixture set, and removed nothing;
+and it added two members, `SENSOR` and `UNKNOWN`, to `PositionSource`, which §3.2's rule and
+`MIGRATIONS.md`'s table class as a MINOR of the CDM schema: an adapter does not force a CDM major,
+and this one needed two enum members, so the schema moved 3.0.0 → 3.1.0 and the 3.1.0 contract is
+frozen under `tests/frozen/cdm/3.1.0/` beside 3.0.0. `gates/bump_derivation.py` derives MINOR over
+the arc with nothing unruled once `MIGRATIONS.md`'s rulings in the 3.4.0 section are read, and the
+release commit types that floor; a schema MINOR is at least a package MINOR, so the two reasons
+agree. The Adapter API stays 3.1.0 (no member of the contract moved; the new adapter implements
+it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and the
+profiles did not move. The runtime bridge `synapse-link16-bridge` is a sibling distribution under
+`packages/link16_bridge/` with a version of its own, 1.0.0; none of the axes above is its.
+
 ---
 
 ## 5. Main advancement
@@ -365,7 +380,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.3.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.4.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

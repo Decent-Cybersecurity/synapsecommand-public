@@ -222,6 +222,26 @@ measurement — the wheel and sdist digests read off the index agree with the ga
 re-hash to them, and the witness record is committed as `releases/witness/3.3.0.json`, the Release
 asset the pipeline built, verified and attached, byte for byte. The sentence above about what the
 index serves stopped being true at 07:54:20Z that day and is kept as written.
+
+**Updated 2026-10-11, the 3.4.0 release, and the schema moves a MINOR for the first time since
+3.0.0.** On this tree the package is at `3.4.0` and the schema stays at `3.1.0` from this commit
+on. The wire contract took a MINOR on its own table: `PositionSource` gained two members, `SENSOR`
+and `UNKNOWN`, and nothing was removed, renamed or narrowed — "an enum member added" is the MINOR
+row above. The handoff the members came from asked for a 4.0.0, and that is not followed: a 3.0.0
+reader refuses a 3.1.0 object whose `position_source` is one of the two new members, by its
+closed `enum`, and accepts every other 3.1.0 object, which is the old-reader refusal every MINOR
+carries rather than a break. Every golden moved by its `schema_version` stamp alone, and the 3.1.0
+contract is frozen under `tests/frozen/cdm/3.1.0/` beside 3.0.0. The package took 3.4.0 for the
+same arc: the Link 16 gateway arc since `v3.3.0` added one adapter, `link16_gateway`, the roster
+twenty-one to twenty-two, with its fixture set, and `gates/bump_derivation.py` derived MINOR over
+it with nothing unruled once the rulings in `MIGRATIONS.md`'s 3.4.0 section are read — a schema
+MINOR is at least a package MINOR, and the floor was a MINOR on its own account as well. No
+adapter that shipped before it writes either new member, so their objects validate under the
+frozen 3.0.0 contract unchanged but for the stamp. The runtime half of the gateway is a separate
+distribution, `synapse-link16-bridge`, under `packages/link16_bridge/` with a version of its own.
+The paragraphs above are kept as written. **What the index serves is still a separate fact from
+what this tree says** — at the time of writing it is `3.3.0` — and `PUBLICATION.md`'s ledger is
+where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]
@@ -270,6 +290,8 @@ version.compatible(written_with="2.1.0", read_by="2.0.0")   # False — old read
 version.compatible(written_with="2.9.0", read_by="2.1.0")   # False — nobody has published 2.9.0
 version.compatible(written_with="2.0.0", read_by="1.0.0")   # False — a major apart
 version.compatible(written_with="2.1.0", read_by="3.0.0")   # False — a major apart, either way
+version.compatible(written_with="3.0.0", read_by="3.1.0")   # True  — new reader, old writer (since 3.1.0)
+version.compatible(written_with="3.1.0", read_by="3.0.0")   # False — old reader, new enum member
 version.assess(written_with="2.1.0", read_by="2.0.0")       # REFUSED, WRITER_NEWER, and the evidence
 ```
 
@@ -277,7 +299,9 @@ version.assess(written_with="2.1.0", read_by="2.0.0")       # REFUSED, WRITER_NE
 "accepts the same major including a minor from the future" before). A newer reader accepts an
 older object because the frozen historical schemas show it validating. An older reader does NOT
 accept a newer object: every published schema carries `additionalProperties: false`, so a
-property it does not know — populated or explicitly null — is refused. A minor nobody has
+property it does not know — populated or explicitly null — is refused; and, since 3.1.0
+(2026-10-11), every enum it publishes is closed, so a value it does not list — a `position_source`
+of `SENSOR` or `UNKNOWN` read by a 3.0.0 reader — is refused too. A minor nobody has
 published is unknown, not safe. A different major is refused outright. `version.assess()` returns
 the verdict, the direction and the evidence it rests on; a supported verdict is version
 eligibility, and the document is still validated on its own.

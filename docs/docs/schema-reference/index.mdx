@@ -29,7 +29,7 @@ Both arrows are gated. `python -m synapse_cdm.schemas --check --out schemas` fai
 schemas drift from the models, and `npm run check:schemas` fails if these pages drift from
 the schemas — so a field renamed in Python cannot reach a reader through a stale page.
 
-**CDM schema version: `3.0.0`.** Compatibility is decided by
+**CDM schema version: `3.1.0`.** Compatibility is decided by
 `version.compatible()`, not by string equality, and it is directional: a newer reader accepts an
 older object because the frozen historical schemas show it validating, while an older reader
 refuses a newer object that carries a property it does not know, populated or null. A minor
@@ -37,9 +37,9 @@ nobody has published is unknown, not safe — see the [Changelog](../changelog.m
 
 | Page | Source file | SHA-256 |
 | --- | --- | --- |
-| [CDMObject (the union)](./cdm-object.mdx) | `schemas/cdm_object.schema.json` | `7692dd6442b5…` |
-| [Entity](./entity.mdx) | `schemas/entity.schema.json` | `c68e32381081…` |
-| [Event](./event.mdx) | `schemas/event.schema.json` | `527f30670e99…` |
-| [Track](./track.mdx) | `schemas/track.schema.json` | `1570fb21f43b…` |
-| [PlanObject](./plan-object.mdx) | `schemas/plan_object.schema.json` | `bb6808a1a1e8…` |
-| [GnssInterferencePayload](./payload-gnss-interference.mdx) | `schemas/payload_gnss_interference.schema.json` | `72b6a565fe0c…` |
+| [CDMObject (the union)](./cdm-object.mdx) | `schemas/cdm_object.schema.json` | `b5d7b3c58cca…` |
+| [Entity](./entity.mdx) | `schemas/entity.schema.json` | `7254d63a2613…` |
+| [Event](./event.mdx) | `schemas/event.schema.json` | `25880be6e99b…` |
+| [Track](./track.mdx) | `schemas/track.schema.json` | `bfc3b77f6f31…` |
+| [PlanObject](./plan-object.mdx) | `schemas/plan_object.schema.json` | `e5336ebf9011…` |
+| [GnssInterferencePayload](./payload-gnss-interference.mdx) | `schemas/payload_gnss_interference.schema.json` | `6bbcc5e0f5da…` |

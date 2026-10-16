@@ -34,6 +34,7 @@ checks it end to end; the connection between a built artefact and an uploaded on
 act, recorded in MIGRATIONS.md's release procedure.
 """
 import ast
+import json
 import pathlib
 import re
 import subprocess
@@ -1115,6 +1116,186 @@ def test_the_release_notes_keep_an_artefacts_section_that_says_where_the_digests
         "their generated metadata. A digest in the tagged tree is either a local rebuild's — which "
         "is not what PyPI serves — or a value that can only be written after the tag, which no "
         "tagged tree can contain. They belong in PUBLICATION.md and in the release body")
+
+
+# --------------------------------------- the release notes, against the schemas that moved
+#
+# ADDED 2026-10-11 (the 3.4.0 release commit, review R5-F1). The 3.4.0 notes said that six schema
+# files moved "each by its label", and named the entity, plan-object and track schemas as the ones
+# that also moved by the two new `PositionSource` members. `schemas/cdm_object.schema.json` carries
+# the members too, so the sentence told a reader that one published schema had moved by its label
+# alone when its enum had grown. The notes become the GitHub Release body; nothing compared their
+# account of `schemas/` with `schemas/`.
+#
+# The label is what every schema version move re-stamps and nothing else: the root `$id`, the root
+# `x-cdm-schema-version`, and each `default` that equals the schema version (the `schema_version`
+# field's). Against the previous release tag, two rules over the notes' clauses (a clause ends at a
+# `.` or `;` followed by white space) that speak of a label:
+#   1. a clause that says "label alone" names in code font only schemas that moved, and by their
+#      label alone;
+#   2. every schema whose content moved past its label is named in code font in a clause that
+#      speaks of the label and does not say "label alone".
+# A schema is named by its stem (`cdm_object`) or its path (`schemas/cdm_object.schema.json`). A
+# release in which no schema moved past its label and no clause says "label alone" asks nothing of
+# the notes; the second test below shows the reader is not vacuous.
+
+SCHEMAS = REPO / "schemas"
+SCHEMA_SUFFIX = ".schema.json"
+LABEL_ALONE = "label alone"
+
+
+def _version_key(version: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in version.split("."))
+
+
+def _previous_release_tag() -> str | None:
+    """The newest release tag whose version is below this tree's `PACKAGE_VERSION`.
+
+    Below, not the newest tag: at the release tag itself the newest tag is this release, and the
+    comparison must be with the one before it in both states, untagged and tagged.
+    """
+    older = []
+    for tag in tags():
+        match = TAG.match(tag)
+        if match and _version_key(match["version"]) < _version_key(PACKAGE_VERSION):
+            older.append((_version_key(match["version"]), tag))
+    return max(older)[1] if older else None
+
+
+def _without_label(node, version, *, root: bool = True):
+    """The schema document with its version label taken out, everything else kept as it is."""
+    if isinstance(node, dict):
+        kept = {}
+        for key, value in node.items():
+            if root and key in ("$id", "x-cdm-schema-version"):
+                continue
+            if key == "default" and value == version:
+                continue
+            kept[key] = _without_label(value, version, root=False)
+        return kept
+    if isinstance(node, list):
+        return [_without_label(value, version, root=False) for value in node]
+    return node
+
+
+def _moved_past_label(old: dict, new: dict) -> bool:
+    return (_without_label(old, old.get("x-cdm-schema-version"))
+            != _without_label(new, new.get("x-cdm-schema-version")))
+
+
+def _schema_moves(tag: str) -> dict[str, str]:
+    """Each published schema's move since `tag`: "past-label", "label-only" or "none"."""
+    moves = {}
+    for path in sorted(SCHEMAS.glob("*" + SCHEMA_SUFFIX)):
+        stem = path.name[: -len(SCHEMA_SUFFIX)]
+        then = _git("show", f"{tag}:{path.relative_to(REPO).as_posix()}")
+        if then.returncode != 0:
+            moves[stem] = "past-label"  # published since the tag: new content in full
+            continue
+        old, new = json.loads(then.stdout), json.loads(path.read_text())
+        if _moved_past_label(old, new):
+            moves[stem] = "past-label"
+        else:
+            moves[stem] = "label-only" if old != new else "none"
+    return moves
+
+
+def _label_clauses(text: str) -> list[str]:
+    clauses = []
+    for paragraph in re.split(r"\n\s*\n", text):
+        joined = " ".join(paragraph.split())
+        clauses.extend(c for c in re.split(r"(?<=[.;])\s+", joined) if "label" in c)
+    return clauses
+
+
+def _schemas_named(clause: str, stems) -> set[str]:
+    named = set()
+    for stem in stems:
+        if f"`{stem}`" in clause or f"`schemas/{stem}{SCHEMA_SUFFIX}`" in clause:
+            named.add(stem)
+    return named
+
+
+def _notes_schema_account_errors(text: str, moves: dict[str, str]) -> list[str]:
+    errors = []
+    accounted = set()
+    for clause in _label_clauses(text):
+        named = _schemas_named(clause, moves)
+        if LABEL_ALONE in clause:
+            wrong = sorted(s for s in named if moves[s] != "label-only")
+            if wrong:
+                errors.append(f"says {LABEL_ALONE!r} of {wrong}, whose moves are "
+                              f"{[moves[s] for s in wrong]}: {clause!r}")
+        else:
+            accounted |= named
+    unnamed = sorted(s for s, move in moves.items() if move == "past-label" and s not in accounted)
+    if unnamed:
+        errors.append(f"names nowhere, in a clause about the label, the schemas that moved past it: "
+                      f"{unnamed}")
+    return errors
+
+
+def test_the_release_notes_account_for_every_published_schema_that_moved_past_its_label():
+    """The notes' account of `schemas/` is the schemas' own: what moved past its label is named.
+
+    Measured on the 3.4.0 tree before the R5-F1 repair: `cdm_object`, `entity`, `plan_object` and
+    `track` moved past their label since `v3.3.0` (the two members and their dated description),
+    `event` and `payload_gnss_interference` by the label alone; the notes' one clause about the
+    label named none of the four in code font, and this test failed on all four.
+    """
+    _require_git()
+    tag = _previous_release_tag()
+    if tag is None:
+        pytest.skip(f"no release tag below {PACKAGE_VERSION}, so there is no previous contract "
+                    "to compare `schemas/` with")
+    errors = _notes_schema_account_errors(NOTES.read_text(), _schema_moves(tag))
+    assert not errors, (
+        f"RELEASE_NOTES.md misdescribes how `schemas/` moved since {tag}:\n  "
+        + "\n  ".join(errors) + "\nA notes clause that names the schemas that moved past their "
+        "label tells a reader that every schema it leaves out moved by its label alone")
+
+
+def test_the_schema_account_reader_is_not_vacuous():
+    """A relabel alone is no move and an enum member is one; both notes rules refuse their case.
+
+    Hand-built documents and notes in the published shape, so the reading holds whatever the tags
+    are.
+    """
+    def schema(version: str, members: list[str]) -> dict:
+        return {
+            "$id": f"urn:synapsecommand:cdm:{version}:entity",
+            "properties": {
+                "schema_version": {"default": version, "type": "string"},
+                "position_source": {"enum": members, "type": "string"},
+            },
+            "x-cdm-schema-version": version,
+        }
+
+    old = schema("3.0.0", ["GNSS", "ESTIMATED"])
+    assert not _moved_past_label(old, schema("3.1.0", ["GNSS", "ESTIMATED"]))
+    assert _moved_past_label(old, schema("3.1.0", ["GNSS", "ESTIMATED", "SENSOR"]))
+    assert _moved_past_label(old, schema("3.0.0", ["GNSS", "ESTIMATED", "SENSOR"]))
+    nested_id = schema("3.1.0", ["GNSS", "ESTIMATED"])
+    nested_id["properties"]["schema_version"]["$id"] = "urn:x"
+    assert _moved_past_label(old, nested_id), "only the root `$id` is label"
+    other_default = schema("3.1.0", ["GNSS", "ESTIMATED"])
+    other_default["properties"]["position_source"]["default"] = "GNSS"
+    assert _moved_past_label(old, other_default), "only a default equal to the version is label"
+
+    moves = {"cdm_object": "past-label", "entity": "past-label", "event": "label-only",
+             "evidence": "none"}
+    good = ("Three schema files moved. `cdm_object` and `entity` moved by their label and two "
+            "members; `event` by the label alone.")
+    assert _notes_schema_account_errors(good, moves) == []
+    omitted = ("Three schema files moved, each by its label, and the entity schema by two members "
+               "as well.")
+    assert len(_notes_schema_account_errors(omitted, moves)) == 1
+    partial = good.replace("`cdm_object` and `entity`", "`entity`")
+    assert "['cdm_object']" in _notes_schema_account_errors(partial, moves)[0]
+    misfiled = good.replace("`event` by", "`event` and `cdm_object` by")
+    assert len(_notes_schema_account_errors(misfiled, moves)) == 1
+    unmoved = good.replace("`event` by", "`event` and `evidence` by")
+    assert len(_notes_schema_account_errors(unmoved, moves)) == 1
 
 
 def test_every_documented_tag_command_names_this_trees_package_version():

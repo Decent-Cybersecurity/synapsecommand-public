@@ -132,7 +132,7 @@
     "version": "3"
   },
   "cdm": {
-    "schema_version": "3.0.0",
+    "schema_version": "3.1.0",
     "supported": "3.x"
   },
   "manifest_schema_version": "2.1.0",

@@ -197,11 +197,22 @@ def test_metadata_values_field_by_field():
     texts = {x.id: x.summary for x in meta.limitations}
     assert "provisional" in texts["provisional-internal-profile"]
     assert "BLOCKED_EXTERNAL_EVIDENCE" in texts["no-native-bytes"]
-    assert texts["evidence-availability"].startswith("`evidence.available` is false because")
+    # Flipped 2026-10-11 in the 3.4.0 release commit to the form `dis7`'s took at 3.2.0 and
+    # `tacticalapi`'s at 3.3.0, which names no version, so it stays true whatever happens to any
+    # one tag; it read "`evidence.available` is false because no published Release carries this
+    # adapter's records yet" from the landing until then.
+    assert texts["evidence-availability"] == (
+        "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
+        "untracked and unpackaged, CI generates the set on every run, and the release pipeline "
+        "generates the records for every shipped adapter and attaches them to the GitHub Release "
+        "of the version it publishes. `evidence.available` is true because every published "
+        "distribution that carries this adapter has that Release, so its records are retrievable "
+        "by a third party; it says nothing about what the wheel contains")
     assert meta.limitations_empty_reason is None
     assert meta.residual is Residual.STRUCTURED
     assert meta.payload_adapter is None and meta.constituents == []
-    assert meta.evidence.available is False
+    # True since 2026-10-11, the 3.4.0 release commit; false from the landing until then.
+    assert meta.evidence.available is True
 
 
 # ============================================================================ 3-4 translation

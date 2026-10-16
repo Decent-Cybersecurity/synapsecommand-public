@@ -74,6 +74,10 @@ no file of the handoff was copied into the repository except those named above.
 | `link16_gateway` adapter | `1.0.0` | `1.0.0` |
 | `synapse-link16-bridge` | `1.0.0`, landed on 2026-10-11 after the adapter | `1.0.0`, released on GitHub in the tag and the Release, not uploaded to PyPI (L-11) |
 
+Dated 2026-10-11: the release commit typed the right-hand column — `PACKAGE_VERSION` `3.4.0` and
+`SCHEMA_VERSION` `3.1.0`, the 3.1.0 contract frozen under `tests/frozen/cdm/3.1.0/` with `SELF`
+provenance under the tag `v3.4.0` — and this tree reads it.
+
 ## 4. Rulings
 
 All of 2026-10-10. The maintainer's rulings (U) govern the lead's (L), which govern the run
@@ -199,7 +203,7 @@ The handoff's `acceptance.csv` has 45 rows (38 `implementation`, 7 `native exter
 | C04 | above 1 MiB, depth 32, 10 000 nodes: `LIMIT_EXCEEDED` before conversion | `AD::test_depth_32_is_limit_free_33_is_limit_exceeded_65_is_input_too_deep`, `AD::test_nodes_10000_admitted_10001_refused`, `AD::test_one_octet_over_1_mib_is_input_too_large_and_a_dict_over_1_mib_is_limit_exceeded`; `depth_33.bin`, `nodes_10001.bin` | PASS; above 1 MiB of octets and above depth 64 the code is realised as `InputTooLarge` / `InputTooDeep` (L-06) |
 | P01 | zeros, poles, longitude 180 preserved | `MP::test_zero_poles_antimeridian_preserved` | PASS |
 | P02 | partial or out-of-range position refused; wrapper null for an unavailable fix | `partial_coordinates.json`, `latitude_out_of_range.json` via `AD::test_malformed_fixtures_are_refused_with_their_expected_codes`; `B:wrapper::test_wrapper_uses_null_for_an_unavailable_fix_and_keeps_the_partial_coordinate` | PASS (translator); synthetic wrapper PASS; native wrapper BLOCKED_EXTERNAL_EVIDENCE (N04, N05) |
-| P03 | SENSOR or UNKNOWN under the new schema, no false GNSS | `MP::test_sensor_and_unknown_methods_project_under_cdm_3_1` against the schemas the models generate; against the frozen 3.1.0 contract from the release commit | PASS (the handoff's "schema4" is CDM 3.1.0, L-02) |
+| P03 | SENSOR or UNKNOWN under the new schema, no false GNSS | `MP::test_sensor_and_unknown_methods_project_under_cdm_3_1` against the schemas the models generate; `MP::test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract` against the frozen 3.1.0 contract, which the release commit froze (2026-10-11), and refused by the frozen 3.0.0 one by the method alone | PASS (the handoff's "schema4" is CDM 3.1.0, L-02) |
 | P04 | SENSOR or UNKNOWN under 3.0.0: position null, no Track, compatibility transform | `MP::test_compatibility_projection_validates_against_frozen_3_0_0`, `MP::test_compatibility_projection_omits_unrepresentable_positions`, `MP::test_compatibility_projection_keeps_representable_positions_with_a_track`; `B:negotiation::test_compat_projection_for_a_300_sink_marks_position_not_projected`, `B:negotiation::test_compat_objects_validate_against_frozen_300` | PASS (translator); negotiation PASS |
 | V01 | 10000 ft HAE → 3048 m in `vertical` and `alt_m`, feet kept | `MP::test_hae_feet_becomes_metres_in_vertical_and_alt_m_and_feet_stay_in_residual` | PASS (L-09 tension stated) |
 | V02 | MSL, BARO, AGL, FL keep the source vertical, `alt_m` null | `MP::test_other_datums_keep_source_vertical_and_null_alt_m` | PASS |
@@ -271,8 +275,8 @@ the bridge's tests; the bridge's requirement matrix lists every test that bears 
 | 006 | transport variant and standard edition kept apart | `B:native::test_pin_record_keeps_transport_variant_and_edition_separate` | PASS (field split); native transport BLOCKED_EXTERNAL_EVIDENCE |
 | 010 | the files the specification names | the adapter, `pkg/fixtures/link16_gateway/`, the three test modules, the documentation page | PASS with deviation (test module names, section 7.1) |
 | 011 | `PositionSource.SENSOR` and `UNKNOWN` | `pkg/enums.py`; P03 | PASS; no shipped adapter re-labelled (D-14) |
-| 012 | publish the extension as a new major | schemas re-exported from the models; 3.0.0 family frozen; 3.1.0 frozen at the release | PASS with deviation: CDM 3.1.0, a MINOR, not 4.0.0 (L-02) |
-| 013 | negotiate the output schema | P04; `B:negotiation::test_choose_is_a_pure_function_of_the_sink_and_the_installed_version`, `B:negotiation::test_no_common_version_blocks_ingest`, `B:egress::test_an_entity_whose_position_the_compatibility_projection_left_out_is_not_exported` | PASS; the full-projection end-to-end test (`B:negotiation::test_full_projection_for_a_310_sink`) is skipped, version-pending, until the release commit |
+| 012 | publish the extension as a new major | schemas re-exported from the models; 3.0.0 family frozen; 3.1.0 frozen at the release commit under `tests/frozen/cdm/3.1.0/` (2026-10-11) | PASS with deviation: CDM 3.1.0, a MINOR, not 4.0.0 (L-02) |
+| 013 | negotiate the output schema | P04; `B:negotiation::test_choose_is_a_pure_function_of_the_sink_and_the_installed_version`, `B:negotiation::test_no_common_version_blocks_ingest`, `B:egress::test_an_entity_whose_position_the_compatibility_projection_left_out_is_not_exported` | PASS; the full-projection end-to-end test (`B:negotiation::test_full_projection_for_a_310_sink`) was skipped, version-pending, until the release commit, and runs and passes from it (2026-10-11) |
 | 014 | Adapter API preserved, one report per call | `AD::test_input_types`; no SDK change | PASS |
 | 020 | native profile pins its documents | `B:native::test_incomplete_pin_is_native_profile_incomplete` | PASS (the gate); pin content BLOCKED_EXTERNAL_EVIDENCE (N01) |
 | 021 | verified native definitions | `B:native::test_incomplete_pin_is_native_profile_incomplete` | PASS (the gate); definitions BLOCKED_EXTERNAL_EVIDENCE (N03, N04) |
@@ -458,6 +462,17 @@ do not depend on this record, which lies outside it). Every figure below was re-
 | the bridge on Linux (the colima VM, aarch64, Python 3.11.17, no network, the same `packages/` tree) | the run kit's Linux runner | `528 passed, 14 skipped`: the seven `native` rows, the version-pending test, and six repository-bound tests (the archive carries `packages/` only); the wheel test and the process-level crash tests ran |
 | the bridge's lint | `ruff check --config packages/link16_bridge/pyproject.toml packages/link16_bridge` | `All checks passed!` |
 | secrets scan of the bridge | gitleaks 8.30.1 with the repository's configuration over `packages/link16_bridge`, the workflow `gateway-bridge.yml`, this record and ARCHITECTURE.md | `no leaks found`, each |
+
+**Readings at the release commit**, 2026-10-11, on the release tree with the release state
+applied (counts only; the readiness report's section 19 names the rest):
+
+| Reading | Command | Result |
+|---|---|---|
+| harness | `python -m synapse_cdm.harness --adapter link16_gateway --schemas schemas` | `15 passed, 0 failed`, the goldens re-stamped `3.1.0` and otherwise unchanged |
+| conformance suite | `python -m synapse_cdm.suite conformance run --adapter link16_gateway --schemas schemas` | `CONFORMANT`, eligible L5; ledger MAPPED 174, LOST 0 |
+| the adapter's three test modules | `python -m pytest -q` over `AD`, `ID` and `MP` | `198 passed`, `35 passed`, `91 passed` (MP gains the frozen-3.1.0 check of P03) |
+| the bridge's tests | `cd packages/link16_bridge && python -m pytest -q -rs` | `534 passed, 8 skipped`: the seven `native` rows and the wheel test (this interpreter carries neither pip nor setuptools); the full-projection negotiation test runs |
+| evidence | `python -m synapse_cdm.evidence generate --adapter link16_gateway` | `cdm_version` 3.1.0, `package_version` 3.4.0; `internal_fixture` and `self_round_trip` PRESENT, the three external categories ABSENT |
 | the host tests the bridge landing edits | `python -m pytest -q tests/test_cdm_version_floor.py tests/test_cdm_architecture_docs.py` | `333 passed` |
 
 ## 11. Open items
@@ -470,14 +485,19 @@ do not depend on this record, which lies outside it). Every figure below was re-
   dependency floor names synapse-cdm 3.4.0, so `pip check` reports the floor unmet until the
   release commit types that version; and `B:negotiation::test_full_projection_for_a_310_sink` is
   skipped with the reason "version-pending until the 3.4.0 release commit types SCHEMA_VERSION
-  3.1.0".
+  3.1.0". (Dated 2026-10-11: the release commit typed `SCHEMA_VERSION` 3.1.0 and `PACKAGE_VERSION`
+  3.4.0, so all five ended there — the schemas are labelled 3.1.0, the default projection stamps
+  3.1.0, `cdm_schema=SCHEMA_VERSION` is the full projection, the floor names the tree's own
+  version, and the full-projection test runs. Kept here as the record of the landing's state.)
 - **Export under the compatibility projection (D-52, 2026-10-11).** Until the release commit
   types CDM 3.1.0, every sink is served the compatibility projection, which leaves a SENSOR or
   UNKNOWN position out of the Entity; the bridge denies the export of such an Entity
   (`EXPORT_DENIED`, `PROFILE_NOT_READY`, audited), because its report would say `position: null`
   for a source that reported one, with no loss record. Exporting a positioned SENSOR or UNKNOWN
   source needs the FULL projection, which a sink that accepts CDM 3.1.0 is served from the 3.4.0
-  release; the bridge's `docs/operations.md` states it.
+  release; the bridge's `docs/operations.md` states it. (Dated 2026-10-11: from the release commit
+  a sink that accepts CDM 3.1.0 is served the full projection, and the denial applies only to an
+  Entity a sink that accepts 3.0.0 alone was served.)
 - **D-43, a host finding.** `times.parse` and `times.parse_wire` accept hour 24 on Python 3.14 and
   refuse it on 3.12, because `datetime.fromisoformat` changed. The adapter does not use them for
   its strict calendar. Not changed in this arc; reported to the maintainer as a separate task.
@@ -584,3 +604,19 @@ do not depend on this record, which lies outside it). Every figure below was re-
   shown to fail on the mutant that leaves the column as it is; the Fable closure check then read GO with two
   optional side effects, one recorded in section 11 (the synthetic server's stderr at `stop()`), one applied
   (this test cited in the L03 and REQ106 rows).
+- **2026-10-11, the release commit, synapse-cdm 3.4.0 with CDM schema 3.1.0.** On
+  `soif/release-3.4.0`, from the bridge landing. It types `PACKAGE_VERSION` 3.4.0 (the derived
+  floor, MINOR) and `SCHEMA_VERSION` 3.1.0 (a MINOR on the schema's own table; REQ012's 4.0.0 not
+  followed, L-02), re-exports the six schema files, writes every golden again by its stamp alone,
+  freezes 3.1.0 under `tests/frozen/cdm/3.1.0/` with `SELF` provenance, adds 3.1.0 to
+  `KNOWN_CONTRACTS` with the version matrix's within-major evidence, rewords `assess()` for the
+  closed-enum ground (two rulings in the migration notes' 3.4.0 section, which the pending section
+  became), re-derives the DIS 7 entity profile and re-stamps its vectors (D-08), flips
+  `evidence.available` to true with the version-free sentence, retires the release notes'
+  exemption rows, and writes the readiness re-qualification and the fourteenth historical-arcs
+  row. Rows changed here: P03 (the frozen 3.1.0 check), REQ012 and REQ013 (above), the version
+  register and the open items' version-pending facts, each dated. What stays at 3.0.0 and why is
+  in the migration notes' 3.4.0 section: the SC-OES examples and the semantic corpus by choice, the
+  pinned egress inputs by their pins, and the handoff's reference projections at their own 4.0.0.
+  Section 10's release readings are taken on this tree; the tag, the upload and the witness round
+  are the release round's, recorded after the fact.
