@@ -1,0 +1,150 @@
+{
+  "directory": "nexrad2/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "archive_version_05.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "azimuth_number_zero.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "bzip2_crc_corrupt.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "bzip2_stream_cut_short.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "compression_indicator_bzip2.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "compression_indicator_zlib.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "decompresses_past_the_bound.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_1_legacy_radial.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_29_model_data_record.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "metadata_record_past_its_size.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "negative_control_word_past_the_file.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_an_archive_ii_volume.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "radial_length_out_of_range.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "short_volume_header.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_record.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unexpected_message_type.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic malformed NEXRAD Level II volume written on 2026-10-15 by fixtures/nexrad2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

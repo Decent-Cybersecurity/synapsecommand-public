@@ -76,6 +76,7 @@
       "type": "string"
     },
     "EventType": {
+      "description": "The broad legacy category of an `Event`. A separate axis from SC-OES's `EventClass`.\n\nENVIRONMENTAL_OBSERVATION was added on 2026-10-15, CDM 3.2.0 \u2014 a MINOR by MIGRATIONS.md's\ntable, since a member is added and none is removed, and appended last so that the published\nenum's seven existing positions keep their values. It is an environmental measurement or\nmodel product \u2014 a station reading, a radar sweep, a gridded field, an imagery product \u2014\ncarried under a named payload contract that says which. It is NOT gap 20's detection: a\nGMTI target report stays DETECTION, and FORMAT_COVERAGE.md's gap 20 stays open. It is NOT\nSC-OES's `EventClass.OBSERVATION`, a semantic class on a different axis, and the longer name\nexists so that the two are never read as two spellings of one fact. No governed SC-OES type\nmaps to it, and it re-labels no event any shipped adapter emits.",
       "enum": [
         "DETECTION",
         "GNSS_INTERFERENCE",
@@ -83,7 +84,8 @@
         "ALERT",
         "STATUS_CHANGE",
         "PLAN_INJECT",
-        "SIM_RESULT"
+        "SIM_RESULT",
+        "ENVIRONMENTAL_OBSERVATION"
       ],
       "title": "EventType",
       "type": "string"
@@ -540,6 +542,38 @@
       "title": "OperationalStatus",
       "type": "object"
     },
+    "Period": {
+      "additionalProperties": false,
+      "description": "A closed or open-ended interval. `start` required, `end` optional and open-ended if absent.\n\n`start` is required and `end` is not, because that asymmetry is what the sources state: an\nactivation begins at a stated instant and ends \"until further notice\" far more often than the\nreverse. An interval with neither bound is not a period, it is the absence of one, and the\nfield holding a Period is optional for exactly that case.",
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it closes. None = open-ended, never 'unknown'.",
+          "title": "End"
+        },
+        "start": {
+          "description": "When the interval opens.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
     "Point": {
       "additionalProperties": false,
       "properties": {
@@ -928,6 +962,71 @@
       "title": "SourceRef",
       "type": "object"
     },
+    "TemporalValidity": {
+      "additionalProperties": false,
+      "description": "The four times an object can have, separated because they answer different questions.\n\n\u00a727's four, and the separation is the point:\n\n    observed_at   when the SOURCE saw the state\n    valid_from    when the state BEGAN, which may be long before anyone saw it\n    valid_to      when it ceased. None = still current, never \"unknown\"\n    effective     the period the source declares the object OPERATIVE \u2014 an airspace\n                  reservation published on Monday, effective Wednesday 0600 to 1200\n\nAn airspace restriction shows why one timestamp cannot do the work of four: it is observed\nwhen the NOTAM is read, valid from the moment it is published, and effective for a window\nthat has not started yet. Collapsing those into \"the time\" is how a restriction gets drawn on\na map twelve hours early.\n\nEVERY FIELD IS OPTIONAL AND THAT IS DELIBERATE. A source that states only one of the four\nsays one of the four; a model that required more would be filled by adapters copying one\ninstant into three fields, and three copies of one reading look like corroboration. The\nPRESENCE of this block is itself information \u2014 the source described validity in time \u2014 and\na block with nothing in it is the absence of the block.\n\n\u00a727's epoch rule, stated where it is enforced: unknown time is NOT `1970-01-01` and NOT\n`now()`. It is the absence of the field. `Timestamp` does not refuse the epoch instant, and\nthat is a decision rather than an omission \u2014 1970-01-01T00:00:00Z is a real instant, some\nsources legitimately carry it as a base epoch, and a validator that refused it would refuse\nreal data in order to catch a defect that lives in the ADAPTER. The rule is therefore\nenforced where the substitution would be made, in review of the adapter and in the\nconformance suite's own reading, and it is written down here and in `docs/docs/cdm/policies`.",
+      "properties": {
+        "effective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The period the source declares the object operative."
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the source saw it. None = the source did not say.",
+          "title": "Observed At"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the state began. None = the source did not say.",
+          "title": "Valid From"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it ceased. None = still current / open-ended.",
+          "title": "Valid To"
+        }
+      },
+      "title": "TemporalValidity",
+      "type": "object"
+    },
     "Verification": {
       "description": "How corroborated the assertion is. NOT confidence \u2014 `06-verification-and-confidence.md`.\n\nThey vary independently and every combination is meaningful: a single high-grade sensor can\nbe highly confident and entirely uncorroborated, and three weak sources can corroborate each\nother and leave the producer unsure. Absence means nothing is asserted about corroboration;\n`UNVERIFIED` is the positive claim that the question was asked and the answer was \"no\", which\nis a different and more informative fact. `DISPUTED` records that a disagreement exists and\nis not a verdict on it.",
       "enum": [
@@ -1111,6 +1210,18 @@
       ],
       "default": null,
       "description": "The source's own operational state for this object, namespaced. None = the source stated none."
+    },
+    "validity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TemporalValidity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The times the source states about what this event reports (\u00a727), on PlanObject.validity's precedent. Every interval is `effective`: an instant sets end == start, and end = None is open-ended, never 'unknown'. `observed_at` above is the END of the sensing interval for an observation and the REFERENCE time for a model product, never a future valid instant. None = the source states none. Added 2026-10-15, CDM 3.2.0."
     }
   },
   "required": [

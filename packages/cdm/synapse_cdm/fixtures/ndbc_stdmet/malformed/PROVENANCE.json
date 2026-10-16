@@ -1,0 +1,123 @@
+{
+  "directory": "ndbc_stdmet/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "cut_inside_a_row.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "documented_column_other_width.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mm_in_historical_file.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_a_number.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "number_past_the_double_range.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "repeated_instant.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "row_width_mismatch.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "signed_value_outside_ptdy.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_outside_the_record.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_under_hash_yy.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_under_yyyy.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "undocumented_sentinel_width.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_column.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic malformed NDBC standard meteorological file written on 2026-10-15 by fixtures/ndbc_stdmet/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -1,0 +1,133 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter inflates nothing: a yearly historical file arrives as .txt.gz, and synapse-decode --container gzip unwraps it under the host's own bounds before the adapter is handed the text",
+          "max_objects": "not a bound of its own: one Event per data row and one Entity, and a data row is at least seven octets (five two-digit time columns, one value, the line end), so max_input_bytes bounds the count",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, and every pass over the file is one walk of its lines and tokens; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the parsed twin nests three containers (the twin, `rows`, a row). 64 (`MAX_DEPTH`, `adapters/ndbc_stdmet.py`) is the harness loader's own bound and the figure the JSON-reading adapters of synapse_cdm declare. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_ndbc_stdmet_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module decodes a line",
+            "kind": "implementation_cap",
+            "source": "No NDBC document states a maximum size for a stdmet file. DECISIONS U-07 rules one station-text file at most 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/ndbc_stdmet.py`); the design record's largest unit is a realtime file of the last 45 days at ten-minute rows (research-station-text F18), and a yearly historical file is one year of them. The CO-OPS request range limits the same ruling rests on (6-minute data one month a request, hourly one year, research-station-text F05) are the station-text class's other stated unit. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 8388608,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "NDBC standard meteorological text (Web Data Guide Version 2.0): one realtime, monthly or yearly historical stdmet file per call, as its octets or its parsed twin; one ENVIRONMENTAL_OBSERVATION Event per data row carrying point-observation/1, and the station's Entity"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the header is read against a closed vocabulary of stdmet columns, and a column this module does not know is refused `unknown-column` rather than carried; the twin is exactly header, units and rows, so an injected key is refused `not-a-twin`",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "NDBC standard meteorological data (stdmet)",
+      "version": "NDBC Web Data Guide, Version 2.0 (June 2023)"
+    },
+    "id": "ndbc_stdmet",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "one-file-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one stdmet file per call (a realtime, monthly or yearly historical file), as its octets or its parsed twin; a yearly .txt.gz is unwrapped by synapse-decode --container gzip. Other NDBC data types (.spec, .cwind, .ocean and the rest) are not this adapter's and their headers are refused",
+        "unsupported_paths": []
+      },
+      {
+        "id": "station-from-the-caller",
+        "notes": null,
+        "severity": null,
+        "summary": "a stdmet file states neither its station nor the station's position (research-station-text F03): the station identifier is the caller's station_id argument, and the position comes only from a caller's StationTable, else the Entity's position is null. Nothing is joined from activestations.xml or another file",
+        "unsupported_paths": []
+      },
+      {
+        "id": "sentinel-conventions",
+        "notes": null,
+        "severity": null,
+        "summary": "MM is read as missing only in a realtime file (a header with PTDY), and a run of 9s only in a historical file at the width research-station-text F02 observed for its column (WVHT, DPD, APD and TIDE 99.00, MWD 999, VIS 99.0, WTMP 999.0). Any other run of 9s in a historical file is refused undocumented-sentinel, and so is a real reading of that shape in a column whose sentinel width is not documented (a 999.0 hPa pressure, a 99 degree wind direction): the widths for WDIR, WSPD, GST, PRES, ATMP and DEWP are not established, so this module refuses rather than guesses. MM in a historical file is refused",
+        "unsupported_paths": []
+      },
+      {
+        "id": "two-digit-years",
+        "notes": null,
+        "severity": null,
+        "summary": "the year is the width its header column names (four digits under #YY and YYYY, two under YY), and a two-digit year is read only as 98, 1998: the YY layout is recorded in a 1998 file only (research-station-text F01), so any other two-digit year is refused undocumented-year rather than given a century",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-units-line",
+        "notes": null,
+        "severity": null,
+        "summary": "a file with no units line (before 2007) states no unit, so each value is an Absence of cause unit_unknown and the number stays in the Event's residual row; nothing assumes the unit a later file states",
+        "unsupported_paths": []
+      },
+      {
+        "id": "instant-not-window",
+        "notes": null,
+        "severity": null,
+        "summary": "each row is one instant, observed_at and both ends of validity.effective; the averaging windows the measurement descriptions give for a column (WSPD over eight minutes, PTDY over three hours) are not stated as intervals",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-quality-flags",
+        "notes": null,
+        "severity": null,
+        "summary": "NDBC's text files print no per-value quality flag (NDBC T80-10, December 2023), so every contract states quality_flags_basis instead of flags",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter ndbc_stdmet` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every row a structured residual on its own Event) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "NDBC standard meteorological (stdmet) text translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.1.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

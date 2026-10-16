@@ -172,6 +172,7 @@
     "valid_to": null
   },
   {
+    "attributes": null,
     "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
     "integrity": null,
     "object_kind": "track",
@@ -363,7 +364,8 @@
         "system": "GMTIF-TARGET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -514,7 +516,8 @@
         "system": "GMTIF-TARGET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -665,6 +668,7 @@
         "system": "GMTIF-TARGET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

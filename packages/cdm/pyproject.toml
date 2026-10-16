@@ -43,7 +43,7 @@ keywords = [
 ]
 classifiers = [
     # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
-    # exactly one voice: twenty-two adapters shipped and harness-verified, the Adapter contract
+    # exactly one voice: twenty-seven adapters shipped and harness-verified, the Adapter contract
     # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
     # tree does not have.
     "Development Status :: 5 - Production/Stable",
@@ -160,6 +160,12 @@ synapse = "synapse_cdm.suite:main"
 # from a clean install, and the name comes from the adapter's handoff specification, identified
 # by `SC DIS7 SPEC 001 v1.0`, which is not in this repository.
 synapse-dis7 = "synapse_cdm.dis7_host:main"
+# `synapse-decode` joined 2026-10-15 with the observation adapters' shared layer: the one offline
+# host command they share, on `synapse-dis7`'s shape — `decode` reads one local file with a bound,
+# digests it, unwraps a declared gzip or tar container, frames it and hands each frame to the named
+# adapter with the values the caller supplied; `list` and --version. It writes stdout, opens no
+# socket and writes no file. A console entry point appearing is a MINOR by the bump table.
+synapse-decode = "synapse_cdm.decode_host:main"
 
 # ---------------------------------------------------------------------------------------------
 # LINT, AND WHY THE RULE SET IS THIS SMALL. Added 2026-09-08 by SOIF Part 1 round P7, for §50's
@@ -266,7 +272,7 @@ include = ["synapse_cdm*"]
 # any file that is neither shipped nor in a stated do-not-ship class.
 #
 # SHIPS
-#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, twenty-two adapters.
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, twenty-seven adapters.
 #   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
 #                                      partner writing an adapter reads; MIGRATIONS is also what
 #                                      tells them what `schema_version` will and will not do.

@@ -1,0 +1,38 @@
+{
+  "rule": "SEM-014",
+  "title": "A Track's completeness block counts the samples it rides on",
+  "cases": [
+    {
+      "name": "two samples, carried_samples 2",
+      "document": {
+        "object_kind": "track", "schema_version": "3.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "T-14"}],
+        "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b14",
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f14",
+        "samples": [
+          {"observed_at": "2026-04-29T06:00:00.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+          {"observed_at": "2026-04-29T06:00:01.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}}
+        ],
+        "attributes": {"completeness": {"carried_samples": 2, "stated_samples": null, "fragment": null, "completeness_basis": "the source states no total"}}
+      },
+      "expected": {"structural": "PASS", "semantic": "PASS"}
+    },
+    {
+      "name": "two samples, carried_samples 3",
+      "document": {
+        "object_kind": "track", "schema_version": "3.1.0",
+        "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
+        "source_ids": [{"system": "TEST", "external_id": "T-14"}],
+        "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b14",
+        "entity_id": "1e6d3e1f-7c0b-4d2a-8b4f-3a8c9d5e2f14",
+        "samples": [
+          {"observed_at": "2026-04-29T06:00:00.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}},
+          {"observed_at": "2026-04-29T06:00:01.000Z", "position": {"lat": 57.0, "lon": 21.0, "position_source": "GNSS"}}
+        ],
+        "attributes": {"completeness": {"carried_samples": 3, "stated_samples": null, "fragment": null, "completeness_basis": "the source states no total"}}
+      },
+      "expected": {"structural": "PASS", "semantic": "FAIL", "finding_contains": "SEM-014"}
+    }
+  ]
+}

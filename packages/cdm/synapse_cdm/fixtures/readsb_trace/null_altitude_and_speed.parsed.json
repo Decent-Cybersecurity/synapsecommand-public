@@ -1,0 +1,40 @@
+{
+  "icao": "0029e9",
+  "noRegData": true,
+  "version": "readsb 3.16.17 0000000",
+  "timestamp": 1773446400.0,
+  "trace": [
+    [
+      70000.0,
+      56.8,
+      22.2,
+      null,
+      null,
+      null,
+      0,
+      null,
+      null,
+      null,
+      1250,
+      null,
+      null,
+      null
+    ],
+    [
+      70010.0,
+      56.801,
+      22.201,
+      null,
+      null,
+      null,
+      0,
+      null,
+      null,
+      "adsb_icao",
+      null,
+      null,
+      null,
+      null
+    ]
+  ]
+}

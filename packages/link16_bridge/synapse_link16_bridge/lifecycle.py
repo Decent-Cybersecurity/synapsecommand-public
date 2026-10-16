@@ -35,6 +35,7 @@ from synapse_cdm.models import Entity
 
 from synapse_link16_bridge import identity, jsonstrict
 from synapse_link16_bridge.clock import from_ms, parse_ms
+from synapse_link16_bridge.negotiate import Projection, dump
 from synapse_link16_bridge.state import publish
 from synapse_link16_bridge.store import (CHANNEL, SQL_CHANNEL_EPOCH, SQL_CHANNEL_GAP,
                                          SQL_CURRENT_CLOSE, SQL_CURRENT_GET,
@@ -50,11 +51,11 @@ class Outcome:
 
 
 def apply(store: Store, notice: dict, *, channel_epoch: int, tenant: str, realm: str,
-          synthetic: bool, max_identities: int) -> Outcome:
+          synthetic: bool, max_identities: int, projection: Projection) -> Outcome:
     operation = notice["operation"]
     effective_at = parse_ms(notice["effective_at"], "effective_at")
     if operation == "DROP_SOURCE":
-        return _drop(store, notice, effective_at, channel_epoch)
+        return _drop(store, notice, effective_at, channel_epoch, projection)
     if operation == "REKEY":
         return _rekey(store, notice, effective_at, channel_epoch, tenant, realm, synthetic,
                       max_identities)
@@ -65,7 +66,8 @@ def apply(store: Store, notice: dict, *, channel_epoch: int, tenant: str, realm:
     return Outcome(True)
 
 
-def _drop(store: Store, notice: dict, effective_at: int, epoch: int) -> Outcome:
+def _drop(store: Store, notice: dict, effective_at: int, epoch: int,
+          projection: Projection) -> Outcome:
     key = identity.key_of(notice)
     row = store.db.execute(SQL_IDENTITY_GET, (key,)).fetchone()
     if row is None:
@@ -79,7 +81,7 @@ def _drop(store: Store, notice: dict, effective_at: int, epoch: int) -> Outcome:
     if current is not None and current[7] == "ACTIVE":
         entity = Entity.model_validate_json(current[11])
         closed = Entity.model_validate(dict(entity.model_dump(), valid_to=from_ms(effective_at)))
-        payload = jsonstrict.canonical(closed.model_dump(mode="json"))
+        payload = jsonstrict.canonical(dump(closed, projection))
         publish(store, f"{notice['record_id']}:0", "close", payload, closed.schema_version, [])
         store.db.execute(SQL_CURRENT_CLOSE, (store.fence, key))
     store.db.execute(SQL_IDENTITY_TOMBSTONE, (effective_at, notice["record_id"], store.fence, key))

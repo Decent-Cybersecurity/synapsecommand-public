@@ -1,0 +1,240 @@
+{
+  "directory": "readsb_trace",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_adsb_2022_form.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_adsb_2022_form.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equal_instants_and_db_flags.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equal_instants_and_db_flags.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "every_flag_bit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "every_flag_bit.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ground_heading_slot.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ground_heading_slot.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_fragment_day_one.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_fragment_day_one.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_fragment_day_two.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_fragment_day_two.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mlat_positions.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mlat_positions.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nonicao_address.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nonicao_address.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "null_altitude_and_speed.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "null_altitude_and_speed.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "pre2022_nine_elements.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "pre2022_nine_elements.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "receiver_id_fifteen_elements.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "receiver_id_fifteen_elements.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reference_not_midnight.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reference_not_midnight.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tisb_positions.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tisb_positions.trace",
+      "operational_data": false,
+      "origin": "Synthetic readsb trace written on 2026-10-15 for the readsb_trace adapter's landing by fixtures/readsb_trace/spec/build_fixtures.py from a literal document in that script, after the field order of readsb's README-json.md (pinned by URL and SHA-256, never carried); the address is in the 0029xx block, positions are in the Baltic rectangle, nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -149,6 +149,7 @@
         "system": "ASTERIX_SAC_SIC"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

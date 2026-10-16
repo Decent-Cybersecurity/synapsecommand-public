@@ -88,3 +88,37 @@ packages/cdm/synapse_cdm/fixtures/tacticalapi/** -text
 # checkout that rewrote one byte would fail the pin test and the octet fixtures alike.
 *.bin -text -diff
 packages/cdm/synapse_cdm/fixtures/link16_gateway/** -text
+
+# readsb trace files (the `readsb_trace` adapter): one gzip member each (`.trace`), raw binary,
+# marked explicitly for the reason every entry above gives. Added 2026-10-15 in the change that
+# lands the adapter. `spec/build_fixtures.py --check` compares every payload, twin and provenance
+# record byte for byte, so the whole directory is held out of line-ending conversion: a checkout
+# that rewrote one byte would fail it.
+*.trace -text -diff
+packages/cdm/synapse_cdm/fixtures/readsb_trace/** -text
+
+# NEXRAD Level II volumes (the `nexrad2` adapter): an Archive II volume header and bzip2 LDM
+# records (`.ar2v`), raw binary, marked explicitly for the reason every entry above gives. Added
+# 2026-10-15 in the change that lands the adapter. `spec/build_fixtures.py --check` compares every
+# payload, twin and provenance record byte for byte, so the whole directory is held out of
+# line-ending conversion: a checkout that rewrote one byte would fail it.
+*.ar2v -text -diff
+packages/cdm/synapse_cdm/fixtures/nexrad2/** -text
+
+# The station-text adapters (`ndbc_stdmet`, `coops_csv`, `airnow_hourly`): an NDBC standard
+# meteorological file (`.stdmet`), a CO-OPS data API response (`.csv`, and `.json` for its JSON
+# form) and an AirNow hourly file (`.dat`). They are text, and that is why they are listed: their
+# whitespace, their trailing spaces and their line ends are DATA — an NDBC column is found by its
+# spacing, a CO-OPS header is compared whole with its trailing space, an AirNow file is CRLF — and
+# a checkout that normalised a line end or a space would hand the adapter another file than the
+# one its golden was written from. Added 2026-10-15 in the change that lands the three adapters,
+# with the extension rows the binary-fixture habit above asks for (`*.csv` also covers the four
+# GeoPackage source tables, which are LF and stay so). `spec/build_fixtures.py --check` compares
+# every payload, twin and provenance record byte for byte, so the three directories are held out
+# of line-ending conversion as a whole.
+*.stdmet -text -diff
+*.csv -text -diff
+*.dat -text -diff
+packages/cdm/synapse_cdm/fixtures/ndbc_stdmet/** -text
+packages/cdm/synapse_cdm/fixtures/coops_csv/** -text
+packages/cdm/synapse_cdm/fixtures/airnow_hourly/** -text

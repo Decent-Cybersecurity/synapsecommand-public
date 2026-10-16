@@ -1,0 +1,49 @@
+{
+  "form": "HourlyData",
+  "records": [
+    [
+      "04/28/26",
+      "10:00",
+      "000000001",
+      "EX site one",
+      "2",
+      "OZONE",
+      "PPB",
+      "31",
+      "EX synthetic agency"
+    ],
+    [
+      "04/28/26",
+      "10:00",
+      "000000001",
+      "EX site one",
+      "2",
+      "PM2.5",
+      "UG/M3",
+      "-1.4",
+      "EX synthetic agency"
+    ],
+    [
+      "04/28/26",
+      "10:00",
+      "000000002",
+      "EX site two",
+      "2",
+      "NO2",
+      "PPB",
+      "5.6",
+      "EX synthetic agency"
+    ],
+    [
+      "04/28/26",
+      "10:00",
+      "000000002",
+      "EX site two",
+      "2",
+      "BARPR",
+      "MILLIBAR",
+      "1013.2",
+      "EX synthetic agency"
+    ]
+  ]
+}

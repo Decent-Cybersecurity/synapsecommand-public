@@ -220,7 +220,8 @@ class Ingestor:
                              record_row=insert_row)
             return "QUARANTINED", decision.code
         flag = state.apply(store, identity_key, body, list(verdict.objects),
-                           force_late=decision.late, flags=list(verdict.flags))
+                           force_late=decision.late, flags=list(verdict.flags),
+                           projection=self.translator.projection)
         if insert_row:
             self._row(record, batch, key, "ACCEPTED", flag, identity_key)
         return "ACCEPTED", flag
@@ -241,7 +242,8 @@ class Ingestor:
         outcome = lifecycle.apply(self.store, body, channel_epoch=epoch,
                                   tenant=self.config.tenant, realm=self.config.realm,
                                   synthetic=self.config.synthetic,
-                                  max_identities=self.config.limits["max_identities"])
+                                  max_identities=self.config.limits["max_identities"],
+                                  projection=self.translator.projection)
         if not outcome.accept:
             self._quarantine(record, batch, key, outcome.code, outcome.path,
                              "lifecycle notice refused")

@@ -1,0 +1,543 @@
+[
+  {
+    "event_id": "919c512f-f162-532a-95f7-5ed884b0444e",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-28T06:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 1,
+          "kind": "table",
+          "row": 0
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [
+          {
+            "applies_to": "Water Level",
+            "name": "O",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "F",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 1
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "R",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "L",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "record",
+            "name": "Quality",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): p preliminary, v verified",
+            "value": "p"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": {
+              "name": "MLLW",
+              "namespace": "CO-OPS datagetter request parameter datum"
+            },
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": -0.118
+            },
+            "name": "Water Level",
+            "namespace": "CO-OPS datagetter water_level"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": 0.03
+            },
+            "name": "Sigma",
+            "namespace": "CO-OPS datagetter water_level"
+          }
+        ],
+        "station_id": "0000001",
+        "station_namespace": "CO-OPS station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "CoopsRequest.time_zone gmt, the request parameter the response does not echo (research-station-text F05): each stamp is read as UTC",
+            "name": "gmt",
+            "stated_by": "caller"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "1f3d6f71-4a81-5891-aa91-d937862698ef"
+    ],
+    "residual": {
+      "data": {
+        "form": "csv",
+        "header": "Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality",
+        "request": {
+          "datum": "MLLW",
+          "interval": "6",
+          "lst_offset": null,
+          "product": "water_level",
+          "station": "0000001",
+          "time_zone": "gmt",
+          "units": "metric"
+        },
+        "row": [
+          "2026-04-28 06:00",
+          "-0.118",
+          "0.030",
+          "0",
+          "1",
+          "0",
+          "0",
+          "p"
+        ]
+      },
+      "namespace": "NOAA CO-OPS data API response (datagetter)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "coops_csv",
+      "adapter_version": "1.0.0",
+      "format_name": "NOAA CO-OPS data API response (datagetter)",
+      "format_version": "api.tidesandcurrents.noaa.gov/api/prod, read 2026-10-14",
+      "observed_at": "2026-04-28T06:00:00.000Z",
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "CO-OPS",
+      "transformations": [
+        "the request's time_zone is gmt, so each stamp is read as UTC",
+        "each value's decimal text is read as a binary floating-point number",
+        "each flag's decimal text is read as an integer"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0000001/water_level/MLLW/metric/6/2026-04-28T06:00:00.000Z",
+        "system": "CO-OPS"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-28T06:00:00.000Z",
+        "start": "2026-04-28T06:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "a7a67329-fdaf-503b-81d9-959debcb52d2",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-28T06:06:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 1,
+          "kind": "table",
+          "row": 1
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [
+          {
+            "applies_to": "Water Level",
+            "name": "O",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "F",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "R",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 1
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "L",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 1
+          },
+          {
+            "applies_to": "record",
+            "name": "Quality",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): p preliminary, v verified",
+            "value": "p"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": {
+              "name": "MLLW",
+              "namespace": "CO-OPS datagetter request parameter datum"
+            },
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": -0.142
+            },
+            "name": "Water Level",
+            "namespace": "CO-OPS datagetter water_level"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": 0.045
+            },
+            "name": "Sigma",
+            "namespace": "CO-OPS datagetter water_level"
+          }
+        ],
+        "station_id": "0000001",
+        "station_namespace": "CO-OPS station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "CoopsRequest.time_zone gmt, the request parameter the response does not echo (research-station-text F05): each stamp is read as UTC",
+            "name": "gmt",
+            "stated_by": "caller"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "1f3d6f71-4a81-5891-aa91-d937862698ef"
+    ],
+    "residual": {
+      "data": {
+        "form": "csv",
+        "header": "Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality",
+        "request": {
+          "datum": "MLLW",
+          "interval": "6",
+          "lst_offset": null,
+          "product": "water_level",
+          "station": "0000001",
+          "time_zone": "gmt",
+          "units": "metric"
+        },
+        "row": [
+          "2026-04-28 06:06",
+          "-0.142",
+          "0.045",
+          "0",
+          "0",
+          "1",
+          "1",
+          "p"
+        ]
+      },
+      "namespace": "NOAA CO-OPS data API response (datagetter)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "coops_csv",
+      "adapter_version": "1.0.0",
+      "format_name": "NOAA CO-OPS data API response (datagetter)",
+      "format_version": "api.tidesandcurrents.noaa.gov/api/prod, read 2026-10-14",
+      "observed_at": "2026-04-28T06:06:00.000Z",
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "CO-OPS",
+      "transformations": [
+        "the request's time_zone is gmt, so each stamp is read as UTC",
+        "each value's decimal text is read as a binary floating-point number",
+        "each flag's decimal text is read as an integer"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0000001/water_level/MLLW/metric/6/2026-04-28T06:06:00.000Z",
+        "system": "CO-OPS"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-28T06:06:00.000Z",
+        "start": "2026-04-28T06:06:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "fa5fe1ce-045e-5e05-81ef-adbf117ff880",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-28T06:12:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 1,
+          "kind": "table",
+          "row": 2
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [
+          {
+            "applies_to": "Water Level",
+            "name": "I",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "F",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "R",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "Water Level",
+            "name": "T",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): the product's quality flags",
+            "value": 0
+          },
+          {
+            "applies_to": "record",
+            "name": "Quality",
+            "namespace": "the CO-OPS response field definitions (api/prod/responseHelp.html): p preliminary, v verified",
+            "value": "v"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": {
+              "name": "MLLW",
+              "namespace": "CO-OPS datagetter request parameter datum"
+            },
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": -0.15
+            },
+            "name": "Water Level",
+            "namespace": "CO-OPS datagetter water_level"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "metric",
+              "unit_namespace": "CO-OPS datagetter request parameter units",
+              "value": 0.02
+            },
+            "name": "Sigma",
+            "namespace": "CO-OPS datagetter water_level"
+          }
+        ],
+        "station_id": "0000001",
+        "station_namespace": "CO-OPS station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "CoopsRequest.time_zone gmt, the request parameter the response does not echo (research-station-text F05): each stamp is read as UTC",
+            "name": "gmt",
+            "stated_by": "caller"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "1f3d6f71-4a81-5891-aa91-d937862698ef"
+    ],
+    "residual": {
+      "data": {
+        "form": "csv",
+        "header": "Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality",
+        "request": {
+          "datum": "MLLW",
+          "interval": "6",
+          "lst_offset": null,
+          "product": "water_level",
+          "station": "0000001",
+          "time_zone": "gmt",
+          "units": "metric"
+        },
+        "row": [
+          "2026-04-28 06:12",
+          "-0.150",
+          "0.020",
+          "0",
+          "0",
+          "0",
+          "0",
+          "v"
+        ]
+      },
+      "namespace": "NOAA CO-OPS data API response (datagetter)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "coops_csv",
+      "adapter_version": "1.0.0",
+      "format_name": "NOAA CO-OPS data API response (datagetter)",
+      "format_version": "api.tidesandcurrents.noaa.gov/api/prod, read 2026-10-14",
+      "observed_at": "2026-04-28T06:12:00.000Z",
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "CO-OPS",
+      "transformations": [
+        "the request's time_zone is gmt, so each stamp is read as UTC",
+        "each value's decimal text is read as a binary floating-point number",
+        "each flag's decimal text is read as an integer"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0000001/water_level/MLLW/metric/6/2026-04-28T06:12:00.000Z",
+        "system": "CO-OPS"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-28T06:12:00.000Z",
+        "start": "2026-04-28T06:12:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "no position: the payload states none and no station table was supplied",
+      "site_class": "tide_gauge",
+      "valid_from_basis": "the earliest sample the response states"
+    },
+    "confidence": null,
+    "entity_id": "1f3d6f71-4a81-5891-aa91-d937862698ef",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "header": "Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality"
+      },
+      "namespace": "NOAA CO-OPS data API response (datagetter)"
+    },
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "coops_csv",
+      "adapter_version": "1.0.0",
+      "format_name": "NOAA CO-OPS data API response (datagetter)",
+      "format_version": "api.tidesandcurrents.noaa.gov/api/prod, read 2026-10-14",
+      "observed_at": "2026-04-28T06:00:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "CO-OPS",
+      "transformations": [
+        "the request's time_zone is gmt, so each stamp is read as UTC"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0000001",
+        "system": "CO-OPS"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-04-28T06:00:00.000Z",
+    "valid_to": null
+  }
+]

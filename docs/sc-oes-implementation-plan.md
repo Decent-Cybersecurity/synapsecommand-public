@@ -522,6 +522,10 @@ Two readings shape the content:
   `sc.air.air_track_observed.v1`, `sc.isr.threat_assessment_updated.v1` and
   `sc.mission.operational_impact_assessed.v1` as well. **The mapping table is ADR 0007's and not
   this plan's**, and ADR 0007 records why the air-track row moved off `TRACK_UPDATE`.
+  *(Dated correction, 2026-10-15: "seven members" was true of this plan's tree and is not of the
+  tree after CDM 3.2.0's landing, which appends an eighth, `ENVIRONMENTAL_OBSERVATION`, after
+  `SIM_RESULT` — see the CDM 3.2.0 landing record in `MIGRATIONS.md`. No governed type maps to it,
+  so the six `null`s and seven mappings above are unchanged.)*
 - **`payload_model` is already occupied for one entry.** `models.py:308`'s `PAYLOAD_MODELS` maps
   `EventType.GNSS_INTERFERENCE` to `GnssInterferencePayload` (`models.py:282`), which carries
   `frequency_band`, `interference_type` and `signal_strength_dbm`. §112 says "Reuse the existing

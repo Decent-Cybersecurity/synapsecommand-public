@@ -59,6 +59,18 @@ class PositionSource(StrEnum):
 
 
 class EventType(StrEnum):
+    """The broad legacy category of an `Event`. A separate axis from SC-OES's `EventClass`.
+
+    ENVIRONMENTAL_OBSERVATION was added on 2026-10-15, CDM 3.2.0 — a MINOR by MIGRATIONS.md's
+    table, since a member is added and none is removed, and appended last so that the published
+    enum's seven existing positions keep their values. It is an environmental measurement or
+    model product — a station reading, a radar sweep, a gridded field, an imagery product —
+    carried under a named payload contract that says which. It is NOT gap 20's detection: a
+    GMTI target report stays DETECTION, and FORMAT_COVERAGE.md's gap 20 stays open. It is NOT
+    SC-OES's `EventClass.OBSERVATION`, a semantic class on a different axis, and the longer name
+    exists so that the two are never read as two spellings of one fact. No governed SC-OES type
+    maps to it, and it re-labels no event any shipped adapter emits.
+    """
     DETECTION = "DETECTION"
     GNSS_INTERFERENCE = "GNSS_INTERFERENCE"
     TRACK_UPDATE = "TRACK_UPDATE"
@@ -66,6 +78,7 @@ class EventType(StrEnum):
     STATUS_CHANGE = "STATUS_CHANGE"
     PLAN_INJECT = "PLAN_INJECT"
     SIM_RESULT = "SIM_RESULT"
+    ENVIRONMENTAL_OBSERVATION = "ENVIRONMENTAL_OBSERVATION"
 
 
 class Severity(StrEnum):

@@ -814,6 +814,7 @@
         "system": "MIIS-PLATFORM-VIRTUAL"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

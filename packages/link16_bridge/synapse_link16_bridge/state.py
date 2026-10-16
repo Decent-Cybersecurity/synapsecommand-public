@@ -26,6 +26,7 @@ import json
 
 from synapse_link16_bridge import jsonstrict
 from synapse_link16_bridge.clock import parse_ms
+from synapse_link16_bridge.negotiate import Projection, dump
 from synapse_link16_bridge.store import (SQL_CONFLICT_INSERT, SQL_CURRENT_CONFLICT,
                                          SQL_CURRENT_GET, SQL_CURRENT_PUT, SQL_LAST_ROWID,
                                          SQL_OBSERVATION_INSERT, SQL_OUTBOX_INSERT,
@@ -49,16 +50,17 @@ def publish(store: Store, event_key: str, kind: str, payload: bytes, schema_vers
 
 
 def apply(store: Store, key: str, report: dict, objects: list, *, force_late: bool,
-          flags: list[str]) -> str | None:
+          flags: list[str], projection: Projection) -> str | None:
     """Record one accepted report inside the open transaction. Returns its state flag (`LATE`,
-    `REFRESH`, `CONFLICT`) or None when current state moved to it."""
+    `REFRESH`, `CONFLICT`) or None when current state moved to it. Every object is serialised
+    for the negotiated `projection` (`negotiate.dump`), the stored current Entity included."""
     record_id = report["record_id"]
     effective_at = parse_ms(report["effective_at"], "effective_at")
     position, motion = report["position"], report["kinematics"]
     pos_at = None if position is None else parse_ms(position["observed_at"], "position")
     kin_at = None if motion is None else parse_ms(motion["observed_at"], "kinematics")
     digest = state_sha256(report)
-    entity_payload = jsonstrict.canonical(objects[0].model_dump(mode="json"))
+    entity_payload = jsonstrict.canonical(dump(objects[0], projection))
     current = store.db.execute(SQL_CURRENT_GET, (key,)).fetchone()
     flag, conflict_id, late = None, None, 0
     if current is None and not force_late:
@@ -91,7 +93,7 @@ def apply(store: Store, key: str, report: dict, objects: list, *, force_late: bo
             store.db.execute(SQL_SAMPLE_CONFLICT, (key, pos_at, record_id, sample))
     event_flags = list(flags) + ([flag] if flag else [])
     for index, obj in enumerate(objects):
-        payload = jsonstrict.canonical(obj.model_dump(mode="json"))
+        payload = jsonstrict.canonical(dump(obj, projection))
         publish(store, f"{record_id}:{index}", "cdm", payload, obj.schema_version, event_flags)
     store.counter_add("accepted")
     if late:

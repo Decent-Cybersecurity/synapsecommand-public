@@ -14,12 +14,17 @@ schema version the installed `synapse-cdm` writes:
 Keyed on the installed number on purpose: while the tree's `SCHEMA_VERSION` still reads 3.0.0
 (between the landing and the release commit), a 3.0.0 sink is served the compatibility
 projection, which the frozen 3.0.0 contract accepts, and no SENSOR object is ever stamped 3.0.0 on
-its way to a sink.
+its way to a sink. The models carry the fields a later MINOR added (CDM 3.2.0's `Event.validity`
+and `Track.attributes`), so every object delivered under `COMPAT_3_0` is serialised by `dump`,
+which is `synapse_cdm.projection.dump_for(obj, "3.0.0")` there and the full `model_dump` under
+`FULL` (2026-10-15).
 """
 from __future__ import annotations
 
 import enum
+from typing import Any
 
+from synapse_cdm.projection import dump_for
 from synapse_cdm.version import SCHEMA_VERSION
 
 COMPAT = "3.0.0"
@@ -53,3 +58,10 @@ def adapter_schema(projection: Projection) -> str | None:
     if projection is Projection.COMPAT_3_0:
         return COMPAT
     raise ValueError("no projection was negotiated")
+
+
+def dump(obj, projection: Projection) -> dict[str, Any]:
+    """The JSON form of a CDM object as the negotiated sink reads it: the full `model_dump` under
+    `FULL`, the frozen contract's projection (`dump_for`) under `COMPAT_3_0`."""
+    target = adapter_schema(projection)
+    return obj.model_dump(mode="json") if target is None else dump_for(obj, target)

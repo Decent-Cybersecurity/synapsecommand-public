@@ -830,6 +830,7 @@
         "system": "MIIS-WINDOW-INCLUDED"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

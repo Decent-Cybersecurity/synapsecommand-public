@@ -1,0 +1,213 @@
+{
+  "directory": "readsb_trace/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "crc_mismatch.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "deflate_data_corrupt.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_key.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "empty_trace.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "fewer_than_nine_elements.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "flags_outside_four_bits.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ground_outside_element_three.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "inflates_past_the_bound.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "latitude_out_of_range.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "lone_surrogate_in_version.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "longitude_out_of_range.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nan_literal.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "negative_offset.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_gzip.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "offsets_not_monotonic.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "timestamp_not_a_number.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "timestamp_past_a_double.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trailing_octets_after_the_member.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_gzip.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_json.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_position_source.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_top_level_key.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "uppercase_address.trace",
+      "operational_data": false,
+      "origin": "Synthetic malformed readsb trace written on 2026-10-15 by fixtures/readsb_trace/spec/build_fixtures.py, from a literal in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "readsb_trace/spec/readsb_trace_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

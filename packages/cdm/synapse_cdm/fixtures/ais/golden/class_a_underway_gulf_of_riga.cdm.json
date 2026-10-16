@@ -133,6 +133,7 @@
         "system": "AIS"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

@@ -459,11 +459,34 @@ def test_the_documented_gaps_are_still_gaps():
             "here, a parallel per-sample structure on Track, or deciding that a rich track point "
             "is an Event with a position."
         )
-    assert "attributes" not in models.Track.model_fields, (
-        "gap 16 appears to be closed on Track — update FORMAT_COVERAGE.md, MIGRATIONS.md and the "
-        "Legion envelope rows, which park a page's crs and paging on the owning Entity today "
-        "precisely because Track has no bag."
+    # Gap 16's TRACK half closed on 2026-10-15, CDM 3.2.0: `Track.attributes` is the typed
+    # completeness block, so this assertion turned from "absent" into "present, and exactly this
+    # shape". The block is pinned field by field and `extra="forbid"` is pinned too, because a
+    # quietly relaxed block is a bag nobody ruled on. The documents are held with it: the gap
+    # entry and the Legion rows say the Track half is closed and Legion still parks on the Entity,
+    # and the proposal bullet in MIGRATIONS.md says when it was implemented. The TrackSample half
+    # above stays open.
+    track_attributes = models.Track.model_fields.get("attributes")
+    assert track_attributes is not None and not track_attributes.is_required(), (
+        "Track.attributes was removed or made required — that is a MAJOR, and gap 16's Track half "
+        "would reopen with it."
     )
+    assert _unwrap(track_attributes.annotation) is models.TrackAttributes
+    assert models.TrackAttributes.model_config["extra"] == "forbid", (
+        "TrackAttributes no longer forbids unknown keys, which makes it a bag. That is the one-line "
+        "relaxation U-04 kept open for a ruling; write the ruling down with it."
+    )
+    assert set(models.TrackAttributes.model_fields) == {"completeness"}
+    assert set(models.TrackCompleteness.model_fields) == {
+        "carried_samples", "stated_samples", "fragment", "completeness_basis"}
+    coverage = _flat(DOC.read_text())
+    assert ("The Track half of this gap was closed on 2026-10-15, CDM 3.2.0, by "
+            "`Track.attributes.completeness`") in coverage
+    assert ("Dated 2026-10-15: CDM 3.2.0 adds `Track.attributes`, a typed completeness block, and "
+            "this adapter keeps parking these figures on the Entity") in coverage
+    migrations = _flat((DOC.parent / "MIGRATIONS.md").read_text())
+    assert ("**Implemented 2026-10-15, CDM 3.2.0:** `Track.attributes` is the typed completeness "
+            "block") in migrations
 
     # Gap 17, state-vector uncertainty. Asserted on Position and Kinematics because a covariance
     # would hang off one of them, and the gap says both plus gap 6 have to be designed together.

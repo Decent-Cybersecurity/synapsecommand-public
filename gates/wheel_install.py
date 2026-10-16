@@ -38,8 +38,8 @@ repository. Every check below is a property of the installed artefact:
     schemas    the published schemas can be regenerated and re-checked from anywhere
     harness    every adapter the tree registers replays green with no --fixtures argument
                at all — the roster derived, never a count typed here
-    scripts    the cdm-harness, cdm-schemas, cdm-conformance, synapse and synapse-dis7 entry
-               points work, the last one read as bytes
+    scripts    the cdm-harness, cdm-schemas, cdm-conformance, synapse, synapse-dis7 and
+               synapse-decode entry points work, the last two read as bytes
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package
 
@@ -262,6 +262,29 @@ PACKAGE_ONLY_TESTS = (
     # `test_cdm_link16_gateway_identity.py` is package-only (2026-10-10): the adapter and its
     # packaged fixtures are all it reads.
     "test_cdm_link16_gateway_identity.py",
+    # `test_cdm_decode_host.py` is package-only (2026-10-15, the observation arc's shared layer):
+    # it runs `python -m synapse_cdm.decode_host` with the interpreter under test, reads the DIS 7
+    # vectors through `synapse_cdm.__file__` and writes only under `tmp_path`, so against a wheel
+    # it exercises the host command a consumer got.
+    "test_cdm_decode_host.py",
+    # `test_cdm_readsb_trace_adapter.py` is package-only (2026-10-15, the NYC observations arc): it
+    # reads the adapter, its packaged fixtures under `fixtures/readsb_trace/` and the `adsb`
+    # fixtures it compares identities with, and runs the packaged builder's `--check`, all through
+    # `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_readsb_trace_adapter.py",
+    # `test_cdm_nexrad2_adapter.py` is package-only (2026-10-15, the NYC observations arc): it
+    # reads the adapter, its packaged fixtures, twins and goldens under `fixtures/nexrad2/`, loads
+    # the packaged builder in memory to build refused volumes and runs its `--check`, all through
+    # `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_nexrad2_adapter.py",
+    # The three station-text adapters' modules are package-only (2026-10-15, the NYC observations
+    # arc): each reads its adapter, its packaged fixtures, twins and goldens under
+    # `fixtures/ndbc_stdmet/`, `fixtures/coops_csv/` or `fixtures/airnow_hourly/` and runs the
+    # packaged builder's `--check`, all through `synapse_cdm.__file__`, writing only under
+    # `tmp_path`.
+    "test_cdm_ndbc_stdmet_adapter.py",
+    "test_cdm_coops_csv_adapter.py",
+    "test_cdm_airnow_hourly_adapter.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -337,6 +360,11 @@ REPO_BOUND_TESTS = {
     "test_cdm_tacticalapi_contract_text.py": "gates/tacticalapi_contract_comments.py, tests/tacticalapi_comment_digests.json, docs/tacticalapi-implementation.md and the repository's NOTICE, read as the repository's own files, with the module sets of three other test modules — none of them ships in the wheel",
     # Added 2026-10-10 (the Link 16 gateway arc).
     "test_cdm_link16_gateway_mapping.py": "tests/frozen/cdm/3.0.0/ and the published schemas/link16_gateway/ at the repository root, neither of which the wheel carries",
+    # Added 2026-10-15 (the CDM 3.2.0 landing of the observation carrier).
+    "test_cdm_observation_carrier.py": "tests/frozen/cdm/3.0.0/ and the published schemas/ at the repository root — the module holds the new member, Event.validity and Track.attributes to the published files and shows the frozen 3.0.0 contract refusing them, and the wheel carries neither directory",
+    "test_cdm_projection.py": "tests/frozen/cdm/3.0.0/ and the published schemas/ at the repository root — the module derives synapse_cdm.projection's ledger from the two and holds dump_for's output to the frozen 3.0.0 contract, and the wheel carries neither directory",
+    # Added 2026-10-15 (the observation arc's shared layer).
+    "test_cdm_observation_contracts.py": "schemas/observation/ at the repository root — the module holds the four published contract schemas to the models and validates its literals with them, and the wheel carries the generator, not the files",
 }
 
 def source_roster() -> tuple[str, ...]:
@@ -673,7 +701,23 @@ def check_schemas(python: pathlib.Path, outside: pathlib.Path,
     if differing:
         raise Failed(f"the schemas generated from the installed package differ from the "
                      f"published ones: {differing}")
-    return f"{len(written)} schemas regenerated from outside the repo, byte-identical"
+    # The observation contracts' schemas (2026-10-15) are the same claim for a second generator:
+    # written from outside the repository, then compared with `schemas/observation/`.
+    observation = outside / "observation-schemas"
+    must(run([str(python), "-m", "synapse_cdm.observation_contracts", "--out", str(observation)],
+             cwd=outside), "python -m synapse_cdm.observation_contracts")
+    verdict = must(run([str(python), "-m", "synapse_cdm.observation_contracts", "--check",
+                        "--out", str(observation)], cwd=outside), "observation_contracts --check")
+    if "CURRENT" not in verdict:
+        raise Failed(f"observation_contracts --check did not report CURRENT: {verdict.strip()}")
+    contracts = sorted((REPO / "schemas" / "observation").glob("*.schema.json"))
+    regenerated = sorted(observation.glob("*.schema.json"))
+    if [p.name for p in contracts] != [p.name for p in regenerated] or any(
+            a.read_bytes() != b.read_bytes() for a, b in zip(contracts, regenerated)):
+        raise Failed("the observation contract schemas generated from the installed package are "
+                     "not the published ones in schemas/observation/")
+    return (f"{len(written)} schemas and {len(regenerated)} observation contract schemas "
+            "regenerated from outside the repo, byte-identical")
 
 
 def check_harness(python: pathlib.Path, outside: pathlib.Path,
@@ -787,6 +831,64 @@ def check_dis7_script(scripts: pathlib.Path, outside: pathlib.Path) -> str:
             "byte-exact), exit classes 0, 2, 3 and 4")
 
 
+def check_decode_script(scripts: pathlib.Path, outside: pathlib.Path) -> str:
+    """`synapse-decode` from the clean venv (2026-10-15), on the DIS 7 vector the WHEEL carries.
+
+    The decode is held byte for byte to `synapse-dis7 decode` of the same file with the same
+    context — the generic host and the adapter's own host inject the same values, so they must
+    write the same octets — and the exit classes 2, 3 and 4 are each produced once. Like the DIS 7
+    check, every call goes through `run_bytes` and a failure reports stderr, never stdout.
+    """
+    tool = str(scripts / "synapse-decode")
+
+    def fail(step: str, result: subprocess.CompletedProcess, why: str) -> Failed:
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()[-800:]
+        return Failed(f"synapse-decode {step}: {why} (exit {result.returncode})\n"
+                      f"      stderr: {stderr}")
+
+    vectors = pathlib.Path(must(run([str(scripts / "python"), "-c",
+                                     "import pathlib, synapse_cdm; print(pathlib.Path("
+                                     "synapse_cdm.__file__).parent / 'fixtures' / 'dis7' / "
+                                     "'vectors')"], cwd=outside),
+                                "locating the packaged DIS 7 vectors").strip())
+    source = vectors / "equator_eastbound.dis"
+    context = json.loads((vectors / "equator_eastbound.context.json").read_text())
+    flags = ["--at", context["time_context"]["instant"],
+             "--basis=" + context["time_context"]["basis"], "--session", context["session"],
+             "--synthetic"]
+    package_version = must(run([str(scripts / "python"), "-c",
+                                "from synapse_cdm.version import PACKAGE_VERSION; "
+                                "print(PACKAGE_VERSION)"], cwd=outside),
+                           "reading the installed PACKAGE_VERSION").strip()
+
+    result = run_bytes([tool, "--version"], cwd=outside)
+    if result.returncode != 0 or package_version.encode() not in result.stdout:
+        raise fail("--version", result, f"did not exit 0 reporting {package_version}")
+    result = run_bytes([tool, "list"], cwd=outside)
+    if result.returncode != 0 or not result.stdout.startswith(b"dis7 "):
+        raise fail("list", result, "did not exit 0 listing dis7 first")
+
+    decode = [tool, "decode", "--adapter", "dis7", *flags]
+    result = run_bytes(decode + ["--input", str(source)], cwd=outside)
+    reference = run_bytes([str(scripts / "synapse-dis7"), "decode", *flags,
+                           "--input", str(source)], cwd=outside)
+    if result.returncode != 0 or not result.stdout or result.stdout != reference.stdout:
+        raise fail("decode", result, "did not exit 0 with the octets synapse-dis7 writes")
+    decoded = len(result.stdout)
+
+    result = run_bytes(decode + ["--input", str(source), "--sha256", "0" * 64], cwd=outside)
+    if result.returncode != 3 or result.stdout != b"":
+        raise fail("decode with another digest", result, "is not exit 3 with nothing on stdout")
+    result = run_bytes(decode + ["--input", "https://example.invalid/a.dis"], cwd=outside)
+    if result.returncode != 2 or result.stdout != b"":
+        raise fail("decode of a URL", result, "is not exit 2 with nothing on stdout")
+    result = run_bytes(decode + ["--input", str(outside / "decode-absent.dis")], cwd=outside)
+    if result.returncode != 4 or result.stdout != b"":
+        raise fail("decode of an absent file", result, "is not exit 4 with nothing on stdout")
+    return (f"synapse-decode --version, list and decode ({decoded} octets equal to "
+            "synapse-dis7's), exit classes 0, 2, 3 and 4")
+
+
 def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
                           schema_dir: pathlib.Path) -> str:
     must(run([str(scripts / "cdm-harness"), "--adapter", "pntmap", "--json"], cwd=outside),
@@ -816,7 +918,9 @@ def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
     must(run([str(scripts / "synapse"), "conformance", "list"], cwd=outside),
          "synapse conformance list")
     check_dis7_script(scripts, outside)
-    return "cdm-harness, cdm-schemas, cdm-conformance, synapse and synapse-dis7 all run"
+    check_decode_script(scripts, outside)
+    return ("cdm-harness, cdm-schemas, cdm-conformance, synapse, synapse-dis7 and synapse-decode "
+            "all run")
 
 
 def check_slice_closure() -> str:

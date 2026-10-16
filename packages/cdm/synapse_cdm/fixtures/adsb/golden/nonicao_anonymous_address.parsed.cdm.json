@@ -115,6 +115,7 @@
         "system": "ADSB_NONICAO"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

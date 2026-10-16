@@ -240,7 +240,8 @@
         "system": "CAT048_REPORT"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -483,6 +484,7 @@
         "system": "CAT048_REPORT"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

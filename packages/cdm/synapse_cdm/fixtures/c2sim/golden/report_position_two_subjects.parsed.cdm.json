@@ -110,7 +110,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "4fb3011f-4bb6-5619-8c5b-9e8b8b4a9a2e",
@@ -211,6 +212,7 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

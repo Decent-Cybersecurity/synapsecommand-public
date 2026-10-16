@@ -815,6 +815,7 @@
         "system": "MIIS-SENSOR-PHYSICAL"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

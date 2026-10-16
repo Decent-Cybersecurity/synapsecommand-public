@@ -17,7 +17,7 @@ description: "JSON Schema reference for CDMObject (the union)."
 | Source file | `schemas/cdm_object.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:3.1.0:cdm_object` |
 | CDM schema version | `3.1.0` |
-| SHA-256 of source | `b5d7b3c58ccad0c752f92dbc1566cb36308bc0ee6fc69ffbe901ef5495a09b41` |
+| SHA-256 of source | `8dee39aa198956bbb68ffe3cef9f4f349946c7c3cd06b707e60c8de04f7daf03` |
 
 ## The union
 
@@ -192,6 +192,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
+| `validity` | [TemporalValidity](#temporalvalidity) \| null | no | The times the source states about what this event reports (§27), on PlanObject.validity's precedent. Every interval is `effective`: an instant sets end == start, and end = None is open-ended, never 'unknown'. `observed_at` above is the END of the sensing interval for an observation and the REFERENCE time for a model product, never a future valid instant. None = the source states none. Added 2026-10-15, CDM 3.2.0. Default `null`. |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
@@ -260,6 +261,18 @@ member rather than a null wherever the enum has one.
 
 ### EventType
 
+The broad legacy category of an `Event`. A separate axis from SC-OES's `EventClass`.
+
+ENVIRONMENTAL_OBSERVATION was added on 2026-10-15, CDM 3.2.0 — a MINOR by MIGRATIONS.md's
+table, since a member is added and none is removed, and appended last so that the published
+enum's seven existing positions keep their values. It is an environmental measurement or
+model product — a station reading, a radar sweep, a gridded field, an imagery product —
+carried under a named payload contract that says which. It is NOT gap 20's detection: a
+GMTI target report stays DETECTION, and FORMAT_COVERAGE.md's gap 20 stays open. It is NOT
+SC-OES's `EventClass.OBSERVATION`, a semantic class on a different axis, and the longer name
+exists so that the two are never read as two spellings of one fact. No governed SC-OES type
+maps to it, and it re-labels no event any shipped adapter emits.
+
 Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
 
 member rather than a null wherever the enum has one.
@@ -273,6 +286,7 @@ member rather than a null wherever the enum has one.
 | `STATUS_CHANGE` |
 | `PLAN_INJECT` |
 | `SIM_RESULT` |
+| `ENVIRONMENTAL_OBSERVATION` |
 
 ### EvidenceKind
 
@@ -904,6 +918,7 @@ rejecting it would refuse legitimate multi-source data.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
+| `attributes` | [TrackAttributes](#trackattributes) \| null | no | The typed block for what a Track states about itself — today, how complete a history it is. None = nothing stated. Added 2026-10-15, CDM 3.2.0. Default `null`. |
 | `entity_id` | string (uuid) | **yes** | The Entity this history belongs to. |
 | `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `object_kind` | `"track"` | no |  |
@@ -916,6 +931,60 @@ rejecting it would refuse legitimate multi-source data.
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
 | `track_id` | string (uuid) | **yes** |  |
 | `track_quality` | number \| null | no | 0..1. None = not assessed, never 0. Default `null`. (≥ 0; ≤ 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TrackAttributes
+
+The typed block on `Track.attributes` (CDM 3.2.0, 2026-10-15). Today it holds one thing.
+
+`extra="forbid"` is the decision, and it is one line on purpose. Every other canonical object
+has an open bag — `Entity.attributes`, `Event.payload` — and Track's block is typed instead
+because the one question every paginated or windowed source asks of a Track is a completeness
+question, and a typed answer is one a consumer can read without knowing which adapter wrote
+it. Should the bag be the ruling instead, relaxing `extra` to "allow" is the whole change:
+`completeness` stays typed and other keys ride beside it.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `completeness` | [TrackCompleteness](#trackcompleteness) \| null | no | How much of the history this Track holds. None = the adapter states nothing about it. Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TrackCompleteness
+
+How much of a history this Track holds, stated on the Track itself.
+
+A Track built from one page, one window or one file of a longer history is a FRAGMENT, and a
+consumer that cannot tell a fragment from a whole history will compute a speed across a gap it
+does not know is there. Until 2026-10-15 the figures that answer "how much of this is here"
+could ride only on the owning Entity, keyed by `track_id`, because Track had nowhere to put
+them, and a consumer holding only the Track could not read them; the Legion adapter still
+parks them there, since no shipped adapter is re-labelled by this block. FORMAT_COVERAGE.md's
+gap 16 records the problem, and this block closes its Track half.
+
+Three figures and a basis, and each of the three keeps "the source does not say" apart from a
+value. `carried_samples` is never in doubt — it is counted — and it must equal the length of
+the Track's `samples`, so the block cannot describe a different list from the one it rides on.
+`stated_samples` is the source's own total and is None when the source states none, never 0.
+`fragment` is None when the adapter cannot tell, never False: "we cannot tell" and "we can
+tell it is whole" are different answers. There is no per-sample field here, on purpose: gap
+16's TrackSample half stays open.
+
+Two bounds were tightened on 2026-10-15, before the block shipped: `stated_samples` is at
+least 1, so "never 0" is held rather than only said, and `completeness_basis` must hold a
+character that is not whitespace, the pattern `\S`, read by Python's `re` here (the
+engine the published schema's Python validator uses), so the model and the schema refuse the
+same blank strings — a basis of spaces states nothing.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `carried_samples` | integer | **yes** | How many samples this Track carries. Equal to len(samples), which the Track validates. (≥ 1) |
+| `completeness_basis` | string | **yes** | Why the figures above are what they are: which source fields they were read from, or that the source states none. Required and not blank, as every `*_basis` is. (pattern `\S`; min length 1) |
+| `fragment` | boolean \| null | no | True = the source shows this Track is part of a longer history; False = it shows this is the whole of it; None = the adapter cannot tell, never False. Default `null`. |
+| `stated_samples` | integer \| null | no | How many samples the SOURCE states the whole history holds, at least 1. None = the source states no total, never 0. Default `null`. (≥ 1) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).

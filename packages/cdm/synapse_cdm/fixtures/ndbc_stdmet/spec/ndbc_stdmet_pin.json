@@ -1,0 +1,57 @@
+{
+  "what_this_is": "The pin record of the ndbc_stdmet adapter: the two NDBC documents its format and its quality-flag reading rest on, each as a held PDF identified by SHA-256, byte count and page count under PIN_SUFFIXES and never carried in the index (DECISIONS U-08: .gitignore keeps every PDF out of a working tree, so the pin-presence test skips wherever the document is not held); the HTML page it is read beside, cited by URL; the licence reading behind the adapter's class; and how the synthetic fixture set is built.",
+  "adapter": {
+    "name": "ndbc_stdmet",
+    "ordinal": 26,
+    "direction": "ingest",
+    "fixture_directory": "ndbc_stdmet"
+  },
+  "standards": [
+    {
+      "document": "NDBC Web Data Guide, Version 2.0, June 2023",
+      "read_for": "the standard meteorological data type, its file names (station_id.datatype) and the realtime, monthly and historical generations of a stdmet file (research-station-text F01, F18)",
+      "publisher": "NOAA NWS National Data Buoy Center, a US Government agency",
+      "url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
+      "local_path": "fixtures/ndbc_stdmet/spec/ndbc_web_data_guide.pdf",
+      "sha256": "13b3e07fc82e2ecf65ec1ca3f614bd180a97cc8ec3519238ab403ca0ede5ec26",
+      "bytes": 415252,
+      "pages": 15,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "NDBC Technical Document 23-01 (T80-10), Handbook of Automated Data Quality Control Checks and Procedures, December 2023",
+      "read_for": "why a stdmet file carries no per-value quality flag: hard-flagged values are withheld from public release, soft flags are not printed, and the flags reach only the NOAA archive (research-station-text F12)",
+      "publisher": "NOAA NWS National Data Buoy Center, a US Government agency",
+      "url": "https://www.ndbc.noaa.gov/publications/NDBCHandbookofAutomatedDataQualityControl2023.pdf",
+      "local_path": "fixtures/ndbc_stdmet/spec/ndbc_qc_handbook_2023.pdf",
+      "sha256": "dce4e2214d0c99989e6cb655002bcb1a76e9418d6585cac7d7d1628caf70897f",
+      "bytes": 819313,
+      "pages": 50,
+      "read_on": "2026-10-14"
+    }
+  ],
+  "measured": "The SHA-256, the byte counts and the page counts were measured on 2026-10-15 from the design record's copies fetched on 2026-10-14 (research-station-text, its work directory): the digest with shasum -a 256, the size from the file system and the page count from the document's own page tree as pdfinfo reads it. Nothing was fetched for this record. A PDF is never carried in the index; a maintainer who holds the documents places them at their local_path and the pin gate checks them there.",
+  "cited": [
+    {
+      "document": "NDBC measurement descriptions and units (faq/measdes.shtml)",
+      "read_for": "the column names and units of a stdmet file, 'Times are in UTC', MM in realtime files and a run of 9s in historical files, 'PTDY is not in Historical files', VIS in nautical miles and TIDE in feet relative to MLLW (research-station-text F01, F02, F15, F16)",
+      "url": "https://www.ndbc.noaa.gov/faq/measdes.shtml",
+      "carried_here": false,
+      "digest": "not stated: the design record holds no copy of this HTML page, so no SHA-256 was measured and none is claimed; the 3.5.0 release readiness list carries the reading for the maintainer (open question in reports/R4-build.md)",
+      "read_on": "2026-10-14"
+    }
+  ],
+  "not_pinned_here": "The station page, activestations.xml and latest_obs.txt state a station's position; the adapter reads none of them (joining two payloads is fusion), and a position comes only from the caller's StationTable.",
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "NDBC is a National Weather Service centre (the T80-10 title block), and the NWS states its information public domain unless specifically noted otherwise, usable for any lawful purpose if not claimed as one's own and not modified and presented as official (weather.gov/disclaimer; research-station-text F11). No NDBC-specific terms page was found. That is the repository's PUBLIC_GOVERNMENT class.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "NDBC's files are public; none enters this tree. The fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only): no row of any station's file, not a value, is used.",
+  "fixtures_are_synthetic": "Every payload under fixtures/ndbc_stdmet/ and its malformed/ directory is built by spec/build_fixtures.py from a literal token table in that script, written on 2026-10-15 for this adapter. The station is EX001, a stdmet file states no station and no position, the days are 1998-06-15, 2004-09-01, 2025-11-03 and 2026-04-28, and every value is written in the script.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "text": "ASCII, every column padded to its widest token and joined with one space, LF line ends; the twin is json.dumps(indent=2, ensure_ascii=True) of the same token lists. Nothing depends on a library version."
+  }
+}

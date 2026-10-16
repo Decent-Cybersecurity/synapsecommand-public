@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-two adapters
-cannot grow twenty-two slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-seven adapters
+cannot grow twenty-seven slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2086,6 +2086,12 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('docs/soif-part1-release-readiness.md',
      'the roster **538 verdicts, 0 failed**, the same fourteen adapters in the same two directions as',
      'the §57 readiness report the 2.1.2 release was certified on — a dated certification of that tree, which `tests/test_cdm_readiness.py` holds to the release it names'),
+    # ADDED 2026-10-16 (the NYC observations arc, replayed onto `v3.4.0`): the report's 3.4.0
+    # release status reads the release tree's manifests check over the twenty-two adapters it
+    # shipped; it was the roster until the replay put five more in the tree.
+    ('docs/soif-part1-release-readiness.md',
+     'CURRENT at 3.1.0, `manifests --check` CURRENT for the twenty-two shipped adapters, the support-matrix',
+     'the readiness record of the 3.4.0 release tree — a dated reading of that tree, which shipped twenty-two adapters; the five that landed after `v3.4.0` are in no release'),
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      "`fixtures/*/golden/` (every `.cdm.json` and `.parsed.cdm.json` the fourteen adapters' harness runs write, moved at",
      'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
@@ -2372,6 +2378,28 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      'and the two comments the arc moved to twenty-one adapters)',
      'a dated round record in the history: what that round measured or ruled on the roster of its own day, kept as written because a later round annotates rather than tidies'),
+    # ADDED 2026-10-15 (the NYC observations arc, `readsb_trace`, `nexrad2`, `ndbc_stdmet`,
+    # `coops_csv` and `airnow_hourly`), the Link 16 landing's shape again, and re-read on
+    # 2026-10-16 when the arc was replayed onto `v3.4.0`. Four rows exempt RELEASE_NOTES.md's
+    # roster counts while the notes describe the 3.4.0 artefact (a roster of twenty-two) beside
+    # five rows marked as postdating it; the release commit that carries the five retires them.
+    # One more permanent row below: MIGRATIONS.md's record of the CDM 3.2.0 landing says how
+    # many adapters that round re-wrote goldens for.
+    ('RELEASE_NOTES.md',
+     'synapse_cdm.manifests --check` reads `CURRENT: manifests vs 22 shipped adapters at manifest schema 2.1.0`.',
+     "named subset — the roster OF the released version these notes describe; readsb_trace, nexrad2, ndbc_stdmet, coops_csv and airnow_hourly are the rows marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     '# Twenty-two adapters at 3.4.0, all harness-verified — and five more',
+     "named subset — the roster OF the released version these notes describe; readsb_trace, nexrad2, ndbc_stdmet, coops_csv and airnow_hourly are the rows marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'At `v3.4.0` `python -m synapse_cdm.harness --list-adapters` prints `22 adapters registered`.',
+     "named subset — the roster OF the released version these notes describe; readsb_trace, nexrad2, ndbc_stdmet, coops_csv and airnow_hourly are the rows marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('RELEASE_NOTES.md',
+     'read `22 adapters, 633 fixture files` and `22 adapters x 2 schema modes, 1222 fixture verdicts, 0 failed`',
+     "named subset — the roster OF the released version these notes describe; readsb_trace, nexrad2, ndbc_stdmet, coops_csv and airnow_hourly are the rows marked as postdating it in the same table, in no release. Retire this row with the next release's notes"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     '--update-golden` for all twenty-two adapters and read, each moving by `"validity": null`',
+     'a dated round record of the CDM 3.2.0 landing (2026-10-15): the goldens it re-wrote were those of the twenty-two adapters registered that day, and `readsb_trace` landed after it with goldens written once; kept as written because a later round annotates rather than tidies'),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),
@@ -2646,8 +2674,13 @@ def test_the_divergent_fixture_dirs_are_what_the_registry_declares():
     divergent = {name for name, cls in shipped.items() if cls.fixture_dir is not None}
     same = len(shipped) - len(divergent)
     note = flat(COMMENT_MARKER.sub("", (PKG / "adapter.py").read_text()))
+    # WIDENED 2026-10-15 (the NYC observations arc, `readsb_trace`): the count of adapters that
+    # leave `fixture_dir` unset reached twenty-one, the first hyphenated value it has taken, and
+    # `[a-z]+` could not read it; it now takes `ROSTER_WORD`, the grammar the roster half of the
+    # same sentence already used. Measured on the arc's R1 tree before the edit: both patterns
+    # read "twenty" and "twenty-two" off the note there, so no earlier reading moved.
     match = re.search(
-        rf"which is true of (?P<n>[a-z]+) of the (?P<roster>{ROSTER_WORD}) shipped adapters — "
+        rf"which is true of (?P<n>{ROSTER_WORD}) of the (?P<roster>{ROSTER_WORD}) shipped adapters — "
         r"(?P<list>.*?), and the split below",
         note)
     assert match, (

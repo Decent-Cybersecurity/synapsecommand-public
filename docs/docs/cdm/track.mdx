@@ -56,6 +56,25 @@ look similar and translate to genuinely different CDM values. Collapsing them ei
 assessment nobody made or discards the worst-quality signal a sensor can send.
 :::
 
+## `attributes` — how complete a history this is (CDM 3.2.0)
+
+A `Track` built from one page, one window or one file of a longer history is a **fragment**, and a
+consumer that cannot tell a fragment from a whole history will compute a speed across a gap it
+does not know is there. `attributes` is a typed block — `extra="forbid"`, so it is not a bag —
+whose one member says how complete the history is:
+
+| `attributes.completeness` | Means |
+| --- | --- |
+| `carried_samples` | how many samples this `Track` carries — always equal to `len(samples)`, which the model checks |
+| `stated_samples` | how many the **source** says the whole history holds, at least `1`; `null` when it says nothing, never `0` (a `0` is refused) |
+| `fragment` | `true` part of a longer history, `false` the whole of it, `null` when the adapter cannot tell — never `false` for "cannot tell" |
+| `completeness_basis` | the adapter's reason, in words: which source fields the figures came from, or that there were none; required, and refused when blank (the pattern `\S`: at least one character that is not whitespace) |
+
+`attributes` is `null` when the adapter states nothing. No adapter that shipped before CDM 3.2.0
+was re-labelled by the block: the Legion adapter still parks its completeness figures on the
+`Entity` the track belongs to. There is still no per-sample field — a `TrackSample` is a position
+and an instant, and nothing else.
+
 ## `track_id` and `entity_id` — two identifiers, one object
 
 `entity_id` is the entity this history belongs to. `track_id` is the history itself.

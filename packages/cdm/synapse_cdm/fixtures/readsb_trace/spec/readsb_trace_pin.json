@@ -1,0 +1,49 @@
+{
+  "what_this_is": "The pin record of the readsb_trace adapter: the document its format is read from, cited by URL, SHA-256 and byte count and NOT carried; the two facts the document does not state, with the source lines that state them; the licence reading behind the adapter's class; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: gates/pin_paths.py's corpus is the pinned documents this tree carries, and this one is carried nowhere in it.",
+  "adapter": {
+    "name": "readsb_trace",
+    "ordinal": 24,
+    "direction": "ingest",
+    "fixture_directory": "readsb_trace"
+  },
+  "standard": {
+    "document": "readsb README-json.md, the section \"trace jsons\" (lines 210 to 267 of the file at the tag below), the only documentation of the trace format",
+    "publisher": "readsb (wiedehopf/readsb on GitHub), a free program",
+    "url": "https://raw.githubusercontent.com/wiedehopf/readsb/v3.16.17/README-json.md",
+    "tag": "v3.16.17",
+    "tag_commit": "094720939c01943de82b14df6f42f67fff1cd514",
+    "tag_committed": "2026-09-27T10:20:44Z",
+    "sha256": "abb581d94e5c12e52d45cd8f9096a250ee99cb4f84926e3217f5003c8d242b30",
+    "bytes": 22058,
+    "lines": 349,
+    "carried_here": false,
+    "why_not_carried": "The README is the documentation of a GPL-3.0-or-later program and is retrievable at one URL per tag; carrying a copy would put a third party's text into an Apache-2.0 tree and pin nothing the URL and the digest do not. The adapter cites the element numbers and the flag bits it reads, never the text.",
+    "read_on": "2026-10-14",
+    "measured": "the SHA-256 and the byte and line counts were measured on 2026-10-15 from the design record's copy fetched on 2026-10-14 (the dev branch and the v3.16.17 tag were byte-identical that day, research-readsb-globe-history F7); nothing was fetched for this record"
+  },
+  "code_only_facts": [
+    {
+      "fact": "every trace header carries \"version\": \"readsb <version> <commit>\", which the README does not show",
+      "source": "json_out.c line 1834 at tag v3.16.17",
+      "url": "https://github.com/wiedehopf/readsb/blob/v3.16.17/json_out.c#L1834"
+    },
+    {
+      "fact": "in a permanent (globe_history) trace the header's timestamp is the UTC midnight that opened the day and element 0 counts seconds after it; a live trace's reference is its first point (the README's own example), so the adapter adds element 0 to timestamp and assumes neither",
+      "source": "globe_index.c lines 596 to 603 and 659 to 663, json_out.c lines 1448, 1449 and 1836, at tag v3.16.17",
+      "url": "https://github.com/wiedehopf/readsb/blob/v3.16.17/globe_index.c#L596-L603"
+    }
+  ],
+  "licence": {
+    "license_class": "OPEN",
+    "reading": "DECISIONS L-10 (2026-10-15): the README is cited by reference only, never carried, and recorded under the class the tree's nearest by-reference precedent records, the geojson adapter's OPEN for an RFC cited by URL (fixtures/geojson/spec/geojson_pin.json). The project that owns the document is named here: readsb, whose LICENSE states it is licensed under the GPL, v3 or any later version (research-readsb-globe-history F7). That licence governs readsb's code and works based on it; this adapter is an independent reader of readsb's output written from the README's field order, copies no readsb code and ports no function of it. The 3.5.0 release round's readiness report lists this reading for the maintainer's confirmation.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "The trace files adsb.lol publishes are licensed ODbL 1.0, and ADS-B Exchange serves the same format under its own reserved terms (research-readsb-globe-history F5, F12). No record from either, not a point, enters this tree: the fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only), so no ODbL notice is owed.",
+  "fixtures_are_synthetic": "Every payload under fixtures/readsb_trace/ and its malformed/ directory is built by spec/build_fixtures.py from a literal in that script, written on 2026-10-15 for this adapter. Addresses are in the 0029xx block below the ICAO allocation table's lowest state block (the adsb fixtures' convention), callsigns begin EX, positions are inside the Baltic rectangle of CONTRIBUTING.md, the readsb version string names commit 0000000, and no file states a registration, a type, an owner or a year.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "gzip": "one member per file, assembled by the script: the ten-octet header 1f 8b 08 00 00 00 00 00 02 03 (no name, modification time 0, XFL 2, OS 3), the raw deflate stream from zlib at level 9 with a 15-bit window and memory level 8, then CRC-32 and length, little-endian",
+    "zlib": "1.2.12, the zlib.ZLIB_RUNTIME_VERSION of CPython 3.11.15, 3.12.13 and 3.14.7 on the machine that wrote the set on 2026-10-15; --check printed CURRENT under all three. A zlib that deflates differently is a new reading of this record, not a defect"
+  }
+}

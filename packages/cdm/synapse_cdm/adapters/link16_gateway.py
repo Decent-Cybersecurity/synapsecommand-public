@@ -41,7 +41,10 @@ asks for `alt_m` whenever the height is ellipsoidal.
 `cdm_schema="3.0.0"` selects the compatibility projection: a report whose position method is
 SENSOR or UNKNOWN (CDM 3.1.0 members) yields an Entity with no position and no Track, the
 transformation `POSITION_NOT_PROJECTED_CDM3: source method is unrepresentable`, and the report
-still whole in the residual. Every other report projects in full, stamped "3.0.0".
+still whole in the residual. Every other report projects in full, stamped "3.0.0". The objects
+are models and carry the fields a later MINOR added (CDM 3.2.0's `Track.attributes`, null), so a
+3.0.0 consumer is handed `synapse_cdm.projection.dump_for(obj, "3.0.0")`, which the frozen 3.0.0
+contract accepts, never a bare `model_dump` (2026-10-15).
 
 THE TWO EGRESS MODES
 --------------------

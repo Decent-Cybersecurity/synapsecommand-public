@@ -49,7 +49,12 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
                 # alternation below is built longest first so the compound is tried before its
                 # own first half, which is `tests/test_cdm_prose_counts.py`'s `_NUMBER_WORD` rule.
                 # Added 2026-10-10 (the Link 16 gateway arc): twenty-two, the roster's next count.
-                "twenty-one": 21, "twenty-two": 22}
+                # Added 2026-10-15 (the NYC observations arc, `readsb_trace`): twenty-three.
+                # Added 2026-10-15 (the same arc, `nexrad2`): twenty-four.
+                # Added 2026-10-15 (the same arc, the three station-text adapters): twenty-five to
+                # twenty-seven, the counts the roster passes through as they land.
+                "twenty-one": 21, "twenty-two": 22, "twenty-three": 23, "twenty-four": 24,
+                "twenty-five": 25, "twenty-six": 26, "twenty-seven": 27}
 _NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 

@@ -8,7 +8,11 @@ description: Anything that happens — the audit-bearing object, with two timest
 # `Event`
 
 **Anything that happens.** A detection, a GNSS interference alert, a track update, a status
-change, a plan inject, a simulation result.
+change, a plan inject, a simulation result — and, since CDM 3.2.0 (2026-10-15), an environmental
+observation: `ENVIRONMENTAL_OBSERVATION`, a station reading, a radar sweep, a gridded field or an
+imagery product, carried under a named payload contract that says which. It is not a detection —
+a GMTI target report stays `DETECTION` — and it is not SC-OES's `OBSERVATION` event class, which
+is a different axis.
 
 `Event` is the audit-bearing object: two timestamps and a source, always.
 
@@ -37,6 +41,25 @@ event = Event(..., observed_at=alert["alert_time"], received_at=self.now())
 injects a frozen one, which is what makes golden-output tests possible at all — an adapter that
 reaches for `datetime.now()` fails the golden check on its second run, and that is the intended
 lesson.
+
+## `validity` — the interval the source states (CDM 3.2.0)
+
+`validity` is the same `TemporalValidity` block a [`PlanObject`](./plan-object.mdx) carries,
+optional, and `null` when the source states nothing. Its rule is one sentence per case:
+
+| Case | `observed_at` | `validity` |
+| --- | --- | --- |
+| an observation over an interval (an hourly mean, a radar volume) | the **end** of the sensing interval | `effective` = the interval |
+| an observation at an instant | that instant | `effective` with `end == start` |
+| a model product (a forecast, an analysis) | the **reference** time, never a future valid instant | `effective` = the interval the product is valid for |
+
+Every interval is `effective: Period`. `Period.end = null` means **open-ended**, never "unknown",
+so an instant sets both ends. Check J of the conformance suite reads keys ending `_at`, `_from` and
+`_to` only, so `validity.effective` is held by the schema and the model, not by J.
+
+A reader at CDM 3.0.0 or 3.1.0 refuses an `Event` that carries a `validity` key at all, populated
+or `null` — every published schema is `additionalProperties: false` — so readers upgrade before
+writers.
 
 ## `severity` — refused, never defaulted
 

@@ -1,0 +1,124 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_objects": "not a bound this format needs: one trace file yields exactly three objects, an Entity, a Track and an Event, whatever it holds; the number of points it may hold is bounded by max_decompressed_bytes and, since 2026-10-15, by MAX_POINTS = 100000 per trace (refused too-many-points before any model is built; its basis is MAX_POINTS_BASIS)",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, and the byte, inflation and depth bounds make every walk of the document linear in a bounded input; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_decompressed_bytes": {
+            "enforced_at": "`readsb_trace.inflate`, called by `to_cdm` on octets: zlib inflates with its output held to the octets still allowed, and the first octet past the bound is refused `inflates-past-the-bound` before it is kept",
+            "kind": "implementation_cap",
+            "source": "A trace file is one gzip member, and nothing in the format bounds how far it inflates. The design record's figure is a secondary source's day mean, about 140 KB of JSON per trace (research-readsb-globe-history F9), with no per-file maximum established; 64 MiB (67 108 864 octets, `MAX_DECOMPRESSED_BYTES`, `adapters/readsb_trace.py`) is DECISIONS L-09's figure, eight times the input cap. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_readsb_trace_adapter.py::test_inflation_is_held_to_the_declared_bound_and_one_octet_past_it_is_refused"
+          },
+          "max_depth": {
+            "enforced_at": "for a dict and for JSON text, the base class: `Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` before this class's `to_cdm` runs; for gzip octets, `readsb_trace.parse_document` measures the inflated text with `adapter.json_nesting_depth` before `json.loads` and refuses with `InputTooDeep`",
+            "kind": "implementation_cap",
+            "source": "A trace nests four containers (the document, `trace`, a point, the aircraft object in element 8). 64 (`MAX_DEPTH`, `adapters/readsb_trace.py`) is the harness loader's own bound and the figure most JSON-reading adapters of synapse_cdm declare, at least eight times the deepest JSON document this adapter ships, goldens included. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module inflates or parses anything",
+            "kind": "implementation_cap",
+            "source": "No document states a maximum size for a readsb trace file. The design record's only figure is a secondary source's mean for one day: about 23 KB of gzip and 140 KB of JSON per trace on 2023-11-19 (research-readsb-globe-history F9); the per-file maximum is not established. 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/readsb_trace.py`) is the geojson adapter's cap, ruled for this adapter by DECISIONS L-09. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": 67108864,
+        "max_depth": 64,
+        "max_input_bytes": 8388608,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "readsb trace JSON (README-json.md, trace jsons, readsb v3.16.17): one globe_history trace_full file per call, as its gzip octets or as the decompressed document in a dict; one Entity, one Track and one TRACK_UPDATE Event per file"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the trace header is a closed set of eleven keys, read off readsb's trace writer, and an unknown top-level key is refused `unknown-key` rather than preserved, so an injected key is refused; inside a point, the aircraft object (element 8) and any element past 13 are the source's own open vocabulary and are carried whole, every key with them, in the Entity's residual",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "readsb trace JSON",
+      "version": "readsb v3.16.17"
+    },
+    "id": "readsb_trace",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "one-trace-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one readsb trace file per call, as its gzip octets (one gzip member) or as the decompressed document in a dict; a day archive, a tar part, a list of traces and JSON text are not taken. synapse-decode takes one tar member by name",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-join-across-files",
+        "notes": null,
+        "severity": null,
+        "summary": "nothing is joined across files: a flight across UTC midnight is two files, two Tracks and one entity_id, and a new-leg flag is decoded as data and nothing is split on it. A Track's and its Event's ids derive from the address and the first and last instants, so two files of one airframe spanning the same two instants (two readsb instances' copies of one day, or a copy holding more points between them) give one track_id and one event_id: the id names the airframe's window, not the file, and files with different spans are different Tracks. Stitching, merging and leg-splitting are fusion's",
+        "unsupported_paths": []
+      },
+      {
+        "id": "per-sample-fields-on-the-entity",
+        "notes": null,
+        "severity": null,
+        "summary": "TrackSample holds a position and an instant only, so a point's ground speed, element 5, flags, vertical rate, aircraft object, source, geometric altitude and rate, IAS and roll stay in the Entity's residual (`residual.data.trace[i]`, sample i's point as stated), with the readings taken from them in `attributes.readsb_samples`, arrays keyed by the same index; only the last point's speed, track and vertical rate reach Entity.kinematics",
+        "unsupported_paths": []
+      },
+      {
+        "id": "barometric-altitude-not-hae",
+        "notes": null,
+        "severity": null,
+        "summary": "a barometric altitude is carried as Position.vertical in feet against BARO and never as alt_m; only a geometric altitude reaches alt_m, converted from feet (x 0.3048). When element 3 is barometric, element 10's geometric altitude stays in the residual",
+        "unsupported_paths": []
+      },
+      {
+        "id": "db-strings-not-exercised",
+        "notes": null,
+        "severity": null,
+        "summary": "the database fields r, t, desc, ownOp and year are carried verbatim in the residual and read for nothing; no packaged fixture states them, because every registration mark is a claim about a real allocation, so the shipped set is readsb's database-less form",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter readsb_trace` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, the whole document a structured residual on the Entity) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "readsb trace JSON (globe_history trace_full) translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.1.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

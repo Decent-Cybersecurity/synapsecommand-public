@@ -1,0 +1,46 @@
+{
+  "icao": "0029d1",
+  "noRegData": true,
+  "version": "readsb 3.16.17 0000000",
+  "timestamp": 1773446400.0,
+  "trace": [
+    [
+      29000.0,
+      56.92361,
+      23.97111,
+      "ground",
+      0.0,
+      182.4,
+      0,
+      null,
+      null,
+      "adsb_icao",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      29030.5,
+      56.92302,
+      23.97108,
+      "ground",
+      12.3,
+      181.9,
+      0,
+      null,
+      {
+        "type": "adsb_icao",
+        "flight": "EXHELO2 ",
+        "category": "A7",
+        "nic": 9,
+        "rc": 75
+      },
+      "adsb_icao_nt",
+      null,
+      null,
+      null,
+      null
+    ]
+  ]
+}

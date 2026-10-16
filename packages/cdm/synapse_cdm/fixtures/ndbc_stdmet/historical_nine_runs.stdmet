@@ -1,0 +1,5 @@
+#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD  MWD   PRES ATMP  WTMP DEWP  VIS  TIDE
+#yr  mo dy hr mn degT  m/s m/s     m   sec   sec degT    hPa degC  degC degC   mi    ft
+2025 11 03 00 00  140  3.1 4.0 99.00 99.00 99.00  999 1018.2 11.4  12.9  9.0 99.0 99.00
+2025 11 03 00 10  145  3.3 4.2  1.10  7.00  5.20  150 1018.1 11.3  12.9  9.0 99.0 99.00
+2025 11 03 00 20  150  3.0 3.9  1.05  6.70  5.10  155 1018.0 11.3 999.0  8.9 99.0 99.00

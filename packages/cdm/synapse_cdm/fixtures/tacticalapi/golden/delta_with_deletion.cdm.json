@@ -154,7 +154,8 @@
         "system": "TacticalAPI"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -276,6 +277,7 @@
         "system": "TacticalAPI"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

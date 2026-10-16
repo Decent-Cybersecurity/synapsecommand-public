@@ -1,0 +1,78 @@
+{
+  "directory": "ndbc_stdmet",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "before_2007_no_units_line.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "before_2007_no_units_line.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "historical_nine_runs.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "historical_nine_runs.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "realtime_newest_first.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "realtime_newest_first.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_1998.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_1998.stdmet",
+      "operational_data": false,
+      "origin": "Synthetic NDBC standard meteorological file written on 2026-10-15 for the ndbc_stdmet adapter's landing by fixtures/ndbc_stdmet/spec/build_fixtures.py from a literal token table in that script, after the column layouts of the NDBC Web Data Guide and measurement descriptions (pinned or cited, never carried); the station is EX001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "ndbc_stdmet/spec/ndbc_stdmet_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

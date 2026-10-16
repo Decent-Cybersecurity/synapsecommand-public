@@ -529,6 +529,18 @@
           ],
           "default": null,
           "description": "The source's own operational state for this object, namespaced. None = the source stated none."
+        },
+        "validity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemporalValidity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The times the source states about what this event reports (\u00a727), on PlanObject.validity's precedent. Every interval is `effective`: an instant sets end == start, and end = None is open-ended, never 'unknown'. `observed_at` above is the END of the sensing interval for an observation and the REFERENCE time for a model product, never a future valid instant. None = the source states none. Added 2026-10-15, CDM 3.2.0."
         }
       },
       "required": [
@@ -595,6 +607,7 @@
       "type": "string"
     },
     "EventType": {
+      "description": "The broad legacy category of an `Event`. A separate axis from SC-OES's `EventClass`.\n\nENVIRONMENTAL_OBSERVATION was added on 2026-10-15, CDM 3.2.0 \u2014 a MINOR by MIGRATIONS.md's\ntable, since a member is added and none is removed, and appended last so that the published\nenum's seven existing positions keep their values. It is an environmental measurement or\nmodel product \u2014 a station reading, a radar sweep, a gridded field, an imagery product \u2014\ncarried under a named payload contract that says which. It is NOT gap 20's detection: a\nGMTI target report stays DETECTION, and FORMAT_COVERAGE.md's gap 20 stays open. It is NOT\nSC-OES's `EventClass.OBSERVATION`, a semantic class on a different axis, and the longer name\nexists so that the two are never read as two spellings of one fact. No governed SC-OES type\nmaps to it, and it re-labels no event any shipped adapter emits.",
       "enum": [
         "DETECTION",
         "GNSS_INTERFERENCE",
@@ -602,7 +615,8 @@
         "ALERT",
         "STATUS_CHANGE",
         "PLAN_INJECT",
-        "SIM_RESULT"
+        "SIM_RESULT",
+        "ENVIRONMENTAL_OBSERVATION"
       ],
       "title": "EventType",
       "type": "string"
@@ -1988,6 +2002,18 @@
       "additionalProperties": false,
       "description": "An entity's position history, in time order. The order is a contract, not a hope.\n\nA scrambled sample list produces nonsense the moment anything differentiates it \u2014 speed\nfrom consecutive positions, a heading arrow, a predicted point. So non-decreasing\ntimestamps are validated here, at the boundary, where the defect is one adapter's bug\nrather than a mystery in a fusion layer three hops downstream.\n\nEqual timestamps are ALLOWED: two sensors reporting the same instant is real, and\nrejecting it would refuse legitimate multi-source data.",
       "properties": {
+        "attributes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TrackAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The typed block for what a Track states about itself \u2014 today, how complete a history it is. None = nothing stated. Added 2026-10-15, CDM 3.2.0."
+        },
         "entity_id": {
           "description": "The Entity this history belongs to.",
           "format": "uuid",
@@ -2106,6 +2132,78 @@
         "samples"
       ],
       "title": "Track",
+      "type": "object"
+    },
+    "TrackAttributes": {
+      "additionalProperties": false,
+      "description": "The typed block on `Track.attributes` (CDM 3.2.0, 2026-10-15). Today it holds one thing.\n\n`extra=\"forbid\"` is the decision, and it is one line on purpose. Every other canonical object\nhas an open bag \u2014 `Entity.attributes`, `Event.payload` \u2014 and Track's block is typed instead\nbecause the one question every paginated or windowed source asks of a Track is a completeness\nquestion, and a typed answer is one a consumer can read without knowing which adapter wrote\nit. Should the bag be the ruling instead, relaxing `extra` to \"allow\" is the whole change:\n`completeness` stays typed and other keys ride beside it.",
+      "properties": {
+        "completeness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TrackCompleteness"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How much of the history this Track holds. None = the adapter states nothing about it."
+        }
+      },
+      "title": "TrackAttributes",
+      "type": "object"
+    },
+    "TrackCompleteness": {
+      "additionalProperties": false,
+      "description": "How much of a history this Track holds, stated on the Track itself.\n\nA Track built from one page, one window or one file of a longer history is a FRAGMENT, and a\nconsumer that cannot tell a fragment from a whole history will compute a speed across a gap it\ndoes not know is there. Until 2026-10-15 the figures that answer \"how much of this is here\"\ncould ride only on the owning Entity, keyed by `track_id`, because Track had nowhere to put\nthem, and a consumer holding only the Track could not read them; the Legion adapter still\nparks them there, since no shipped adapter is re-labelled by this block. FORMAT_COVERAGE.md's\ngap 16 records the problem, and this block closes its Track half.\n\nThree figures and a basis, and each of the three keeps \"the source does not say\" apart from a\nvalue. `carried_samples` is never in doubt \u2014 it is counted \u2014 and it must equal the length of\nthe Track's `samples`, so the block cannot describe a different list from the one it rides on.\n`stated_samples` is the source's own total and is None when the source states none, never 0.\n`fragment` is None when the adapter cannot tell, never False: \"we cannot tell\" and \"we can\ntell it is whole\" are different answers. There is no per-sample field here, on purpose: gap\n16's TrackSample half stays open.\n\nTwo bounds were tightened on 2026-10-15, before the block shipped: `stated_samples` is at\nleast 1, so \"never 0\" is held rather than only said, and `completeness_basis` must hold a\ncharacter that is not whitespace, the pattern `\\S`, read by Python's `re` here (the\nengine the published schema's Python validator uses), so the model and the schema refuse the\nsame blank strings \u2014 a basis of spaces states nothing.",
+      "properties": {
+        "carried_samples": {
+          "description": "How many samples this Track carries. Equal to len(samples), which the Track validates.",
+          "minimum": 1,
+          "title": "Carried Samples",
+          "type": "integer"
+        },
+        "completeness_basis": {
+          "description": "Why the figures above are what they are: which source fields they were read from, or that the source states none. Required and not blank, as every `*_basis` is.",
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Completeness Basis",
+          "type": "string"
+        },
+        "fragment": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True = the source shows this Track is part of a longer history; False = it shows this is the whole of it; None = the adapter cannot tell, never False.",
+          "title": "Fragment"
+        },
+        "stated_samples": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many samples the SOURCE states the whole history holds, at least 1. None = the source states no total, never 0.",
+          "title": "Stated Samples"
+        }
+      },
+      "required": [
+        "carried_samples",
+        "completeness_basis"
+      ],
+      "title": "TrackCompleteness",
       "type": "object"
     },
     "TrackSample": {

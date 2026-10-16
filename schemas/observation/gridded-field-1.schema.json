@@ -1,0 +1,1350 @@
+{
+  "$defs": {
+    "ArrayLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "group": {
+          "description": "The group path from the root, `/` for the root itself.",
+          "pattern": "^/",
+          "title": "Group",
+          "type": "string"
+        },
+        "index": {
+          "description": "An element's index; empty = the whole variable.",
+          "items": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "title": "Index",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "netcdf",
+            "hdf5"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "variable": {
+          "minLength": 1,
+          "title": "Variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "group",
+        "variable"
+      ],
+      "title": "ArrayLocator",
+      "type": "object"
+    },
+    "ArraySummary": {
+      "additionalProperties": false,
+      "description": "What a consumer may know about an array without opening it.",
+      "properties": {
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min"
+        },
+        "missing_count": {
+          "minimum": 0,
+          "title": "Missing Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count",
+        "missing_count"
+      ],
+      "title": "ArraySummary",
+      "type": "object"
+    },
+    "CodedValue": {
+      "additionalProperties": false,
+      "description": "A code from a named table, verbatim; `meaning` only as the table's own words.",
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "meaning": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meaning"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "namespace"
+      ],
+      "title": "CodedValue",
+      "type": "object"
+    },
+    "Datum": {
+      "additionalProperties": false,
+      "description": "The vertical datum a height is referred to (NAVD88, MLLW), as the source names it.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "namespace"
+      ],
+      "title": "Datum",
+      "type": "object"
+    },
+    "GribLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_offset": {
+          "description": "The message's first octet in the file.",
+          "minimum": 0,
+          "title": "Byte Offset",
+          "type": "integer"
+        },
+        "field": {
+          "description": "The field's 0-based ordinal in the message.",
+          "minimum": 0,
+          "title": "Field",
+          "type": "integer"
+        },
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "kind": {
+          "const": "grib",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "description": "The message's 0-based ordinal in the file.",
+          "minimum": 0,
+          "title": "Message",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "message",
+        "field",
+        "byte_offset"
+      ],
+      "title": "GribLocator",
+      "type": "object"
+    },
+    "Grid": {
+      "additionalProperties": false,
+      "description": "The source's grid definition, verbatim and opaque.\n\n`parameters` is the template's own content under the source's own names (GRIB section 3\noctets, CF grid-mapping attributes, GeoKeys, world-file terms). It is never promoted into a\ncanonical field and it never holds a `crs` key: the canonical geometry is the WGS84\nfootprint the adapter converts, on `Event.geometry`.",
+      "properties": {
+        "cell_size": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Measurement"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One per axis of `shape`, in the same order, verbatim units.",
+          "title": "Cell Size"
+        },
+        "namespace": {
+          "description": "Whose grid vocabulary: a GRIB table, CF, GeoTIFF.",
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "scanning_mode": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scanning Mode"
+        },
+        "shape": {
+          "description": "Cells per axis, source order.",
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Shape",
+          "type": "array"
+        },
+        "template": {
+          "description": "The template or projection identifier, verbatim.",
+          "minLength": 1,
+          "title": "Template",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "template",
+        "shape"
+      ],
+      "title": "Grid",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "Measurement": {
+      "additionalProperties": false,
+      "description": "One value with the unit the source stated and the table it was read from.",
+      "properties": {
+        "unit": {
+          "description": "The source's own unit string, verbatim.",
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        },
+        "unit_namespace": {
+          "description": "Where the unit was read: a GRIB table, a CF attribute, a header line.",
+          "minLength": 1,
+          "title": "Unit Namespace",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "unit_namespace"
+      ],
+      "title": "Measurement",
+      "type": "object"
+    },
+    "ParquetLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "kind": {
+          "const": "parquet",
+          "title": "Kind",
+          "type": "string"
+        },
+        "row": {
+          "description": "The 0-based row inside the row group.",
+          "minimum": 0,
+          "title": "Row",
+          "type": "integer"
+        },
+        "row_group": {
+          "minimum": 0,
+          "title": "Row Group",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "row_group",
+        "row"
+      ],
+      "title": "ParquetLocator",
+      "type": "object"
+    },
+    "ProductVersion": {
+      "additionalProperties": false,
+      "description": "Which run, which version, produced when and by whom \u2014 processing facts, never times.",
+      "properties": {
+        "producer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Producer"
+        },
+        "production_time_verbatim": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Production Time Verbatim"
+        },
+        "run": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "title": "ProductVersion",
+      "type": "object"
+    },
+    "QualityFlag": {
+      "additionalProperties": false,
+      "description": "One quality flag, verbatim: its name, its value, the table it belongs to, what it covers.\n\nNobody interprets it here \u2014 not into a confidence, not into a pass/fail. `applies_to` names\nthe reading, moment, variable or `record` the flag describes; its value is never an instant.",
+      "properties": {
+        "applies_to": {
+          "minLength": 1,
+          "title": "Applies To",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "namespace",
+        "applies_to"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "What is measured, named the source's way: a short name, a table code, or both.",
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "RadarLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "azimuth_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Azimuth Number"
+        },
+        "elevation_number": {
+          "description": "The elevation NUMBER, 1-based as the volume numbers it; never the angle, which a rescan repeats.",
+          "minimum": 1,
+          "title": "Elevation Number",
+          "type": "integer"
+        },
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "kind": {
+          "const": "radar",
+          "title": "Kind",
+          "type": "string"
+        },
+        "ldm_record": {
+          "minimum": 0,
+          "title": "Ldm Record",
+          "type": "integer"
+        },
+        "message": {
+          "minimum": 0,
+          "title": "Message",
+          "type": "integer"
+        },
+        "moment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moment"
+        }
+      },
+      "required": [
+        "kind",
+        "ldm_record",
+        "message",
+        "elevation_number"
+      ],
+      "title": "RadarLocator",
+      "type": "object"
+    },
+    "RasterLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "band_file": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Band File"
+        },
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "ifd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ifd"
+        },
+        "kind": {
+          "const": "raster",
+          "title": "Kind",
+          "type": "string"
+        },
+        "tile": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tile"
+        },
+        "window": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RasterWindow"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "RasterLocator",
+      "type": "object"
+    },
+    "RasterWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "column": {
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "height": {
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "row": {
+          "minimum": 0,
+          "title": "Row",
+          "type": "integer"
+        },
+        "width": {
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "column",
+        "row",
+        "width",
+        "height"
+      ],
+      "title": "RasterWindow",
+      "type": "object"
+    },
+    "TableLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 of the frame handed to the adapter, when it is not the whole file `source.source_hash` digests. Computed by the host, never by the adapter.",
+          "title": "Frame Sha256"
+        },
+        "granule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The granule a band file belongs to, shared by its files.",
+          "title": "Granule Id"
+        },
+        "header_lines": {
+          "minimum": 0,
+          "title": "Header Lines",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "table",
+          "title": "Kind",
+          "type": "string"
+        },
+        "row": {
+          "description": "The 0-based data record, after the header lines.",
+          "minimum": 0,
+          "title": "Row",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "row",
+        "header_lines"
+      ],
+      "title": "TableLocator",
+      "type": "object"
+    },
+    "TimeInputs": {
+      "additionalProperties": false,
+      "description": "The time facts a model product states beside `observed_at` and `Event.validity`.",
+      "properties": {
+        "forecast_offset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reference_time": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Time"
+        },
+        "reference_time_significance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CodedValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GRIB2 Table 1.2, verbatim, where the source states one."
+        },
+        "source_time_system": {
+          "$ref": "#/$defs/TimeSystem"
+        },
+        "statistical_process": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CodedValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GRIB2 Table 4.10, verbatim, where the source states one."
+        }
+      },
+      "required": [
+        "source_time_system"
+      ],
+      "title": "TimeInputs",
+      "type": "object"
+    },
+    "TimeSystem": {
+      "additionalProperties": false,
+      "description": "The time system the source's stamps were read in, and who said so.",
+      "properties": {
+        "basis": {
+          "description": "Where it was read, or which declared argument said it.",
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "name": {
+          "description": "Verbatim: UTC, GMT, gmt, GPS.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "stated_by": {
+          "enum": [
+            "source",
+            "caller"
+          ],
+          "title": "Stated By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "stated_by",
+        "basis"
+      ],
+      "title": "TimeSystem",
+      "type": "object"
+    },
+    "UnitRef": {
+      "additionalProperties": false,
+      "description": "The unit of an array of values, which a `Measurement` would repeat per value.",
+      "properties": {
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        },
+        "unit_namespace": {
+          "minLength": 1,
+          "title": "Unit Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit",
+        "unit_namespace"
+      ],
+      "title": "UnitRef",
+      "type": "object"
+    },
+    "ValuesByReference": {
+      "additionalProperties": false,
+      "description": "The values stay in the source; this says where they are and how to open them.",
+      "properties": {
+        "dtype": {
+          "description": "The stored type, verbatim.",
+          "minLength": 1,
+          "title": "Dtype",
+          "type": "string"
+        },
+        "encoding": {
+          "description": "The packing or compression, verbatim.",
+          "minLength": 1,
+          "title": "Encoding",
+          "type": "string"
+        },
+        "fill": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fill"
+        },
+        "locator": {
+          "discriminator": {
+            "mapping": {
+              "grib": "#/$defs/GribLocator",
+              "hdf5": "#/$defs/ArrayLocator",
+              "netcdf": "#/$defs/ArrayLocator",
+              "parquet": "#/$defs/ParquetLocator",
+              "radar": "#/$defs/RadarLocator",
+              "raster": "#/$defs/RasterLocator",
+              "table": "#/$defs/TableLocator"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/GribLocator"
+            },
+            {
+              "$ref": "#/$defs/RadarLocator"
+            },
+            {
+              "$ref": "#/$defs/TableLocator"
+            },
+            {
+              "$ref": "#/$defs/RasterLocator"
+            },
+            {
+              "$ref": "#/$defs/ParquetLocator"
+            },
+            {
+              "$ref": "#/$defs/ArrayLocator"
+            }
+          ],
+          "title": "Locator"
+        },
+        "mode": {
+          "const": "reference",
+          "title": "Mode",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scale"
+        },
+        "shape": {
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Shape",
+          "type": "array"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArraySummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "mode",
+        "locator",
+        "shape",
+        "dtype",
+        "encoding"
+      ],
+      "title": "ValuesByReference",
+      "type": "object"
+    },
+    "ValuesInline": {
+      "additionalProperties": false,
+      "description": "At most `MAX_INLINE_VALUES` values, in the source's order. `None` is a missing value, and\na contract with one names the mechanism that made it missing.",
+      "properties": {
+        "missing_mechanism": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Mechanism"
+        },
+        "mode": {
+          "const": "inline",
+          "title": "Mode",
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Shape",
+          "type": "array"
+        },
+        "values": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 4096,
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mode",
+        "shape",
+        "values"
+      ],
+      "title": "ValuesInline",
+      "type": "object"
+    },
+    "VerticalLevel": {
+      "additionalProperties": false,
+      "description": "A level as the source states it (a GRIB Table 4.5 surface, a sensor height).",
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "VerticalLevel",
+      "type": "object"
+    }
+  },
+  "$id": "urn:synapsecommand:observation:gridded-field:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "`gridded-field/1`: one field on one grid.",
+  "properties": {
+    "contract": {
+      "const": "gridded-field/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "datum": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Datum"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "grid": {
+      "$ref": "#/$defs/Grid"
+    },
+    "level": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VerticalLevel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "locator": {
+      "discriminator": {
+        "mapping": {
+          "grib": "#/$defs/GribLocator",
+          "hdf5": "#/$defs/ArrayLocator",
+          "netcdf": "#/$defs/ArrayLocator",
+          "parquet": "#/$defs/ParquetLocator",
+          "radar": "#/$defs/RadarLocator",
+          "raster": "#/$defs/RasterLocator",
+          "table": "#/$defs/TableLocator"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GribLocator"
+        },
+        {
+          "$ref": "#/$defs/RadarLocator"
+        },
+        {
+          "$ref": "#/$defs/TableLocator"
+        },
+        {
+          "$ref": "#/$defs/RasterLocator"
+        },
+        {
+          "$ref": "#/$defs/ParquetLocator"
+        },
+        {
+          "$ref": "#/$defs/ArrayLocator"
+        }
+      ],
+      "title": "Locator"
+    },
+    "product_class": {
+      "enum": [
+        "observation",
+        "forecast",
+        "analysis",
+        "reanalysis",
+        "modelled_estimate",
+        "reference"
+      ],
+      "title": "Product Class",
+      "type": "string"
+    },
+    "product_version": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProductVersion"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "quality_flags_basis": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Why there are no quality flags: the format publishes none, or none is set. Required exactly when quality_flags is empty.",
+      "title": "Quality Flags Basis"
+    },
+    "quantity": {
+      "$ref": "#/$defs/Quantity"
+    },
+    "time": {
+      "$ref": "#/$defs/TimeInputs"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UnitRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "values": {
+      "discriminator": {
+        "mapping": {
+          "inline": "#/$defs/ValuesInline",
+          "reference": "#/$defs/ValuesByReference"
+        },
+        "propertyName": "mode"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ValuesByReference"
+        },
+        {
+          "$ref": "#/$defs/ValuesInline"
+        }
+      ],
+      "title": "Values"
+    }
+  },
+  "required": [
+    "product_class",
+    "time",
+    "locator",
+    "contract",
+    "quantity",
+    "grid",
+    "values"
+  ],
+  "title": "GriddedField",
+  "type": "object",
+  "x-observation-contract": "gridded-field/1"
+}

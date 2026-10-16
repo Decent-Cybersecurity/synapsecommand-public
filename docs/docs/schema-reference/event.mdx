@@ -17,7 +17,7 @@ description: "Anything that happens. The audit-bearing object: two timestamps an
 | Source file | `schemas/event.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:3.1.0:event` |
 | CDM schema version | `3.1.0` |
-| SHA-256 of source | `25880be6e99bbf4b627ac84fa423006450462c033c9ecca8e5a467390b5cfe30` |
+| SHA-256 of source | `5ea02a5dc0e86ad59aaeb828c53940b9b73ea7caa0b522d31fd37103dc55e8e1` |
 
 Anything that happens. The audit-bearing object: two timestamps and a source, always.
 
@@ -42,6 +42,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
+| `validity` | [TemporalValidity](#temporalvalidity) \| null | no | The times the source states about what this event reports (§27), on PlanObject.validity's precedent. Every interval is `effective`: an instant sets end == start, and end = None is open-ended, never 'unknown'. `observed_at` above is the END of the sensing interval for an observation and the REFERENCE time for a model product, never a future valid instant. None = the source states none. Added 2026-10-15, CDM 3.2.0. Default `null`. |
 
 :::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
@@ -135,6 +136,18 @@ member rather than a null wherever the enum has one.
 
 ### EventType
 
+The broad legacy category of an `Event`. A separate axis from SC-OES's `EventClass`.
+
+ENVIRONMENTAL_OBSERVATION was added on 2026-10-15, CDM 3.2.0 — a MINOR by MIGRATIONS.md's
+table, since a member is added and none is removed, and appended last so that the published
+enum's seven existing positions keep their values. It is an environmental measurement or
+model product — a station reading, a radar sweep, a gridded field, an imagery product —
+carried under a named payload contract that says which. It is NOT gap 20's detection: a
+GMTI target report stays DETECTION, and FORMAT_COVERAGE.md's gap 20 stays open. It is NOT
+SC-OES's `EventClass.OBSERVATION`, a semantic class on a different axis, and the longer name
+exists so that the two are never read as two spellings of one fact. No governed SC-OES type
+maps to it, and it re-labels no event any shipped adapter emits.
+
 Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
 
 member rather than a null wherever the enum has one.
@@ -148,6 +161,7 @@ member rather than a null wherever the enum has one.
 | `STATUS_CHANGE` |
 | `PLAN_INJECT` |
 | `SIM_RESULT` |
+| `ENVIRONMENTAL_OBSERVATION` |
 
 ### EvidenceKind
 
@@ -353,6 +367,23 @@ say — never the receipt time, which would make every restart look like a state
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 
+### Period
+
+A closed or open-ended interval. `start` required, `end` optional and open-ended if absent.
+
+`start` is required and `end` is not, because that asymmetry is what the sources state: an
+activation begins at a stated instant and ends "until further notice" far more often than the
+reverse. An interval with neither bound is not a period, it is the absence of one, and the
+field holding a Period is optional for exactly that case.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `end` | string \| null | no | When it closes. None = open-ended, never 'unknown'. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `start` | string | **yes** | When the interval opens. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
 ### Point
 
 | Field | Type | Required | Description |
@@ -539,6 +570,47 @@ data and hide it from an operator. There is no safe default, so there is no defa
 | `synthetic` | boolean | **yes** | true for anything not from a real source (TR-12). |
 | `system` | string | **yes** | The external system this came from. (min length 1) |
 | `transformations` | array&lt;string&gt; | no | Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, in the order it applied them. Empty = nothing was transformed, which is a claim the lossless check can contradict. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TemporalValidity
+
+The four times an object can have, separated because they answer different questions.
+
+§27's four, and the separation is the point:
+
+    observed_at   when the SOURCE saw the state
+    valid_from    when the state BEGAN, which may be long before anyone saw it
+    valid_to      when it ceased. None = still current, never "unknown"
+    effective     the period the source declares the object OPERATIVE — an airspace
+                  reservation published on Monday, effective Wednesday 0600 to 1200
+
+An airspace restriction shows why one timestamp cannot do the work of four: it is observed
+when the NOTAM is read, valid from the moment it is published, and effective for a window
+that has not started yet. Collapsing those into "the time" is how a restriction gets drawn on
+a map twelve hours early.
+
+EVERY FIELD IS OPTIONAL AND THAT IS DELIBERATE. A source that states only one of the four
+says one of the four; a model that required more would be filled by adapters copying one
+instant into three fields, and three copies of one reading look like corroboration. The
+PRESENCE of this block is itself information — the source described validity in time — and
+a block with nothing in it is the absence of the block.
+
+§27's epoch rule, stated where it is enforced: unknown time is NOT `1970-01-01` and NOT
+`now()`. It is the absence of the field. `Timestamp` does not refuse the epoch instant, and
+that is a decision rather than an omission — 1970-01-01T00:00:00Z is a real instant, some
+sources legitimately carry it as a base epoch, and a validator that refused it would refuse
+real data in order to catch a defect that lives in the ADAPTER. The rule is therefore
+enforced where the substitution would be made, in review of the adapter and in the
+conformance suite's own reading, and it is written down here and in `docs/docs/cdm/policies`.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `effective` | [Period](#period) \| null | no | The period the source declares the object operative. Default `null`. |
+| `observed_at` | string \| null | no | When the source saw it. None = the source did not say. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `valid_from` | string \| null | no | When the state began. None = the source did not say. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `valid_to` | string \| null | no | When it ceased. None = still current / open-ended. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).

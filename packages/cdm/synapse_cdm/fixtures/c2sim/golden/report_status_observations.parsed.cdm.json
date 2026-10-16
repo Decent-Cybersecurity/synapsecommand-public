@@ -138,7 +138,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "b3b117d9-17a1-52af-90a3-072044260baa",
@@ -226,6 +227,7 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

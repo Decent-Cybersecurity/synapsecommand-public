@@ -237,7 +237,8 @@
         "system": "ICAO24"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -477,6 +478,7 @@
         "system": "ICAO24"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

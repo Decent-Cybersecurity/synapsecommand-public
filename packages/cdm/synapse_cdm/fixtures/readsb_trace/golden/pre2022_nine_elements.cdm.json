@@ -1,0 +1,273 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN: ADS-B states an identity and nothing in it is authenticated, so nothing here infers a side",
+      "entity_id_basis": "the trace's address under ICAO24, upper-cased as the adsb adapter writes it, so a frame and a trace of one airframe give one entity_id",
+      "entity_type_basis": "PLATFORM: a trace is one airframe's history. The emitter category in an aircraft object is sampled on some points only and is not read as a type",
+      "kinematics_basis": "the last point: element 4 (ground speed, knots), element 5 as course only when the point is airborne (on the ground it is the true heading and stays in the residual; 360 is not a course this field holds), element 7 (vertical rate, feet per minute, barometric by flag bit 2); a null element is an unknown, never zero",
+      "position_basis": "the trace's last point, the Track's last sample",
+      "position_source_basis": "the point has no element 9: a trace written before 2022 states no source for a position",
+      "quality_basis": "the last point: source_quality is element 9, the source readsb names; rc_m is the radius of containment in metres from element 8's aircraft object, an integrity bound and not a one-sigma accuracy, so accuracy_m is never set; a point without either states nothing here",
+      "readsb_samples": {
+        "altitude_geometric": [
+          false,
+          false
+        ],
+        "element_5": [
+          "track",
+          "track"
+        ],
+        "elements": [
+          9,
+          9
+        ],
+        "new_leg": [
+          false,
+          false
+        ],
+        "on_ground": [
+          false,
+          false
+        ],
+        "stale": [
+          false,
+          false
+        ],
+        "vertical_rate_geometric": [
+          false,
+          false
+        ]
+      },
+      "readsb_samples_basis": "readings taken from each point, keyed by sample index: index i is Track.samples[i] and residual.data.trace[i]. on_ground is element 3 being ground; element_5 says whether element 5 is a track or, on the ground, a true heading; the four booleans are element 6's bits 0 to 3; elements is how many elements the point states",
+      "symbol_basis": "derived from affiliation; a trace states no symbol",
+      "valid_from_basis": "the instant of the trace's first point",
+      "valid_to_basis": "the instant of the trace's last point: the file holds nothing after it, which says nothing about the airframe after it",
+      "vertical_basis": "element 3, barometric altitude in feet (flag bit 3 clear), as stated; alt_m is metres above the ellipsoid and a pressure altitude is not one"
+    },
+    "confidence": null,
+    "entity_id": "bb0f5e5a-1f90-5be8-8253-73682c885035",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 0.65024,
+      "course_deg": 300.2,
+      "speed_mps": 93.11444444444444
+    },
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.503,
+      "lon": 20.992,
+      "position_source": "ESTIMATED",
+      "vertical": {
+        "reference": "BARO",
+        "uncertainty": null,
+        "unit": "ft",
+        "value": 6100.0
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "icao": "0029e6",
+        "noRegData": true,
+        "timestamp": 1773446400.0,
+        "trace": [
+          [
+            20000.0,
+            56.5,
+            21.0,
+            6000,
+            180.0,
+            300.0,
+            0,
+            0,
+            null
+          ],
+          [
+            20030.0,
+            56.503,
+            20.992,
+            6100,
+            181.0,
+            300.2,
+            0,
+            128,
+            null
+          ]
+        ]
+      },
+      "namespace": "readsb trace JSON"
+    },
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "readsb_trace",
+      "adapter_version": "1.0.0",
+      "format_name": "readsb trace JSON",
+      "format_version": "readsb v3.16.17",
+      "observed_at": "2026-03-14T00:00:00.000Z",
+      "original_id": "0029e6",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "READSB",
+      "transformations": [
+        "icao: the address is upper-cased for its source id, as the adsb adapter writes it, so one airframe has one entity_id across both adapters",
+        "trace[*][0]: a point's instant is timestamp + element 0, summed in decimal from the shortest text of each number, then rendered to the CDM's millisecond form",
+        "trace[-1][4]: the last point's ground speed in knots becomes metres per second (x 1852/3600)",
+        "trace[-1][7]: the last point's vertical rate in feet per minute becomes metres per second (x 0.00508)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0029E6",
+        "system": "ICAO24"
+      }
+    ],
+    "status": null,
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-03-14T05:33:20.000Z",
+    "valid_to": "2026-03-14T05:33:50.000Z"
+  },
+  {
+    "attributes": {
+      "completeness": {
+        "carried_samples": 2,
+        "completeness_basis": "carried_samples counts the trace's points; readsb writes one permanent trace per airframe per UTC day, so a file is a window of the airframe's history and never the whole of it; the trace states no total",
+        "fragment": true,
+        "stated_samples": null
+      }
+    },
+    "entity_id": "bb0f5e5a-1f90-5be8-8253-73682c885035",
+    "integrity": null,
+    "object_kind": "track",
+    "quality": null,
+    "residual": {
+      "data": {
+        "icao": "0029e6",
+        "timestamp": 1773446400.0
+      },
+      "namespace": "readsb trace JSON"
+    },
+    "samples": [
+      {
+        "observed_at": "2026-03-14T05:33:20.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 56.5,
+          "lon": 21.0,
+          "position_source": "ESTIMATED",
+          "vertical": {
+            "reference": "BARO",
+            "uncertainty": null,
+            "unit": "ft",
+            "value": 6000.0
+          }
+        }
+      },
+      {
+        "observed_at": "2026-03-14T05:33:50.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 56.503,
+          "lon": 20.992,
+          "position_source": "ESTIMATED",
+          "vertical": {
+            "reference": "BARO",
+            "uncertainty": null,
+            "unit": "ft",
+            "value": 6100.0
+          }
+        }
+      }
+    ],
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "readsb_trace",
+      "adapter_version": "1.0.0",
+      "format_name": "readsb trace JSON",
+      "format_version": "readsb v3.16.17",
+      "observed_at": "2026-03-14T00:00:00.000Z",
+      "original_id": "0029e6",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "READSB",
+      "transformations": [
+        "icao: the address is upper-cased for its source id, as the adsb adapter writes it, so one airframe has one entity_id across both adapters",
+        "trace[*][0]: a point's instant is timestamp + element 0, summed in decimal from the shortest text of each number, then rendered to the CDM's millisecond form"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0029E6",
+        "system": "ICAO24"
+      }
+    ],
+    "status": null,
+    "track_id": "b3881a91-f86a-5b86-af4c-648e9e118680",
+    "track_quality": null
+  },
+  {
+    "event_id": "c0f32457-8a08-55a6-b005-58a5af255440",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-03-14T05:33:50.000Z",
+    "oes": null,
+    "payload": {
+      "event_id_basis": "the address and the trace's first and last instants",
+      "event_type_basis": "TRACK_UPDATE: one trace file is one update of one airframe's history",
+      "observed_at_basis": "the instant of the trace's last point: timestamp + element 0, on the aggregator's clock (readsb stamps a point with the system time at which the message reached it); the aircraft states no time",
+      "received_at_basis": "the injected clock; a trace states no delivery instant",
+      "sample_count": 2,
+      "severity_basis": "INFO: a trace states no urgency; an emergency code in an aircraft object stays in the residual",
+      "track_id": "b3881a91-f86a-5b86-af4c-648e9e118680",
+      "validity_basis": "no validity: the event is an instant, and the span the trace covers is the Entity's valid_from and valid_to and the Track's samples"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "bb0f5e5a-1f90-5be8-8253-73682c885035"
+    ],
+    "residual": {
+      "data": {
+        "icao": "0029e6",
+        "timestamp": 1773446400.0
+      },
+      "namespace": "readsb trace JSON"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "readsb_trace",
+      "adapter_version": "1.0.0",
+      "format_name": "readsb trace JSON",
+      "format_version": "readsb v3.16.17",
+      "observed_at": "2026-03-14T00:00:00.000Z",
+      "original_id": "0029e6",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "READSB",
+      "transformations": [
+        "icao: the address is upper-cased for its source id, as the adsb adapter writes it, so one airframe has one entity_id across both adapters",
+        "trace[*][0]: a point's instant is timestamp + element 0, summed in decimal from the shortest text of each number, then rendered to the CDM's millisecond form"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "0029E6",
+        "system": "ICAO24"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

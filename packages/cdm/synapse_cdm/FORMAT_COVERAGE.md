@@ -71,6 +71,16 @@ run is a guess with a table around it.
 | `link16_gateway 1.0.0` | implemented by `adapters/link16_gateway.py`, which holds the gateway contract's strict parser and validator in the same module, with a JSON fixture (an octet twin beside two of them) and a golden file (landed 2026-10-10) |
 | `link16_gateway 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`) at its own path under `residual.data.report`, which holds the whole validated report; the Track's residual holds the record identifier; names no gap (landed 2026-10-10) |
 | `link16_gateway 1.0.0 · egress` | implemented in the `from_cdm()` direction: the same report reconstructed from this adapter's own objects (the default mode), or one report built from an Entity the report contract can represent, under a runtime-supplied `ExportContext` (landed 2026-10-10) |
+| `readsb_trace 1.0.0` | implemented by `adapters/readsb_trace.py`, with a gzip fixture, its parsed twin and a golden file (landed 2026-10-15) |
+| `readsb_trace 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual (`Entity.residual`) at its own path under `residual.data`, which holds the whole trace document, so `residual.data.trace[i]` is sample i's point as written; the Track's and the Event's residual hold the address and the time base. The per-point fields a `TrackSample` cannot hold are there because of gap 16, with the readings taken from them parked beside it in `attributes.readsb_samples` (landed 2026-10-15) |
+| `nexrad2 1.0.0` | implemented by `adapters/nexrad2.py`, with an Archive II volume fixture, its parsed twin and a golden file (landed 2026-10-15) |
+| `nexrad2 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each sweep Event's `residual.data` holds the sweep's radial headers as stated (`residual.data.radials[i]`, raw integers and single-precision values), and the site Entity's holds the volume header, the site and the census of the LDM records (landed 2026-10-15) |
+| `ndbc_stdmet 1.0.0` | implemented by `adapters/ndbc_stdmet.py`, with a stdmet text fixture, its parsed twin and a golden file (landed 2026-10-15) |
+| `ndbc_stdmet 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each row's Event holds the header, the units line and its own row as written (`residual.data.row`), and the station Entity's the header and the units line (landed 2026-10-15) |
+| `coops_csv 1.0.0` | implemented by `adapters/coops_csv.py`, with a CSV response and its parsed twin, or a JSON response, and a golden file (landed 2026-10-15) |
+| `coops_csv 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each sample's Event holds its own row (`residual.data.row`, CSV) or record (`residual.data.record`, JSON) as written and the request it answers, and the station Entity's the CSV header line or the JSON form's `metadata` (landed 2026-10-15) |
+| `airnow_hourly 1.0.0` | implemented by `adapters/airnow_hourly.py`, with an hourly file fixture, its parsed twin and a golden file (landed 2026-10-15) |
+| `airnow_hourly 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each line's Event holds the line's fields as written (`residual.data.record` for HourlyData, `residual.data.row` with the header for HourlyAQObs), and each site Entity's the site's fields as the first line naming it states them (landed 2026-10-15) |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -279,6 +289,11 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 21 | `dis7` | shipped | `adapters/dis7.py`, whose docstring claims the ordinal, and `fixtures/dis7/README.md`. One DIS 7 Entity State PDU becomes one `Entity`, and the unchanged Entity gives the original octets back. The row was at Phase 1 while only the vendored vectors, the contract files and `fixtures/dis7/spec/dis7_pin.json` existed; the class, the harness fixtures and their goldens landed together |
 | 22 | `tacticalapi` | shipped | `adapters/tacticalapi.py`, whose docstring claims the ordinal, `fixtures/tacticalapi/README.md` and `fixtures/tacticalapi/spec/tacticalapi_pin.json`, which records it beside the adapter's name. One TacticalAPI blue-force response becomes an `Entity` and an `Event` per blue force, ingest only, the seventh `residual: structured` adapter. Built and verified out of tree against the contract at upstream commit `58661c9` before it landed on 2026-10-06; the class, the fixture set, its goldens and its tests landed together, so the row had no Phase 1 in this table |
 | 23 | `link16_gateway` | shipped | `adapters/link16_gateway.py`, whose docstring claims the ordinal, and `fixtures/link16_gateway/README.md`. One SC Link16 Gateway 1.0.0 report (an internal JSON contract defined in this repository, not JREAP C and not Link 16 bytes) becomes one `Entity` and, when its position is present and projected, one single-sample `Track`; bidirectional (mirror reconstruction, and export under a runtime-supplied context), the eighth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-10, so the row had no Phase 1 in this table |
+| 24 | `readsb_trace` | shipped | `adapters/readsb_trace.py`, whose docstring claims the ordinal, `fixtures/readsb_trace/README.md` and `fixtures/readsb_trace/spec/readsb_trace_pin.json`, which records it beside the adapter's name. One readsb `globe_history` trace file (one airframe's UTC day of decoded positions, gzip JSON) becomes one `Entity`, one `Track` and one `TRACK_UPDATE` `Event`; ingest only, the ninth `residual: structured` adapter and the first of the NYC observation arc. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
+| 25 | `nexrad2` | shipped | `adapters/nexrad2.py`, whose docstring claims the ordinal, `fixtures/nexrad2/README.md` and `fixtures/nexrad2/spec/nexrad2_pin.json`, which records it beside the adapter's name. One NEXRAD Level II (Archive II) volume becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per elevation number, carrying the `radar-sweep/1` contract, and the radar site's `Entity`; ingest only, the tenth `residual: structured` adapter and the first producer of the observation carrier. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
+| 26 | `ndbc_stdmet` | shipped | `adapters/ndbc_stdmet.py`, whose docstring claims the ordinal, `fixtures/ndbc_stdmet/README.md` and `fixtures/ndbc_stdmet/spec/ndbc_stdmet_pin.json`, which records it beside the adapter's name. One NDBC standard meteorological text file becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per data row, carrying the `point-observation/1` contract, and the station's `Entity`; ingest only, the eleventh `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
+| 27 | `coops_csv` | shipped | `adapters/coops_csv.py`, whose docstring claims the ordinal, `fixtures/coops_csv/README.md` and `fixtures/coops_csv/spec/coops_csv_pin.json`, which records it beside the adapter's name. One NOAA CO-OPS data API response, in its CSV or JSON form and under the caller's `CoopsRequest`, becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per sample, carrying the `point-observation/1` contract, and the station's `Entity`; ingest only, the twelfth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
+| 28 | `airnow_hourly` | shipped | `adapters/airnow_hourly.py`, whose docstring claims the ordinal, `fixtures/airnow_hourly/README.md` and `fixtures/airnow_hourly/spec/airnow_hourly_pin.json`, which records it beside the adapter's name. One EPA AirNow hourly observation file (HourlyData or HourlyAQObs) becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per line, carrying the `point-observation/1` contract, and one `Entity` per site; ingest only, the thirteenth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -296,6 +311,13 @@ fixtures and goldens landed together, which returned the count to one.
 change and was never at Phase 1 here, so the count stays at one.
 `link16_gateway` at #23 landed on 2026-10-10 the same way, with its class, fixtures,
 goldens and tests in one change and never at Phase 1 here, so the count still stays at one.
+`readsb_trace` at #24 landed on 2026-10-15 the same way, with its class, fixtures, goldens
+and tests in one change and never at Phase 1 here, so the count still stays at one.
+`nexrad2` at #25 landed on 2026-10-15 the same way, with its class, fixtures, goldens and
+tests in one change and never at Phase 1 here, so the count still stays at one.
+`ndbc_stdmet` at #26, `coops_csv` at #27 and `airnow_hourly` at #28 landed on 2026-10-15 the same
+way, each with its class, fixtures, goldens and tests in one change and never at Phase 1 here, so
+the count still stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -1139,7 +1161,7 @@ Ten fields, no geometry, and no position — which is the whole reason it is a s
 | `results[]` | `Track.samples[]` | `legion 1.0.0` | in payload order, which the CDM validates as non-decreasing. A page that arrives out of order is refused rather than sorted: sorting would hide a source defect the caller needs to see |
 | `results[].position` + envelope `crs` | `Track.samples[].position` | `legion 1.0.0` | the envelope's `crs` applies to every result; the per-item `crs` overrides it where present |
 | `results[].recorded_at` | `Track.samples[].observed_at` | `legion 1.0.0` | falling back to `created_at`, as on a single location |
-| `crs` | — | `legion 1.0.0` | **there is no `Track.attributes`** — `Track` has no extension bag at all, unlike `Entity` and `Event`. So the envelope's `crs` and `paging` are parked on the **Entity** the track belongs to, which is the object that has one — recorded here because it is a real consequence of the model's shape |
+| `crs` | — | `legion 1.0.0` | **there is no `Track.attributes`** — `Track` has no extension bag at all, unlike `Entity` and `Event`. So the envelope's `crs` and `paging` are parked on the **Entity** the track belongs to, which is the object that has one — recorded here because it is a real consequence of the model's shape. **Dated 2026-10-15: CDM 3.2.0 adds `Track.attributes`, a typed completeness block, and this adapter keeps parking these figures on the Entity** — no shipped adapter is re-labelled by the block, so this row and the completeness section below describe `legion 1.0.0` as it ships |
 | `paging.has_more` | `Entity.attributes` | `legion 1.0.0` | parked so a consumer can see that the history is partial. `optional`, unlike its two siblings, so its absence is not a claim that there is no more |
 | *(computed)* | `Entity.attributes` | `legion 1.0.0` | `attributes.legion_track_completeness` — see the completeness section below. The one place a consumer can machine-read how much of a history it is holding |
 | `paging.next` | `Entity.attributes` | `legion 1.0.0` | `required`, integer or `null` — an offset page cursor. `null` means no next page and lands in `unavailable_fields`; the adapter parks it and never follows it |
@@ -1181,6 +1203,12 @@ adapter can fix. It is the strongest argument yet for a `Track.attributes` bag, 
 recorded as a 1.1.0 candidate in `MIGRATIONS.md` rather than acted on here, because adding a bag
 to a canonical object is a schema change and this adapter ships at `schema_version 1.0.0` with
 none.
+
+(Dated 2026-10-15: CDM 3.2.0 adds `Track.attributes`, a typed completeness block —
+`carried_samples`, `stated_samples`, `fragment` and `completeness_basis` — so a consumer holding
+only a `Track` can now read how complete it is when the adapter that wrote it says. This adapter is
+not re-labelled by it: `legion 1.0.0` keeps writing `attributes.legion_track_completeness` on the
+Entity, and the Track it writes carries `attributes: null`.)
 
 ### Where the pinned spec is ambiguous or contradicts itself
 
@@ -15072,6 +15100,161 @@ and `docs/docs/cdm/link16-gateway.mdx`. Fixtures: `fixtures/link16_gateway/`; pi
 | more than 1 MiB, deeper than 32 or more than 10 000 nodes | — | refused | `LIMIT_EXCEEDED`; past the manifest's 1 MiB or 64 the base class refuses first |
 | a lifecycle notice, a list of reports, a stream | — | refused | One report per call; notices are the runtime bridge's and never reach the adapter |
 
+## readsb trace JSON (README-json.md "trace jsons", readsb v3.16.17) — ingest only
+
+`readsb_trace` is #24 in the ordinal table: `adapters/readsb_trace.py`, ingest only, the ninth
+adapter to declare `residual: structured`, landed 2026-10-15. It reads one trace file of readsb's
+`globe_history` — one airframe's positions over one UTC day, already decoded and fused by the
+aggregator — as the file's gzip octets (one member; readsb keeps a `.json` name on gzip bytes) or
+as the decompressed document in a dict. The format is documented only by readsb's
+`README-json.md`, section "trace jsons", cited by URL and SHA-256 at tag v3.16.17 and not carried
+(`fixtures/readsb_trace/spec/readsb_trace_pin.json`, which also pins the two facts only the code
+states: the `version` key, and the UTC-midnight reference of a permanent file). Nothing is joined
+across files: a flight across UTC midnight is two files and two Tracks of one Entity, and a
+new-leg flag splits nothing. Fixtures: `fixtures/readsb_trace/`, written by its
+`spec/build_fixtures.py`.
+
+| readsb trace | CDM field | Status | Notes |
+|---|---|---|---|
+| `icao`, six lower-case hexadecimal digits | `Entity.entity_id`, `Entity.source_ids`, `SourceId.system`, `SourceId.external_id`, `Track.entity_id` | `readsb_trace 1.0.0` | Upper-cased under `ICAO24`, the system and the spelling the `adsb` adapter derives from a frame, so one airframe has one `entity_id` across both; the address as written is `SourceRef.original_id` and stays in the residual. Upper-case hex in the file is refused `bad-address`: readsb writes lower case |
+| `icao` with `~` first | `SourceId.system`, `SourceId.external_id` | `readsb_trace 1.0.0` | `ADSB_NONICAO`, never `ICAO24`, the `~` dropped from the id |
+| `timestamp` plus a point's element 0 | `Track.samples[].observed_at` | `readsb_trace 1.0.0` | Summed in decimal from the shortest text of each number, then rendered to milliseconds. No midnight is assumed (a live trace's reference is its first point). The aggregator's reception clock: source time, never ours |
+| `timestamp` | `SourceRef.observed_at` | `readsb_trace 1.0.0` | The instant the file states for itself |
+| the first and last points' instants | `Entity.valid_from`, `Entity.valid_to`, `Event.observed_at`, `Track.track_id`, `Event.event_id` | `readsb_trace 1.0.0` | The span keys the Track and the Event identifiers with the upper-cased address, so two days of one airframe are two Tracks, and two files of one airframe over the same span (two instances' copies of one day) share one `track_id` and one `event_id`; `Event.observed_at` is the last point's |
+| elements 1 and 2 | `Track.samples[].position`, `Position.lat`, `Position.lon`, `Entity.position` | `readsb_trace 1.0.0` | Copied; out of range refused `coordinate-out-of-range`. The Entity's position is the last sample's |
+| element 3, a number, flag bit 3 clear | `Position.vertical` | `readsb_trace 1.0.0` | Feet against `BARO` as stated; `Position.alt_m` stays null (SEM-004) |
+| element 3 with flag bit 3 set; element 10 when element 3 is null | `Position.vertical`, `Position.alt_m` | `readsb_trace 1.0.0` | A geometric altitude, feet above the WGS 84 ellipsoid, converted to metres (x 0.3048) in both, the conversion listed in `SourceRef.transformations`. When element 3 is barometric, element 10 stays in the residual |
+| element 3 `ground` | `Entity.attributes` | `readsb_trace 1.0.0` | No vertical; `attributes.readsb_samples.on_ground[i]`. Element 5 is then a TRUE HEADING (`readsb_samples.element_5[i]` reads `true_heading`) and never a course. `ground` in any other element is refused `ground-outside-element-3` |
+| elements 4, 5 and 7 of the last point | `Entity.kinematics`, `Kinematics.speed_mps`, `Kinematics.course_deg`, `Kinematics.climb_mps` | `readsb_trace 1.0.0` | Knots to metres per second (x 1852/3600); element 5 as a course only when airborne and below 360; feet per minute to metres per second (x 0.00508), barometric or geometric by flag bit 2. Nulls stay unknowns. Every point's are in the residual |
+| element 6, the four flag bits | `Entity.attributes` | `readsb_trace 1.0.0` | Decoded beside the raw value: `readsb_samples.stale`, `new_leg`, `vertical_rate_geometric`, `altitude_geometric`, keyed by sample index (gap 16). A new leg is data and splits nothing; another bit is refused `bad-flags` |
+| element 9, the source | `Position.position_source`, `Entity.quality.source_quality` | `readsb_trace 1.0.0` | `adsb_icao`, `adsb_icao_nt`, `adsb_other`, `adsr_icao`, `adsr_other` give GNSS; `mlat`, the three TIS-B sources, `adsc`, `other`, `mode_s`, `unknown`, a null and a missing element 9 give ESTIMATED, the reason in `position_source_basis`. A string README-json.md does not list is refused `unknown-source` |
+| `rc` in the last point's aircraft object | `Entity.quality.uncertainty` | `readsb_trace 1.0.0` | `rc_m`, a containment radius in metres; `accuracy_m` is never set. On every point a stated `rc` that is not a non-negative number is refused `bad-element` |
+| `dbFlags` | `Entity.attributes` | `readsb_trace 1.0.0` | `readsb_db_flags`: military, interesting, PIA and LADD decoded, other bits counted |
+| a trace file | `Track.attributes.completeness` | `readsb_trace 1.0.0` | `carried_samples` the points, `stated_samples` null (the file states no total), `fragment` true: one UTC day of an airframe's history |
+| the update a file is | `Event.event_type`, `Event.severity`, `Event.related_entities`, `Event.received_at`, `Event.validity` | `readsb_trace 1.0.0` | `TRACK_UPDATE`, `INFO`, the Entity, the injected clock; `validity` null with its basis in the payload |
+| the whole document, every leaf | `Entity.residual` | `readsb_trace 1.0.0 · residual` | `residual.data` is the document as handed over; element 8 (the aircraft object), elements 9 to 13 and any past 13 (a receiver id) are read there and nowhere else |
+| `icao`, `timestamp` | `Track.residual`, `Event.residual` | `readsb_trace 1.0.0 · residual` | The record's address and time base, on the two objects that do not carry the document |
+| a top-level key outside the eleven readsb writes, a missing `icao`, `timestamp` or `trace`, an empty `trace` | — | refused | `unknown-key`, `missing-key`, `empty-trace` |
+| a point of fewer than nine elements, a negative or decreasing element 0, a non-numeric `timestamp` | — | refused | `fewer-than-nine-elements`, `negative-offset`, `offsets-not-monotonic`, `bad-timestamp` |
+| a number no double holds (JSON admits an integer of any length) in `timestamp` or a numeric element, a string or key holding a lone surrogate | — | refused | `bad-timestamp`, `bad-element` (the code the element already uses), `not-unicode` |
+| a `trace` of more than 100 000 points (`MAX_POINTS`, DECISIONS L-24; one day at one point per second is 86 400) | — | refused | `too-many-points`, compared before any point is walked or any model built; the text states the bound, never the count (added 2026-10-15) |
+| octets that are not one gzip member, a member that does not inflate, ends early or is followed by octets, inflation past 64 MiB, text that is not UTF-8 or not one JSON document, a duplicate key, `NaN` | — | refused | `not-gzip`, `does-not-inflate`, `truncated-gzip`, `trailing-octets`, `inflates-past-the-bound`, `not-utf-8`, `not-json`, `duplicate-key`, `non-finite-number`; JSON text past depth 64 is refused `InputTooDeep` before it is decoded |
+| a day archive, a tar part, a list of traces | — | refused | One trace file per call; `synapse-decode` takes one tar member by name |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## NEXRAD Level II (ICD 2620010J and ICD 2620002Y, Build 23.0) — ingest only
+
+`nexrad2` is #25 in the ordinal table: `adapters/nexrad2.py`, ingest only, the tenth adapter to
+declare `residual: structured` and the first producer of the observation carrier, landed
+2026-10-15. It reads one Archive II volume file — the 24-octet volume header, then LDM records,
+each a signed control word whose absolute value is the size of one bzip2 stream — as its octets
+or as its parsed twin, and it writes one `ENVIRONMENTAL_OBSERVATION` `Event` per elevation NUMBER
+carrying the `radar-sweep/1` contract, then the radar site's `Entity`. The layouts are ICD
+2620010J (Archive II/User) and ICD 2620002Y (RDA/RPG), both Build 23.0 and pinned by SHA-256 as
+held PDFs in `fixtures/nexrad2/spec/nexrad2_pin.json`, never carried. Every range ICD 2620002Y
+Tables XVII-A, -B, -E, -F and -H state for a field the adapter reads is a validation rule; Table
+XVII-I's data ranges are not rules, and a moment's summary is not range-checked (narrowed
+2026-10-15). Fixtures: `fixtures/nexrad2/`, written by its
+`spec/build_fixtures.py`, an encoder from the ICD tables.
+
+| NEXRAD Level II | CDM field | Status | Notes |
+|---|---|---|---|
+| volume header ICAO identifier; message 31 Radar Identifier | `Entity.entity_id`, `Entity.source_ids`, `radar-sweep/1` `site_id` | `nexrad2 1.0.0` | `ids.derive("NEXRAD", <ICAO>)`; four upper-case letters or refused `bad-volume-header`; a radial naming another site is refused `site-mismatch` |
+| volume header date and time (Figure 1) | `Entity.valid_from`, `SourceRef.observed_at` | `nexrad2 1.0.0` | The start of the volume, Modified Julian Date (1970-01-01 = 1) plus milliseconds past midnight; the tape name and extension (`AR2V0006.001`) are `SourceRef.original_id`; an archive version other than 06 or 07 is refused `unsupported-archive-version` |
+| VOL Lat, Long, Site Height | `Entity.position`, `Position.vertical` | `nexrad2 1.0.0` | MANUAL with its basis; the site height is metres above mean sea level as stated, so `alt_m` stays null; the four site fields must be the same in every radial, else `site-varies`; the tower height stays in the residual |
+| a radial's Elevation Number | one `Event`, `radar-sweep/1` `elevation_number`, `SourceId.external_id` | `nexrad2 1.0.0` | A sweep is an elevation NUMBER, never an angle: a SAILS or MRLE rescan repeats the lowest angle under another number. `<ICAO>/<volume start>/elevation <n>` keys the Event |
+| Collection Time and Modified Julian Date of the data header | `Event.observed_at`, `Event.validity.effective` | `nexrad2 1.0.0` | `observed_at` is the sweep's LAST radial's; `effective` runs from its first to its last; the message header's second stamp stays in the residual; times running backwards inside a sweep are refused `radial-times-out-of-order` |
+| Collection Time accuracy (+/-2000 ms, Table XVII-A) | `Event.quality.uncertainty` | `nexrad2 1.0.0` | `collection_time_accuracy_s` 2.0 |
+| the sweep's first radial's LDM record and message | `radar-sweep/1` `locator`, each moment's `values.locator`, `SourceRef.record_index` | `nexrad2 1.0.0` | Ordinals 0-based (record 0 is the metadata record), the elevation number 1-based; `frame_sha256` is the host's digest of the volume when a gzip or tar was unwrapped around it |
+| each data moment (Table XVII-B) | `radar-sweep/1` `moments[]` | `nexrad2 1.0.0` | Gate count, first-gate range and gate interval (in km) per moment, which must be the same on every radial of the sweep (`moment-geometry-varies`); the unit is Table XVII-I's verbatim |
+| the gate codes | `moments[].values` (by reference) | `nexrad2 1.0.0` | Never copied: the locator, the shape `[radials, gates]`, `Integer*1` or `Integer*2`, the scale and offset (null when a radial states another, Table XVII-I note 20) and a summary whose min and max are each radial's codes converted with its own scale and offset |
+| coded values 0 (below threshold) and 1 (range folded); CFP's 0 to 7 | `radar-sweep/1` `quality_flags` | `nexrad2 1.0.0` | Counted per moment under separate names (`below_threshold_count`, `range_folded_count`; for CFP `filter_not_applied_count`, `point_clutter_filter_count`, `dual_pol_only_filtered_count`, `reserved_code_count`); never merged, never a value |
+| Radial Status (with the 0x80 bad-data bit), spot blanking, the VOL, ELV and RAD constants, each moment's TOVER, SNR threshold and control flags | `radar-sweep/1` `quality_flags` | `nexrad2 1.0.0` | Verbatim or in the unit the flag's name states; one flag `applies_to` "sweep" (or the moment) when every radial states it alike, else one per radial ("radial <azimuth number>"); `bad_data_radial_count` always |
+| VCP number; a common elevation angle | `radar-sweep/1` `coverage_pattern`, `elevation_angle` | `nexrad2 1.0.0` | Stated when every radial of the sweep agrees, else null with each radial's value in the residual |
+| the radar site | `Event.related_entities`, `Event.geometry` | `nexrad2 1.0.0` | The site's point: no gate or beam geometry is computed |
+| every radial's header, raw | `Event.residual` | `nexrad2 1.0.0 · residual` | `residual.data.radials[i]` as the radial states it, its LDM record and message beside it |
+| the volume header, the site, every LDM record's control word, sizes and message types | `Entity.residual` | `nexrad2 1.0.0 · residual` | The metadata record's 134 segments are framed and counted by type, not decoded |
+| message 1, message 29 (an `_MDM` record), a radial compressed with bzip2 or zlib | — | refused | `message-1`, `message-29`, `radial-bzip2-compressed`, `radial-zlib-compressed`, by name |
+| a value outside a range Table XVII-A, -B, -E, -F or -H states (Radial Length 9,360 to 14,296 and Azimuth Number 1 to 720 among them) | — | refused | `<field>-out-of-range`, naming the field and its LDM record and message, never the value |
+| a short header, a record past the end, a stream that is not bzip2, corrupt, cut short or followed by octets, decompression past 402,979,072 octets a volume or 2 MiB a record, a metadata record that is not 325,888 octets | — | refused | `short-volume-header`, `record-past-the-end`, `not-bzip2`, `bzip2-corrupt`, `truncated-bzip2`, `octets-after-bzip2`, `decompresses-past-the-bound`, `record-past-its-bound`, `metadata-record-size` |
+| a data block or moment the ICD does not name, two blocks overlapping, a block past the radial, no VOL, ELV, RAD or REF | — | refused | `unknown-block`, `unknown-moment`, `blocks-overlap`, `block-past-the-radial`, `constant-block-missing`, `reflectivity-missing`: the stricter reading of Table XVII-A note 9 |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## NDBC standard meteorological text (Web Data Guide 2.0) — ingest only
+
+`ndbc_stdmet` is #26 in the ordinal table: `adapters/ndbc_stdmet.py`, ingest only, the eleventh
+adapter to declare `residual: structured`, landed 2026-10-15. It reads one stdmet file — a
+realtime file, a monthly or a yearly historical file once its gzip is unwrapped — as its octets or
+its parsed twin: whitespace-aligned columns read with `str.split()` (never `csv`, which reads a
+19-column row as 41 fields), keyed by the header line's names so every year's layout is read by
+name, never by position. It writes one `ENVIRONMENTAL_OBSERVATION` `Event` per data row carrying
+the `point-observation/1` contract, then the station's `Entity`. The format is the NDBC Web Data
+Guide (Version 2.0, June 2023) and NDBC's measurement descriptions; the guide and the
+quality-control handbook T80-10 are pinned by SHA-256 as held PDFs in
+`fixtures/ndbc_stdmet/spec/ndbc_stdmet_pin.json`, and the descriptions are cited by URL. Fixtures:
+`fixtures/ndbc_stdmet/`, written by its `spec/build_fixtures.py`.
+
+| NDBC stdmet | CDM field | Status | Notes |
+|---|---|---|---|
+| the station (not in the file) | `Entity.entity_id`, `Entity.source_ids`, `point-observation/1` `station_id` | `ndbc_stdmet 1.0.0` | The caller's `station_id` (five upper-case letters or digits), because a stdmet file does not state its station; `ids.derive("NDBC", <station>)` |
+| the station's position (not in the file) | `Entity.position`, `Event.geometry` | `ndbc_stdmet 1.0.0` | Only from the caller's `StationTable`, MANUAL with its basis; else null, never zeros. Nothing is joined from `activestations.xml` |
+| `#YY`/`YY`/`YYYY`, `MM`, `DD`, `hh`, `mm` | `Event.observed_at`, `Event.validity.effective`, `SourceRef.observed_at` | `ndbc_stdmet 1.0.0` | One UTC instant, both ends of `effective`; the year is the width its column's name says (four digits under `#YY` and `YYYY`, two under `YY`, else `bad-time`), and the only two-digit year read is `98`, as 1998, the one the `YY` layout is recorded with (a 1998 file); any other is refused `undocumented-year`, never given a century; no `mm` column is the hour; a repeated instant is refused `repeated-instant` |
+| every data column (`WDIR`/`WD`, `WSPD`, `GST`, `WVHT`, `DPD`, `APD`, `MWD`, `PRES`/`BAR`, `ATMP`, `WTMP`, `DEWP`, `VIS`, `PTDY`, `TIDE`) | `point-observation/1` `readings[]` | `ndbc_stdmet 1.0.0` | One reading per column, named as the header names it; the value with the units line's unit verbatim (`nmi` and `mi` as written); `TIDE` with the datum MLLW the descriptions give; `PTDY` read with the sign the realtime file prints (`+0.3`, a signed zero), a `+` in any other column refused `not-a-number` |
+| `MM` in a realtime file; a run of 9s at a documented width in a historical file | `readings[].absence` | `ndbc_stdmet 1.0.0` | `Absence` of cause `sentinel`, the marker verbatim, its mechanism named: WVHT, DPD, APD, TIDE `99.00`, MWD `999`, VIS `99.0`, WTMP `999.0` |
+| a value in a file with no units line (before 2007) | `readings[].absence` | `ndbc_stdmet 1.0.0 · residual` | `Absence` of cause `unit_unknown`; the number stays in the Event's residual row |
+| the header, the units line and each row as written | `Event.residual`, `Entity.residual` | `ndbc_stdmet 1.0.0 · residual` | `residual.data.row`; the station's residual holds the header and the units line |
+| a quality flag | `point-observation/1` `quality_flags_basis` | `ndbc_stdmet 1.0.0` | None is printed (T80-10): the absence is stated with its basis |
+| a run of 9s at an undocumented width, `MM` in a historical file, a column of no stdmet layout, a row of another width, a value that is no number, a number no binary double holds | — | refused | `undocumented-sentinel`, `mm-in-historical-file`, `unknown-column`, `width-mismatch`, `not-a-number`, `number-out-of-range`, naming the row and the column, never the value |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## NOAA CO-OPS data API responses (datagetter, CSV and JSON) — ingest only
+
+`coops_csv` is #27 in the ordinal table: `adapters/coops_csv.py`, ingest only, the twelfth adapter
+to declare `residual: structured`, landed 2026-10-15. It reads one response of the CO-OPS data
+API in either form it answers in — the CSV form (one header, read positionally and compared whole
+with the product's own, so wind's two `Direction` columns and air pressure's trailing space are
+both kept) or the JSON form (`metadata` and `data`, every value a string) — under the caller's
+required `CoopsRequest`, because a response echoes none of the datum, the units, the time zone or
+(in CSV) the station it was requested with. It writes one `ENVIRONMENTAL_OBSERVATION` `Event` per
+sample carrying the `point-observation/1` contract, then the station's `Entity`. The API's pages
+are cited by URL in `fixtures/coops_csv/spec/coops_csv_pin.json` and not carried. Fixtures:
+`fixtures/coops_csv/`, written by its `spec/build_fixtures.py`.
+
+| CO-OPS | CDM field | Status | Notes |
+|---|---|---|---|
+| `Date Time` / `t` | `Event.observed_at`, `Event.validity.effective`, `SourceRef.observed_at` | `coops_csv 1.0.0` | Read under the request's `time_zone`: `gmt` as UTC, `lst` with the caller's `lst_offset` (a declared transformation: `2026-04-28 00:00` at `-05:00` is `05:00Z`); `lst_ldt` refused by name; a request with no zone refused |
+| `Water Level` / `v`, `Sigma` / `s`; `Pressure`; `Speed`, `Direction` (degrees), `Gust` | `point-observation/1` `readings[]` | `coops_csv 1.0.0` | The unit is the request's `units` (`metric` or `english`) verbatim under the request parameter's namespace; wind's direction is in degrees; a water level carries the request's `datum` as `{name, namespace}` |
+| the flags (water level O or I, F, R, L or T; air pressure X, N, R; wind X, R) and the quality level p/v | `point-observation/1` `quality_flags` | `coops_csv 1.0.0` | Typed and verbatim: each flag an integer (O is a count), the quality level its letter, every flag named by the level it belongs to |
+| the station (`metadata.id`; the request's in CSV) | `Entity.entity_id`, `Entity.source_ids`, `station_id` | `coops_csv 1.0.0` | `ids.derive("CO-OPS", <station>)`; a JSON response naming another station than the request's is refused `station-disagrees`. A sample's `Event` identity is `<station>/<product>/<datum or ->/<units>/<interval, 6 when absent>/<UTC instant>`: every request parameter that changes the value, and not the zone |
+| `metadata.lat`, `metadata.lon` | `Entity.position`, `Event.geometry` | `coops_csv 1.0.0` | Strings read as decimal degrees, MANUAL with their basis; the CSV form's position comes only from a caller's `StationTable` |
+| each row or record as written, the request, `metadata` | `Event.residual`, `Entity.residual` | `coops_csv 1.0.0 · residual` | `residual.data.row` or `residual.data.record`, with `residual.data.request`; wind's compass point stays here |
+| a header not the request's product's, another product's header, a blank field, a stamp not `YYYY-MM-DD HH:MM`, the JSON form of air pressure or wind, a value or a JSON integer no binary double holds, a flag of that size | — | refused | `unknown-header`, `header-of-another-product`, `blank-value`, `bad-time`, `json-form-not-read`, `number-out-of-range`, `flag-out-of-range`, never quoting a value |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## EPA AirNow hourly observation files (HourlyData, HourlyAQObs) — ingest only
+
+`airnow_hourly` is #28 in the ordinal table: `adapters/airnow_hourly.py`, ingest only, the
+thirteenth adapter to declare `residual: structured`, landed 2026-10-15. It reads one of AirNow's
+two hourly observation files, told apart by their shape — HourlyData (no header, nine
+`|`-delimited fields, a two-digit year) or HourlyAQObs (a quoted CSV under 34 names) — as its
+octets or its parsed twin. It writes one `ENVIRONMENTAL_OBSERVATION` `Event` per line carrying the
+`point-observation/1` contract, then one `Entity` per site. The two fact sheets and the AirNow Data
+Exchange Guidelines are pinned by SHA-256 as held PDFs in
+`fixtures/airnow_hourly/spec/airnow_hourly_pin.json`. Fixtures: `fixtures/airnow_hourly/`, written
+by its `spec/build_fixtures.py`.
+
+| AirNow | CDM field | Status | Notes |
+|---|---|---|---|
+| valid date and valid time (GMT, the START of a one-hour period) | `Event.validity.effective`, `Event.observed_at`, `SourceRef.observed_at` | `airnow_hourly 1.0.0` | `effective` is [start, start + 1 h] and `observed_at` its END; the record's own stamp, the start, stays in `SourceRef.observed_at`; a two-digit year is 20YY; a time not on the hour is refused `not-an-hour`; the GMT offset is never applied |
+| AQSID | `Entity.entity_id`, `Entity.source_ids`, `station_id` | `airnow_hourly 1.0.0` | Nine or twelve upper-case letters and digits; `ids.derive("AirNow", <AQSID>)` |
+| HourlyData parameter, units, value | `point-observation/1` `readings[0]` | `airnow_hourly 1.0.0` | Verbatim and open-ended (the files name parameters the fact sheet does not list); a negative raw concentration is a value, never clamped |
+| HourlyAQObs `*_AQI`; each concentration with its `*_Unit` | `point-observation/1` `readings[]` | `airnow_hourly 1.0.0` | The AQIs with the unit `AQI`; a concentration with its unit verbatim; a blank field states no reading; a concentration with a blank unit is an `Absence` of cause `unit_unknown` |
+| HourlyAQObs `Latitude`, `Longitude`, `Status` | `Entity.position`, `Entity.status` | `airnow_hourly 1.0.0` | The line's stated position, MANUAL with its basis, else the caller's site table; the status as `OperationalStatus` under the file's namespace; a site stated two ways is refused `site-disagrees` |
+| every line as written; a site's fields as its first line states them | `Event.residual`, `Entity.residual` | `airnow_hourly 1.0.0 · residual` | `residual.data.record` or `residual.data.row`; `Elevation`, `GMTOffset`, the `*_Measured` fields and the reporting areas stay here |
+| a quality flag | `point-observation/1` `quality_flags_basis` | `airnow_hourly 1.0.0` | None is published: only valid data are reported, and every value is preliminary |
+| a date in neither form, an AQSID of another length, a line of another width, a value that is no number, a number no binary double holds, a HourlyAQObs header not the 34 names the files write (the fact sheet's list spells `OZONE_Measured` as `Ozone_Measured`; that spelling is refused) | — | refused | `bad-date`, `bad-aqsid`, `width-mismatch`, `not-a-number`, `number-out-of-range`, `unknown-header`, never quoting a value |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
 ## Gaps, and what each one costs
 
 1. **No canonical name.** A CoT callsign and a 4676 track number are the strings an operator
@@ -15795,7 +15978,13 @@ and `docs/docs/cdm/link16-gateway.mdx`. Fixtures: `fixtures/link16_gateway/`; pi
 16. **No per-sample extension, and no per-segment one either.** `TrackSample` has exactly two
    fields — `position` and `observed_at` — and it is `extra="forbid"` with no `attributes` bag.
    `Track` above it has no bag either, which the Legion row set already met and worked around by
-   parking a page's `crs` and `paging` on the owning `Entity`. STANAG 4676 turns that inconvenience
+   parking a page's `crs` and `paging` on the owning `Entity`. (Dated 2026-10-15: that sentence was
+   true until CDM 3.2.0. The Track half of this gap was closed on 2026-10-15, CDM 3.2.0, by
+   `Track.attributes.completeness`, a typed block that states how many samples the Track carries,
+   how many the source says the history holds, and whether it is a fragment; Legion keeps parking
+   its figures on the Entity, because no shipped adapter is re-labelled by the block. The
+   `TrackSample` half below — no per-sample extension — stays open, and the block deliberately has
+   no per-sample field.) STANAG 4676 turns that inconvenience
    into a structural problem, because **a NITS `TrackPoint` carries sixteen attributes** and a NITS
    `TrackSegment` carries nine more: an identity (`uid`/`lid`), a `Confidence`, a comment, an
    `outline` and an `outlineObscured`, a `nearestConfuser` distance with its own confidence, any

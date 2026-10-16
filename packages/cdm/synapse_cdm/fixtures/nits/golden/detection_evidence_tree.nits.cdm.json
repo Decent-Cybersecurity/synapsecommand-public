@@ -301,6 +301,7 @@
     "valid_to": null
   },
   {
+    "attributes": null,
     "entity_id": "585014da-039d-54c1-8e9b-9a4b52bd4a26",
     "integrity": null,
     "object_kind": "track",
@@ -617,6 +618,7 @@
         "system": "NITS_UID"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

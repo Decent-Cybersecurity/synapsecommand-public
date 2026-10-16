@@ -221,6 +221,7 @@
         "system": "GMTIF-PROCESSING"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

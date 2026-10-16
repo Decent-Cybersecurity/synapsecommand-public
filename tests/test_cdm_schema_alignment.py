@@ -445,7 +445,10 @@ def test_the_sidc_and_the_ontology_list_are_portable_now():
                                                                     [22.0, 58.0]]]}}),
      "SEM-002"),
     ("event", event(payload={"interference_type": "JAMMING"}), "SEM-011"),
-], ids=["interval", "track-order", "ring-closure", "payload-shape"])
+    ("track", track(attributes={"completeness": {"carried_samples": 2,
+                                                 "completeness_basis": "one sample, two claimed"}}),
+     "SEM-014"),
+], ids=["interval", "track-order", "ring-closure", "payload-shape", "completeness-count"])
 def test_a_cross_field_rule_is_schema_valid_and_model_refused_with_its_rule_id(kind, doc, rule):
     """The schema cannot say it; the model does, and says which rule. Conformance keeps the two
     verdicts apart — `tests/test_cdm_semantic_corpus.py` runs the whole corpus through it."""

@@ -1,0 +1,1028 @@
+[
+  {
+    "event_id": "2211c941-953d-5b12-861e-e344c50eff16",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.5,
+        57.25
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2025-11-03T00:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 2,
+          "kind": "table",
+          "row": 0
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [],
+        "quality_flags_basis": "NDBC prints no per-value quality flag in its text files: hard-flagged values are withheld from public release, soft flags are not printed, and the flags reach only the NOAA archive (NDBC T80-10, December 2023; research-station-text F12). A missing value is the absence its sentinel names.",
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degT",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 140.0
+            },
+            "name": "WDIR",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 3.1
+            },
+            "name": "WSPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 4.0
+            },
+            "name": "GST",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing WVHT as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "WVHT",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing DPD as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "DPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing APD as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "APD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing MWD as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "999"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "MWD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "hPa",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 1018.2
+            },
+            "name": "PRES",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 11.4
+            },
+            "name": "ATMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 12.9
+            },
+            "name": "WTMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 9.0
+            },
+            "name": "DEWP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing VIS as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.0"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "VIS",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing TIDE as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": {
+              "name": "MLLW",
+              "namespace": "NDBC's measurement descriptions (faq/measdes.shtml): TIDE is in feet relative to mean lower low water"
+            },
+            "level": null,
+            "measurement": null,
+            "name": "TIDE",
+            "namespace": "NDBC stdmet header line"
+          }
+        ],
+        "station_id": "EX001",
+        "station_namespace": "NDBC station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "NDBC's measurement descriptions (faq/measdes.shtml): 'Times are in UTC'; the year, MM, DD, hh and mm columns",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "b90f550a-05d9-56e7-b345-95a6ee401e6b"
+    ],
+    "residual": {
+      "data": {
+        "header": [
+          "#YY",
+          "MM",
+          "DD",
+          "hh",
+          "mm",
+          "WDIR",
+          "WSPD",
+          "GST",
+          "WVHT",
+          "DPD",
+          "APD",
+          "MWD",
+          "PRES",
+          "ATMP",
+          "WTMP",
+          "DEWP",
+          "VIS",
+          "TIDE"
+        ],
+        "row": [
+          "2025",
+          "11",
+          "03",
+          "00",
+          "00",
+          "140",
+          "3.1",
+          "4.0",
+          "99.00",
+          "99.00",
+          "99.00",
+          "999",
+          "1018.2",
+          "11.4",
+          "12.9",
+          "9.0",
+          "99.0",
+          "99.00"
+        ],
+        "units": [
+          "#yr",
+          "mo",
+          "dy",
+          "hr",
+          "mn",
+          "degT",
+          "m/s",
+          "m/s",
+          "m",
+          "sec",
+          "sec",
+          "degT",
+          "hPa",
+          "degC",
+          "degC",
+          "degC",
+          "mi",
+          "ft"
+        ]
+      },
+      "namespace": "NDBC standard meteorological data (stdmet)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ndbc_stdmet",
+      "adapter_version": "1.0.0",
+      "format_name": "NDBC standard meteorological data (stdmet)",
+      "format_version": "NDBC Web Data Guide, Version 2.0 (June 2023)",
+      "observed_at": "2025-11-03T00:00:00.000Z",
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NDBC",
+      "transformations": [
+        "the year, MM, DD, hh and mm columns are read as one UTC instant (NDBC's measurement descriptions (faq/measdes.shtml): times are UTC)",
+        "each value's decimal text is read as a binary floating-point number",
+        "a missing-value marker is an Absence carrying the marker as written"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EX001/2025-11-03T00:00:00.000Z",
+        "system": "NDBC"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2025-11-03T00:00:00.000Z",
+        "start": "2025-11-03T00:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "fd6257f0-c44a-53df-abf4-bdd687842ba7",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.5,
+        57.25
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2025-11-03T00:10:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 2,
+          "kind": "table",
+          "row": 1
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [],
+        "quality_flags_basis": "NDBC prints no per-value quality flag in its text files: hard-flagged values are withheld from public release, soft flags are not printed, and the flags reach only the NOAA archive (NDBC T80-10, December 2023; research-station-text F12). A missing value is the absence its sentinel names.",
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degT",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 145.0
+            },
+            "name": "WDIR",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 3.3
+            },
+            "name": "WSPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 4.2
+            },
+            "name": "GST",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 1.1
+            },
+            "name": "WVHT",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "sec",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 7.0
+            },
+            "name": "DPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "sec",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 5.2
+            },
+            "name": "APD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degT",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 150.0
+            },
+            "name": "MWD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "hPa",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 1018.1
+            },
+            "name": "PRES",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 11.3
+            },
+            "name": "ATMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 12.9
+            },
+            "name": "WTMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 9.0
+            },
+            "name": "DEWP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing VIS as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.0"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "VIS",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing TIDE as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": {
+              "name": "MLLW",
+              "namespace": "NDBC's measurement descriptions (faq/measdes.shtml): TIDE is in feet relative to mean lower low water"
+            },
+            "level": null,
+            "measurement": null,
+            "name": "TIDE",
+            "namespace": "NDBC stdmet header line"
+          }
+        ],
+        "station_id": "EX001",
+        "station_namespace": "NDBC station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "NDBC's measurement descriptions (faq/measdes.shtml): 'Times are in UTC'; the year, MM, DD, hh and mm columns",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "b90f550a-05d9-56e7-b345-95a6ee401e6b"
+    ],
+    "residual": {
+      "data": {
+        "header": [
+          "#YY",
+          "MM",
+          "DD",
+          "hh",
+          "mm",
+          "WDIR",
+          "WSPD",
+          "GST",
+          "WVHT",
+          "DPD",
+          "APD",
+          "MWD",
+          "PRES",
+          "ATMP",
+          "WTMP",
+          "DEWP",
+          "VIS",
+          "TIDE"
+        ],
+        "row": [
+          "2025",
+          "11",
+          "03",
+          "00",
+          "10",
+          "145",
+          "3.3",
+          "4.2",
+          "1.10",
+          "7.00",
+          "5.20",
+          "150",
+          "1018.1",
+          "11.3",
+          "12.9",
+          "9.0",
+          "99.0",
+          "99.00"
+        ],
+        "units": [
+          "#yr",
+          "mo",
+          "dy",
+          "hr",
+          "mn",
+          "degT",
+          "m/s",
+          "m/s",
+          "m",
+          "sec",
+          "sec",
+          "degT",
+          "hPa",
+          "degC",
+          "degC",
+          "degC",
+          "mi",
+          "ft"
+        ]
+      },
+      "namespace": "NDBC standard meteorological data (stdmet)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ndbc_stdmet",
+      "adapter_version": "1.0.0",
+      "format_name": "NDBC standard meteorological data (stdmet)",
+      "format_version": "NDBC Web Data Guide, Version 2.0 (June 2023)",
+      "observed_at": "2025-11-03T00:10:00.000Z",
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NDBC",
+      "transformations": [
+        "the year, MM, DD, hh and mm columns are read as one UTC instant (NDBC's measurement descriptions (faq/measdes.shtml): times are UTC)",
+        "each value's decimal text is read as a binary floating-point number",
+        "a missing-value marker is an Absence carrying the marker as written"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EX001/2025-11-03T00:10:00.000Z",
+        "system": "NDBC"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2025-11-03T00:10:00.000Z",
+        "start": "2025-11-03T00:10:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "f90877e3-105c-566a-881a-b445d659fe51",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.5,
+        57.25
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2025-11-03T00:20:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 2,
+          "kind": "table",
+          "row": 2
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [],
+        "quality_flags_basis": "NDBC prints no per-value quality flag in its text files: hard-flagged values are withheld from public release, soft flags are not printed, and the flags reach only the NOAA archive (NDBC T80-10, December 2023; research-station-text F12). A missing value is the absence its sentinel names.",
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degT",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 150.0
+            },
+            "name": "WDIR",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 3.0
+            },
+            "name": "WSPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 3.9
+            },
+            "name": "GST",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "m",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 1.05
+            },
+            "name": "WVHT",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "sec",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 6.7
+            },
+            "name": "DPD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "sec",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 5.1
+            },
+            "name": "APD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degT",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 155.0
+            },
+            "name": "MWD",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "hPa",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 1018.0
+            },
+            "name": "PRES",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 11.3
+            },
+            "name": "ATMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing WTMP as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "999.0"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "WTMP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "NDBC stdmet units line",
+              "value": 8.9
+            },
+            "name": "DEWP",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing VIS as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.0"
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "VIS",
+            "namespace": "NDBC stdmet header line"
+          },
+          {
+            "absence": {
+              "cause": "sentinel",
+              "mechanism": "a historical file writes a missing TIDE as a run of 9s of this width (NDBC's measurement descriptions (faq/measdes.shtml); the width research-station-text F02 observed)",
+              "sentinel": "99.00"
+            },
+            "datum": {
+              "name": "MLLW",
+              "namespace": "NDBC's measurement descriptions (faq/measdes.shtml): TIDE is in feet relative to mean lower low water"
+            },
+            "level": null,
+            "measurement": null,
+            "name": "TIDE",
+            "namespace": "NDBC stdmet header line"
+          }
+        ],
+        "station_id": "EX001",
+        "station_namespace": "NDBC station identifier",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "NDBC's measurement descriptions (faq/measdes.shtml): 'Times are in UTC'; the year, MM, DD, hh and mm columns",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "b90f550a-05d9-56e7-b345-95a6ee401e6b"
+    ],
+    "residual": {
+      "data": {
+        "header": [
+          "#YY",
+          "MM",
+          "DD",
+          "hh",
+          "mm",
+          "WDIR",
+          "WSPD",
+          "GST",
+          "WVHT",
+          "DPD",
+          "APD",
+          "MWD",
+          "PRES",
+          "ATMP",
+          "WTMP",
+          "DEWP",
+          "VIS",
+          "TIDE"
+        ],
+        "row": [
+          "2025",
+          "11",
+          "03",
+          "00",
+          "20",
+          "150",
+          "3.0",
+          "3.9",
+          "1.05",
+          "6.70",
+          "5.10",
+          "155",
+          "1018.0",
+          "11.3",
+          "999.0",
+          "8.9",
+          "99.0",
+          "99.00"
+        ],
+        "units": [
+          "#yr",
+          "mo",
+          "dy",
+          "hr",
+          "mn",
+          "degT",
+          "m/s",
+          "m/s",
+          "m",
+          "sec",
+          "sec",
+          "degT",
+          "hPa",
+          "degC",
+          "degC",
+          "degC",
+          "mi",
+          "ft"
+        ]
+      },
+      "namespace": "NDBC standard meteorological data (stdmet)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ndbc_stdmet",
+      "adapter_version": "1.0.0",
+      "format_name": "NDBC standard meteorological data (stdmet)",
+      "format_version": "NDBC Web Data Guide, Version 2.0 (June 2023)",
+      "observed_at": "2025-11-03T00:20:00.000Z",
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NDBC",
+      "transformations": [
+        "the year, MM, DD, hh and mm columns are read as one UTC instant (NDBC's measurement descriptions (faq/measdes.shtml): times are UTC)",
+        "each value's decimal text is read as a binary floating-point number",
+        "a missing-value marker is an Absence carrying the marker as written"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EX001/2025-11-03T00:20:00.000Z",
+        "system": "NDBC"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2025-11-03T00:20:00.000Z",
+        "start": "2025-11-03T00:20:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "station table ndbc-stdmet-fixture-stations: synthetic station positions written for the packaged fixtures on 2026-10-15 (fixtures/ndbc_stdmet/README.md); no real station is named",
+      "site_class": "buoy",
+      "station_id_basis": "the caller's station_id argument: a stdmet file does not state the station it was recorded at (research-station-text F03)",
+      "valid_from_basis": "the earliest instant a row of the file states"
+    },
+    "confidence": null,
+    "entity_id": "b90f550a-05d9-56e7-b345-95a6ee401e6b",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.25,
+      "lon": 21.5,
+      "position_source": "MANUAL",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "header": [
+          "#YY",
+          "MM",
+          "DD",
+          "hh",
+          "mm",
+          "WDIR",
+          "WSPD",
+          "GST",
+          "WVHT",
+          "DPD",
+          "APD",
+          "MWD",
+          "PRES",
+          "ATMP",
+          "WTMP",
+          "DEWP",
+          "VIS",
+          "TIDE"
+        ],
+        "units": [
+          "#yr",
+          "mo",
+          "dy",
+          "hr",
+          "mn",
+          "degT",
+          "m/s",
+          "m/s",
+          "m",
+          "sec",
+          "sec",
+          "degT",
+          "hPa",
+          "degC",
+          "degC",
+          "degC",
+          "mi",
+          "ft"
+        ]
+      },
+      "namespace": "NDBC standard meteorological data (stdmet)"
+    },
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "ndbc_stdmet",
+      "adapter_version": "1.0.0",
+      "format_name": "NDBC standard meteorological data (stdmet)",
+      "format_version": "NDBC Web Data Guide, Version 2.0 (June 2023)",
+      "observed_at": "2025-11-03T00:00:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NDBC",
+      "transformations": [
+        "the year, MM, DD, hh and mm columns are read as one UTC instant (NDBC's measurement descriptions (faq/measdes.shtml): times are UTC)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EX001",
+        "system": "NDBC"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2025-11-03T00:00:00.000Z",
+    "valid_to": null
+  }
+]

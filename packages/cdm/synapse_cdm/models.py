@@ -88,8 +88,28 @@ def _timestamp_in(value: object, info: ValidationInfo) -> _dt.datetime:
     `conformance.assess_a` validates on the JSON path. A consumer that parses JSON itself and
     calls `model_validate` on the dict is on the Python path and gets the coercion; the
     conformance tool exists so that a wire claim is never made from that path.
+
+    A value that is neither text nor a datetime is refused first, on both paths, with a message
+    that names its type and never repeats it (2026-10-15): until then a number reached
+    `times.parse` on the Python path and came out as an `AttributeError` rather than a
+    `ValidationError`, and the JSON path's message quoted it.
+
+    An instant whose UTC reading leaves the years 0001 to 9999 is refused the same way (also
+    2026-10-15): `0001-01-01T00:00:00+14:00`, or an aware datetime at either end of the range,
+    is a valid local time whose conversion to UTC raised `OverflowError` out of the validator.
     """
-    return times.parse_wire(value) if info.mode == "json" else times.parse(value)
+    if not isinstance(value, (str, _dt.datetime)):
+        raise ValueError(
+            "a timestamp is RFC 3339 text or a datetime, and a value of type "
+            f"{type(value).__name__} is neither; the value is not repeated here"
+        )
+    try:
+        return times.parse_wire(value) if info.mode == "json" else times.parse(value)
+    except OverflowError:
+        raise ValueError(
+            "a timestamp read in UTC falls before 0001-01-01 or after 9999-12-31, which no "
+            "timestamp holds; the value is not repeated here"
+        ) from None
 
 
 Timestamp = Annotated[
@@ -896,6 +916,15 @@ class Event(CDMBase):
     )
     observed_at: Timestamp = Field(description="When the SOURCE saw it. Never receipt time.")
     received_at: Timestamp = Field(description="When WE took delivery. Never source time.")
+    validity: TemporalValidity | None = Field(
+        default=None,
+        description="The times the source states about what this event reports (§27), on "
+                    "PlanObject.validity's precedent. Every interval is `effective`: an instant "
+                    "sets end == start, and end = None is open-ended, never 'unknown'. "
+                    "`observed_at` above is the END of the sensing interval for an observation "
+                    "and the REFERENCE time for a model product, never a future valid instant. "
+                    "None = the source states none. Added 2026-10-15, CDM 3.2.0.",
+    )
     oes: OesMetadata | None = Field(
         default=None,
         description="The SC-OES wire-semantic block. None = the producer made no SC-OES "
@@ -980,6 +1009,73 @@ class TrackSample(BaseModel):
     observed_at: Timestamp
 
 
+class TrackCompleteness(BaseModel):
+    """How much of a history this Track holds, stated on the Track itself.
+
+    A Track built from one page, one window or one file of a longer history is a FRAGMENT, and a
+    consumer that cannot tell a fragment from a whole history will compute a speed across a gap it
+    does not know is there. Until 2026-10-15 the figures that answer "how much of this is here"
+    could ride only on the owning Entity, keyed by `track_id`, because Track had nowhere to put
+    them, and a consumer holding only the Track could not read them; the Legion adapter still
+    parks them there, since no shipped adapter is re-labelled by this block. FORMAT_COVERAGE.md's
+    gap 16 records the problem, and this block closes its Track half.
+
+    Three figures and a basis, and each of the three keeps "the source does not say" apart from a
+    value. `carried_samples` is never in doubt — it is counted — and it must equal the length of
+    the Track's `samples`, so the block cannot describe a different list from the one it rides on.
+    `stated_samples` is the source's own total and is None when the source states none, never 0.
+    `fragment` is None when the adapter cannot tell, never False: "we cannot tell" and "we can
+    tell it is whole" are different answers. There is no per-sample field here, on purpose: gap
+    16's TrackSample half stays open.
+
+    Two bounds were tightened on 2026-10-15, before the block shipped: `stated_samples` is at
+    least 1, so "never 0" is held rather than only said, and `completeness_basis` must hold a
+    character that is not whitespace, the pattern `\\S`, read by Python's `re` here (the
+    engine the published schema's Python validator uses), so the model and the schema refuse the
+    same blank strings — a basis of spaces states nothing.
+    """
+    model_config = ConfigDict(STRICT, regex_engine="python-re")
+    carried_samples: int = Field(
+        ge=1,
+        description="How many samples this Track carries. Equal to len(samples), which the Track "
+                    "validates.",
+    )
+    stated_samples: int | None = Field(
+        default=None, ge=1,
+        description="How many samples the SOURCE states the whole history holds, at least 1. "
+                    "None = the source states no total, never 0.",
+    )
+    fragment: bool | None = Field(
+        default=None,
+        description="True = the source shows this Track is part of a longer history; False = it "
+                    "shows this is the whole of it; None = the adapter cannot tell, never False.",
+    )
+    completeness_basis: str = Field(
+        min_length=1, pattern=r"\S",
+        description="Why the figures above are what they are: which source fields they were read "
+                    "from, or that the source states none. Required and not blank, as every "
+                    "`*_basis` is.",
+    )
+
+
+class TrackAttributes(BaseModel):
+    """The typed block on `Track.attributes` (CDM 3.2.0, 2026-10-15). Today it holds one thing.
+
+    `extra="forbid"` is the decision, and it is one line on purpose. Every other canonical object
+    has an open bag — `Entity.attributes`, `Event.payload` — and Track's block is typed instead
+    because the one question every paginated or windowed source asks of a Track is a completeness
+    question, and a typed answer is one a consumer can read without knowing which adapter wrote
+    it. Should the bag be the ruling instead, relaxing `extra` to "allow" is the whole change:
+    `completeness` stays typed and other keys ride beside it.
+    """
+    model_config = STRICT
+    completeness: TrackCompleteness | None = Field(
+        default=None,
+        description="How much of the history this Track holds. None = the adapter states nothing "
+                    "about it.",
+    )
+
+
 class Track(CDMBase):
     """An entity's position history, in time order. The order is a contract, not a hope.
 
@@ -1000,6 +1096,11 @@ class Track(CDMBase):
     track_quality: float | None = Field(
         default=None, ge=0.0, le=1.0, description="0..1. None = not assessed, never 0."
     )
+    attributes: TrackAttributes | None = Field(
+        default=None,
+        description="The typed block for what a Track states about itself — today, how complete "
+                    "a history it is. None = nothing stated. Added 2026-10-15, CDM 3.2.0.",
+    )
 
     @model_validator(mode="after")
     def _ordered(self) -> "Track":
@@ -1011,6 +1112,20 @@ class Track(CDMBase):
                     f"{times.render(earlier)}. Sort at the adapter — a track that runs "
                     "backwards yields a negative speed downstream"
                 )
+        return self
+
+    @model_validator(mode="after")
+    def _completeness_counts_these_samples(self) -> "Track":
+        """SEM-014 is checked when the Track is built and when a field is assigned, and a list
+        changed in place (`track.samples.append(...)`) is not checked again until the Track is
+        validated again — the limit every pydantic validator has, stated here (2026-10-15)."""
+        completeness = self.attributes.completeness if self.attributes is not None else None
+        if completeness is not None and completeness.carried_samples != len(self.samples):
+            raise ValueError(
+                f"SEM-014: attributes.completeness.carried_samples is "
+                f"{completeness.carried_samples} and the Track carries {len(self.samples)} "
+                "samples — the block describes a different list from the one it rides on"
+            )
         return self
 
 

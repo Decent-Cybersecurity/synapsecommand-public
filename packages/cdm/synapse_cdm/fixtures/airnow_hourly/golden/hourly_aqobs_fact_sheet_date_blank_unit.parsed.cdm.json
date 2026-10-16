@@ -1,0 +1,277 @@
+[
+  {
+    "event_id": "d805f5cb-3708-55a3-9648-7ea59de87c7b",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.6,
+        57.4
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-28T13:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 1,
+          "kind": "table",
+          "row": 0
+        },
+        "product_class": "observation",
+        "product_version": null,
+        "quality_flags": [],
+        "quality_flags_basis": "AirNow's hourly files carry no per-value quality flag: only valid data are reported, a missing value is a line or a field that is not there, and every value is preliminary (the Hourly Data and Hourly AQ Obs fact sheets; research-station-text F08, F09). HourlyAQObs's *_Measured fields say whether a site measures a pollutant and stay in the residual.",
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "AQI",
+              "unit_namespace": "the Hourly AQ Obs fact sheet: the field is the NowCast Air Quality Index (NO2's the hourly AQI), an index of 0 to 500 with no other unit",
+              "value": 6.0
+            },
+            "name": "NO2_AQI",
+            "namespace": "AirNow HourlyAQObs field"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "PPB",
+              "unit_namespace": "AirNow HourlyAQObs NO2_Unit field",
+              "value": 6.8
+            },
+            "name": "NO2",
+            "namespace": "AirNow HourlyAQObs field"
+          },
+          {
+            "absence": {
+              "cause": "unit_unknown",
+              "mechanism": "the line states the concentration and leaves its unit field blank, so the value's unit is not stated and the number stays in the Event's residual",
+              "sentinel": null
+            },
+            "datum": null,
+            "level": null,
+            "measurement": null,
+            "name": "CO",
+            "namespace": "AirNow HourlyAQObs field"
+          }
+        ],
+        "station_id": "000000002",
+        "station_namespace": "EPA AQS site identifier (AQSID)",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "the AirNow fact sheets: the valid date and valid time are GMT and mark the beginning of a one-hour measurement period (research-station-text F08)",
+            "name": "GMT",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "f8a7cdc2-3fea-5494-a72d-4f1f816ddeb3"
+    ],
+    "residual": {
+      "data": {
+        "form": "HourlyAQObs",
+        "header": [
+          "AQSID",
+          "SiteName",
+          "Status",
+          "EPARegion",
+          "Latitude",
+          "Longitude",
+          "Elevation",
+          "GMTOffset",
+          "CountryCode",
+          "StateName",
+          "ValidDate",
+          "ValidTime",
+          "DataSource",
+          "ReportingArea_PipeDelimited",
+          "OZONE_AQI",
+          "PM10_AQI",
+          "PM25_AQI",
+          "NO2_AQI",
+          "OZONE_Measured",
+          "PM10_Measured",
+          "PM25_Measured",
+          "NO2_Measured",
+          "PM25",
+          "PM25_Unit",
+          "OZONE",
+          "OZONE_Unit",
+          "NO2",
+          "NO2_Unit",
+          "CO",
+          "CO_Unit",
+          "SO2",
+          "SO2_Unit",
+          "PM10",
+          "PM10_Unit"
+        ],
+        "row": [
+          "000000002",
+          "EX site two",
+          "Inactive",
+          "R0",
+          "",
+          "",
+          "",
+          "2.0",
+          "XX",
+          "EX",
+          "04/28/26",
+          "12:00",
+          "EX synthetic agency",
+          "",
+          "",
+          "",
+          "",
+          "6",
+          "0",
+          "0",
+          "0",
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "6.8",
+          "PPB",
+          "0.3",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "airnow_hourly",
+      "adapter_version": "1.0.0",
+      "format_name": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)",
+      "format_version": "AirNow Hourly Data File fact sheet (last updated August 2025) and Hourly AQ Obs File fact sheet (updated March 2023)",
+      "observed_at": "2026-04-28T12:00:00.000Z",
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AirNow",
+      "transformations": [
+        "the valid date and time are read as the GMT start of a one-hour period; observed_at is its end, one hour later",
+        "a two-digit year is read as 20YY: AirNow's hourly files begin in 2019",
+        "each value's decimal text is read as a binary floating-point number"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "000000002/2026-04-28T12:00:00.000Z",
+        "system": "AirNow"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-28T13:00:00.000Z",
+        "start": "2026-04-28T12:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "station table airnow-hourly-fixture-sites: synthetic site positions written for the packaged fixtures on 2026-10-15 (fixtures/airnow_hourly/README.md); no real site is named",
+      "site_class": "air_quality_site",
+      "valid_from_basis": "the end of the earliest hour a line states for the site"
+    },
+    "confidence": null,
+    "entity_id": "f8a7cdc2-3fea-5494-a72d-4f1f816ddeb3",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.4,
+      "lon": 21.6,
+      "position_source": "MANUAL",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "first_record": 0,
+        "site": {
+          "AQSID": "000000002",
+          "CountryCode": "XX",
+          "DataSource": "EX synthetic agency",
+          "EPARegion": "R0",
+          "Elevation": "",
+          "GMTOffset": "2.0",
+          "Latitude": "",
+          "Longitude": "",
+          "ReportingArea_PipeDelimited": "",
+          "SiteName": "EX site two",
+          "StateName": "EX",
+          "Status": "Inactive"
+        }
+      },
+      "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
+    },
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "airnow_hourly",
+      "adapter_version": "1.0.0",
+      "format_name": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)",
+      "format_version": "AirNow Hourly Data File fact sheet (last updated August 2025) and Hourly AQ Obs File fact sheet (updated March 2023)",
+      "observed_at": "2026-04-28T13:00:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "AirNow",
+      "transformations": [
+        "the valid date and time are read as the GMT start of a one-hour period; observed_at is its end, one hour later"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "000000002",
+        "system": "AirNow"
+      }
+    ],
+    "status": {
+      "attributes": {},
+      "namespace": "AirNow HourlyAQObs Status",
+      "since": null,
+      "state": "Inactive"
+    },
+    "symbol": null,
+    "valid_from": "2026-04-28T13:00:00.000Z",
+    "valid_to": null
+  }
+]

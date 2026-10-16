@@ -1,0 +1,69 @@
+{
+  "directory": "coops_csv",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_below_datum_flagged.csv",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_below_datum_flagged.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_json_form.json",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_preliminary.csv",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_preliminary.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_verified.csv",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "water_level_verified.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NOAA CO-OPS data API response written on 2026-10-15 for the coops_csv adapter's landing by fixtures/coops_csv/spec/build_fixtures.py from literals in that script, after the response layouts the API's pages give (cited by URL, never carried); the station is 0000001 and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

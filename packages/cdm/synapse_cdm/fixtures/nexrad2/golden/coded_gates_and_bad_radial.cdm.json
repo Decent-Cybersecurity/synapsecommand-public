@@ -1,0 +1,1352 @@
+[
+  {
+    "event_id": "9e3e5a33-2116-56cf-9cf4-db44b17cff8e",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        22.5,
+        57.25
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:10:00.050Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "radar-sweep/1",
+        "coverage_pattern": {
+          "code": "212",
+          "meaning": null,
+          "namespace": "ICD 2620002Y Table XVII-E, Volume Coverage Pattern Number"
+        },
+        "elevation_angle": null,
+        "elevation_number": 1,
+        "locator": {
+          "azimuth_number": null,
+          "elevation_number": 1,
+          "frame_sha256": null,
+          "granule_id": null,
+          "kind": "radar",
+          "ldm_record": 1,
+          "message": 0,
+          "moment": null
+        },
+        "moments": [
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1840,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "REF",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "dBZ",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*1",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1840 gate words of 8 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "REF"
+              },
+              "mode": "reference",
+              "offset": 66.0,
+              "scale": 2.0,
+              "shape": [
+                3,
+                1840
+              ],
+              "summary": {
+                "count": 5520,
+                "max": 94.5,
+                "min": -32.0,
+                "missing_count": 17
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1200,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "VEL",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "m/s",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*1",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1200 gate words of 8 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "VEL"
+              },
+              "mode": "reference",
+              "offset": 129.0,
+              "scale": null,
+              "shape": [
+                3,
+                1200
+              ],
+              "summary": {
+                "count": 3600,
+                "max": 1.0,
+                "min": -1.0,
+                "missing_count": 6
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1200,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "SW",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "m/s",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*1",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1200 gate words of 8 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "SW"
+              },
+              "mode": "reference",
+              "offset": 129.0,
+              "scale": 2.0,
+              "shape": [
+                3,
+                1200
+              ],
+              "summary": {
+                "count": 3600,
+                "max": 1.0,
+                "min": 1.0,
+                "missing_count": 6
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1200,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "ZDR",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "dB",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*2",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1200 gate words of 16 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "ZDR"
+              },
+              "mode": "reference",
+              "offset": 418.0,
+              "scale": 32.0,
+              "shape": [
+                3,
+                1200
+              ],
+              "summary": {
+                "count": 3600,
+                "max": 0.0,
+                "min": 0.0,
+                "missing_count": 6
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1200,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "PHI",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "deg",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*2",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1200 gate words of 16 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "PHI"
+              },
+              "mode": "reference",
+              "offset": 2.0,
+              "scale": 2.8361001014709473,
+              "shape": [
+                3,
+                1200
+              ],
+              "summary": {
+                "count": 3600,
+                "max": 210.85292429905647,
+                "min": 210.85292429905647,
+                "missing_count": 6
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1200,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "RHO",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "N/A",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*1",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1200 gate words of 8 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 2 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "RHO"
+              },
+              "mode": "reference",
+              "offset": -60.5,
+              "scale": 300.0,
+              "shape": [
+                3,
+                1200
+              ],
+              "summary": {
+                "count": 3600,
+                "max": 1.0516666666666667,
+                "min": 1.0516666666666667,
+                "missing_count": 6
+              }
+            }
+          },
+          {
+            "first_gate_range": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 2.125
+            },
+            "gate_count": 1840,
+            "gate_interval": {
+              "unit": "km",
+              "unit_namespace": "ICD 2620002Y Table XVII-B",
+              "value": 0.25
+            },
+            "name": "CFP",
+            "namespace": "ICD 2620002Y Table XVII-I",
+            "unit": {
+              "unit": "dB",
+              "unit_namespace": "ICD 2620002Y Table XVII-I"
+            },
+            "values": {
+              "dtype": "Integer*1",
+              "encoding": "ICD 2620002Y Table XVII-B: each radial's 1840 gate words of 8 bits in its data moment block, inside the volume's bzip2 LDM records; F = (N - OFFSET) / SCALE with the block's own scale and offset (note 15, 20); N below 8 is a coded value, not a measurement; the summary's min and max are F in the moment's unit and missing_count counts the coded gates",
+              "fill": null,
+              "locator": {
+                "azimuth_number": null,
+                "elevation_number": 1,
+                "frame_sha256": null,
+                "granule_id": null,
+                "kind": "radar",
+                "ldm_record": 1,
+                "message": 0,
+                "moment": "CFP"
+              },
+              "mode": "reference",
+              "offset": 8.0,
+              "scale": 1.0,
+              "shape": [
+                3,
+                1840
+              ],
+              "summary": {
+                "count": 5520,
+                "max": 0.0,
+                "min": 0.0,
+                "missing_count": 11
+              }
+            }
+          }
+        ],
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": null,
+          "run": null,
+          "version": "AR2V0006."
+        },
+        "quality_flags": [
+          {
+            "applies_to": "REF",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 7
+          },
+          {
+            "applies_to": "REF",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 10
+          },
+          {
+            "applies_to": "REF",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "REF",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "REF",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "VEL",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 2
+          },
+          {
+            "applies_to": "VEL",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 4
+          },
+          {
+            "applies_to": "VEL",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "VEL",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "VEL",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "SW",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "SW",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "SW",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "SW",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "SW",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "ZDR",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "ZDR",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "ZDR",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "ZDR",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "ZDR",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "PHI",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "PHI",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "PHI",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "PHI",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "PHI",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "RHO",
+            "name": "below_threshold_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "RHO",
+            "name": "range_folded_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 21",
+            "value": 3
+          },
+          {
+            "applies_to": "RHO",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "RHO",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "RHO",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "CFP",
+            "name": "filter_not_applied_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 30",
+            "value": 2
+          },
+          {
+            "applies_to": "CFP",
+            "name": "point_clutter_filter_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 30",
+            "value": 3
+          },
+          {
+            "applies_to": "CFP",
+            "name": "dual_pol_only_filtered_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 30",
+            "value": 4
+          },
+          {
+            "applies_to": "CFP",
+            "name": "reserved_code_count",
+            "namespace": "ICD 2620002Y Table XVII-I note 30",
+            "value": 2
+          },
+          {
+            "applies_to": "CFP",
+            "name": "tover_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 5.0
+          },
+          {
+            "applies_to": "CFP",
+            "name": "snr_threshold_db",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 2.0
+          },
+          {
+            "applies_to": "CFP",
+            "name": "control_flags",
+            "namespace": "ICD 2620002Y Table XVII-B",
+            "value": 0
+          },
+          {
+            "applies_to": "sweep",
+            "name": "bad_data_radial_count",
+            "namespace": "ICD 2620002Y Table III-C",
+            "value": 1
+          },
+          {
+            "applies_to": "radial 1",
+            "name": "radial_status",
+            "namespace": "ICD 2620002Y Table III-C",
+            "value": 3
+          },
+          {
+            "applies_to": "radial 2",
+            "name": "radial_status",
+            "namespace": "ICD 2620002Y Table III-C",
+            "value": 129
+          },
+          {
+            "applies_to": "radial 3",
+            "name": "radial_status",
+            "namespace": "ICD 2620002Y Table III-C",
+            "value": 4
+          },
+          {
+            "applies_to": "radial 1",
+            "name": "spot_blanking",
+            "namespace": "ICD 2620002Y Table XVII-A",
+            "value": 6
+          },
+          {
+            "applies_to": "radial 2",
+            "name": "spot_blanking",
+            "namespace": "ICD 2620002Y Table XVII-A",
+            "value": 6
+          },
+          {
+            "applies_to": "radial 3",
+            "name": "spot_blanking",
+            "namespace": "ICD 2620002Y Table XVII-A",
+            "value": 7
+          },
+          {
+            "applies_to": "sweep",
+            "name": "vol_dbz0_db",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": -44.625
+          },
+          {
+            "applies_to": "sweep",
+            "name": "horizontal_tx_power_kw",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 312.5
+          },
+          {
+            "applies_to": "sweep",
+            "name": "vertical_tx_power_kw",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 312.5
+          },
+          {
+            "applies_to": "sweep",
+            "name": "system_zdr_db",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 0.25
+          },
+          {
+            "applies_to": "sweep",
+            "name": "initial_system_phidp_deg",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 60.0
+          },
+          {
+            "applies_to": "sweep",
+            "name": "vcp_number",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 212
+          },
+          {
+            "applies_to": "sweep",
+            "name": "processing_status",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 0
+          },
+          {
+            "applies_to": "sweep",
+            "name": "zdr_bias_estimate_raw",
+            "namespace": "ICD 2620002Y Table XVII-E",
+            "value": 3
+          },
+          {
+            "applies_to": "sweep",
+            "name": "atmospheric_attenuation_db_per_km",
+            "namespace": "ICD 2620002Y Table XVII-F",
+            "value": -0.012
+          },
+          {
+            "applies_to": "sweep",
+            "name": "elv_dbz0_db",
+            "namespace": "ICD 2620002Y Table XVII-F",
+            "value": -44.375
+          },
+          {
+            "applies_to": "sweep",
+            "name": "unambiguous_range_km",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": 115.0
+          },
+          {
+            "applies_to": "sweep",
+            "name": "noise_level_h_dbm",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": -80.5
+          },
+          {
+            "applies_to": "sweep",
+            "name": "noise_level_v_dbm",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": -80.25
+          },
+          {
+            "applies_to": "sweep",
+            "name": "nyquist_velocity_mps",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": 28.75
+          },
+          {
+            "applies_to": "sweep",
+            "name": "radial_flags",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": 0
+          },
+          {
+            "applies_to": "sweep",
+            "name": "calibration_dbz0_h_dbz",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": -44.5
+          },
+          {
+            "applies_to": "sweep",
+            "name": "calibration_dbz0_v_dbz",
+            "namespace": "ICD 2620002Y Table XVII-H",
+            "value": -44.75
+          }
+        ],
+        "quality_flags_basis": null,
+        "radial_count": 3,
+        "site_id": "ZZZZ",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "ICD 2620002Y Table XVII-A: Collection Time is milliseconds past midnight GMT, with the Modified Julian Date (1 = 1970-01-01)",
+            "name": "GMT",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": {
+      "accuracy_m": null,
+      "confidence": null,
+      "source_quality": null,
+      "uncertainty": {
+        "collection_time_accuracy_s": 2.0
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "8a1c63e1-5e6c-50dd-9ab2-386abb78b9f1"
+    ],
+    "residual": {
+      "data": {
+        "elevation_number": 1,
+        "radials": [
+          {
+            "azimuth_angle": 0.25,
+            "azimuth_indexing": 0,
+            "azimuth_number": 1,
+            "azimuth_spacing": 1,
+            "block_count": 10,
+            "collection_time": 22200000,
+            "compression": 0,
+            "cut_sector": 1,
+            "elevation_angle": 0.4921875,
+            "elevation_number": 1,
+            "elv": {
+              "atmospheric_attenuation": -12,
+              "dbz0": -44.375
+            },
+            "julian_date": 20573,
+            "ldm_record": 1,
+            "message": 0,
+            "message_header": {
+              "channel": 8,
+              "julian_date": 20573,
+              "milliseconds": 22200000,
+              "segment_number": 1,
+              "segments": 1,
+              "sequence": 135,
+              "size": 6228
+            },
+            "moments": [
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "REF",
+                "offset": 66.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "VEL",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "SW ",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "ZDR",
+                "offset": 418.0,
+                "reserved": 0,
+                "scale": 32.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "PHI",
+                "offset": 2.0,
+                "reserved": 0,
+                "scale": 2.8361001014709473,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "RHO",
+                "offset": -60.5,
+                "reserved": 0,
+                "scale": 300.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "CFP",
+                "offset": 8.0,
+                "reserved": 0,
+                "scale": 1.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              }
+            ],
+            "rad": {
+              "calibration_h": -44.5,
+              "calibration_v": -44.75,
+              "noise_level_h": -80.5,
+              "noise_level_v": -80.25,
+              "nyquist_velocity": 2875,
+              "radial_flags": 0,
+              "unambiguous_range": 1150
+            },
+            "radial_length": 12440,
+            "radial_status": 3,
+            "spot_blanking": 6,
+            "vol": {
+              "dbz0": -44.625,
+              "horizontal_tx_power": 312.5,
+              "initial_system_phidp": 60.0,
+              "processing_status": 0,
+              "system_zdr": 0.25,
+              "vcp": 212,
+              "version_major": 3,
+              "version_minor": 1,
+              "vertical_tx_power": 312.5,
+              "zdr_bias": 3
+            }
+          },
+          {
+            "azimuth_angle": 0.75,
+            "azimuth_indexing": 0,
+            "azimuth_number": 2,
+            "azimuth_spacing": 1,
+            "block_count": 10,
+            "collection_time": 22200025,
+            "compression": 0,
+            "cut_sector": 1,
+            "elevation_angle": 0.5,
+            "elevation_number": 1,
+            "elv": {
+              "atmospheric_attenuation": -12,
+              "dbz0": -44.375
+            },
+            "julian_date": 20573,
+            "ldm_record": 1,
+            "message": 1,
+            "message_header": {
+              "channel": 8,
+              "julian_date": 20573,
+              "milliseconds": 22200025,
+              "segment_number": 1,
+              "segments": 1,
+              "sequence": 136,
+              "size": 6228
+            },
+            "moments": [
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "REF",
+                "offset": 66.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "VEL",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "SW ",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "ZDR",
+                "offset": 418.0,
+                "reserved": 0,
+                "scale": 32.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "PHI",
+                "offset": 2.0,
+                "reserved": 0,
+                "scale": 2.8361001014709473,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "RHO",
+                "offset": -60.5,
+                "reserved": 0,
+                "scale": 300.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "CFP",
+                "offset": 8.0,
+                "reserved": 0,
+                "scale": 1.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              }
+            ],
+            "rad": {
+              "calibration_h": -44.5,
+              "calibration_v": -44.75,
+              "noise_level_h": -80.5,
+              "noise_level_v": -80.25,
+              "nyquist_velocity": 2875,
+              "radial_flags": 0,
+              "unambiguous_range": 1150
+            },
+            "radial_length": 12440,
+            "radial_status": 129,
+            "spot_blanking": 6,
+            "vol": {
+              "dbz0": -44.625,
+              "horizontal_tx_power": 312.5,
+              "initial_system_phidp": 60.0,
+              "processing_status": 0,
+              "system_zdr": 0.25,
+              "vcp": 212,
+              "version_major": 3,
+              "version_minor": 1,
+              "vertical_tx_power": 312.5,
+              "zdr_bias": 3
+            }
+          },
+          {
+            "azimuth_angle": 1.25,
+            "azimuth_indexing": 0,
+            "azimuth_number": 3,
+            "azimuth_spacing": 1,
+            "block_count": 10,
+            "collection_time": 22200050,
+            "compression": 0,
+            "cut_sector": 1,
+            "elevation_angle": 0.5078125,
+            "elevation_number": 1,
+            "elv": {
+              "atmospheric_attenuation": -12,
+              "dbz0": -44.375
+            },
+            "julian_date": 20573,
+            "ldm_record": 1,
+            "message": 2,
+            "message_header": {
+              "channel": 8,
+              "julian_date": 20573,
+              "milliseconds": 22200050,
+              "segment_number": 1,
+              "segments": 1,
+              "sequence": 137,
+              "size": 6228
+            },
+            "moments": [
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "REF",
+                "offset": 66.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "VEL",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 1.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "SW ",
+                "offset": 129.0,
+                "reserved": 0,
+                "scale": 2.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "ZDR",
+                "offset": 418.0,
+                "reserved": 0,
+                "scale": 32.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "PHI",
+                "offset": 2.0,
+                "reserved": 0,
+                "scale": 2.8361001014709473,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 16
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1200,
+                "name": "RHO",
+                "offset": -60.5,
+                "reserved": 0,
+                "scale": 300.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              },
+              {
+                "control_flags": 0,
+                "first_gate_range": 2125,
+                "gate_interval": 250,
+                "gates": 1840,
+                "name": "CFP",
+                "offset": 8.0,
+                "reserved": 0,
+                "scale": 1.0,
+                "snr_threshold": 16,
+                "tover": 50,
+                "word_size": 8
+              }
+            ],
+            "rad": {
+              "calibration_h": -44.5,
+              "calibration_v": -44.75,
+              "noise_level_h": -80.5,
+              "noise_level_v": -80.25,
+              "nyquist_velocity": 2875,
+              "radial_flags": 0,
+              "unambiguous_range": 1150
+            },
+            "radial_length": 12440,
+            "radial_status": 4,
+            "spot_blanking": 7,
+            "vol": {
+              "dbz0": -44.625,
+              "horizontal_tx_power": 312.5,
+              "initial_system_phidp": 60.0,
+              "processing_status": 0,
+              "system_zdr": 0.25,
+              "vcp": 212,
+              "version_major": 3,
+              "version_minor": 1,
+              "vertical_tx_power": 312.5,
+              "zdr_bias": 3
+            }
+          }
+        ]
+      },
+      "namespace": "NEXRAD Level II (Archive II)"
+    },
+    "schema_version": "3.1.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "nexrad2",
+      "adapter_version": "1.0.0",
+      "format_name": "NEXRAD Level II (Archive II)",
+      "format_version": "ICD 2620010J (Archive II/User) and ICD 2620002Y (RDA/RPG), Build 23.0",
+      "observed_at": "2026-04-29T06:10:00.000Z",
+      "original_id": "AR2V0006.001",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NEXRAD",
+      "transformations": [
+        "volume header: the start of the volume is the header's NEXRAD-modified Julian date (1970-01-01 = day 1) plus its milliseconds past midnight (ICD 2620010J Figure 1), rendered to the CDM's millisecond form; it is SourceRef.observed_at and the site's valid_from",
+        "sweeps[*].radials[*].collection_time: a radial's instant is its Modified Julian Date plus its Collection Time, milliseconds past midnight GMT (ICD 2620002Y Table XVII-A); a sweep's observed_at is its last radial's and validity.effective runs from its first to its last",
+        "scaled integers: first-gate range and gate interval (thousandths of a km), TOVER (tenths of a dB), SNR threshold (eighths of a dB), ATMOS (thousandths of a dB/km), unambiguous range (tenths of a km) and Nyquist velocity (hundredths of m/s) are stated in their units in the contract; the residual keeps the integers the radial states",
+        "derived: the gate codes of every moment of every radial stay in the volume, by reference; the contract states the shape, the packing, a summary whose minimum and maximum are each radial's codes converted with that radial's own scale and offset, and the count of every coded value that is not a measurement, each under its own name",
+        "sweeps[*].radials[*].moments[*].name: a moment name the ICD pads to three characters ('SW ') is stated without its trailing space in the contract and in applies_to; the residual keeps the three characters"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZZZ/2026-04-29T06:10:00.000Z/elevation 1",
+        "system": "NEXRAD"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-29T06:10:00.050Z",
+        "start": "2026-04-29T06:10:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "the VOL data block (ICD 2620002Y Table XVII-E) every radial of the volume states alike: latitude and longitude in degrees",
+      "site_class": "radar_site",
+      "valid_from_basis": "the volume header's start of the volume (ICD 2620010J Figure 1: the date and time of the start volume radial, from the RDA)",
+      "vertical_basis": "the VOL block's Site Height, the height of the site base above mean sea level in metres (ICD 2620002Y Table XVII-E); alt_m is metres above the ellipsoid and this is not one, and the tower height stays in the residual"
+    },
+    "confidence": null,
+    "entity_id": "8a1c63e1-5e6c-50dd-9ab2-386abb78b9f1",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.25,
+      "lon": 22.5,
+      "position_source": "MANUAL",
+      "vertical": {
+        "reference": "MSL",
+        "uncertainty": null,
+        "unit": "m",
+        "value": 120.0
+      }
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "records": [
+          {
+            "compressed_bytes": 356,
+            "control_word": 356,
+            "decompressed_bytes": 325888,
+            "message_types": {
+              "0": 127,
+              "13": 1,
+              "15": 1,
+              "18": 1,
+              "2": 1,
+              "3": 1,
+              "32": 1,
+              "5": 1
+            },
+            "messages": 134
+          },
+          {
+            "compressed_bytes": 573,
+            "control_word": 573,
+            "decompressed_bytes": 37404,
+            "message_types": {
+              "31": 3
+            },
+            "messages": 3
+          }
+        ],
+        "site": {
+          "latitude": 57.25,
+          "longitude": 22.5,
+          "site_height": 120,
+          "tower_height": 30
+        },
+        "volume_header": {
+          "extension": "001",
+          "icao": "ZZZZ",
+          "julian_date": 20573,
+          "milliseconds": 22200000,
+          "tape": "AR2V0006."
+        }
+      },
+      "namespace": "NEXRAD Level II (Archive II)"
+    },
+    "schema_version": "3.1.0",
+    "source": {
+      "adapter": "nexrad2",
+      "adapter_version": "1.0.0",
+      "format_name": "NEXRAD Level II (Archive II)",
+      "format_version": "ICD 2620010J (Archive II/User) and ICD 2620002Y (RDA/RPG), Build 23.0",
+      "observed_at": "2026-04-29T06:10:00.000Z",
+      "original_id": "AR2V0006.001",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "NEXRAD",
+      "transformations": [
+        "volume header: the start of the volume is the header's NEXRAD-modified Julian date (1970-01-01 = day 1) plus its milliseconds past midnight (ICD 2620010J Figure 1), rendered to the CDM's millisecond form; it is SourceRef.observed_at and the site's valid_from"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZZZ",
+        "system": "NEXRAD"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-04-29T06:10:00.000Z",
+    "valid_to": null
+  }
+]

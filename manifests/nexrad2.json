@@ -1,0 +1,154 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, every record is inflated under a byte bound and every walk is linear in what was inflated; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_decompressed_bytes": {
+            "enforced_at": "`nexrad2.decode_volume`: every record's bzip2 stream is inflated by `bz2.BZ2Decompressor.decompress` with `max_length` set to one octet past what the volume may still decompress to, and that octet is refused `decompresses-past-the-bound` before it is kept",
+            "kind": "implementation_cap",
+            "source": "The ICDs' ceilings: the metadata record is fixed at 325,888 octets (ICD 2620010J 7.3.5) and a radial record at 120 radials of at most 14,296 octets (7.3.4, ICD 2620002Y Table XVII-A), <= 1.72 MB (research-nexrad-level2 F03/F12); with each radial record held to 2 MiB (`MAX_RECORD_BYTES_BASIS`) and the 32 x 720 radials a volume can number filling 192 of them, a volume decompresses to at most 325,888 + 192 x 2,097,152 = 402,979,072 octets (`MAX_DECOMPRESSED_BYTES`, `adapters/nexrad2.py`). This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_nexrad2_adapter.py::test_the_volume_is_held_to_its_decompression_bound_at_the_octet"
+          },
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the dict form, the parsed twin, nests seven containers (a radial's moment inside the sweep's radials). 16 (`MAX_DEPTH`, `adapters/nexrad2.py`) is the dis7 envelope's bound, over twice that. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_nexrad2_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module reads a header or inflates a record",
+            "kind": "implementation_cap",
+            "source": "No ICD states a maximum size for a volume file. The design record's figure is the archive's own listing for one site and day: KOKX on 2026-09-11, 248 volumes of 3,601,535 to 8,908,516 octets (research-nexrad-level2 F03). 32 MiB (33 554 432 octets, `MAX_INPUT_BYTES`, `adapters/nexrad2.py`) is DECISIONS U-07's bound for one volume, over three times the largest. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`nexrad2._radial`: an Elevation Number outside 1 to 32 is refused `elevation-number-out-of-range`, so a volume groups into at most 32 sweeps",
+            "kind": "normative",
+            "source": "NORMATIVE, from ICD 2620002Y \u00a73.2.4.17.1 Table XVII-A: Elevation Number, 'Elevation number within volume scan', range 1 to 32. One Event per elevation number and the site's Entity make at most 33 objects (`MAX_OBJECTS`, `adapters/nexrad2.py`).",
+            "test": "tests/test_cdm_nexrad2_adapter.py::test_thirty_two_elevations_are_thirty_three_objects"
+          }
+        },
+        "max_decompressed_bytes": 402979072,
+        "max_depth": 16,
+        "max_input_bytes": 33554432,
+        "max_objects": 33,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "NEXRAD Level II Archive II volume (ICD 2620010J, Build 23.0): the volume header, the bzip2 LDM records, the 134-segment metadata record (framed and counted) and message 31 radials (ICD 2620002Y Table XVII); one ENVIRONMENTAL_OBSERVATION Event per elevation number and the radar site's Entity per volume"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the volume is binary with fixed tables: a data block, a data moment or a message type the ICDs do not name is refused rather than preserved (the stricter reading of ICD 2620002Y Table XVII-A note 9), and the dict form is held to be exactly what its own wire_hex decodes to, so an injected key is refused `not-a-twin`",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "NEXRAD Level II (Archive II)",
+      "version": "ICD 2620010J (Archive II/User) and ICD 2620002Y (RDA/RPG), Build 23.0"
+    },
+    "id": "nexrad2",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "values-by-reference",
+        "notes": "the twin's `gates` holds every moment's gate codes as runs; the contract states each moment's locator, shape [radials, gates], packing and a summary",
+        "severity": null,
+        "summary": "Array values are carried by reference \u2014 a locator, the shape and packing needed to open them, and a summary \u2014 and are not copied into the output.",
+        "unsupported_paths": [
+          "gates"
+        ]
+      },
+      {
+        "id": "volume-octets-by-reference",
+        "notes": null,
+        "severity": null,
+        "summary": "the twin's wire_hex is the volume's octets, the input its dict form is decoded from; they are identified by SourceRef.source_hash when the host injects it and are not copied into any object",
+        "unsupported_paths": [
+          "wire_hex"
+        ]
+      },
+      {
+        "id": "one-volume-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one Archive II volume file per call, as its octets or as its twin; a real-time chunk (the _chunks bucket's records), a gzip or tar around the volume and an _MDM sidecar are not taken. synapse-decode unwraps a gzip or a named tar member before the adapter sees the volume",
+        "unsupported_paths": []
+      },
+      {
+        "id": "messages-refused-by-name",
+        "notes": null,
+        "severity": null,
+        "summary": "message 1 (the legacy radial, pre-Build 10), message 29 (model data, the _MDM record) and a radial whose Compression Indicator is 1 (bzip2) or 2 (zlib) are refused by name and not decoded; an archive version other than 06 or 07 is refused",
+        "unsupported_paths": []
+      },
+      {
+        "id": "metadata-not-decoded",
+        "notes": null,
+        "severity": null,
+        "summary": "the metadata record's messages (15, 32, 13, 18, 3, 5, 2) and the RDA status messages (2) among the radials are framed and counted by type in the site Entity's residual, not decoded; the VCP is read from each radial's VOL block, not from message 5",
+        "unsupported_paths": []
+      },
+      {
+        "id": "geometry-is-the-site",
+        "notes": null,
+        "severity": null,
+        "summary": "Event.geometry is the radar site's point, not the area a sweep covers: no gate or beam geometry is computed, and the gates' ranges are the contract's first_gate_range and gate_interval",
+        "unsupported_paths": []
+      },
+      {
+        "id": "strict-icd-ranges",
+        "notes": null,
+        "severity": null,
+        "summary": "every range ICD 2620002Y states for a field this module reads is a validation rule, so a volume a lenient reader would take can be refused; a data block or moment the ICD does not name is refused, not skipped (note 9 recommends skipping it); spare and reserved octets are not read except the moment block's Reserved word, which is carried",
+        "unsupported_paths": []
+      },
+      {
+        "id": "zdr-bias-unscaled",
+        "notes": null,
+        "severity": null,
+        "summary": "the VOL block's ZDR Bias Estimate Weighted Mean is carried as the Integer*2 it is stated as: the ICD's note 33 on its scaling is not in the design record, so no unit is stated for it",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter nexrad2` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every radial header a structured residual, the gate codes and the octets a declared limitation) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "NEXRAD Level II (Archive II) volume translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.1.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

@@ -1,0 +1,78 @@
+{
+  "directory": "airnow_hourly",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_aqobs_fact_sheet_date_blank_unit.dat",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_aqobs_fact_sheet_date_blank_unit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_aqobs_two_sites.dat",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_aqobs_two_sites.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_data_site_without_position.dat",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_data_site_without_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_data_two_sites.dat",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hourly_data_two_sites.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic EPA AirNow hourly observation file written on 2026-10-15 for the airnow_hourly adapter's landing by fixtures/airnow_hourly/spec/build_fixtures.py from literals in that script, after the AirNow fact sheets' layouts (pinned by SHA-256, never carried); the sites are in the 000000001 and 000000000011 blocks and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

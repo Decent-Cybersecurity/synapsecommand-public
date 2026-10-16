@@ -1,0 +1,49 @@
+{
+  "what_this_is": "The pin record of the nexrad2 adapter: the two ICDs its format is read from, each as a held PDF identified by SHA-256, byte count and page count under PIN_SUFFIXES and never carried in the index (DECISIONS U-08: .gitignore keeps every PDF out of a working tree, so the pin-presence test skips wherever the document is not held); the licence reading behind the adapter's class; and how the synthetic fixture set is built.",
+  "adapter": {
+    "name": "nexrad2",
+    "ordinal": 25,
+    "direction": "ingest",
+    "fixture_directory": "nexrad2"
+  },
+  "standards": [
+    {
+      "document": "Interface Control Document for the Archive II/User, Document Number 2620010J, Code Identification 0WY55, WSR-88D ROC, 25 June 2024, Build 23.0",
+      "read_for": "the volume header (7.3.3, Figure 1), the LDM compressed record and its signed control word (7.3.4) and the 134-segment metadata record (7.3.5)",
+      "publisher": "NOAA NWS Radar Operations Center (ROC), a US Government agency",
+      "url": "https://www.roc.noaa.gov/public-documents/icds/2620010J.pdf",
+      "local_path": "fixtures/nexrad2/spec/2620010J.pdf",
+      "sha256": "38a383a5b15a496fb02f6c8e3f799aef0b4c65ad0cf3c68e542681841ef1f7fe",
+      "bytes": 303745,
+      "pages": 21,
+      "distribution": "DISTRIBUTION STATEMENT A: Approved for public release; distribution unlimited.",
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "Interface Control Document for the RDA/RPG, Document Number 2620002Y, Code Identification 0WY55, WSR-88D ROC, 25 June 2024, Build 23.0",
+      "read_for": "the message header (Table II), the radial status (Table III-C), message 31 (Tables XVII-A, -B, -E, -F, -H and -I and their notes) and message 1 and 29, which the adapter refuses by name",
+      "publisher": "NOAA NWS Radar Operations Center (ROC), a US Government agency",
+      "url": "https://www.roc.noaa.gov/public-documents/icds/2620002Y.pdf",
+      "local_path": "fixtures/nexrad2/spec/2620002Y.pdf",
+      "sha256": "358f71e28a27f8c750c12544369e9f3ea35b9311634e41966b4f24962575e696",
+      "bytes": 657638,
+      "pages": 111,
+      "distribution": "DISTRIBUTION STATEMENT A: Approved for public release; distribution unlimited.",
+      "read_on": "2026-10-14"
+    }
+  ],
+  "measured": "The SHA-256, the byte counts and the page counts were measured on 2026-10-15 from the design record's copies fetched on 2026-10-14 (research-nexrad-level2 F01): the digest with shasum -a 256, the size from the file system and the page count from the document's own page tree as pdfinfo reads it. Nothing was fetched for this record. A PDF is never carried in the index; a maintainer who holds the two documents places them at their local_path and the pin gate checks them there.",
+  "not_pinned_here": "The design record also read 2620010K, posted as a draft for Build 25.0 (2026), and the ROC's VCP Information Sheet. Neither is a document this adapter is written against: the draft is not in force, and the VCP sheet's scan times are context, not a layout.",
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "Both ICDs carry Distribution Statement A, 'Approved for public release; distribution unlimited', and 2620010J 1.1 states 'Distribution of this document is unrestricted'; they are a US Government agency's free public downloads, which is the repository's PUBLIC_GOVERNMENT class (fixtures/adsb/spec/adsb_terms.json gives the vocabulary; research-nexrad-level2 F01, F08).",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "The archive's volumes are NOAA open data (registry.opendata.aws/noaa-nexrad: 'open to the public and can be used as desired', attribution requested; research-nexrad-level2 F08). No volume from any archive, not a record and not a byte, enters this tree: the fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only), and the public test volumes of the Py-ART and MetPy projects are real volumes and are not used.",
+  "fixtures_are_synthetic": "Every payload under fixtures/nexrad2/ and its malformed/ directory is built by spec/build_fixtures.py, an encoder written on 2026-10-15 from the two ICDs' tables, from literals in that script. The radar sites are ZZZZ and XZZA (CONTRIBUTING.md, Identifiers and places in observation fixtures), every site lies in the Baltic rectangle, the day is 2026-04-29, and every value is written from the ICD's tables, not taken from a volume.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "bzip2": "every LDM record is bz2.compress(data, 9) from the standard library; bzip2 output is a function of its input and block size alone, and --check printed CURRENT under CPython 3.11.15, 3.12.13 and 3.14.7 on the machine that wrote the set on 2026-10-15. A libbzip2 that compresses differently is a new reading of this record, not a defect"
+  }
+}

@@ -17,7 +17,7 @@ description: "An entity's position history, in time order. The order is a contra
 | Source file | `schemas/track.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:3.1.0:track` |
 | CDM schema version | `3.1.0` |
-| SHA-256 of source | `bfc3b77f6f311d7783873658698e825c3a2cf238e6d3379819ef118eb81287f8` |
+| SHA-256 of source | `ba5a1d51e3c3fc044576c2d64190876569586d073d448223c199626e624e608a` |
 
 An entity's position history, in time order. The order is a contract, not a hope.
 
@@ -33,6 +33,7 @@ rejecting it would refuse legitimate multi-source data.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
+| `attributes` | [TrackAttributes](#trackattributes) \| null | no | The typed block for what a Track states about itself — today, how complete a history it is. None = nothing stated. Added 2026-10-15, CDM 3.2.0. Default `null`. |
 | `entity_id` | string (uuid) | **yes** | The Entity this history belongs to. |
 | `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. A DATA CONTAINER and nothing more: this package makes no signature and verifies none, no conformance check, harness column or evidence field reads it, and its presence on an object proves nothing about the object. A record carrying one is unverified until something outside this package verifies it. Default `null`. |
 | `object_kind` | `"track"` | no |  |
@@ -291,6 +292,60 @@ data and hide it from an operator. There is no safe default, so there is no defa
 | `synthetic` | boolean | **yes** | true for anything not from a real source (TR-12). |
 | `system` | string | **yes** | The external system this came from. (min length 1) |
 | `transformations` | array&lt;string&gt; | no | Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, in the order it applied them. Empty = nothing was transformed, which is a claim the lossless check can contradict. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TrackAttributes
+
+The typed block on `Track.attributes` (CDM 3.2.0, 2026-10-15). Today it holds one thing.
+
+`extra="forbid"` is the decision, and it is one line on purpose. Every other canonical object
+has an open bag — `Entity.attributes`, `Event.payload` — and Track's block is typed instead
+because the one question every paginated or windowed source asks of a Track is a completeness
+question, and a typed answer is one a consumer can read without knowing which adapter wrote
+it. Should the bag be the ruling instead, relaxing `extra` to "allow" is the whole change:
+`completeness` stays typed and other keys ride beside it.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `completeness` | [TrackCompleteness](#trackcompleteness) \| null | no | How much of the history this Track holds. None = the adapter states nothing about it. Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TrackCompleteness
+
+How much of a history this Track holds, stated on the Track itself.
+
+A Track built from one page, one window or one file of a longer history is a FRAGMENT, and a
+consumer that cannot tell a fragment from a whole history will compute a speed across a gap it
+does not know is there. Until 2026-10-15 the figures that answer "how much of this is here"
+could ride only on the owning Entity, keyed by `track_id`, because Track had nowhere to put
+them, and a consumer holding only the Track could not read them; the Legion adapter still
+parks them there, since no shipped adapter is re-labelled by this block. FORMAT_COVERAGE.md's
+gap 16 records the problem, and this block closes its Track half.
+
+Three figures and a basis, and each of the three keeps "the source does not say" apart from a
+value. `carried_samples` is never in doubt — it is counted — and it must equal the length of
+the Track's `samples`, so the block cannot describe a different list from the one it rides on.
+`stated_samples` is the source's own total and is None when the source states none, never 0.
+`fragment` is None when the adapter cannot tell, never False: "we cannot tell" and "we can
+tell it is whole" are different answers. There is no per-sample field here, on purpose: gap
+16's TrackSample half stays open.
+
+Two bounds were tightened on 2026-10-15, before the block shipped: `stated_samples` is at
+least 1, so "never 0" is held rather than only said, and `completeness_basis` must hold a
+character that is not whitespace, the pattern `\S`, read by Python's `re` here (the
+engine the published schema's Python validator uses), so the model and the schema refuse the
+same blank strings — a basis of spaces states nothing.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `carried_samples` | integer | **yes** | How many samples this Track carries. Equal to len(samples), which the Track validates. (≥ 1) |
+| `completeness_basis` | string | **yes** | Why the figures above are what they are: which source fields they were read from, or that the source states none. Required and not blank, as every `*_basis` is. (pattern `\S`; min length 1) |
+| `fragment` | boolean \| null | no | True = the source shows this Track is part of a longer history; False = it shows this is the whole of it; None = the adapter cannot tell, never False. Default `null`. |
+| `stated_samples` | integer \| null | no | How many samples the SOURCE states the whole history holds, at least 1. None = the source states no total, never 0. Default `null`. (≥ 1) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).

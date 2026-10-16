@@ -238,6 +238,7 @@
     "valid_to": null
   },
   {
+    "attributes": null,
     "entity_id": "1e1ad00c-3a94-5010-95de-1fae132cd688",
     "integrity": null,
     "object_kind": "track",
@@ -523,6 +524,7 @@
     "valid_to": null
   },
   {
+    "attributes": null,
     "entity_id": "a9c2f5a7-5195-5cb0-9676-b57d53174e29",
     "integrity": null,
     "object_kind": "track",
@@ -726,7 +728,8 @@
         "system": "NITS_UID"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "830e75eb-e6f7-5c78-b001-e433f94afaf3",
@@ -887,6 +890,7 @@
         "system": "NITS_UID"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

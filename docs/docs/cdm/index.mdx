@@ -17,6 +17,12 @@ is by **what a thing is** — not by which system sent it, and not by which cons
 | [`Track`](./track.mdx) | an entity's **position history** | `track_id`, `entity_id`, `samples[]`, `track_quality` |
 | [`PlanObject`](./plan-object.mdx) | something we **push out** | `object_id`, `object_type`, `geometry`, `style`, `label`, `expires_at` |
 
+:::note[Observations, added 2026-10-15]
+An environmental measurement or model product is an `Event` of type `ENVIRONMENTAL_OBSERVATION`,
+not a fifth object: its payload carries one of four named contracts, and the station or radar it
+was made at is an `Entity`. See [Observation contracts](./observation-contracts.mdx).
+:::
+
 ## What all four carry
 
 Every canonical object inherits `CDMBase`, and none of these fields is decoration.
@@ -112,12 +118,13 @@ it came from. It **identifies its origin** and it is **never semantically truste
 that the source said something the CDM has no home for, which is a fact about the source record
 and not an assertion about the world. See [CDM Policies](./policies.mdx).
 
-Fourteen of the twenty-two adapters shipped today do not use it — they keep parking leftovers in
+Fourteen of the twenty-seven adapters shipped today do not use it — they keep parking leftovers in
 `attributes.source_extras` and declare `residual: legacy`, because the information is already
 preserved and moving the placement would cost every golden file and every consumer for nothing a
-reader can use. The other eight — the five of the adapter expansion (`geojson`, `geopackage`,
-`c2sim`, `aixm511`, `aixm52`), `dis7`, `tacticalapi` and, since 2026-10-10, `link16_gateway` —
-declare `residual: structured` and carry their leftovers in it.
+reader can use. The other thirteen — the five of the adapter expansion (`geojson`, `geopackage`,
+`c2sim`, `aixm511`, `aixm52`), `dis7`, `tacticalapi`, since 2026-10-10 `link16_gateway`, and since
+2026-10-15 `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` — declare
+`residual: structured` and carry their leftovers in it.
 
 ## Why `additionalProperties: false` everywhere
 

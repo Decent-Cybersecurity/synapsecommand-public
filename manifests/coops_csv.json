@@ -1,0 +1,126 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter inflates nothing: a compressed response is unwrapped by synapse-decode --container gzip under the host's own bounds before the adapter is handed it",
+          "max_objects": "not a bound of its own: one Event per sample and one Entity, and a sample row is at least 26 octets (a 16-character stamp, a value, the flags and the line end), so max_input_bytes bounds the count",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, and every pass over the response is one walk of its lines or its parsed records; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "for a dict and for JSON octets, the base class: `Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` before this class's `to_cdm` runs, so JSON text past the bound never reaches `json.loads`",
+            "kind": "implementation_cap",
+            "source": "A JSON response nests three containers (the response, data, a record) and the CSV twin three (the twin, rows, a row). 64 (`MAX_DEPTH`, `adapters/coops_csv.py`) is the harness loader's own bound and the figure the JSON-reading adapters of synapse_cdm declare. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module decodes a line or a JSON token",
+            "kind": "implementation_cap",
+            "source": "The API bounds a request by its time range \u2014 6-minute data one month a request, hourly data one year (research-station-text F05, the API page) \u2014 and states no size; a month of 6-minute samples is 7 440 rows and a year of hourly ones 8 784. DECISIONS U-07 rules one station-text file at most 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/coops_csv.py`), over a kilobyte a row for the longer of the two. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 8388608,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "NOAA CO-OPS datagetter response: the CSV form of water_level, air_pressure or wind, or the JSON form of water_level, one response per call under the caller's CoopsRequest; one ENVIRONMENTAL_OBSERVATION Event per sample carrying point-observation/1, and the station's Entity"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the CSV header is compared whole with the product's own, and the JSON response, its metadata and each data record are closed key sets read off the API's response, so a column or a key this module does not know is refused rather than carried",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "NOAA CO-OPS data API response (datagetter)",
+      "version": "api.tidesandcurrents.noaa.gov/api/prod, read 2026-10-14"
+    },
+    "id": "coops_csv",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "request-from-the-caller",
+        "notes": null,
+        "severity": null,
+        "summary": "a response echoes none of the request's datum, units, time zone or interval, and the CSV form not its station: they are the caller's required CoopsRequest, and a JSON response naming another station is refused",
+        "unsupported_paths": []
+      },
+      {
+        "id": "lst-ldt-refused",
+        "notes": null,
+        "severity": null,
+        "summary": "time_zone lst_ldt is refused by name (DECISIONS L-11): daylight-saving local time needs a time-zone database; gmt is read as UTC, and lst with the caller's declared standard-time offset",
+        "unsupported_paths": []
+      },
+      {
+        "id": "products-read",
+        "notes": null,
+        "severity": null,
+        "summary": "the CSV form of water_level, air_pressure and wind and the JSON form of water_level are read; every other product, and the JSON form of air_pressure and wind, whose record keys the design record does not hold, are refused",
+        "unsupported_paths": []
+      },
+      {
+        "id": "units-verbatim",
+        "notes": null,
+        "severity": null,
+        "summary": "the request's units (metric or english) is every value's unit, verbatim under the request parameter's namespace; no unit string is derived from it, and wind's degrees direction is the one value with a unit of its own",
+        "unsupported_paths": []
+      },
+      {
+        "id": "blank-values-refused",
+        "notes": null,
+        "severity": null,
+        "summary": "a blank field is refused blank-value: the design record does not hold how the API writes a missing sample, so this module neither reads a blank as a sentinel nor drops the reading",
+        "unsupported_paths": []
+      },
+      {
+        "id": "direction-text-in-residual",
+        "notes": null,
+        "severity": null,
+        "summary": "wind's second Direction column, the compass point, is text and not a measurement; it stays in each Event's residual row",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter coops_csv` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every row or record a structured residual on its own Event) with no LOST leaf on any parsed form. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "NOAA CO-OPS data API response (CSV and JSON) translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.1.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

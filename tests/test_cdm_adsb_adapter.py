@@ -174,6 +174,44 @@ def test_no_fixture_carries_an_allocated_icao_address(path):
     )
 
 
+#: The readsb trace fixtures carry the same address in the form readsb writes it — six lower-case
+#: hex digits, `~` first for a non-ICAO address — inside a gzip member. The sweep above is extended
+#: to them on 2026-10-15 (the `readsb_trace` landing): every address in the directory, the payloads
+#: and the malformed set alike, read with the standard library's `gzip` wherever a member inflates
+#: to a document, is held to the same block. A malformed payload that does not inflate, or inflates
+#: to no address, states none and is counted.
+READSB = PACKAGE / "fixtures" / "readsb_trace"
+
+
+def _readsb_addresses() -> list[tuple[str, str | None]]:
+    import gzip
+    import zlib
+
+    found = []
+    for path in sorted(READSB.glob("*.trace")) + sorted((READSB / "malformed").glob("*.trace")):
+        try:
+            document = json.loads(gzip.decompress(path.read_bytes()))
+        except (OSError, EOFError, zlib.error, ValueError):
+            found.append((path.name, None))
+            continue
+        address = document.get("icao") if isinstance(document, dict) else None
+        found.append((path.name, address if isinstance(address, str) else None))
+    return found
+
+
+def test_no_readsb_trace_fixture_carries_an_allocated_icao_address():
+    found = _readsb_addresses()
+    stated = [(name, address) for name, address in found if address is not None]
+    assert len(found) == 36 and len(stated) == 30, (len(found), len(stated))
+    for name, address in stated:
+        value = address.removeprefix("~")
+        assert int(value, 16) < LOWEST_ALLOCATED_BLOCK, (
+            f"readsb_trace/{name} carries the address {address}, at or above "
+            f"{LOWEST_ALLOCATED_BLOCK:06X}; see the adsb fixtures README"
+        )
+        assert value.lower().startswith("0029"), f"readsb_trace/{name} carries {address}"
+
+
 # ------------------------------------------------------------------- the codec
 
 

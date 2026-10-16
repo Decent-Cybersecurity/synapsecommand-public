@@ -1,0 +1,114 @@
+{
+  "directory": "coops_csv/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "air_pressure_header.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "blank_value.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cut_inside_a_row.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "flag_past_the_double_range.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "json_station_disagrees.json",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "json_unknown_key.json",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_a_number.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "number_past_the_double_range.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "quality_not_p_or_v.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "row_width_mismatch.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "stamp_with_seconds.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_header.csv",
+      "operational_data": false,
+      "origin": "Synthetic malformed NOAA CO-OPS data API response written on 2026-10-15 by fixtures/coops_csv/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "coops_csv/spec/coops_csv_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

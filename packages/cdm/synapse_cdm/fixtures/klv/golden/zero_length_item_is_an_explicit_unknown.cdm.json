@@ -818,6 +818,7 @@
         "system": "UAS-LS-PACKET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

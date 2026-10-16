@@ -1,7 +1,7 @@
 # Contributing
 
 This repository holds the SynapseCommand **Canonical Data Model** — the contract layer that
-twenty-two integration adapters translate into. A contract is the wrong place for a surprise, so the
+twenty-seven integration adapters translate into. A contract is the wrong place for a surprise, so the
 rules below are short and they are enforced by something that fails a build rather than by
 review alone.
 
@@ -181,6 +181,93 @@ guess.
 Ship at least three, and make one of them **awkward** — a missing position, an unknown type, a
 vendor block you have never seen, a coordinate of exactly zero. The interesting fixture is the
 one that is allowed to be ugly.
+
+#### Identifiers and places in observation fixtures (added 2026-10-15)
+
+The observation adapters — station text, weather radar, gridded fields, imagery and product
+references — name things the earlier fixtures never had to: a station, a radar site, the extent
+of a grid, a tile. Each of those names a real place or a real allocation when it is copied from a
+live product, so a fixture that uses one is real data in the sense above even when every number
+in it is invented. These rules say what a fixture uses instead. They extend the conventions the
+existing fixture READMEs already follow — Baltic-plausible positions, `EX`-prefixed names, an
+unallocated address block — and each states its argument, because a rule with no argument is
+copied wrongly the first time it is inconvenient.
+
+- **Station identifiers, one synthetic block per identifier grammar.** A station-text fixture
+  states a station only from the block for its own grammar, so a parser is still exercised on the
+  shape the format really has:
+  - *alphanumeric five-character station ids* (the buoy and coastal-station form): `EX` followed
+    by three digits, `EX001` to `EX099`. `EX` is this repository's exercise marker, as in the
+    ADS-B callsigns;
+  - *seven-digit numeric station ids* (the tide and water-level form): six zeros and one digit, or
+    five zeros and two, `0000001` to `0000099`. Leading zeros make the id visibly synthetic, and
+    they are the awkward case on purpose — a reader that turns the id into an integer loses them;
+  - *nine- and twelve-digit air-quality site ids*: zeros and two final digits, `000000001` to
+    `000000099` and `000000000001` to `000000000099`; the run of leading zeros makes the id
+    visibly synthetic, as in the seven-digit block.
+- **Radar site identifiers: `ZZZZ`, then `XZZA` to `XZZZ`.** A weather radar names itself with a
+  four-letter location indicator. A synthetic radar takes `ZZZZ`, and a fixture that needs a
+  second site takes `XZZA`, `XZZB` and so on, so every synthetic site is spelled from one visibly
+  artificial pattern.
+- **Places: the Baltic rectangle, 56.0° N to 58.5° N and 20.0° E to 24.5° E.** Every position, grid
+  corner, footprint vertex and tile a new fixture states lies inside it. It is the smallest
+  half-degree rectangle around the positions the existing fixture READMEs name — the Gulf of
+  Riga, Ventspils, Liepāja, the water west of Saaremaa, the Riga apron and the Courland exercise
+  area — whose fixtures span 56.15° N to 58.12° N and 20.42° E to 24.10° E, so a new fixture adds
+  no place the repository did not already use. It does not cross the antimeridian, which
+  `BoundingBox` refuses. A tile identifier always names a real place, so it follows this rule
+  rather than an "unallocated" one: a fixture uses a tile whose footprint lies inside the
+  rectangle, and a grid fixture states an extent inside it whatever projection the format uses.
+- **Aircraft addresses keep the ADS-B rule**: a readsb trace fixture uses the `0029xx` block that
+  `fixtures/adsb/README.md` argues for and its test pins.
+
+Three further readings behind the identifier forms are conventions taken here on 2026-10-15 and
+not verified against the allocating registers in this repository: that `ZZZZ` is the indicator for
+"no other indicator", that `X` is not an aerodrome first letter, and that no real id in these
+registers takes these shapes.
+
+No fixture, test or document of these adapters spells the identifier of a real station, radar
+site, model domain or tile, and none uses a value read from a live product — not as an example,
+not as a test's expectation, not in a comment. A fixture README restates the rule it follows.
+
+#### Writing a fixture builder (added 2026-10-15)
+
+A binary fixture — a GRIB2 message, a radar volume, a PNG, a Parquet file — cannot document itself,
+so it is written by `fixtures/<adapter>/spec/build_fixtures.py`, and the builder is the reviewable
+form of the set. Every builder of the observation adapters follows these rules, because a builder
+that cannot be re-run, or that writes something different on a second machine, is a fixture set
+nobody can check:
+
+- **`--check` rebuilds and compares, and writes nothing.** `python -I -B build_fixtures.py --check`
+  builds every fixture and twin into memory or a temporary directory, compares the bytes with the
+  committed files, prints `CURRENT` and exits 0, or prints `STALE: <names>` and exits 1. Without
+  `--check` it writes the files. It runs under `-I` (so it locates the package from its own
+  `__file__`, never from `PYTHONPATH`) and `-B` (so no bytecode lands under `spec/`).
+- **Deterministic writers.** The same script writes the same bytes on every run and every
+  machine: no clock, no random value, no host name; a gzip member is written with `mtime=0`; a tool
+  that stamps its own version or a creation time into its output is either told not to or not
+  used, and the version it does stamp is recorded in the set's pin.
+- **No absolute path in a fixture or a pin.** A tool is run from a working directory relative to
+  the fixture directory, and the commands a pin records are written relative to it, so nothing
+  names the machine that built the set.
+- **GDAL runs with `GDAL_PAM_ENABLED=NO`.** Otherwise it leaves a `.aux.xml` beside a raster, and
+  the harness replays every file of a fixture directory as a payload.
+- **Sources are literals in the script.** A builder's inputs are written in `build_fixtures.py`
+  itself or under `sources/` with their own `PROVENANCE.json`: `spec/` ships only
+  `build_fixtures.py`, `*_pin.json` and `*_terms.json` (`tests/test_cdm_packaging.py`).
+- **A standard-library writer first.** Where the report on a format shows one is possible, the
+  builder is pure Python, because that is the only builder every interpreter of the test matrix can
+  re-run; a tool-written set is re-checked on a named tool build before each release and the
+  reading is recorded in its pin.
+
+`tests/observation_support.py` holds the checks an adapter's tests owe the set: `builder_problems`
+runs `--check` the way the release check runs it and requires `CURRENT`, exit 0 and an unchanged
+directory; `load_builder` compiles the builder in memory for an in-process assertion, as
+`tests/test_cdm_generator_loading.py` requires of every loader; `provenance_problems` and
+`twin_problems` hold the set to its `PROVENANCE.json` and every binary payload to its
+`.parsed.json` twin; and `station_id_problems`, `radar_site_problems`,
+`aircraft_address_problems` and `positions_outside_the_rectangle` hold it to the identifier rules
+above.
 
 ### Then
 

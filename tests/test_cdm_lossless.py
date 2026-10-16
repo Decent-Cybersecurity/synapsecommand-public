@@ -211,9 +211,17 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # six before it.
     # the Link 16 gateway arc (2026-10-10): `link16_gateway` is the eighth; fourteen-and-eight. Its
     # Entity carries the whole report and its Track the record identifier, never an empty `data`.
-    assert census[ResidualStance.STRUCTURED] == ["aixm511", "aixm52", "c2sim", "dis7", "geojson",
-                                                 "geopackage", "link16_gateway", "tacticalapi"]
-    assert len(roster) == 22
+    # the NYC observations arc (2026-10-15): `readsb_trace` is the ninth; fourteen-and-nine. Its
+    # Entity carries the whole trace document, its Track and Event the address and time base.
+    # the same arc, the same day: `nexrad2` is the tenth; fourteen-and-ten. Its site Entity carries
+    # the volume header, the site and the record census, each sweep Event the sweep's radials.
+    # the same arc, the same day: `ndbc_stdmet`, `coops_csv` and `airnow_hourly` are the eleventh
+    # to thirteenth; fourteen-and-thirteen. Each Event carries its own row or record as written.
+    assert census[ResidualStance.STRUCTURED] == ["airnow_hourly", "aixm511", "aixm52", "c2sim",
+                                                 "coops_csv", "dis7", "geojson", "geopackage",
+                                                 "link16_gateway", "ndbc_stdmet", "nexrad2",
+                                                 "readsb_trace", "tacticalapi"]
+    assert len(roster) == 27
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

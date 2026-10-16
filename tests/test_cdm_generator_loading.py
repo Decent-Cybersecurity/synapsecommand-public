@@ -325,3 +325,71 @@ def test_the_generators_leave_no_bytecode_in_the_tree_after_a_full_run():
         f"generator bytecode is on disk: {stale}. Nothing in this suite writes it any more, so "
         "these are either left from before the fix — delete them — or something regressed"
     )
+
+
+# ----------------------------------------- the shared observation loader (added 2026-10-15)
+#
+# `tests/observation_support.py` gives the observation adapters' harnesses ONE loader for their
+# builders, `load_builder`, so a later round never writes a fifth one. It is a helper rather than
+# an adapter test module, so the closure above does not reach it, and it is held to the same two
+# properties here: it reads the source even when a poisoned cache stands beside it, and it writes
+# no bytecode. The builder is a small one staged under `tmp_path`, because no observation builder
+# exists yet.
+
+_STAGED_BUILDER = "MARKER = 'source'\n"
+
+
+def _staged_observation_builder(tmp_path: pathlib.Path) -> pathlib.Path:
+    spec = tmp_path / "synapse_cdm" / "fixtures" / "demo" / "spec"
+    spec.mkdir(parents=True)
+    path = spec / "build_fixtures.py"
+    path.write_text(_STAGED_BUILDER)
+    return path
+
+
+def test_the_shared_observation_loader_never_calls_the_caching_loader():
+    tree = ast.parse((TESTS / "observation_support.py").read_text())
+    calls = [node.lineno for node in ast.walk(tree)
+             if isinstance(node, ast.Attribute) and node.attr == BANNED_CALL]
+    assert calls == [], f"tests/observation_support.py calls {BANNED_CALL} at lines {calls}"
+    assert _loads_a_module_by_path((TESTS / "observation_support.py").read_text())
+
+
+def test_the_shared_observation_loader_reads_the_source_even_with_a_poisoned_cache(tmp_path,
+                                                                                   monkeypatch):
+    from tests import observation_support
+
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+    monkeypatch.setattr(sys, "path", list(sys.path))
+    path = _staged_observation_builder(tmp_path)
+    original = path.read_bytes()
+    stat = path.stat()
+    path.write_bytes(original + b"POISON_MARKER = 1\n")
+    os.utime(path, (stat.st_atime, stat.st_mtime))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("poison_observation_builder", path)
+    planted = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(planted)
+    assert planted.POISON_MARKER == 1
+    pycs = sorted((path.parent / "__pycache__").glob("*.pyc"))
+    assert pycs, "no bytecode was planted, so this check would prove nothing"
+    path.write_bytes(original)
+    os.utime(path, (stat.st_atime, stat.st_mtime))
+    for pyc in pycs:
+        blob = bytearray(pyc.read_bytes())
+        blob[12:16] = (len(original) & 0xFFFFFFFF).to_bytes(4, "little")
+        pyc.write_bytes(bytes(blob))
+    module = observation_support.load_builder(path)
+    assert module.MARKER == "source"
+    assert not hasattr(module, "POISON_MARKER"), (
+        "observation_support.load_builder returned a module built from the planted bytecode")
+
+
+def test_the_shared_observation_loader_writes_no_bytecode_beside_the_builder(tmp_path,
+                                                                            monkeypatch):
+    from tests import observation_support
+
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+    path = _staged_observation_builder(tmp_path)
+    assert observation_support.load_builder(path).MARKER == "source"
+    assert not (path.parent / "__pycache__").exists()

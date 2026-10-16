@@ -1,0 +1,39 @@
+{
+  "what_this_is": "The pin record of the coops_csv adapter: the CO-OPS data API pages its format is read from, cited by URL and NOT carried (HTML, DECISIONS U-08), with no digest because the design record holds no copy of them; the licence reading behind the adapter's class; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: nothing is pinned as a held document.",
+  "adapter": {
+    "name": "coops_csv",
+    "ordinal": 27,
+    "direction": "ingest",
+    "fixture_directory": "coops_csv"
+  },
+  "cited": [
+    {
+      "document": "CO-OPS data API, the datagetter parameter page",
+      "read_for": "the request parameters a response does not echo — station, product, datum (MLLW, MLW, MSL, MHW, MHHW, NAVD, STND, CRD, IGLD, LWD, MTL; 'Datum is mandatory for all water level products'), units (metric or english), time_zone (gmt, lst, lst_ldt), interval — and the request range limits (6-minute data one month, hourly one year) (research-station-text F05)",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "CO-OPS data API, the response field definitions (responseHelp.html)",
+      "read_for": "water level's t, v, s (sigma), f (the flags in order) and q (p preliminary, v verified); the preliminary flags O (a count), F, R, L and the verified I, F, R, T; air pressure's X, N, R; wind's X, R (research-station-text F06)",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/responseHelp.html",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    }
+  ],
+  "digest": "not stated for either page: the design record holds no copy of them (research-station-text read them on 2026-10-14 and saved none), so no SHA-256 was measured and none is claimed. Nothing was fetched for this record (DECISIONS L-06); the 3.5.0 release readiness list carries the reading for the maintainer (open question in reports/R4-build.md).",
+  "response_layouts_read": "The CSV headers the adapter compares whole are the ones research-station-text F04 to F06 quotes from responses fetched on 2026-10-14: water level 'Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality', air pressure 'Date Time, Pressure, X, N, R ' (with its trailing space) and wind 'Date Time, Speed, Direction, Direction, Gust, X, R'. The JSON form's keys (metadata id, name, lat, lon; data t, v, s, f, q, every value a string) are F05's, for water level only.",
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "NOS states that the information on government servers is in the public domain unless specifically annotated otherwise and may be used freely by the public, requests attribution, and releases raw data as preliminary (tidesandcurrents.noaa.gov/disclaimers.html; research-station-text F11). That is the repository's PUBLIC_GOVERNMENT class.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "CO-OPS responses are public; none enters this tree. The fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only): no sample of any station, not a value, is used.",
+  "fixtures_are_synthetic": "Every payload under fixtures/coops_csv/ and its malformed/ directory is built by spec/build_fixtures.py from literals in that script, written on 2026-10-15 for this adapter. The station is 0000001, the JSON form's position lies in the Baltic rectangle, the days are 2026-04-27 and 2026-04-28, and every value is written in the script.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "text": "ASCII, the CSV header line as written and each row's fields joined by commas, LF line ends; the JSON form is json.dumps with compact separators; the twin is json.dumps(indent=2, ensure_ascii=True) of the same literals. Nothing depends on a library version."
+  }
+}

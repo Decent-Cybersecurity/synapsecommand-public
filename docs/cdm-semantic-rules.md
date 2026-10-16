@@ -41,6 +41,7 @@ each. A finding is never moved from one class to the other to make a level pass.
 | SEM-011 | `Event.payload` | When `event_type` has a registered payload model (`GNSS_INTERFERENCE` → `GnssInterferencePayload`), the payload validates against it; keys the model does not declare are preserved. | The payload's shape depends on a sibling field. |
 | SEM-012 | `Track.samples` | Samples are in non-decreasing `observed_at` order. | Ordering across array elements. |
 | SEM-013 | `PlanObject` | When both `expires_at` and `validity.valid_to` are present they are equal. | Cross-field. |
+| SEM-014 | `Track.attributes.completeness` | `carried_samples` equals the number of `samples` on the same Track. | Equality between a number and an array's length. |
 
 Rules carried by the SC-OES layer (an event's `oes` block: self-relations, membership of
 `entity_relations` subjects in `related_entities`) are the SC-OES specification's, are assessed by

@@ -141,7 +141,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All twenty-two harnesses are green**, and at least one of them run against the INSTALLED
+2. **All twenty-seven harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -596,11 +596,60 @@ now true of it.
 release tag is `v3.4.0`, and `3.4.0` is what the index serves — `PUBLICATION.md` entry 26 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, and the index note in
-the 3.4.0 section being what moved in it. Everything else the round touched ships in nothing: the
-ledger, the witness record and its README, the release-pipeline and changelog pages, the Link 16
-gateway implementation record, the frozen-contract manifest, and three test modules.
+**What moved inside the distribution: 814 files** — for the 3.4.0 witness round, `MIGRATIONS.md`,
+this section, the dated witness paragraphs in the release procedure and the pipeline section, and
+the index note in the 3.4.0 section being what moved in it. The landings below were counted
+against `v3.3.0` when they were written, beside the Link 16 landings the `3.4.0` section now
+records; they are counted here against `v3.4.0`, each file once (corrected 2026-10-16, at the
+replay onto that tag).
+For the CDM 3.2.0 landing of 2026-10-15 below, `enums.py` and `models.py`, the new module
+`projection.py` (the 3.0.0 contract projection, (vii) below), one dated docstring sentence in
+`adapters/link16_gateway.py` (whose landing the `3.4.0` section below records),
+`FORMAT_COVERAGE.md` (gap 16 and the Legion rows, dated), `README.md` (the key-field table), this
+file (the landing record, three Bump rulings and the implemented note on the `Track.attributes`
+proposal), the eight local goldens under `fixtures/adsb/local/` that `tests/test_cdm_adsb_adapter.py` compares by
+equality, and 563 golden files written again by `python -m synapse_cdm.harness --adapter <name>
+--update-golden` for all twenty-two adapters and read, each moving by `"validity": null` on every
+Event and `"attributes": null` on every Track it holds and by nothing else — none of them counted
+above in this section, and each counted once: under `fixtures/adsb/golden/`, `airborne_position_baro_gulf_of_riga.cdm.json`, `airborne_position_baro_gulf_of_riga.parsed.cdm.json`, `airborne_position_gillham_above_50175.cdm.json`, `airborne_position_gillham_above_50175.parsed.cdm.json`, `airborne_position_gnss_height_odd.cdm.json`, `airborne_position_gnss_height_odd.parsed.cdm.json`, `airborne_position_no_position_information.cdm.json`, `airborne_position_no_position_information.parsed.cdm.json`, `airborne_position_permanent_alert.cdm.json`, `airborne_position_permanent_alert.parsed.cdm.json`, `airborne_velocity_airspeed_and_heading.cdm.json`, `airborne_velocity_airspeed_and_heading.parsed.cdm.json`, `airborne_velocity_all_unavailable.cdm.json`, `airborne_velocity_all_unavailable.parsed.cdm.json`, `airborne_velocity_ground_speed.cdm.json`, `airborne_velocity_ground_speed.parsed.cdm.json`, `aircraft_status_unlawful_interference.cdm.json`, `aircraft_status_unlawful_interference.parsed.cdm.json`, `identification_light_aircraft.cdm.json`, `identification_light_aircraft.parsed.cdm.json`, `identification_point_obstacle.cdm.json`, `identification_point_obstacle.parsed.cdm.json`, `nonicao_anonymous_address.cdm.json`, `nonicao_anonymous_address.parsed.cdm.json`, `operational_status_magnetic_heading.cdm.json`, `operational_status_magnetic_heading.parsed.cdm.json`, `surface_position_riga_taxiway.cdm.json`, `surface_position_riga_taxiway.parsed.cdm.json`, `surface_position_stopped_no_track.cdm.json`, `surface_position_stopped_no_track.parsed.cdm.json`, `tisb_fine_format_relayed_track.cdm.json`, `tisb_fine_format_relayed_track.parsed.cdm.json`; under `fixtures/adsb/local/`, `airborne_position_baro_gulf_of_riga.cdm.json`, `airborne_position_gillham_above_50175.cdm.json`, `airborne_position_gnss_height_odd.cdm.json`, `airborne_position_permanent_alert.cdm.json`, `nonicao_anonymous_address.cdm.json`, `surface_position_riga_taxiway.cdm.json`, `surface_position_stopped_no_track.cdm.json`, `tisb_fine_format_relayed_track.cdm.json`; under `fixtures/ais/golden/`, `aid_to_navigation_off_position.cdm.json`, `aid_to_navigation_off_position.parsed.cdm.json`, `aid_to_navigation_virtual.cdm.json`, `aid_to_navigation_virtual.parsed.cdm.json`, `base_station_liepaja.cdm.json`, `base_station_liepaja.parsed.cdm.json`, `class_a_assigned_schedule_moored.cdm.json`, `class_a_assigned_schedule_moored.parsed.cdm.json`, `class_a_sentinels_no_position.cdm.json`, `class_a_sentinels_no_position.parsed.cdm.json`, `class_a_underway_gulf_of_riga.cdm.json`, `class_a_underway_gulf_of_riga.parsed.cdm.json`, `class_b_extended_named.cdm.json`, `class_b_extended_named.parsed.cdm.json`, `class_b_own_station_ventspils.cdm.json`, `class_b_own_station_ventspils.parsed.cdm.json`, `equator_zero_meridian.cdm.json`, `equator_zero_meridian.parsed.cdm.json`, `sart_active_distress.cdm.json`, `sart_active_distress.parsed.cdm.json`, `static_voyage_two_fragments.cdm.json`, `static_voyage_two_fragments.parsed.cdm.json`; under `fixtures/c2sim/golden/`, `order_hold_in_place.cdm.json`, `order_hold_in_place.parsed.cdm.json`, `order_move_to_location.cdm.json`, `order_move_to_location.parsed.cdm.json`, `report_position_two_subjects.cdm.json`, `report_position_two_subjects.parsed.cdm.json`, `report_status_observations.cdm.json`, `report_status_observations.parsed.cdm.json`; under `fixtures/cat021/golden/`, `airborne_position_coarse_and_high_resolution.cdm.json`, `airborne_position_coarse_and_high_resolution.parsed.cdm.json`, `airborne_position_time_of_applicability.cdm.json`, `airborne_position_time_of_applicability.parsed.cdm.json`, `duplicate_address.cdm.json`, `duplicate_address.parsed.cdm.json`, `emergency_unlawful_interference.cdm.json`, `emergency_unlawful_interference.parsed.cdm.json`, `icao24_shared_with_adsb.cdm.json`, `icao24_shared_with_adsb.parsed.cdm.json`, `midnight_rollover_after.cdm.json`, `midnight_rollover_after.parsed.cdm.json`, `midnight_rollover_before.cdm.json`, `midnight_rollover_before.parsed.cdm.json`, `mode_five_authenticated.cdm.json`, `mode_five_authenticated.parsed.cdm.json`, `obstacle_line.cdm.json`, `obstacle_line.parsed.cdm.json`, `position_time_of_message_reception_high_precision.cdm.json`, `position_time_of_message_reception_high_precision.parsed.cdm.json`, `quality_indicators_without_mops_version.cdm.json`, `quality_indicators_without_mops_version.parsed.cdm.json`, `range_check_failed_still_translated.cdm.json`, `range_check_failed_still_translated.parsed.cdm.json`, `reserved_full_second_indication.cdm.json`, `reserved_full_second_indication.parsed.cdm.json`, `spare_bits_nonzero.cdm.json`, `spare_bits_nonzero.parsed.cdm.json`, `special_purpose_field_opaque.cdm.json`, `special_purpose_field_opaque.parsed.cdm.json`, `surface_stopped_track_invalid.cdm.json`, `surface_stopped_track_invalid.parsed.cdm.json`, `surface_vehicle_with_ref_ground_vector.cdm.json`, `surface_vehicle_with_ref_ground_vector.parsed.cdm.json`, `trajectory_intent_two_points.cdm.json`, `trajectory_intent_two_points.parsed.cdm.json`, `two_records_one_block.cdm.json`, `two_records_one_block.parsed.cdm.json`, `version_three_emergency_in_ref.cdm.json`, `version_three_emergency_in_ref.parsed.cdm.json`; under `fixtures/cat023/golden/`, `all_three_service_types.cdm.json`, `all_three_service_types.parsed.cdm.json`, `data_driven_report_period.cdm.json`, `data_driven_report_period.parsed.cdm.json`, `ground_station_status_full.cdm.json`, `ground_station_status_full.parsed.cdm.json`, `ground_station_status_minimal.cdm.json`, `ground_station_status_minimal.parsed.cdm.json`, `midnight_rollover_nearest.cdm.json`, `midnight_rollover_nearest.parsed.cdm.json`, `non_minimal_fspec.cdm.json`, `non_minimal_fspec.parsed.cdm.json`, `operational_range_at_maximum.cdm.json`, `operational_range_at_maximum.parsed.cdm.json`, `report_type_004.cdm.json`, `report_type_004.parsed.cdm.json`, `reserved_and_special_purpose.cdm.json`, `reserved_and_special_purpose.parsed.cdm.json`, `service_statistics_report.cdm.json`, `service_statistics_report.parsed.cdm.json`, `service_statistics_reserved_type.cdm.json`, `service_statistics_reserved_type.parsed.cdm.json`, `service_status_degraded.cdm.json`, `service_status_degraded.parsed.cdm.json`, `service_status_report.cdm.json`, `service_status_report.parsed.cdm.json`, `service_status_unknown.cdm.json`, `service_status_unknown.parsed.cdm.json`, `spare_bits_nonzero.cdm.json`, `spare_bits_nonzero.parsed.cdm.json`, `table_2_x_item_present.cdm.json`, `table_2_x_item_present.parsed.cdm.json`, `time_of_day_absent.cdm.json`, `time_of_day_absent.parsed.cdm.json`; under `fixtures/cat034/golden/`, `geographical_filter_polar_window.cdm.json`, `geographical_filter_polar_window.parsed.cdm.json`, `jamming_strobe_is_not_gnss.cdm.json`, `jamming_strobe_is_not_gnss.parsed.cdm.json`, `message_counts_twenty_one_types.cdm.json`, `message_counts_twenty_one_types.parsed.cdm.json`, `message_type_008.cdm.json`, `message_type_008.parsed.cdm.json`, `midnight_rollover_nearest.cdm.json`, `midnight_rollover_nearest.parsed.cdm.json`, `mode_s_jamming_strobe.cdm.json`, `mode_s_jamming_strobe.parsed.cdm.json`, `non_minimal_fspec.cdm.json`, `non_minimal_fspec.parsed.cdm.json`, `north_marker_minimal.cdm.json`, `north_marker_minimal.parsed.cdm.json`, `processing_mode_reduction_steps.cdm.json`, `processing_mode_reduction_steps.parsed.cdm.json`, `re_and_sp_carried.cdm.json`, `re_and_sp_carried.parsed.cdm.json`, `sector_crossing_with_rotation.cdm.json`, `sector_crossing_with_rotation.parsed.cdm.json`, `solar_storm_message.cdm.json`, `solar_storm_message.parsed.cdm.json`, `spare_bits_nonzero.cdm.json`, `spare_bits_nonzero.parsed.cdm.json`, `station_position_three_dimensional.cdm.json`, `station_position_three_dimensional.parsed.cdm.json`, `system_status_all_four_subfields.cdm.json`, `system_status_all_four_subfields.parsed.cdm.json`, `time_of_day_absent_where_optional.cdm.json`, `time_of_day_absent_where_optional.parsed.cdm.json`, `two_records_one_block.cdm.json`, `two_records_one_block.parsed.cdm.json`; under `fixtures/cat048/golden/`, `acas_ra_active_undecoded.cdm.json`, `acas_ra_active_undecoded.parsed.cdm.json`, `bds_registers_comm_b_broadcast.cdm.json`, `bds_registers_comm_b_broadcast.parsed.cdm.json`, `derived_position_inverts_to_the_polar_values.cdm.json`, `derived_position_inverts_to_the_polar_values.parsed.cdm.json`, `end_of_track_full_items.cdm.json`, `end_of_track_full_items.parsed.cdm.json`, `end_of_track_items_omitted.cdm.json`, `end_of_track_items_omitted.parsed.cdm.json`, `field_monitor_report.cdm.json`, `field_monitor_report.parsed.cdm.json`, `flight_level_negative.cdm.json`, `flight_level_negative.parsed.cdm.json`, `fspec_longer_than_necessary.cdm.json`, `fspec_longer_than_necessary.parsed.cdm.json`, `ghost_target_still_translated.cdm.json`, `ghost_target_still_translated.parsed.cdm.json`, `helicopter_classification_not_read_as_a_type.cdm.json`, `helicopter_classification_not_read_as_a_type.parsed.cdm.json`, `ic_conflict_codes.cdm.json`, `ic_conflict_codes.parsed.cdm.json`, `icao24_shared_with_cat021.cdm.json`, `icao24_shared_with_cat021.parsed.cdm.json`, `injected_site_no_height_item.cdm.json`, `injected_site_no_height_item.parsed.cdm.json`, `injected_site_pressure_height_only.cdm.json`, `injected_site_pressure_height_only.parsed.cdm.json`, `injected_site_range_at_maximum.cdm.json`, `injected_site_range_at_maximum.parsed.cdm.json`, `midnight_rollover_after.cdm.json`, `midnight_rollover_after.parsed.cdm.json`, `midnight_rollover_before.cdm.json`, `midnight_rollover_before.parsed.cdm.json`, `military_emergency.cdm.json`, `military_emergency.parsed.cdm.json`, `mode_1_and_mode_2_with_confidence.cdm.json`, `mode_1_and_mode_2_with_confidence.parsed.cdm.json`, `mode_4_result_in_ref.cdm.json`, `mode_4_result_in_ref.parsed.cdm.json`, `mode_s_alert_is_not_an_emergency.cdm.json`, `mode_s_alert_is_not_an_emergency.parsed.cdm.json`, `mode_s_roll_call_track.cdm.json`, `mode_s_roll_call_track.parsed.cdm.json`, `no_detection_track_only.cdm.json`, `no_detection_track_only.parsed.cdm.json`, `no_time_item_at_all.cdm.json`, `no_time_item_at_all.parsed.cdm.json`, `plot_and_track_one_block.cdm.json`, `plot_and_track_one_block.parsed.cdm.json`, `plot_characteristics_all_subfields.cdm.json`, `plot_characteristics_all_subfields.parsed.cdm.json`, `psr_only_plot_no_identity.cdm.json`, `psr_only_plot_no_identity.parsed.cdm.json`, `psr_plot_with_track_number_only.cdm.json`, `psr_plot_with_track_number_only.parsed.cdm.json`, `psr_track_two_scans_same_track_number.cdm.json`, `psr_track_two_scans_same_track_number.parsed.cdm.json`, `radial_ambiguity_rad_invalid.cdm.json`, `radial_ambiguity_rad_invalid.parsed.cdm.json`, `radial_doppler_both_subfields.cdm.json`, `radial_doppler_both_subfields.parsed.cdm.json`, `radial_doppler_calculated.cdm.json`, `radial_doppler_calculated.parsed.cdm.json`, `reserved_expansion_field_carried.cdm.json`, `reserved_expansion_field_carried.parsed.cdm.json`, `spare_bits_nonzero.cdm.json`, `spare_bits_nonzero.parsed.cdm.json`, `special_purpose_field_opaque.cdm.json`, `special_purpose_field_opaque.parsed.cdm.json`, `three_altitudes_disagreeing.cdm.json`, `three_altitudes_disagreeing.parsed.cdm.json`, `time_of_day_exactly_86400.cdm.json`, `time_of_day_exactly_86400.parsed.cdm.json`, `track_quality_vector.cdm.json`, `track_quality_vector.parsed.cdm.json`, `two_stations_one_block.cdm.json`, `two_stations_one_block.parsed.cdm.json`, `warning_error_code_37.cdm.json`, `warning_error_code_37.parsed.cdm.json`, `warning_error_code_series.cdm.json`, `warning_error_code_series.parsed.cdm.json`; under `fixtures/cat062/golden/`, `ads_c_age_two_octets.cdm.json`, `ads_c_age_two_octets.parsed.cdm.json`, `adsb_version_3_emergency.cdm.json`, `adsb_version_3_emergency.parsed.cdm.json`, `both_altitudes_disagreeing.cdm.json`, `both_altitudes_disagreeing.parsed.cdm.json`, `cartesian_position_parked.cdm.json`, `cartesian_position_parked.parsed.cdm.json`, `composed_track_number_three_units.cdm.json`, `composed_track_number_three_units.parsed.cdm.json`, `contributing_sensors.cdm.json`, `contributing_sensors.parsed.cdm.json`, `emergency_disagreement.cdm.json`, `emergency_disagreement.parsed.cdm.json`, `emitter_category_and_fleet.cdm.json`, `emitter_category_and_fleet.parsed.cdm.json`, `estimated_accuracies_full.cdm.json`, `estimated_accuracies_full.parsed.cdm.json`, `flight_plan_correlated.cdm.json`, `flight_plan_correlated.parsed.cdm.json`, `full_mask_track.cdm.json`, `full_mask_track.parsed.cdm.json`, `midnight_rollover_nearest.cdm.json`, `midnight_rollover_nearest.parsed.cdm.json`, `minimum_fspec_track.cdm.json`, `minimum_fspec_track.parsed.cdm.json`, `mode5_time_offset.cdm.json`, `mode5_time_offset.parsed.cdm.json`, `mode_s_address_present.cdm.json`, `mode_s_address_present.parsed.cdm.json`, `non_minimal_fspec.cdm.json`, `non_minimal_fspec.parsed.cdm.json`, `pre_emergency_pair.cdm.json`, `pre_emergency_pair.parsed.cdm.json`, `reserved_and_extension_fields.cdm.json`, `reserved_and_extension_fields.parsed.cdm.json`, `spare_bits_nonzero.cdm.json`, `spare_bits_nonzero.parsed.cdm.json`, `target_identification_forbidden.cdm.json`, `target_identification_forbidden.parsed.cdm.json`, `target_size_length_only.cdm.json`, `target_size_length_only.parsed.cdm.json`, `three_altitudes_and_a_measured_height.cdm.json`, `three_altitudes_and_a_measured_height.parsed.cdm.json`, `track_begin.cdm.json`, `track_begin.parsed.cdm.json`, `track_data_ages.cdm.json`, `track_data_ages.parsed.cdm.json`, `track_end.cdm.json`, `track_end.parsed.cdm.json`, `track_number_only.cdm.json`, `track_number_only.parsed.cdm.json`, `trajectory_intent_three_points.cdm.json`, `trajectory_intent_three_points.parsed.cdm.json`, `two_records_one_block.cdm.json`, `two_records_one_block.parsed.cdm.json`; under `fixtures/gmti/golden/`, `delta_targets_across_the_prime_meridian.cdm.json`, `delta_targets_across_the_prime_meridian.parsed.cdm.json`, `dwell_with_no_targets_and_target_bits_set.cdm.json`, `dwell_with_no_targets_and_target_bits_set.parsed.cdm.json`, `free_text_and_test_status.cdm.json`, `free_text_and_test_status.parsed.cdm.json`, `full_mask_every_optional_group.cdm.json`, `full_mask_every_optional_group.parsed.cdm.json`, `hrr_signature_parked_both_time_branches.cdm.json`, `hrr_signature_parked_both_time_branches.parsed.cdm.json`, `mission_dwell_hi_res_targets.cdm.json`, `mission_dwell_hi_res_targets.parsed.cdm.json`, `multi_day_dwell_time.cdm.json`, `multi_day_dwell_time.parsed.cdm.json`, `platform_location_mixed_time_basis.cdm.json`, `platform_location_mixed_time_basis.parsed.cdm.json`, `processing_history_chain.cdm.json`, `processing_history_chain.parsed.cdm.json`, `repeated_mission_segment.cdm.json`, `repeated_mission_segment.parsed.cdm.json`, `reserved_and_extension_segments_recorded.cdm.json`, `reserved_and_extension_segments_recorded.parsed.cdm.json`, `simulated_classifications_never_flip_synthetic.cdm.json`, `simulated_classifications_never_flip_synthetic.parsed.cdm.json`, `sparse_mask_minimum_dwell.cdm.json`, `sparse_mask_minimum_dwell.parsed.cdm.json`, `synthesized_data_parks_without_refusal.cdm.json`, `synthesized_data_parks_without_refusal.parsed.cdm.json`, `tagging_device_beside_simulated_targets.cdm.json`, `tagging_device_beside_simulated_targets.parsed.cdm.json`; under `fixtures/klv/golden/`, `a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`, `a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`, `a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.cdm.json`, `a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.cdm.json`, `a_negative_time_adjustment_is_read_signed.cdm.json`, `a_negative_time_adjustment_is_read_signed.parsed.cdm.json`, `a_platform_only_core_identifier_names_one_of_the_two_devices.cdm.json`, `a_platform_only_core_identifier_names_one_of_the_two_devices.parsed.cdm.json`, `a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.cdm.json`, `a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.parsed.cdm.json`, `a_poi_missing_a_mandatory_element_is_carried_and_reported.cdm.json`, `a_poi_missing_a_mandatory_element_is_carried_and_reported.parsed.cdm.json`, `a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.cdm.json`, `a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.parsed.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json`, `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.cdm.json`, `a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`, `a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.cdm.json`, `a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.parsed.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.cdm.json`, `a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.cdm.json`, `a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, `an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.cdm.json`, `an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.parsed.cdm.json`, `an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.cdm.json`, `an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.parsed.cdm.json`, `an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.cdm.json`, `an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.parsed.cdm.json`, `an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.cdm.json`, `an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.parsed.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.cdm.json`, `every_row_of_the_minimum_set_reported_in_one_packet.cdm.json`, `every_row_of_the_minimum_set_reported_in_one_packet.parsed.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.parsed.cdm.json`, `imapb_items_from_the_documents_own_examples.cdm.json`, `imapb_items_from_the_documents_own_examples.parsed.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.parsed.cdm.json`, `length_divergence_at_a_required_length.cdm.json`, `length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`, `mandatory_items_only.parsed.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`, `over_recommended_max_length_is_an_advisory.cdm.json`, `over_recommended_max_length_is_an_advisory.parsed.cdm.json`, `rvt_local_set_complete_from_the_element_rules.cdm.json`, `rvt_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`, `security_local_set_complete_from_the_element_rules.cdm.json`, `security_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_local_set_minimal_required_only.cdm.json`, `security_local_set_minimal_required_only.parsed.cdm.json`, `security_local_set_partial_is_carried_as_partial.cdm.json`, `security_local_set_partial_is_carried_as_partial.parsed.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`, `special_values_are_signals_and_not_measurements.cdm.json`, `special_values_are_signals_and_not_measurements.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `tag_75_from_the_documents_own_example.cdm.json`, `tag_75_from_the_documents_own_example.parsed.cdm.json`, `the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.cdm.json`, `the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.cdm.json`, `the_miis_core_identifier_from_the_documents_own_example.cdm.json`, `the_miis_core_identifier_from_the_documents_own_example.parsed.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json`, `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json`, `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`; under `fixtures/legion/golden/`, `entity_location_ecef_gulf_of_riga.cdm.json`, `entity_location_lla_ventspils.cdm.json`, `entity_sensor_mast_riga.cdm.json`, `event_gunshot_detection.cdm.json`, `locations_list_patrol_three.cdm.json`; under `fixtures/link16_gateway/golden/`, `air_flight_level.cdm.json`, `air_hae_feet_gnss_hostile.cdm.json`, `air_hae_metres_friendly.cdm.json`, `air_msl.cdm.json`, `air_sensor.cdm.json`, `air_sensor_octets.cdm.json`, `air_south_pole_antimeridian_resolved.cdm.json`, `land_agl_assumed_friend_earlier_components.cdm.json`, `subsurface_unit_other_depth_unknown_reference.cdm.json`, `subsurface_unknown_method.cdm.json`, `surface_baro_pending_null_quality.cdm.json`, `surface_zero.cdm.json`, `unknown_domain_poles_uint64_unicode.cdm.json`, `unknown_domain_poles_uint64_unicode_octets.cdm.json`; under `fixtures/nits/golden/`, `amplification_zombie_beside_friend.nits.cdm.json`, `amplification_zombie_beside_friend.parsed.cdm.json`, `cooperative_modality_is_a_gnss_fix.nits.cdm.json`, `cooperative_modality_is_a_gnss_fix.parsed.cdm.json`, `detection_evidence_tree.nits.cdm.json`, `detection_evidence_tree.parsed.cdm.json`, `ecef_track_with_velocity.nits.cdm.json`, `ecef_track_with_velocity.parsed.cdm.json`, `exercise_faker_is_friendly.nits.cdm.json`, `exercise_faker_is_friendly.parsed.cdm.json`, `fractional_increment_parks_raw_integers.nits.cdm.json`, `fractional_increment_parks_raw_integers.parsed.cdm.json`, `linkage_processed_track_carried.nits.cdm.json`, `linkage_processed_track_carried.parsed.cdm.json`, `local_cartesian_with_complete_cft.nits.cdm.json`, `local_cartesian_with_complete_cft.parsed.cdm.json`, `local_spherical_is_attributes_only.nits.cdm.json`, `local_spherical_is_attributes_only.parsed.cdm.json`, `motion_event_complex_polygon.nits.cdm.json`, `motion_event_complex_polygon.parsed.cdm.json`, `motion_event_tripwire.nits.cdm.json`, `motion_event_tripwire.parsed.cdm.json`, `segment_retraction_is_an_event.nits.cdm.json`, `segment_retraction_is_an_event.parsed.cdm.json`, `standalone_basic_track.nits.cdm.json`, `standalone_basic_track.parsed.cdm.json`, `three_contiguous_segments_one_track.nits.cdm.json`, `three_contiguous_segments_one_track.parsed.cdm.json`, `wgs84_velocity_with_height.nits.cdm.json`, `wgs84_velocity_with_height.parsed.cdm.json`, `wgs84_velocity_without_height.nits.cdm.json`, `wgs84_velocity_without_height.parsed.cdm.json`; under `fixtures/pntmap/golden/`, `equator_emitter_l5.cdm.json`, `jamming_gulf_of_riga.cdm.json`, `spoofing_no_geolocation.cdm.json`, `unknown_type_vendor_fields.cdm.json`; under `fixtures/stanag4586/golden/`, `a_checksum_that_does_not_validate_is_flagged.cdm.json`, `a_checksum_that_does_not_validate_is_flagged.parsed.cdm.json`, `altitude_type_baro_never_reaches_alt_m.cdm.json`, `altitude_type_baro_never_reaches_alt_m.parsed.cdm.json`, `an_idd_version_that_is_not_edition_3.cdm.json`, `an_idd_version_that_is_not_edition_3.parsed.cdm.json`, `an_undecoded_message_type_is_parked.cdm.json`, `an_undecoded_message_type_is_parked.parsed.cdm.json`, `four_decoded_messages_one_vehicle.cdm.json`, `four_decoded_messages_one_vehicle.parsed.cdm.json`, `four_octet_checksum.cdm.json`, `four_octet_checksum.parsed.cdm.json`, `inertial_states_wgs84_altitude.cdm.json`, `inertial_states_wgs84_altitude.parsed.cdm.json`, `no_checksum_is_not_a_failing_checksum.cdm.json`, `no_checksum_is_not_a_failing_checksum.parsed.cdm.json`, `two_inertial_states_leave_the_entity_unpositioned.cdm.json`, `two_inertial_states_leave_the_entity_unpositioned.parsed.cdm.json`, `two_vehicles_are_two_entities.cdm.json`, `two_vehicles_are_two_entities.parsed.cdm.json`, `zero_ground_speed_yields_no_course.cdm.json`, `zero_ground_speed_yields_no_course.parsed.cdm.json`; under `fixtures/tacticalapi/golden/`, `awkward_symbols_and_codes.cdm.json`, `awkward_symbols_and_codes.parsed.cdm.json`, `awkward_zeros.cdm.json`, `awkward_zeros.parsed.cdm.json`, `delta_with_deletion.cdm.json`, `delta_with_deletion.parsed.cdm.json`, `snapshot_three_forces.cdm.json`, `snapshot_three_forces.parsed.cdm.json`, `snapshot_with_unknown_fields.cdm.json`, `snapshot_with_unknown_fields.parsed.cdm.json`; under `fixtures/tak/golden/`, `air_track_due_north.cdm.json`, `air_track_due_north.parsed.cdm.json`, `bridge_installation.cdm.json`, `bridge_installation.parsed.cdm.json`, `degraded_no_position.cdm.json`, `degraded_no_position.parsed.cdm.json`, `equator_zero_meridian.cdm.json`, `equator_zero_meridian.parsed.cdm.json`, `narva_patrol.cdm.json`, `narva_patrol.parsed.cdm.json`, `suspect_vessel_sentinels.cdm.json`, `suspect_vessel_sentinels.parsed.cdm.json`.
+For the observation layer of 2026-10-15 below, the two new modules `observation_contracts.py` and
+`decode_host.py`, `pyproject.toml` (the `synapse-decode` entry point), the package `README.md`
+(one section and two layout lines), this file, and one docstring sentence in `models.py` and the
+copy rule of `projection.py` — those four already counted above, and counted once.
+For the `readsb_trace` landing of 2026-10-15 below, the new adapter module `adapters/readsb_trace.py`
+and the new fixture directory `fixtures/readsb_trace/`, 82 files: its two `README.md` and two
+`PROVENANCE.json` records (the directory's and `malformed/`'s), and, under `spec/`, at the top
+level and under `golden/` and `malformed/`, `airborne_adsb_2022_form.cdm.json`, `airborne_adsb_2022_form.parsed.cdm.json`, `airborne_adsb_2022_form.parsed.json`, `airborne_adsb_2022_form.trace`, `build_fixtures.py`, `crc_mismatch.trace`, `deflate_data_corrupt.trace`, `duplicate_key.trace`, `empty_trace.trace`, `equal_instants_and_db_flags.cdm.json`, `equal_instants_and_db_flags.parsed.cdm.json`, `equal_instants_and_db_flags.parsed.json`, `equal_instants_and_db_flags.trace`, `every_flag_bit.cdm.json`, `every_flag_bit.parsed.cdm.json`, `every_flag_bit.parsed.json`, `every_flag_bit.trace`, `fewer_than_nine_elements.trace`, `flags_outside_four_bits.trace`, `ground_heading_slot.cdm.json`, `ground_heading_slot.parsed.cdm.json`, `ground_heading_slot.parsed.json`, `ground_heading_slot.trace`, `ground_outside_element_three.trace`, `inflates_past_the_bound.trace`, `latitude_out_of_range.trace`, `lone_surrogate_in_version.trace`, `longitude_out_of_range.trace`, `midnight_fragment_day_one.cdm.json`, `midnight_fragment_day_one.parsed.cdm.json`, `midnight_fragment_day_one.parsed.json`, `midnight_fragment_day_one.trace`, `midnight_fragment_day_two.cdm.json`, `midnight_fragment_day_two.parsed.cdm.json`, `midnight_fragment_day_two.parsed.json`, `midnight_fragment_day_two.trace`, `mlat_positions.cdm.json`, `mlat_positions.parsed.cdm.json`, `mlat_positions.parsed.json`, `mlat_positions.trace`, `nan_literal.trace`, `negative_offset.trace`, `nonicao_address.cdm.json`, `nonicao_address.parsed.cdm.json`, `nonicao_address.parsed.json`, `nonicao_address.trace`, `not_gzip.trace`, `null_altitude_and_speed.cdm.json`, `null_altitude_and_speed.parsed.cdm.json`, `null_altitude_and_speed.parsed.json`, `null_altitude_and_speed.trace`, `offsets_not_monotonic.trace`, `pre2022_nine_elements.cdm.json`, `pre2022_nine_elements.parsed.cdm.json`, `pre2022_nine_elements.parsed.json`, `pre2022_nine_elements.trace`, `readsb_trace.py`, `readsb_trace_pin.json`, `receiver_id_fifteen_elements.cdm.json`, `receiver_id_fifteen_elements.parsed.cdm.json`, `receiver_id_fifteen_elements.parsed.json`, `receiver_id_fifteen_elements.trace`, `reference_not_midnight.cdm.json`, `reference_not_midnight.parsed.cdm.json`, `reference_not_midnight.parsed.json`, `reference_not_midnight.trace`, `timestamp_not_a_number.trace`, `timestamp_past_a_double.trace`, `tisb_positions.cdm.json`, `tisb_positions.parsed.cdm.json`, `tisb_positions.parsed.json`, `tisb_positions.trace`, `trailing_octets_after_the_member.trace`, `truncated_gzip.trace`, `truncated_json.trace`, `unknown_position_source.trace`, `unknown_top_level_key.trace`, `uppercase_address.trace`; the
+same landing moves the roster count in `README.md`, `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py`, `version.py` and `pyproject.toml`, its row and section in `FORMAT_COVERAGE.md`, one
+row of `decode_host.py`, the harness count of the release procedure's second condition in this
+file, and one guard in `models.py` (ruled below) — `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py` and `version.py` counted here first and the rest already counted above, and each
+counted once.
+For the `nexrad2` landing of 2026-10-15 below, the new adapter module `adapters/nexrad2.py` and
+the new fixture directory `fixtures/nexrad2/`, 43 files with the module: its two `README.md` and two
+`PROVENANCE.json` records (the directory's and `malformed/`'s), and, under `spec/`, at the top
+level and under `golden/` and `malformed/`, `all_moments_one_elevation.ar2v`, `all_moments_one_elevation.cdm.json`, `all_moments_one_elevation.parsed.cdm.json`, `all_moments_one_elevation.parsed.json`, `archive_version_05.ar2v`, `azimuth_number_zero.ar2v`, `build_fixtures.py`, `bzip2_crc_corrupt.ar2v`, `bzip2_stream_cut_short.ar2v`, `coded_gates_and_bad_radial.ar2v`, `coded_gates_and_bad_radial.cdm.json`, `coded_gates_and_bad_radial.parsed.cdm.json`, `coded_gates_and_bad_radial.parsed.json`, `compression_indicator_bzip2.ar2v`, `compression_indicator_zlib.ar2v`, `decompresses_past_the_bound.ar2v`, `message_1_legacy_radial.ar2v`, `message_29_model_data_record.ar2v`, `metadata_record_past_its_size.ar2v`, `negative_control_word_past_the_file.ar2v`, `nexrad2.py`, `nexrad2_pin.json`, `not_an_archive_ii_volume.ar2v`, `one_sweep_across_two_records.ar2v`, `one_sweep_across_two_records.cdm.json`, `one_sweep_across_two_records.parsed.cdm.json`, `one_sweep_across_two_records.parsed.json`, `radial_length_out_of_range.ar2v`, `sails_repeated_lowest_angle.ar2v`, `sails_repeated_lowest_angle.cdm.json`, `sails_repeated_lowest_angle.parsed.cdm.json`, `sails_repeated_lowest_angle.parsed.json`, `short_volume_header.ar2v`, `truncated_record.ar2v`, `two_elevations_two_records.ar2v`, `two_elevations_two_records.cdm.json`, `two_elevations_two_records.parsed.cdm.json`, `two_elevations_two_records.parsed.json`, `unexpected_message_type.ar2v`; the
+same landing moves the roster count in `README.md`, `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py`, `version.py` and `pyproject.toml`, its row and section in `FORMAT_COVERAGE.md`, one
+row and the frame digest of `decode_host.py`, the site helper and two time guards of
+`observation_contracts.py`, and the harness count of the release procedure's second condition in
+this file — all of them already counted above, and counted once.
+For the station-text landing of 2026-10-15 below, the three new adapter modules
+`adapters/ndbc_stdmet.py`, `adapters/coops_csv.py` and `adapters/airnow_hourly.py` and the three new
+fixture directories `fixtures/ndbc_stdmet/` (35 files), `fixtures/coops_csv/` (32) and
+`fixtures/airnow_hourly/` (33), 103 files with the modules: each directory's two `README.md` and two
+`PROVENANCE.json` records and its `spec/build_fixtures.py`, and, under `spec/`, at the top level and
+under `golden/` and `malformed/`, `air_pressure_header.csv`, `airnow_hourly.py`, `airnow_hourly_pin.json`, `bad_aqsid.dat`, `before_2007_no_units_line.cdm.json`, `before_2007_no_units_line.parsed.cdm.json`, `before_2007_no_units_line.parsed.json`, `before_2007_no_units_line.stdmet`, `blank_value.csv`, `coops_csv.py`, `coops_csv_pin.json`, `cut_inside_a_line.dat`, `cut_inside_a_row.csv`, `cut_inside_a_row.stdmet`, `documented_column_other_width.stdmet`, `fact_sheet_measured_spelling.dat`, `flag_past_the_double_range.csv`, `four_digit_year_in_hourly_data.dat`, `historical_nine_runs.cdm.json`, `historical_nine_runs.parsed.cdm.json`, `historical_nine_runs.parsed.json`, `historical_nine_runs.stdmet`, `hourly_aqobs_fact_sheet_date_blank_unit.cdm.json`, `hourly_aqobs_fact_sheet_date_blank_unit.dat`, `hourly_aqobs_fact_sheet_date_blank_unit.parsed.cdm.json`, `hourly_aqobs_fact_sheet_date_blank_unit.parsed.json`, `hourly_aqobs_two_sites.cdm.json`, `hourly_aqobs_two_sites.dat`, `hourly_aqobs_two_sites.parsed.cdm.json`, `hourly_aqobs_two_sites.parsed.json`, `hourly_data_site_without_position.cdm.json`, `hourly_data_site_without_position.dat`, `hourly_data_site_without_position.parsed.cdm.json`, `hourly_data_site_without_position.parsed.json`, `hourly_data_two_sites.cdm.json`, `hourly_data_two_sites.dat`, `hourly_data_two_sites.parsed.cdm.json`, `hourly_data_two_sites.parsed.json`, `json_station_disagrees.json`, `json_unknown_key.json`, `mm_in_historical_file.stdmet`, `ndbc_stdmet.py`, `ndbc_stdmet_pin.json`, `not_a_number.csv`, `not_a_number.dat`, `not_a_number.stdmet`, `not_on_the_hour.dat`, `number_past_the_double_range.csv`, `number_past_the_double_range.dat`, `number_past_the_double_range.stdmet`, `quality_not_p_or_v.csv`, `realtime_newest_first.cdm.json`, `realtime_newest_first.parsed.cdm.json`, `realtime_newest_first.parsed.json`, `realtime_newest_first.stdmet`, `repeated_instant.stdmet`, `repeated_record.dat`, `row_width_mismatch.csv`, `row_width_mismatch.stdmet`, `signed_value_outside_ptdy.stdmet`, `stamp_with_seconds.csv`, `two_digit_year_1998.cdm.json`, `two_digit_year_1998.parsed.cdm.json`, `two_digit_year_1998.parsed.json`, `two_digit_year_1998.stdmet`, `two_digit_year_out_of_range.dat`, `two_digit_year_outside_the_record.stdmet`, `two_digit_year_under_hash_yy.stdmet`, `two_digit_year_under_yyyy.stdmet`, `undocumented_sentinel_width.stdmet`, `unknown_column.stdmet`, `unknown_header.csv`, `unknown_header.dat`, `water_level_below_datum_flagged.cdm.json`, `water_level_below_datum_flagged.csv`, `water_level_below_datum_flagged.parsed.cdm.json`, `water_level_below_datum_flagged.parsed.json`, `water_level_json_form.cdm.json`, `water_level_json_form.json`, `water_level_preliminary.cdm.json`, `water_level_preliminary.csv`, `water_level_preliminary.parsed.cdm.json`, `water_level_preliminary.parsed.json`, `water_level_verified.cdm.json`, `water_level_verified.csv`, `water_level_verified.parsed.cdm.json`, `water_level_verified.parsed.json`, `width_mismatch.dat`; the
+same landing moves the roster count in `README.md`, `__init__.py`, `adapter.py`, `lossless.py`,
+`symbology.py`, `version.py` and `pyproject.toml`, three rows and three sections in
+`FORMAT_COVERAGE.md`, three rows of `decode_host.py`, the text helpers of
+`observation_contracts.py`, the wording of the range claim and one bound check in
+`adapters/nexrad2.py`, and the harness count of the release procedure's second condition in this
+file — all of them already counted above, and counted once.
+Everything else the witness round touched ships in nothing: the ledger, the witness record and
+its README, the release-pipeline and changelog pages, the Link 16 gateway implementation record,
+the frozen-contract manifest, and three test modules.
 
 **THE 3.4.0 WITNESS ROUND's RECORD, 2026-10-16 — the record is the pipeline's own, for the fourth
 time.** Run 38840201037's `witness` job built `witness-3.4.0.json`, its verify step read `VERIFIED`
@@ -615,6 +664,304 @@ provenance in `tests/frozen/cdm/MANIFEST.json` to `af4c21a4e11762613c8d7a90e6202
 commit `v3.4.0` names, which is the release commit itself, as the 3.0.1 corrective resolved the
 3.0.0 contract's; `tests/test_cdm_version_matrix.py` now proves it by `git rev-list -n1 v3.4.0`.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.4.0`.
+
+**THE CDM 3.2.0 LANDING, 2026-10-15 — the observation carrier: `EventType` gains
+`ENVIRONMENTAL_OBSERVATION`, `Event` gains `validity`, `Track` gains `attributes`, and the number is
+not typed in this tree.** Three additions, each a member appended or an optional field added, in
+the form of the CDM 3.1.0 landing in the `3.4.0` section below (corrected 2026-10-16, at the replay
+onto `v3.4.0`). `EventType.ENVIRONMENTAL_OBSERVATION` is appended after
+`SIM_RESULT`, so the published enum's seven existing positions keep their values, with a dated
+class docstring that is the published description of the vocabulary. `Event.validity:
+TemporalValidity | None` follows `PlanObject.validity`'s precedent. `Track.attributes:
+TrackAttributes | None` is a typed block whose one member, `completeness` — `TrackCompleteness`,
+holding `carried_samples`, `stated_samples`, `fragment` and `completeness_basis` — states how much
+of a history the Track holds, with `carried_samples` held equal to the length of `samples` by the
+model; `stated_samples` is at least 1 and `completeness_basis` must hold a character that is not
+whitespace (both tightened the same day, before the block shipped: "never 0" and a required basis
+are held, not only said, and the published schema carries `minimum: 1` and `pattern: \S`);
+`TrackAttributes` is `extra="forbid"`, and relaxing that one line is the whole change if a
+free bag is ruled instead (the proposal entry below asked whoever added the field to choose; the
+typed block is the maintainer's default of 2026-10-14, which the contract owner may still amend
+before the release). No other proposed field lands: the rest of "Proposed for the next MINOR" below
+is deferred. `SCHEMA_VERSION` reads `3.1.0`, released as `v3.4.0` (corrected 2026-10-16, at the
+replay onto that tag), so the files under `schemas/` are re-exported by
+`python -m synapse_cdm.schemas --out schemas` under that label and are MISLABELLED until the
+release commit types 3.2.0, re-stamps every golden, manifest and generated page, freezes the 3.2.0
+contract under `tests/frozen/cdm/3.2.0/` and extends `KNOWN_CONTRACTS`; a merge hold in the form of
+the CDM 3.1.0 landing's, in the `3.4.0` section below, covers this landing (corrected
+2026-10-16, at the replay onto `v3.4.0`), and the branch is not fast-forwarded to `main` before
+that commit. **Why, and
+what follows.** (i) The reason: the CDM has no category for an environmental measurement or a model
+product, and no event can state the interval its measurement covers, while the observation adapters
+that follow — station text, weather radar, gridded fields, imagery and product references — need
+one category, one canonical interval, and a Track that can say it is a fragment. Each addition is
+the smallest that answers its question. The category is one member, and which observation an event
+carries is said by a named payload contract (`<name>/1`, the `c2sim-order/1` pattern), not by more
+members. The interval is the existing `TemporalValidity`: every interval is `effective: Period`, an
+instant sets `end == start`, `end = None` is open-ended and never unknown, and `Event.observed_at`
+is the END of the sensing interval for an observation and the REFERENCE time for a model product,
+never a future valid instant. Check J walks keys ending `_at`, `_from` and `_to` only, so
+`validity.effective` is held by the schema and the model and not by J. (ii) The four kinds are
+complete for this arc: an observation is an `Event` under the new member with a named contract, a
+station or radar site an `Entity` of type `SENSOR` or `FACILITY`, a timeless footprint a
+`PlanObject` `ANNOTATION`. A fifth kind, `observation`, with a closed sub-union of the contracts, is
+named here as the successor shape should a consumer need the contracts validated by the schema
+alone, and it is not added. (iii) The consequence, by the directional reading at the top of this
+file: every reader at 3.0.0 or 3.1.0 REFUSES an Event carrying the new member, and refuses an Event
+carrying a `validity` key or a Track carrying an `attributes` key, populated or null — and because
+the harness writes every optional field, every Event and Track this tree emits from now on carries
+the key. Deployment is readers before writers. (iv) Gap 20 stays open: the member is an
+environmental measurement or model product carried under a named contract, a GMTI target report
+stays `DETECTION`, and `FORMAT_COVERAGE.md`'s gap 20 and its guard are unchanged; the spelling is
+deliberately not the `EntityType` name that guard forbids, nor SC-OES's `EventClass.OBSERVATION`.
+(v) The member is not added "to make SC-OES fit": no governed type maps to it, the thirteen
+registry mappings and their six nulls are unchanged, and the sentences of ADR 0007 that count the
+enum's members describe it as it was before this date. The dated amendment beside them is M's, as
+every amendment to ADRs 0001–0010 is, and it is not written here. (vi) The member, `validity` and
+`attributes` ship in one release together with adapters that produce them — the readsb trace
+adapter for `Track.attributes`, at least one observation adapter for the member and `validity` —
+so that no member ships with no producer and joins `PLAN_INJECT` and `SIM_RESULT` as an
+unestablished one; if no producer is ready, the release does not carry the addition. Gap 16's Track
+half is closed with this landing (`FORMAT_COVERAGE.md`, dated) and its `TrackSample` half stays
+open; the Legion adapter is not re-labelled and keeps parking its completeness figures on the
+Entity; `tests/test_cdm_format_coverage.py` now asserts the block's shape where it asserted the
+field's absence. The count rule is semantic rule SEM-014 (`docs/cdm-semantic-rules.md`, corpus
+`tests/semantic_corpus/SEM-014.json`): the validator's message begins `SEM-014: `, so conformance
+dimension A reports it as semantic. (vii) The compatibility projection keeps its promise. The
+Link 16 compatibility projection (`cdm_schema="3.0.0"`) and the bridge's `COMPAT_3_0` delivery
+promise a 3.0.0 consumer objects the frozen 3.0.0 contract accepts, and a model dump now carries
+`"validity": null` or `"attributes": null`, which that contract refuses. The new module
+`projection.py` keeps the promise at the dump boundary: a ledger of what the current models carry
+that the frozen 3.0.0 contract does not — the properties `Event.validity` and `Track.attributes`
+(CDM 3.2.0) and the members `PositionSource.SENSOR` and `UNKNOWN` (CDM 3.1.0) and
+`EventType.ENVIRONMENTAL_OBSERVATION` (CDM 3.2.0) — and `dump_for(obj, "3.0.0")`, which is
+`model_dump(mode="json")` with each ledger property removed when null and refused when populated,
+and a ledger member anywhere in the object refused, by a `ProjectionRefused` (a `ValueError`) that
+names the path and never quotes a value. `"3.0.0"` is the only target with a ledger (corrected
+2026-10-16, at the replay onto `v3.4.0`: the 3.1.0 contract is frozen under `tests/frozen/cdm/` and
+has none). The adapter's `cdm_schema="3.0.0"` path still returns models; the
+bridge serialises every `COMPAT_3_0` object, and the mapping test its 3.0.0 projection, through
+`dump_for`, and `tests/test_cdm_projection.py` derives the ledger from the frozen 3.0.0 schemas
+against the published ones and holds the two equal, so no later MINOR can add a field or a member
+the ledger does not name. The full projection is untouched: a 3.0.0 or 3.1.0 reader of a full
+object still refuses it, and `compatible()` still never drops a field. Outside the distribution:
+`schemas/` (`cdm_object`, `event`, `track`), four generated schema-reference pages and the docs
+site's worked example (`docs/src/data/worked-example.json`, which embeds the `pntmap` golden), the
+`Event`, `Track` and Link 16 gateway documentation pages, the fourteen canonical renderings under
+`examples/sc-oes/` (each Event gains `"validity": null` and nothing else), the semantic-rule table
+and its corpus file, the current-contracts page's rule range, the synthetic identifier convention
+for the observation fixture classes in `CONTRIBUTING.md`, a dated correction in
+`docs/sc-oes-implementation-plan.md`, the runtime bridge `packages/link16_bridge/` (its `COMPAT_3_0`
+dumps through `dump_for`, its export comparison reading a stored payload back through its model,
+and one README sentence), the new test modules `tests/test_cdm_observation_carrier.py` and
+`tests/test_cdm_projection.py` and their entries in `gates/wheel_install.py`, and test-side edits
+in `tests/test_cdm_format_coverage.py`, `tests/test_cdm_schema_alignment.py` (a SEM-014 case),
+`tests/test_cdm_stanag4676_adapter.py` (a Track's null `attributes` read as an empty holder) and
+`tests/test_cdm_link16_gateway_mapping.py` (its 3.0.0 projection dumped through `dump_for`, and
+`attributes` among the null defaults its comparison with the handoff's references ignores).
+
+**Bump ruling.** `synapse_cdm/enums.py:EventType` — MINOR: one member, `ENVIRONMENTAL_OBSERVATION`,
+is appended to a closed vocabulary and none is removed or renamed — the CDM table's "an enum member
+added" row; the class gains a dated docstring, its published description, and moves nothing else.
+
+**Bump ruling.** `synapse_cdm/models.py:Event` — MINOR: one optional field, `validity`, is added
+with a `None` default — the CDM table's "an optional field added" row; no existing field, default
+or validator changed, so every object that validated before still validates.
+
+**Bump ruling.** `synapse_cdm/models.py:Track` — MINOR: one optional field, `attributes`, is added
+with a `None` default, and one validator that reads only that field, refusing a completeness block
+whose `carried_samples` is not the length of `samples` — the CDM table's "an optional field added"
+row; a Track without the field, which is every Track that validated before, is accepted exactly as
+before.
+
+**THE OBSERVATION LAYER, 2026-10-15 — the four observation payload contracts, the helpers the
+observation adapters build with, and the offline host command `synapse-decode`; no schema moves
+and no adapter lands.** The new module `observation_contracts.py` holds the four named contracts
+an `ENVIRONMENTAL_OBSERVATION` Event carries in `payload["observation"]` — `gridded-field/1`,
+`point-observation/1`, `radar-sweep/1` and `imagery-product/1`, pydantic models on the
+`c2sim-order/1` pattern, closed and frozen, registered in nothing — with their shared blocks (a
+measurement with its unit verbatim, an absence with its mechanism, the grid as the source's own
+structure with no `crs` key, a level, a datum, verbatim quality flags, a locator discriminated by
+kind, values by reference or inline up to `MAX_INLINE_VALUES`, a product class and a product
+version that no time key can be mistaken for), the `observed_at` rule checked by
+`observation_event`, the station `Entity` built by `site_entity`, the one injected-time convention
+`InjectedTime`, the caller's `StationTable`, and the `MAPPINGS` helpers that make the preservation
+ledger classify an array left in the source as a declared limitation. Their JSON Schemas are
+published under `schemas/observation/` as an artefact beside the CDM's and not a branch of it,
+generated by `python -m synapse_cdm.observation_contracts` and held current by its `--check`; the
+CDM's own schemas, goldens and projection ledger do not move, since nothing here is a property, a
+member or a definition of a canonical object. The new module `decode_host.py` is the command
+`synapse-decode`, on `synapse-dis7`'s shape: a bounded read of one local file, its SHA-256 through
+`evidence.digest_bytes` checked against `--sha256` or a manifest row, one gzip member or one named
+tar member unwrapped under the adapter's bound and a ratio, a framer, and the adapter constructed
+from values only; remote locators are refused by name, exit codes 0, 2, 3 and 4, and no diagnostic
+quotes the input. The console entry point appearing is a MINOR by the bump table, which the gate
+derives without a ruling. Two repairs ride with it: `projection.ProjectionRefused` survives
+`copy.copy` and a pickle round trip, and the docstring of the SEM-014 validator states that a list
+changed in place is checked again only when the Track is validated again. Fixes of the same day,
+before anything shipped: a tar header the standard library fails to parse with `ValueError`,
+`IndexError` or `OverflowError` (a malformed pax or GNU sparse record, a size past an offset) is
+exit 3 on the corrupt-header line instead of a traceback; an `--at` or `--received-at` instant
+whose UTC reading leaves the years 0001 to 9999 is exit 2 on its flag's line, and
+`parse_instant` and `InjectedTime` raise their fixed `ValueError` for it; gzip input is fed to
+the inflater in 64 KiB slices, so the work is linear in the file; the manifest-row credential
+check also names cookie headers, `x-`-prefixed key names and `%xx`-escaped names; every host
+bound is a `LimitBasis` in `BOUNDS_BASIS`; a symbolic link to a regular file is followed, as a
+recorded policy; and `json_number` and `utf8_text` join the helpers. Outside the
+distribution: `schemas/observation/` (four files), the documentation page
+`docs/docs/cdm/observation-contracts.mdx` and a note on the CDM overview page, a row and a dated
+paragraph of the parser-safety page, the proposed `docs/adr/0012-observation-contracts.md`, a
+sentence of the root `README.md`, the builder convention in `CONTRIBUTING.md`, the wheel gate's
+`synapse-decode` check, observation schema regeneration and module lists in
+`gates/wheel_install.py`, the shared test support `tests/observation_support.py`, the new test
+modules `tests/test_cdm_observation_contracts.py` and `tests/test_cdm_decode_host.py`, and test
+additions in `tests/test_cdm_observation_carrier.py` and `tests/test_cdm_generator_loading.py`.
+
+**THE `readsb_trace` LANDING, 2026-10-15 — readsb trace JSON: `readsb_trace` lands as #24, and the
+roster moves twenty-two to twenty-three.** The adapter reads one readsb `globe_history` trace file —
+one airframe's positions over one UTC day, already decoded and fused by the aggregator, as the
+file's one gzip member (readsb keeps a `.json` name on gzip bytes) or as the decompressed document
+in a dict — and writes an Entity, a Track and a `TRACK_UPDATE` Event. It is the first producer of
+CDM 3.2.0's `Track.attributes`: every Track states the completeness block, a fragment of one UTC
+day whose total the file does not state, which `projection.dump_for(…, "3.0.0")` refuses as a
+populated 3.2.0 property, so a readsb Track reaches no 3.0.0 consumer; the Entity and the Event
+dump for 3.0.0 unchanged. Identity is the address upper-cased under `ICAO24` (`ADSB_NONICAO` for a
+`~` address), the `(system, external_id)` the `adsb` adapter derives from a frame, so one airframe
+has one `entity_id` across the two; nothing is joined across files, and a flight across UTC midnight
+is two Tracks of one Entity. A Track's and its Event's ids are the address and the first and last
+instants, so two files of one airframe over the same span share them. Barometric feet go to `Position.vertical` and never to `alt_m`; a
+geometric altitude reaches `alt_m` only through the declared feet-to-metres conversion; the
+containment radius `rc` is a named uncertainty, never `accuracy_m`. The whole document is the
+Entity's structured residual, and the per-point fields `TrackSample` cannot hold (gap 16) are read
+there, with their readings parked beside it in `attributes.readsb_samples`, keyed by sample index.
+The format is cited, not carried: readsb's `README-json.md` at tag v3.16.17, by URL, SHA-256 and
+byte count in `fixtures/readsb_trace/spec/readsb_trace_pin.json`, with the two facts only the code
+states; the licence class is OPEN by DECISIONS L-10, the GPL-3.0-or-later program that owns the
+document named in the record. Bounds: 8 MiB of input, 64 MiB inflated, depth 64, each an
+implementation cap with its basis (DECISIONS L-09), and, added the same day, 100 000 points per
+trace (`MAX_POINTS`, its basis `MAX_POINTS_BASIS`, DECISIONS L-24), compared before any point is
+walked and refused `too-many-points`, because the byte bounds alone admit a trace whose model
+graph runs to gigabytes. The adapter reads numbers and text through the shared
+`observation_contracts.json_number` and `utf8_text`, lifted from it the same day with its rules
+unchanged. Thirteen synthetic traces and their twins, 23
+refused payloads under `malformed/`, and 26 goldens written by the harness and read, all built by
+the pure-Python `spec/build_fixtures.py`, whose `--check` rebuilds them byte for byte. `synapse-decode`
+hosts the adapter (`--received-at` required; the file's digest checked, not injected). Outside the
+distribution: `manifests/readsb_trace.json`, the regenerated support matrix, the root `README.md`,
+`CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md` (one row marked
+post-3.4.0, corrected 2026-10-16 at the replay onto `v3.4.0`) and `.gitattributes` (`*.trace`),
+the documentation pages that state the roster or the
+parser audit, the wheel gate's module list, the new test module
+`tests/test_cdm_readsb_trace_adapter.py`, and test-side edits in the modules that hold the roster,
+the JSON-decoding set, the structured-residual census, the decode host's table, the `adsb`
+address sweep, the projection's golden census (the 26 readsb Tracks join its refusal branch at
+their populated `attributes`) and one dated widening in `tests/test_cdm_prose_counts.py` (the
+`fixture_dir` count reached a hyphenated word).
+
+**Bump ruling.** `synapse_cdm/models.py:_timestamp_in` — PATCH: a value that is neither text nor a
+datetime, which no validation path ever accepted, is now refused on the Python path as a
+`ValidationError`, where it escaped as an `AttributeError`, and on both paths with a message naming
+its type instead of quoting it; and (also 2026-10-15) an instant whose UTC reading falls outside
+the years 0001 to 9999, which escaped as an `OverflowError`, is refused as a `ValidationError`
+whose message does not quote it; every value accepted before is accepted unchanged and nothing
+refused before is accepted.
+
+**THE `nexrad2` LANDING, 2026-10-15 — NEXRAD Level II: `nexrad2` lands as #25, and the roster
+moves twenty-three to twenty-four.** The adapter reads one Archive II volume file — the 24-octet
+volume header, then LDM records, each a signed control word whose absolute value is the size of
+one bzip2 stream (ICD 2620010J 7.3.4), the first the fixed 134-segment metadata record — as its
+octets or as its parsed twin, and it is the first producer of the observation carrier: one
+`ENVIRONMENTAL_OBSERVATION` Event per elevation NUMBER (never angle: a SAILS rescan repeats the
+lowest one), each carrying the `radar-sweep/1` contract, then the radar site's Entity (SENSOR, the
+VOL block's position, its site height as metres above mean sea level, `alt_m` null). A sweep's
+`observed_at` is its last radial's collection time and `validity.effective` runs from its first,
+so every sweep Event populates CDM 3.2.0's `Event.validity`, which `projection.dump_for(…,
+"3.0.0")` refuses: a sweep Event reaches no 3.0.0 consumer, and the site Entity dumps for 3.0.0
+unchanged. Each moment's gate codes stay in the volume, by reference — a radar locator, the shape,
+the packing and a summary converted with each radial's own scale and offset — and the coded
+values that are not measurements are counted under their own names, below threshold and range
+folded never merged. The radial status with its bad-data bit, spot blanking, the VOL, ELV and RAD
+constants and each moment's TOVER, SNR threshold and control flags are typed quality flags, one
+per sweep where every radial agrees and one per radial where they differ; every radial header,
+raw, is the sweep Event's structured residual. Every range ICD 2620002Y states for a field the
+adapter reads is a validation rule, and message 1, message 29 (an `_MDM` record) and a radial
+compressed with bzip2 or zlib are refused by name. Bounds: 32 MiB of input (DECISIONS U-07), each
+record's bzip2 stream inflated with `max_length` under 402,979,072 octets a volume, 2 MiB a radial
+record and exactly 325,888 the metadata record, 33 objects (Table XVII-A's 32 elevation numbers and
+the site), depth 16 on the twin. The ICDs are pinned as held PDFs by SHA-256 in
+`fixtures/nexrad2/spec/nexrad2_pin.json` and never carried; the licence class is
+PUBLIC_GOVERNMENT. Five synthetic volumes and their twins, 16 refused volumes under `malformed/` and
+10 goldens written by the harness and read, all built by the pure-Python encoder
+`spec/build_fixtures.py`, whose `--check` rebuilds them byte for byte. `synapse-decode` hosts the
+adapter (`--received-at` required; the file's digest injected as `source_hash`, and, new in the
+host, the volume's own digest as `frame_sha256` when a gzip or a tar was unwrapped around it). The
+shared layer gains a stated height in `site_entity`, and `observation_event` and `InjectedTime`
+refuse an instant no UTC timestamp holds and a zone that states no offset with their fixed
+`ValueError`. Outside the distribution: `manifests/nexrad2.json`, the regenerated support matrix,
+the root `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md` (one
+row marked post-3.4.0, corrected 2026-10-16 at the replay onto `v3.4.0`) and `.gitattributes`
+(`*.ar2v`), the documentation pages that state the
+roster, the parser audit or the observation host, the wheel gate's module list, the new test module
+`tests/test_cdm_nexrad2_adapter.py`, and test-side edits in the modules that hold the roster, the
+structured-residual census, the decode host's table and credential names, and the projection's
+golden census (the 16 sweep Events join its refusal branch at their populated `validity`).
+
+**THE STATION-TEXT LANDING, 2026-10-15 — NDBC, CO-OPS and AirNow: `ndbc_stdmet` lands as #26,
+`coops_csv` as #27 and `airnow_hourly` as #28, and the roster moves twenty-four to twenty-seven.**
+Three ingest-only producers of the `point-observation/1` contract, each writing one
+`ENVIRONMENTAL_OBSERVATION` Event per data row, sample or line — all of the row's values in one
+contract, every Event populating CDM 3.2.0's `Event.validity`, which `projection.dump_for(…,
+"3.0.0")` refuses, so no station-text Event reaches a 3.0.0 consumer — and one site `Entity`
+(SENSOR, `site_entity`) per station, which dumps for 3.0.0 unchanged. `ndbc_stdmet` reads one NDBC
+standard meteorological text file by the header line's column names, never by position, with
+`str.split()`; `MM` is missing in a realtime file (one whose header holds `PTDY`) and a run of 9s
+in a historical file only at the width research-station-text F02 documents for its column, and any
+other run of 9s is refused rather than read as a value or as missing; a file with no units line
+states no unit, so each value is an `Absence` of cause `unit_unknown`; the year is the width its
+column's name says, and the one two-digit year read is `98`, as 1998 (the `YY` layout is recorded
+in a 1998 file only), any other being refused rather than given a century; `PTDY` is read with the
+sign the realtime file prints; the station is the caller's
+`station_id` and its position comes only from the caller's `StationTable`. `coops_csv` reads one
+CO-OPS data API response in its CSV form (the header compared whole with the product's, read by
+position) or its JSON form, under a required `CoopsRequest` because the response echoes none of its
+datum, units or time zone: `gmt` is UTC, `lst` is read with the caller's declared offset, five hours
+for `-05:00`, and `lst_ldt` is refused by name (DECISIONS L-11); the datum is `{name, namespace}`
+beside the water level and the four flags and the p/v level are typed quality flags; a sample's
+identity holds the datum, the units and the interval, so two readings of one instant under two
+datums are two Events. `airnow_hourly`
+reads one AirNow HourlyData or HourlyAQObs file (DECISIONS L-20): a stamp is the GMT start of a
+one-hour period, so `validity.effective` is that hour and `observed_at` its end; parameters, units
+and negative raw values are carried verbatim; the HourlyAQObs header is the files' spelling
+(`OZONE_Measured`), and the fact sheet's `Ozone_Measured` is refused. NDBC and AirNow publish no per-value quality flag, and
+their contracts state that absence with its basis. Each file is at most 8 MiB (DECISIONS U-07); none
+of the three inflates anything — `synapse-decode --container gzip` unwraps a yearly NDBC `.txt.gz`.
+The shared layer gains `text_lines` and `twin_text`, one reading of a file of lines (UTF-8, no
+control character, one line-end style, a line end after the last line, so a file cut inside a row
+is refused), and `decimal_float` and `decimal_integer`, so a number or a flag no binary double
+holds is each adapter's own typed refusal (`number-out-of-range`, `flag-out-of-range`) rather than
+a `ValidationError` from the contract or a `ValueError` from `int()`. The NDBC guide and T80-10 and the two AirNow fact sheets and Data Exchange Guidelines
+are pinned as held PDFs by SHA-256 and never carried; the CO-OPS pages and NDBC's measurement
+descriptions are cited by URL with no digest, no copy being held; the three licence classes are
+PUBLIC_GOVERNMENT. Each fixture set is synthetic, written by its pure-Python
+`spec/build_fixtures.py`, whose `--check` rebuilds it byte for byte: four payloads each with their
+twins (for CO-OPS three CSV responses with theirs and one JSON response), eleven to thirteen
+refused payloads under each `malformed/`, and 23 goldens
+written by the harness and read. `synapse-decode` hosts all three (`--received-at` required; the
+digest injected as `source_hash`, and the text's own as `frame_sha256` when a gzip was unwrapped;
+`--request` for `ndbc_stdmet`'s station and `coops_csv`'s request, `--station-table` for a
+position). The same landing narrows `nexrad2`'s claim recorded in the paragraph above: Table
+XVII-I's data ranges are not validation rules, and a moment's summary is not range-checked; the
+docstring, the package README, the parser audit and the coverage section now say so; the
+`strict-icd-ranges` Limitation keeps its sentence until its generated manifest can move with it. Outside the
+distribution: the three generated manifests, the regenerated support matrix, the root `README.md`,
+`CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md` (three rows marked
+post-3.4.0, corrected 2026-10-16 at the replay onto `v3.4.0`) and `.gitattributes` (`*.stdmet`,
+`*.csv`, `*.dat` and the three directories), the
+documentation pages that state the roster, the parser audit or the observation host, the wheel
+gate's module list, the three new test modules, and test-side edits in the modules that hold the
+roster, the JSON-decoding adapters, the structured-residual census, the decode host's table, and
+the projection's golden census (the 56 station-text Events join its refusal branch at their
+populated `validity`).
 
 ### 3.4.0 — 2026-10-11 — the JREAP C / Link 16 gateway contract translator: `link16_gateway` lands as #23, the roster moves twenty-one to twenty-two, `PositionSource` gains `SENSOR` and `UNKNOWN` and the CDM schema moves 3.0.0 → 3.1.0, and the bridge `synapse-link16-bridge` lands beside the package
 
@@ -14715,6 +15062,13 @@ evidence that was missing when they were first written down:
   the model is `extra="forbid"` by design. Whoever adds it should decide at the same time whether
   a *typed* completeness block is better than a free bag, since "how much of this is here" is a
   question every paginated source will ask.
+  **Implemented 2026-10-15, CDM 3.2.0:** `Track.attributes` is the typed completeness block —
+  `TrackAttributes`, `extra="forbid"`, holding `completeness: TrackCompleteness` with
+  `carried_samples` (held equal to the length of `samples`), `stated_samples`, `fragment` and
+  `completeness_basis` — and a free bag is the one-line relaxation of `extra` if that is ruled
+  instead. No per-sample field was added, the Legion adapter was not re-labelled and keeps its
+  figures on the Entity, and gap 16's `TrackSample` half stays open. See the CDM 3.2.0 landing
+  record of 2026-10-15.
 - **`Position.baro_alt_m`** (or `Entity.baro_alt_m` — the choice is part of the work) —
   `FORMAT_COVERAGE.md` gap 9, and the strongest-evidenced of these. `Position.alt_m` is
   documented as metres above the WGS84 ellipsoid, which is what an ADS-B type code 20-22 frame

@@ -1,0 +1,57 @@
+{
+  "what_this_is": "The pin record of the airnow_hourly adapter: the two AirNow fact sheets its formats are read from and the AirNow Data Exchange Guidelines its licence reading rests on, each as a held PDF identified by SHA-256, byte count and page count under PIN_SUFFIXES and never carried in the index (DECISIONS U-08: .gitignore keeps every PDF out of a working tree, so the pin-presence test skips wherever the document is not held); the licence reading behind the adapter's class; and how the synthetic fixture set is built.",
+  "adapter": {
+    "name": "airnow_hourly",
+    "ordinal": 28,
+    "direction": "ingest",
+    "fixture_directory": "airnow_hourly"
+  },
+  "standards": [
+    {
+      "document": "AirNow Fact Sheet: Hourly Data File (last updated August 2025)",
+      "read_for": "HourlyData_yyyymmddhh.dat: no header, nine |-delimited fields, the valid date mm/dd/yy and time in GMT marking the beginning of the measurement period, AQSID, the parameter and unit tables, 'Only valid data are reported', negative raw concentrations (research-station-text F08, F09)",
+      "publisher": "US EPA AirNow program, a US Government agency",
+      "url": "https://docs.airnowapi.org/docs/HourlyDataFactSheet.pdf",
+      "local_path": "fixtures/airnow_hourly/spec/HourlyDataFactSheet.pdf",
+      "sha256": "df09ec1c38c27e856ee6cc9418504b4bccb31b3b790a06a855724e0150c9efcb",
+      "bytes": 160541,
+      "pages": 4,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "AirNow Fact Sheet: Hourly AQ Obs File (updated March 2023, last updated August 2025)",
+      "read_for": "HourlyAQObs_yyyymmddhh.dat: the 34 quoted fields, AQSID of nine or twelve characters, ValidDate and ValidTime in GMT marking the beginning of the period, the NowCast AQI fields, the *_Measured fields and the raw concentrations with their units (research-station-text F08, F09)",
+      "publisher": "US EPA AirNow program, a US Government agency",
+      "url": "https://docs.airnowapi.org/docs/HourlyAQObsFactSheet.pdf",
+      "local_path": "fixtures/airnow_hourly/spec/HourlyAQObsFactSheet.pdf",
+      "sha256": "39169b549105486e072f857923e47ab6efbcc62caff9d207d350e5b3fc3ade00",
+      "bytes": 175468,
+      "pages": 4,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "AirNow Data Exchange Guidelines (last updated August 2025)",
+      "read_for": "the terms the licence reading below records (research-station-text F10)",
+      "publisher": "US EPA AirNow program, a US Government agency",
+      "url": "https://docs.airnowapi.org/docs/DataUseGuidelines.pdf",
+      "local_path": "fixtures/airnow_hourly/spec/DataUseGuidelines.pdf",
+      "sha256": "7e607f8b9a097a30fc1a8a5702d5266573613802c315b38493b393e25ec80fda",
+      "bytes": 272816,
+      "pages": 2,
+      "read_on": "2026-10-14"
+    }
+  ],
+  "measured": "The SHA-256, the byte counts and the page counts were measured on 2026-10-15 from the design record's copies fetched on 2026-10-14 (research-station-text, its work directory): the digest with shasum -a 256, the size from the file system and the page count from the document's own page tree as pdfinfo reads it. Nothing was fetched for this record. A PDF is never carried in the index; a maintainer who holds the documents places them at their local_path and the pin gate checks them there.",
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "DECISIONS L-10 (2026-10-15): AirNow's terms are recorded as PUBLIC_GOVERNMENT, a US Government agency's free public download. The Data Exchange Guidelines are conduct terms, not a copyright grant: the data are owned by the reporting federal, state, local and tribal agencies, must be credited to them and to the EPA AirNow program, should be considered preliminary, should not be used to formulate or support regulation, and should be disseminated as received and not altered; a product using them must say they are preliminary (research-station-text F10). Those obligations bind whoever uses the data, which this package never carries: its fixtures are synthetic. A translator's declared transformations change the form of a value, never the value, and every line is kept as received in each Event's residual. The 3.5.0 release round's readiness report lists this reading for the maintainer's confirmation.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "AirNow's files are preliminary public data; none enters this tree. The fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only): no line of any AirNow file, not a value and not a site, is used, and the files the design record saved are read for layout only.",
+  "fixtures_are_synthetic": "Every payload under fixtures/airnow_hourly/ and its malformed/ directory is built by spec/build_fixtures.py from literals in that script, written on 2026-10-15 for this adapter. The sites are 000000001 to 000000003 and 000000000011, named 'EX site ...', every stated position lies in the Baltic rectangle, the hour is on 2026-04-28, and every value is written in the script.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "text": "ASCII with CRLF line ends: HourlyData fields joined by |, HourlyAQObs fields each quoted and joined by commas; the twin is json.dumps(indent=2, ensure_ascii=True) of the same field lists. Nothing depends on a library version."
+  }
+}

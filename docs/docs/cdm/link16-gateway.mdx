@@ -157,6 +157,10 @@ with `position` null and no Track, the transformation `POSITION_NOT_PROJECTED_CD
 report still whole in the residual; every other report projects in full with its Track; every
 object is stamped `3.0.0`. The installed `SCHEMA_VERSION` is accepted as well and means the same as
 `None` whenever it is not `3.0.0`. The conformance suite judges the default projection only.
+The projection's objects are models, which carry the fields a later MINOR added (CDM 3.2.0's
+`Event.validity` and `Track.attributes`, null here), so they are serialised for a 3.0.0 consumer
+with `synapse_cdm.projection.dump_for(obj, "3.0.0")`, which removes those null keys and is what
+the frozen 3.0.0 contract accepts (2026-10-15).
 
 ## Egress: mirror and export
 

@@ -1,0 +1,866 @@
+{
+  "wire_hex": "41523256303030362e3030310000505d0152bec05a5a5a5a00000164425a683931415926535954157dd40000007fccffffffffffffffffffffffffffffffffff000041400000083001186d8700011a602610d3000098010313000000034118026234326434c20c001300013260004600098989a600000002308c04c9886100229452643d0264d06026464d003431184d0c46419000d0d0d0034340c9b41189bd27ba80a2884a2804a8aa09b7188554880606085558060514424140280a01552a285ad54888a6ea0275352caa00a9e71402749107e824822473955662484849608862058840669b626f0eb78ab29ea779b8ded6d45757d874973868ef51b3c7d021448d2254c9d429549d5f5f62c5ab97b062c99b46ad9bb8ed72e9df73c7afbbdff84083020c287122c68f224ca97326ce9f428d2a752ad6af600b36ad8173cfd2edebf830e2c793265f5cd9f47b7be9d09fa3a1a53f4f53fbfed5d6d7ffec4dae690a01025c8a01000a4f5b9140280a0128a2886c8bb9229c28482a0abeea000000023d425a6839314159265359e4c9e85900001d7ffefddc604dc4747e09ff66ddd206005045fce001447411440550002420541cc0023c000070341a6434d1a1840c868608d0d3268d00c8310001a1c0d06990d3468610321a1823434c9a340320c40006870341a6434d1a1840c868608d0d3268d00c8310001a08924a7a4d34d1a93f5350c4f28f5069ea6d1ea4d18d234da8f5346d3534da9a3da9a8f68d29de32b3beefb99ccf7de1e4fb3d3afbfef6e723a9b289f5eeca4355f4343cec00cd071107580f0bdc6dfe3e36b89f5bc4e3bb241034cdb83ee626eee9d0fbdc4fd0fc8e063fbb1a0247b4c53620f99f2bcaff6dcffbd1a2c3c9c8eb3642d176aa800f12b1d863c6e344b86c3e97d8d21d489e27e96c211c2d2118baf0f3c610438d13d434dcc6782531afebb960f8199e4be9bdcb69240ba373cea8002d3e0c14c2ea08f2aa000b2827ada2bf46713610c510d289bd4708031e569a5791d1182d912c2246211f734d473f5ea8d9e6d234891bc8d3b6f1b92cc7b37864dae96c0748fd4eabea634e1681eeb7b487e6f53b6efb73b8ebfc77f3737359d97331e7779c4fb1b9fd5d47dae769ca897385f6bb4f0707074f0f55eec31dd63d8781dc1b39db34def438044005dc6e60e07e11de7c2b8a913f91ef361f2b3a74743bed333bc4f75d8c60613f215f1b65cb42e862d8031e07a815ec3843430de7f060e4ec8ea88800ba8e270f99d9a7695afb9d0ed8e93add674b10eb7234ea1e8618db226644f9571819172005ea1b903658801da40cac3cfff8bb9229c28487264f42c8",
+  "volume_header": {
+    "tape": "AR2V0006.",
+    "extension": "001",
+    "julian_date": 20573,
+    "milliseconds": 22200000,
+    "icao": "ZZZZ"
+  },
+  "site": {
+    "latitude": 57.25,
+    "longitude": 22.5,
+    "site_height": 120,
+    "tower_height": 30
+  },
+  "records": [
+    {
+      "control_word": 356,
+      "compressed_bytes": 356,
+      "decompressed_bytes": 325888,
+      "messages": 134,
+      "message_types": {
+        "0": 127,
+        "2": 1,
+        "3": 1,
+        "5": 1,
+        "13": 1,
+        "15": 1,
+        "18": 1,
+        "32": 1
+      }
+    },
+    {
+      "control_word": 573,
+      "compressed_bytes": 573,
+      "decompressed_bytes": 37404,
+      "messages": 3,
+      "message_types": {
+        "31": 3
+      }
+    }
+  ],
+  "sweeps": [
+    {
+      "elevation_number": 1,
+      "radials": [
+        {
+          "ldm_record": 1,
+          "message": 0,
+          "message_header": {
+            "size": 6228,
+            "channel": 8,
+            "sequence": 135,
+            "julian_date": 20573,
+            "milliseconds": 22200000,
+            "segments": 1,
+            "segment_number": 1
+          },
+          "collection_time": 22200000,
+          "julian_date": 20573,
+          "azimuth_number": 1,
+          "azimuth_angle": 0.25,
+          "compression": 0,
+          "radial_length": 12440,
+          "azimuth_spacing": 1,
+          "radial_status": 3,
+          "elevation_number": 1,
+          "cut_sector": 1,
+          "elevation_angle": 0.4921875,
+          "spot_blanking": 6,
+          "azimuth_indexing": 0,
+          "block_count": 10,
+          "vol": {
+            "version_major": 3,
+            "version_minor": 1,
+            "dbz0": -44.625,
+            "horizontal_tx_power": 312.5,
+            "vertical_tx_power": 312.5,
+            "system_zdr": 0.25,
+            "initial_system_phidp": 60.0,
+            "vcp": 212,
+            "processing_status": 0,
+            "zdr_bias": 3
+          },
+          "elv": {
+            "atmospheric_attenuation": -12,
+            "dbz0": -44.375
+          },
+          "rad": {
+            "unambiguous_range": 1150,
+            "noise_level_h": -80.5,
+            "noise_level_v": -80.25,
+            "nyquist_velocity": 2875,
+            "radial_flags": 0,
+            "calibration_h": -44.5,
+            "calibration_v": -44.75
+          },
+          "moments": [
+            {
+              "name": "REF",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 66.0
+            },
+            {
+              "name": "VEL",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 129.0
+            },
+            {
+              "name": "SW ",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 129.0
+            },
+            {
+              "name": "ZDR",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 32.0,
+              "offset": 418.0
+            },
+            {
+              "name": "PHI",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 2.8361001014709473,
+              "offset": 2.0
+            },
+            {
+              "name": "RHO",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 300.0,
+              "offset": -60.5
+            },
+            {
+              "name": "CFP",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 1.0,
+              "offset": 8.0
+            }
+          ]
+        },
+        {
+          "ldm_record": 1,
+          "message": 1,
+          "message_header": {
+            "size": 6228,
+            "channel": 8,
+            "sequence": 136,
+            "julian_date": 20573,
+            "milliseconds": 22200025,
+            "segments": 1,
+            "segment_number": 1
+          },
+          "collection_time": 22200025,
+          "julian_date": 20573,
+          "azimuth_number": 2,
+          "azimuth_angle": 0.75,
+          "compression": 0,
+          "radial_length": 12440,
+          "azimuth_spacing": 1,
+          "radial_status": 129,
+          "elevation_number": 1,
+          "cut_sector": 1,
+          "elevation_angle": 0.5,
+          "spot_blanking": 6,
+          "azimuth_indexing": 0,
+          "block_count": 10,
+          "vol": {
+            "version_major": 3,
+            "version_minor": 1,
+            "dbz0": -44.625,
+            "horizontal_tx_power": 312.5,
+            "vertical_tx_power": 312.5,
+            "system_zdr": 0.25,
+            "initial_system_phidp": 60.0,
+            "vcp": 212,
+            "processing_status": 0,
+            "zdr_bias": 3
+          },
+          "elv": {
+            "atmospheric_attenuation": -12,
+            "dbz0": -44.375
+          },
+          "rad": {
+            "unambiguous_range": 1150,
+            "noise_level_h": -80.5,
+            "noise_level_v": -80.25,
+            "nyquist_velocity": 2875,
+            "radial_flags": 0,
+            "calibration_h": -44.5,
+            "calibration_v": -44.75
+          },
+          "moments": [
+            {
+              "name": "REF",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 66.0
+            },
+            {
+              "name": "VEL",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 129.0
+            },
+            {
+              "name": "SW ",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 129.0
+            },
+            {
+              "name": "ZDR",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 32.0,
+              "offset": 418.0
+            },
+            {
+              "name": "PHI",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 2.8361001014709473,
+              "offset": 2.0
+            },
+            {
+              "name": "RHO",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 300.0,
+              "offset": -60.5
+            },
+            {
+              "name": "CFP",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 1.0,
+              "offset": 8.0
+            }
+          ]
+        },
+        {
+          "ldm_record": 1,
+          "message": 2,
+          "message_header": {
+            "size": 6228,
+            "channel": 8,
+            "sequence": 137,
+            "julian_date": 20573,
+            "milliseconds": 22200050,
+            "segments": 1,
+            "segment_number": 1
+          },
+          "collection_time": 22200050,
+          "julian_date": 20573,
+          "azimuth_number": 3,
+          "azimuth_angle": 1.25,
+          "compression": 0,
+          "radial_length": 12440,
+          "azimuth_spacing": 1,
+          "radial_status": 4,
+          "elevation_number": 1,
+          "cut_sector": 1,
+          "elevation_angle": 0.5078125,
+          "spot_blanking": 7,
+          "azimuth_indexing": 0,
+          "block_count": 10,
+          "vol": {
+            "version_major": 3,
+            "version_minor": 1,
+            "dbz0": -44.625,
+            "horizontal_tx_power": 312.5,
+            "vertical_tx_power": 312.5,
+            "system_zdr": 0.25,
+            "initial_system_phidp": 60.0,
+            "vcp": 212,
+            "processing_status": 0,
+            "zdr_bias": 3
+          },
+          "elv": {
+            "atmospheric_attenuation": -12,
+            "dbz0": -44.375
+          },
+          "rad": {
+            "unambiguous_range": 1150,
+            "noise_level_h": -80.5,
+            "noise_level_v": -80.25,
+            "nyquist_velocity": 2875,
+            "radial_flags": 0,
+            "calibration_h": -44.5,
+            "calibration_v": -44.75
+          },
+          "moments": [
+            {
+              "name": "REF",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 66.0
+            },
+            {
+              "name": "VEL",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 1.0,
+              "offset": 129.0
+            },
+            {
+              "name": "SW ",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 2.0,
+              "offset": 129.0
+            },
+            {
+              "name": "ZDR",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 32.0,
+              "offset": 418.0
+            },
+            {
+              "name": "PHI",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 16,
+              "scale": 2.8361001014709473,
+              "offset": 2.0
+            },
+            {
+              "name": "RHO",
+              "reserved": 0,
+              "gates": 1200,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 300.0,
+              "offset": -60.5
+            },
+            {
+              "name": "CFP",
+              "reserved": 0,
+              "gates": 1840,
+              "first_gate_range": 2125,
+              "gate_interval": 250,
+              "tover": 50,
+              "snr_threshold": 16,
+              "control_flags": 0,
+              "word_size": 8,
+              "scale": 1.0,
+              "offset": 8.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "REF",
+      "runs": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          130,
+          1831
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "VEL",
+      "runs": [
+        [
+          1,
+          4
+        ],
+        [
+          127,
+          2
+        ],
+        [
+          131,
+          1194
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "SW ",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          131,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "ZDR",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          418,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "PHI",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          600,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "RHO",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          255,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 1,
+      "moment": "CFP",
+      "runs": [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          7,
+          1
+        ],
+        [
+          8,
+          1829
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "REF",
+      "runs": [
+        [
+          1,
+          7
+        ],
+        [
+          255,
+          1833
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "VEL",
+      "runs": [
+        [
+          0,
+          2
+        ],
+        [
+          129,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "SW ",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          131,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "ZDR",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          418,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "PHI",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          600,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "RHO",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          255,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 2,
+      "moment": "CFP",
+      "runs": [
+        [
+          8,
+          1840
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "REF",
+      "runs": [
+        [
+          0,
+          2
+        ],
+        [
+          100,
+          1838
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "VEL",
+      "runs": [
+        [
+          129,
+          1200
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "SW ",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          131,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "ZDR",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          418,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "PHI",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          600,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "RHO",
+      "runs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          255,
+          1198
+        ]
+      ]
+    },
+    {
+      "elevation_number": 1,
+      "azimuth_number": 3,
+      "moment": "CFP",
+      "runs": [
+        [
+          8,
+          1840
+        ]
+      ]
+    }
+  ]
+}

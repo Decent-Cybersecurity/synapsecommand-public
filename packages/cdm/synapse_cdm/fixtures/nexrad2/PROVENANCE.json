@@ -1,0 +1,96 @@
+{
+  "directory": "nexrad2",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "all_moments_one_elevation.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "all_moments_one_elevation.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "coded_gates_and_bad_radial.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "coded_gates_and_bad_radial.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "one_sweep_across_two_records.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "one_sweep_across_two_records.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sails_repeated_lowest_angle.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sails_repeated_lowest_angle.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_elevations_two_records.ar2v",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_elevations_two_records.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic NEXRAD Level II volume written on 2026-10-15 for the nexrad2 adapter's landing by fixtures/nexrad2/spec/build_fixtures.py from literals in that script, after the byte layouts of ICDs 2620010J and 2620002Y (pinned by SHA-256, never carried); the radar site is ZZZZ or XZZA in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "nexrad2/spec/nexrad2_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

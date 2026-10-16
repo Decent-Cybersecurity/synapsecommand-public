@@ -1,0 +1,2 @@
+"AQSID","SiteName","Status","EPARegion","Latitude","Longitude","Elevation","GMTOffset","CountryCode","StateName","ValidDate","ValidTime","DataSource","ReportingArea_PipeDelimited","OZONE_AQI","PM10_AQI","PM25_AQI","NO2_AQI","OZONE_Measured","PM10_Measured","PM25_Measured","NO2_Measured","PM25","PM25_Unit","OZONE","OZONE_Unit","NO2","NO2_Unit","CO","CO_Unit","SO2","SO2_Unit","PM10","PM10_Unit"
+"000000002","EX site two","Inactive","R0","","","","2.0","XX","EX","04/28/26","12:00","EX synthetic agency","","","","","6","0","0","0","1","","","","","6.8","PPB","0.3","","","","",""

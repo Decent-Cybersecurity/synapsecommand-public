@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Twenty-two integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Twenty-seven integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -10,9 +10,11 @@ ground station and service status reports, STANAG 4586 Edition 3 DLI air-vehicle
 GeoJSON (RFC 7946), OGC GeoPackage 1.4.0, C2SIM (SISO-STD-019/020-2020), AIXM 5.1.1 with the
 Digital NOTAM Event Schema 2.0, AIXM 5.2, the DIS 7 Entity State PDU subset (IEEE 1278.1-2012),
 the TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`),
-and the SC Link16 Gateway report.
-Without a canonical model in the middle, twenty-two
-adapters means two hundred and thirty-one translations and twenty-two private notions of "a contact".
+the SC Link16 Gateway report, readsb trace JSON (one `globe_history` trace file), NEXRAD
+Level II (one Archive II weather radar volume), NDBC standard meteorological text, NOAA CO-OPS
+data API responses and EPA AirNow hourly observation files. Without a canonical model in the
+middle, twenty-seven adapters means three hundred and fifty-one translations and twenty-seven
+private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -42,6 +44,11 @@ With one, an adapter is a thin translator and nothing else.
 | [`dis7`](adapters/dis7.py) 1.0.0 | bidirectional | DIS 7 Entity State PDUs — the Entity State subset of IEEE 1278.1-2012 only: protocol version 7, PDU type 1, protocol family 1, 144 to 4224 octets → one `Entity` per PDU, the position projected from ECEF to WGS 84 and the whole PDU kept in a structured residual; an unchanged `Entity` → the original PDU, **byte for byte**, on its own tested codec layer ([`dis7_codec`](adapters/dis7_codec.py)). Every other PDU type and protocol version is refused with a coded error; the state instant is the caller's, never the DIS timestamp or a clock |
 | [`tacticalapi`](adapters/tacticalapi.py) 1.0.0 | ingest | TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`, upstream commit `58661c9`) — one `GetBlueForcesResponse` snapshot or one `SubscribeBlueForceEventsResponse` stream update, as a serialized `google.protobuf.Any` or its dict twin → one `Entity` and one `Event` (`TRACK_UPDATE`, or `STATUS_CHANGE` for a deleted entry) **per blue force**, in list order, the entry carried whole in the `tacticalapi-blueforce/1` typed block and every field the contract does not name in a structured residual, on its own tested wire reader ([`tacticalapi_codec`](adapters/tacticalapi_codec.py)). **Affiliation is `UNKNOWN` unless the caller supplies one** — the message carries no affiliation field — and a symbol is taken only from a MIL-STD-2525D numeric code. Encodings a lenient protobuf parser would repair are refused by name; gRPC framing and the stream stay with the caller |
 | [`link16_gateway`](adapters/link16_gateway.py) 1.0.0 | bidirectional | SC Link16 Gateway 1.0.0 report — an internal JSON contract this repository defines (profile `sc-link16-gateway/1.0.0`, published under `schemas/link16_gateway/` in the repository), not JREAP C and not Link 16 bytes — one report as octets or a dict → one `Entity` and, when its position is present and projected, one single-sample `Track`, the whole report kept in a structured residual and the identity the uuid5 of the report's scoped identity tuple. Egress in two modes: `mirror` reconstructs the report from this adapter's own objects, and `export` builds one report from an `Entity` the report contract can represent, under a runtime-supplied `ExportContext`, every unrepresentable value refused or omitted as a recorded loss. **A provisional internal profile**: nothing native is parsed, produced or claimed |
+| [`readsb_trace`](adapters/readsb_trace.py) 1.0.0 | ingest | readsb trace JSON (README-json.md, section "trace jsons", readsb v3.16.17, pinned by URL and digest and not carried) — one `globe_history` `trace_full` file, as its gzip octets (one member, inflation bounded at 64 MiB) or the decompressed document → one `Entity` PLATFORM (the address upper-cased under `ICAO24` or `ADSB_NONICAO`, so its `entity_id` is the `adsb` adapter's), one `Track` with a sample per point and the completeness block (a one-day fragment), and one `TRACK_UPDATE` `Event`. Barometric feet go to `Position.vertical` and never to `alt_m`; the whole document is the Entity's structured residual, with the readings taken from each point parked beside it keyed by sample index. Nothing is joined across files |
+| [`nexrad2`](adapters/nexrad2.py) 1.0.0 | ingest | NEXRAD Level II (Archive II) weather radar volumes (ICD 2620010J and ICD 2620002Y, Build 23.0, pinned by digest and not carried) — one volume file, as its octets (32 MiB at most; every bzip2 record inflated under a bound, 402,979,072 octets a volume) or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per elevation NUMBER (never angle: a SAILS rescan repeats the lowest one) carrying the `radar-sweep/1` contract, each moment's gates by reference with a summary and the below-threshold and range-folded codes counted apart, and the radar site's `Entity` (SENSOR, its height as stated against mean sea level). Every range ICD 2620002Y Tables XVII-A, -B, -E, -F and -H state is a validation rule (Table XVII-I's data ranges are not); message 1, message 29 and compressed radials are refused by name |
+| [`ndbc_stdmet`](adapters/ndbc_stdmet.py) 1.0.0 | ingest | NDBC standard meteorological text (Web Data Guide Version 2.0, pinned by digest and not carried) — one realtime, monthly or yearly historical stdmet file (8 MiB at most; a yearly `.txt.gz` unwrapped by `synapse-decode`), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per data row carrying the `point-observation/1` contract, every column read by its header NAME (16 to 19 columns, the 1998 layout's two-digit year `98` and no other, no minute, `BAR` or `PRES`, no units line before 2007, `PTDY`'s printed sign), and the station's `Entity`. `MM` is missing in a realtime file and a run of 9s only at the width documented for its column in a historical file; any other run of 9s is refused, never guessed. The station is the caller's `station_id` and its position comes only from the caller's `StationTable`; no quality flag is published (NDBC T80-10) |
+| [`coops_csv`](adapters/coops_csv.py) 1.0.0 | ingest | NOAA CO-OPS data API responses (`datagetter`, its pages cited by URL) — one response in its CSV form (water level, air pressure or wind, the header compared whole and read by position) or its JSON form (water level), under the caller's required `CoopsRequest` because a response echoes none of its datum, units or time zone → one `ENVIRONMENTAL_OBSERVATION` `Event` per sample carrying the `point-observation/1` contract, and the station's `Entity`. `gmt` is UTC, `lst` is read with the caller's declared offset, and `lst_ldt` is refused by name; the datum is carried as `{name, namespace}` beside the water level, the units verbatim, the flags and the p/v level as typed quality flags |
+| [`airnow_hourly`](adapters/airnow_hourly.py) 1.0.0 | ingest | EPA AirNow hourly observation files (the Hourly Data and Hourly AQ Obs fact sheets, pinned by digest and not carried) — one `HourlyData` (header-less, pipe-delimited) or `HourlyAQObs` (quoted CSV) file, as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per line carrying the `point-observation/1` contract, and one `Entity` per site. A stamp is the GMT START of a one-hour period, so `validity.effective` is the hour and `observed_at` its end; parameters, units and negative raw values are carried verbatim; a HourlyData site's position comes only from the caller's site table |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -112,8 +119,8 @@ half the suite against **that**.
 | Object | Means | Key fields |
 |---|---|---|
 | `Entity` | something that **exists** | `entity_id`, `entity_type`, `affiliation`, `position`, `kinematics`, `valid_from/to`, `confidence`, `attributes` |
-| `Event` | something that **happened** | `event_id`, `event_type`, `severity`, `related_entities`, `geometry`, `payload`, `observed_at`, `received_at` |
-| `Track` | an entity's **position history** | `track_id`, `entity_id`, `samples[]`, `track_quality` |
+| `Event` | something that **happened** | `event_id`, `event_type`, `severity`, `related_entities`, `geometry`, `payload`, `observed_at`, `received_at`, `validity` |
+| `Track` | an entity's **position history** | `track_id`, `entity_id`, `samples[]`, `track_quality`, `attributes` |
 | `PlanObject` | something we **push out** | `object_id`, `object_type`, `geometry`, `style`, `label`, `expires_at` |
 
 Every one of them also carries, from `CDMBase`:
@@ -344,7 +351,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fifteen of the twenty-two
+clone. Every adapter that declares an egress direction was affected — fifteen of the twenty-seven
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the four that shipped since
 (`geojson`, `c2sim`, `dis7` and, on 2026-10-10, `link16_gateway`) declared theirs from the start. The second
@@ -389,9 +396,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's twenty-two adapters it is 462 against 231.
+   contradiction. At today's twenty-seven adapters it is 702 against 351.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that twenty-two adapters cannot grow twenty-two
+   `docs/docs/cdm/entity.mdx` both carry "so that twenty-seven adapters cannot grow twenty-seven
    slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
@@ -858,6 +865,39 @@ distribution `synapse-link16-bridge`, which this wheel does not carry.
 The `link16_gateway` adapter is part of the distribution built from this tree; no release before
 3.4.0 carries it. The reference page is https://docs.synapsecommand.com/cdm/link16-gateway.
 
+## Observations: the four payload contracts and the `synapse-decode` host
+
+An environmental measurement or model product — a station reading, a radar sweep, a gridded
+field, an imagery product — is an `Event` of type `ENVIRONMENTAL_OBSERVATION` whose
+`payload["observation"]` is one of four named contracts in `synapse_cdm.observation_contracts`:
+`gridded-field/1`, `point-observation/1`, `radar-sweep/1` and `imagery-product/1`. They are
+pydantic models a consumer validates with `model_validate`, or with `contract_of(event)`; a
+measured value carries its unit verbatim and the table it was read from, a sentinel is an absence
+with its mechanism named, quality flags are carried verbatim, and array values go by reference
+unless they fit in `MAX_INLINE_VALUES`. `python -m synapse_cdm.observation_contracts --out DIR`
+writes their JSON Schemas, and `--check` says whether a directory is current.
+
+`synapse-decode` is the offline host command the observation adapters share, on the shape of
+`synapse-dis7`: it reads one local file with a bound, digests it, checks the digest against
+`--sha256` or a manifest row, unwraps a declared gzip stream or one named tar member, and hands
+the result to the named adapter with the values the caller supplies:
+
+```bash
+synapse-decode list
+synapse-decode decode --adapter geojson --input features.json.gz --container gzip --at 2026-09-11T10:00:00Z --basis "dataset publication date" --synthetic > objects.json
+synapse-decode decode --adapter readsb_trace --input day.tar --container tar --member 2026/03/14/traces/c1/trace_full_0029c1.json --received-at 2026-03-15T06:00:00Z --synthetic > objects.json
+synapse-decode decode --adapter nexrad2 --input ZZZZ20260429_061000_V06.gz --container gzip --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter ndbc_stdmet --input EX001h2025.txt.gz --container gzip --request station=EX001 --station-table stations.json --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter coops_csv --input water_level.csv --request station=0000001 --request product=water_level --request datum=MLLW --request units=metric --request time_zone=gmt --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter airnow_hourly --input HourlyData_2026042810.dat --station-table sites.json --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+```
+
+Exit codes: `0` success, `2` usage or context flags (a URL, an `s3://` or a `/vsicurl/` locator is
+refused by name), `3` rejected data, `4` file or output I/O. Diagnostics never quote the input, a
+request parameter or a manifest URL. The contracts and the command are not part of the published
+3.4.0 distribution; they ship with the first release after it. The reference page is
+https://docs.synapsecommand.com/cdm/observation-contracts.
+
 ## Layout
 
 Repository root, then the package:
@@ -886,6 +926,8 @@ packages/cdm/
     oes.py          the SC-OES event block: type ids, ontology identifiers, effective intervals
     oes_registry.py the packaged SC-OES registries, read offline, and their helper surface
     release_notes.py release-note rendering for the release pipeline
+    observation_contracts.py  the four observation payload contracts and their helpers
+    decode_host.py  `synapse-decode`, the observation adapters' offline host command
     registry/       the three packaged SC-OES registries, read as data
     adapters/       one module per external system (pntmap, tak, ais, adsb, …)
     fixtures/       synthetic payloads + golden outputs

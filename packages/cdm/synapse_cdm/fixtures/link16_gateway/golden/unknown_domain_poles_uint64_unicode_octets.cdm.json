@@ -121,6 +121,7 @@
     "valid_to": null
   },
   {
+    "attributes": null,
     "entity_id": "2ec2d3ed-5c40-54a5-8dfa-5736f1b47cdd",
     "integrity": null,
     "object_kind": "track",

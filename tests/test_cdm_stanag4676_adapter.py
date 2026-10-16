@@ -1059,13 +1059,14 @@ def test_the_round_trip_changes_exactly_one_value(path):
     allowed = {"msgCreatedTime", "profile"} if "datastream" in path.name else {"msgCreatedTime"}
     for a, b in zip(before, after):
         for holder in ("attributes", "payload"):
-            for blob in (a.get(holder, {}), b.get(holder, {})):
+            # A Track has an `attributes` key holding None since CDM 3.2.0: read it as empty.
+            for blob in ((a.get(holder) or {}), (b.get(holder) or {})):
                 for key in allowed:
                     blob.get("nits_root", {}).pop(key, None)
-            a.get(holder, {}).pop("profile_basis", None)
-            b.get(holder, {}).pop("profile_basis", None)
-            a.get(holder, {}).pop("nits_profiles", None)
-            b.get(holder, {}).pop("nits_profiles", None)
+            (a.get(holder) or {}).pop("profile_basis", None)
+            (b.get(holder) or {}).pop("profile_basis", None)
+            (a.get(holder) or {}).pop("nits_profiles", None)
+            (b.get(holder) or {}).pop("nits_profiles", None)
     assert before == after
 
 

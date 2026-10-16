@@ -1,0 +1,126 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter inflates nothing: a compressed file is unwrapped by synapse-decode --container gzip under the host's own bounds before the adapter is handed it",
+          "max_objects": "not a bound of its own: one Event per line and at most one Entity per line, and a line is at least 34 octets (the date, the time, a nine-character AQSID, a value and the delimiters), so max_input_bytes bounds the count",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, and every pass over the file is one walk of its lines and fields; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the parsed twin nests three containers (the twin, its lines, a line). 64 (`MAX_DEPTH`, `adapters/airnow_hourly.py`) is the harness loader's own bound and the figure the JSON-reading adapters of synapse_cdm declare. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_airnow_hourly_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module decodes a line",
+            "kind": "implementation_cap",
+            "source": "No AirNow document states a maximum size for an hourly file. The design record's figure is one HourlyData file of 7878 lines for one hour, every publicly approved site in AirNow (research-station-text F08), and a HourlyAQObs file is one line a site. DECISIONS U-07 rules one station-text file at most 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/airnow_hourly.py`), with the CO-OPS request range limits (research-station-text F05) the class's other stated unit. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 8388608,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "EPA AirNow HourlyData_yyyymmddhh.dat (header-less, |-delimited) or HourlyAQObs_yyyymmddhh.dat (quoted CSV), one file per call, as its octets or its parsed twin; one ENVIRONMENTAL_OBSERVATION Event per line carrying point-observation/1, and one Entity per site"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "a HourlyData line is exactly the fact sheet's nine fields and a HourlyAQObs header exactly the 34 names the files write (OZONE_Measured where the fact sheet's list spells Ozone_Measured), so a field this module does not know is refused rather than carried; the twin's keys are closed and an injected key is refused `not-a-twin`",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)",
+      "version": "AirNow Hourly Data File fact sheet (last updated August 2025) and Hourly AQ Obs File fact sheet (updated March 2023)"
+    },
+    "id": "airnow_hourly",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "hourly-files-only",
+        "notes": null,
+        "severity": null,
+        "summary": "HourlyData and HourlyAQObs files are read; the forecast file (reportingarea.dat), the site file (monitoring_site_locations.dat), the API's responses and EPA AQS records are not, and nothing is joined from another file",
+        "unsupported_paths": []
+      },
+      {
+        "id": "site-position-from-the-caller",
+        "notes": null,
+        "severity": null,
+        "summary": "a HourlyData line states no position: it comes only from a caller's site table (a StationTable keyed by AQSID), else the site Entity's position is null; a HourlyAQObs line's Latitude and Longitude are its stated position, and its Elevation, whose datum the fact sheet does not state, stays in the residual",
+        "unsupported_paths": []
+      },
+      {
+        "id": "hour-start-stamps",
+        "notes": null,
+        "severity": null,
+        "summary": "a stamp is the GMT start of a one-hour period: validity.effective is [start, start + 1 h] and observed_at its end; the GMT offset (to local standard time) is never applied",
+        "unsupported_paths": []
+      },
+      {
+        "id": "aqi-unit",
+        "notes": null,
+        "severity": null,
+        "summary": "a HourlyAQObs AQI field is carried with the unit AQI under the fact sheet's definition, an index with no other unit; a concentration's unit is its own *_Unit field, verbatim",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-empty-lines",
+        "notes": null,
+        "severity": null,
+        "summary": "a HourlyAQObs line stating neither an AQI nor a concentration is refused no-reading, and a HourlyData line with a blank value or unit is refused blank-value: the fact sheets say only valid data are reported, and the design record holds no such line",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-quality-flags",
+        "notes": null,
+        "severity": null,
+        "summary": "AirNow's hourly files carry no per-value quality flag, so every contract states quality_flags_basis; the data are preliminary, and the AirNow Data Exchange Guidelines' terms bind the consumer, not this package",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter airnow_hourly` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every line a structured residual on its own Event) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "EPA AirNow hourly observation file (HourlyData, HourlyAQObs) translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.1.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

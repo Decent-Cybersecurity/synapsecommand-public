@@ -1358,7 +1358,8 @@
         "system": "UAS-LS-PACKET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "2850f564-8d33-5ab6-b8bd-8a05882b6d61",
@@ -1729,7 +1730,8 @@
         "system": "VMTI-VTRACKER-TRACK-ID"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "affiliation": "UNKNOWN",

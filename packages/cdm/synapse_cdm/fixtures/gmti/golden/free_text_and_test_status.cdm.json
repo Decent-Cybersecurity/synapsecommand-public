@@ -175,7 +175,8 @@
         "system": "GMTIF-FREETEXT"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "f4ccd907-376e-5851-a0aa-a5f4081962fe",
@@ -237,6 +238,7 @@
         "system": "GMTIF-STATUS"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

@@ -14,7 +14,10 @@ SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0.
   channel before translation, translated by the `link16_gateway` adapter of `synapse-cdm`,
   deduplicated, given a durable disposition, kept in history with current state, freshness,
   lifecycle (drop, rekey, gap, scope reset), quarantine and an audit trail, and delivered to a
-  sink at least once under stable event keys.
+  sink at least once under stable event keys. A sink that accepts only CDM 3.0.0 is served the
+  adapter's compatibility projection, every object serialised by
+  `synapse_cdm.projection.dump_for(obj, "3.0.0")`, so the frozen 3.0.0 contract accepts it after
+  a later MINOR has added fields to the models (2026-10-15).
 - Export of a CDM Entity, and its one-sample Track, to a gateway only when the deployment
   configuration permits it, after exact-match policy, freshness, allocation, family and profile
   checks, with idempotent requests and no blind re-send.

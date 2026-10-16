@@ -542,6 +542,9 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
                         "pntmap": "pntmap", "stanag4586": "stanag4586",
                         "stanag4609": "klv", "stanag4676": "nits",
                         "link16_gateway": "link16_gateway",
+                        "nexrad2": "nexrad2", "ndbc_stdmet": "ndbc_stdmet",
+                        "coops_csv": "coops_csv", "airnow_hourly": "airnow_hourly",
+                        "readsb_trace": "readsb_trace",
                         "tacticalapi": "tacticalapi", "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.

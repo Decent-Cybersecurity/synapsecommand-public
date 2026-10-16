@@ -229,7 +229,7 @@ def test_the_deepest_shipped_document_is_inside_the_declared_bound_and_translate
 
 #: The adapters whose `to_cdm` decodes JSON text. Derived below, from the syntax tree, so a sixth
 #: would be swept without an edit here and a comment that mentions the call would not.
-JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "c2sim", "geojson", "legion", "link16_gateway", "pntmap", "tak")
+JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "c2sim", "coops_csv", "geojson", "legion", "link16_gateway", "pntmap", "readsb_trace", "tak")
 
 
 def _decodes_json(tree: ast.Module) -> bool:
@@ -266,7 +266,7 @@ def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
         if any(by_module.get(m, False) for m in modules):
             decoding.add(name)
     assert sorted(decoding) == list(JSON_ADAPTERS), sorted(decoding)
-    assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "c2sim", "geojson", "legion", "link16_gateway", "pntmap", "tak"}, \
+    assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "c2sim", "coops_csv", "geojson", "legion", "link16_gateway", "pntmap", "readsb_trace", "tak"}, \
         "the modules that call the decoder themselves; aixm52 inherits it"
 
 
@@ -338,6 +338,9 @@ def test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it(n
     `pytest.raises(InputTooDeep)` catches no `RecursionError`, and on CPython 3.11 `json.loads`
     raises one a little under a thousand containers deep, so a bound measured after the decode
     is a red test here on that interpreter and never a green one."""
+    # Built through `fixture_instance()` since 2026-10-15: `coops_csv` decodes JSON and its
+    # constructor requires the request a response answers, which only the fixture context supplies;
+    # for every other adapter here the hook is the plain construction.
     cls = discover()[name]
     limits = cls.metadata.capabilities.limits
     assert limits.max_depth is not None, f"{name} declares no max_depth"
@@ -346,15 +349,15 @@ def test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it(n
     text_reached_the_depth_check = False
     for depth in (limits.max_depth + 1, 1000, 50_000):
         with pytest.raises(InputTooDeep, match=f"nesting {depth} containers deep") as raised:
-            cls().to_cdm(_nested_dict(depth))
+            cls.fixture_instance().to_cdm(_nested_dict(depth))
         assert f"max_depth = {limits.max_depth}" in str(raised.value)
         text = _nested_json(depth).encode()
         if len(text) > limits.max_input_bytes:
             with pytest.raises(InputTooLarge):
-                cls().to_cdm(text)
+                cls.fixture_instance().to_cdm(text)
             continue
         with pytest.raises(InputTooDeep, match=f"nesting {depth} containers deep") as raised:
-            cls().to_cdm(text)
+            cls.fixture_instance().to_cdm(text)
         assert f"max_depth = {limits.max_depth}" in str(raised.value)
         text_reached_the_depth_check = True
     tightest = 2 * (limits.max_depth + 1)  # '[' * 65 + ']' * 65, the shortest text past the bound
@@ -381,10 +384,10 @@ def test_a_byte_order_mark_or_a_wide_encoding_does_not_walk_past_the_bound(name)
                            ("utf-32-be", document.encode("utf-32-be"))):
         if len(payload) > limits.max_input_bytes:
             with pytest.raises(InputTooLarge):
-                cls().to_cdm(payload)
+                cls.fixture_instance().to_cdm(payload)
             continue
         with pytest.raises(InputTooDeep, match="nesting 1000 containers deep") as raised:
-            cls().to_cdm(payload)
+            cls.fixture_instance().to_cdm(payload)
         assert not isinstance(raised.value, RecursionError), label
 
 

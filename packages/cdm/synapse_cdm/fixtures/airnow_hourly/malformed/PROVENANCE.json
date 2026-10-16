@@ -1,0 +1,105 @@
+{
+  "directory": "airnow_hourly/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "bad_aqsid.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cut_inside_a_line.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "fact_sheet_measured_spelling.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "four_digit_year_in_hourly_data.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_a_number.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "not_on_the_hour.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "number_past_the_double_range.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "repeated_record.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_digit_year_out_of_range.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_header.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "width_mismatch.dat",
+      "operational_data": false,
+      "origin": "Synthetic malformed EPA AirNow hourly observation file written on 2026-10-15 by fixtures/airnow_hourly/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "airnow_hourly/spec/airnow_hourly_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

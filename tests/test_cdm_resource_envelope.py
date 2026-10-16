@@ -85,8 +85,10 @@ def shipped() -> dict:
 
 ADAPTERS = sorted(shipped())
 #: `link16_gateway` joined 2026-10-10 (the Link 16 gateway arc): it decodes JSON octets itself, so
-#: the inclusive depth bound and the size-before-depth order are run on it as well.
-JSON_ADAPTERS = ("adsb", "ais", "legion", "link16_gateway", "pntmap", "tak")
+#: the inclusive depth bound and the size-before-depth order are run on it as well. `readsb_trace`
+#: joined 2026-10-15 (the NYC observations arc): it calls the JSON decoder itself, on the text its
+#: gzip member inflates to, and the base class bounds a dict or JSON text handed to it.
+JSON_ADAPTERS = ("adsb", "ais", "coops_csv", "legion", "link16_gateway", "pntmap", "readsb_trace", "tak")
 XML_ADAPTERS = ("stanag4676", "tak")
 
 

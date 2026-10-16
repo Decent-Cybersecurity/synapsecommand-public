@@ -13,14 +13,16 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Twenty-two
+This is the contract layer, and it is public because that is what a contract is for. **Twenty-seven
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
 `cat062`, `cat023`, `stanag4586` (ingest), `geojson`, `geopackage` (ingest), `c2sim`,
-`aixm511` (ingest), `aixm52` (ingest), `dis7`, `tacticalapi` (ingest) and `link16_gateway` — byte-exact on the wire
+`aixm511` (ingest), `aixm52` (ingest), `dis7`, `tacticalapi` (ingest), `link16_gateway`,
+`readsb_trace` (ingest), `nexrad2` (ingest), `ndbc_stdmet` (ingest), `coops_csv` (ingest) and
+`airnow_hourly` (ingest) — byte-exact on the wire
 wherever the format is binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — two hundred and thirty-one and twenty-two as of today; with one, an adapter is a
+"a contact" — three hundred and fifty-one and twenty-seven as of today; with one, an adapter is a
 thin translator and nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
 forms, message families, exclusions and evidence scope — is the generated
 [support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
@@ -114,7 +116,7 @@ may not be made.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the twenty-two shipped adapters are verified against** — which is what
+harness and **every fixture the twenty-seven shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:
@@ -128,6 +130,18 @@ The `dis7` adapter and the `synapse-dis7` command are part of the distribution b
 The `tacticalapi` adapter is part of the distribution built from this tree; no release before 3.3.0 carries it.
 
 The `link16_gateway` adapter is part of the distribution built from this tree; no release before 3.4.0 carries it.
+
+The `readsb_trace` adapter is not part of the published 3.4.0 distribution; it ships with the first release after it.
+
+The `nexrad2` adapter is not part of the published 3.4.0 distribution; it ships with the first release after it.
+
+The `ndbc_stdmet` adapter is not part of the published 3.4.0 distribution; it ships with the first release after it.
+
+The `coops_csv` adapter is not part of the published 3.4.0 distribution; it ships with the first release after it.
+
+The `airnow_hourly` adapter is not part of the published 3.4.0 distribution; it ships with the first release after it.
+
+The observation contract models (`synapse_cdm.observation_contracts`) and the `synapse-decode` host command are not part of the published 3.4.0 distribution; they ship with the first release after it.
 
 `synapse-cdm` **1.0.0** was published on 2026-08-25 and the upload is recorded, measured and
 closed as ledger entry 5 of [`PUBLICATION.md`](PUBLICATION.md) — including the check that the two

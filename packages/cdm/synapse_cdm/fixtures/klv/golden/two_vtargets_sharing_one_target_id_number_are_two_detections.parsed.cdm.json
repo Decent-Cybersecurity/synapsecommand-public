@@ -1157,7 +1157,8 @@
         "system": "UAS-LS-PACKET"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "2850f564-8d33-5ab6-b8bd-8a05882b6d61",
@@ -1380,7 +1381,8 @@
         "system": "VMTI-VTARGET-TARGET-ID-NUMBER"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "95afab6a-9eb2-5e26-8b2f-d3ec47f238a8",
@@ -1603,6 +1605,7 @@
         "system": "VMTI-VTARGET-TARGET-ID-NUMBER"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

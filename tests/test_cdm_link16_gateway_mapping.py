@@ -24,6 +24,7 @@ import synapse_cdm
 from synapse_cdm import harness, lossless, schemas
 from synapse_cdm.adapter import json_nesting_depth
 from synapse_cdm.enums import Affiliation, PositionSource
+from synapse_cdm.projection import dump_for
 from synapse_cdm.version import SCHEMA_VERSION
 
 from synapse_cdm.adapters import link16_gateway as module
@@ -55,8 +56,13 @@ def doc_of(name: str) -> dict:
 
 
 def project(doc_or_name, **kwargs) -> list[dict]:
+    """The adapter's objects as JSON. Under `cdm_schema="3.0.0"` they are dumped the way a 3.0.0
+    reader is served them, through `synapse_cdm.projection.dump_for` (CDM 3.2.0, 2026-10-15)."""
     raw = raw_of(doc_or_name) if isinstance(doc_or_name, str) else doc_or_name
-    return [o.model_dump(mode="json") for o in Link16GatewayAdapter(**kwargs).to_cdm(raw)]
+    objects = Link16GatewayAdapter(**kwargs).to_cdm(raw)
+    if kwargs.get("cdm_schema") == "3.0.0":
+        return [dump_for(o, "3.0.0") for o in objects]
+    return [o.model_dump(mode="json") for o in objects]
 
 
 def edited(**changes) -> dict:
@@ -77,12 +83,15 @@ IGNORED = ("schema_version", "source.system", "position.vertical.uncertainty",
 
 
 def _strip(objects: list[dict]) -> list:
-    """Remove, on either side, exactly the keys the comparison names — and the three model
-    defaults only when they are null, so a value there would still be compared."""
+    """Remove, on either side, exactly the keys the comparison names — and the four model
+    defaults only when they are null, so a value there would still be compared. The fourth,
+    `attributes` on a Track (CDM 3.2.0, 2026-10-15), is younger than the handoff's references."""
     out = copy.deepcopy(objects)
     for obj in out:
         obj.pop("schema_version")
         obj["source"].pop("system")
+        if obj["object_kind"] == "track" and "attributes" in obj and obj["attributes"] is None:
+            del obj["attributes"]
         positions = [obj.get("position")] + [s["position"] for s in obj.get("samples", [])]
         for position in positions:
             if position and position.get("vertical") and \
@@ -191,16 +200,25 @@ def test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract()
     """P03 under the frozen contract (2026-10-11, the 3.4.0 release commit): the full projection
     of a SENSOR and an UNKNOWN report — the default, stamped with the declared `SCHEMA_VERSION` —
     validates against the frozen 3.1.0 entity and track schemas, the bytes the release froze, and
-    the same objects are refused by the frozen 3.0.0 ones, by the method alone."""
+    the same objects are refused by the frozen 3.0.0 ones, by the method alone.
+
+    Re-read 2026-10-16, when the NYC observations arc was replayed onto `v3.4.0`: a Track now dumps
+    CDM 3.2.0's `"attributes": null`, which the frozen 3.1.0 contract refuses as an unknown key
+    (readers before writers; there is no 3.1.0 projection ledger), so that one null key is removed
+    before the 3.1.0 check, the way `_strip` removes it, and its refusal is asserted on its own."""
     assert SCHEMA_VERSION == "3.1.0"
     frozen_3_1_0 = {kind: schemas.validator_for(json.loads(
         (FROZEN_3_1_0 / f"{kind}.schema.json").read_text())) for kind in ("entity", "track")}
     for name, method in (("air_sensor.json", "SENSOR"), ("subsurface_unknown_method.json",
                                                           "UNKNOWN")):
         entity, track = project(name)
+        assert track["attributes"] is None
+        assert [e.message for e in frozen_3_1_0["track"].iter_errors(track)] == [
+            "Additional properties are not allowed ('attributes' was unexpected)"], name
         for obj in (entity, track):
             assert obj["schema_version"] == "3.1.0"
-            assert list(frozen_3_1_0[obj["object_kind"]].iter_errors(obj)) == [], name
+            known = {k: v for k, v in obj.items() if not (obj is track and k == "attributes")}
+            assert list(frozen_3_1_0[obj["object_kind"]].iter_errors(known)) == [], name
             refusals = [e for e in _frozen(obj["object_kind"]).iter_errors(obj)]
             assert refusals, name
             leaves = []
@@ -234,14 +252,20 @@ def test_compatibility_projection_omits_unrepresentable_positions():
         assert entity["source"]["transformations"] == [T_IDENTITY, T_COMPAT]
         assert entity["residual"]["data"]["report"] == doc_of(name)
     # The full projection of the same two reports is exactly what 3.0.0 refuses, and the method
-    # is the whole reason: with GNSS written in its place the same objects validate.
+    # is the whole reason: `dump_for` refuses it at the position source, and with GNSS written in
+    # its place the same objects, dumped for 3.0.0, validate.
     for name in ("air_sensor.json", "subsurface_unknown_method.json"):
-        for obj in project(name):
+        for model in Link16GatewayAdapter().to_cdm(raw_of(name)):
+            obj = model.model_dump(mode="json")
             assert list(_frozen(obj["object_kind"]).iter_errors(obj))
+            with pytest.raises(ValueError, match=r"position_source: a member of PositionSource "
+                                                 r"added in CDM 3\.1\.0"):
+                dump_for(model, "3.0.0")
             positions = [obj.get("position")] + [s["position"] for s in obj.get("samples", [])]
             for position in filter(None, positions):
                 position["position_source"] = "GNSS"
-            assert list(_frozen(obj["object_kind"]).iter_errors(obj)) == []
+            gnss = dump_for(type(model).model_validate(obj), "3.0.0")
+            assert list(_frozen(obj["object_kind"]).iter_errors(gnss)) == []
 
 
 def test_compatibility_projection_keeps_representable_positions_with_a_track():

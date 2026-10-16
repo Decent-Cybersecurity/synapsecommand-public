@@ -65,8 +65,13 @@ every kind validates under the 3.1.0 schema and models, and a 3.1.0 document car
 is refused by the frozen 3.0.0 schema by its closed `enum`. Every golden moved by its
 `schema_version` stamp alone. Six schema files moved. `cdm_object`, `entity`, `plan_object` and
 `track`, the four that carry `PositionSource`, moved by their label, the two members and their dated
-description; `event` and `payload_gnss_interference` moved by the label alone. The fourteen SC-OES
-examples and the semantic corpus stay stamped 3.0.0 and are read as documents of the previous minor; the DIS 7
+description; `payload_gnss_interference` moved by the label alone; at `v3.4.0` so did `event`,
+which since that tag, in no release, has moved past its label by CDM 3.2.0's `validity`, as
+`track` and `cdm_object` have by `attributes` (the rows marked **post-3.4.0** below). The fourteen SC-OES
+examples and the semantic corpus stay stamped 3.0.0 and are read as documents of the previous minor
+— the examples until `v3.4.0`: since that tag, in no release, they read 3.1.0 with CDM 3.2.0's
+`"validity": null` on every Event, as does the corpus's new `SEM-014.json`, which carries
+`attributes`; the DIS 7
 adapter's vendored entity profile is re-derived from the 3.1.0 entity schema, and the pin record
 keeps its handoff bundle's digests beside the derived ones. No shipped adapter is re-labelled:
 `cat048`, `cat062`, `stanag4609` and `tacticalapi` keep the members they wrote, with their bases.
@@ -207,13 +212,15 @@ release and arc branches.
   bridge's synthetic server prints a traceback to its own stderr when it is stopped with a request
   body still arriving. None touches a claim of this release.
 
-## Twenty-two adapters at 3.4.0, all harness-verified
+## Twenty-two adapters at 3.4.0, all harness-verified — and five more in the tree since
 
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas`, run over the roster with no
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. `python -m synapse_cdm.harness --list-adapters` prints `22 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+directions to agree. At `v3.4.0` `python -m synapse_cdm.harness --list-adapters` prints `22
+adapters registered`. The five rows marked **post-3.4.0** landed in the tree after that tag,
+`readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` on 2026-10-15, and are
+in no release. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -239,6 +246,11 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `dis7` | bidirectional | 6 | L4 | VERIFIED |
 | `tacticalapi` | ingest | 10 | L3 | VERIFIED |
 | `link16_gateway` | bidirectional | 15 | L4 | PROVISIONAL (new in the 3.4.0 arc) |
+| `readsb_trace` | ingest | 26 | L3 | VERIFIED (**post-3.4.0**, in no release) |
+| `nexrad2` | ingest | 10 | L3 | VERIFIED (**post-3.4.0**, in no release) |
+| `ndbc_stdmet` | ingest | 8 | L3 | VERIFIED (**post-3.4.0**, in no release) |
+| `coops_csv` | ingest | 7 | L3 | VERIFIED (**post-3.4.0**, in no release) |
+| `airnow_hourly` | ingest | 8 | L3 | VERIFIED (**post-3.4.0**, in no release) |
 
 **611 fixture verdicts, 0 failed** across the twenty-two, against the published 3.1.0 schemas —
 the 596 that 3.3.0 shipped, each golden re-stamped and otherwise unchanged, plus 15 from the new

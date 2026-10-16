@@ -1,0 +1,239 @@
+---
+title: Observation contracts and the synapse-decode host
+sidebar_label: Observation contracts
+sidebar_position: 12
+description: The four named payload contracts an environmental observation Event carries, the rules they hold, the helpers that build them, and the offline host command the observation adapters share.
+---
+
+# Observation contracts and the `synapse-decode` host
+
+## Status
+
+This page is the published text of the four observation payload contracts, as
+`synapse_cdm.observation_contracts` implements them (added 2026-10-15). Their acceptance by the
+contract owner is recorded in ADR 0012 (`docs/adr/0012-observation-contracts.md` in the
+repository), which reads *Proposed* until that acceptance is given; a field the owner renames before then is
+renamed here in the same change. The models, the published schemas and the `synapse-decode`
+command are not part of the published 3.4.0 distribution; they ship with the first release after it.
+
+## The carrier
+
+There is no fifth canonical object. An environmental measurement or model product is an `Event`
+whose `event_type` is `ENVIRONMENTAL_OBSERVATION` and whose `payload["observation"]` is one of four
+named contracts:
+
+| Contract | Carries |
+| --- | --- |
+| `gridded-field/1` | one field on one grid: a GRIB2 message, a gridded product's variable |
+| `point-observation/1` | the readings one record states for one station |
+| `radar-sweep/1` | one elevation of one radar volume, its moments by reference |
+| `imagery-product/1` | one product, band or granule file, by reference |
+
+The contract is a pydantic model a consumer validates — `MODELS[name].model_validate(...)`, or
+`contract_of(event)` for an Event — on the pattern of the `c2sim-order/1` contract. It is not
+registered in `PAYLOAD_MODELS`, because a registration binds every producer of an event type to
+one shape and four classes cannot share one. The station, buoy, monitor or radar the observation
+was made at is an `Entity` that the Event names in `related_entities`. The interval the
+observation covers is `Event.validity.effective`; an instant sets `end` equal to `start`.
+
+## The rules every contract holds
+
+- **Units.** A measured value is `Measurement`: `value`, `unit` — the source's own unit string,
+  verbatim — and `unit_namespace`, the table or header the unit was read from. There is no unit
+  enum. A value whose unit cannot be read is not stated.
+- **Absences.** A value the source does not state is an `Absence` with a `cause` — `sentinel`,
+  with the marker the source wrote (`MM`, `-3`) in `sentinel`, or `unit_unknown`, whose unreadable
+  value is parked in the Event's residual and never in the contract — and a `mechanism` naming the
+  table or rule. A sentinel is never carried as a number.
+- **Grid.** `Grid` is the source's grid definition, opaque and verbatim: `namespace`, `template`,
+  `shape`, `scanning_mode`, `cell_size` (one `Measurement` per axis) and `parameters` under the
+  source's own names. It has no `crs` key at any depth: the canonical geometry is the WGS84
+  footprint the adapter converts, on `Event.geometry`.
+- **Level and datum.** `VerticalLevel` (`type`, `code`, `value`, `unit`, `namespace`) and `Datum`
+  (`name`, `namespace`) carry what the source states. `Position.alt_m` is metres above the
+  ellipsoid and nothing else, so a pressure level or a NAVD88 height never lands in it.
+- **Quality flags.** `quality_flags` is a list of `QualityFlag` — `name`, `value` verbatim (a
+  string, an integer, a number or a boolean, its type kept), `namespace` and `applies_to`, which
+  names the reading, moment, variable or record the flag covers and is never an instant. Nobody
+  interprets a flag. Where there is none, `quality_flags_basis` says why, and exactly one of the
+  two is stated.
+- **Values.** `values` is `ValuesByReference` (`mode: "reference"`: a locator, `shape`, `dtype`,
+  `encoding`, `scale`, `offset`, `fill` and an optional `summary` of `count`, `missing_count`,
+  `min` and `max`) or `ValuesInline` (`mode: "inline"`: at most `MAX_INLINE_VALUES` = 4096 values,
+  `null` for a missing one with its `missing_mechanism`). Inline values need a unit.
+- **Where in the source.** `locator` is one of seven kinds, by `kind`: `grib` (message ordinal,
+  field ordinal, byte offset), `radar` (LDM record, message, elevation number, azimuth number,
+  moment), `table` (data row, header lines), `raster` (band file, IFD, tile or window), `parquet`
+  (row group, row), `netcdf` and `hdf5` (group path, variable, index). Every kind may carry
+  `frame_sha256`, the digest of the frame when it is not the whole file, and `granule_id`.
+  Since 2026-10-15 the host computes `frame_sha256` and hands it to an adapter that declares the
+  argument (`nexrad2`, the first) whenever it unwrapped a gzip or a tar member or cut the file into
+  frames; when the frame is the file as read it passes nothing, because `source_hash` already
+  digests those octets.
+  Ordinals are 0-based, as `SourceRef.record_index` is, except the radar elevation and azimuth
+  numbers, which are the volume's own 1-based numbers.
+- **Product class and version.** `product_class` is one of `observation`, `forecast`, `analysis`,
+  `reanalysis`, `modelled_estimate` and `reference`. `product_version` holds `run`, `version`,
+  `production_time_verbatim` and `producer`: processing facts, kept out of every key that ends in
+  `_at`, `_from` or `_to` so that nothing reads a production clock as a time.
+- **Time.** `time` states the `source_time_system` the stamps were read in — `name` verbatim,
+  `stated_by` the `source` or the `caller`, and a `basis` — and, for a model product, the
+  `reference_time`, the GRIB2 Table 1.2 `reference_time_significance`, the `forecast_offset` and
+  the Table 4.10 `statistical_process`.
+- **Closed.** Every block refuses a key it does not name.
+
+## `observed_at`
+
+For an observation, `Event.observed_at` is the **end** of the sensing interval, and
+`validity.effective` states the interval. For a forecast, analysis, reanalysis or modelled
+estimate, `observed_at` is the **reference time** the contract states, never the future instant
+the product is valid for; the valid interval is `validity.effective`. A `reference` product states
+no sensing instant and is not an observation Event. `observation_event` checks these rules when it
+builds the Event and refuses an Event that breaks one.
+
+## The four contracts
+
+Every contract carries `product_class`, `product_version`, `time`, `locator`, `quality_flags` and
+`quality_flags_basis`, and:
+
+| Contract | Its own fields |
+| --- | --- |
+| `gridded-field/1` | `quantity` (`name` and/or `code`, `namespace`), `unit`, `level`, `datum`, `grid`, `values` |
+| `point-observation/1` | `station_id` verbatim, `station_namespace`, `readings`: each a `name`, a `namespace`, a `measurement` or an `absence` (exactly one), a `level` and a `datum` |
+| `radar-sweep/1` | `site_id`, `elevation_number`, `elevation_angle`, `radial_count`, `coverage_pattern`, `moments`: each a `name`, `namespace`, `unit`, `gate_count`, `first_gate_range`, `gate_interval`, `values` |
+| `imagery-product/1` | `product`, `band`, `wavelength`, `unit`, `grid`, `values` |
+
+A point observation states a reading once per name, namespace and level; a radar sweep is located
+by a `radar` locator naming its own elevation number and states each moment once.
+
+## Helpers
+
+- `site_entity(...)` builds the station's `Entity`: identity `ids.derive(system, station_id)`, the
+  `EntityType` of its site class from `SITE_ENTITY_TYPES` (every class `SENSOR` until the contract
+  owner rules one `FACILITY`; an unlisted class is refused), affiliation `UNKNOWN`, the position
+  from the payload, else from the caller's `StationTable`, else none — never zeros — with method
+  `MANUAL` and its basis in `attributes.position_basis`, and `valid_from` the observation instant.
+  A height the payload states beside the position (a radar's site height, 2026-10-15) is
+  `stated_vertical` with its `stated_vertical_basis`: carried as `Position.vertical` in the unit and
+  datum the source names, its basis in `attributes.vertical_basis`, and copied to `alt_m` only when
+  it is metres above the ellipsoid.
+- `observation_event(...)` builds the Event, with the `observed_at` rule checked and the identity
+  derived from its first source identifier.
+- `InjectedTime(instant, basis)` is the one convention for a time the payload does not state and
+  the caller supplies, on the shape of `TimeContext` and `AsOf`; an instant without a zone is
+  refused rather than read as UTC, and so, since 2026-10-15, is one whose UTC reading falls
+  outside the years 0001 to 9999, and a datetime whose zone states no offset (a naive one in all
+  but name). `observation_event` refuses an `observed_at` outside those years with the same fixed
+  message.
+- `json_number(value)` and `utf8_text(text)` (2026-10-15) are what a JSON-reading adapter may
+  trust in a parsed document: a number that is an int or a float, not a boolean, finite, and not
+  an integer past `LARGEST_JSON_INTEGER` (no double holds it, and `math.isfinite` raises on it);
+  and text a UTF-8 serialisation can carry (no lone surrogate). The adapter refuses what they
+  reject by the rule of the element that states it, naming the path and never the value.
+- `text_lines(octets, refused)` and `twin_text(value)` (2026-10-15) are what a station-text
+  adapter may trust in a file of lines and in its parsed twin: UTF-8 without a byte-order mark, no
+  control character or tab, one line-end style for the whole file, no blank line, and a line end
+  after the last line, so a file cut inside a row is refused rather than read as a shorter number.
+  `refused(code, text)` builds the adapter's own refusal, which names the line and never quotes it.
+- `decimal_float(text)` and `decimal_integer(text)` (2026-10-15) read a number from text the
+  adapter has already held to its grammar, and answer `None` where no double holds it: a decimal
+  that reads to an infinity or a non-zero one that reads as zero, and an integer of more digits
+  than `LARGEST_INTEGER_DIGITS` (309) or past `LARGEST_JSON_INTEGER`. The adapter refuses that
+  with its own typed refusal, so a number of any length never escapes as a `ValidationError`
+  from the contract or a `ValueError` from `int()`.
+- `contract_mapping`, `ledger_rows` and `by_reference_limitation` build an adapter's `MAPPINGS`
+  rows into a contract and the structured limitation that makes the preservation ledger classify
+  an array left in the source as a declared limitation rather than as lost.
+
+## Publication
+
+`python -m synapse_cdm.observation_contracts --out schemas/observation` writes
+`gridded-field-1.schema.json`, `point-observation-1.schema.json`, `radar-sweep-1.schema.json` and
+`imagery-product-1.schema.json` (JSON Schema 2020-12, `$id`
+`urn:synapsecommand:observation:<name>:1`); `--check` reports `CURRENT` or names each stale,
+missing or stray file. They are a non-union artefact for consumers that do not run Python, beside
+the CDM's schemas and not a branch of them.
+
+**The schemas are looser than the models (noted 2026-10-15).** Of the two validators, the
+published schemas hold shape, enumerations, patterns and closed objects, not the models'
+cross-field rules, non-blank text or finite numbers. A blank `station_id`, inline values without a
+unit, a contract with neither quality flags nor `quality_flags_basis`, a radar locator naming
+another elevation than its sweep, and an infinite value all pass their schema and are refused by
+the model; a consumer that needs the whole contract validates with the model
+(`parse_observation`).
+
+## `synapse-decode`
+
+The offline host command the observation adapters share:
+
+```bash
+synapse-decode decode --adapter A --input F (--synthetic | --live)
+       [--sha256 HEX | --manifest-row FILE]
+       [--container gzip | --container tar --member NAME]
+       [--at T --basis B] [--session S] [--received-at T]
+       [--station-table FILE] [--request KEY=VALUE ...]
+synapse-decode list
+synapse-decode --version
+```
+
+It reads one local file to at most one octet past the adapter's byte bound, digests exactly the
+octets it read with SHA-256, compares that with `--sha256` or the `sha256` member of a manifest
+row, unwraps a declared container, frames the result and hands each frame to the adapter,
+constructed only from the values the caller supplied. The digest is of the file as read, before
+any container is unwrapped, and it is injected as `source_hash` only into an adapter that declares
+that argument; `list` says which. The manifest row is never passed to the adapter, and a row that
+carries a credential in one of the shapes the host names is refused: a parameter or header named
+like one followed by `=` or `:` (`api_key=`, `Authorization:`, `X-Amz-Signature=`, and since
+2026-10-15 `Cookie:` and `Set-Cookie:`), `bearer` and a token, a query parameter named or ending in
+`key` or `sig`, a password inside a URL, or a key named like a credential at any depth (since
+2026-10-15 with an HTTP header's `x-` prefix too: `x-api-key`, `x-auth-token`). Every string and
+key is matched as written and, when it holds a `%`, once more with its `%xx` escapes decoded, so
+`api%5Fkey=` is the name it spells; the decode is applied once, never repeated. A bare `key` is
+not a credential name. That is a check over named shapes, not a proof that a row holds no secret,
+and it is linear in the row's size. The receipt instant is `--received-at`, required by an adapter
+that reads the clock; the command never reads one.
+
+| Exit | Meaning |
+| --- | --- |
+| `0` | the canonical JSON array of every object, in frame order, on stdout |
+| `2` | usage or context: a command line the argument parser refuses; a remote locator (`/vsicurl/` or another GDAL virtual path, `http(s)://`, `s3://`, a DAP locator, any URL) at the start of the argument or behind a driver prefix or quotes (`NETCDF:"/vsicurl/…":var`), refused by name before anything is read; an adapter the host does not serve; an argument the adapter does not declare, a required one missing, or a malformed value; a manifest row or station table refused |
+| `3` | rejected data: a file past the bound, a digest that differs, a container refused, a frame the adapter refuses |
+| `4` | I/O: an absent or non-regular file (a FIFO is not waited on), or stdout that cannot be written |
+
+A symbolic link to a regular file is followed, and the file it names is what is read and digested;
+`/dev/stdin` is read the same way when the shell redirected a regular file onto it. That is the
+recorded policy (2026-10-15): the regular-file check runs on what the path resolves to, so a link
+to a FIFO, a device or a directory is still exit `4`. An `--at` or `--received-at` instant must
+also be one UTC can state: `0001-01-01T00:00:00+14:00` names a real local time whose UTC reading
+falls before the year 1, and it is refused on its flag's line with exit `2` (until 2026-10-15 it
+ended the command with a traceback).
+
+Containers: one gzip member, fed to the inflater in slices of 65 536 octets and inflated in steps
+of at most 65 536 octets, with the running total held to the adapter's bound and to 256 times the
+octets read (fed whole, as it was until 2026-10-15, every step copied the rest of the file); or
+one named regular member of an uncompressed tar of at most 4 096 headers, none of whose names is
+absolute or climbs out with `..`, never a link, a directory or a device. A tar header the
+standard library cannot parse — a malformed pax or GNU sparse record, a size past what an offset
+holds — is exit `3`, `a tar header is corrupt or the archive is truncated`, however the library
+fails on it. Each of these host bounds (the ratio, the step, the header count, the context file's
+size and depth, a request value's length) is a `LimitBasis` in `decode_host.BOUNDS_BASIS`, an
+implementation cap with its source, its enforcement point and its test, the form an adapter
+declares its own bounds in. Diagnostics are one fixed line each on stderr and
+never quote a byte of the input, a key, a request value or a manifest URL; a command line the
+argument parser refuses is reported by the class of the error and the declared flags it names
+(`synapse-decode: a value is not one of its choices: --container; see synapse-decode --help`),
+never by the parser's own message, which quotes what was typed. The hosted adapters
+today are `dis7` (time context, session, `source_hash` injected), `geojson` (an optional as-of) and,
+since 2026-10-15, `readsb_trace` (`--received-at` required; the file's digest checked and not
+injected; the trace file's own gzip member is inflated by the adapter, so the file, or the named
+member of a day archive's tar, is handed over as read) and `nexrad2` (`--received-at` required;
+the file's digest injected as `source_hash`, and the volume's own digest as each radar locator's
+`frame_sha256` when a gzip or a tar was unwrapped around it), and the three station-text adapters
+(2026-10-15), each with `--received-at` required, the file's digest injected as `source_hash` and
+the text's own digest as each table locator's `frame_sha256` when a gzip was unwrapped around it:
+`ndbc_stdmet` (`--request station=...`, the station a stdmet file does not state, required, and
+`--station-table` for its position), `coops_csv` (`--request` the parameters of the request the
+response answers — station, product, datum, units, time_zone, interval and, for `lst`, lst_offset —
+required, refused at exit `2` as the adapter's `CoopsRequest` refuses them, `lst_ldt` by name; and
+`--station-table` for the CSV form's position) and `airnow_hourly` (`--station-table`, the site
+table a HourlyData file does not state); each observation adapter adds its own row when it lands.

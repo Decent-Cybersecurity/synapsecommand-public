@@ -96,6 +96,13 @@ def _not_projected(entity: Entity) -> bool:
     return any(step.startswith(COMPAT_FLAG) for step in entity.source.transformations)
 
 
+def _remodelled(model: type[Entity] | type[Track], stored: bytes | None) -> bytes | None:
+    """A stored CDM payload in the canonical JSON of its full model dump, None when absent."""
+    if stored is None:
+        return None
+    return jsonstrict.canonical(model.model_validate_json(stored).model_dump(mode="json"))
+
+
 class ExportResult(dict):
     """`request_id`, `state` and `reason` of one export attempt."""
 
@@ -146,9 +153,13 @@ class Egress:
         and is not late (a `REFRESH` record); a Track is the one the same record published at
         index 1. What is returned is always the stored current snapshot (the `current` row's
         Entity, the current record's Track), so the export carries the stored record's times and
-        provenance whichever equal-state record the caller holds."""
+        provenance whichever equal-state record the caller holds. A stored payload is read back
+        through its model before the comparison (2026-10-15): one published under the
+        compatibility projection has no key for a field a later MINOR added
+        (`synapse_cdm.projection`), while the object a sink parsed from it has that field as
+        None, and the two must compare equal exactly when every value does."""
         payload = jsonstrict.canonical(entity.model_dump(mode="json"))
-        if payload == bytes(current[11]):
+        if payload == _remodelled(Entity, bytes(current[11])):
             record_id = current[1]
         else:
             record_id = entity.source.original_id
@@ -157,12 +168,13 @@ class Egress:
             row = self.store.db.execute(SQL_OBSERVATION_STATE, (key, record_id)).fetchone()
             if row is None or row[0] != current[2] or row[1] != current[3] or row[2] != 0:
                 return None
-            if self._published(f"{record_id}:0") != payload:
+            if _remodelled(Entity, self._published(f"{record_id}:0")) != payload:
                 return None
         stored_entity = Entity.model_validate_json(bytes(current[11]))
         if track is None:
             return stored_entity, None
-        if self._published(f"{record_id}:1") != jsonstrict.canonical(track.model_dump(mode="json")):
+        if _remodelled(Track, self._published(f"{record_id}:1")) != \
+                jsonstrict.canonical(track.model_dump(mode="json")):
             return None
         stored_track = self._published(f"{current[1]}:1")
         if stored_track is None:
