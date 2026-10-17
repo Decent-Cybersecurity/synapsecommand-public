@@ -87,8 +87,8 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.4.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.5.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.2.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
 | Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `MANIFEST_SCHEMA_VERSION` |
@@ -348,6 +348,22 @@ it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ont
 profiles did not move. The runtime bridge `synapse-link16-bridge` is a sibling distribution under
 `packages/link16_bridge/` with a version of its own, 1.0.0; none of the axes above is its.
 
+**Dated note, 2026-10-16: the release after 3.4.0 is `3.5.0`, a MINOR, and the CDM schema moves a
+MINOR with it again, 3.1.0 → 3.2.0.** The NYC observation arc since `v3.4.0` added five `Adapter`
+subclasses, registered as `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and
+`airnow_hourly` — the roster twenty-two → twenty-seven — with their fixture sets, the modules
+`observation_contracts`, `decode_host` and `projection` and the `synapse-decode` command, and
+removed nothing; and it added one member to `EventType`, `ENVIRONMENTAL_OBSERVATION`, and two
+optional fields, `Event.validity` and `Track.attributes`, which §3.2's rule and `MIGRATIONS.md`'s
+table class as a MINOR of the CDM schema, so the schema moved 3.1.0 → 3.2.0 and the 3.2.0 contract
+is frozen under `tests/frozen/cdm/3.2.0/` beside 3.0.0 and 3.1.0. `gates/bump_derivation.py` read
+the arc as MINOR with nothing unruled before the number was typed, and derives MINOR over it once
+`MIGRATIONS.md`'s rulings in the 3.5.0 section are read; the release commit types that floor, and a
+schema MINOR is at least a package MINOR, so the two reasons agree. The Adapter API stays 3.1.0 (no
+member of the contract moved; the new adapters implement it), and the manifest and evidence schemas
+stay 2.1.0 and 2.0.0. SC-OES, the ontology and the profiles did not move. The bridge moves 1.0.0 →
+1.1.0 on its own version, and its floor moves to `synapse-cdm` 3.5.0.
+
 ---
 
 ## 5. Main advancement
@@ -380,7 +396,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.4.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.5.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

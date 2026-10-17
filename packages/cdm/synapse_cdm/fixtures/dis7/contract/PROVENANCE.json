@@ -26,7 +26,7 @@
       "classification": "PUBLIC",
       "operational_data": false,
       "personal_data": false,
-      "origin": "Vendored from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): its entity profile, a contract schema written for that bundle; not a payload. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-derived it for CDM 3.1.0: the published schemas/entity.schema.json at 3.1.0 with the profile's own $id and the bundle's allOf overlay, whose schema_version const moved from 3.0.0 to 3.1.0 and which is otherwise unchanged. The bundle's hash and size and the derived hash and size are pinned in spec/dis7_pin.json.",
+      "origin": "Vendored from the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository): its entity profile, a contract schema written for that bundle; not a payload. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-derived it for CDM 3.1.0, and re-derived again 2026-10-16 by the 3.5.0 release commit for CDM 3.2.0: the published schemas/entity.schema.json at 3.2.0 with the profile's own $id and the bundle's allOf overlay, whose schema_version const moved from 3.0.0 to 3.2.0 and which is otherwise unchanged. The bundle's hash and size and the derived hash and size are pinned in spec/dis7_pin.json.",
       "standard_ref": "dis7/spec/dis7_pin.json"
     },
     {

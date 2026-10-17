@@ -471,7 +471,7 @@ def test_one_realtime_row_becomes_this_event_and_the_station_this_entity():
             },
             "namespace": "NDBC standard meteorological data (stdmet)",
         },
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "severity": "INFO",
         "source": {
             **source,
@@ -520,7 +520,7 @@ def test_one_realtime_row_becomes_this_event_and_the_station_this_entity():
             "data": {"header": REALTIME_HEADER, "units": REALTIME_UNITS},
             "namespace": "NDBC standard meteorological data (stdmet)",
         },
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "source": {
             **source,
             "observed_at": "2026-04-28T12:00:00.000Z",

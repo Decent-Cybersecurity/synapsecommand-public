@@ -37,6 +37,8 @@ REFERENCE = SET / "reference"
 FROZEN_3_0_0 = REPO / "tests" / "frozen" / "cdm" / "3.0.0"
 #: The contract the release commit froze on 2026-10-11, when it typed CDM 3.1.0.
 FROZEN_3_1_0 = REPO / "tests" / "frozen" / "cdm" / "3.1.0"
+#: The contract the 3.5.0 release commit froze on 2026-10-16, when it typed CDM 3.2.0.
+FROZEN_3_2_0 = REPO / "tests" / "frozen" / "cdm" / "3.2.0"
 PUBLISHED = REPO / "schemas" / "link16_gateway"
 
 HANDOFF = ("air_flight_level", "air_msl", "air_sensor", "land_unknown_position",
@@ -205,8 +207,12 @@ def test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract()
     Re-read 2026-10-16, when the NYC observations arc was replayed onto `v3.4.0`: a Track now dumps
     CDM 3.2.0's `"attributes": null`, which the frozen 3.1.0 contract refuses as an unknown key
     (readers before writers; there is no 3.1.0 projection ledger), so that one null key is removed
-    before the 3.1.0 check, the way `_strip` removes it, and its refusal is asserted on its own."""
-    assert SCHEMA_VERSION == "3.1.0"
+    before the 3.1.0 check, the way `_strip` removes it, and its refusal is asserted on its own.
+
+    Re-read 2026-10-16, the 3.5.0 release commit: `SCHEMA_VERSION` reads 3.2.0, so the objects are
+    stamped 3.2.0, which the frozen 3.1.0 schemas' version pattern admits; every other assertion
+    stands. The full projection against the contract it is now written for is the next test."""
+    assert SCHEMA_VERSION == "3.2.0"
     frozen_3_1_0 = {kind: schemas.validator_for(json.loads(
         (FROZEN_3_1_0 / f"{kind}.schema.json").read_text())) for kind in ("entity", "track")}
     for name, method in (("air_sensor.json", "SENSOR"), ("subsurface_unknown_method.json",
@@ -216,7 +222,7 @@ def test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract()
         assert [e.message for e in frozen_3_1_0["track"].iter_errors(track)] == [
             "Additional properties are not allowed ('attributes' was unexpected)"], name
         for obj in (entity, track):
-            assert obj["schema_version"] == "3.1.0"
+            assert obj["schema_version"] == "3.2.0"
             known = {k: v for k, v in obj.items() if not (obj is track and k == "attributes")}
             assert list(frozen_3_1_0[obj["object_kind"]].iter_errors(known)) == [], name
             refusals = [e for e in _frozen(obj["object_kind"]).iter_errors(obj)]
@@ -229,6 +235,20 @@ def test_sensor_and_unknown_methods_validate_against_the_frozen_3_1_0_contract()
                     leaves.append(node.message)
                     pending.extend(node.context or ())
             assert any(f"'{method}' is not one of" in m for m in leaves), (name, leaves)
+
+
+def test_sensor_and_unknown_methods_validate_against_the_frozen_3_2_0_contract_whole():
+    """P03 under the contract the 3.5.0 release commit froze (2026-10-16): the full projection of a
+    SENSOR and an UNKNOWN report, stamped 3.2.0 and carrying the Track's null `attributes`,
+    validates against the frozen 3.2.0 entity and track schemas with nothing removed."""
+    frozen_3_2_0 = {kind: schemas.validator_for(json.loads(
+        (FROZEN_3_2_0 / f"{kind}.schema.json").read_text())) for kind in ("entity", "track")}
+    for name in ("air_sensor.json", "subsurface_unknown_method.json"):
+        entity, track = project(name)
+        assert "attributes" in track and track["attributes"] is None
+        for obj in (entity, track):
+            assert obj["schema_version"] == "3.2.0"
+            assert list(frozen_3_2_0[obj["object_kind"]].iter_errors(obj)) == [], name
 
 
 def _frozen(kind: str):

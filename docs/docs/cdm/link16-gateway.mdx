@@ -377,7 +377,7 @@ Each is recorded, with its ruling, in the repository's `docs/link16-gateway-impl
 - **I03, the operator release.** Besides a provider report at a higher incarnation, an audited operator command releases a quarantined reuse; the specification says "await provider resolution". Realised in the runtime bridge.
 - **REQ105, the reporting-authority half.** Notices carry no reporter, so the authority half of a drop cannot be checked: not claimed. Realised in the runtime bridge.
 - **The cursor's "inclusive contents after".** Read as strictly after the committed cursor. Realised in the runtime bridge.
-- **The configuration's `cdm_schema_version` default.** The specification's 4.0.0 target is 3.1.0 here, and the list is explicit. Realised in the runtime bridge.
+- **The configuration's `cdm_schema_version` default.** The specification's 4.0.0 target is 3.1.0 here, and the list is explicit. Realised in the runtime bridge. (Since 2026-10-16, the 3.5.0 release, the full projection is CDM 3.2.0: a sink must accept 3.2.0 to be served it, one that also accepts 3.0.0 is served the compatibility projection, and one that accepts only 3.1.0 is refused at negotiation, because no projection to 3.1.0 exists.)
 
 ## Limitations and what is not claimed
 

@@ -1210,7 +1210,7 @@
       },
       "namespace": "NEXRAD Level II (Archive II)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "nexrad2",
@@ -1322,7 +1322,7 @@
       },
       "namespace": "NEXRAD Level II (Archive II)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "nexrad2",
       "adapter_version": "1.0.0",

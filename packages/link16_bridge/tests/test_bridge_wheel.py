@@ -63,11 +63,11 @@ def test_installed_bridge_wheel_runs_outside_the_checkout(tmp_path):
                            capture_output=True, text=True, timeout=300)
     assert built.returncode == 0, built.stderr[-2000:]
     wheels = sorted((tmp_path / "dist").glob("*.whl"))
-    assert [w.name for w in wheels] == ["synapse_link16_bridge-1.0.0-py3-none-any.whl"]
+    assert [w.name for w in wheels] == ["synapse_link16_bridge-1.1.0-py3-none-any.whl"]
     names = zipfile.ZipFile(wheels[0]).namelist()
     assert "synapse_link16_bridge/cli.py" in names
-    assert "synapse_link16_bridge-1.0.0.dist-info/licenses/LICENSE" in names
-    assert "synapse_link16_bridge-1.0.0.dist-info/licenses/NOTICE" in names
+    assert "synapse_link16_bridge-1.1.0.dist-info/licenses/LICENSE" in names
+    assert "synapse_link16_bridge-1.1.0.dist-info/licenses/NOTICE" in names
     assert not [n for n in names if n.startswith(("tests/", "docs/"))]
     target = tmp_path / "site"
     installed = subprocess.run([sys.executable, "-m", "pip", "install", "--no-deps",
@@ -89,10 +89,10 @@ def test_installed_bridge_wheel_runs_outside_the_checkout(tmp_path):
     assert probe.returncode == 0, probe.stderr[-2000:]
     found = json.loads(probe.stdout)
     assert pathlib.Path(found["file"]).resolve().is_relative_to(target.resolve())
-    assert found["version"] == "1.0.0" and found["cdm"] is True
+    assert found["version"] == "1.1.0" and found["cdm"] is True
     (requirement,) = found["requires"]
     assert requirement.startswith("synapse-cdm")
-    assert set(requirement[len("synapse-cdm"):].split(",")) == {">=3.4.0", "<4"}
+    assert set(requirement[len("synapse-cdm"):].split(",")) == {">=3.5.0", "<4"}
 
     script = target / "bin" / "synapse-link16-bridge"
     reports = tmp_path / "reports"

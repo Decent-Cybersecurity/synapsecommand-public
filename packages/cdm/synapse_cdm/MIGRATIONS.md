@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.4.0` and `SCHEMA_VERSION` is `3.1.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.5.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -21,7 +21,10 @@ corrective the same day, a second package PATCH for a release pipeline's refusal
 at the 3.2.0 release of 2026-10-06, the second for the ordinary reason again; three MINORs apart
 at the 3.3.0 release of 2026-10-07, the third for the ordinary reason too; and still three MINORs
 apart at the 3.4.0 release of 2026-10-11, because both numbers moved a MINOR — the schema for the
-first time since 3.0.0, when `PositionSource` gained `SENSOR` and `UNKNOWN`.)
+first time since 3.0.0, when `PositionSource` gained `SENSOR` and `UNKNOWN`; and three MINORs apart
+again at the 3.5.0 release of 2026-10-16, both numbers moving a MINOR once more — the schema when
+`EventType` gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained `validity` and `Track` gained
+`attributes`.)
 
 ## What each bump means
 
@@ -213,7 +216,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.4.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.5.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -510,7 +513,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.4.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.5.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -590,13 +593,153 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.5.0 — 2026-10-16 — the NYC observation carrier: five observation adapter modules land, `readsb_trace` as #24, `nexrad2` as #25, `ndbc_stdmet` as #26, `coops_csv` as #27 and `airnow_hourly` as #28, the roster moves twenty-two to twenty-seven, `EventType` gains `ENVIRONMENTAL_OBSERVATION`, `Event` gains `validity` and `Track` gains `attributes` and the CDM schema moves 3.1.0 → 3.2.0, and the offline host command `synapse-decode` lands
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.4.0`, and `3.4.0` is what the index serves — `PUBLICATION.md` entry 26 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: 814 files** — for the 3.4.0 witness round, `MIGRATIONS.md`,
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.5.0` and
+`SCHEMA_VERSION` is `3.2.0` at this commit, in `version.py`, and the tag `v3.5.0` is to name the
+commit that carries this release state. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that
+watched the upload and is not asserted here before it has happened. The paragraph this replaces
+said that nothing in the section was in a release, that the newest release tag was `v3.4.0` and
+that `3.4.0` was what the index served (`PUBLICATION.md` entry 26) — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.4.0 -> 3.5.0 ON 2026-10-16, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.4.0` and derives MINOR with nothing unruled: on
+the landing commit, before any number was typed, it read "the arc since 3.4.0 derives MINOR with 0
+unruled, so the next release is at least 3.5.0", its `--json` reporting `pending.unruled` as the
+empty list and `pending.number` as `3.5.0`, and `--mutation-check` reads `1 check, 0 failed` on this
+tree from the moment the tag names it (until then the gate reads its rulings under the pending
+heading this commit removed and refuses the five units this section rules — the transitional
+reading every release commit whose arc carries a ruling records, and the release round reads the
+green at the tag). The floor comes from the public names, the modules and the fixture sets the
+landings below added and from nothing removed — the `Adapter` subclasses `ReadsbTraceAdapter`,
+`Nexrad2Adapter`, `NdbcStdmetAdapter`, `CoopsCsvAdapter` and `AirnowHourlyAdapter`, registered as
+`readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly`, their five fixture sets,
+the modules `observation_contracts.py`, `decode_host.py` and `projection.py`, and the
+`synapse-decode` entry point — and from the schema MINOR of the next paragraph. The units the table
+cannot decide are ruled in this section's five `**Bump ruling.**` paragraphs: the four the landings
+wrote (`EventType`, `Event`, `Track` and `_timestamp_in`) and the one this release adds,
+`version.py:KNOWN_CONTRACTS`; `assess()` did not move, because its wording already names both
+refusal grounds and every verdict a new pair needs. Over the arc the gate's table decides
+1218 signals, 272 MINOR and 946 PATCH, and the five rulings decide
+the rest. So the floor and the number are one number and no Version ruling is needed or present.
+`ADAPTER_API_VERSION` stays at `3.1.0`, and `MANIFEST_SCHEMA_VERSION` 2.1.0 and
+`EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release put them. The sibling distribution
+`synapse-link16-bridge` moves 1.0.0 -> 1.1.0 on its own version — it gained `negotiate.dump`, and its
+floor moves to `synapse-cdm>=3.5.0,<4` because it imports `projection.py` — and nothing under
+`packages/link16_bridge/` is read by this gate.
+
+**THE SCHEMA VERSION MOVED 3.1.0 -> 3.2.0 ON 2026-10-16, A MINOR ON ITS OWN TABLE.** `EventType`
+gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained `validity` and `Track` gained `attributes` in the
+CDM 3.2.0 landing of 2026-10-15 below, and nothing was removed, renamed or narrowed: the table at
+the top of this file puts "an optional field added" and "an enum member added" on the MINOR row,
+and VERSIONING.md §3.2 says the same. A 3.0.0 or 3.1.0 reader refuses every 3.2.0 Event and Track,
+because each carries the new key, populated or null, and an Event of the new type by its closed
+`enum` as well — the writer-newer refusal every minor carries, not a break of anything an older
+reader accepted; deployment is readers before writers. This commit types the number
+(`SCHEMA_VERSION = "3.2.0"`); re-exports `schemas/`, where six files now carry
+`x-cdm-schema-version: 3.2.0`, and of the four object schemas `event` and `track` differ from
+`tests/frozen/cdm/3.1.0/` by the new member or property, the definitions it reaches, their dated
+descriptions and the label, and `entity` and `plan_object` by the label alone (the union
+`cdm_object` carries the additions too, and `payload_gnss_interference` moved by the label alone);
+regenerates the goldens — 670 files written by `python -m synapse_cdm.harness --adapter <name>
+--update-golden` for every name `--list-adapters` prints, the harness reading 670 fixture verdicts,
+0 failed, the twenty Digital NOTAM goldens of the `aixm511` set written by the same harness from
+that set's own directory (20 passed, 0 failed), and the eight reference-position goldens under
+`fixtures/adsb/local/` re-stamped as the 3.4.0 release re-stamped them — each moving by its
+`schema_version` stamp alone, no other line of a golden changing in this commit; and freezes the
+four object schemas into `tests/frozen/cdm/3.2.0/` with their sha256 under provenance tag
+`v3.5.0`, commit `SELF`, the 3.1.0 form, which the round after the release resolves to the commit
+the tag names before any next package bump. `version.KNOWN_CONTRACTS` reads `("2.0.0", "2.1.0",
+"3.0.0", "3.1.0", "3.2.0")`; `assess("3.0.0", "3.2.0")` and `assess("3.1.0", "3.2.0")` read
+SUPPORTED, reader-newer, and `assess("3.2.0", "3.0.0")` and `assess("3.2.0", "3.1.0")` REFUSED,
+writer-newer, each shown on the frozen bytes by `tests/test_cdm_version_matrix.py` for a property,
+populated or null, and for the member. What stays at an older stamp, and why: the fourteen
+semantic-corpus files that read 3.0.0 stay there by the 3.4.0 section's choice — a 3.2.0 reader
+accepts them, so they keep exercising that acceptance — and so do the six egress inputs under
+`fixtures/c2sim/egress/` and `fixtures/geojson/egress/`, whose sha256 is pinned, and the three
+GeoJSON egress goldens that copy their stamp; `fixtures/link16_gateway/reference/` keeps the
+handoff's own `4.0.0`. Unlike the 3.4.0 release, the fourteen examples under `examples/sc-oes/` and
+`tests/semantic_corpus/SEM-014.json` move to 3.2.0: each carries a field only 3.2.0 defines (a
+`"validity": null` on every Event, a Track's `attributes`), which no older frozen contract accepts,
+so no older stamp can be true of them. The DIS 7 adapter's vendored entity profile pins the CDM
+version it was written against, so it is re-derived from the 3.2.0 entity schema with the DIS 7
+handoff bundle's overlay — whose `schema_version` const moves to 3.2.0 and which is otherwise
+unchanged — and its three vector documents are re-stamped, the 3.4.0 form;
+`fixtures/dis7/spec/dis7_pin.json` keeps the bundle's digests beside the derived ones, and
+`tests/test_cdm_dis7_schema.py` holds the derivation. No adapter that shipped before this release
+writes the new member or populates either new field: each of their Events dumps `"validity": null`
+and each Track `"attributes": null`, which `projection.dump_for(…, "3.0.0")` removes for a 3.0.0
+consumer, and a 3.1.0-only consumer has no projection (the Link 16 adapter refuses
+`cdm_schema="3.1.0"`, and the bridge's negotiation refuses a sink that accepts 3.1.0 alone).
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-16 — the release-state set and nothing else.**
+`version.py`'s three moved constants (`PACKAGE_VERSION`, `SCHEMA_VERSION`, `KNOWN_CONTRACTS`), their
+dated comments and the live readings in its docstring; this section's heading and its opening
+paragraphs, the one ruling it adds, the re-tensed sentences of the landing paragraphs below, a
+dated clause on the 3.4.0 witness round's paragraph, the introduction's two-number sentence, the two
+tag-command examples in the procedure and in the pipeline section, and the released note on the
+`Track.attributes` proposal; the schema re-export, the goldens, the eight reference-position
+goldens and the DIS 7 profile, vectors, pin rows, records and README of the paragraph above, and
+the `link16_gateway` fixture `README.md`'s dated stamp sentence; the evidence declaration of each
+new adapter and the narrowed `strict-icd-ranges` Limitation of `adapters/nexrad2.py`;
+one dated clause in `projection.py`'s docstring (3.2.0 is frozen and has no ledger); the package
+`README.md`'s availability sentence for the contracts and the command; the 3.2.0 freeze under
+`tests/frozen/cdm/` and its manifest entry; `RELEASE_NOTES.md`, rewritten for this release with
+every count derived; `README.md`'s tag example and its availability sentences for the new adapters
+and the contracts, and the same sentences on the documentation site's introduction and observation
+contracts pages; ADR 0012, accepted; `VERSIONING.md`'s two table cells, its tag-command example and
+a dated note under §4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated paragraph and
+its compatibility paragraph and example; `docs/docs/current-contracts.mdx`, regenerated, with a
+dated clause; `manifests/`, `docs/docs/cdm/support-matrix.mdx`, the schema-reference pages and the
+worked example, regenerated; the c2sim walkthrough's expectation `examples/c2sim/expected/`, written
+again by its `run.py --update` and moving by its stamp and by the `"validity": null` the CDM 3.2.0
+landing gave every Event, which that landing did not write into it, and the GeoPackage-to-GeoJSON
+walkthrough's expectation, written again by its `run.py --update` and moving by its stamp alone;
+the sc-oes examples and `SEM-014.json` re-stamped; the hand-written expected outputs of the
+`ndbc_stdmet`, `coops_csv` and `airnow_hourly` tests, their stamp literal alone; a dated clause on
+the `link16_gateway` documentation page (a sink that accepts only 3.1.0 is refused at
+negotiation); the repaired builder check of `tests/observation_support.py`, which refused bytecode
+another module's import had left beside a fixture builder, and which the wheel gate's slice on
+the landing's CI run read red, and now refuses only bytecode its own `--check` run writes; the two version literals `tests/test_cdm_packaging.py` pins and the one
+`tests/test_cdm_oes.py` pins; the 3.2.0 evidence in `tests/test_cdm_version_matrix.py`; the
+frozen-3.2.0 check in `tests/test_cdm_link16_gateway_mapping.py` and the refused 3.1.0 case in
+`tests/test_cdm_link16_gateway_adapter.py`; the re-derived DIS 7 digests and dated assertion in
+`tests/test_cdm_dis7_schema.py`; the frozen-without-a-ledger cases in `tests/test_cdm_projection.py`
+and the two input documents in `tests/test_cdm_observation_carrier.py`; the frozen 3.2.0 copies'
+rows, the row for the repaired check's comment and the retired `RELEASE_NOTES.md` exemption rows
+in `tests/test_cdm_prose_counts.py`; the readiness report's re-qualification; a dated note in the DIS 7 record; the bridge's 1.1.0, its
+floor and the two bridge test modules that read them; and the fifteenth `UNRULED_HISTORICAL_ARCS`
+row in `tests/test_cdm_bump_derivation.py`, for `("v3.4.0", "v3.5.0")` at five units — the five
+this section rules, compared set to set, written before the tag exists by the raw derivation from
+`v3.4.0` to this tree. Five declarations move with the release and not with the arc: each new
+adapter landed declaring `evidence.available: false` — "it becomes true at the first release that
+attaches them", its own words — and `tests/test_cdm_evidence.py` holds the field to the newest
+tag's tree, so this commit flips each to `true` with a sentence beside it that names no version,
+the form `link16_gateway`'s took at 3.4.0; the five manifests and the support matrix are
+regenerated.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Four things the
+release notes say and this section repeats because they are the honest boundary of the arc: every
+fixture of the new adapters is synthetic, written by its own pure-Python builder, and no byte or
+value of a real collection is in the tree, so the strict readings — NEXRAD's ICD ranges, AirNow's
+`no-reading` and `not-an-hour` refusals, the CO-OPS unit read verbatim from the request — have met
+the documents and not yet a real file; the documents the adapters read are cited and pinned, never
+carried, and the AirNow Data Exchange Guidelines' terms bind the consumer, not this package; the
+observation contracts were accepted on the maintainer's default with the contract owner's answer
+pending (ADR 0012), so an objection is a later MINOR beside what shipped; and the bridge
+distribution `synapse-link16-bridge` 1.1.0 is carried by the tag and the Release's source archives
+and installs from the tag, and no upload of it to the package index is made by this release.
+
+**What moved inside the distribution: 891 files** — for the release transition of 2026-10-16, 77 files the arc had not moved before it: 68 golden files that the CDM 3.2.0 landing below left as they were, because the objects they hold carry no Event and no Track, each moved by its `schema_version` stamp alone — under `fixtures/aixm511/dnotam/golden/`, `atsa_act_baseline_and_activation.cdm.json`, `atsa_act_baseline_and_activation.parsed.cdm.json`, `corrections_out_of_order.cdm.json`, `corrections_out_of_order.parsed.cdm.json`, `expiry.cdm.json`, `expiry.parsed.cdm.json`, `explicit_nil_values.cdm.json`, `explicit_nil_values.parsed.cdm.json`, `future_effective_change.cdm.json`, `future_effective_change.parsed.cdm.json`, `nav_uns_baseline_and_outage.cdm.json`, `nav_uns_baseline_and_outage.parsed.cdm.json`, `overlapping_tempdeltas.cdm.json`, `overlapping_tempdeltas.parsed.cdm.json`, `rwy_cls_baseline_and_closure.cdm.json`, `rwy_cls_baseline_and_closure.parsed.cdm.json`, `saa_act_activation_with_schedule.cdm.json`, `saa_act_activation_with_schedule.parsed.cdm.json`, `unresolved_references.cdm.json` and `unresolved_references.parsed.cdm.json`; under `fixtures/aixm511/golden/`, `airport_runway_navaid.cdm.json`, `airport_runway_navaid.parsed.cdm.json`, `airspace_baseline_polygon.cdm.json`, `airspace_baseline_polygon.parsed.cdm.json`, `airspace_deltas_same_feature.cdm.json`, `airspace_deltas_same_feature.parsed.cdm.json`, `airspace_hole_crs84_snapshot.cdm.json`, `airspace_hole_crs84_snapshot.parsed.cdm.json`, `vertical_structure_two_parts.cdm.json` and `vertical_structure_two_parts.parsed.cdm.json`; under `fixtures/aixm52/golden/`, `airport_runway_navaid.cdm.json`, `airport_runway_navaid.parsed.cdm.json`, `airspace_baseline_polygon.cdm.json`, `airspace_baseline_polygon.parsed.cdm.json`, `airspace_deltas_same_feature.cdm.json`, `airspace_deltas_same_feature.parsed.cdm.json`, `airspace_hole_crs84_snapshot.cdm.json`, `airspace_hole_crs84_snapshot.parsed.cdm.json`, `vertical_structure_two_parts.cdm.json` and `vertical_structure_two_parts.parsed.cdm.json`; under `fixtures/c2sim/golden/`, `initialisation_three_sides.cdm.json` and `initialisation_three_sides.parsed.cdm.json`; under `fixtures/dis7/golden/`, `equator_eastbound.cdm.json`, `equator_eastbound.parsed.cdm.json`, `north_pole_stationary.cdm.json`, `north_pole_stationary.parsed.cdm.json`, `unprojectable_with_extensions.cdm.json` and `unprojectable_with_extensions.parsed.cdm.json`; under `fixtures/geojson/golden/`, `antimeridian_bbox_repeated_values.cdm.json`, `feature_zero_meridian_clockwise_ring.cdm.json`, `null_and_empty_properties_typed_ids.cdm.json` and `six_geometries_baltic.cdm.json`; under `fixtures/geopackage/golden/`, `elevations_epsg4979_and_crs84.cdm.json`, `elevations_epsg4979_and_crs84.parsed.cdm.json`, `exercise_facilities_routes_areas.cdm.json`, `exercise_facilities_routes_areas.parsed.cdm.json`, `mixed_content_partial_read.cdm.json`, `mixed_content_partial_read.parsed.cdm.json`, `six_families_geometry_column.cdm.json` and `six_families_geometry_column.parsed.cdm.json`; under `fixtures/gmti/golden/`, `tasking_segments_parked_with_job_id_zero.cdm.json` and `tasking_segments_parked_with_job_id_zero.parsed.cdm.json`; under `fixtures/legion/golden/`, `entity_exercise_affiliation_and_nulls.cdm.json`; under `fixtures/link16_gateway/golden/`, `land_unknown_position.cdm.json`; under `fixtures/nits/golden/`, `datastream_unresolved_references.nits.cdm.json` and `datastream_unresolved_references.parsed.cdm.json`; under `fixtures/stanag4586/golden/`, `longitude_absent_from_the_presence_vector.cdm.json` and `longitude_absent_from_the_presence_vector.parsed.cdm.json`; eight files of the DIS 7 set — the entity profile `dis7-entity.schema.json` and the `PROVENANCE.json` record under `contract/`, the three vector documents `equator_eastbound.expected.json`, `north_pole_stationary.expected.json` and `unprojectable_with_extensions.expected.json` and the `PROVENANCE.json` record under `vectors/`, the pin record `dis7_pin.json` and the set's `README.md`; and the `link16_gateway` fixture `README.md` (its dated stamp sentence). The release also moved, among the files the arc had already moved, `version.py`, this file, the package's `README.md` (the contracts' and the command's availability sentence), `projection.py` (one dated clause), the five new adapter modules (each one's evidence declaration, and `adapters/nexrad2.py`'s narrowed Limitation), and the eight reference-position goldens under `fixtures/adsb/local/` and the 622 other goldens the landings below had moved, each of those goldens by its stamp alone; and 814 files the arc moved before the release — for the 3.4.0 witness round, `MIGRATIONS.md`,
 this section, the dated witness paragraphs in the release procedure and the pipeline section, and
 the index note in the 3.4.0 section being what moved in it. The landings below were counted
 against `v3.3.0` when they were written, beside the Link 16 landings the `3.4.0` section now
@@ -664,6 +807,9 @@ provenance in `tests/frozen/cdm/MANIFEST.json` to `af4c21a4e11762613c8d7a90e6202
 commit `v3.4.0` names, which is the release commit itself, as the 3.0.1 corrective resolved the
 3.0.0 contract's; `tests/test_cdm_version_matrix.py` now proves it by `git rev-list -n1 v3.4.0`.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.4.0`.
+(Dated 2026-10-16, at the 3.5.0 roll: those two clauses covered the witness round alone — the
+landings recorded below moved the distribution after it, the count clause above accounts for every
+file, and `PACKAGE_VERSION` reads `3.5.0` from the release commit on.)
 
 **THE CDM 3.2.0 LANDING, 2026-10-15 — the observation carrier: `EventType` gains
 `ENVIRONMENTAL_OBSERVATION`, `Event` gains `validity`, `Track` gains `attributes`, and the number is
@@ -681,16 +827,18 @@ whitespace (both tightened the same day, before the block shipped: "never 0" and
 are held, not only said, and the published schema carries `minimum: 1` and `pattern: \S`);
 `TrackAttributes` is `extra="forbid"`, and relaxing that one line is the whole change if a
 free bag is ruled instead (the proposal entry below asked whoever added the field to choose; the
-typed block is the maintainer's default of 2026-10-14, which the contract owner may still amend
-before the release). No other proposed field lands: the rest of "Proposed for the next MINOR" below
-is deferred. `SCHEMA_VERSION` reads `3.1.0`, released as `v3.4.0` (corrected 2026-10-16, at the
-replay onto that tag), so the files under `schemas/` are re-exported by
-`python -m synapse_cdm.schemas --out schemas` under that label and are MISLABELLED until the
-release commit types 3.2.0, re-stamps every golden, manifest and generated page, freezes the 3.2.0
-contract under `tests/frozen/cdm/3.2.0/` and extends `KNOWN_CONTRACTS`; a merge hold in the form of
-the CDM 3.1.0 landing's, in the `3.4.0` section below, covers this landing (corrected
-2026-10-16, at the replay onto `v3.4.0`), and the branch is not fast-forwarded to `main` before
-that commit. **Why, and
+typed block is the maintainer's default of 2026-10-14, which the contract owner could still have
+amended before the release; re-tensed 2026-10-16: the owner's answer was pending at the release,
+which carried the block as built, ADR 0012). No other proposed field lands: the rest of "Proposed for the next MINOR" below
+is deferred. `SCHEMA_VERSION` read `3.1.0`, released as `v3.4.0` (corrected 2026-10-16, at the
+replay onto that tag), so the files under `schemas/` were re-exported by
+`python -m synapse_cdm.schemas --out schemas` under that label and were MISLABELLED until the
+release commit of 2026-10-16 typed 3.2.0, re-stamped every golden, manifest and generated page,
+froze the 3.2.0 contract under `tests/frozen/cdm/3.2.0/` and extended `KNOWN_CONTRACTS`; a merge
+hold in the form of the CDM 3.1.0 landing's, in the `3.4.0` section below, covered this landing
+(corrected 2026-10-16, at the replay onto `v3.4.0`), and the branch was not fast-forwarded to `main`
+before that commit, which held for the landing commit and stopped holding at the release commit
+(re-tensed 2026-10-16, at the 3.5.0 roll). **Why, and
 what follows.** (i) The reason: the CDM has no category for an environmental measurement or a model
 product, and no event can state the interval its measurement covers, while the observation adapters
 that follow — station text, weather radar, gridded fields, imagery and product references — need
@@ -721,7 +869,9 @@ every amendment to ADRs 0001–0010 is, and it is not written here. (vi) The mem
 `attributes` ship in one release together with adapters that produce them — the readsb trace
 adapter for `Track.attributes`, at least one observation adapter for the member and `validity` —
 so that no member ships with no producer and joins `PLAN_INJECT` and `SIM_RESULT` as an
-unestablished one; if no producer is ready, the release does not carry the addition. Gap 16's Track
+unestablished one; if no producer is ready, the release does not carry the addition (re-tensed
+2026-10-16: the 3.5.0 release carries all three with their producers — `readsb_trace` for
+`Track.attributes`, `nexrad2` and the three station-text adapters for the member and `validity`). Gap 16's Track
 half is closed with this landing (`FORMAT_COVERAGE.md`, dated) and its `TrackSample` half stays
 open; the Legion adapter is not re-labelled and keeps parking its completeness figures on the
 Entity; `tests/test_cdm_format_coverage.py` now asserts the block's shape where it asserted the
@@ -774,6 +924,12 @@ whose `carried_samples` is not the length of `samples` — the CDM table's "an o
 row; a Track without the field, which is every Track that validated before, is accepted exactly as
 before.
 
+**Bump ruling.** `synapse_cdm/version.py:KNOWN_CONTRACTS` — MINOR: the tuple gains `3.2.0`, the
+contract frozen in the release commit under `tests/frozen/cdm/3.2.0/`; no member is removed, and the
+only verdicts that move are the 3.0.0/3.2.0 and 3.1.0/3.2.0 pairs', from UNKNOWN (a minor nobody had
+frozen) to SUPPORTED reader-newer and REFUSED writer-newer, each shown by
+`tests/test_cdm_version_matrix.py`.
+
 **THE OBSERVATION LAYER, 2026-10-15 — the four observation payload contracts, the helpers the
 observation adapters build with, and the offline host command `synapse-decode`; no schema moves
 and no adapter lands.** The new module `observation_contracts.py` holds the four named contracts
@@ -810,7 +966,8 @@ bound is a `LimitBasis` in `BOUNDS_BASIS`; a symbolic link to a regular file is 
 recorded policy; and `json_number` and `utf8_text` join the helpers. Outside the
 distribution: `schemas/observation/` (four files), the documentation page
 `docs/docs/cdm/observation-contracts.mdx` and a note on the CDM overview page, a row and a dated
-paragraph of the parser-safety page, the proposed `docs/adr/0012-observation-contracts.md`, a
+paragraph of the parser-safety page, the proposed `docs/adr/0012-observation-contracts.md`
+(accepted at the 3.5.0 release, 2026-10-16), a
 sentence of the root `README.md`, the builder convention in `CONTRIBUTING.md`, the wheel gate's
 `synapse-decode` check, observation schema regeneration and module lists in
 `gates/wheel_install.py`, the shared test support `tests/observation_support.py`, the new test
@@ -952,7 +1109,9 @@ digest injected as `source_hash`, and the text's own as `frame_sha256` when a gz
 position). The same landing narrows `nexrad2`'s claim recorded in the paragraph above: Table
 XVII-I's data ranges are not validation rules, and a moment's summary is not range-checked; the
 docstring, the package README, the parser audit and the coverage section now say so; the
-`strict-icd-ranges` Limitation keeps its sentence until its generated manifest can move with it. Outside the
+`strict-icd-ranges` Limitation keeps its sentence until its generated manifest can move with it (it
+moved in the release commit of 2026-10-16, with `manifests/nexrad2.json` and the support matrix
+regenerated). Outside the
 distribution: the three generated manifests, the regenerated support matrix, the root `README.md`,
 `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md` (three rows marked
 post-3.4.0, corrected 2026-10-16 at the replay onto `v3.4.0`) and `.gitattributes` (`*.stdmet`,
@@ -15068,7 +15227,8 @@ evidence that was missing when they were first written down:
   `completeness_basis` — and a free bag is the one-line relaxation of `extra` if that is ruled
   instead. No per-sample field was added, the Legion adapter was not re-labelled and keeps its
   figures on the Entity, and gap 16's `TrackSample` half stays open. See the CDM 3.2.0 landing
-  record of 2026-10-15.
+  record of 2026-10-15. **Released 2026-10-16** in the 3.5.0 section's release, with its producer
+  `readsb_trace`.
 - **`Position.baro_alt_m`** (or `Entity.baro_alt_m` — the choice is part of the work) —
   `FORMAT_COVERAGE.md` gap 9, and the strongest-evidenced of these. `Position.alt_m` is
   documented as metres above the WGS84 ellipsoid, which is what an ADS-B type code 20-22 frame

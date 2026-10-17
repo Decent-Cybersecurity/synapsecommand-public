@@ -24,8 +24,10 @@ repo_bound = pytest.mark.skipif(REPO is None, reason="repository-bound: reads fi
                                                      "only in a checkout of the repository")
 
 
-def test_the_version_is_1_0_0_and_dynamic():
-    assert _version.__version__ == "1.0.0"
+# Renamed 2026-10-16 (`test_the_version_is_1_0_0_and_dynamic` until then): the bridge moved
+# 1.0.0 -> 1.1.0 with the synapse-cdm 3.5.0 release, a MINOR for `negotiate.dump` and the floor.
+def test_the_version_is_1_1_0_and_dynamic():
+    assert _version.__version__ == "1.1.0"
     assert PYPROJECT["project"]["dynamic"] == ["version"]
     assert PYPROJECT["tool"]["setuptools"]["dynamic"]["version"] == {
         "attr": "synapse_link16_bridge._version.__version__"}
@@ -34,7 +36,8 @@ def test_the_version_is_1_0_0_and_dynamic():
 def test_the_dependency_floor_and_the_absence_of_a_test_extra():
     project = PYPROJECT["project"]
     assert project["name"] == "synapse-link16-bridge"
-    assert project["dependencies"] == ["synapse-cdm>=3.4.0,<4"]
+    # 3.4.0 until 2026-10-16: the bridge imports `synapse_cdm.projection`, first carried by 3.5.0
+    assert project["dependencies"] == ["synapse-cdm>=3.5.0,<4"]
     assert "optional-dependencies" not in project
     assert project["requires-python"] == ">=3.11"
     assert (project["license"], project["license-files"]) == ("Apache-2.0", ["LICENSE", "NOTICE"])

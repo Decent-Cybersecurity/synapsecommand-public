@@ -207,7 +207,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -252,7 +252,7 @@
         }
       }
     ],
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -336,7 +336,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -412,7 +412,7 @@
       "6f1ead77-e588-5084-bfac-676ec0f25c5c"
     ],
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
@@ -496,7 +496,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -572,7 +572,7 @@
       "d0806d3a-8699-5e49-9389-b87c8fafdac3"
     ],
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
@@ -656,7 +656,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -732,7 +732,7 @@
       "799a5336-605b-58f5-849a-4e68cae3fdbb"
     ],
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",

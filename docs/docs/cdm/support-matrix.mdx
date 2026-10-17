@@ -121,7 +121,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - a HourlyAQObs AQI field is carried with the unit AQI under the fact sheet's definition, an index with no other unit; a concentration's unit is its own *_Unit field, verbatim
 - a HourlyAQObs line stating neither an AQI nor a concentration is refused no-reading, and a HourlyData line with a blank value or unit is refused blank-value: the fact sheets say only valid data are reported, and the design record holds no such line
 - AirNow's hourly files carry no per-value quality flag, so every contract states quality_flags_basis; the data are preliminary, and the AirNow Data Exchange Guidelines' terms bind the consumer, not this package
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `ais` — AIS
 
@@ -320,7 +320,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the request's units (metric or english) is every value's unit, verbatim under the request parameter's namespace; no unit string is derived from it, and wind's degrees direction is the one value with a unit of its own
 - a blank field is refused blank-value: the design record does not hold how the API writes a missing sample, so this module neither reads a blank as a sentinel nor drops the reading
 - wind's second Direction column, the compass point, is text and not a measurement; it stays in each Event's residual row
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `dis7` — DIS 7 Entity State PDU
 
@@ -468,7 +468,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - a file with no units line (before 2007) states no unit, so each value is an Absence of cause unit_unknown and the number stays in the Event's residual row; nothing assumes the unit a later file states
 - each row is one instant, observed_at and both ends of validity.effective; the averaging windows the measurement descriptions give for a column (WSPD over eight minutes, PTDY over three hours) are not stated as intervals
 - NDBC's text files print no per-value quality flag (NDBC T80-10, December 2023), so every contract states quality_flags_basis instead of flags
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `nexrad2` — NEXRAD Level II (Archive II) volume translator
 
@@ -486,9 +486,9 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - message 1 (the legacy radial, pre-Build 10), message 29 (model data, the _MDM record) and a radial whose Compression Indicator is 1 (bzip2) or 2 (zlib) are refused by name and not decoded; an archive version other than 06 or 07 is refused
 - the metadata record's messages (15, 32, 13, 18, 3, 5, 2) and the RDA status messages (2) among the radials are framed and counted by type in the site Entity's residual, not decoded; the VCP is read from each radial's VOL block, not from message 5
 - Event.geometry is the radar site's point, not the area a sweep covers: no gate or beam geometry is computed, and the gates' ranges are the contract's first_gate_range and gate_interval
-- every range ICD 2620002Y states for a field this module reads is a validation rule, so a volume a lenient reader would take can be refused; a data block or moment the ICD does not name is refused, not skipped (note 9 recommends skipping it); spare and reserved octets are not read except the moment block's Reserved word, which is carried
+- every range ICD 2620002Y Tables XVII-A, -B, -E, -F and -H state for a field this module reads is a validation rule, so a volume a lenient reader would take can be refused; Table XVII-I's data ranges are not rules (they are a moment's typical values, note 20), so a moment's gate codes are converted with each radial's own scale and offset and the summary is not range-checked (narrowed 2026-10-16, the 3.5.0 release); a data block or moment the ICD does not name is refused, not skipped (note 9 recommends skipping it); spare and reserved octets are not read except the moment block's Reserved word, which is carried
 - the VOL block's ZDR Bias Estimate Weighted Mean is carried as the Integer*2 it is stated as: the ICD's note 33 on its scaling is not in the design record, so no unit is stated for it
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `pntmap` — PNTMAP
 
@@ -521,7 +521,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - TrackSample holds a position and an instant only, so a point's ground speed, element 5, flags, vertical rate, aircraft object, source, geometric altitude and rate, IAS and roll stay in the Entity's residual (`residual.data.trace[i]`, sample i's point as stated), with the readings taken from them in `attributes.readsb_samples`, arrays keyed by the same index; only the last point's speed, track and vertical rate reach Entity.kinematics
 - a barometric altitude is carried as Position.vertical in feet against BARO and never as alt_m; only a geometric altitude reaches alt_m, converted from feet (x 0.3048). When element 3 is barometric, element 10's geometric altitude stays in the residual
 - the database fields r, t, desc, ownOp and year are carried verbatim in the residual and read for nothing; no packaged fixture states them, because every registration mark is a claim about a real allocation, so the shipped set is readsb's database-less form
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `stanag4586` — STANAG 4586 DLI
 

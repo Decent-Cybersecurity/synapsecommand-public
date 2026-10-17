@@ -2,14 +2,22 @@
 
 ## Status
 
-Proposed — 2026-10-15. The four contracts below are implemented in
-`packages/cdm/synapse_cdm/observation_contracts.py`, their JSON Schemas are published under
-`schemas/observation/`, and their text is `docs/docs/cdm/observation-contracts.mdx`; none of it is
-in a release. The contracts are the contract owner's to freeze. This ADR becomes *Accepted* only
-when that acceptance is given, and the line then reads in the form of ADRs 0001–0010:
-"Accepted — <owner>, <date>, on the private <document>, which is not in this repository". Until
-then a field the owner renames is renamed in the models, the schemas and the page in one change,
-and the release that would first carry the contracts waits for the acceptance.
+Accepted — M, 2026-10-16, on the maintainer's private ruling of 2026-10-14 that took the
+observation carrier's defaults, which is not in this repository; the 3.5.0 release is the first to
+carry the contracts. The contract owner's own answer was pending at acceptance: an objection to a
+name or a field is read against the released contracts and becomes a later MINOR that adds beside
+what shipped (a renamed contract or field is an addition next to the old one), never a rewrite of
+it.
+
+Proposed — 2026-10-15, superseded by the line above on 2026-10-16. The four contracts below are
+implemented in `packages/cdm/synapse_cdm/observation_contracts.py`, their JSON Schemas are
+published under `schemas/observation/`, and their text is `docs/docs/cdm/observation-contracts.mdx`;
+none of it was in a release. The contracts were the contract owner's to freeze, and this ADR was to
+become *Accepted* when that acceptance was given, in the form of ADRs 0001–0010: "Accepted —
+<owner>, <date>, on the private <document>, which is not in this repository". Until then a field the
+owner renamed was to be renamed in the models, the schemas and the page in one change, and the
+release that would first carry the contracts was to wait for the acceptance; the maintainer
+accepted on that default instead, so the release did not wait.
 
 ## Context
 

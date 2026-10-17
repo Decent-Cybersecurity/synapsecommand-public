@@ -1235,11 +1235,15 @@ class Nexrad2Adapter(Adapter):
             ),
             Limitation(
                 id="strict-icd-ranges",
-                summary="every range ICD 2620002Y states for a field this module reads is a "
-                "validation rule, so a volume a lenient reader would take can be refused; a "
-                "data block or moment the ICD does not name is refused, not skipped (note 9 "
-                "recommends skipping it); spare and reserved octets are not read except the "
-                "moment block's Reserved word, which is carried",
+                summary="every range ICD 2620002Y Tables XVII-A, -B, -E, -F and -H state for a "
+                "field this module reads is a validation rule, so a volume a lenient reader "
+                "would take can be refused; Table XVII-I's data ranges are not rules (they are "
+                "a moment's typical values, note 20), so a moment's gate codes are converted "
+                "with each radial's own scale and offset and the summary is not range-checked "
+                "(narrowed 2026-10-16, the 3.5.0 release); a data block or moment the ICD does "
+                "not name is refused, not skipped (note 9 recommends skipping it); spare and "
+                "reserved octets are not read except the moment block's Reserved word, which "
+                "is carried",
             ),
             Limitation(
                 id="zdr-bias-unscaled",
@@ -1249,16 +1253,21 @@ class Nexrad2Adapter(Adapter):
             ),
             Limitation(
                 id="evidence-availability",
-                summary="`evidence.available` is false because no published Release carries "
-                "this adapter's records yet; it becomes true at the first release that "
-                "attaches them",
+                summary="the evidence RECORD for this adapter is not IN the distribution: "
+                "`evidence/` is untracked and unpackaged, CI generates the set on every "
+                "run, and the release pipeline generates the records for every shipped "
+                "adapter and attaches them to the GitHub Release of the version it "
+                "publishes. `evidence.available` is true because every published "
+                "distribution that carries this adapter has that Release, so its records "
+                "are retrievable by a third party; it says nothing about what the wheel "
+                "contains",
             ),
         ],
         limitations_empty_reason=None,
         residual=ResidualStance.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     TRANSFORMS: dict[str, str] = {

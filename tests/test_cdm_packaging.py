@@ -405,6 +405,13 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     `link16_gateway` adapter with its fixture set added, nothing removed — and the schema took a
     MINOR of its own for the first time since 3.0.0, because `PositionSource` gained `SENSOR` and
     `UNKNOWN`: the numbers are `3.4.0` and `3.1.0`, each derived on its own table.
+
+    **AND ON 2026-10-16 IT STAYED THREE MINORS WIDE ONCE MORE, BOTH NUMBERS MOVING A MINOR AGAIN.**
+    The NYC observation arc's release commit typed `3.5.0` at the derivation gate's floor — five
+    observation adapter modules with their fixture sets added, nothing removed — and the schema took a
+    MINOR of its own, because `EventType` gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained
+    `validity` and `Track` gained `attributes`: the numbers are `3.5.0` and `3.2.0`, each derived
+    on its own table.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -424,12 +431,12 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.4.0", "3.1.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.5.0", "3.2.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "3.4.0 and 3.1.0. They are three MINORs apart since 2026-10-11, the 3.4.0 release, as "
-        "they were at 3.3.0 — the Link 16 gateway arc added the link16_gateway adapter, a package "
-        "MINOR, and PositionSource gained two members, a schema MINOR, so each number moved a "
-        "MINOR on its own table — so the sweep above is quiet and kept for the day a schema "
+        "3.5.0 and 3.2.0. They are three MINORs apart since 2026-10-16, the 3.5.0 release, as "
+        "they were at 3.4.0 — the NYC observation arc added five adapter modules, a package MINOR, and "
+        "EventType gained a member while Event and Track gained an optional field each, a schema "
+        "MINOR, so each number moved a MINOR on its own table — so the sweep above is quiet and kept for the day a schema "
         "change closes the gap. If you bumped one of them just now: that is the expected event, "
         "and the fix is to update this assertion to the two numbers you now mean, not to re-link "
         "them"

@@ -47,10 +47,10 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.4.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.5.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
-    CDM schema            3.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
+    CDM schema            3.2.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
                                   every serialised object, governed by ``MIGRATIONS.md``.
                                   (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
                                   only. The package did not follow it for two days and then did,
@@ -105,7 +105,13 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   package took 3.4.0 for that adapter and that schema MINOR
                                   together — a schema MINOR obliges at least a package MINOR,
                                   and here the package's floor was a MINOR on its own account
-                                  as well.)
+                                  as well. And on 2026-10-16, the 3.5.0 release, the wire
+                                  contract moved a MINOR again: ``EventType`` gained
+                                  ``ENVIRONMENTAL_OBSERVATION``, ``Event`` gained ``validity``
+                                  and ``Track`` gained ``attributes``, each an addition, for the
+                                  observation adapters, so the schema read 3.2.0, and the
+                                  package took 3.5.0 for those adapter modules and that schema
+                                  MINOR together, on the same two grounds as 3.4.0.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -158,8 +164,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.4.0`` and ``SCHEMA_VERSION`` is ``3.1.0``, and this paragraph is the
-fifteenth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.5.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
+sixteenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -249,7 +255,17 @@ Link 16 gateway arc since ``v3.3.0`` added the ``Link16GatewayAdapter`` subclass
 3.0.0 -> 3.1.0 — ``PositionSource`` gained ``SENSOR`` and ``UNKNOWN``, MIGRATIONS.md's "an enum
 member added" row. ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled
 once MIGRATIONS.md's rulings in the 3.4.0 section are read, and the two numbers read 3.4.0 and
-3.1.0. MIGRATIONS.md's 3.4.0 section is the record.)
+3.1.0. MIGRATIONS.md's 3.4.0 section is the record. **Corrected a thirteenth time 2026-10-16, the
+3.5.0 release, and the parting stays three MINORs wide because both numbers moved a MINOR once
+more**: the NYC observation arc since ``v3.4.0`` added five ``Adapter`` subclasses, registered as
+``readsb_trace``, ``nexrad2``, ``ndbc_stdmet``, ``coops_csv`` and ``airnow_hourly``, with their
+fixture sets, the shared modules ``observation_contracts``, ``decode_host`` and ``projection`` and
+the ``synapse-decode`` host command, and removed nothing, and it moved the wire contract 3.1.0 ->
+3.2.0 — ``EventType`` gained ``ENVIRONMENTAL_OBSERVATION``, ``Event`` gained ``validity`` and
+``Track`` gained ``attributes``, MIGRATIONS.md's MINOR row ("an optional field added; an enum
+member added"). ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled once
+MIGRATIONS.md's rulings in the 3.5.0 section are read, and the two numbers read 3.5.0 and 3.2.0.
+MIGRATIONS.md's 3.5.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -414,7 +430,17 @@ from typing import NamedTuple
 #: that carries one of the two members, by its closed `enum`, and accepts one that does not —
 #: the WRITER_NEWER refusal `assess()` states for every minor, not a MAJOR. The 3.1.0 contract is
 #: frozen under `tests/frozen/cdm/3.1.0/` beside 3.0.0, with `SELF` provenance under `v3.4.0`.
-SCHEMA_VERSION = "3.1.0"
+#: MOVED 3.1.0 -> 3.2.0 on 2026-10-16, a MINOR, by the 3.5.0 release commit: `EventType` gained
+#: `ENVIRONMENTAL_OBSERVATION`, `Event` gained the optional `validity` and `Track` the optional
+#: `attributes` (the NYC observation carrier; they landed in the models on 2026-10-15 with this
+#: line still at 3.1.0, the 3.1.0 landing's form), and nothing was removed, renamed or narrowed —
+#: MIGRATIONS.md's MINOR row, "an optional field added; an enum member added". A frozen 3.0.0 or
+#: 3.1.0 reader refuses a 3.2.0 Event or Track, because each carries the new key, populated or
+#: null, and every published schema is `additionalProperties: false`; it accepts the 3.2.0
+#: objects of the other two kinds — the WRITER_NEWER refusal `assess()` states for every minor,
+#: not a MAJOR. The 3.2.0 contract is frozen under `tests/frozen/cdm/3.2.0/` beside 3.0.0 and
+#: 3.1.0, with `SELF` provenance under `v3.5.0`.
+SCHEMA_VERSION = "3.2.0"
 
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
@@ -532,7 +558,20 @@ SCHEMA_VERSION = "3.1.0"
 #: needed. The sibling distribution `synapse-link16-bridge` under `packages/link16_bridge/` has a
 #: version of its own and is outside this one. `ADAPTER_API_VERSION` stays at 3.1.0, and
 #: `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
-PACKAGE_VERSION = "3.4.0"
+#: Moved 3.4.0 -> 3.5.0 on 2026-10-16, a MINOR, and this one IS the derived floor — for the same
+#: two reasons as 3.4.0: the NYC observation arc since `v3.4.0` adds five `Adapter` subclasses,
+#: registered as `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly`, with
+#: their fixture sets, the modules `observation_contracts`, `decode_host` and `projection` and the
+#: `synapse-decode` host command, and removes nothing — the roster moves twenty-two ->
+#: twenty-seven — and it moves `SCHEMA_VERSION` 3.1.0 -> 3.2.0 (above), and a schema MINOR is at
+#: least a package MINOR. `gates/bump_derivation.py` read the arc as MINOR with nothing unruled
+#: and the next release at least 3.5.0 before this number was typed, and derives MINOR over it
+#: with nothing unruled once MIGRATIONS.md's rulings in the 3.5.0 section are read, so the gate's
+#: floor and this number are one number and no Version ruling is needed. The sibling distribution
+#: `synapse-link16-bridge` moves 1.0.0 -> 1.1.0 on its own version and stays outside this one.
+#: `ADAPTER_API_VERSION` stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and
+#: `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.5.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
@@ -701,7 +740,10 @@ class Compatibility(NamedTuple):
 #: 3.1.0 joined on 2026-10-11, frozen in the release commit `v3.4.0` names (the manifest's `SELF`
 #: provenance), and is the first minor of major 3: the 3.0.0/3.1.0 pair is the first within-major
 #: pair of this major the matrix holds evidence for.
-KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0", "3.0.0", "3.1.0")
+#: 3.2.0 joined on 2026-10-16, frozen in the release commit `v3.5.0` names (the manifest's `SELF`
+#: provenance): the matrix holds evidence for 3.0.0/3.2.0 and 3.1.0/3.2.0 as well, every
+#: within-major pair `assess()` answers.
+KNOWN_CONTRACTS: tuple[str, ...] = ("2.0.0", "2.1.0", "3.0.0", "3.1.0", "3.2.0")
 
 _MATRIX = "tests/test_cdm_version_matrix.py"
 _FROZEN = "tests/frozen/cdm/MANIFEST.json"

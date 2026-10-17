@@ -116,7 +116,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -260,7 +260,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -404,7 +404,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -616,7 +616,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -801,7 +801,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -978,7 +978,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1158,7 +1158,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1297,7 +1297,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1472,7 +1472,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1636,7 +1636,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1804,7 +1804,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "c2sim",
       "adapter_version": "1.0.0",
@@ -1947,7 +1947,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -1971,7 +1971,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "8ef973ef-6198-5b42-87d4-823502a6c63b",
@@ -2109,7 +2110,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -2133,7 +2134,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "75d435a2-906b-5462-a74f-c28202fd6195",
@@ -2226,7 +2228,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -2251,7 +2253,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "4fb3011f-4bb6-5619-8c5b-9e8b8b4a9a2e",
@@ -2332,7 +2335,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -2357,7 +2360,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "50cd55b5-cd7e-571f-a5e6-b00f027fc5e5",
@@ -2479,7 +2483,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -2503,7 +2507,8 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   },
   {
     "event_id": "b3b117d9-17a1-52af-90a3-072044260baa",
@@ -2572,7 +2577,7 @@
       },
       "namespace": "C2SIM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "c2sim",
@@ -2596,6 +2601,7 @@
         "system": "C2SIM"
       }
     ],
-    "status": null
+    "status": null,
+    "validity": null
   }
 ]

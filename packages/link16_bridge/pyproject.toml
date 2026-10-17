@@ -29,8 +29,9 @@ classifiers = [
 ]
 # The CDM release that carries the `link16_gateway` adapter and the PositionSource members SENSOR
 # and UNKNOWN; below the next package major. Everything else at runtime is the standard library
-# (sqlite3, http.server, http.client, ssl, hmac).
-dependencies = ["synapse-cdm>=3.4.0,<4"]
+# (sqlite3, http.server, http.client, ssl, hmac). Raised 3.4.0 -> 3.5.0 on 2026-10-16 with the
+# bridge's 1.1.0: the bridge imports `synapse_cdm.projection`, which 3.5.0 is the first to carry.
+dependencies = ["synapse-cdm>=3.5.0,<4"]
 
 [project.scripts]
 synapse-link16-bridge = "synapse_link16_bridge.cli:main"

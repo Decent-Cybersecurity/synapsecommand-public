@@ -7,7 +7,9 @@ until then: the PUBLISHED schemas under `schemas/`, re-exported from the models,
 them; and the FROZEN 3.0.0 contract under `tests/frozen/cdm/3.0.0/`, which must refuse them. The
 second half is the consequence `MIGRATIONS.md` records for the landing — a reader at 3.0.0 refuses
 the member, and refuses a `validity` or `attributes` key populated or null — shown on bytes here
-rather than argued.
+rather than argued. (Dated 2026-10-16, the 3.5.0 release commit: `SCHEMA_VERSION` reads 3.2.0, the
+3.2.0 contract is frozen under `tests/frozen/cdm/3.2.0/`, and the two input documents below read
+3.2.0, the contract whose fields they carry; nothing else here moved.)
 
 Every expectation below is a literal written by hand: the member list, the error locations, the
 messages and the dumped blocks. Nothing is compared with output the code under test produced.
@@ -53,7 +55,7 @@ MEMBERS = [
 
 def event(**overrides) -> dict:
     doc = {
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "object_kind": "event",
         "source": SOURCE,
         "source_ids": IDS,
@@ -69,7 +71,7 @@ def event(**overrides) -> dict:
 
 def track(**overrides) -> dict:
     doc = {
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "object_kind": "track",
         "source": SOURCE,
         "source_ids": IDS,

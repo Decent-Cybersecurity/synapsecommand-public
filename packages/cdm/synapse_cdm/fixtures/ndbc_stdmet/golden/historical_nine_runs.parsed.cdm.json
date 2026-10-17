@@ -273,7 +273,7 @@
       },
       "namespace": "NDBC standard meteorological data (stdmet)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "ndbc_stdmet",
@@ -583,7 +583,7 @@
       },
       "namespace": "NDBC standard meteorological data (stdmet)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "ndbc_stdmet",
@@ -893,7 +893,7 @@
       },
       "namespace": "NDBC standard meteorological data (stdmet)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "ndbc_stdmet",
@@ -998,7 +998,7 @@
       },
       "namespace": "NDBC standard meteorological data (stdmet)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "ndbc_stdmet",
       "adapter_version": "1.0.0",

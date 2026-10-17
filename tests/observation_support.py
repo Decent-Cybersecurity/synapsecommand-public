@@ -186,6 +186,14 @@ def builder_problems(
     2026-10-15: a builder that writes beside wherever it is run from leaves a file the fixture
     directory's snapshot never sees), bytecode left beside the builder."""
     before, cwd_before = _snapshot(fixture_dir), _snapshot(cwd)
+    # Bytecode directories are read before and after as well (2026-10-16): the claim is that the
+    # `--check` run writes none, not that none exists. In one pytest session other modules import
+    # their own `spec/build_fixtures.py` in memory, and an interpreter without `-B` leaves
+    # `spec/__pycache__` behind them; the wheel gate's slice runs exactly such a session against
+    # the installed package, where an absolute "no `__pycache__` anywhere" reading failed for the
+    # five observation adapters on CI run 38976967421 while the kit, which sets
+    # PYTHONDONTWRITEBYTECODE, never saw it.
+    pycache_before = _pycache_dirs(fixture_dir)
     result = run_builder_check(fixture_dir, cwd, python)
     after, cwd_after = _snapshot(fixture_dir), _snapshot(cwd)
     problems = []
@@ -197,9 +205,17 @@ def builder_problems(
         problems.append(f"--check changed the fixture directory: {_changed(before, after)}")
     if cwd_after != cwd_before:
         problems.append(f"--check changed its working directory: {_changed(cwd_before, cwd_after)}")
-    if any(p.name == "__pycache__" for p in fixture_dir.rglob("*")):
-        problems.append("bytecode was written under the fixture directory")
+    written = sorted(_pycache_dirs(fixture_dir) - pycache_before)
+    if written:
+        problems.append(f"bytecode was written under the fixture directory: {written}")
     return problems
+
+
+def _pycache_dirs(directory: pathlib.Path) -> set[str]:
+    """Every `__pycache__` directory under `directory`, relative, as the bytecode delta's basis."""
+    return {
+        p.relative_to(directory).as_posix() for p in directory.rglob("__pycache__") if p.is_dir()
+    }
 
 
 def load_builder(path: pathlib.Path, name: str = "build_fixtures") -> types.ModuleType:

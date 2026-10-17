@@ -208,7 +208,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -257,7 +257,7 @@
         }
       }
     ],
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -494,7 +494,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -543,7 +543,7 @@
         }
       }
     ],
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -707,7 +707,7 @@
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [],
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4676",
@@ -869,7 +869,7 @@
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [],
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4676",

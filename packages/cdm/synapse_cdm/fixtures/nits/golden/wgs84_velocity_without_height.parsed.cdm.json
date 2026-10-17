@@ -216,7 +216,7 @@
     },
     "quality": null,
     "residual": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -265,7 +265,7 @@
         }
       }
     ],
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",

@@ -5,7 +5,7 @@
     {
       "name": "two samples, carried_samples 2",
       "document": {
-        "object_kind": "track", "schema_version": "3.1.0",
+        "object_kind": "track", "schema_version": "3.2.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "T-14"}],
         "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b14",
@@ -21,7 +21,7 @@
     {
       "name": "two samples, carried_samples 3",
       "document": {
-        "object_kind": "track", "schema_version": "3.1.0",
+        "object_kind": "track", "schema_version": "3.2.0",
         "source": {"system": "TEST", "adapter": "test", "adapter_version": "1.0.0", "synthetic": true},
         "source_ids": [{"system": "TEST", "external_id": "T-14"}],
         "track_id": "3a8f5a3b-9e2d-4f4c-8d6b-5c0e1f7a4b14",

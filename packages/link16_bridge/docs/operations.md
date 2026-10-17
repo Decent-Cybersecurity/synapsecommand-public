@@ -142,7 +142,10 @@ published without its position — one whose `source.transformations` carry the
 built from it would say `position: null` for a source that reported a position, with no loss
 record. Exporting a positioned SENSOR or UNKNOWN source needs the FULL projection, which a sink
 that accepts CDM 3.1.0 is served from the 3.4.0 release, the one that types that schema version
-(added 2026-10-11).
+(added 2026-10-11). Since the 3.5.0 release (2026-10-16) the FULL projection is CDM 3.2.0, so the
+sink must accept 3.2.0; a sink that accepts only 3.1.0 is refused at negotiation, and one that also
+accepts 3.0.0 is served the compatibility projection. The bridge needs `synapse-cdm` 3.5.0 or
+later from that release on.
 
 ## Definitions
 

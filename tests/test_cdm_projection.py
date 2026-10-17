@@ -338,7 +338,10 @@ def test_an_assignment_after_construction_is_judged_too():
         dump_for(obj, "3.0.0")
 
 
-@pytest.mark.parametrize("target", ["3.2.0", "2.1.0", "", None, b"3.0.0", 3])
+# Corrected 2026-10-16, the 3.5.0 release commit (the replay review's F-02): "2.1.0" and "3.2.0"
+# were cases of this test, and both are frozen contracts on this tree, so they moved to the
+# frozen-without-a-ledger test below; "3.3.0" is a CDM number no contract has.
+@pytest.mark.parametrize("target", ["3.3.0", "", None, b"3.0.0", 3])
 def test_a_target_that_is_not_a_frozen_contract_is_refused(target):
     with pytest.raises(ValueError) as caught:
         dump_for(event(), target)
@@ -346,13 +349,15 @@ def test_a_target_that_is_not_a_frozen_contract_is_refused(target):
     assert not isinstance(caught.value, ProjectionRefused)
 
 
-def test_the_frozen_3_1_0_contract_has_no_ledger_and_is_refused_as_a_target():
-    # Corrected 2026-10-16, at the replay onto `v3.4.0`: 3.1.0 is frozen on this tree, so the
-    # case is a contract with no ledger rather than one that is not frozen.
-    assert (REPO / "tests" / "frozen" / "cdm" / "3.1.0").is_dir()
-    assert "3.1.0" not in LEDGERS and TARGETS == ("3.0.0",)
+# Corrected 2026-10-16, at the replay onto `v3.4.0`: 3.1.0 is frozen on this tree, so the case is
+# a contract with no ledger rather than one that is not frozen. The same day the 3.5.0 release
+# commit froze 3.2.0, the current contract, and "2.1.0" (frozen since 2026-09-20) joined the case.
+@pytest.mark.parametrize("target", ["2.1.0", "3.1.0", "3.2.0"])
+def test_a_frozen_contract_with_no_ledger_is_refused_as_a_target(target):
+    assert (REPO / "tests" / "frozen" / "cdm" / target).is_dir()
+    assert target not in LEDGERS and TARGETS == ("3.0.0",)
     with pytest.raises(ValueError) as caught:
-        dump_for(event(), "3.1.0")
+        dump_for(event(), target)
     assert str(caught.value) == "dump_for: the target must be one of ['3.0.0']"
     assert not isinstance(caught.value, ProjectionRefused)
 

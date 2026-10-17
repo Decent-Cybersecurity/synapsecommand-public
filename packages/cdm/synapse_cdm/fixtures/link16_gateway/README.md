@@ -43,7 +43,9 @@ two containers below themselves, so every golden nests at most eight containers 
 `python -m synapse_cdm.harness --adapter link16_gateway --update-golden` and read value by value
 before being kept. At the landing they carried `"schema_version": "3.0.0"`, the number the
 package then declared; on 2026-10-11 the 3.4.0 release commit, which typed CDM 3.1.0, wrote them
-again with the same command, and only that stamp moved.
+again with the same command, and only that stamp moved; and on 2026-10-16 the 3.5.0 release commit,
+which typed CDM 3.2.0, wrote them again, and only that stamp moved (each Track's
+`"attributes": null` was written by the CDM 3.2.0 landing of 2026-10-15, before it).
 
 ## `reference/`: the handoff's own projections
 

@@ -1,8 +1,10 @@
 # synapse-link16-bridge
 
 The runtime bridge between an **SC Link16 Gateway 1.0.0** API and the SynapseCommand Canonical
-Data Model. Version 1.0.0, Apache-2.0, written 2026-10-11 as the runtime half of the
-SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0.
+Data Model. Version 1.1.0, Apache-2.0, written 2026-10-11 as the runtime half of the
+SynapseCommand JREAP C and Link 16 engineering handoff 1.0.0, moved 2026-10-15 (the compatibility
+projection's dumps through `synapse_cdm.projection`; released 2026-10-16 beside `synapse-cdm`
+3.5.0).
 
 ## What it is
 
@@ -40,13 +42,14 @@ deployment in a named authorised environment (not claimed). No numerical quality
 
 ## Install
 
-The bridge needs `synapse-cdm` 3.4.0 or later (and below 4), which carries the `link16_gateway`
-adapter and the CDM 3.1.0 position methods. Install it from the package index first, then the
-bridge from the repository's release tag:
+The bridge needs `synapse-cdm` 3.5.0 or later (and below 4), which carries the `link16_gateway`
+adapter, the CDM 3.1.0 position methods and the 3.0.0 contract projection `synapse_cdm.projection`
+(the floor read 3.4.0 until 2026-10-16, before the bridge imported that module). Install it from
+the package index first, then the bridge from the repository's release tag:
 
 ```bash
 pip install synapse-cdm
-pip install "synapse-link16-bridge @ git+https://github.com/Decent-Cybersecurity/synapsecommand-public@v3.4.0#subdirectory=packages/link16_bridge"
+pip install "synapse-link16-bridge @ git+https://github.com/Decent-Cybersecurity/synapsecommand-public@v3.5.0#subdirectory=packages/link16_bridge"
 ```
 
 The bridge's runtime dependencies are `synapse-cdm` and the Python standard library.

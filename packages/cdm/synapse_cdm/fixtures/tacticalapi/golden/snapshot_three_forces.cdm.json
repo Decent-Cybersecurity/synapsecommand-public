@@ -81,7 +81,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "tacticalapi",
       "adapter_version": "1.0.0",
@@ -137,7 +137,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "tacticalapi",
@@ -242,7 +242,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "tacticalapi",
       "adapter_version": "1.0.0",
@@ -298,7 +298,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "tacticalapi",
@@ -387,7 +387,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "tacticalapi",
       "adapter_version": "1.0.0",
@@ -443,7 +443,7 @@
       },
       "namespace": "TacticalAPI"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "tacticalapi",

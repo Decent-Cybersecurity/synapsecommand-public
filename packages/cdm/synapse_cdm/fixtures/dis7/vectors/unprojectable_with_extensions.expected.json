@@ -82,7 +82,7 @@
       },
       "namespace": "DIS"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "dis7",
       "adapter_version": "1.0.0",

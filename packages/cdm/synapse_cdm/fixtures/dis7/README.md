@@ -27,6 +27,9 @@ to `vectors/<name>.expected.json` by `tests/test_cdm_dis7_adapter.py`.
   schema to 3.1.0: `contract/dis7-entity.schema.json` is re-derived from the 3.1.0 entity
   schema with the bundle's overlay, and the three `vectors/*.expected.json` are re-stamped
   3.1.0; `spec/dis7_pin.json` records the bundle's digests and the derived ones side by side.
+  The same four moved again on 2026-10-16, when the 3.5.0 release commit moved the CDM schema
+  to 3.2.0: the profile is re-derived from the 3.2.0 entity schema, its const 3.2.0, and the
+  three vectors read 3.2.0.
 - `spec/` — the pin record `dis7_pin.json`, `build_fixtures.py` (it regenerates the three PDUs
   through the pinned open-dis-python checkout, compares them with `vectors/` and writes nothing)
   and the other specification-side files. Nothing in a subdirectory is replayed by the harness.

@@ -127,7 +127,7 @@
       },
       "namespace": "NOAA CO-OPS data API response (datagetter)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "coops_csv",
@@ -291,7 +291,7 @@
       },
       "namespace": "NOAA CO-OPS data API response (datagetter)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "coops_csv",
@@ -455,7 +455,7 @@
       },
       "namespace": "NOAA CO-OPS data API response (datagetter)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "coops_csv",
@@ -513,7 +513,7 @@
       },
       "namespace": "NOAA CO-OPS data API response (datagetter)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "coops_csv",
       "adapter_version": "1.0.0",

@@ -78,7 +78,7 @@
       },
       "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "airnow_hourly",
@@ -187,7 +187,7 @@
       },
       "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "airnow_hourly",
@@ -258,7 +258,7 @@
       },
       "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "airnow_hourly",
       "adapter_version": "1.0.0",
@@ -313,7 +313,7 @@
       },
       "namespace": "EPA AirNow hourly observation files (HourlyData, HourlyAQObs)"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "airnow_hourly",
       "adapter_version": "1.0.0",

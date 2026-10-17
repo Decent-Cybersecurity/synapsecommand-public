@@ -657,6 +657,24 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/support_matrix.py:render",
         "synapse_cdm/version.py:KNOWN_CONTRACTS",
         "synapse_cdm/version.py:assess"},
+    # The fifteenth row, written IN the 3.5.0 release commit (2026-10-16) from the gate's own
+    # `derive(snapshot_at("v3.4.0"), snapshot_at(None))` on that tree — the 3.4.0 route, so that the
+    # tag needs no re-tag for it. Five units, each ruled in MIGRATIONS.md's `### 3.5.0` section: the
+    # CDM 3.2.0 landing's three (`EventType` gained a member, `Event` and `Track` an optional field
+    # each, all MINOR), the readsb landing's `models._timestamp_in` guard (PATCH), and the release
+    # commit's own `version.KNOWN_CONTRACTS` (3.2.0 joined, MINOR); `version.assess` did not move.
+    # The five adapter modules, their fixture sets, `observation_contracts`, `decode_host`,
+    # `projection` and the `synapse-decode` entry point are units the arc ADDED, and the class
+    # bodies whose `evidence.available` flips are among them; the schema move itself is the
+    # `SCHEMA_VERSION` signal, not an ambiguity. The arc's 1218 signals (272 MINOR, 946 PATCH, the
+    # re-stamped goldens among the PATCH) derive the MINOR the number types, and the schema MINOR
+    # is at least a package MINOR on its own account.
+    ("v3.4.0", "v3.5.0"): {
+        "synapse_cdm/enums.py:EventType",
+        "synapse_cdm/models.py:Event",
+        "synapse_cdm/models.py:Track",
+        "synapse_cdm/models.py:_timestamp_in",
+        "synapse_cdm/version.py:KNOWN_CONTRACTS"},
 }
 
 

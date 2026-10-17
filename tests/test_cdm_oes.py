@@ -761,12 +761,17 @@ def test_the_wire_contract_is_a_major_and_a_one_x_reader_is_refused_at_the_versi
     `PositionSource` gained `SENSOR` and `UNKNOWN`. The line went red and was edited on purpose,
     as the first paragraph asks. The wire contract is still a major above 1.x, so ADR 0005's
     reading holds; the 3.0.0 ↔ 3.1.0 pair is `tests/test_cdm_version_matrix.py`'s to state.
+
+    RE-PINNED 2026-10-16 by the 3.5.0 release commit, from `3.1.0` to `3.2.0` — a MINOR:
+    `EventType` gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained `validity` and `Track` gained
+    `attributes`. The line went red and was edited on purpose, as the first paragraph asks; the
+    pairs within major 3 are `tests/test_cdm_version_matrix.py`'s to state.
     """
-    assert version.SCHEMA_VERSION == "3.1.0"
+    assert version.SCHEMA_VERSION == "3.2.0"
     assert version.compatible("2.0.0", "1.0.0") is False
     assert version.compatible("1.0.0", "2.0.0") is False
     assert version.compatible("1.0.0", "3.0.0") is False
-    assert _event().schema_version == "3.1.0"
+    assert _event().schema_version == "3.2.0"
 
 
 def test_a_legacy_one_x_object_still_validates_against_the_two_x_models():

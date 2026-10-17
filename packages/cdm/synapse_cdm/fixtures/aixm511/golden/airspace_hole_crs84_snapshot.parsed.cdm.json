@@ -496,7 +496,7 @@
       },
       "namespace": "AIXM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "aixm511",
       "adapter_version": "1.0.0",
@@ -667,7 +667,7 @@
       "namespace": "AIXM"
     },
     "route": null,
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "aixm511",
       "adapter_version": "1.0.0",
@@ -846,7 +846,7 @@
       },
       "namespace": "AIXM"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "aixm511",
       "adapter_version": "1.0.0",

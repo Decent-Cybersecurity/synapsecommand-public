@@ -10,8 +10,10 @@ Since 2026-10-11, the 3.4.0 release commit, four vendored files are no longer th
 the CDM schema moved 3.0.0 -> 3.1.0, so the entity profile `contract/dis7-entity.schema.json` is
 re-derived from the published 3.1.0 entity schema with the bundle's overlay (its `schema_version`
 const moved to 3.1.0), and the three `vectors/*.expected.json` are re-stamped 3.1.0.
-`BUNDLE_MANIFEST` stays the bundle's record; `DERIVED` below holds those four files' digests in
-this tree, and `test_the_entity_profile_is_the_published_entity_schema_with_the_bundle_overlay`
+Since 2026-10-16, the 3.5.0 release commit, the same four moved again when the CDM schema moved
+3.1.0 -> 3.2.0: the profile is re-derived from the published 3.2.0 entity schema (its const 3.2.0)
+and the three vectors read 3.2.0. `BUNDLE_MANIFEST` stays the bundle's record; `DERIVED` below
+holds those four files' digests in this tree, and `test_the_entity_profile_is_the_published_entity_schema_with_the_bundle_overlay`
 holds the derivation itself.
 """
 from __future__ import annotations
@@ -70,14 +72,17 @@ CDM_ENTITY_SHA256 = "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18b
 #: The four vendored files the 3.4.0 release commit moved on 2026-10-11, and their digests in
 #: this tree (sha256, bytes), read from the files that commit wrote and copied here, never
 #: computed. Every other vendored file is still the bundle's bytes, `BUNDLE_MANIFEST`'s values.
+#: Re-read 2026-10-16 from the files the 3.5.0 release commit wrote (CDM 3.2.0); the bytes counts
+#: are unchanged, since each file moved by one version string of the same length.
 DERIVED = {
-    "vectors/equator_eastbound.expected.json": ("60e0dbe98c4d09f7fb9ab9ca090703faa69b50278099c118ea131675b406c9da", 3430),
-    "vectors/north_pole_stationary.expected.json": ("3fb1f20a57ab7be1155cd7a333160fc20e644c5823b4f37662b732685549b256", 3437),
-    "vectors/unprojectable_with_extensions.expected.json": ("0a51146b0fd010513ac03150ed42881143befda3c6bf93a69f10a56ed130d22c", 3251),
-    "contract/dis7-entity.schema.json": ("41ffda593b05a4dd28c7a9492108007dbb48e306c5beef0b87c9a908a7910a40", 49161),
+    "vectors/equator_eastbound.expected.json": ("d4b4d778d26c9ef1ceb85cf2c6f85524fc81395fda2a9f924b0c33ae5d1c299b", 3430),
+    "vectors/north_pole_stationary.expected.json": ("8fdec80245a47f3521de1cc7238e644543493a3deac0f697d557abb7b96c86a4", 3437),
+    "vectors/unprojectable_with_extensions.expected.json": ("0ec297b323bf1ec6b25747fe49f3efad053f291ebf2a05c6e44382c082706b22", 3251),
+    "contract/dis7-entity.schema.json": ("1a89cd0df0ecc1a2ce39a32eb4563f77a54d939cac48ed7c42793c8bbbdfc083", 49161),
 }
 #: The overlay's one value the derivation moves: the bundle's profile pins the CDM version it was
-#: written against, 3.0.0, and the re-derived profile pins 3.1.0.
+#: written against, 3.0.0, and the re-derived profile pins the declared `SCHEMA_VERSION` (3.1.0
+#: from 2026-10-11, 3.2.0 from 2026-10-16).
 BUNDLE_SCHEMA_VERSION_CONST = "3.0.0"
 
 
@@ -134,7 +139,9 @@ def test_pin_every_vendored_file_matches_the_record_and_the_bundle_manifest(file
         assert measured != BUNDLE_MANIFEST[file]
         assert (row["sha256"], row["bytes"]) == DERIVED[file]
         assert (row["bundle_sha256"], row["bundle_bytes"]) == BUNDLE_MANIFEST[file]
+        # the 3.4.0 release's note, extended 2026-10-16 by the 3.5.0 release commit (CDM 3.2.0)
         assert "2026-10-11" in row["derived"] and "3.1.0" in row["derived"]
+        assert "2026-10-16" in row["derived"] and "3.2.0" in row["derived"]
     else:
         assert measured == BUNDLE_MANIFEST[file]
         assert (row["sha256"], row["bytes"]) == BUNDLE_MANIFEST[file]

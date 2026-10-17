@@ -210,7 +210,7 @@
       },
       "namespace": "readsb trace JSON"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "readsb_trace",
       "adapter_version": "1.0.0",
@@ -359,7 +359,7 @@
         }
       }
     ],
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "source": {
       "adapter": "readsb_trace",
       "adapter_version": "1.0.0",
@@ -417,7 +417,7 @@
       },
       "namespace": "readsb trace JSON"
     },
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "severity": "INFO",
     "source": {
       "adapter": "readsb_trace",

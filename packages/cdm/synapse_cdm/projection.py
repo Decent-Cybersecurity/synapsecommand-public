@@ -35,7 +35,9 @@ is refused and `Affiliation.UNKNOWN`, which 3.0.0 has always had, is not.
 `dump_for` does not re-stamp `schema_version`; the stamp is the producer's (the Link 16
 compatibility projection stamps "3.0.0"). `"3.0.0"` is the only target with a ledger (corrected
 2026-10-16, at the replay onto `v3.4.0`: the 3.1.0 contract is frozen under `tests/frozen/cdm/`
-and has none). The full projection is untouched: `model_dump` still writes every field, and
+and has none; and the same day the 3.5.0 release commit froze 3.2.0, the current contract, which
+has none either, since an object of this tree needs no projection to the contract it is written
+against). The full projection is untouched: `model_dump` still writes every field, and
 `compatible()` never drops one.
 """
 

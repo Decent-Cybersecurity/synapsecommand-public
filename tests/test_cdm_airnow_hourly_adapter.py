@@ -432,7 +432,7 @@ def test_a_stamp_is_the_start_of_its_hour_and_observed_at_its_end():
             },
             "namespace": FORMAT,
         },  # fmt: skip
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "severity": "INFO",
         "source": {
             "adapter": "airnow_hourly",

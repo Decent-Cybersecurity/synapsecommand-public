@@ -507,7 +507,7 @@ def test_one_preliminary_sample_becomes_this_event_and_the_station_this_entity()
             },
             "namespace": "NOAA CO-OPS data API response (datagetter)",
         },
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "severity": "INFO",
         "source": {
             **source,
@@ -549,7 +549,7 @@ def test_one_preliminary_sample_becomes_this_event_and_the_station_this_entity()
             "data": {"header": WATER_LEVEL},
             "namespace": "NOAA CO-OPS data API response (datagetter)",
         },
-        "schema_version": "3.1.0",
+        "schema_version": "3.2.0",
         "source": {
             **source,
             "observed_at": "2026-04-28T00:00:00.000Z",

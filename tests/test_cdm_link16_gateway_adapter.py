@@ -643,12 +643,17 @@ def test_constructor_refuses_bad_mode_context_schema_and_synthetic():
         (dict(export_context=context), ValueError, "an ExportContext is given only in mode 'export'"),
         (dict(cdm_schema="4.0.0"), ValueError, "cdm_schema must be None, SCHEMA_VERSION or '3.0.0'"),
         (dict(cdm_schema="2.1.0"), ValueError, "cdm_schema must be None, SCHEMA_VERSION or '3.0.0'"),
+        # 2026-10-16, the 3.5.0 release commit: SCHEMA_VERSION reads 3.2.0, so the 3.1.0 contract
+        # the adapter's full projection was written against until then is no value it accepts —
+        # there is no 3.1.0 projection (the visible form of the run's Q-REL-3 ruling)
+        (dict(cdm_schema="3.1.0"), ValueError, "cdm_schema must be None, SCHEMA_VERSION or '3.0.0'"),
         (dict(cdm_schema=3), ValueError, "cdm_schema must be None, SCHEMA_VERSION or '3.0.0'"),
     ]
     for kwargs, kind, text in cases:
         with pytest.raises(kind) as caught:
             Link16GatewayAdapter(**kwargs)
         assert str(caught.value) == f"link16_gateway configuration: {text}"
+    assert SCHEMA_VERSION == "3.2.0"
     for good in (None, SCHEMA_VERSION, "3.0.0"):
         Link16GatewayAdapter(cdm_schema=good)
     Link16GatewayAdapter(mode="export", export_context=context)

@@ -894,8 +894,8 @@ synapse-decode decode --adapter airnow_hourly --input HourlyData_2026042810.dat 
 
 Exit codes: `0` success, `2` usage or context flags (a URL, an `s3://` or a `/vsicurl/` locator is
 refused by name), `3` rejected data, `4` file or output I/O. Diagnostics never quote the input, a
-request parameter or a manifest URL. The contracts and the command are not part of the published
-3.4.0 distribution; they ship with the first release after it. The reference page is
+request parameter or a manifest URL. The contracts and the command are part of the distribution
+built from this tree; no release before 3.5.0 carries them. The reference page is
 https://docs.synapsecommand.com/cdm/observation-contracts.
 
 ## Layout

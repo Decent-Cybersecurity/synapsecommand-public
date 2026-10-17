@@ -35,7 +35,7 @@
       "classification": "PUBLIC",
       "operational_data": false,
       "personal_data": false,
-      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
+      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else; re-stamped again 2026-10-16 by the 3.5.0 release commit, from 3.1.0 to 3.2.0, and changed in nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
       "standard_ref": "dis7/spec/dis7_pin.json"
     },
     {
@@ -89,7 +89,7 @@
       "classification": "PUBLIC",
       "operational_data": false,
       "personal_data": false,
-      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
+      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else; re-stamped again 2026-10-16 by the 3.5.0 release commit, from 3.1.0 to 3.2.0, and changed in nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
       "standard_ref": "dis7/spec/dis7_pin.json"
     },
     {
@@ -134,7 +134,7 @@
       "classification": "PUBLIC",
       "operational_data": false,
       "personal_data": false,
-      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
+      "origin": "Vendored from the vectors directory of the DIS 7 handoff bundle (a handoff document set identified by SC DIS7 SPEC 001 v1.0, not in this repository). Synthetic: fictional exercise 42, site 7, application 11; no captured traffic. Byte-identical to the bundle's file until 2026-10-11, when the 3.4.0 release commit re-stamped its schema_version from 3.0.0 to 3.1.0 and changed nothing else; re-stamped again 2026-10-16 by the 3.5.0 release commit, from 3.1.0 to 3.2.0, and changed in nothing else. The bundle's hash and size and the re-stamped hash and size are pinned in spec/dis7_pin.json.",
       "standard_ref": "dis7/spec/dis7_pin.json"
     },
     {
