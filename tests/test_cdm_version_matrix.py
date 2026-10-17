@@ -86,6 +86,10 @@ type, is refused by either earlier contract (REFUSED, writer-newer), by `additio
 for the property and by the closed `enum` for the member. The `SELF` record is valid only while
 `PACKAGE_VERSION` is 3.5.0, so the round after the release resolves it to the commit `v3.5.0`
 names before any next package bump.
+Resolved 2026-10-17 by the 3.5.0 witness round: the manifest now records
+`da2e197d9c0612322ed9763e29f3ea4e2fa70132`, which `git rev-list -n1 v3.5.0` reads — the release
+commit itself — so the 3.2.0 row is held by the `rev-list` branch as every older contract's is, and
+the `SELF` slot is free for the next freeze.
 """
 from __future__ import annotations
 
