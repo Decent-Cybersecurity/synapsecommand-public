@@ -122,3 +122,33 @@ packages/cdm/synapse_cdm/fixtures/nexrad2/** -text
 packages/cdm/synapse_cdm/fixtures/ndbc_stdmet/** -text
 packages/cdm/synapse_cdm/fixtures/coops_csv/** -text
 packages/cdm/synapse_cdm/fixtures/airnow_hourly/** -text
+
+# GRIB2 messages (the `grib2` adapter): one WMO FM 92 GRIB edition 2 message a file (`.grb2`), raw
+# binary, marked explicitly for the reason every entry above gives. Added 2026-10-17 in the change
+# that lands the adapter. `spec/build_fixtures.py --check` compares every payload, twin and
+# provenance record byte for byte (the GDAL-written seven by their recorded SHA-256 where no GDAL
+# is installed), so the whole directory is held out of line-ending conversion: a checkout that
+# rewrote one byte would fail it.
+*.grb2 -text -diff
+packages/cdm/synapse_cdm/fixtures/grib2/** -text
+
+# GeoTIFF and Cloud Optimized GeoTIFF files (the `cog` adapter): classic TIFF (`.tif`), raw binary,
+# marked explicitly for the reason every entry above gives; and GDAL VRT indexes (`.vrt`), XML text
+# whose octets the builder writes with LF line ends and compares byte for byte, so it is held out of
+# conversion and diffing the same way. Added 2026-10-17 in the change that lands the
+# adapter. `spec/build_fixtures.py --check` compares every payload, twin and provenance record byte
+# for byte (the GDAL-written eight by their recorded SHA-256 where no GDAL is installed), so the
+# whole directory is held out of line-ending conversion: a checkout that rewrote one byte would
+# fail it.
+*.tif -text -diff
+*.vrt -text -diff
+packages/cdm/synapse_cdm/fixtures/cog/** -text
+
+# IEM NEXRAD N0Q composites (the `iem_n0q` adapter): PNG (`.png`), raw binary, marked explicitly
+# for the reason every entry above gives. Added 2026-10-17 in the change that lands the adapter.
+# `spec/build_fixtures.py --check` compares every payload, twin and provenance record byte for byte
+# (the builder writes its own DEFLATE stream, so the octets do not depend on a zlib build), so the
+# whole directory is held out of line-ending conversion: a checkout that rewrote one byte would
+# fail it.
+*.png -text -diff
+packages/cdm/synapse_cdm/fixtures/iem_n0q/** -text

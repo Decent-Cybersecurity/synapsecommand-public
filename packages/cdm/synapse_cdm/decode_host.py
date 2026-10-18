@@ -27,7 +27,8 @@ WHAT IS REFUSED, AND WITH WHICH EXIT CODE
   malformed; a manifest row that is not one JSON object with a `sha256`, or that carries a
   credential in one of the shapes `_CREDENTIAL` names; a station table the contract refuses.
 3 rejected data: a file over the adapter's bound; a SHA-256 that differs from the expected one;
-  a container refused by its bounds or its shape; a frame the adapter refuses (`ValueError`).
+  a container refused by its bounds or its shape; octets the adapter's framer cannot cut into
+  frames; a frame the adapter refuses (`ValueError`).
 4 I/O: an `--input` or context file that is absent or not a regular file (a FIFO or a device is
   refused without blocking), or stdout that cannot be written.
 
@@ -56,6 +57,23 @@ cut the file into several payloads — an adapter that declares a frame-digest a
 (`Hosted.frame_digest_argument`, since 2026-10-15) is also given the SHA-256 of the frame it is
 handed, computed here by the same function, and records it as its locator's `frame_sha256`. When
 the frame is the whole file, nothing is passed: `source_hash` already digests those octets.
+
+A framer cuts the (unwrapped) octets into frames that lie end to end from the first octet, so a
+frame's position is the sum of the frames before it; an adapter that declares a frame-offset
+argument (`Hosted.frame_offset_argument`, since 2026-10-17, for `grib2`) is given the octet its
+frame begins at in those octets, beside its ordinal. `grib_messages` is the GRIB2 framer: one
+message per frame, cut at each Section 0's eight-octet total length, and a file that is not its
+messages end to end — a stray octet between two, a length that runs past the end, an edition 1
+message, whose length field is another — is exit 3.
+
+Two raster adapters are served since 2026-10-17, each reading its file whole. `cog` takes a
+GeoTIFF or a VRT index; what it must not be left to guess comes as request parameters — the file's
+name `--request band_file=NAME` and its granule `--request granule=ID`, identifiers the host never
+reads off a path — and `--at`/`--basis` comes only with `--request time=sensing_time` (a band
+file whose metadata states no sensing time) or `--request time=as_of` (a DEM or a VRT), the
+adapter's two injected instants, because which one applies is known only once the file is read.
+`iem_n0q` takes one IEM N0Q composite PNG, and `--at`/`--basis` is the archive file name's slot,
+refused (exit 2) unless it falls on IEM's five-minute grid.
 """
 
 from __future__ import annotations
@@ -311,6 +329,39 @@ def whole_file(data: bytes) -> list[bytes]:
     return [data]
 
 
+def grib_messages(data: bytes) -> list[bytes]:
+    """The framer for GRIB2 (2026-10-17): one message per frame, cut at each Section 0's total
+    length (octets 9-16), the messages end to end with nothing between them. A refusal is exit 3
+    and names an octet position, never an octet of the input."""
+    frames: list[bytes] = []
+    position = 0
+    while position < len(data):
+        if len(data) - position < 16 or data[position : position + 4] != b"GRIB":
+            raise Refused(
+                EXIT_REJECTED,
+                f"{PROG}: octet {position} of the input does not begin a GRIB message; a GRIB2 "
+                "file is its messages end to end",
+            )
+        if data[position + 7] != 2:
+            raise Refused(
+                EXIT_REJECTED,
+                f"{PROG}: the message at octet {position} is not GRIB edition 2, which is the only "
+                "edition this host frames",
+            )
+        total = int.from_bytes(data[position + 8 : position + 16], "big")
+        if total < 20 or total > len(data) - position:
+            raise Refused(
+                EXIT_REJECTED,
+                f"{PROG}: the message at octet {position} states a total length shorter than "
+                "Sections 0 and 8 or running past the end of the input",
+            )
+        frames.append(data[position : position + total])
+        position += total
+    if not frames:
+        raise Refused(EXIT_REJECTED, f"{PROG}: the input holds no GRIB message")
+    return frames
+
+
 def _input_bound(cls: type) -> int:
     return cls.capabilities().limits.max_input_bytes
 
@@ -325,7 +376,8 @@ class Hosted:
     a value the adapter would refuse (a `ValueError`, exit 2), before the input is read.
     `max_file_bytes` and `max_unwrapped_bytes` read the bounds off the adapter class.
     `frame_digest_argument` names the constructor argument that takes the SHA-256 of the frame
-    when the frame is not the file as read (the module docstring's last paragraph).
+    when the frame is not the file as read, and `frame_offset_argument` the one that takes the
+    octet the frame begins at (the module docstring's last paragraphs).
     """
 
     name: str
@@ -340,6 +392,7 @@ class Hosted:
     max_file_bytes: Callable[[type], int] = _input_bound
     max_unwrapped_bytes: Callable[[type], int] = _input_bound
     frame_digest_argument: str | None = None
+    frame_offset_argument: str | None = None
 
 
 def _load_dis7() -> type:
@@ -450,6 +503,78 @@ def _prepare_airnow_hourly(context: Context) -> dict:
     return {"synthetic": context.synthetic, "site_table": context.station_table}
 
 
+def _load_grib2() -> type:
+    from synapse_cdm.adapters.grib2 import Grib2Adapter
+
+    return Grib2Adapter
+
+
+def _prepare_grib2(context: Context) -> dict:
+    # A message is one frame of the file: its ordinal, its first octet and, when the file held
+    # more than one message or a gzip was unwrapped, its own digest are given by `decode`; its
+    # context is the receipt.
+    return {"synthetic": context.synthetic}
+
+
+def _load_cog() -> type:
+    from synapse_cdm.adapters.cog import CogAdapter
+
+    return CogAdapter
+
+
+#: The request parameters `cog` takes (2026-10-17), and the two roles `--at` may play for it.
+COG_REQUEST_KEYS = ("band_file", "granule", "time")
+COG_TIME_ROLES = ("sensing_time", "as_of")
+
+
+def _prepare_cog(context: Context) -> dict:
+    # A GeoTIFF or a VRT is one file, read whole. What the host must not guess is handed over as
+    # request parameters: the file's name (`band_file`) and the granule its band files share
+    # (`granule`), both identifiers only, because the host never reads a name off a path; and,
+    # when `--at` is given, which of the adapter's two injected instants it is (`time=sensing_time`
+    # for a band file whose metadata states no sensing time, `time=as_of` for a DEM or a VRT),
+    # because the adapter cannot tell before it has read the file and the host does not read it.
+    # The adapter's constructor is run here, reading no clock, so a value it refuses is exit 2.
+    from synapse_cdm.observation_contracts import InjectedTime, parse_instant
+
+    request = dict(context.request)
+    if set(request) - set(COG_REQUEST_KEYS):
+        raise ValueError("cog takes the request parameters band_file, granule and time only")
+    role = request.get("time")
+    if (role is None) != (context.at is None):
+        raise ValueError("--request time=... names the role of --at, and is given with it only")
+    if role is not None and role not in COG_TIME_ROLES:
+        raise ValueError("--request time is sensing_time or as_of")
+    kwargs: dict = {
+        "synthetic": context.synthetic,
+        "band_file": request.get("band_file"),
+        "granule_id": request.get("granule"),
+    }
+    if role is not None:
+        kwargs[role] = InjectedTime(parse_instant(context.at), context.basis)
+    _load_cog()(_no_clock, **kwargs)
+    return kwargs
+
+
+def _load_iem_n0q() -> type:
+    from synapse_cdm.adapters.iem_n0q import IemN0qAdapter
+
+    return IemN0qAdapter
+
+
+def _prepare_iem_n0q(context: Context) -> dict:
+    # A PNG states no time: the archive file name's slot is `--at`, with its basis, parsed by the
+    # caller from the name (2026-10-17). A slot off IEM's five-minute grid is refused here, exit 2,
+    # before the file is read.
+    from synapse_cdm.adapters.iem_n0q import checked_slot
+    from synapse_cdm.observation_contracts import InjectedTime, parse_instant
+
+    return {
+        "synthetic": context.synthetic,
+        "slot": checked_slot(InjectedTime(parse_instant(context.at), context.basis)),
+    }
+
+
 #: Every adapter this host serves. An observation adapter adds its row here when it lands, with its
 #: framer when its payload unit is smaller than the file.
 HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
@@ -515,6 +640,38 @@ HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
             arguments=frozenset({"received_at", "station_table"}),
             required=frozenset({"received_at"}),
             prepare=_prepare_airnow_hourly,
+            injects_source_hash=True,
+            reads_clock=True,
+            frame_digest_argument="frame_sha256",
+        ),
+        "grib2": Hosted(
+            name="grib2",
+            load=_load_grib2,
+            arguments=frozenset({"received_at"}),
+            required=frozenset({"received_at"}),
+            prepare=_prepare_grib2,
+            injects_source_hash=True,
+            reads_clock=True,
+            framer=grib_messages,
+            frame_argument="message_ordinal",
+            frame_digest_argument="frame_sha256",
+            frame_offset_argument="byte_offset",
+        ),
+        "cog": Hosted(
+            name="cog",
+            load=_load_cog,
+            arguments=frozenset({"received_at", "time", "request"}),
+            required=frozenset({"received_at"}),
+            prepare=_prepare_cog,
+            injects_source_hash=True,
+            reads_clock=True,
+        ),
+        "iem_n0q": Hosted(
+            name="iem_n0q",
+            load=_load_iem_n0q,
+            arguments=frozenset({"received_at", "time"}),
+            required=frozenset({"received_at", "time"}),
+            prepare=_prepare_iem_n0q,
             injects_source_hash=True,
             reads_clock=True,
             frame_digest_argument="frame_sha256",
@@ -1016,10 +1173,14 @@ def decode(args: argparse.Namespace) -> list[dict]:
     # The frame is not the file as read when a container was unwrapped or the file was cut.
     framed = args.container is not None or len(frames) != 1
     dumped: list[dict] = []
+    offset = 0
     for index, frame in enumerate(frames):
         frame_kwargs = dict(kwargs)
         if hosted.frame_argument is not None:
             frame_kwargs[hosted.frame_argument] = index
+        if hosted.frame_offset_argument is not None:
+            frame_kwargs[hosted.frame_offset_argument] = offset
+        offset += len(frame)
         if hosted.frame_digest_argument is not None and framed:
             frame_kwargs[hosted.frame_digest_argument] = evidence.digest_bytes(frame)[0]
         adapter = cls(clock, **frame_kwargs)
@@ -1055,6 +1216,8 @@ def listing() -> str:
             or "-"
         )
         frame = " frame_sha256 injected" if hosted.frame_digest_argument is not None else ""
+        if hosted.frame_offset_argument is not None:
+            frame += " framed by message"
         lines.append(
             f"{name} arguments {flags} source_hash "
             f"{'injected' if hosted.injects_source_hash else 'checked-only'}{frame} "

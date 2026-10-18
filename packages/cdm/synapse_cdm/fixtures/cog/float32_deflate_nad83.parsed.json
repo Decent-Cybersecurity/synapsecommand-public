@@ -1,0 +1,182 @@
+{
+  "wire_hex": "49492a0008000000120000010300010000000300000001010300010000000300000002010300010000002000000003010300010000000800000006010300010000000100000011010400010000008b0100001501030001000000010000001601030001000000030000001701040001000000220000001c01030001000000010000003d01030001000000030000005301030001000000030000000e830c0003000000ec00000082840c000600000004010000af8703002000000034010000b0870c000200000074010000b1870200070000008401000081a4020006000000e6000000000000002d3939393900000000000000c03f000000000000c03f000000000000000000000000000000000000000000000000000000000000000000000000000036400000000000f04c400000000000000000010001000000070000040000010002000104000001000100000800000100ad100108b187060000000608000001008e230908b087010001000b08b08701000000a8f9eb941da4724000000040a65458414e414438337c00789c3bf0df31c12181010c1c18183e24585880d98e0c0cfb65644e80d900a0020701",
+  "header": {
+    "byte_order": "II",
+    "first_ifd_offset": 8
+  },
+  "ifds": [
+    {
+      "offset": 8,
+      "next_ifd_offset": 0,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            32
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "RowsPerStrip": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "Predictor": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.125,
+            0.125,
+            0.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            22.0,
+            57.875,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-9999"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "StripOffsets": [
+        395
+      ],
+      "StripByteCounts": [
+        34
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 0,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 2
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 2048,
+        "name": "GeodeticCRSGeoKey",
+        "value": 4269
+      },
+      {
+        "id": 2049,
+        "name": "GeodeticCitationGeoKey",
+        "value": "NAD83"
+      },
+      {
+        "id": 2054,
+        "name": "GeogAngularUnitsGeoKey",
+        "value": 9102
+      },
+      {
+        "id": 2057,
+        "name": "EllipsoidSemiMajorAxisGeoKey",
+        "value": [
+          6378137.0
+        ]
+      },
+      {
+        "id": 2059,
+        "name": "EllipsoidInvFlatteningGeoKey",
+        "value": [
+          298.257222101
+        ]
+      }
+    ]
+  },
+  "gdal_metadata": null,
+  "vertical": null,
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 3,
+    "height": 3,
+    "dtype": "Float32",
+    "encoding": "TIFF Compression 8 (Deflate), Predictor 3 (floating point)",
+    "count": 9,
+    "missing_count": 0,
+    "min": -3.5,
+    "max": 11.5,
+    "values": [
+      -3.5,
+      -1.25,
+      0.0,
+      2.75,
+      4.5,
+      6.25,
+      8.0,
+      9.75,
+      11.5
+    ],
+    "missing_mechanism": null
+  }
+}

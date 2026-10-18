@@ -217,11 +217,18 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # the volume header, the site and the record census, each sweep Event the sweep's radials.
     # the same arc, the same day: `ndbc_stdmet`, `coops_csv` and `airnow_hourly` are the eleventh
     # to thirteenth; fourteen-and-thirteen. Each Event carries its own row or record as written.
+    # the same arc's 3.6.0 content (2026-10-17): `grib2` is the fourteenth; fourteen-and-fourteen.
+    # Each field's Event carries the message's Sections 0 to 2 and its own Sections 3 to 7.
+    # the same day: `cog` is the fifteenth; fourteen-and-fifteen. Each object carries the file's
+    # directories, GeoKeys, GDAL metadata and decoded window, or a VRT's index.
+    # the same day: `iem_n0q` is the sixteenth; fourteen-and-sixteen. Its Event carries the PNG's
+    # header, palette, ancillary chunks and index summary.
     assert census[ResidualStance.STRUCTURED] == ["airnow_hourly", "aixm511", "aixm52", "c2sim",
-                                                 "coops_csv", "dis7", "geojson", "geopackage",
+                                                 "cog", "coops_csv", "dis7", "geojson",
+                                                 "geopackage", "grib2", "iem_n0q",
                                                  "link16_gateway", "ndbc_stdmet", "nexrad2",
                                                  "readsb_trace", "tacticalapi"]
-    assert len(roster) == 27
+    assert len(roster) == 30
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

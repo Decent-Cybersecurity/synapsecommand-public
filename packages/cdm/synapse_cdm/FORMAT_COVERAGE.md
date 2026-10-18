@@ -81,6 +81,12 @@ run is a guess with a table around it.
 | `coops_csv 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each sample's Event holds its own row (`residual.data.row`, CSV) or record (`residual.data.record`, JSON) as written and the request it answers, and the station Entity's the CSV header line or the JSON form's `metadata` (landed 2026-10-15) |
 | `airnow_hourly 1.0.0` | implemented by `adapters/airnow_hourly.py`, with an hourly file fixture, its parsed twin and a golden file (landed 2026-10-15) |
 | `airnow_hourly 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each line's Event holds the line's fields as written (`residual.data.record` for HourlyData, `residual.data.row` with the header for HourlyAQObs), and each site Entity's the site's fields as the first line naming it states them (landed 2026-10-15) |
+| `grib2 1.0.0` | implemented by `adapters/grib2.py`, with a GRIB2 message fixture, its parsed twin and a golden file (landed 2026-10-17) |
+| `grib2 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each field's Event holds the message's Sections 0 to 2 (`residual.data.indicator`, `identification`, `local_use`) and the field's own Sections 3 to 7 as stated (`residual.data.field`, every template octet under its own name) (landed 2026-10-17) |
+| `cog 1.0.0` | implemented by `adapters/cog.py` (with its codec `adapters/raster_codec.py`), with a GeoTIFF or VRT fixture, its parsed twin and a golden file (landed 2026-10-17) |
+| `cog 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each object holds the file's header, every directory's entries under their TIFF names, IFD 0's GeoKeys and GDAL_METADATA items, the vertical datum the GeoKeys state and the decoded window (`residual.data.header`, `ifds`, `geokeys`, `gdal_metadata`, `vertical`, `window`), or a VRT's index as stated (`residual.data.vrt`) (landed 2026-10-17) |
+| `iem_n0q 1.0.0` | implemented by `adapters/iem_n0q.py` (on the PNG reader of `adapters/raster_codec.py`), with an IEM N0Q composite PNG fixture, its parsed twin and a golden file (landed 2026-10-17) |
+| `iem_n0q 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: the Event holds the PNG's IHDR fields, its palette, every ancillary chunk in file order (a `tEXt` chunk as its keyword and text, any other as its octets) and the index summary as stated (`residual.data.header`, `palette`, `ancillary`, `index_summary`) (landed 2026-10-17) |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -294,6 +300,9 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 26 | `ndbc_stdmet` | shipped | `adapters/ndbc_stdmet.py`, whose docstring claims the ordinal, `fixtures/ndbc_stdmet/README.md` and `fixtures/ndbc_stdmet/spec/ndbc_stdmet_pin.json`, which records it beside the adapter's name. One NDBC standard meteorological text file becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per data row, carrying the `point-observation/1` contract, and the station's `Entity`; ingest only, the eleventh `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
 | 27 | `coops_csv` | shipped | `adapters/coops_csv.py`, whose docstring claims the ordinal, `fixtures/coops_csv/README.md` and `fixtures/coops_csv/spec/coops_csv_pin.json`, which records it beside the adapter's name. One NOAA CO-OPS data API response, in its CSV or JSON form and under the caller's `CoopsRequest`, becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per sample, carrying the `point-observation/1` contract, and the station's `Entity`; ingest only, the twelfth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
 | 28 | `airnow_hourly` | shipped | `adapters/airnow_hourly.py`, whose docstring claims the ordinal, `fixtures/airnow_hourly/README.md` and `fixtures/airnow_hourly/spec/airnow_hourly_pin.json`, which records it beside the adapter's name. One EPA AirNow hourly observation file (HourlyData or HourlyAQObs) becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per line, carrying the `point-observation/1` contract, and one `Entity` per site; ingest only, the thirteenth `residual: structured` adapter. The class, the fixture set, its goldens and its tests landed together on 2026-10-15, so the row had no Phase 1 in this table |
+| 29 | `grib2` | shipped | `adapters/grib2.py`, whose docstring claims the ordinal, `fixtures/grib2/README.md` and `fixtures/grib2/spec/grib2_pin.json`, which records it beside the adapter's name. One GRIB edition 2 message becomes one `ENVIRONMENTAL_OBSERVATION` `Event` per field, carrying the `gridded-field/1` contract; ingest only, the fourteenth `residual: structured` adapter and the first of the arc's 3.6.0 content. The class, the fixture set, its goldens and its tests landed together on 2026-10-17, so the row had no Phase 1 in this table |
+| 30 | `cog` | shipped | `adapters/cog.py`, whose docstring claims the ordinal, `fixtures/cog/README.md` and `fixtures/cog/spec/cog_pin.json`, which records it beside the adapter's name. One Cloud Optimized GeoTIFF, classic GeoTIFF or GDAL VRT index becomes one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `imagery-product/1` contract when a sensing time is stated or supplied, otherwise one `ANNOTATION` `PlanObject`; ingest only, the fifteenth `residual: structured` adapter and the second of the arc's 3.6.0 content, with the standard-library raster codec (`adapters/raster_codec.py`) the IEM N0Q adapter reuses. The class, the fixture set, its goldens and its tests landed together on 2026-10-17, so the row had no Phase 1 in this table |
+| 31 | `iem_n0q` | shipped | `adapters/iem_n0q.py`, whose docstring claims the ordinal, `fixtures/iem_n0q/README.md` and `fixtures/iem_n0q/spec/iem_n0q_pin.json`, which records it beside the adapter's name. One IEM NEXRAD N0Q composite PNG becomes one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `gridded-field/1` contract, at the caller's archive slot; ingest only, the sixteenth `residual: structured` adapter and the third and last of the arc's 3.6.0 content, on the PNG reader of `adapters/raster_codec.py`. The class, the fixture set, its goldens and its tests landed together on 2026-10-17, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -318,6 +327,12 @@ tests in one change and never at Phase 1 here, so the count still stays at one.
 `ndbc_stdmet` at #26, `coops_csv` at #27 and `airnow_hourly` at #28 landed on 2026-10-15 the same
 way, each with its class, fixtures, goldens and tests in one change and never at Phase 1 here, so
 the count still stays at one.
+`grib2` at #29 landed on 2026-10-17 the same way, with its class, fixtures, goldens and tests in
+one change and never at Phase 1 here, so the count still stays at one.
+`cog` at #30 landed on 2026-10-17 the same way, with its class, fixtures, goldens and tests in
+one change and never at Phase 1 here, so the count still stays at one.
+`iem_n0q` at #31 landed on 2026-10-17 the same way, with its class, fixtures, goldens and tests in
+one change and never at Phase 1 here, so the count still stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -15253,6 +15268,93 @@ by its `spec/build_fixtures.py`.
 | every line as written; a site's fields as its first line states them | `Event.residual`, `Entity.residual` | `airnow_hourly 1.0.0 · residual` | `residual.data.record` or `residual.data.row`; `Elevation`, `GMTOffset`, the `*_Measured` fields and the reporting areas stay here |
 | a quality flag | `point-observation/1` `quality_flags_basis` | `airnow_hourly 1.0.0` | None is published: only valid data are reported, and every value is preliminary |
 | a date in neither form, an AQSID of another length, a line of another width, a value that is no number, a number no binary double holds, a HourlyAQObs header not the 34 names the files write (the fact sheet's list spells `OZONE_Measured` as `Ozone_Measured`; that spelling is refused) | — | refused | `bad-date`, `bad-aqsid`, `width-mismatch`, `not-a-number`, `number-out-of-range`, `unknown-header`, never quoting a value |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## GRIB2 (WMO FM 92 GRIB edition 2) — ingest only
+
+`grib2` is #29 in the ordinal table: `adapters/grib2.py`, ingest only, the fourteenth adapter to
+declare `residual: structured`, landed 2026-10-17. It reads ONE GRIB edition 2 message — Section 0's
+sixteen octets with its eight-octet total length, Sections 1 to 7 with Sections 4 to 7 repeated
+for a second field, and Section 8's `7777` — as its octets or its parsed twin, and it writes one
+`ENVIRONMENTAL_OBSERVATION` `Event` per field carrying the `gridded-field/1` contract. The layouts
+are read against NCEP's WMO GRIB2 documentation (version 37.0.0) and WMO-No. 306, both cited by
+reference in `fixtures/grib2/spec/grib2_pin.json` and never carried; the few code-table rows the
+adapter states words or units for are listed there with the file each was read from. A file of
+messages is `synapse-decode`'s to cut. Fixtures: `fixtures/grib2/`, seven written by GDAL 3.13.3
+and six by its `spec/build_fixtures.py`'s own encoder.
+
+| GRIB2 | CDM field | Status | Notes |
+|---|---|---|---|
+| Section 1 reference time (octets 13-19) and its significance (Code Table 1.2) | `Event.observed_at`, `SourceRef.observed_at`, `gridded-field/1` `time.reference_time`, `time.reference_time_significance` | `grib2 1.0.0` | `observed_at` is the reference time for every class this adapter emits, never a future valid instant; Table 1.2 codes 0 to 3 with the table's words, any other refused `unsupported-reference-significance`; UTC |
+| forecast time and its unit (Template 4.0 octets 18-22, Code Table 4.4) | `Event.validity.effective`, `time.forecast_offset` | `grib2 1.0.0` | The validity is the instant reference + forecast time; minutes, hours and seconds are read, any other unit refused `unsupported-time-unit` |
+| Template 4.8's end of the overall interval, its one time range and statistical process (Code Table 4.10) | `Event.validity.effective`, `time.statistical_process`, `quality_flags` `missing_in_statistical_process` | `grib2 1.0.0` | The interval runs from reference + forecast time (Note 2) to the stated end, which must equal its start plus the range's length (`interval-disagrees`); more than one range refused |
+| type of processed data (Section 1 octet 21, Code Table 1.4) | `gridded-field/1` `product_class` | `grib2 1.0.0` | 0 analysis; 1 and 2 forecast when the validity ends after the reference time, else analysis; 7 (processed radar observations) modelled_estimate; any other refused `unsupported-data-type`, a class nobody ruled |
+| discipline, parameter category and number (Code Table 4.2) | `gridded-field/1` `quantity`, `unit` | `grib2 1.0.0` | The code `discipline.category.number`; a name and a unit only for the rows the pin lists (GDAL's tables, and NSSL's MRMS row keyed by centre 161 and discipline 209); any other parameter states no unit |
+| first fixed surface (Template 4.x octets 23-28, Code Table 4.5) | `gridded-field/1` `level` | `grib2 1.0.0` | The code, and the scaled value x 10^-(scale factor) in the surface's unit where the table gives one; a layer's second surface stays in the residual |
+| Grid Definition Template 3.0 (lat/lon) and 3.30 (Lambert conformal) | `gridded-field/1` `grid`, `Event.geometry` | `grib2 1.0.0` | The template octets verbatim under their own names, the shape `[Nj, Ni]`, the scanning mode as its eight flag bits; the WGS84 footprint Polygon is a lat/lon grid's corner points or a Lambert grid's outline converted point by point with the spherical inverse (shapes 0, 1 and 6), densified to at most 16 segments an edge; no `crs`, no `BoundingBox`; any other template, a grid across 180 degrees, a scanning mode beyond the i and j directions refused |
+| Data Representation Templates 5.0, 5.3 and 5.41, with the Section 6 bitmap | `gridded-field/1` `values` (by reference) | `grib2 1.0.0` | Never copied: the `grib` locator (message, field, octet), the shape, the packing, Y = (R + X x 2^E) / 10^D as `scale` and `offset`, and a summary whose missing count adds the bitmap's absent points, Table 5.5's missing values and a parameter's sentinels; complex packing of orders 1 and 2 under management 0, 1 and 2; PNG of 8 and 16 bits with its rows inflated under 64 MiB |
+| Data Representation Template 5.40 (JPEG 2000) | `gridded-field/1` `values` (by reference, no summary) | `grib2 1.0.0` | Read in reference form (DECISIONS U-02): Sections 0 to 6 read, Section 7 held to open with a codestream's SOC and SIZ markers; the twin's codestream is a declared limitation |
+| bitmap indicator, absent points, Table 5.5 counts, sentinel counts, production status | `gridded-field/1` `quality_flags` | `grib2 1.0.0` | Each mechanism its own flag, never merged |
+| message ordinal, field ordinal, the octet the message begins at | `values.locator`, `locator`, `SourceRef.record_index` | `grib2 1.0.0` | Given by `synapse-decode` when it cuts a file; a message handed over alone is message 0 at octet 0; `frame_sha256` when the message is not the whole file |
+| Sections 0 to 2; each field's Sections 3 to 7 as stated | `Event.residual` | `grib2 1.0.0 · residual` | `residual.data.indicator`, `identification`, `local_use` and `field` |
+| GRIB edition 1, a total length that is not the payload's, no `7777`, a section out of order or past the end, a second Section 2 or 3, any other template, a bitmap whose set points are not Section 5's count, a PNG chunk whose CRC fails or whose rows would inflate past the bound | — | refused | `grib-edition-1`, `truncated-message`, `octets-after-message`, `no-end-section`, `section-out-of-order`, `section-past-the-end`, `repeated-grid-section`, `unsupported-packing-template`, `bitmap-count-disagrees`, `png-crc`, `png-past-the-decompression-bound` among them |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0) and GDAL VRT — ingest only
+
+`cog` is #30 in the ordinal table: `adapters/cog.py`, ingest only, the fifteenth adapter to
+declare `residual: structured`, landed 2026-10-17. It reads ONE file — a classic GeoTIFF (a COG is
+one, its directories first) of at most 256 MiB, or a GDAL VRT index — as its octets or its parsed
+twin, HEADER-ONLY: every directory and every block position is read and checked, and the values
+of one block only, block 0 of the full-resolution image, are decoded under 1 MiB. The layouts are
+read against OGC GeoTIFF 1.1, OGC COG 1.0 and TIFF 6.0, cited by reference in
+`fixtures/cog/spec/cog_pin.json` and never carried; GDAL's own GDAL_METADATA and GDAL_NODATA tags
+are honoured explicitly. The decoding lives in `adapters/raster_codec.py`, the standard-library
+codec the IEM N0Q adapter reuses. Fixtures: `fixtures/cog/`, eight written by GDAL 3.13.3 and two
+VRT indexes by its `spec/build_fixtures.py`.
+
+| GeoTIFF / VRT | CDM field | Status | Notes |
+|---|---|---|---|
+| GDAL_METADATA `SENSING_TIME` (HLS), or `RangeBeginningDate`/`Time` and `RangeEndingDate`/`Time` (ECOSTRESS) | `Event.validity.effective`, `Event.observed_at`, `SourceRef.observed_at`, `imagery-product/1` `time.source_time_system` | `cog 1.0.0` | Read only with the zone stated (RFC 3339 with its offset; a time ending `Z`); `observed_at` is the end of the interval, an instant its two ends; a stamp without a zone, a partial interval, a reversed one and both forms at once refused by name |
+| the caller's `sensing_time` (an instant and its basis) | the same, `stated_by: caller` | `cog 1.0.0` | Only when the file states none; required where the file names a sensed product's processing clock (`HLS_PROCESSING_TIME`, `ProductionDateTime`) and states no sensing time (`sensing-time-required`, DECISIONS L-12); a file name is never read for a time |
+| no sensing time stated or supplied (a DEM, a VRT) | `PlanObject` `ANNOTATION`, `validity.observed_at` from the caller's `as_of` | `cog 1.0.0` | The `geo-object/1` pattern: nothing promoted; the structured limitation `no-source-time` |
+| `HLS_PROCESSING_TIME`, `ProductionDateTime`, TIFF `DateTime` (306), `Software` (305) | `imagery-product/1` `product_version` | `cog 1.0.0` | Processing clocks verbatim, in no key ending `_at` |
+| ModelTiepointTag, ModelPixelScaleTag, the image size, GTRasterTypeGeoKey | `Event.geometry` / `PlanObject.geometry` | `cog 1.0.0` | The outline of the image's cells (a PixelIsPoint tiepoint is a cell centre); EPSG:4326 as stated, EPSG:4269 stated as WGS84 without a datum shift, a WGS84 UTM zone converted point by point with the transverse Mercator inverse, densified to at most 16 segments an edge and rounded to 10^-6 degree; any other system, a rotation, more than one tiepoint, an outline past 180 degrees of longitude or (UTM) reaching a pole refused; no `crs`, no `BoundingBox` |
+| the GeoKeys, ModelPixelScaleTag, ModelTiepointTag | `imagery-product/1` `grid` | `cog 1.0.0` | Verbatim under OGC GeoTIFF 1.1's key names, the shape `[rows, columns]`, the cell size in the system's unit |
+| VerticalGeoKey 5703 (NAVD88 height) | `residual.data.vertical.datum` `{name, namespace}` | `cog 1.0.0 · residual` | Never `Position.alt_m` (ellipsoidal metres only); any other vertical system refused |
+| block 0 of IFD 0, decoded | `imagery-product/1` `values` | `cog 1.0.0` | Inline when it holds at most 4096 cells and the file states its unit (GDAL UNITTYPE, or the vertical system's) and no scale or offset; otherwise by reference: the raster locator (IFD 0, tile 0, the window), dtype, encoding, GDAL's scale and offset, the nodata text and the window's summary in the stored values |
+| GDAL_NODATA (42113), NaN samples | the window's missing values and `missing_mechanism` | `cog 1.0.0` | A sample equal to the nodata value as its type stores it, or a NaN, is missing; an infinite sample is refused |
+| GDAL_METADATA `DESCRIPTION`, `UNITTYPE`, TIFF ImageDescription (270) | `imagery-product/1` `band.name`, `unit`, `product.name` | `cog 1.0.0` | Verbatim where stated |
+| GDAL_METADATA `CLOUD_COVERAGE`, `SPATIAL_COVERAGE` | `imagery-product/1` `quality_flags` | `cog 1.0.0` | Verbatim text, `applies_to: granule`; with neither, `quality_flags_basis` says the file states no quality summary |
+| every directory's entries, IFD 0's GeoKeys and GDAL_METADATA items | `residual.data.ifds`, `geokeys`, `gdal_metadata` | `cog 1.0.0 · residual` | Every entry under its TIFF name with its type; a tag this module does not name kept as `Tag<number>`; the block offsets and byte counts a declared limitation, read to check every block lies in the file |
+| a VRT's size, SRS, GeoTransform, metadata and simple or complex sources | `PlanObject.geometry`, `residual.data.vrt` | `cog 1.0.0` | The SRS as `EPSG:<code>` or WKT1 GEOGCS, PROJCS or COMPD_CS (EPSG:5498 read as NAD83 horizontally); sources listed and never opened |
+| BigTIFF, a directory, value or block outside the file, a looping chain, JPEG/LERC/ZSTD/LZMA/WebP/JPEG 2000 compression, more than one sample a pixel, a block past 1 MiB or inflating past its size, a coordinate system outside the closed set, a VRT with a DTD, an entity, an element not read or a remote source | — | refused | `bigtiff`, `ifd-past-the-end`, `block-past-the-end`, `ifd-loop`, `unsupported-compression`, `more-than-one-sample`, `block-past-the-decompression-bound`, `block-inflates-past-its-size`, `unsupported-crs`, `vrt-dtd`, `unsupported-vrt-element`, `remote-source` among them |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## IEM NEXRAD N0Q composite (PNG, IEM product composite_n0q) — ingest only
+
+`iem_n0q` is #31 in the ordinal table: `adapters/iem_n0q.py`, ingest only, the sixteenth adapter
+to declare `residual: structured`, landed 2026-10-17. It reads ONE IEM N0Q composite PNG (8 MiB at
+most), as its octets or its parsed twin, against the PNG Third Edition and IEM's composite and
+raster-catalogue pages, cited by URL in `fixtures/iem_n0q/spec/iem_n0q_pin.json` and never carried.
+The grid is a PRODUCT CONSTANT the adapter declares — 12200 x 5400 cells of 0.005 degree in
+EPSG:4326, the archive's world file `0.005 / 0.0 / 0.0 / -0.005 / -126.0 / 50.0` read as the centre
+of the north-west cell — and IHDR is held to it; the `.wld` is never a payload and never read. The
+PNG decoding is the shared codec `adapters/raster_codec.py`. Fixtures: `fixtures/iem_n0q/`, four
+12200 x 5400 PNGs written by its `spec/build_fixtures.py` in pure Python, with its own DEFLATE writer.
+
+| N0Q PNG | CDM field | Status | Notes |
+|---|---|---|---|
+| the archive file name's slot (`n0q_YYYYMMDDHHMM`), supplied by the caller with its basis | `Event.observed_at`, `Event.validity.effective` (both ends), `SourceRef.observed_at`, `gridded-field/1` `time.source_time_system` (`stated_by: caller`) | `iem_n0q 1.0.0` | The composite's nominal time (UTC, minutes divisible by five); a slot off the five-minute grid refused when the adapter is built; the PNG states no time and no file name is read |
+| `tEXt` `gentime` | `gridded-field/1` `product_version.production_time_verbatim` | `iem_n0q 1.0.0` | IEM's generation clock, verbatim and unparsed, in no key ending `_at`; blank, past 1024 characters or stated twice refused |
+| IHDR width, height, bit depth, colour type | `gridded-field/1` `grid.shape` `[5400, 12200]`; `residual.data.header` | `iem_n0q 1.0.0` | Held to 12200 x 5400 x 8-bit indexed (colour type 3) before anything is inflated; any other refused `not-the-n0q-grid` |
+| the product constant's outline | `Event.geometry` | `iem_n0q 1.0.0` | A WGS84 Polygon from 126.0025 W 50.0025 N to 65.0025 W 23.0025 N: the world file's cell centres moved half a cell out; latitude/longitude, so nothing is transformed; no `crs`, no `BoundingBox`, no site `Entity` |
+| the world-file terms, the cell size | `gridded-field/1` `grid` (`template` `EPSG:4326`, `cell_size`, `parameters.world_file`, `parameters.registration`) | `iem_n0q 1.0.0` | The constant, verbatim under the world file's term names |
+| the palette indices (IDAT) | `gridded-field/1` `values` (by reference), `unit` `dBZ`, `quantity` `composite_n0q` | `iem_n0q 1.0.0` | Index 0 missing, index i (i − 65) / 2 dBZ: `scale` 0.5, `offset` −32.5, `fill` 0, the raster locator a whole-image window, a summary in dBZ (count, missing count, least, greatest); index 255 is 95.0 dBZ, IEM's two pages disagreeing on the ramp top (90 or 95), declared as `ramp-top-disagreement`; never inline (65,880,000 cells) |
+| PLTE | `residual.data.palette` | `iem_n0q 1.0.0 · residual` | The colours are read for nothing; an index past the palette refused |
+| ancillary chunks (`tEXt`, `tRNS`, `tIME` and any other) | `residual.data.ancillary` | `iem_n0q 1.0.0 · residual` | In file order; a `tEXt` chunk as its keyword and text under the PNG's keyword rules, any other as its octets in hexadecimal; a `tIME` clock is never a time |
+| the index-domain summary | `residual.data.index_summary` | `iem_n0q 1.0.0 · residual` | Count, index-0 count, least and greatest non-zero index |
+| a size, depth or colour type other than the product's, an interlaced image, a chunk whose CRC fails or out of order, an unknown critical chunk, image data inflating past or short of its rows, an index past the palette, a malformed `tEXt` chunk | — | refused | `not-the-n0q-grid`, `interlaced`, `png-crc`, `png-chunk-order`, `unknown-critical-chunk`, `png-data-past-its-rows`, `png-truncated`, `png-short`, `index-past-the-palette`, `bad-text-chunk`, `gentime-twice`, `bad-gentime` among them |
 | egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
 
 ## Gaps, and what each one costs

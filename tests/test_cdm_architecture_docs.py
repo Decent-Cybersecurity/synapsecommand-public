@@ -53,8 +53,12 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
                 # Added 2026-10-15 (the same arc, `nexrad2`): twenty-four.
                 # Added 2026-10-15 (the same arc, the three station-text adapters): twenty-five to
                 # twenty-seven, the counts the roster passes through as they land.
+                # Added 2026-10-17 (the same arc's 3.6.0 content, `grib2`): twenty-eight.
+                # Added 2026-10-17 (the same arc's 3.6.0 content, `cog`): twenty-nine.
+                # Added 2026-10-17 (the same arc's 3.6.0 content, `iem_n0q`): thirty.
                 "twenty-one": 21, "twenty-two": 22, "twenty-three": 23, "twenty-four": 24,
-                "twenty-five": 25, "twenty-six": 26, "twenty-seven": 27}
+                "twenty-five": 25, "twenty-six": 26, "twenty-seven": 27, "twenty-eight": 28,
+                "twenty-nine": 29, "thirty": 30}
 _NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 

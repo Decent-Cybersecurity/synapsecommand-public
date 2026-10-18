@@ -1,0 +1,155 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, every walk is linear in the octets read, one block of at most max_decompressed_bytes is decoded, and the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_decompressed_bytes": {
+            "enforced_at": "`raster_codec.decode_block`: block 0's decoded size is compared with the bound before any octet is decompressed and refused `block-past-the-decompression-bound`; LZW, Deflate and PackBits are then held to exactly the block's size, and an octet past it is refused `block-inflates-past-its-size` before it is kept",
+            "kind": "implementation_cap",
+            "source": "One 512 x 512 tile of 32-bit floats is 1,048,576 octets (research-raster F9, F16): the block of the 3DEP and CUDEM COGs. 1 MiB (`MAX_DECOMPRESSED_BYTES`, `adapters/cog.py`) is that block, the one block this module decodes. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_cog_adapter.py::test_a_block_is_held_to_the_bound_before_and_while_it_inflates"
+          },
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs; `secure_xml.parse` refuses a VRT element past it",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the dict form, the parsed twin, nests seven containers (a rational inside a tag inside a directory). 16 (`MAX_DEPTH`, `adapters/cog.py`) is the dis7 envelope's bound, and the VRT's XML is held to the same depth. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_cog_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module reads the header",
+            "kind": "implementation_cap",
+            "source": "3DEP n41w074 165,776,270 B and CUDEM tiles 150-217 MB (research-raster F5/F6): the largest files of the two products the design record measured. TIFF 6.0 states no maximum below the 4 GiB its 32-bit offsets reach. 256 MiB (268 435 456 octets, `MAX_INPUT_BYTES`, `adapters/cog.py`) is DECISIONS U-07's bound, above the largest; the conformance suite allocates bound + 1 three times a run, about 768 MiB, a cost U-07 accepted. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`CogAdapter.to_cdm` returns exactly one object",
+            "kind": "implementation_cap",
+            "source": "One object a file: one band file is one product object (design-judge DJ-09), and a VRT is one index. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_cog_adapter.py::test_every_fixture_becomes_exactly_one_object"
+          }
+        },
+        "max_decompressed_bytes": 1048576,
+        "max_depth": 16,
+        "max_input_bytes": 268435456,
+        "max_objects": 1,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "classic GeoTIFF / Cloud Optimized GeoTIFF, one band a file: every directory, the GeoKeys, GDAL_METADATA and GDAL_NODATA read, block 0 of the full-resolution image decoded (none, LZW, Deflate, PackBits; predictors 1, 2 and 3); one ENVIRONMENTAL_OBSERVATION Event (imagery-product/1) when a sensing time is stated or supplied, else one ANNOTATION PlanObject",
+        "GDAL VRT, as an index: its footprint and its sources listed, never opened; one ANNOTATION PlanObject"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the dict form is held to be exactly what its own wire_hex decodes to, so a key injected into a twin is refused `not-a-twin` or `twin-disagrees`; on the wire, a TIFF tag, a GeoKey or a GDAL_METADATA item this module does not name is read by its type and kept in the residual, and a VRT element it does not read is refused",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it"
+    },
+    "id": "cog",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "values-by-reference",
+        "notes": "the twin's `arrays` holds each directory's block offsets and byte counts as the file states them; they are read to locate and check every block, and the values stay in the file but for the one window",
+        "severity": null,
+        "summary": "Array values are carried by reference \u2014 a locator, the shape and packing needed to open them, and a summary \u2014 and are not copied into the output.",
+        "unsupported_paths": [
+          "arrays"
+        ]
+      },
+      {
+        "id": "payload-octets-by-reference",
+        "notes": null,
+        "severity": null,
+        "summary": "the twin's wire_hex is the file's octets, the input its dict form is decoded from; they are identified by SourceRef.source_hash when the caller gives it and are not copied into any object",
+        "unsupported_paths": [
+          "wire_hex"
+        ]
+      },
+      {
+        "id": "no-source-time",
+        "notes": null,
+        "severity": null,
+        "summary": "a DEM and a VRT state no instant, so the PlanObject carries no timestamp unless the caller supplies an as-of (`CogAdapter(as_of=InjectedTime(instant, basis))`), which lands at `validity.observed_at` with its basis in `source.transformations`. A band file whose metadata states a sensing time becomes an Event and is judged on it. The conformance suite's check J reads this id as the declared reason it may find no timestamp to judge",
+        "unsupported_paths": []
+      },
+      {
+        "id": "header-and-one-window",
+        "notes": null,
+        "severity": null,
+        "summary": "the values are read for one window only: block 0 of the full-resolution image (its north-west tile or first strip), clipped to the image, at most 1 MiB decoded; it is summarised in the stored values and carried inline when it holds at most 4096 cells (and, in an Event, when the file states its unit and no scale or offset). Every other block is checked to lie in the file and is not decoded; overview and mask directories are read as structure",
+        "unsupported_paths": []
+      },
+      {
+        "id": "coordinate-systems-read",
+        "notes": null,
+        "severity": null,
+        "summary": "a footprint is converted from EPSG:4326, EPSG:4269 (NAD83, stated as WGS84 without a datum shift) and the WGS84 UTM zones only, and a vertical system only from EPSG:5703 (NAVD88 height); every other system, a user-defined one, a rotation and more than one tiepoint are refused by name. A height is never converted to the ellipsoid: the datum stays beside it in the residual",
+        "unsupported_paths": []
+      },
+      {
+        "id": "tiff-forms-read",
+        "notes": null,
+        "severity": null,
+        "summary": "classic TIFF only (BigTIFF refused by name); one sample a pixel; compression none, LZW, Deflate and PackBits (JPEG, LERC, ZSTD, LZMA, WebP and JPEG 2000 refused by name); predictors 1, 2 (integer samples) and 3 (Float32 and Float64); samples of 8, 16 or 32 bits signed or unsigned, Float32 and Float64",
+        "unsupported_paths": []
+      },
+      {
+        "id": "vrt-index-only",
+        "notes": null,
+        "severity": null,
+        "summary": "a VRT is read as an index: its size, SRS, GeoTransform, metadata and simple or complex sources, listed and never opened; a remote source, a DTD, an entity and any other element (a derived band, a pixel function, an overview) are refused by name",
+        "unsupported_paths": []
+      },
+      {
+        "id": "identity-from-what-the-file-states",
+        "notes": null,
+        "severity": null,
+        "summary": "without `band_file` an object's id derives from what the file states: its coordinate system, size, north-west corner, cell, sample type and sensing interval (a VRT's: its system, size, corner, cell and source count), followed by the caller's `source_hash` digest when it gives one. With neither `band_file` nor `source_hash`, two band files of one granule that share a grid and a sensing time share an id; a caller that holds several bands of a granule passes `band_file` (and `granule_id`) or `source_hash`",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter cog` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every directory, GeoKey, metadata item and the decoded window a structured residual, the block index and the octets a declared limitation) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "Cloud Optimized GeoTIFF header reader",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

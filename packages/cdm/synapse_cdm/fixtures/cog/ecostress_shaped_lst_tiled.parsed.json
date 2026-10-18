@@ -1,0 +1,289 @@
+{
+  "wire_hex": "49492a000800000013000001030001000000080000000101030001000000080000000201030001000000200000000301030001000000080000000601030001000000010000001501030001000000010000001c01030001000000010000003d01030001000000030000004201030001000000100000004301030001000000100000004401040001000000540300004501040001000000650000005301030001000000030000000e830c0003000000ae02000082840c0006000000c6020000af87030020000000f6020000b18702001e0000003603000080a40200bb010000f200000081a40200040000006e616e00000000003c4744414c4d657461646174613e0a20203c4974656d206e616d653d2250726f64756374696f6e4461746554696d65223e323032362d30342d32395431313a30323a33332e3030303030305a3c2f4974656d3e0a20203c4974656d206e616d653d2252616e6765426567696e6e696e6744617465223e323032362d30342d32393c2f4974656d3e0a20203c4974656d206e616d653d2252616e6765426567696e6e696e6754696d65223e30343a31373a32302e3030303030305a3c2f4974656d3e0a20203c4974656d206e616d653d2252616e6765456e64696e6744617465223e323032362d30342d32393c2f4974656d3e0a20203c4974656d206e616d653d2252616e6765456e64696e6754696d65223e30343a31383a31322e3030303030305a3c2f4974656d3e0a20203c4974656d206e616d653d22554e495454595045222073616d706c653d22302220726f6c653d22756e697474797065223e4b3c2f4974656d3e0a20203c4974656d206e616d653d224445534352495054494f4e222073616d706c653d22302220726f6c653d226465736372697074696f6e223e4c53543c2f4974656d3e0a3c2f4744414c4d657461646174613e0a0000000000000080514000000000008051400000000000000000000000000000000000000000000000000000000000000000000000000088134100000000f42f584100000000000000000100010000000700000400000100010001040000010001000204b187160000000108b187070016000608000001008e23000c000001007b7f040c000001002923574753203834202f2055544d207a6f6e652033354e7c5747532038347c00789c73668080bd50ba07881981b818ca6770800206ecc099807e05a87605dcfa6d8ea0ea37390b34a28838ebb1d90fb21eae3f01aaff01d1fac1da1960fa1ba0fa0f90a97f0154ff0262f543b4c3f51f80ea6f2053ff03a8fe041cfa47c1c80600f3332701",
+  "header": {
+    "byte_order": "II",
+    "first_ifd_offset": 8
+  },
+  "ifds": [
+    {
+      "offset": 8,
+      "next_ifd_offset": 0,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            32
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "Predictor": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "TileWidth": {
+          "type": "SHORT",
+          "value": [
+            16
+          ]
+        },
+        "TileLength": {
+          "type": "SHORT",
+          "value": [
+            16
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            70.0,
+            70.0,
+            0.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            320000.0,
+            6340560.0,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "nan"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "TileOffsets": [
+        852
+      ],
+      "TileByteCounts": [
+        101
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 0,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 1026,
+        "name": "GTCitationGeoKey",
+        "value": "WGS 84 / UTM zone 35N"
+      },
+      {
+        "id": 2049,
+        "name": "GeodeticCitationGeoKey",
+        "value": "WGS 84"
+      },
+      {
+        "id": 2054,
+        "name": "GeogAngularUnitsGeoKey",
+        "value": 9102
+      },
+      {
+        "id": 3072,
+        "name": "ProjectedCRSGeoKey",
+        "value": 32635
+      },
+      {
+        "id": 3076,
+        "name": "ProjLinearUnitsGeoKey",
+        "value": 9001
+      }
+    ]
+  },
+  "gdal_metadata": [
+    {
+      "name": "ProductionDateTime",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "2026-04-29T11:02:33.000000Z"
+    },
+    {
+      "name": "RangeBeginningDate",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "2026-04-29"
+    },
+    {
+      "name": "RangeBeginningTime",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "04:17:20.000000Z"
+    },
+    {
+      "name": "RangeEndingDate",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "2026-04-29"
+    },
+    {
+      "name": "RangeEndingTime",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "04:18:12.000000Z"
+    },
+    {
+      "name": "UNITTYPE",
+      "sample": 0,
+      "role": "unittype",
+      "domain": null,
+      "value": "K"
+    },
+    {
+      "name": "DESCRIPTION",
+      "sample": 0,
+      "role": "description",
+      "domain": null,
+      "value": "LST"
+    }
+  ],
+  "vertical": null,
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 8,
+    "height": 8,
+    "dtype": "Float32",
+    "encoding": "TIFF Compression 8 (Deflate), Predictor 3 (floating point)",
+    "count": 64,
+    "missing_count": 1,
+    "min": 280.0,
+    "max": 285.25,
+    "values": [
+      280.0,
+      280.5,
+      281.0,
+      281.5,
+      282.0,
+      282.5,
+      283.0,
+      283.5,
+      280.25,
+      280.75,
+      281.25,
+      281.75,
+      282.25,
+      282.75,
+      283.25,
+      283.75,
+      280.5,
+      281.0,
+      281.5,
+      null,
+      282.5,
+      283.0,
+      283.5,
+      284.0,
+      280.75,
+      281.25,
+      281.75,
+      282.25,
+      282.75,
+      283.25,
+      283.75,
+      284.25,
+      281.0,
+      281.5,
+      282.0,
+      282.5,
+      283.0,
+      283.5,
+      284.0,
+      284.5,
+      281.25,
+      281.75,
+      282.25,
+      282.75,
+      283.25,
+      283.75,
+      284.25,
+      284.75,
+      281.5,
+      282.0,
+      282.5,
+      283.0,
+      283.5,
+      284.0,
+      284.5,
+      285.0,
+      281.75,
+      282.25,
+      282.75,
+      283.25,
+      283.75,
+      284.25,
+      284.75,
+      285.25
+    ],
+    "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): nan"
+  }
+}

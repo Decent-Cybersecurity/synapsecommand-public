@@ -1,0 +1,126 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            23.0,
+            57.25
+          ],
+          [
+            23.5,
+            57.25
+          ],
+          [
+            23.5,
+            57.5
+          ],
+          [
+            23.0,
+            57.5
+          ],
+          [
+            23.0,
+            57.25
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "974a98a3-bfe3-5e31-8822-9d5e1d2e9d89",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "vrt": {
+          "bands": [
+            {
+              "band": 1,
+              "data_type": "Float32",
+              "fields": {
+                "ColorInterp": "Gray",
+                "NoDataValue": "-99999"
+              },
+              "metadata": [],
+              "sources": [
+                {
+                  "DstRect": {
+                    "xOff": "0",
+                    "xSize": "4",
+                    "yOff": "1",
+                    "ySize": "3"
+                  },
+                  "SourceBand": "1",
+                  "SourceProperties": {
+                    "BlockXSize": "4",
+                    "BlockYSize": "3",
+                    "DataType": "Float32",
+                    "RasterXSize": "4",
+                    "RasterYSize": "3"
+                  },
+                  "SrcRect": {
+                    "xOff": "0",
+                    "xSize": "4",
+                    "yOff": "0",
+                    "ySize": "3"
+                  },
+                  "element": "SimpleSource",
+                  "relative_to_vrt": true,
+                  "shared": null,
+                  "source_filename": "navd88_dem_deflate.tif"
+                }
+              ]
+            }
+          ],
+          "geo_transform": [
+            23.0,
+            0.0625,
+            0.0,
+            57.5,
+            0.0,
+            -0.0625
+          ],
+          "metadata": [],
+          "raster_x_size": 8,
+          "raster_y_size": 4,
+          "srs": {
+            "data_axis_to_srs_axis_mapping": "2,1,3",
+            "text": "COMPD_CS[\"NAD83 + NAVD88 height\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4269\"]],VERT_CS[\"NAVD88 height\",VERT_DATUM[\"North American Vertical Datum 1988\",2005,AUTHORITY[\"EPSG\",\"5103\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Gravity-related height\",UP],AUTHORITY[\"EPSG\",\"5703\"]],AUTHORITY[\"EPSG\",\"5498\"]]"
+          }
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "route": null,
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells in degrees of EPSG:4269 (NAD83), stated as WGS84 coordinates without a datum shift: the null transformation PROJ applies between the two, which differ by about a metre"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "VRT EPSG:4269 8x4 at 23.0,57.5 cell 0.0625x0.0625 1 sources",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

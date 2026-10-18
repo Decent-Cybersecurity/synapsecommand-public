@@ -1,0 +1,761 @@
+[
+  {
+    "event_id": "507140a3-7006-51ca-9b4d-6fe9b67e124d",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.327071,
+            56.753545
+          ],
+          [
+            21.334921,
+            56.753524
+          ],
+          [
+            21.34277,
+            56.753503
+          ],
+          [
+            21.35062,
+            56.753481
+          ],
+          [
+            21.358469,
+            56.753459
+          ],
+          [
+            21.366319,
+            56.753436
+          ],
+          [
+            21.374169,
+            56.753413
+          ],
+          [
+            21.382018,
+            56.753389
+          ],
+          [
+            21.389867,
+            56.753365
+          ],
+          [
+            21.397717,
+            56.75334
+          ],
+          [
+            21.405566,
+            56.753315
+          ],
+          [
+            21.413416,
+            56.753289
+          ],
+          [
+            21.421265,
+            56.753262
+          ],
+          [
+            21.429115,
+            56.753236
+          ],
+          [
+            21.436964,
+            56.753208
+          ],
+          [
+            21.444813,
+            56.753181
+          ],
+          [
+            21.452663,
+            56.753152
+          ],
+          [
+            21.452715,
+            56.757465
+          ],
+          [
+            21.452767,
+            56.761777
+          ],
+          [
+            21.452819,
+            56.766089
+          ],
+          [
+            21.45287,
+            56.770401
+          ],
+          [
+            21.452922,
+            56.774713
+          ],
+          [
+            21.452974,
+            56.779025
+          ],
+          [
+            21.453026,
+            56.783337
+          ],
+          [
+            21.453078,
+            56.787649
+          ],
+          [
+            21.45313,
+            56.791961
+          ],
+          [
+            21.453182,
+            56.796273
+          ],
+          [
+            21.453234,
+            56.800586
+          ],
+          [
+            21.453286,
+            56.804898
+          ],
+          [
+            21.453338,
+            56.80921
+          ],
+          [
+            21.45339,
+            56.813522
+          ],
+          [
+            21.453442,
+            56.817834
+          ],
+          [
+            21.453495,
+            56.822146
+          ],
+          [
+            21.445631,
+            56.822174
+          ],
+          [
+            21.437767,
+            56.822202
+          ],
+          [
+            21.429903,
+            56.822229
+          ],
+          [
+            21.422039,
+            56.822256
+          ],
+          [
+            21.414175,
+            56.822283
+          ],
+          [
+            21.406312,
+            56.822308
+          ],
+          [
+            21.398448,
+            56.822334
+          ],
+          [
+            21.390584,
+            56.822359
+          ],
+          [
+            21.38272,
+            56.822383
+          ],
+          [
+            21.374856,
+            56.822407
+          ],
+          [
+            21.366992,
+            56.82243
+          ],
+          [
+            21.359128,
+            56.822453
+          ],
+          [
+            21.351264,
+            56.822475
+          ],
+          [
+            21.3434,
+            56.822497
+          ],
+          [
+            21.335536,
+            56.822519
+          ],
+          [
+            21.327672,
+            56.82254
+          ],
+          [
+            21.327635,
+            56.818227
+          ],
+          [
+            21.327597,
+            56.813915
+          ],
+          [
+            21.327559,
+            56.809603
+          ],
+          [
+            21.327522,
+            56.805291
+          ],
+          [
+            21.327484,
+            56.800979
+          ],
+          [
+            21.327447,
+            56.796667
+          ],
+          [
+            21.327409,
+            56.792355
+          ],
+          [
+            21.327371,
+            56.788042
+          ],
+          [
+            21.327334,
+            56.78373
+          ],
+          [
+            21.327296,
+            56.779418
+          ],
+          [
+            21.327259,
+            56.775106
+          ],
+          [
+            21.327221,
+            56.770794
+          ],
+          [
+            21.327184,
+            56.766482
+          ],
+          [
+            21.327146,
+            56.762169
+          ],
+          [
+            21.327109,
+            56.757857
+          ],
+          [
+            21.327071,
+            56.753545
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T05:41:07.250Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "band": {
+          "code": "sample 0",
+          "name": "Red",
+          "namespace": "GDAL_METADATA (TIFF tag 42112) item DESCRIPTION of band 1, where stated"
+        },
+        "contract": "imagery-product/1",
+        "grid": {
+          "cell_size": [
+            {
+              "unit": "metre",
+              "unit_namespace": "OGC GeoTIFF 1.1 ModelPixelScaleTag",
+              "value": 30.0
+            },
+            {
+              "unit": "metre",
+              "unit_namespace": "OGC GeoTIFF 1.1 ModelPixelScaleTag",
+              "value": 30.0
+            }
+          ],
+          "namespace": "OGC GeoTIFF 1.1",
+          "parameters": {
+            "ModelPixelScaleTag": [
+              30.0,
+              30.0,
+              0.0
+            ],
+            "ModelTiepointTag": [
+              0.0,
+              0.0,
+              0.0,
+              520000.0,
+              6297680.0,
+              0.0
+            ],
+            "geokeys": {
+              "GTCitationGeoKey": "WGS 84 / UTM zone 34N",
+              "GTModelTypeGeoKey": 1,
+              "GTRasterTypeGeoKey": 1,
+              "GeodeticCitationGeoKey": "WGS 84",
+              "GeogAngularUnitsGeoKey": 9102,
+              "ProjLinearUnitsGeoKey": 9001,
+              "ProjectedCRSGeoKey": 32634
+            }
+          },
+          "scanning_mode": null,
+          "shape": [
+            256,
+            256
+          ],
+          "template": "ProjectedCRSGeoKey 32634"
+        },
+        "locator": {
+          "band_file": null,
+          "frame_sha256": null,
+          "granule_id": null,
+          "ifd": 0,
+          "kind": "raster",
+          "tile": 0,
+          "window": {
+            "column": 0,
+            "height": 128,
+            "row": 0,
+            "width": 128
+          }
+        },
+        "product": {
+          "code": "IFD 0",
+          "name": null,
+          "namespace": "TIFF 6.0: the file's first image file directory, named by its ImageDescription (tag 270) where it states one"
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-04-30T02:11:45Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [
+          {
+            "applies_to": "granule",
+            "name": "CLOUD_COVERAGE",
+            "namespace": "GDAL_METADATA (TIFF tag 42112) dataset item, HLS v2.0 User Guide Table 11",
+            "value": "17"
+          },
+          {
+            "applies_to": "granule",
+            "name": "SPATIAL_COVERAGE",
+            "namespace": "GDAL_METADATA (TIFF tag 42112) dataset item, HLS v2.0 User Guide Table 11",
+            "value": "100"
+          }
+        ],
+        "quality_flags_basis": null,
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "GDAL_METADATA (TIFF tag 42112) item SENSING_TIME, an RFC 3339 instant with its zone",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        },
+        "unit": null,
+        "values": {
+          "dtype": "Int16",
+          "encoding": "TIFF Compression 8 (Deflate), Predictor 2 (horizontal differencing)",
+          "fill": "-9999",
+          "locator": {
+            "band_file": null,
+            "frame_sha256": null,
+            "granule_id": null,
+            "ifd": 0,
+            "kind": "raster",
+            "tile": 0,
+            "window": {
+              "column": 0,
+              "height": 128,
+              "row": 0,
+              "width": 128
+            }
+          },
+          "mode": "reference",
+          "offset": 0.0,
+          "scale": 0.0001,
+          "shape": [
+            128,
+            128
+          ],
+          "summary": {
+            "count": 16384,
+            "max": 1635.0,
+            "min": 1003.0,
+            "missing_count": 5
+          }
+        },
+        "wavelength": null
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "gdal_metadata": [
+          {
+            "domain": null,
+            "name": "CLOUD_COVERAGE",
+            "role": null,
+            "sample": null,
+            "value": "17"
+          },
+          {
+            "domain": null,
+            "name": "HLS_PROCESSING_TIME",
+            "role": null,
+            "sample": null,
+            "value": "2026-04-30T02:11:45Z"
+          },
+          {
+            "domain": null,
+            "name": "SENSING_TIME",
+            "role": null,
+            "sample": null,
+            "value": "2026-04-29T05:41:07.250000Z"
+          },
+          {
+            "domain": null,
+            "name": "SPATIAL_COVERAGE",
+            "role": null,
+            "sample": null,
+            "value": "100"
+          },
+          {
+            "domain": null,
+            "name": "OFFSET",
+            "role": "offset",
+            "sample": 0,
+            "value": "0"
+          },
+          {
+            "domain": null,
+            "name": "SCALE",
+            "role": "scale",
+            "sample": 0,
+            "value": "0.0001"
+          },
+          {
+            "domain": null,
+            "name": "DESCRIPTION",
+            "role": "description",
+            "sample": 0,
+            "value": "Red"
+          },
+          {
+            "domain": "IMAGE_STRUCTURE",
+            "name": "OVERVIEW_RESAMPLING",
+            "role": null,
+            "sample": null,
+            "value": "CUBIC"
+          }
+        ],
+        "geokeys": {
+          "keys": [
+            {
+              "id": 1024,
+              "name": "GTModelTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1025,
+              "name": "GTRasterTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1026,
+              "name": "GTCitationGeoKey",
+              "value": "WGS 84 / UTM zone 34N"
+            },
+            {
+              "id": 2049,
+              "name": "GeodeticCitationGeoKey",
+              "value": "WGS 84"
+            },
+            {
+              "id": 2054,
+              "name": "GeogAngularUnitsGeoKey",
+              "value": 9102
+            },
+            {
+              "id": 3072,
+              "name": "ProjectedCRSGeoKey",
+              "value": 32634
+            },
+            {
+              "id": 3076,
+              "name": "ProjLinearUnitsGeoKey",
+              "value": 9001
+            }
+          ],
+          "minor_revision": 0,
+          "revision": 1,
+          "version": 1
+        },
+        "header": {
+          "byte_order": "II",
+          "first_ifd_offset": 192
+        },
+        "ifds": [
+          {
+            "next_ifd_offset": 1096,
+            "offset": 192,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  16
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  8
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "-9999"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  256
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  256
+                ]
+              },
+              "ModelPixelScaleTag": {
+                "type": "DOUBLE",
+                "value": [
+                  30.0,
+                  30.0,
+                  0.0
+                ]
+              },
+              "ModelTiepointTag": {
+                "type": "DOUBLE",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  520000.0,
+                  6297680.0,
+                  0.0
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "Predictor": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "TileLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "TileWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              }
+            }
+          },
+          {
+            "next_ifd_offset": 0,
+            "offset": 1096,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  16
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  8
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "-9999"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "NewSubfileType": {
+                "type": "LONG",
+                "value": [
+                  1
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "Predictor": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "TileLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "TileWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              }
+            }
+          }
+        ],
+        "vertical": null,
+        "window": {
+          "block": 0,
+          "column": 0,
+          "count": 16384,
+          "dtype": "Int16",
+          "encoding": "TIFF Compression 8 (Deflate), Predictor 2 (horizontal differencing)",
+          "height": 128,
+          "ifd": 0,
+          "max": 1635,
+          "min": 1003,
+          "missing_count": 5,
+          "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): -9999",
+          "row": 0,
+          "values": null,
+          "width": 128
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": "2026-04-29T05:41:07.250Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells in a WGS84 UTM zone, each edge densified to at most 16 segments and every vertex converted with the transverse Mercator inverse (Kruger's series to third order in n), rounded to 10^-6 degree",
+        "window: the values of block 0 of the full-resolution image, clipped to the image, decoded and summarised in the stored values; a sample equal to GDAL_NODATA, or a NaN, is missing",
+        "gdal_metadata: the sensing instant is the SENSING_TIME item, RFC 3339 with its zone, read in UTC; it is validity.effective's two ends and observed_at"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EPSG:32634 256x256 at 520000.0,6297680.0 cell 30.0x30.0 Int16 sensed 2026-04-29T05:41:07.250Z to 2026-04-29T05:41:07.250Z",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-29T05:41:07.250Z",
+        "start": "2026-04-29T05:41:07.250Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  }
+]

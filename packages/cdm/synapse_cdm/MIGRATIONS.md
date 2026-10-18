@@ -144,7 +144,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All twenty-seven harnesses are green**, and at least one of them run against the INSTALLED
+2. **All thirty harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -640,11 +640,119 @@ now true of it.
 release tag is `v3.5.0`, and `3.5.0` is what the index serves — `PUBLICATION.md` entry 27 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.5.0 section being what moved in it.
-Everything else the round touched ships in nothing: the ledger, the witness record and its README,
-the release-pipeline and changelog pages, the frozen-contract manifest, and three test modules.
+**What moved inside the distribution: 169 files** — for the `grib2` landing of 2026-10-17, 79: the
+adapter module `adapters/grib2.py`; its fixture set under `fixtures/grib2/`, the thirteen messages
+and their twins at the top level, `bitmap_simple_packing.grb2`, `bitmap_simple_packing.parsed.json`, `complex_order_1.grb2`, `complex_order_1.parsed.json`, `complex_order_1_primary_and_secondary_missing.grb2`, `complex_order_1_primary_and_secondary_missing.parsed.json`, `complex_order_2_missing.grb2`, `complex_order_2_missing.parsed.json`, `complex_order_2_with_bitmap.grb2`, `complex_order_2_with_bitmap.parsed.json`, `jpeg2000_reference_form.grb2`, `jpeg2000_reference_form.parsed.json`, `lambert_conformal_simple.grb2`, `lambert_conformal_simple.parsed.json`, `mrms_style_png_sentinels.grb2`, `mrms_style_png_sentinels.parsed.json`, `png_16_bit.grb2`, `png_16_bit.parsed.json`, `png_8_bit.grb2`, `png_8_bit.parsed.json`, `simple_packing_latlon.grb2`, `simple_packing_latlon.parsed.json`, `two_fields_one_message.grb2`, `two_fields_one_message.parsed.json`, `zero_width_accumulation.grb2` and `zero_width_accumulation.parsed.json`, the set's `PROVENANCE.json` and `README.md`; its
+goldens under `golden/`, `bitmap_simple_packing.cdm.json`, `bitmap_simple_packing.parsed.cdm.json`, `complex_order_1.cdm.json`, `complex_order_1.parsed.cdm.json`, `complex_order_1_primary_and_secondary_missing.cdm.json`, `complex_order_1_primary_and_secondary_missing.parsed.cdm.json`, `complex_order_2_missing.cdm.json`, `complex_order_2_missing.parsed.cdm.json`, `complex_order_2_with_bitmap.cdm.json`, `complex_order_2_with_bitmap.parsed.cdm.json`, `jpeg2000_reference_form.cdm.json`, `jpeg2000_reference_form.parsed.cdm.json`, `lambert_conformal_simple.cdm.json`, `lambert_conformal_simple.parsed.cdm.json`, `mrms_style_png_sentinels.cdm.json`, `mrms_style_png_sentinels.parsed.cdm.json`, `png_16_bit.cdm.json`, `png_16_bit.parsed.cdm.json`, `png_8_bit.cdm.json`, `png_8_bit.parsed.cdm.json`, `simple_packing_latlon.cdm.json`, `simple_packing_latlon.parsed.cdm.json`, `two_fields_one_message.cdm.json`, `two_fields_one_message.parsed.cdm.json`, `zero_width_accumulation.cdm.json` and `zero_width_accumulation.parsed.cdm.json`; its refusal set under `malformed/`, `bitmap_count_disagrees.grb2`, `grib_edition_1.grb2`, `grid_template_32769.grb2`, `missing_end_section.grb2`, `png_crc_failure.grb2`, `png_data_past_its_rows.grb2`, `png_rows_past_the_decompression_bound.grb2`, `repeated_grid_section.grb2`, `total_length_short_of_the_payload.grb2`, `truncated_message.grb2` and `unknown_packing_template.grb2`, with that
+directory's own `PROVENANCE.json` and `README.md`; and under `spec/`, the builder
+`build_fixtures.py` and the pin record `grib2_pin.json`; `decode_host.py` (the GRIB framer
+`grib_messages`, the `frame_offset_argument` field of `Hosted`, the offset `decode` hands a framed
+adapter, the listing's words for it and the `grib2` row of `HOSTED`); the package's `README.md`
+(the roster sentence, the shipped-table row, the pair arithmetic and the host example) and
+`FORMAT_COVERAGE.md` (the two status rows, ordinal row 29 and the GRIB2 row set); and the roster
+count in `pyproject.toml`, `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py` and
+`version.py`. For the `cog` landing of the same day, 58 more, every one new: the adapter module
+`adapters/cog.py` and its codec `adapters/raster_codec.py`; its fixture set under `fixtures/cog/`,
+the ten payloads and their twins at the top level, `compound_navd88_index.parsed.json`, `compound_navd88_index.vrt`, `ecostress_shaped_lst_tiled.parsed.json`, `ecostress_shaped_lst_tiled.tif`, `float32_big_endian_nodata.parsed.json`, `float32_big_endian_nodata.tif`, `float32_deflate_nad83.parsed.json`, `float32_deflate_nad83.tif`, `float32_lzw_predictor3.parsed.json`, `float32_lzw_predictor3.tif`, `hls_shaped_band_cog.parsed.json`, `hls_shaped_band_cog.tif`, `int16_packbits_pixel_is_point.parsed.json`, `int16_packbits_pixel_is_point.tif`, `local_sources_index.parsed.json`, `local_sources_index.vrt`, `navd88_dem_deflate.parsed.json`, `navd88_dem_deflate.tif`, `utm_tiled_cog_lzw.parsed.json` and `utm_tiled_cog_lzw.tif`, the set's `PROVENANCE.json` and `README.md`; its
+goldens under `golden/`, `compound_navd88_index.cdm.json`, `compound_navd88_index.parsed.cdm.json`, `ecostress_shaped_lst_tiled.cdm.json`, `ecostress_shaped_lst_tiled.parsed.cdm.json`, `float32_big_endian_nodata.cdm.json`, `float32_big_endian_nodata.parsed.cdm.json`, `float32_deflate_nad83.cdm.json`, `float32_deflate_nad83.parsed.cdm.json`, `float32_lzw_predictor3.cdm.json`, `float32_lzw_predictor3.parsed.cdm.json`, `hls_shaped_band_cog.cdm.json`, `hls_shaped_band_cog.parsed.cdm.json`, `int16_packbits_pixel_is_point.cdm.json`, `int16_packbits_pixel_is_point.parsed.cdm.json`, `local_sources_index.cdm.json`, `local_sources_index.parsed.cdm.json`, `navd88_dem_deflate.cdm.json`, `navd88_dem_deflate.parsed.cdm.json`, `utm_tiled_cog_lzw.cdm.json` and `utm_tiled_cog_lzw.parsed.cdm.json`; its refusal set under `malformed/`, `bigtiff_header.tif`, `entity_declaration.vrt`, `ifd_loop.tif`, `jpeg_compression.tif`, `tile_inflates_past_its_size.tif`, `tile_offset_past_the_end.tif`, `tile_past_the_decompression_bound.tif`, `truncated_ifd.tif`, `unsupported_crs.tif` and `vsicurl_source.vrt`, with that
+directory's own `PROVENANCE.json` and `README.md`; and under `spec/`, the builder
+`build_fixtures.py` and the pin record `cog_pin.json`. The same landing moved again, within the 79
+already counted, the package's `README.md` (the roster sentence, the shipped-table row and the pair
+arithmetic), `FORMAT_COVERAGE.md` (the two status rows, ordinal row 30 and the GeoTIFF row set)
+and the roster count in `pyproject.toml`, `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py`
+and `version.py`; this file's landing paragraph is the witness round's one, below. For the `iem_n0q` landing of the same day, 31 more, every one new: the adapter module
+`adapters/iem_n0q.py`; its fixture set under `fixtures/iem_n0q/`, the four PNGs and their twins at the top level, `all_missing_no_gentime.parsed.json`, `all_missing_no_gentime.png`, `corner_cells_paeth_average.parsed.json`, `corner_cells_paeth_average.png`, `echo_patch_split_idat.parsed.json`, `echo_patch_split_idat.png`, `ramp_ends_every_filter_type.parsed.json` and `ramp_ends_every_filter_type.png`, the set's `PROVENANCE.json` and `README.md`; its goldens under `golden/`, `all_missing_no_gentime.cdm.json`, `all_missing_no_gentime.parsed.cdm.json`, `corner_cells_paeth_average.cdm.json`, `corner_cells_paeth_average.parsed.cdm.json`, `echo_patch_split_idat.cdm.json`, `echo_patch_split_idat.parsed.cdm.json`, `ramp_ends_every_filter_type.cdm.json` and `ramp_ends_every_filter_type.parsed.cdm.json`; its refusal set under `malformed/`, `four_bit_indices.png`, `gentime_twice.png`, `idat_crc_failure.png`, `index_past_the_palette.png`, `inflates_past_its_rows.png`, `truecolour_colour_type_2.png`, `truncated_idat_stream.png` and `wrong_image_size.png`, with that directory's own `PROVENANCE.json` and `README.md`; and under `spec/`, the builder `build_fixtures.py` and the pin record
+`iem_n0q_pin.json`. The same landing moved again, within the files already counted,
+`decode_host.py` (the `cog` and `iem_n0q` rows of `HOSTED`, their loaders and preparers, the
+`cog` request vocabulary `COG_REQUEST_KEYS` and `COG_TIME_ROLES`, and the docstring's paragraph on
+the two), `adapters/cog.py` (the `not-hosted` limitation retired and its docstring's `HOSTED`
+paragraph), the package's `README.md` (the roster sentence, the shipped-table row, the `cog` row's
+host sentence, the pair arithmetic and the host examples), `FORMAT_COVERAGE.md` (the two status
+rows, ordinal row 31 and the N0Q row set) and the roster count in `pyproject.toml`, `__init__.py`,
+`adapter.py`, `lossless.py`, `symbology.py` and `version.py`. For the 3.5.0 witness round, one: `MIGRATIONS.md` itself, this
+section, the dated witness paragraphs in the release procedure and the pipeline section, the
+release's dated account in the pipeline section, and the index note in the 3.5.0 section being what
+moved in it. Everything else the four touched ships in nothing: for the three landings, the
+generated manifests `manifests/grib2.json`, `manifests/cog.json` and `manifests/iem_n0q.json` and
+the support matrix, the
+repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md`,
+`.gitattributes`, the documentation pages, `gates/wheel_install.py` and the test modules; for the
+witness round, the ledger, the witness record and its README, the release-pipeline and
+changelog pages, the frozen-contract manifest, and three test modules.
+
+**THE `grib2` LANDING, 2026-10-17 — adapter #29, the roster twenty-seven to twenty-eight, the first
+of the arc's 3.6.0 content.** `adapters/grib2.py` reads one GRIB edition 2 message (8 MiB at most,
+DECISIONS U-07) as its octets or its parsed twin and writes one `ENVIRONMENTAL_OBSERVATION` `Event`
+per field carrying `gridded-field/1`: the reference time as `observed_at`, never a future valid
+instant, with its Code Table 1.2 significance; the forecast's validity, an instant or Template 4.8's
+interval, as `validity.effective`; the grid verbatim and a WGS84 footprint Polygon (a lat/lon grid's
+corners, a Lambert conformal grid's outline converted point by point); and the values by reference
+with a summary decoded from simple packing, complex packing with spatial differencing and PNG, the
+PNG rows inflated under 64 MiB. JPEG 2000 is read in reference form and its values declared
+unsupported (U-02). No CDM field, member or contract moved: `SCHEMA_VERSION` stays `3.2.0` and the
+projection ledger is unchanged. `synapse-decode` gains a framer, so a GRIB2 file is cut into its
+messages end to end and each is handed over with its ordinal, the octet it begins at and, when it
+is not the whole file, its own digest. Seven fixtures are written by GDAL 3.13.3 and six by the
+builder's own encoder; without GDAL the builder's `--check` holds the seven to their recorded
+digests and says so. `PACKAGE_VERSION` still reads `3.5.0`: the number is the release round's.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:Hosted` — MINOR: one field with a default,
+`frame_offset_argument = None`, is added; every existing entry and every caller that builds one
+keeps working.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:HOSTED` — MINOR: the table gains the `grib2` entry; no
+entry is removed and none changes. (Extended 2026-10-17, at the `iem_n0q` landing: the table gains
+the `cog` and `iem_n0q` entries the same way, and no entry is removed or changed.)
+
+**Bump ruling.** `synapse_cdm/decode_host.py:decode` — MINOR: an entry that declares a frame-offset
+argument is given the octet its frame begins at; for every other entry the call is unchanged.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:listing` — MINOR: an entry that declares a frame-offset
+argument is listed with the words `framed by message`; every existing line is unchanged.
+
+**THE `cog` LANDING, 2026-10-17 — adapter #30, the roster twenty-eight to twenty-nine, the second of
+the arc's 3.6.0 content.** `adapters/cog.py` reads one classic GeoTIFF or Cloud Optimized GeoTIFF
+(256 MiB at most, DECISIONS U-07) or one GDAL VRT index, as its octets or its parsed twin,
+header-only: every directory, the GeoKeys, GDAL_METADATA and GDAL_NODATA are read and kept in the
+residual, every block is checked to lie in the file, and one block, block 0 of the full-resolution
+image, is decoded under 1 MiB (none, LZW, Deflate, PackBits; predictors 2 and 3) and summarised,
+inline when small. A file whose metadata states a sensing time (HLS's `SENSING_TIME`, or the
+ECOSTRESS `RangeBeginning`/`RangeEnding` items, each read only with its zone), or one whose caller
+supplies it with its basis, becomes one `ENVIRONMENTAL_OBSERVATION` `Event` carrying
+`imagery-product/1`; a file that names a sensed product's processing clock and states no sensing
+time is refused unless the caller supplies one; any other file — a DEM, a VRT — becomes one
+`ANNOTATION` `PlanObject` with the caller's as-of when given, under the structured limitation
+`no-source-time`. The footprint is a WGS84 Polygon from EPSG:4326, EPSG:4269 (stated without a
+datum shift) or a WGS84 UTM zone (converted point by point); every other system is refused, and a
+NAVD88 height datum is stated beside the values, never as an ellipsoidal height. A VRT's sources are
+listed and never opened, and a remote one is refused by name. The decoding is the standard-library
+codec `adapters/raster_codec.py` (TIFF and GeoTIFF structure, block decoding and a PNG reader), which
+the IEM N0Q adapter reuses. No CDM field, member or contract moved: `SCHEMA_VERSION` stays `3.2.0`
+and the projection ledger is unchanged. `synapse-decode` does not serve the adapter yet. Eight
+fixtures are written by GDAL 3.13.3 and two VRT indexes by the builder; without GDAL the builder's
+`--check` holds the eight to their recorded digests and says so. `PACKAGE_VERSION` still reads
+`3.5.0`: the number is the release round's.
+
+**THE `iem_n0q` LANDING, 2026-10-17 — adapter #31, the roster twenty-nine to thirty, the third and
+last of the arc's 3.6.0 content.** `adapters/iem_n0q.py` reads one IEM NEXRAD N0Q composite PNG
+(8 MiB at most, DECISIONS L-09) as its octets or its parsed twin and writes one
+`ENVIRONMENTAL_OBSERVATION` `Event` carrying `gridded-field/1`, `product_class` observation. The
+grid is a product constant the adapter declares — 12200 x 5400 cells of 0.005 degree in EPSG:4326,
+the archive's world file read as the centre of the north-west cell — and IHDR is held to it (size,
+bit depth 8, colour type 3) before anything is inflated; the `.wld` is never a payload and never
+read. Palette index 0 is missing and index i is (i - 65) / 2 dBZ; the values stay in the file by
+reference, with `scale` 0.5, `offset` -32.5 and a summary in dBZ, and IEM's two pages' disagreement
+on the ramp's top (90 or 95 dBZ) is a declared limitation, the formula's 95.0 emitted. The PNG states
+no time: `observed_at` is the archive file name's slot, which the caller supplies with its basis and
+which must fall on IEM's five-minute grid; IEM's `tEXt` `gentime` generation clock goes to
+`product_version` only. The footprint is the constant outline as a WGS84 Polygon; no site `Entity`.
+The PNG reader is `adapters/raster_codec.py`'s, unchanged. `synapse-decode` serves the adapter
+(`--at` the slot, `--received-at` required) and, since the same landing, `cog` too (the file's name,
+granule and the role of a supplied instant as request parameters), so `cog`'s declared limitation
+`not-hosted` is retired. No CDM field, member or contract moved: `SCHEMA_VERSION` stays `3.2.0` and
+the projection ledger is unchanged. The four fixtures are 12200 x 5400 PNGs written by the builder in
+pure Python with its own DEFLATE writer, so `--check` gives the same octets on every machine.
+`PACKAGE_VERSION` still reads `3.5.0`: the number is the release round's.
 
 **THE 3.5.0 WITNESS ROUND's RECORD, 2026-10-17 — the record is the pipeline's own, for the fifth
 time.** Run 38993508970's `witness` job built `witness-3.5.0.json`, its verify step read `VERIFIED`

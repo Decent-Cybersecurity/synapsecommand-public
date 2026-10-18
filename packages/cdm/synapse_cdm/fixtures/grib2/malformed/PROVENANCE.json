@@ -1,0 +1,105 @@
+{
+  "directory": "grib2/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "bitmap_count_disagrees.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "grib_edition_1.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "grid_template_32769.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_end_section.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_crc_failure.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_data_past_its_rows.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_rows_past_the_decompression_bound.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "repeated_grid_section.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "total_length_short_of_the_payload.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_message.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_packing_template.grb2",
+      "operational_data": false,
+      "origin": "Synthetic malformed GRIB2 message written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

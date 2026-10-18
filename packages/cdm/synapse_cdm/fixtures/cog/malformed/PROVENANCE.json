@@ -1,0 +1,96 @@
+{
+  "directory": "cog/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "bigtiff_header.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_declaration.vrt",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ifd_loop.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jpeg_compression.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tile_inflates_past_its_size.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tile_offset_past_the_end.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tile_past_the_decompression_bound.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_ifd.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unsupported_crs.tif",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "vsicurl_source.vrt",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py, from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -198,6 +198,12 @@ def test_list_and_version_state_the_hosted_adapters():
         b"frame_sha256 injected file-bound 8388608 unwrapped-bound 8388608\n"
         b"airnow_hourly arguments --received-at --station-table? source_hash injected "
         b"frame_sha256 injected file-bound 8388608 unwrapped-bound 8388608\n"
+        b"grib2 arguments --received-at source_hash injected frame_sha256 injected framed by "
+        b"message file-bound 8388608 unwrapped-bound 8388608\n"
+        b"cog arguments --received-at --request? --at/--basis? source_hash injected "
+        b"file-bound 268435456 unwrapped-bound 268435456\n"
+        b"iem_n0q arguments --received-at --at/--basis source_hash injected frame_sha256 "
+        b"injected file-bound 8388608 unwrapped-bound 8388608\n"
     )
     version = _cli("--version")
     assert version.returncode == 0 and version.stderr == b""
@@ -205,7 +211,8 @@ def test_list_and_version_state_the_hosted_adapters():
         version.stdout
         == (
             f"synapse-decode synapse-cdm {PACKAGE_VERSION}\n"
-            "hosted dis7 geojson readsb_trace nexrad2 ndbc_stdmet coops_csv airnow_hourly\n"
+            "hosted dis7 geojson readsb_trace nexrad2 ndbc_stdmet coops_csv airnow_hourly grib2 "
+            "cog iem_n0q\n"
         ).encode()
     )
 
@@ -971,6 +978,354 @@ def test_nexrad2_requires_its_receipt_instant_and_refuses_a_malformed_volume_by_
             3,
             "synapse-decode: frame 0 refused by nexrad2: Nexrad2Refused",
         )
+
+
+# -- grib2: a file is its messages; each is framed with its ordinal, offset and digest ---------
+
+GRIB = PKG / "fixtures" / "grib2"
+GRIB_DECODE = ["decode", "--adapter", "grib2", "--synthetic"]
+GRIB_RECEIVED = "2026-04-29T06:20:00Z"
+#: Two fixture messages end to end: two fields in the first, one in the second.
+GRIB_FIRST = (GRIB / "two_fields_one_message.grb2").read_bytes()
+GRIB_SECOND = (GRIB / "simple_packing_latlon.grb2").read_bytes()
+
+
+def _grib_in_process(octets: bytes, source_hash: str, **frame) -> list:
+    from synapse_cdm.adapters.grib2 import Grib2Adapter
+
+    clock = lambda: dt.datetime(2026, 4, 29, 6, 20, tzinfo=dt.timezone.utc)  # noqa: E731
+    adapter = Grib2Adapter(
+        clock, synthetic=True, source_hash={"algorithm": "sha256", "value": source_hash}, **frame
+    )
+    return [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+
+
+def test_a_two_message_grib2_file_is_framed_into_two_payloads_with_ordinals_0_and_1(tmp_path):
+    file = GRIB_FIRST + GRIB_SECOND
+    assert (len(GRIB_FIRST), len(GRIB_SECOND)) == (259, 196)
+    digest = hashlib.sha256(file).hexdigest()
+    first, second = (hashlib.sha256(m).hexdigest() for m in (GRIB_FIRST, GRIB_SECOND))
+    result = _accepted(
+        _cli(
+            *GRIB_DECODE,
+            "--input",
+            _write(tmp_path / "two.grib2", file),
+            "--received-at",
+            GRIB_RECEIVED,
+            "--sha256",
+            digest,
+        )
+    )
+    locators = [o["payload"]["observation"]["locator"] for o in result]
+    assert [o["source"]["record_index"] for o in result] == [0, 0, 1]
+    assert [(loc["message"], loc["field"], loc["byte_offset"]) for loc in locators] == [
+        (0, 0, 0),
+        (0, 1, 0),
+        (1, 0, 259),
+    ]
+    assert [loc["frame_sha256"] for loc in locators] == [first, first, second]
+    assert {o["source"]["source_hash"]["value"] for o in result} == {digest}
+    assert {o["received_at"] for o in result} == {"2026-04-29T06:20:00.000Z"}
+    assert result == _grib_in_process(
+        GRIB_FIRST, digest, frame_sha256=first, message_ordinal=0, byte_offset=0
+    ) + _grib_in_process(
+        GRIB_SECOND, digest, frame_sha256=second, message_ordinal=1, byte_offset=259
+    )
+
+
+def test_a_one_message_grib2_file_is_its_own_frame_and_a_gzip_around_it_is_unwrapped(tmp_path):
+    digest = hashlib.sha256(GRIB_SECOND).hexdigest()
+    result = _accepted(
+        _cli(
+            *GRIB_DECODE,
+            "--input",
+            str(GRIB / "simple_packing_latlon.grb2"),
+            "--received-at",
+            GRIB_RECEIVED,
+        )
+    )
+    # The frame is the file: no frame digest, message 0 at octet 0.
+    assert result == _grib_in_process(GRIB_SECOND, digest)
+    assert result[0]["payload"]["observation"]["locator"]["frame_sha256"] is None
+    packed = gzip.compress(GRIB_FIRST + GRIB_SECOND, mtime=0)
+    outer = hashlib.sha256(packed).hexdigest()
+    unwrapped = _accepted(
+        _cli(
+            *GRIB_DECODE,
+            "--input",
+            _write(tmp_path / "two.grib2.gz", packed),
+            "--container",
+            "gzip",
+            "--received-at",
+            GRIB_RECEIVED,
+        )
+    )
+    first = hashlib.sha256(GRIB_FIRST).hexdigest()
+    assert unwrapped == _grib_in_process(
+        GRIB_FIRST, outer, frame_sha256=first, message_ordinal=0, byte_offset=0
+    ) + _grib_in_process(GRIB_SECOND, outer, frame_sha256=digest, message_ordinal=1, byte_offset=259)
+
+
+GRIB_FRAMING = [
+    ("a stray octet between two messages", GRIB_FIRST + b"\x00" + GRIB_SECOND,
+     "synapse-decode: octet 259 of the input does not begin a GRIB message; a GRIB2 file is its "
+     "messages end to end"),
+    ("an edition 1 message", GRIB_FIRST[:7] + b"\x01" + GRIB_FIRST[8:],
+     "synapse-decode: the message at octet 0 is not GRIB edition 2, which is the only edition this "
+     "host frames"),
+    ("a length past the end", GRIB_FIRST + GRIB_SECOND[:-1],
+     "synapse-decode: the message at octet 259 states a total length shorter than Sections 0 and "
+     "8 or running past the end of the input"),
+    ("a length of zero", GRIB_FIRST[:8] + b"\x00" * 8 + GRIB_FIRST[16:],
+     "synapse-decode: the message at octet 0 states a total length shorter than Sections 0 and 8 "
+     "or running past the end of the input"),
+    ("fifteen octets", GRIB_FIRST[:15],
+     "synapse-decode: octet 0 of the input does not begin a GRIB message; a GRIB2 file is its "
+     "messages end to end"),
+    ("an empty file", b"", "synapse-decode: the input holds no GRIB message"),
+]  # fmt: skip
+
+
+@pytest.mark.parametrize("label, data, line", GRIB_FRAMING, ids=[r[0] for r in GRIB_FRAMING])
+def test_a_grib2_file_that_is_not_its_messages_end_to_end_is_exit_3(tmp_path, label, data, line):
+    _refused(
+        _cli(*GRIB_DECODE, "--input", _write(tmp_path / "f.grib2", data), "--received-at",
+             GRIB_RECEIVED),
+        3,
+        line,
+    )  # fmt: skip
+
+
+def test_the_grib_framer_cuts_at_each_total_length_and_nothing_else():
+    assert decode_host.grib_messages(GRIB_FIRST + GRIB_SECOND) == [GRIB_FIRST, GRIB_SECOND]
+    assert decode_host.grib_messages(GRIB_SECOND) == [GRIB_SECOND]
+    with pytest.raises(decode_host.Refused) as raised:
+        decode_host.grib_messages(GRIB_SECOND + b"GRIB")
+    assert (raised.value.status, raised.value.message) == (
+        3,
+        "synapse-decode: octet 196 of the input does not begin a GRIB message; a GRIB2 file is "
+        "its messages end to end",
+    )
+
+
+def test_grib2_requires_its_receipt_instant_and_refuses_a_malformed_message_by_class(tmp_path):
+    _refused(
+        _cli(*GRIB_DECODE, "--input", str(GRIB / "simple_packing_latlon.grb2")),
+        2,
+        "synapse-decode: grib2 requires --received-at",
+    )
+    for name in ("png_crc_failure", "repeated_grid_section"):
+        _refused(
+            _cli(
+                *GRIB_DECODE,
+                "--input",
+                str(GRIB / "malformed" / f"{name}.grb2"),
+                "--received-at",
+                GRIB_RECEIVED,
+            ),
+            3,
+            "synapse-decode: frame 0 refused by grib2: Grib2Refused",
+        )
+    # The second message of a file refused: its ordinal is named, the first one's objects are
+    # not printed.
+    bad = (GRIB / "malformed" / "png_crc_failure.grb2").read_bytes()
+    result = _cli(
+        *GRIB_DECODE, "--input", _write(tmp_path / "f.grib2", GRIB_SECOND + bad),
+        "--received-at", GRIB_RECEIVED,
+    )  # fmt: skip
+    _refused(result, 3, "synapse-decode: frame 1 refused by grib2: Grib2Refused")
+
+
+# -- cog and iem_n0q (2026-10-17): one raster file, read whole ---------------------------------
+
+N0Q = PKG / "fixtures" / "iem_n0q"
+N0Q_FILE = N0Q / "echo_patch_split_idat.png"
+N0Q_BASIS = "IEM archive filename slot, UTC, composite nominal time"
+N0Q_DECODE = ["decode", "--adapter", "iem_n0q", "--synthetic"]
+N0Q_SLOT = ["--at", "2026-04-29T06:05:00Z", "--basis", N0Q_BASIS]
+RECEIVED = "2026-04-29T06:20:00Z"
+COG = PKG / "fixtures" / "cog"
+COG_DEM = COG / "navd88_dem_deflate.tif"
+COG_DECODE = ["decode", "--adapter", "cog", "--synthetic"]
+
+
+def _receipt():
+    return dt.datetime(2026, 4, 29, 6, 20, tzinfo=dt.timezone.utc)
+
+
+def _n0q_in_process(octets: bytes, source_hash: str, **kwargs) -> list:
+    from synapse_cdm.adapters.iem_n0q import IemN0qAdapter
+    from synapse_cdm.observation_contracts import InjectedTime
+
+    adapter = IemN0qAdapter(
+        _receipt,
+        synthetic=True,
+        slot=InjectedTime("2026-04-29T06:05:00Z", N0Q_BASIS),
+        source_hash={"algorithm": "sha256", "value": source_hash},
+        **kwargs,
+    )
+    return [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+
+
+def _cog_in_process(octets: bytes, source_hash: str, **kwargs) -> list:
+    from synapse_cdm.adapters.cog import CogAdapter
+
+    adapter = CogAdapter(
+        _receipt, synthetic=True, source_hash={"algorithm": "sha256", "value": source_hash},
+        **kwargs,
+    )  # fmt: skip
+    return [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+
+
+def test_iem_n0q_is_given_its_slot_its_receipt_and_the_file_s_digest():
+    octets = N0Q_FILE.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    result = _accepted(
+        _cli(*N0Q_DECODE, "--input", str(N0Q_FILE), *N0Q_SLOT, "--received-at", RECEIVED)
+    )
+    assert result == _n0q_in_process(octets, digest)
+    (event,) = result
+    assert (event["observed_at"], event["received_at"]) == (
+        "2026-04-29T06:05:00.000Z",
+        "2026-04-29T06:20:00.000Z",
+    )
+    assert event["source"]["source_hash"] == {"algorithm": "sha256", "value": digest}
+    assert event["source_ids"] == [
+        {"system": "IEM_N0Q", "external_id": f"N0Q composite 2026-04-29T06:05:00.000Z sha256 {digest}"}
+    ]
+    # The frame is the file: no frame digest.
+    assert event["payload"]["observation"]["locator"]["frame_sha256"] is None
+
+
+def test_iem_n0q_unwrapped_from_a_gzip_is_given_the_png_s_own_digest(tmp_path):
+    octets = N0Q_FILE.read_bytes()
+    packed = gzip.compress(octets, mtime=0)
+    result = _accepted(
+        _cli(
+            *N0Q_DECODE, "--input", _write(tmp_path / "n0q.png.gz", packed), "--container", "gzip",
+            *N0Q_SLOT, "--received-at", RECEIVED,
+        )
+    )  # fmt: skip
+    frame = hashlib.sha256(octets).hexdigest()
+    assert result == _n0q_in_process(
+        octets, hashlib.sha256(packed).hexdigest(), frame_sha256=frame
+    )
+    assert result[0]["payload"]["observation"]["locator"]["frame_sha256"] == frame
+
+
+def test_iem_n0q_requires_its_slot_on_the_five_minute_grid_and_refuses_a_malformed_png():
+    _refused(
+        _cli(*N0Q_DECODE, "--input", str(N0Q_FILE), *N0Q_SLOT),
+        2,
+        "synapse-decode: iem_n0q requires --received-at",
+    )
+    _refused(
+        _cli(*N0Q_DECODE, "--input", str(N0Q_FILE), "--received-at", RECEIVED),
+        2,
+        "synapse-decode: iem_n0q requires --at/--basis",
+    )
+    for at, basis in (
+        ("2026-04-29T06:07:00Z", N0Q_BASIS),
+        ("2026-04-29T06:05:30Z", N0Q_BASIS),
+        ("2026-04-29T06:05:00Z", "slot"),
+    ):
+        _refused(
+            _cli(
+                *N0Q_DECODE, "--input", str(N0Q_FILE), "--at", at, "--basis", basis,
+                "--received-at", RECEIVED,
+            ),
+            2,
+            "synapse-decode: iem_n0q refuses the context the flags describe",
+        )  # fmt: skip
+    _refused(
+        _cli(
+            *N0Q_DECODE, "--input", str(N0Q_FILE), *N0Q_SLOT, "--received-at", RECEIVED,
+            "--request", "slot=202604290605",
+        ),
+        2,
+        "synapse-decode: --request is not an argument iem_n0q declares",
+    )  # fmt: skip
+    for name in ("idat_crc_failure", "wrong_image_size", "gentime_twice"):
+        _refused(
+            _cli(
+                *N0Q_DECODE, "--input", str(N0Q / "malformed" / f"{name}.png"), *N0Q_SLOT,
+                "--received-at", RECEIVED,
+            ),
+            3,
+            "synapse-decode: frame 0 refused by iem_n0q: IemN0qRefused",
+        )  # fmt: skip
+
+
+def test_cog_is_given_its_identifiers_as_request_parameters_and_the_file_s_digest():
+    octets = COG_DEM.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    result = _accepted(
+        _cli(
+            *COG_DECODE, "--input", str(COG_DEM), "--request", "band_file=dem_band.tif",
+            "--request", "granule=EX-granule-01", "--received-at", RECEIVED,
+        )
+    )  # fmt: skip
+    assert result == _cog_in_process(
+        octets, digest, band_file="dem_band.tif", granule_id="EX-granule-01"
+    )
+    (plan,) = result
+    assert plan["source"]["source_hash"] == {"algorithm": "sha256", "value": digest}
+    assert plan["source"]["original_id"] == "dem_band.tif"
+    assert plan["source_ids"] == [{"system": "COG", "external_id": "EX-granule-01/dem_band.tif"}]
+    # Without a band file the identity is the descriptor followed by the injected digest
+    # (D-R6-14 as amended), so two files of one grid are told apart.
+    bare = _accepted(_cli(*COG_DECODE, "--input", str(COG_DEM), "--received-at", RECEIVED))
+    assert bare == _cog_in_process(octets, digest)
+    assert bare[0]["source_ids"][0]["external_id"].endswith(f" sha256 {digest}")
+
+
+def test_cog_s_instant_comes_with_its_role_and_only_with_it():
+    octets = COG_DEM.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    from synapse_cdm.observation_contracts import InjectedTime
+
+    instant = ["--at", "2026-04-29T00:00:00Z", "--basis", "the tile's publication date, by hand"]
+    result = _accepted(
+        _cli(
+            *COG_DECODE, "--input", str(COG_DEM), *instant, "--request", "time=as_of",
+            "--received-at", RECEIVED,
+        )
+    )  # fmt: skip
+    as_of = InjectedTime("2026-04-29T00:00:00Z", "the tile's publication date, by hand")
+    assert result == _cog_in_process(octets, digest, as_of=as_of)
+    assert result[0]["validity"]["observed_at"] == "2026-04-29T00:00:00.000Z"
+    # The same DEM given its instant as a sensing time becomes an imagery-product/1 Event.
+    sensed = _accepted(
+        _cli(
+            *COG_DECODE, "--input", str(COG_DEM), *instant, "--request", "time=sensing_time",
+            "--received-at", RECEIVED,
+        )
+    )  # fmt: skip
+    assert [o["object_kind"] for o in sensed] == ["event"]
+    assert sensed[0]["observed_at"] == "2026-04-29T00:00:00.000Z"
+    for extra in (
+        [*instant],
+        ["--request", "time=as_of"],
+        [*instant, "--request", "time=valid_at"],
+        ["--request", "tile=EX01"],
+        ["--request", "band_file=sub/dem.tif"],
+    ):
+        _refused(
+            _cli(*COG_DECODE, "--input", str(COG_DEM), *extra, "--received-at", RECEIVED),
+            2,
+            "synapse-decode: cog refuses the context the flags describe",
+        )
+    _refused(
+        _cli(*COG_DECODE, "--input", str(COG_DEM)), 2, "synapse-decode: cog requires --received-at"
+    )
+    _refused(
+        _cli(
+            *COG_DECODE, "--input", str(COG / "malformed" / "jpeg_compression.tif"),
+            "--received-at", RECEIVED,
+        ),
+        3,
+        "synapse-decode: frame 0 refused by cog: CogRefused",
+    )  # fmt: skip
 
 
 # -- the station-text adapters: a request, a station table, the receipt instant ---------------
@@ -1860,13 +2215,84 @@ def test_request_parameters_are_key_value_pairs_and_a_value_is_never_echoed(
 def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert sorted(decode_host.HOSTED) == [
         "airnow_hourly",
+        "cog",
         "coops_csv",
         "dis7",
         "geojson",
+        "grib2",
+        "iem_n0q",
         "ndbc_stdmet",
         "nexrad2",
         "readsb_trace",
     ]
+    # cog and iem_n0q (2026-10-17): the receipt instant always and the file's digest injected;
+    # cog's identifiers and the role of its optional instant as request parameters; iem_n0q's
+    # archive slot as --at/--basis, required, and the frame's own digest when it is not the file.
+    cog_row, n0q_row = decode_host.HOSTED["cog"], decode_host.HOSTED["iem_n0q"]
+    assert [
+        (
+            row.arguments,
+            row.required,
+            row.injects_source_hash,
+            row.reads_clock,
+            row.framer,
+            row.frame_argument,
+            row.frame_digest_argument,
+            row.frame_offset_argument,
+        )
+        for row in (cog_row, n0q_row)
+    ] == [
+        (
+            frozenset({"received_at", "time", "request"}),
+            frozenset({"received_at"}),
+            True,
+            True,
+            decode_host.whole_file,
+            None,
+            None,
+            None,
+        ),
+        (
+            frozenset({"received_at", "time"}),
+            frozenset({"received_at", "time"}),
+            True,
+            True,
+            decode_host.whole_file,
+            None,
+            "frame_sha256",
+            None,
+        ),
+    ]
+    assert (decode_host.COG_REQUEST_KEYS, decode_host.COG_TIME_ROLES) == (
+        ("band_file", "granule", "time"),
+        ("sensing_time", "as_of"),
+    )
+    # grib2 (2026-10-17): the receipt instant; the file's digest injected; the file cut into its
+    # messages, each given its ordinal, its first octet and, when it is not the file, its digest.
+    grib = decode_host.HOSTED["grib2"]
+    assert (
+        grib.arguments,
+        grib.required,
+        grib.injects_source_hash,
+        grib.reads_clock,
+        grib.framer,
+        grib.frame_argument,
+        grib.frame_digest_argument,
+        grib.frame_offset_argument,
+    ) == (
+        frozenset({"received_at"}),
+        frozenset({"received_at"}),
+        True,
+        True,
+        decode_host.grib_messages,
+        "message_ordinal",
+        "frame_sha256",
+        "byte_offset",
+    )
+    assert grib.prepare(decode_host.Context(synthetic=True)) == {"synthetic": True}
+    assert [
+        decode_host.HOSTED[n].frame_offset_argument for n in sorted(decode_host.HOSTED) if n != "grib2"
+    ] == [None] * 9
     # The three station-text adapters (2026-10-15): the receipt instant always, the digest and
     # the frame's own digest injected; a request for the two whose payload does not state it, and
     # a station table for the position no payload of the three states.

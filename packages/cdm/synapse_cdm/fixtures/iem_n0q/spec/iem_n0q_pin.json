@@ -1,0 +1,77 @@
+{
+  "what_this_is": "The pin record of the iem_n0q adapter: the documents its format, grid and values are read from, cited by URL and NOT carried (DECISIONS U-08), with no digest because the design record holds no copy of them; the IEM ramp-top disagreement the adapter records rather than resolves; the licence reading behind the adapter's class; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: nothing is pinned as a held document.",
+  "adapter": {
+    "name": "iem_n0q",
+    "ordinal": 31,
+    "direction": "ingest",
+    "fixture_directory": "iem_n0q"
+  },
+  "cited": [
+    {
+      "document": "Portable Network Graphics (PNG) Specification (Third Edition), W3C Recommendation 24 June 2025",
+      "read_for": "the signature, the chunk layout and its CRC-32, IHDR's seven fields (width, height, bit depth, colour type, compression, filter and interlace method), PLTE (1 to 256 RGB entries; an index past the last entry is an error), IDAT as one zlib stream, IEND, filter method 0's five filter types, and the tEXt keyword rules (1 to 79 Latin-1 printable characters, no leading, trailing or doubled space, a NUL, then Latin-1 text), as research-raster F4 quotes them",
+      "url": "https://www.w3.org/TR/png-3/",
+      "carried_here": false,
+      "licence_class": "OPEN",
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "W3C Software and Document License 2023",
+      "read_for": "the terms the PNG Third Edition is published under: permission to copy, modify and distribute for any purpose and without fee or royalty (research-raster F4), the repository's OPEN class",
+      "url": "https://www.w3.org/copyright/software-license-2023/",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "IEM NEXRAD composite documentation (Iowa Environmental Mesonet, Iowa State University)",
+      "read_for": "the composite's grid since 2014-08-08 (12200 x 5400, \"expanded 1 degree east and south\", EPSG:4326), its five-minute cadence since 2010-11-13, \"All dates in the archive are in UTC time\", \"Rasters are only available at minutes modulo 5\", the composite built from products within 15 minutes of its runtime, N0Q built from N0B since 2022-04-18, and the ramp caption \"-32 dBZ through 90 dBZ, 0.5 dBZ increment\" (research-raster F1, F3)",
+      "url": "https://mesonet.agron.iastate.edu/docs/nexrad_composites/",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "IEM raster catalogue, raster 2 (product composite_n0q)",
+      "read_for": "the unit dBZ and the value table: index 0 Missing, index 1 -32 dBZ, index 65 0 dBZ, index 66 0.5 dBZ, index 255 95 dBZ, so value = (index - 65) / 2 (research-raster F1)",
+      "url": "https://mesonet.agron.iastate.edu/GIS/rasters.php?rid=2",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "IEM archive directory listing for 2026-09-11 (GIS/uscomp)",
+      "read_for": "the archive's file set: n0q_YYYYMMDDHHMM.png (1 to 4 MB, listed as 2M) and a 32-octet .wld at five-minute steps, no JSON sidecar; the .wld's six terms 0.005 / 0.0 / 0.0 / -0.005 / -126.0 / 50.0, which the adapter declares as its product constant and never reads (research-raster F1, F11; gap report HM-01's N0Q row)",
+      "url": "https://mesonet.agron.iastate.edu/archive/data/2026/09/11/GIS/uscomp/",
+      "carried_here": false,
+      "read_on": "2026-10-14",
+      "standing": "Facts read from the listing and from one world file; no archive PNG, no byte of one and no value from one is used by the fixtures."
+    },
+    {
+      "document": "GDAL world file driver documentation and Esri's world files for raster datasets",
+      "read_for": "a world file's terms: x cell size, the two rotation terms, y cell size, and the x and y coordinates of the CENTRE of the upper-left cell; no coordinate system (research-raster F11)",
+      "url": "https://gdal.org/en/stable/drivers/raster/wld.html",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    }
+  ],
+  "digest": "not stated for any page: the design record holds no copy of them (research-raster read them on 2026-10-14 and saved none), so no SHA-256 was measured and none is claimed. Nothing was fetched for this record (DECISIONS L-06).",
+  "ramp_top": {
+    "what": "IEM's two pages disagree on the top of the N0Q ramp: the composite documentation captions it -32 to 90 dBZ, and the raster catalogue's table ends at index 255 = 95 dBZ (research-raster F1, recommendation 11).",
+    "reading": "The adapter emits what the catalogue's formula gives, (index - 65) / 2, so index 255 is 95.0 dBZ, and declares the disagreement as the limitation `ramp-top-disagreement`; neither page is chosen as governing. A 2016 IEM note says GEMPAK output held only whole-dBZ values for a period; nothing in the adapter depends on it.",
+    "open": "Which page IEM means to govern is not established by the design record; a later reading is a later record beside this one."
+  },
+  "grid_registration": {
+    "what": "A world file's last two terms are the centre of the upper-left cell (GDAL's and Esri's definition); IEM's pages do not say whether -126.0 / 50.0 are meant as the centre or the corner.",
+    "reading": "The adapter takes the documented world-file definition, as GDAL reads the archive's file: the outline runs from 126.0025 W 50.0025 N to 65.0025 W 23.0025 N (research-raster F11's half-pixel ruling, recorded in the adapter's GRID_BASIS and in the limitation `product-constant-grid`)."
+  },
+  "licence": {
+    "license_class": "OPEN",
+    "reading": "The PNG Third Edition is published under the W3C Software and Document License 2023 (above), the repository's OPEN class for the format. IEM's disclaimer states its materials are in the public domain and may be used for any lawful purpose, while its footer reads all rights reserved (research-raster F2); those terms concern IEM's data, which never enters this tree.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "No IEM file — not a PNG, not a byte range, not a palette entry, not a value — enters this tree: the fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only). The design record's readings of IEM's pages and of one archive file's header and world file (research-raster F1) are facts only: the grid and the value formula are the product's documented definition, which the adapter declares, and nothing else of them was used as a fixture or a template.",
+  "fixtures_are_synthetic": "Every payload under fixtures/iem_n0q/ and its malformed/ directory is built by spec/build_fixtures.py from a description in that script, written on 2026-10-17 for this adapter: four 12200 x 5400 PNGs at the product's real size, mostly index 0, with literal cells, a literal palette ramp and literal chunks, and every malformed payload the same way. No file states a place, a radar or a slot; every gentime text is a synthetic stamp on 2026-04-29.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "pure_python": "Every file depends on no library version: the scanlines are filtered by the script's own filter functions and DEFLATE-encoded by its own writer (one dynamic-Huffman block with a fixed code: the 258-octet copy at distance 1 two bits, every literal nine or ten), wrapped in a zlib stream whose Adler-32 and every chunk's CRC-32 come from zlib's checksum functions; zlib.decompress then reads every correct stream back and the build stops unless it is exactly the scanlines described. Every twin is json.dumps(indent=2, ensure_ascii=True) of the script's description."
+  }
+}

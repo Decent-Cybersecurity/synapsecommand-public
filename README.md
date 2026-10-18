@@ -13,16 +13,16 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Twenty-seven
+This is the contract layer, and it is public because that is what a contract is for. **Thirty
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
 `cat062`, `cat023`, `stanag4586` (ingest), `geojson`, `geopackage` (ingest), `c2sim`,
 `aixm511` (ingest), `aixm52` (ingest), `dis7`, `tacticalapi` (ingest), `link16_gateway`,
-`readsb_trace` (ingest), `nexrad2` (ingest), `ndbc_stdmet` (ingest), `coops_csv` (ingest) and
-`airnow_hourly` (ingest) — byte-exact on the wire
+`readsb_trace` (ingest), `nexrad2` (ingest), `ndbc_stdmet` (ingest), `coops_csv` (ingest),
+`airnow_hourly` (ingest), `grib2` (ingest), `cog` (ingest) and `iem_n0q` (ingest) — byte-exact on the wire
 wherever the format is binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — three hundred and fifty-one and twenty-seven as of today; with one, an adapter is a
+"a contact" — four hundred and thirty-five and thirty as of today; with one, an adapter is a
 thin translator and nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
 forms, message families, exclusions and evidence scope — is the generated
 [support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
@@ -116,7 +116,7 @@ may not be made.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the twenty-seven shipped adapters are verified against** — which is what
+harness and **every fixture the thirty shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:
@@ -140,6 +140,12 @@ The `ndbc_stdmet` adapter is part of the distribution built from this tree; no r
 The `coops_csv` adapter is part of the distribution built from this tree; no release before 3.5.0 carries it.
 
 The `airnow_hourly` adapter is part of the distribution built from this tree; no release before 3.5.0 carries it.
+
+The `grib2` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
+
+The `cog` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
+
+The `iem_n0q` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
 
 The observation contract models (`synapse_cdm.observation_contracts`) and the `synapse-decode` host command are part of the distribution built from this tree; no release before 3.5.0 carries them.
 

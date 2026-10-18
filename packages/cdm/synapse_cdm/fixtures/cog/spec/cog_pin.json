@@ -1,0 +1,88 @@
+{
+  "what_this_is": "The pin record of the cog adapter: the documents its format is read from, cited by URL and NOT carried (DECISIONS U-08), with no digest because the design record holds no copy of them; the EPSG rows the adapter states names or units for and where each was read; the GDAL build that wrote eight of the fixtures; the licence reading behind the adapter's class; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: nothing is pinned as a held document.",
+  "adapter": {
+    "name": "cog",
+    "ordinal": 30,
+    "direction": "ingest",
+    "fixture_directory": "cog"
+  },
+  "cited": [
+    {
+      "document": "OGC GeoTIFF Standard 1.1, OGC 19-008r4, published 2019-09-14",
+      "read_for": "the GeoKey directory (34735) and its double (34736) and ASCII (34737) parameters, the key names of the Annex (GeodeticCRSGeoKey 2048, ProjectedCRSGeoKey 3072, VerticalGeoKey 4096 among them), GTRasterTypeGeoKey's PixelIsArea and PixelIsPoint, ModelPixelScaleTag (33550), ModelTiepointTag (33922) and ModelTransformationTag (34264), as research-raster F7 quotes them",
+      "url": "https://docs.ogc.org/is/19-008r4/19-008r4.html",
+      "carried_here": false,
+      "licence_class": "OPEN",
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "OGC Cloud Optimized GeoTIFF Standard 1.0, OGC 21-026, 2023-07-14",
+      "read_for": "the layout a COG keeps (every directory tiled, the full-resolution image first, the directories before the tile data), as research-raster F7 quotes it; the adapter reads any classic GeoTIFF and does not require the layout",
+      "url": "https://docs.ogc.org/is/21-026/21-026.html",
+      "carried_here": false,
+      "licence_class": "OPEN",
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "TIFF Revision 6.0 Final, June 3, 1992, Aldus Corporation",
+      "read_for": "the header, the image file directory, the field types, strips and tiles (Section 15), PackBits (Section 9), LZW (Section 13) and the differencing predictor (Section 14), as research-raster F7 and F9 quote them",
+      "url": "https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf",
+      "carried_here": false,
+      "standing": "Cited by reference and never carried: the Aldus notice permits copies only when they are not made for direct commercial advantage and, for the majority of the document, verbatim (research-raster F7). The design record measured a SHA-256 of the ITU mirror's PDF beginning dbcdf729 and recorded no more of it, so no digest is claimed here. The licence class of the document is the maintainer's to confirm at the 3.6.0 release (DECISIONS L-10, L-30)."
+    },
+    {
+      "document": "GDAL GTiff driver documentation",
+      "read_for": "TIFFTAG_GDAL_NODATA (42113) and GDAL_METADATA (42112), GDAL's own tags outside OGC GeoTIFF 1.1, honoured explicitly (research-raster F7, Traps); the floating-point predictor's use on 16-, 32- and 64-bit floats",
+      "url": "https://gdal.org/en/stable/drivers/raster/gtiff.html",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "GDAL VRT driver documentation",
+      "read_for": "the VRT index: VRTDataset, SRS, GeoTransform, VRTRasterBand, SimpleSource and ComplexSource with SourceFilename relativeToVRT (research-raster F5, F6)",
+      "url": "https://gdal.org/en/stable/drivers/raster/vrt.html",
+      "carried_here": false,
+      "read_on": "2026-10-14"
+    },
+    {
+      "document": "HLS v2.0 User Guide and the HLSL30 v2.0 catalog page",
+      "read_for": "SENSING_TIME (a sensing instant), HLS_PROCESSING_TIME (a processing clock) and the CLOUD_COVERAGE and SPATIAL_COVERAGE tile-level percentages of Table 11 (research-satellite F05, F14)",
+      "url": "https://www.earthdata.nasa.gov/data/catalog/lpcloud-hlsl30-2.0",
+      "carried_here": false,
+      "standing": "Whether an HLS COG's own GDAL_METADATA carries these items, rather than only the granule's metadata file, is not established by the design record (briefs/R6.md Q6-2); the adapter reads them where a file states them and, under DECISIONS L-12, requires the sensing time from the caller where a file names HLS_PROCESSING_TIME and states none."
+    },
+    {
+      "document": "ECOSTRESS Collection 2 tiled product (ECO_L2T_LSTE v002) catalog page and user guide",
+      "read_for": "the StandardMetadata items RangeBeginningDate, RangeBeginningTime, RangeEndingDate and RangeEndingTime (the scene's interval) and ProductionDateTime (a processing clock) (research-satellite F06)",
+      "url": "https://www.earthdata.nasa.gov/data/catalog/lpcloud-eco-l2t-lste-002",
+      "carried_here": false,
+      "standing": "The design record finds these items in the granule's metadata file and the HDF5 products; whether a tiled COG's GDAL_METADATA carries them, and in which time form, is not established. The adapter reads them only with each time ending Z and refuses a time without its zone."
+    }
+  ],
+  "digest": "not stated for any page: the design record holds no copy of them (research-raster and research-satellite read them on 2026-10-14 and saved none), so no SHA-256 was measured and none is claimed. Nothing was fetched for this record (DECISIONS L-06).",
+  "epsg_rows": {
+    "why": "The adapter converts a footprint from a closed set of coordinate systems and names a vertical system only from a closed table; each row below was read on 2026-10-17 from PROJ's EPSG database as installed with GDAL 3.13.3 on the machine that wrote the fixtures (projinfo, gdalsrsinfo, gdaltransform).",
+    "rows": [
+      {"code": 4326, "reading": "WGS 84, geographic, degrees"},
+      {"code": 4269, "reading": "NAD83, geographic, degrees; gdaltransform -s_srs EPSG:4269 -t_srs EPSG:4326 reads 21 57 as 21 57: the null transformation, which the adapter states as a declared transformation"},
+      {"code": 5703, "reading": "VERTCRS NAVD88 height, datum North American Vertical Datum 1988 (EPSG:5103), axis gravity-related height, LENGTHUNIT metre"},
+      {"code": 5498, "reading": "COMPD_CS NAD83 + NAVD88 height: EPSG:4269 and EPSG:5703"},
+      {"code": "32601-32660, 32701-32760", "reading": "WGS 84 / UTM zone 1N-60N and 1S-60S: transverse Mercator, scale 0.9996 at the central meridian 6 x zone - 183 degrees, false easting 500 000 m, false northing 0 m (north) or 10 000 000 m (south)"}
+    ],
+    "utm_inverse": "Kruger's series to third order in n, as the Wikipedia article 'Universal Transverse Mercator coordinate system' gives it (cited, not carried); tests/test_cdm_cog_adapter.py holds the adapter's vertices to gdaltransform's reading of the same points, an independent implementation."
+  },
+  "licence": {
+    "license_class": "OPEN",
+    "reading": "OGC GeoTIFF 1.1 and OGC COG 1.0 are published under the OGC licence, which permits use, copy, modification and distribution with notices (research-raster F7), the repository's OPEN class; TIFF 6.0 is cited by reference only (above). USGS and NOAA terms concern the data, which never enters this tree.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "No file from USGS 3DEP, NOAA's coastal elevation models, HLS, ECOSTRESS or any other producer — not a file, not a byte range, not a value — enters this tree: the fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only). The design record's remote header readings (research-raster F5, F6) are facts only and were not used as a fixture or a template.",
+  "fixtures_are_synthetic": "Every payload under fixtures/cog/ and its malformed/ directory is built by spec/build_fixtures.py from literals in that script, written on 2026-10-17 for this adapter: eight GeoTIFFs by GDAL from an ASCII grid of literals, two VRT indexes and every malformed payload by the script itself. Every footprint lies in the Baltic rectangle; no file states a tile, granule or scene identifier; the sensing instants are on 2026-04-29.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints which GDAL reading it took, then CURRENT, exits 0, writes nothing); with --require-gdal it passes only when GDAL 3.13.3 re-wrote the eight tool-written files",
+    "gdal_reading": "GDAL 3.13.3 \"Iowa City\", released 2026/08/13 (gdal_translate --version), run with GDAL_PAM_ENABLED=NO from a temporary directory with relative file names: two runs on 2026-10-17 wrote the same octets, whose SHA-256 the script's GDAL_DIGESTS records. A different GDAL build that writes other octets is a new reading of this record, not a defect (DECISIONS U-11: the maintainer re-runs --check --require-gdal on the named build before each release and records the reading here).",
+    "layout_reading": "The directory layout GDAL chose for each file (entry types, offsets, block arrays) was read once with libtiff's tiffdump -m 100000 and tiffinfo, and the GeoKeys with listgeo, on 2026-10-17, and written into the script's GDAL_FIXTURES; the doubles are the grid literals, which those tools print rounded.",
+    "pure_python": "The two VRT indexes and every malformed payload depend on no library version: the inflation bomb is a Deflate stream of fixed Huffman codes the script assembles bit by bit (its Adler-32 from zlib.adler32), and every twin is json.dumps(indent=2, ensure_ascii=True) of the script's literals."
+  }
+}

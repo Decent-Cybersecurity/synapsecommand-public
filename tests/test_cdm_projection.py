@@ -474,17 +474,53 @@ _STATION_TEXT_EVENTS = {
     },
 }
 
+#: The `grib2` fixtures (2026-10-17) and how many field Events each golden holds: every Event states
+#: `validity.effective`, a populated 3.2.0 property; one message of two fields, twelve of one.
+_GRIB2_FIELDS = {
+    "bitmap_simple_packing": 1,
+    "complex_order_1": 1,
+    "complex_order_1_primary_and_secondary_missing": 1,
+    "complex_order_2_missing": 1,
+    "complex_order_2_with_bitmap": 1,
+    "jpeg2000_reference_form": 1,
+    "lambert_conformal_simple": 1,
+    "mrms_style_png_sentinels": 1,
+    "png_16_bit": 1,
+    "png_8_bit": 1,
+    "simple_packing_latlon": 1,
+    "two_fields_one_message": 2,
+    "zero_width_accumulation": 1,
+}
+
+#: The `cog` fixtures whose golden holds an Event (2026-10-17): the two band files that state a
+#: sensing time, each Event stating `validity.effective`; the other eight are PlanObjects, whose
+#: `validity` predates 3.0.0 and is null here.
+_COG_EVENTS = ("ecostress_shaped_lst_tiled", "hls_shaped_band_cog")
+
+#: The `iem_n0q` fixtures (2026-10-17): each golden holds one Event stating `validity.effective`,
+#: the archive slot as an instant.
+_IEM_N0Q_EVENTS = (
+    "all_missing_no_gentime",
+    "corner_cells_paeth_average",
+    "echo_patch_split_idat",
+    "ramp_ends_every_filter_type",
+)
+
 
 def test_the_golden_census_is_what_the_tree_holds():
-    """690 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
-    wrote the same day, and the 23 of the three station-text adapters the same day: 8 `ndbc_stdmet`,
-    7 `coops_csv`, 8 `airnow_hourly`); the refusal branch below is reached by six objects at a 3.1.0
+    """744 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
+    wrote the same day, the 23 of the three station-text adapters the same day: 8 `ndbc_stdmet`,
+    7 `coops_csv`, 8 `airnow_hourly`, the 26 `grib2` wrote on 2026-10-17, the 20 `cog` wrote the
+    same day and the 8 `iem_n0q` wrote the same day); the refusal branch
+    below is reached by six objects at a 3.1.0
     position source, an Entity and its Track in each of three `link16_gateway` goldens (counted
     with grep when this was written), by the 26 `readsb_trace` Tracks at their populated 3.2.0
     `attributes`, one in each of its goldens, by the 16 `nexrad2` sweep Events at their populated
-    3.2.0 `validity`, one to three in each of its goldens, and by the 56 station-text Events at
-    theirs, one a row, sample or line."""
-    assert len(GOLDENS) == 690
+    3.2.0 `validity`, one to three in each of its goldens, by the 56 station-text Events at
+    theirs, one a row, sample or line, by the 28 `grib2` field Events at theirs, one a field, by
+    the 4 `cog` Events at theirs, one in each golden of its two sensed band files, and by the 8
+    `iem_n0q` Events at theirs, one in each of its goldens."""
+    assert len(GOLDENS) == 744
     refused = []
     for path in GOLDENS:
         doc = json.loads(path.read_text(encoding="utf-8"))
@@ -512,6 +548,25 @@ def test_the_golden_census_is_what_the_tree_holds():
         for _ in range(events)
     ] + [("coops_csv/golden/water_level_json_form.cdm.json", "event", ("validity", "3.2.0"))] * 2
     assert len(station_text) == 56
+    grib2 = [
+        (f"grib2/golden/{name}{suffix}", "event", ("validity", "3.2.0"))
+        for name, fields in _GRIB2_FIELDS.items()
+        for suffix in (".cdm.json", ".parsed.cdm.json")
+        for _ in range(fields)
+    ]
+    assert len(grib2) == 28
+    cog = [
+        (f"cog/golden/{name}{suffix}", "event", ("validity", "3.2.0"))
+        for name in _COG_EVENTS
+        for suffix in (".cdm.json", ".parsed.cdm.json")
+    ]
+    assert len(cog) == 4
+    iem_n0q = [
+        (f"iem_n0q/golden/{name}{suffix}", "event", ("validity", "3.2.0"))
+        for name in _IEM_N0Q_EVENTS
+        for suffix in (".cdm.json", ".parsed.cdm.json")
+    ]
+    assert len(iem_n0q) == 8
     assert sorted(refused) == sorted(
         [
             (
@@ -548,6 +603,9 @@ def test_the_golden_census_is_what_the_tree_holds():
         + readsb
         + nexrad2
         + station_text
+        + grib2
+        + cog
+        + iem_n0q
     )
 
 

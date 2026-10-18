@@ -1,0 +1,116 @@
+{
+  "wire_hex": "475249420000000200000000000000c500000015010007000002000107ea041d06000000000000004803000000000c0000000005ffffffffffffffffffffffffffffff000000040000000300000000ffffffff03750280015ef3c030037ca3a0016a65700003d0900003d09040000000220400000000130000ff000000000100000000010000000000ff0000000000000000150500000009000043960000000000000e00000000080600d7b0000000150712c083487f0e743b60f3c68b0000e5b037373737",
+  "indicator": {
+    "discipline": 0,
+    "edition": 2,
+    "total_length": 197
+  },
+  "identification": {
+    "section_length": 21,
+    "centre": 7,
+    "subcentre": 0,
+    "master_table_version": 2,
+    "local_table_version": 0,
+    "reference_time_significance": 1,
+    "year": 2026,
+    "month": 4,
+    "day": 29,
+    "hour": 6,
+    "minute": 0,
+    "second": 0,
+    "production_status": 0,
+    "data_type": 0
+  },
+  "local_use": null,
+  "fields": [
+    {
+      "grid": {
+        "section_length": 72,
+        "source": 0,
+        "points": 12,
+        "optional_list_octets": 0,
+        "optional_list_interpretation": 0,
+        "template": 0,
+        "parameters": {
+          "earth_shape": 5,
+          "radius_scale_factor": 255,
+          "radius_scaled_value": 4294967295,
+          "major_axis_scale_factor": 255,
+          "major_axis_scaled_value": 4294967295,
+          "minor_axis_scale_factor": 255,
+          "minor_axis_scaled_value": 4294967295,
+          "ni": 4,
+          "nj": 3,
+          "basic_angle": 0,
+          "basic_angle_subdivisions": 4294967295,
+          "la1": 58000000,
+          "lo1": 23000000,
+          "resolution_flags": 48,
+          "la2": 58500000,
+          "lo2": 23750000,
+          "di": 250000,
+          "dj": 250000,
+          "scanning_mode": 64
+        }
+      },
+      "product": {
+        "section_length": 34,
+        "coordinate_values": 0,
+        "template": 0,
+        "parameters": {
+          "category": 19,
+          "number": 0,
+          "generating_process": 0,
+          "background_process": 255,
+          "forecast_process": 0,
+          "cutoff_hours": 0,
+          "cutoff_minutes": 0,
+          "time_unit": 1,
+          "forecast_time": 0,
+          "surface1_type": 1,
+          "surface1_scale": 0,
+          "surface1_value": 0,
+          "surface2_type": 255,
+          "surface2_scale": 0,
+          "surface2_value": 0
+        }
+      },
+      "representation": {
+        "section_length": 21,
+        "points": 9,
+        "template": 0,
+        "parameters": {
+          "reference_value": 300.0,
+          "binary_scale": 0,
+          "decimal_scale": 0,
+          "bits": 14,
+          "original_type": 0
+        }
+      },
+      "bitmap": {
+        "section_length": 8,
+        "indicator": 0
+      },
+      "data": {
+        "section_length": 21
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "count": 12,
+      "missing_count": 3,
+      "min": 300.0,
+      "max": 15000.0
+    }
+  ],
+  "arrays": [
+    {
+      "bitmap_hex": "d7b0",
+      "packed_hex": "12c083487f0e743b60f3c68b0000e5b0"
+    }
+  ],
+  "codestreams": [
+    null
+  ]
+}

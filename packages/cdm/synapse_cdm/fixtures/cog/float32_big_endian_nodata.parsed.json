@@ -1,0 +1,177 @@
+{
+  "wire_hex": "4d4d002a0000000800110100000300000001000400000101000300000001000400000102000300000001002000000103000300000001000100000106000300000001000100000111000400000002000000da011500030000000100010000011600030000000100020000011700030000000200200020011c00030000000100010000015300030000000100030000830e000c00000003000000e88482000c000000060000010087af0003000000200000013087b0000c000000020000017087b100020000000800000180a481000200000006000000e20000000000000188000001a82d39393939003fc00000000000003fc000000000000000000000000000000000000000000000000000000000000000000000000000004034800000000000404c400000000000000000000000000000010001000000070400000000010002040100000001000108000000000110e6080187b100070000080600000001238e080987b000010001080b87b0000100004072a41d96746d88415854a6400000005747532038347c003fc00000c61c3c00402000007fc000004040000040600000c61c3c004090000040a0000040b0000040c0000040d0000040e0000040f000004100000041080000",
+  "header": {
+    "byte_order": "MM",
+    "first_ifd_offset": 8
+  },
+  "ifds": [
+    {
+      "offset": 8,
+      "next_ifd_offset": 0,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            4
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            4
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            32
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "RowsPerStrip": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.125,
+            0.125,
+            0.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            20.5,
+            56.5,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-9999"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "StripOffsets": [
+        392,
+        424
+      ],
+      "StripByteCounts": [
+        32,
+        32
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 0,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 2
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 2048,
+        "name": "GeodeticCRSGeoKey",
+        "value": 4326
+      },
+      {
+        "id": 2049,
+        "name": "GeodeticCitationGeoKey",
+        "value": "WGS 84"
+      },
+      {
+        "id": 2054,
+        "name": "GeogAngularUnitsGeoKey",
+        "value": 9102
+      },
+      {
+        "id": 2057,
+        "name": "EllipsoidSemiMajorAxisGeoKey",
+        "value": [
+          6378137.0
+        ]
+      },
+      {
+        "id": 2059,
+        "name": "EllipsoidInvFlatteningGeoKey",
+        "value": [
+          298.257223563
+        ]
+      }
+    ]
+  },
+  "gdal_metadata": null,
+  "vertical": null,
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 4,
+    "height": 2,
+    "dtype": "Float32",
+    "encoding": "TIFF Compression 1 (none), Predictor 1 (none)",
+    "count": 8,
+    "missing_count": 3,
+    "min": 1.5,
+    "max": 4.5,
+    "values": [
+      1.5,
+      null,
+      2.5,
+      null,
+      3.0,
+      3.5,
+      null,
+      4.5
+    ],
+    "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): -9999; a NaN sample, which states no number"
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "wire_hex": "49492a00c00000004744414c5f5354525543545552414c5f4d455441444154415f53495a453d3030303134302062797465730a4c41594f55543d494644535f4245464f52455f444154410a424c4f434b5f4f524445523d524f575f4d414a4f520a424c4f434b5f4c45414445523d53495a455f41535f55494e54340a424c4f434b5f545241494c45523d4c4153545f345f42595445535f52455045415445440a4b4e4f574e5f494e434f4d50415449424c455f45444954494f4e3d4e4f0a200013000001030001000000000100000101030001000000000100000201030001000000100000000301030001000000080000000601030001000000010000001501030001000000010000001c01030001000000010000003d01030001000000020000004201030001000000800000004301030001000000800000004401040004000000080500004501040004000000180500005301030001000000020000000e830c0003000000a203000082840c0006000000ba030000af87030020000000ea030000b18702001e0000002a04000080a40200f1010000aa01000081a40200060000009c030000480400003c4744414c4d657461646174613e0a20203c4974656d206e616d653d22434c4f55445f434f564552414745223e31373c2f4974656d3e0a20203c4974656d206e616d653d22484c535f50524f43455353494e475f54494d45223e323032362d30342d33305430323a31313a34355a3c2f4974656d3e0a20203c4974656d206e616d653d2253454e53494e475f54494d45223e323032362d30342d32395430353a34313a30372e3235303030305a3c2f4974656d3e0a20203c4974656d206e616d653d225350415449414c5f434f564552414745223e3130303c2f4974656d3e0a20203c4974656d206e616d653d224f4646534554222073616d706c653d22302220726f6c653d226f6666736574223e303c2f4974656d3e0a20203c4974656d206e616d653d225343414c45222073616d706c653d22302220726f6c653d227363616c65223e302e303030313c2f4974656d3e0a20203c4974656d206e616d653d224445534352495054494f4e222073616d706c653d22302220726f6c653d226465736372697074696f6e223e5265643c2f4974656d3e0a20203c4974656d206e616d653d224f564552564945575f524553414d504c494e472220646f6d61696e3d22494d4147455f535452554354555245223e43554249433c2f4974656d3e0a3c2f4744414c4d657461646174613e0a00002d39393939000000000000003e400000000000003e4000000000000000000000000000000000000000000000000000000000000000000000000000bd1f41000000001406584100000000000000000100010000000700000400000100010001040000010001000204b187160000000108b187070016000608000001008e23000c000001007a7f040c000001002923574753203834202f2055544d207a6f6e652033344e7c5747532038347c000f00fe00040001000000010000000001030001000000800000000101030001000000800000000201030001000000100000000301030001000000080000000601030001000000010000001501030001000000010000001c01030001000000010000003d010300010000000200000042010300010000008000000043010300010000008000000044010400010000002c0500004501040001000000b601000053010300010000000200000081a402000600000002050000000000002d3939393900ea060000a4080000520a0000fb0b0000b2010000a6010000a1010000a1010000b6010000789ce5cf61475e010080d13bf77dcb24934c32499224936426c94c9264922449924926c94c269999c924936426499249922433499224499224c92445c6524c9249fd8cfbe178fec073fe86b1200c626c9761d407d1761d86413cf28ba80a835bdc1fc66cff43dcff08f73fc6fd4f707f16eecfc5fd4f717f11ee2fc6fd2f707f39eeafc2fd35b8bf1ef737e1fed7b8ff0deeefc4fd5db8bf07f77fc2fd5f70ff57dc3f84fb8771ff18eeff81fba771ff1ceeff85fb9770ff2aeedfc0fddbb87f0ff71fe2fe63dc7f86fbcf71ff3fdc7f83fbef707f3c6efb93707f0aee4fc3fd19b83f1bf7e7e1fe02dcff0cf797e0fe97b8bf02f7bfc2fdb5b8bf01f737e3fe56dcdf8efbdfe2fef7b8ff03eeff8cfbfb70ff00eeff86fb4770ff38ee9fc4fd33b87f1ef72fe0fe65dcbf86fb3771ff0eeedfc7fdbf71ff09eeff83fb2f70ff15eeff8ffb1f24d8fe44dc9f8cfb53717f3aeecfc4fd39b83f1ff717e2fee7b8bf14f797e1fe4adc5f8dfbeb707f23ee6fc1fd6db8bf03f7bfc3fdddb8ff23eeefc5fdfdb87f10f77fc7fda3b87f02f74fe1fe59dcff13f72fe2fe15dcbf8efbb770ff2eee3fc0fd4709513f44db29eebf07299c4006299c4006b2010000789ce5cf6d47dd0100c6e1b3ce4e9a66534ad334a5949e945296a5944d539a524a29a51411111111112322222222222222468c883122220e3146c4a694524aa9377d87ff8bebfe7d81fbba88869ef7223f26e4f53f1cf483603bc3fd17b8ff0af7dfe0fe3bdcff80fb432f837e106c61dc1f8bfb5fe1fed7b8ff2dee4fc4fdc9b8ff1dee7f8ffb3fe0fe0cdc9f85fb73707f1eee2fc4fdc5b8bf14f797e3fe0adc5f89fbab717f2deeff82fbbfe2fe06dcff0df737e3fe56dcdf8efb3b717f37eeefc5fdfdb87f10f70fe1fe61dc3f82fb4771ff18ee1fc7fd13b87f12f74fe1fe69dcff1df7cfe0fe59dc3f87fbe771ff02ee5fc4fd4bb87f19f7afe0fe55dcbf86fbd771ff06eedfc4fd5bb8ff07eedfc6fd3f71ff0eeedfc5fdbf70ff6fdcbf87fbf771ff01ee3fc4fd51dc7f84fbffe0febfb8ff18f79fe0fe7fb8ff14f79fe3fe4bdc7f8dfb6f71ff3dee7fc4fd3191c01f045a04f7c7e1fe78dcff06f727e0fe24dc9f82fb53717f1aee4fc7fd99b83f1bf7e7e2fe02dc5f84fb4b707f19eeff88fb3fe1fe2adc5f83fb3fe3fe3adc5f8ffb1b717f13ee6fc1fd6db8bf03f777e1fe1edcdf87fb0770ff136fedbb5b6fedbb5ba6010000789ce5cf61471c000080e173ed4e599652ca52364d29a594b29452964d29a594524a2922222222c6888888888888888811111123222246444429a594524afd8cfbf078ffc0fb9c7f0806e42e71ff35eebfc5fdf7b8ff11f73fe3fe57dc1f0845fa20b245e1fe30ee8fc1fdb1b83f0ef727e0fe24dc9f82fb53717f3aeeff8afbbfe1fe2cdc9f83fbf3707f01ee2fc2fd25b8bf14f797e3fe4adc5f8dfb6b70ff2fdc5f87fb1b707f13ee6fc1fd6db8bf03f777e1fe1edcdf87fb0770ff20ee1fc2fdc3b87f04f78fe2fe31dc3f8efb2770ff6fdcff07f74fe2fe29dc3f8dfb6770ff2cee9fc3fdf3b87f01f72fe2fe25dcbf8cfb5770ff2aee5fc3fdebb8ff2feedfc0fd9bb87f0bf76fe3fe1ddcff0ff7efe2fe3ddcbf8ffb0f70ff21eeff8ffb8f70ff31ee3fc1fda7b8ff0cf75fe0fe2bdc7f83fbef70ff03ee7fc2fd2fb8ff0df707c3113f886821dc1f8dfb3fe2fe4fb83f1ef727e2fe64dcff19f7a7e1fe2fb83f03f767e2fe6cdc9f8bfbf3717f21ee2fc6fddf717f19eeafc0fd55b8ff07eeff89fb6b717f3dee6fc4fdcdb8bf15f7b7e3fe4edcdf8dfb7b717f3fee7f07ac49badbac49badba1010000789ce5cfed4618000040d14a1f444444448c88888888888888881123224a699a524a29a594524ad92ca594524a594ad32ca594524a29a59452444444447a8c7e1cf705ee2909090a902bc3fddf71ff0fdc5f85fb6b707f1dee6fc0fd4db8bf05f7b7e1fe0edcdf85fb7b707f1fee1fc0fdbf70ff20ee1fc6fda3b87f1cf74fe2fe69dc3f8bfbe771ff02ee5fc2fd7f71ff3fdcbf8afbd771ff26eedfc6fdbbb87f1ff71fe2fe63dc7f8afbcf71ff25eebfc6fdb7b8ff1ef73fe0fe47dcff84fb9f71ff0bee7fc5fd6fb8ff1df707867ef6c1e7168cfbc3707f38ee8fc0fd91b83f0af747e3fe18dc1f8bfbe370ff17dc1f8ffb13707f22ee4fc2fdc9b83f05f7a7e2fe34dc9f8efb33707f26eecfc2fdd9b83f07f7e7e2fe3cdcff15f7e7e3fe6fb8bf00f717e2fe22dc5f8cfb4b717f39eeafc0fd95b8bf1af7d7e2fe7adcdf88fb9b717f2bee6fc7fd9db8bf1bf7f7e2fe7edcff13f7ffc6fd43b87f04f78fe1fe09dc3f85fb6770ff1ceeff83fb1771ff32ee5fc1fdff71ff1aeedfc0fd5bb87f07f7efe1fe03dc7f84fb4f70ff19eebfc0fd57b8ff06f7dfe1fe0f2354c80e2354c80ea1010000789ce5cfe1461e000040d14afa88888888881111111111111111316244945296a594524a29a594d26c4a29a594d294b26c4a29a594524a29a588888888f418fd38ee0bdc53121612245786fb2b707f25eeafc2fd35b8bf0ef737e0fe26dcdf82fbdb707f07eeefc2fd3db8bf0ff70fe0fe9fb8ff37ee1fc6fda3b87f1cf74fe2fe69dc3f8bfbe771ff1fdcbf84fb5770ff2aeeff8ffbd771ff26eedfc6fdbbb87f1ff71fe2fe63dc7f8afbcf71ff25eebfc6fdb7b8ff1ef73fe0fe47dcff84fb9f71ff0bee7fc5fd6fb8ff1df707073efbe0730bc5fd01dc1f8efb23707f24ee8fc2fdd1b83f06f7c7e2fe38dc1f8ffbbfe0fe04dc9f88fb93707f32ee4fc1fda9b83f0df7a7e3fe0cdc9f89fbb3707f36eecfc1fdb9b83f0ff7e7e3feafb8bf00f77fc3fd85b8bf08f717e3fe52dc5f8efbbfe3fe1fb8bf1af7d7e2fe7adcdf88fb9b717f2bee6fc7fd9db8bf1bf7f7e2fe7edc3f88fb7fe1fe21dc3f82fbc770ff04ee9fc2fd33b87f0ef72fe0fe45dcbf8cfbffe2fe7fb87f0df76fe0fe2ddcbf83fbf770ff01ee3fc2fd27b8ff0cf75fe0fe2bdc7f83fbef70ff0764b4c88e64b4c88e",
+  "header": {
+    "byte_order": "II",
+    "first_ifd_offset": 192
+  },
+  "ifds": [
+    {
+      "offset": 192,
+      "next_ifd_offset": 1096,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            256
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            256
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            16
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "Predictor": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "TileWidth": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "TileLength": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            30.0,
+            30.0,
+            0.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            520000.0,
+            6297680.0,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-9999"
+        }
+      }
+    },
+    {
+      "offset": 1096,
+      "next_ifd_offset": 0,
+      "tags": {
+        "NewSubfileType": {
+          "type": "LONG",
+          "value": [
+            1
+          ]
+        },
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            16
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "Predictor": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "TileWidth": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "TileLength": {
+          "type": "SHORT",
+          "value": [
+            128
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-9999"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "TileOffsets": [
+        1770,
+        2212,
+        2642,
+        3067
+      ],
+      "TileByteCounts": [
+        434,
+        422,
+        417,
+        417
+      ]
+    },
+    {
+      "TileOffsets": [
+        1324
+      ],
+      "TileByteCounts": [
+        438
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 0,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 1026,
+        "name": "GTCitationGeoKey",
+        "value": "WGS 84 / UTM zone 34N"
+      },
+      {
+        "id": 2049,
+        "name": "GeodeticCitationGeoKey",
+        "value": "WGS 84"
+      },
+      {
+        "id": 2054,
+        "name": "GeogAngularUnitsGeoKey",
+        "value": 9102
+      },
+      {
+        "id": 3072,
+        "name": "ProjectedCRSGeoKey",
+        "value": 32634
+      },
+      {
+        "id": 3076,
+        "name": "ProjLinearUnitsGeoKey",
+        "value": 9001
+      }
+    ]
+  },
+  "gdal_metadata": [
+    {
+      "name": "CLOUD_COVERAGE",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "17"
+    },
+    {
+      "name": "HLS_PROCESSING_TIME",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "2026-04-30T02:11:45Z"
+    },
+    {
+      "name": "SENSING_TIME",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "2026-04-29T05:41:07.250000Z"
+    },
+    {
+      "name": "SPATIAL_COVERAGE",
+      "sample": null,
+      "role": null,
+      "domain": null,
+      "value": "100"
+    },
+    {
+      "name": "OFFSET",
+      "sample": 0,
+      "role": "offset",
+      "domain": null,
+      "value": "0"
+    },
+    {
+      "name": "SCALE",
+      "sample": 0,
+      "role": "scale",
+      "domain": null,
+      "value": "0.0001"
+    },
+    {
+      "name": "DESCRIPTION",
+      "sample": 0,
+      "role": "description",
+      "domain": null,
+      "value": "Red"
+    },
+    {
+      "name": "OVERVIEW_RESAMPLING",
+      "sample": null,
+      "role": null,
+      "domain": "IMAGE_STRUCTURE",
+      "value": "CUBIC"
+    }
+  ],
+  "vertical": null,
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 128,
+    "height": 128,
+    "dtype": "Int16",
+    "encoding": "TIFF Compression 8 (Deflate), Predictor 2 (horizontal differencing)",
+    "count": 16384,
+    "missing_count": 5,
+    "min": 1003,
+    "max": 1635,
+    "values": null,
+    "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): -9999"
+  }
+}

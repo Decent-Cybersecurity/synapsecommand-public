@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the twenty-seven shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the thirty shipped adapters.
 ---
 
 # Parser safety
@@ -10,7 +10,7 @@ description: The five bounds and where they live, the rules an adapter MUST foll
 Every adapter in this repository is handed bytes somebody else produced. This page is the policy
 those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
 KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
-parser's default behaviour is dangerous, and it is enforced today on the twenty-seven adapters that
+parser's default behaviour is dangerous, and it is enforced today on the thirty adapters that
 ship — since 2026-09-20/21 that roster includes the Part 2 formats it was written for: AIXM 5.1.1
 and 5.2 and C2SIM (XML), GeoPackage (a SQLite database) and GeoJSON.
 
@@ -39,7 +39,7 @@ hardened against a figure the report does not print.
 > `enforced_at` point, and the `test` that proves the refusal.
 
 > A bound **MUST NOT** be described as the format's normative maximum unless the specification
-> actually says so. Twenty-two of the twenty-seven adapters declare an implementation cap and say so in
+> actually says so. Twenty-five of the thirty adapters declare an implementation cap and say so in
 > the enum and in the prose; the five ASTERIX categories declare the normative `LEN` field.
 
 Which bound runs before which allocation — size before the depth scan, the depth scan before
@@ -51,7 +51,7 @@ worker and the hosting application each add on top is the subject of
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all twenty-seven**. `max_depth` is declared and
+`max_input_bytes` is declared and enforced on **all thirty**. `max_depth` is declared and
 enforced on the **five XML readers** — `tak` and `stanag4676` since 2026-09-16, and `c2sim`,
 `aixm511` and `aixm52` since 2026-09-21, the last three inside expat's start-element handler
 through `secure_xml` — on the **five that decode JSON** — `adsb`, `ais`, `legion` and `pntmap`
@@ -66,19 +66,31 @@ its gzip member inflates to, before `json.loads`), and on `nexrad2` (since 2026-
 class at 16 on the parsed twin; the volume's octets have no nesting to measure), and on the three
 station-text adapters `ndbc_stdmet`, `coops_csv` and `airnow_hourly` (since 2026-10-15: the base
 class at 64 on a parsed twin, and for `coops_csv` on a JSON response's text before `json.loads`;
-a file of lines has no nesting to measure).
+a file of lines has no nesting to measure), and on `grib2` (since 2026-10-17: the base class at 16
+on the parsed twin; a message's octets have no nesting to measure), `cog` (since 2026-10-17: the
+base class at 16 on the parsed twin, and `secure_xml` at the same 16 inside expat's start-element
+handler for a VRT index and for a GeoTIFF's GDAL_METADATA text) and `iem_n0q` (since 2026-10-17: the
+base class at 16 on the parsed twin; a PNG's octets have no nesting to measure).
 `max_objects` is declared and enforced on the five of the adapter expansion (`geojson`,
 `geopackage`, `c2sim`, `aixm511`, `aixm52`), on `tacticalapi` (since 2026-10-06) and on `nexrad2`
 (since 2026-10-15: 33, Table XVII-A's 32 elevation numbers and the site, held by refusing an
-elevation number outside 1 to 32), each before the objects it bounds are built, and declared
-absent with a reason on the other twenty.
+elevation number outside 1 to 32), on `grib2` (since 2026-10-17: 16 fields a message, the
+seventeenth Section 4 refused before it is read), on `cog` (since 2026-10-17: one object a file)
+and on `iem_n0q` (since 2026-10-17: one Event a PNG), each before the objects it bounds are built, and declared absent with a reason on the other twenty.
 `max_decompressed_bytes` is declared and enforced on `readsb_trace` (since 2026-10-15: 64 MiB,
 held while zlib inflates the trace file's one gzip member, the first octet past it refused before
 it is kept) and on `nexrad2` (since 2026-10-15: 402,979,072 octets a volume, held while each LDM
 record's bzip2 stream is inflated with `max_length` one octet past what the volume may still
 produce, and each radial record also held to 2 MiB and the metadata record to its fixed 325,888)
-and declared absent with a reason on the other twenty-five. `max_parse_seconds` is declared absent
-with a reason on all twenty-seven, and `max_depth` on the other nine; none of those absences is
+and on `grib2` (since 2026-10-17: 64 MiB of PNG rows a message, compared with the rows a PNG's
+header implies before an octet is inflated, and each field's stream held to its own rows by
+`max_length`) and on `cog` (since 2026-10-17: 1 MiB, one 512 x 512 tile of 32-bit samples, block 0's
+decoded size compared with the bound before an octet is decompressed and LZW, Deflate and PackBits
+each held to exactly the block's size) and on `iem_n0q` (since 2026-10-17: 80 MiB, above the 65,885,400
+octets of rows the product's 12200 x 5400 grid inflates to; IHDR is held to that grid before an octet
+is inflated, and the image data is inflated into a buffer of exactly its rows, the first octet past
+them refused) and declared absent with a reason on the other twenty-five.
+`max_parse_seconds` is declared absent with a reason on all thirty, and `max_depth` on the other nine; none of those absences is
 enforced, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
@@ -132,7 +144,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 > same number — `stanag4676`'s included, although that reader never descends past what the class
 > model names.
 
-### The twenty-seven declarations
+### The thirty declarations
 
 | adapter | `max_input_bytes` | kind | where the figure comes from |
 |---|---|---|---|
@@ -163,6 +175,9 @@ nested one thousand deep, so check **H** records the refusal on every run.
 | `ndbc_stdmet` | 8 388 608 | implementation cap | one NDBC standard meteorological text file; no NDBC document states a maximum, and the design record's largest unit is a realtime file of the last 45 days at ten-minute rows (`ndbc_stdmet.MAX_INPUT_BYTES`, DECISIONS U-07, 2026-10-15) |
 | `coops_csv` | 8 388 608 | implementation cap | one CO-OPS data API response; the API bounds a request by its range (6-minute data one month, hourly one year) and states no size (`coops_csv.MAX_INPUT_BYTES`, DECISIONS U-07, 2026-10-15) |
 | `airnow_hourly` | 8 388 608 | implementation cap | one AirNow hourly file; no AirNow document states a maximum, and the design record's one HourlyData file holds 7878 lines for one hour (`airnow_hourly.MAX_INPUT_BYTES`, DECISIONS U-07, 2026-10-15) |
+| `grib2` | 8 388 608 | implementation cap | one GRIB2 message; Section 0 states an eight-octet total length, so the format sets no usable maximum, and the largest message of the replay day across HRRR and RAP is 3,810,470 octets (`grib2.MAX_INPUT_BYTES`, DECISIONS U-07, 2026-10-17) |
+| `cog` | 268 435 456 | implementation cap | one GeoTIFF or VRT file; TIFF 6.0's 32-bit offsets reach 4 GiB, and the largest files the design record measured are a 3DEP 1/3 arc-second tile of 165,776,270 octets and coastal topobathy tiles of 150 to 217 MB (`cog.MAX_INPUT_BYTES`, DECISIONS U-07, 2026-10-17) |
+| `iem_n0q` | 8 388 608 | implementation cap | one IEM N0Q composite PNG; PNG states no file size beyond a chunk's 2^31 − 1 octets, and the archive's files are 1 to 4 MB, listed as 2M on 2026-09-11 (`iem_n0q.MAX_INPUT_BYTES`, DECISIONS L-09, 2026-10-17) |
 
 ## 2. XML
 
@@ -278,6 +293,51 @@ the per-record bound already admits, and no report figure supports another numbe
 --container gzip` unwraps it under the host's bounds above before the adapter is handed the text,
 so each declares `max_decompressed_bytes` absent with that reason.
 
+**Added 2026-10-17, for `grib2`.** A GRIB2 message opens no container, but a Template 5.41 field's
+Section 7 is a PNG whose image data is a zlib stream. Its rows — Nj x (1 + Ni x octets per sample),
+or one row of the data points under a bitmap — are compared with what `max_decompressed_bytes`
+(64 MiB, MRMS's 49,003,500 octets of rows below it) leaves the message before any octet is inflated,
+and the stream is inflated by `zlib.decompressobj` into a buffer of exactly the rows, at most 1 MiB
+a step and with `max_length` never more than one octet past the rows, so an octet past them is
+refused before it is kept. Every chunk's CRC is checked, only `IHDR`, `IDAT` and
+`IEND` are read, and nothing may follow the stream or `IEND`. A `.grib2.gz` file is unwrapped by
+`synapse-decode --container gzip` under the host's bounds above, then cut into its messages. The
+file and its unwrapped octets are each held to `grib2`'s `max_input_bytes`, 8 MiB, the bound of one
+message, until a ruling sets one for files: a larger file is exit `3` before any message is cut.
+The decode holds no field whole: each packing hands its codes on at most `grib2.CHUNK` (65,536) at
+a time, so a 214-octet complex-packing message that describes 2^25 points is summarised without
+2^25 values in memory; only a PNG's inflated rows, under the bound above, are held at once. Nor is
+a record held per missing mark: complex packing first walks its codes, holding nothing, for the
+present values its order of differencing needs, so a 1 MiB message of 2^23 alternating primary and
+secondary marks is counted without a record per mark.
+
+**Added 2026-10-17, for `cog`.** A GeoTIFF's blocks are compressed by TIFF's own codecs; `cog` reads
+the header and every directory, checks that every block lies in the file, and decodes ONE block,
+block 0 of the full-resolution image. Its decoded size — a whole tile, or the strip's rows — is
+compared with `max_decompressed_bytes` (1 MiB, one 512 x 512 tile of 32-bit samples, the block of
+the 3DEP and CUDEM COGs) before any octet is decompressed; Deflate is then inflated by
+`zlib.decompressobj` with `max_length` one octet past the block, and LZW and PackBits are decoded
+by `adapters/raster_codec.py` into exactly the block, so an octet past it is refused before it is
+kept, and a stream that ends early or leaves octets after itself is refused too. The directory walk
+is bounded before it reads: 64 directories, 128 entries a directory, 1 MiB for one value and 4 MiB
+for every value together, because entries may point at the same octets; a chain that returns to a
+directory already read is refused. BigTIFF and JPEG, LERC, ZSTD, LZMA, WebP and JPEG 2000
+compression are refused by name. A VRT index and a GeoTIFF's GDAL_METADATA are XML and go through
+`secure_xml` (no DTD, no entity, no external resource, the element and depth bounds); a VRT's
+sources are listed and never opened, and a `/vsicurl/` path, a URL, an `s3://` or a DAP locator is
+refused by name.
+
+**Added 2026-10-17, for `iem_n0q`.** An IEM N0Q composite is one PNG of 12200 x 5400 palette
+indices whose image data is one zlib stream. `iem_n0q` reads IHDR first and refuses any size, bit
+depth or colour type other than the product's before a single octet is inflated, so the rows are
+always exactly 65,885,400 octets, under the declared `max_decompressed_bytes` of 80 MiB; the shared
+codec `adapters/raster_codec.py` then checks every chunk's CRC and order, refuses an unknown
+critical chunk and an interlaced image by name, inflates the stream with `zlib.decompressobj` and
+`max_length` into a buffer of exactly the rows, refusing the first octet past them and a stream
+that ends early or leaves octets after itself, and undoes the five filter types in place. A `tEXt`
+chunk is read under the PNG's keyword rules; every other ancillary chunk is kept as its octets and
+read for nothing.
+
 ## 4. SQLite — Part 2 (GeoPackage)
 
 **Dated correction, 2026-09-20 (adapter expansion phase 2).** The sentence below was true until
@@ -349,15 +409,15 @@ Linux-only and is refused where it cannot be enforced — `docs/docs/security/de
 | check | what it asserts |
 |---|---|
 | **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside an enforced deadline in a killable worker; a `.json` payload past the loader's depth bound is refused by the loader, and the layer is recorded |
-| **M** — streaming | `SKIP`, declared inapplicable, for all twenty-seven — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
+| **M** — streaming | `SKIP`, declared inapplicable, for all thirty — never `PASS`: no adapter can declare a streaming capability, and the four properties one would consist of are printed as not implemented / not applicable |
 | **N** — parser robustness | a truncated payload at many offsets is refused, inside the same enforced deadline |
 | **O** — resource limits | one octet more than the declared `max_input_bytes` is refused; the payload *at* the bound is not refused by the size guard (`tests/test_cdm_resource_envelope.py`) |
 
-**O is required in CI for all twenty-seven.** It was a SKIP for all fourteen of the day's adapters until round P5, because
+**O is required in CI for all thirty.** It was a SKIP for all fourteen of the day's adapters until round P5, because
 no adapter declared a bound to check; it is now in the required set for every adapter in the
 sweep, which is what would notice a bound being quietly removed from a manifest.
 
-## 7. The audit: every parser call in the twenty-seven
+## 7. The audit: every parser call in the thirty
 
 Taken with
 `grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.
@@ -385,6 +445,9 @@ Line numbers are as at round P5 and move; the grep is the durable form.
 | `ndbc_stdmet` | `str.split` on decoded lines (`ndbc_stdmet.py`, `parse_file`; `observation_contracts.text_lines`) | the octets of one stdmet text file | **yes** — 8 MiB in the base class before the module runs; strict UTF-8 without a byte-order mark, no control character or tab, one line-end style, no blank line and a line end after the last line (a file cut inside a row is refused, never read as a shorter number); every header name read against a closed vocabulary, every row held to the header's width and every token to its column's grammar, and a number no binary double holds refused by the adapter's own code; a gzip yearly file is unwrapped by `synapse-decode`, never here; a twin is held to the depth bound by the base class (added 2026-10-15) |
 | `coops_csv` | `json.loads` (`coops_csv.py`, `parse_response`), `csv.reader` with `strict=True` (the same, one line at a time) | the octets of one data API response: a JSON object or a CSV header and rows | **yes** — 8 MiB and `max_depth` 64 in the base class before the module runs; JSON: strict UTF-8, duplicate keys, `NaN`/`Infinity` and an integer no double holds (more than 309 digits, before `int()` reads it) refused by the decoder's hooks, closed key sets, every value a string a text file could hold; CSV: the lines `text_lines` admits, the header compared whole with the request's product's, one CSV record a line, every field to its column's grammar, a value or a flag no double holds refused by the adapter's own code (added 2026-10-15) |
 | `airnow_hourly` | `str.split` on the pipe character and `csv.reader` with `strict=True` (`airnow_hourly.py`, `parse_file`) | the octets of one HourlyData or HourlyAQObs file | **yes** — 8 MiB in the base class before the module runs; the lines `text_lines` admits; nine fields a HourlyData line, the 34-name HourlyAQObs header compared whole and one CSV record a line; every field to its grammar, and a number no double holds refused by the adapter's own code; a twin is held to the depth bound by the base class (added 2026-10-15) |
+| `grib2` | `zlib.decompressobj` (`grib2.py`, `_png`), `zlib.crc32` (the same), `struct` (`grib2.py`, `decode_message` and the section readers) | the octets of one GRIB2 message; a Template 5.41 field's PNG and its zlib stream | **yes** — 8 MiB in the base class before the module runs; Section 0's total length must be the payload's and the message must end with `7777`; every section's length is checked against the octets before Section 8 and every template's against its fixed layout; the grid points of a message are held to 2^25 and its fields to 16 before any value is read; a PNG's chunks are CRC-checked, only IHDR, IDAT and IEND are read, its rows are compared with what `max_decompressed_bytes` 64 MiB leaves before inflating and inflated into a buffer of exactly those rows, at most 1 MiB a step, with `max_length` never more than one octet past them; no field's values are held whole, each packing handing on at most 65,536 codes at a time; a twin is held to the depth bound by the base class (added 2026-10-17) |
+| `cog`, with its codec `raster_codec` | `struct` and `zlib.decompressobj` (`raster_codec.py`, `read_tiff`, `block_layout`, `decode_block`, `inflate`), the codec's own LZW and PackBits decoders (the same), `secure_xml.parse` (`cog.py`, `decode_vrt`, `_gdal_metadata`) | the octets of one GeoTIFF or VRT file; block 0's compressed octets; the VRT's and GDAL_METADATA's XML | **yes** — 256 MiB in the base class before the module runs; BigTIFF refused; 64 directories, 128 entries, 1 MiB a value and 4 MiB of values in all, each checked before it is read; every value and every block inside the file; one block decoded, its size compared with 1 MiB before decompression and every decoder held to exactly the block; XML through `secure_xml` with its bounds, a VRT source never opened and a remote one refused by name; a twin is held to the depth bound by the base class (added 2026-10-17) |
+| `iem_n0q`, with the codec's PNG reader | `struct`, `zlib.crc32` (`iem_n0q.py`, `_product_header`), `zlib.decompressobj` and `zlib.crc32` (`raster_codec.py`, `read_png`, `_png_inflate`) | the octets of one N0Q PNG; its IHDR; its image data's zlib stream; its `tEXt` chunks | **yes** — 8 MiB in the base class before the module runs; IHDR held to 12200 x 5400 x 8-bit indexed before anything is inflated; every chunk's CRC and order checked; the stream inflated into exactly its 65,885,400 octets of rows, at most 1 MiB a step, the first octet past them refused; an index past the palette refused; a twin is held to the depth bound by the base class (added 2026-10-17) |
 | the rest of the roster | none | — | the ASTERIX, GMTI and KLV families decode octets with their own codecs and call no general-purpose parser |
 | all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** — a reading from before 2026-09-20; `sqlite3` now hits in `geopackage` and its row is above |
 

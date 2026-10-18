@@ -1,0 +1,187 @@
+{
+  "wire_hex": "49492a000800000013000001030001000000040000000101030001000000030000000201030001000000200000000301030001000000080000000601030001000000010000000e01020028000000060100001101040001000000c501000015010300010000000100000016010300010000000300000017010400010000002e0000001c01030001000000010000003201020014000000f20000003d01030001000000030000005301030001000000030000000e830c00030000003601000082840c00060000004e010000af870300180000007e010000b187020017000000ae01000081a40200070000002e01000000000000323032363a30343a30312031323a30303a30300073796e74686574696320746f706f6772617068792d62617468796d657472793b204e4156443838002d39393939390000000000000000b03f000000000000b03f000000000000f03f00000000000000000000000000000000000000000000000000000000000037400000000000b84c4000000000000000000100010001000500000400000100020001040000010001000204b18716000000000800000100ad1000100000010047164e41443833202b204e4156443838206865696768747c00789c3bf89fa19e7381c401070608385ec9c0d8d41b90e3bc9181a1a18181c11128f65c4646a6052a0f004a110b01",
+  "header": {
+    "byte_order": "II",
+    "first_ifd_offset": 8
+  },
+  "ifds": [
+    {
+      "offset": 8,
+      "next_ifd_offset": 0,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            4
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            32
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            8
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "ImageDescription": {
+          "type": "ASCII",
+          "value": "synthetic topography-bathymetry; NAVD88"
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "RowsPerStrip": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "DateTime": {
+          "type": "ASCII",
+          "value": "2026:04:01 12:00:00"
+        },
+        "Predictor": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            3
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0625,
+            0.0625,
+            1.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            23.0,
+            57.4375,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-99999"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "StripOffsets": [
+        453
+      ],
+      "StripByteCounts": [
+        46
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 1,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 2
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 1
+      },
+      {
+        "id": 1026,
+        "name": "GTCitationGeoKey",
+        "value": "NAD83 + NAVD88 height"
+      },
+      {
+        "id": 2048,
+        "name": "GeodeticCRSGeoKey",
+        "value": 4269
+      },
+      {
+        "id": 4096,
+        "name": "VerticalGeoKey",
+        "value": 5703
+      }
+    ]
+  },
+  "gdal_metadata": null,
+  "vertical": {
+    "datum": {
+      "name": "NAVD88 height",
+      "namespace": "EPSG:5703, read from OGC GeoTIFF 1.1 VerticalGeoKey (4096)"
+    },
+    "unit": "metre",
+    "unit_namespace": "the axis unit of EPSG:5703 in PROJ's EPSG database",
+    "orthometric": true
+  },
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 4,
+    "height": 3,
+    "dtype": "Float32",
+    "encoding": "TIFF Compression 8 (Deflate), Predictor 3 (floating point)",
+    "count": 12,
+    "missing_count": 1,
+    "min": -12.5,
+    "max": 15.75,
+    "values": [
+      -12.5,
+      -7.25,
+      -2.0,
+      1.5,
+      null,
+      3.25,
+      5.0,
+      8.75,
+      10.5,
+      12.25,
+      14.0,
+      15.75
+    ],
+    "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): -99999"
+  }
+}

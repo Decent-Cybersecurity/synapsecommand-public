@@ -1,0 +1,240 @@
+{
+  "directory": "grib2",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "bitmap_simple_packing.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "bitmap_simple_packing.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_1.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_1.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_1_primary_and_secondary_missing.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_1_primary_and_secondary_missing.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_2_missing.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_2_missing.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_2_with_bitmap.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "complex_order_2_with_bitmap.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jpeg2000_reference_form.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jpeg2000_reference_form.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "lambert_conformal_simple.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "lambert_conformal_simple.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mrms_style_png_sentinels.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mrms_style_png_sentinels.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_16_bit.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_16_bit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_8_bit.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "png_8_bit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "simple_packing_latlon.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by GDAL 3.13.3's GRIB driver, run by fixtures/grib2/spec/build_fixtures.py from an ASCII grid of literals in that script; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "simple_packing_latlon.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_fields_one_message.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_fields_one_message.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_width_accumulation.grb2",
+      "operational_data": false,
+      "origin": "Synthetic GRIB2 message written on 2026-10-17 for the grib2 adapter's landing by fixtures/grib2/spec/build_fixtures.py's own encoder from literals in that script, after the section layouts of the GRIB2 documentation (cited by reference, never carried); the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_width_accumulation.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a GRIB2 message, written on 2026-10-17 by fixtures/grib2/spec/build_fixtures.py from the literals the message was written from, never by decoding it; the grid lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "grib2/spec/grib2_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

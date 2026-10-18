@@ -1,0 +1,156 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, every walk is linear in the octets read or in the grid points, which MAX_GRID_POINTS bounds, and the PNG rows are inflated under a byte bound; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_decompressed_bytes": {
+            "enforced_at": "`grib2._png`: a field's rows (Nj x (1 + Ni x octets per sample)) are compared with what the bound leaves the message before any octet is inflated and refused `png-past-the-decompression-bound`; `grib2._inflate` then calls `zlib.decompressobj().decompress` with `max_length` at most one octet past the rows (and at most `INFLATE_STEP` = 1 MiB a step) into a buffer of exactly the rows, and an octet past them is refused `png-data-past-its-rows` before it is kept",
+            "kind": "implementation_cap",
+            "source": "MRMS QPE's Section 7 is a PNG whose image data inflates to 3500 x (1 + 7000 x 2) = 49,003,500 octets of filtered 16-bit rows (gap-grib2-wire-facts F04: MRMS inner IDAT 49,003,500 B). 64 MiB (67 108 864 octets, `MAX_DECOMPRESSED_BYTES`, `adapters/grib2.py`) sits above it for every PNG field of one message together. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_grib2_adapter.py::test_png_rows_are_held_to_the_decompression_bound_before_inflating"
+          },
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the dict form, the parsed twin, nests five containers (a template's parameters inside a section inside a field). 16 (`MAX_DEPTH`, `adapters/grib2.py`) is the dis7 envelope's bound, over three times that. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_grib2_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module reads Section 0",
+            "kind": "implementation_cap",
+            "source": "largest message of 2026-09-11 12Z across HRRR sfc/prs/nat/subh and RAP awp130pgrb is 3,810,470 B (wire-facts F02); NOT the format's normative maximum. GRIB2's Section 0 states an eight-octet total length, so no figure the format sets bounds a message. 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/grib2.py`) is DECISIONS U-07's bound for one message, 2.2 times the largest. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`grib2.decode_message`: a Section 4 past the sixteenth field is refused `too-many-fields` before it is read",
+            "kind": "implementation_cap",
+            "source": "One Event per field. The design record's most is two fields in one message (RAP awp130pgrb: 49 of 306 messages repeat Sections 4 to 7, gap-grib2-wire-facts F02/T8); 16 (`MAX_FIELDS`, `adapters/grib2.py`) is eight times that. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_grib2_adapter.py::test_a_seventeenth_field_is_refused_before_it_is_read"
+          }
+        },
+        "max_decompressed_bytes": 67108864,
+        "max_depth": 16,
+        "max_input_bytes": 8388608,
+        "max_objects": 16,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "GRIB edition 2 message: Sections 0 to 8 with Sections 4 to 7 repeated; grid templates 3.0 (latitude/longitude) and 3.30 (Lambert conformal), product templates 4.0 and 4.8, data representation templates 5.0, 5.3 and 5.41 decoded and 5.40 read in reference form; one ENVIRONMENTAL_OBSERVATION Event (gridded-field/1) per field"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the message is binary with fixed templates: a section, a template or a PNG chunk this module does not name is refused rather than preserved, Section 2's local octets are carried whole, and the dict form is held to be exactly what its own wire_hex decodes to, so an injected key is refused `not-a-twin`",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "GRIB2 (WMO FM 92 GRIB edition 2)",
+      "version": "GRIB edition 2, read against NCEP's WMO GRIB2 Documentation version 37.0.0 (2026-06-01)"
+    },
+    "id": "grib2",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "values-by-reference",
+        "notes": "the twin's `arrays` holds each field's bitmap and packed values as the message states them; the contract states the locator, the shape, the packing and a summary",
+        "severity": null,
+        "summary": "Array values are carried by reference \u2014 a locator, the shape and packing needed to open them, and a summary \u2014 and are not copied into the output.",
+        "unsupported_paths": [
+          "arrays"
+        ]
+      },
+      {
+        "id": "jpeg2000-values-unsupported",
+        "notes": null,
+        "severity": null,
+        "summary": "a Template 5.40 field's values are a JPEG 2000 codestream this module does not decode (DECISIONS U-02: no decoder outside the standard library): Sections 0 to 6 are read, Section 7 is checked to open with a codestream's SOC and SIZ markers, and the contract states the field by reference with no summary",
+        "unsupported_paths": [
+          "codestreams"
+        ]
+      },
+      {
+        "id": "message-octets-by-reference",
+        "notes": null,
+        "severity": null,
+        "summary": "the twin's wire_hex is the message's octets, the input its dict form is decoded from; they are identified by SourceRef.source_hash when the host injects it and are not copied into any object",
+        "unsupported_paths": [
+          "wire_hex"
+        ]
+      },
+      {
+        "id": "one-message-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one GRIB2 message per call, as its octets or as its twin; a file of several messages, a gzip around one and an index file are not taken. synapse-decode unwraps a gzip and cuts a file into its messages, each with its ordinal and the octet it begins at",
+        "unsupported_paths": []
+      },
+      {
+        "id": "templates-read",
+        "notes": null,
+        "severity": null,
+        "summary": "grid templates 3.0 and 3.30 (north-pole-centred, LaD a standard parallel, a spherical earth), product templates 4.0 and 4.8 (one time range), data representation templates 5.0, 5.3 (orders 1 and 2) and 5.41 (8- and 16-bit greyscale) are read; every other template, a predefined grid or bitmap, a quasi-regular grid, coordinate values after Section 4, a second Section 2 or 3, a scanning mode other than the i and j directions and a grid across 180 degrees are refused by name, as is GRIB edition 1",
+        "unsupported_paths": []
+      },
+      {
+        "id": "tables-read-by-row",
+        "notes": null,
+        "severity": null,
+        "summary": "a parameter's name and unit and a surface's unit are stated only for the Code Table 4.2 and 4.5 rows this module lists, each with the file it was read from (GDAL's table files, its NCEP local table for NCEP's local rows, and NSSL's MRMS table for MRMS's); any other parameter keeps its discipline.category.number code with no unit, any other surface its code with no value, and a row whose unit column states a code's meanings (CFRZR) names the parameter and states no unit",
+        "unsupported_paths": []
+      },
+      {
+        "id": "first-fixed-surface",
+        "notes": null,
+        "severity": null,
+        "summary": "the contract's level is the first fixed surface; a layer's second surface stays in the Event's residual with every other Template 4.x octet",
+        "unsupported_paths": []
+      },
+      {
+        "id": "footprint-outline",
+        "notes": null,
+        "severity": null,
+        "summary": "Event.geometry is the outline of the grid POINTS, not of the cells around them: a lat/lon grid's corner points, a Lambert grid's edge points converted with the spherical inverse, at most 16 segments an edge and rounded to 10^-6 degree",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter grib2` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, every section a structured residual, the packed arrays and the octets a declared limitation) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "GRIB2 message translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

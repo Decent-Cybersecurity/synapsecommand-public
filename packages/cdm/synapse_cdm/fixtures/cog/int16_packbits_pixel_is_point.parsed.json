@@ -1,0 +1,175 @@
+{
+  "wire_hex": "49492a000800000011000001030001000000040000000101030001000000020000000201030001000000100000000301030001000000058000000601030001000000010000001101040001000000800100001501030001000000010000001601030001000000020000001701040001000000120000001c01030001000000010000005301030001000000020000000e830c0003000000e000000082840c0006000000f8000000af8703002000000028010000b0870c000200000068010000b1870200080000007801000081a4020006000000da000000000000002d3939393900000000000000d03f000000000000d03f00000000000000000000000000000000000000000000000000000000000000000000000000a034400000000000504c400000000000000000010001000000070000040000010002000104000001000200000800000100e6100108b187070000000608000001008e230908b087010001000b08b08701000000886d74961da4724000000040a65458415747532038347c00070700070007000700070700fdfffdffb004",
+  "header": {
+    "byte_order": "II",
+    "first_ifd_offset": 8
+  },
+  "ifds": [
+    {
+      "offset": 8,
+      "next_ifd_offset": 0,
+      "tags": {
+        "ImageWidth": {
+          "type": "SHORT",
+          "value": [
+            4
+          ]
+        },
+        "ImageLength": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "BitsPerSample": {
+          "type": "SHORT",
+          "value": [
+            16
+          ]
+        },
+        "Compression": {
+          "type": "SHORT",
+          "value": [
+            32773
+          ]
+        },
+        "PhotometricInterpretation": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SamplesPerPixel": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "RowsPerStrip": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "PlanarConfiguration": {
+          "type": "SHORT",
+          "value": [
+            1
+          ]
+        },
+        "SampleFormat": {
+          "type": "SHORT",
+          "value": [
+            2
+          ]
+        },
+        "ModelPixelScaleTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.25,
+            0.25,
+            0.0
+          ]
+        },
+        "ModelTiepointTag": {
+          "type": "DOUBLE",
+          "value": [
+            0.0,
+            0.0,
+            0.0,
+            20.625,
+            56.625,
+            0.0
+          ]
+        },
+        "GDAL_NODATA": {
+          "type": "ASCII",
+          "value": "-9999"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "StripOffsets": [
+        384
+      ],
+      "StripByteCounts": [
+        18
+      ]
+    }
+  ],
+  "geokeys": {
+    "version": 1,
+    "revision": 1,
+    "minor_revision": 0,
+    "keys": [
+      {
+        "id": 1024,
+        "name": "GTModelTypeGeoKey",
+        "value": 2
+      },
+      {
+        "id": 1025,
+        "name": "GTRasterTypeGeoKey",
+        "value": 2
+      },
+      {
+        "id": 2048,
+        "name": "GeodeticCRSGeoKey",
+        "value": 4326
+      },
+      {
+        "id": 2049,
+        "name": "GeodeticCitationGeoKey",
+        "value": "WGS 84"
+      },
+      {
+        "id": 2054,
+        "name": "GeogAngularUnitsGeoKey",
+        "value": 9102
+      },
+      {
+        "id": 2057,
+        "name": "EllipsoidSemiMajorAxisGeoKey",
+        "value": [
+          6378137.0
+        ]
+      },
+      {
+        "id": 2059,
+        "name": "EllipsoidInvFlatteningGeoKey",
+        "value": [
+          298.257223563
+        ]
+      }
+    ]
+  },
+  "gdal_metadata": null,
+  "vertical": null,
+  "window": {
+    "ifd": 0,
+    "block": 0,
+    "column": 0,
+    "row": 0,
+    "width": 4,
+    "height": 2,
+    "dtype": "Int16",
+    "encoding": "TIFF Compression 32773 (PackBits), Predictor 1 (none)",
+    "count": 8,
+    "missing_count": 0,
+    "min": -3,
+    "max": 1200,
+    "values": [
+      7,
+      7,
+      7,
+      7,
+      7,
+      -3,
+      -3,
+      1200
+    ],
+    "missing_mechanism": null
+  }
+}

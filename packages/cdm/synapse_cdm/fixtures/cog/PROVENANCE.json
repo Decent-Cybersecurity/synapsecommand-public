@@ -1,0 +1,186 @@
+{
+  "directory": "cog",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "compound_navd88_index.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "compound_navd88_index.vrt",
+      "operational_data": false,
+      "origin": "Synthetic GDAL VRT index written on 2026-10-17 for the cog adapter's landing by fixtures/cog/spec/build_fixtures.py from literals in that script, in the form GDAL writes; its sources are names only, the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ecostress_shaped_lst_tiled.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ecostress_shaped_lst_tiled.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_big_endian_nodata.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_big_endian_nodata.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_deflate_nad83.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_deflate_nad83.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_lzw_predictor3.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "float32_lzw_predictor3.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hls_shaped_band_cog.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hls_shaped_band_cog.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "int16_packbits_pixel_is_point.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "int16_packbits_pixel_is_point.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_sources_index.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_sources_index.vrt",
+      "operational_data": false,
+      "origin": "Synthetic GDAL VRT index written on 2026-10-17 for the cog adapter's landing by fixtures/cog/spec/build_fixtures.py from literals in that script, in the form GDAL writes; its sources are names only, the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "navd88_dem_deflate.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "navd88_dem_deflate.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "utm_tiled_cog_lzw.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of a cog fixture, written on 2026-10-17 by fixtures/cog/spec/build_fixtures.py from the literals the file was written from, never by decoding it; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "utm_tiled_cog_lzw.tif",
+      "operational_data": false,
+      "origin": "Synthetic GeoTIFF written on 2026-10-17 for the cog adapter's landing by GDAL 3.13.3, run by fixtures/cog/spec/build_fixtures.py from an ASCII grid of literals in that script; the footprint lies in the Baltic rectangle and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "cog/spec/cog_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

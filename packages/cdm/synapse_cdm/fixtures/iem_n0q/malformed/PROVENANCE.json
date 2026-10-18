@@ -1,0 +1,78 @@
+{
+  "directory": "iem_n0q/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "four_bit_indices.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "gentime_twice.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "idat_crc_failure.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "index_past_the_palette.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "inflates_past_its_rows.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truecolour_colour_type_2.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_idat_stream.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wrong_image_size.png",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from literals in that script, for the conformance suite's check H; malformed/README.md names what is wrong with it and the refusal it expects. Nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

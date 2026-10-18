@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twenty-seven adapters
-cannot grow twenty-seven slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty adapters
+cannot grow thirty slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2419,6 +2419,31 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      '--update-golden` for all twenty-two adapters and read, each moving by `"validity": null`',
      'a dated round record of the CDM 3.2.0 landing (2026-10-15): the goldens it re-wrote were those of the twenty-two adapters registered that day, and `readsb_trace` landed after it with goldens written once; kept as written because a later round annotates rather than tidies'),
+    # ADDED 2026-10-17 (the `grib2` landing, the arc's 3.6.0 content), the NYC landing's shape
+    # again: four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the 3.5.0
+    # artefact beside one row marked as postdating it, and three the 3.5.0 readiness report's
+    # readings of its release tree. The release round that rewrites the notes retires the first four.
+    ('RELEASE_NOTES.md',
+     '`CURRENT: manifests vs 27 shipped adapters at manifest schema 2.1.0`',
+     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'Twenty-seven adapters at 3.5.0, all harness-verified',
+     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'At `v3.5.0` `python -m synapse_cdm.harness --list-adapters` prints `27 adapters registered`',
+     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'read `27 adapters, 697 fixture files` and `27 adapters x 2 schema modes, 1340 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
+     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('docs/soif-part1-release-readiness.md',
+     '`manifests --check` CURRENT for the twenty-seven shipped adapters, the support-matrix',
+     "the 3.5.0 readiness report's readings of the release tree it certified, when the roster was twenty-seven; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'the harness over all twenty-seven adapters and the conformance sweep from a wheel built from the staged tree',
+     "the 3.5.0 readiness report's readings of the release tree it certified, when the roster was twenty-seven; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'readings are `27 adapters, 697 fixture files` and `27 adapters x 2 schema modes, 1340 fixture verdicts, 0 failed`. Read by the release round',
+     "the 3.5.0 readiness report's readings of the release tree it certified, when the roster was twenty-seven; a dated certification, kept as written"),
     # ADDED 2026-10-16 (the 3.5.0 release commit): the repaired builder check's comment records
     # what one CI run read on the landing commit.
     ('tests/observation_support.py',

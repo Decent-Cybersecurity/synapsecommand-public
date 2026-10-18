@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Twenty-seven integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Thirty integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -12,9 +12,10 @@ Digital NOTAM Event Schema 2.0, AIXM 5.2, the DIS 7 Entity State PDU subset (IEE
 the TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`),
 the SC Link16 Gateway report, readsb trace JSON (one `globe_history` trace file), NEXRAD
 Level II (one Archive II weather radar volume), NDBC standard meteorological text, NOAA CO-OPS
-data API responses and EPA AirNow hourly observation files. Without a canonical model in the
-middle, twenty-seven adapters means three hundred and fifty-one translations and twenty-seven
-private notions of "a contact".
+data API responses, EPA AirNow hourly observation files, GRIB2 (one WMO FM 92 GRIB edition 2
+message), Cloud Optimized GeoTIFF (one GeoTIFF's header and first block, or a VRT index) and IEM
+NEXRAD N0Q composites (one 12200 x 5400 PNG). Without a canonical model in the middle, thirty
+adapters means four hundred and thirty-five translations and thirty private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -49,6 +50,9 @@ With one, an adapter is a thin translator and nothing else.
 | [`ndbc_stdmet`](adapters/ndbc_stdmet.py) 1.0.0 | ingest | NDBC standard meteorological text (Web Data Guide Version 2.0, pinned by digest and not carried) — one realtime, monthly or yearly historical stdmet file (8 MiB at most; a yearly `.txt.gz` unwrapped by `synapse-decode`), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per data row carrying the `point-observation/1` contract, every column read by its header NAME (16 to 19 columns, the 1998 layout's two-digit year `98` and no other, no minute, `BAR` or `PRES`, no units line before 2007, `PTDY`'s printed sign), and the station's `Entity`. `MM` is missing in a realtime file and a run of 9s only at the width documented for its column in a historical file; any other run of 9s is refused, never guessed. The station is the caller's `station_id` and its position comes only from the caller's `StationTable`; no quality flag is published (NDBC T80-10) |
 | [`coops_csv`](adapters/coops_csv.py) 1.0.0 | ingest | NOAA CO-OPS data API responses (`datagetter`, its pages cited by URL) — one response in its CSV form (water level, air pressure or wind, the header compared whole and read by position) or its JSON form (water level), under the caller's required `CoopsRequest` because a response echoes none of its datum, units or time zone → one `ENVIRONMENTAL_OBSERVATION` `Event` per sample carrying the `point-observation/1` contract, and the station's `Entity`. `gmt` is UTC, `lst` is read with the caller's declared offset, and `lst_ldt` is refused by name; the datum is carried as `{name, namespace}` beside the water level, the units verbatim, the flags and the p/v level as typed quality flags |
 | [`airnow_hourly`](adapters/airnow_hourly.py) 1.0.0 | ingest | EPA AirNow hourly observation files (the Hourly Data and Hourly AQ Obs fact sheets, pinned by digest and not carried) — one `HourlyData` (header-less, pipe-delimited) or `HourlyAQObs` (quoted CSV) file, as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per line carrying the `point-observation/1` contract, and one `Entity` per site. A stamp is the GMT START of a one-hour period, so `validity.effective` is the hour and `observed_at` its end; parameters, units and negative raw values are carried verbatim; a HourlyData site's position comes only from the caller's site table |
+| [`grib2`](adapters/grib2.py) 1.0.0 | ingest | GRIB edition 2 (NCEP's WMO GRIB2 documentation 37.0.0 and WMO-No. 306, cited by reference and not carried) — one message (8 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per field (Sections 4 to 7 may repeat) carrying the `gridded-field/1` contract: the reference time and its Table 1.2 significance as `observed_at`, never a future valid instant; the forecast's validity (an instant, or Template 4.8's interval) as `validity.effective`; the grid verbatim with a WGS84 footprint Polygon (a lat/lon grid's corners, a Lambert conformal grid's outline converted point by point); the values by reference with a summary decoded from simple packing, complex packing with spatial differencing and PNG (rows inflated under 64 MiB), the bitmap's absent points, Table 5.5's missing values and a parameter's sentinels each counted as missing. JPEG 2000 is read in reference form and its values declared unsupported; `synapse-decode` cuts a file into its messages |
+| [`cog`](adapters/cog.py) 1.0.0 | ingest | Cloud Optimized GeoTIFF and classic GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0 and TIFF 6.0, cited by reference and not carried), and GDAL VRT as an index — one file (256 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `imagery-product/1` contract when the file states a sensing time (HLS's `SENSING_TIME`, or the ECOSTRESS `RangeBeginning`/`RangeEnding` items ending Z) or the caller supplies one with its basis, otherwise one `ANNOTATION` `PlanObject` with the caller's as-of when given: every directory, the GeoKeys, GDAL_METADATA and GDAL_NODATA read and kept in the residual; block 0 of the full-resolution image decoded (none, LZW, Deflate, PackBits; predictors 2 and 3; 1 MiB at most) and summarised, inline when small; a WGS84 footprint Polygon from EPSG:4326, EPSG:4269 (stated without a datum shift) or a WGS84 UTM zone (converted point by point), every other system refused; a NAVD88 height datum stated beside the values, never as `alt_m`; processing clocks only in `product_version`. A VRT's sources are listed and never opened, and a remote one is refused by name. `synapse-decode` serves it (since 2026-10-17), the file's name and granule and the role of a supplied instant given as request parameters |
+| [`iem_n0q`](adapters/iem_n0q.py) 1.0.0 | ingest | IEM NEXRAD N0Q radar composites (the PNG Third Edition and IEM's composite and raster-catalogue pages, cited by URL and not carried) — one archive PNG (8 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `gridded-field/1` contract: the grid a product constant (12200 x 5400 cells of 0.005 degree, IHDR held to it before anything is inflated, the `.wld` never read), its outline a WGS84 footprint Polygon; palette index 0 missing and index i (i − 65) / 2 dBZ, the values by reference with a dBZ summary; `observed_at` the archive file name's slot, which the caller supplies with its basis on IEM's five-minute grid; IEM's `gentime` generation clock only in `product_version`. `synapse-decode` serves it with the slot as `--at` |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -351,7 +355,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fifteen of the twenty-seven
+clone. Every adapter that declares an egress direction was affected — fifteen of the thirty
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the four that shipped since
 (`geojson`, `c2sim`, `dis7` and, on 2026-10-10, `link16_gateway`) declared theirs from the start. The second
@@ -396,9 +400,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's twenty-seven adapters it is 702 against 351.
+   contradiction. At today's thirty adapters it is 870 against 435.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that twenty-seven adapters cannot grow twenty-seven
+   `docs/docs/cdm/entity.mdx` both carry "so that thirty adapters cannot grow thirty
    slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
@@ -890,12 +894,24 @@ synapse-decode decode --adapter nexrad2 --input ZZZZ20260429_061000_V06.gz --con
 synapse-decode decode --adapter ndbc_stdmet --input EX001h2025.txt.gz --container gzip --request station=EX001 --station-table stations.json --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
 synapse-decode decode --adapter coops_csv --input water_level.csv --request station=0000001 --request product=water_level --request datum=MLLW --request units=metric --request time_zone=gmt --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
 synapse-decode decode --adapter airnow_hourly --input HourlyData_2026042810.dat --station-table sites.json --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter grib2 --input fields.grib2.gz --container gzip --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter cog --input dem_tile.tif --request band_file=dem_tile.tif --at 2026-04-28T00:00:00Z --basis "tile publication date" --request time=as_of --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
+synapse-decode decode --adapter iem_n0q --input n0q_202604290605.png --at 2026-04-29T06:05:00Z --basis "IEM archive filename slot, UTC, composite nominal time" --received-at 2026-04-29T06:20:00Z --synthetic > objects.json
 ```
 
 Exit codes: `0` success, `2` usage or context flags (a URL, an `s3://` or a `/vsicurl/` locator is
 refused by name), `3` rejected data, `4` file or output I/O. Diagnostics never quote the input, a
-request parameter or a manifest URL. The contracts and the command are part of the distribution
-built from this tree; no release before 3.5.0 carries them. The reference page is
+request parameter or a manifest URL. A GRIB2 file is cut into its messages, end to end by each
+Section 0's total length, and each is handed over with its ordinal, the octet it begins at and,
+when it is not the whole file, its own digest. The file, and a gzip's unwrapped octets, are held
+to `grib2`'s own bound, 8 MiB (8 388 608 octets), the bound of one message, until a ruling sets one
+for files: a larger file is exit `3` before any message is cut. A GeoTIFF's or a VRT's name and
+granule, and whether a supplied `--at` is a sensing time or an as-of, are request parameters
+(`band_file`, `granule`, `time=sensing_time|as_of`); an IEM N0Q PNG is handed over with the
+archive file name's slot as `--at`, refused unless it falls on IEM's five-minute grid (both since
+2026-10-17). The contracts and the command are
+part of the distribution built from this tree; no release before 3.5.0 carries them. The reference
+page is
 https://docs.synapsecommand.com/cdm/observation-contracts.
 
 ## Layout

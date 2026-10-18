@@ -1,0 +1,562 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            20.505855,
+            57.022509
+          ],
+          [
+            20.513761,
+            57.02254
+          ],
+          [
+            20.521667,
+            57.02257
+          ],
+          [
+            20.529573,
+            57.0226
+          ],
+          [
+            20.537479,
+            57.022629
+          ],
+          [
+            20.545385,
+            57.022658
+          ],
+          [
+            20.553291,
+            57.022687
+          ],
+          [
+            20.561197,
+            57.022715
+          ],
+          [
+            20.569103,
+            57.022742
+          ],
+          [
+            20.577009,
+            57.022769
+          ],
+          [
+            20.584915,
+            57.022796
+          ],
+          [
+            20.592822,
+            57.022822
+          ],
+          [
+            20.600728,
+            57.022847
+          ],
+          [
+            20.608634,
+            57.022872
+          ],
+          [
+            20.61654,
+            57.022896
+          ],
+          [
+            20.624446,
+            57.02292
+          ],
+          [
+            20.632352,
+            57.022944
+          ],
+          [
+            20.63231,
+            57.027256
+          ],
+          [
+            20.632267,
+            57.031568
+          ],
+          [
+            20.632225,
+            57.03588
+          ],
+          [
+            20.632182,
+            57.040192
+          ],
+          [
+            20.632139,
+            57.044504
+          ],
+          [
+            20.632097,
+            57.048816
+          ],
+          [
+            20.632054,
+            57.053128
+          ],
+          [
+            20.632012,
+            57.057439
+          ],
+          [
+            20.631969,
+            57.061751
+          ],
+          [
+            20.631926,
+            57.066063
+          ],
+          [
+            20.631884,
+            57.070375
+          ],
+          [
+            20.631841,
+            57.074687
+          ],
+          [
+            20.631798,
+            57.078999
+          ],
+          [
+            20.631755,
+            57.083311
+          ],
+          [
+            20.631713,
+            57.087623
+          ],
+          [
+            20.63167,
+            57.091935
+          ],
+          [
+            20.623749,
+            57.091911
+          ],
+          [
+            20.615828,
+            57.091887
+          ],
+          [
+            20.607907,
+            57.091863
+          ],
+          [
+            20.599987,
+            57.091838
+          ],
+          [
+            20.592066,
+            57.091812
+          ],
+          [
+            20.584145,
+            57.091786
+          ],
+          [
+            20.576224,
+            57.09176
+          ],
+          [
+            20.568303,
+            57.091733
+          ],
+          [
+            20.560382,
+            57.091705
+          ],
+          [
+            20.552462,
+            57.091677
+          ],
+          [
+            20.544541,
+            57.091649
+          ],
+          [
+            20.53662,
+            57.09162
+          ],
+          [
+            20.5287,
+            57.09159
+          ],
+          [
+            20.520779,
+            57.09156
+          ],
+          [
+            20.512858,
+            57.09153
+          ],
+          [
+            20.504937,
+            57.091499
+          ],
+          [
+            20.504995,
+            57.087187
+          ],
+          [
+            20.505052,
+            57.082875
+          ],
+          [
+            20.50511,
+            57.078563
+          ],
+          [
+            20.505167,
+            57.074251
+          ],
+          [
+            20.505225,
+            57.069939
+          ],
+          [
+            20.505282,
+            57.065627
+          ],
+          [
+            20.505339,
+            57.061316
+          ],
+          [
+            20.505397,
+            57.057004
+          ],
+          [
+            20.505454,
+            57.052692
+          ],
+          [
+            20.505511,
+            57.04838
+          ],
+          [
+            20.505569,
+            57.044068
+          ],
+          [
+            20.505626,
+            57.039756
+          ],
+          [
+            20.505683,
+            57.035444
+          ],
+          [
+            20.50574,
+            57.031132
+          ],
+          [
+            20.505798,
+            57.02682
+          ],
+          [
+            20.505855,
+            57.022509
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "188a53b3-7c5d-5b6f-b65c-34962c3058f7",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "gdal_metadata": [
+          {
+            "domain": "IMAGE_STRUCTURE",
+            "name": "OVERVIEW_RESAMPLING",
+            "role": null,
+            "sample": null,
+            "value": "CUBIC"
+          }
+        ],
+        "geokeys": {
+          "keys": [
+            {
+              "id": 1024,
+              "name": "GTModelTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1025,
+              "name": "GTRasterTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1026,
+              "name": "GTCitationGeoKey",
+              "value": "WGS 84 / UTM zone 34N"
+            },
+            {
+              "id": 2049,
+              "name": "GeodeticCitationGeoKey",
+              "value": "WGS 84"
+            },
+            {
+              "id": 2054,
+              "name": "GeogAngularUnitsGeoKey",
+              "value": 9102
+            },
+            {
+              "id": 3072,
+              "name": "ProjectedCRSGeoKey",
+              "value": 32634
+            },
+            {
+              "id": 3076,
+              "name": "ProjLinearUnitsGeoKey",
+              "value": 9001
+            }
+          ],
+          "minor_revision": 0,
+          "revision": 1,
+          "version": 1
+        },
+        "header": {
+          "byte_order": "II",
+          "first_ifd_offset": 192
+        },
+        "ifds": [
+          {
+            "next_ifd_offset": 704,
+            "offset": 192,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  32
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  5
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "-9999"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  256
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  256
+                ]
+              },
+              "ModelPixelScaleTag": {
+                "type": "DOUBLE",
+                "value": [
+                  30.0,
+                  30.0,
+                  0.0
+                ]
+              },
+              "ModelTiepointTag": {
+                "type": "DOUBLE",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  470000.0,
+                  6327680.0,
+                  0.0
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "Predictor": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "TileLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "TileWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              }
+            }
+          },
+          {
+            "next_ifd_offset": 0,
+            "offset": 704,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  32
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  5
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "-9999"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "NewSubfileType": {
+                "type": "LONG",
+                "value": [
+                  1
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "Predictor": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "TileLength": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              },
+              "TileWidth": {
+                "type": "SHORT",
+                "value": [
+                  128
+                ]
+              }
+            }
+          }
+        ],
+        "vertical": null,
+        "window": {
+          "block": 0,
+          "column": 0,
+          "count": 16384,
+          "dtype": "Float32",
+          "encoding": "TIFF Compression 5 (LZW), Predictor 3 (floating point)",
+          "height": 128,
+          "ifd": 0,
+          "max": 105.25,
+          "min": 10.0,
+          "missing_count": 0,
+          "missing_mechanism": null,
+          "row": 0,
+          "values": null,
+          "width": 128
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "route": null,
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells in a WGS84 UTM zone, each edge densified to at most 16 segments and every vertex converted with the transverse Mercator inverse (Kruger's series to third order in n), rounded to 10^-6 degree",
+        "window: the values of block 0 of the full-resolution image, clipped to the image, decoded and summarised in the stored values; a sample equal to GDAL_NODATA, or a NaN, is missing"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EPSG:32634 256x256 at 470000.0,6327680.0 cell 30.0x30.0 Float32",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

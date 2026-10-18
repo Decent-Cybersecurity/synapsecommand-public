@@ -1,0 +1,233 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            20.5,
+            56.25
+          ],
+          [
+            21.5,
+            56.25
+          ],
+          [
+            21.5,
+            56.75
+          ],
+          [
+            20.5,
+            56.75
+          ],
+          [
+            20.5,
+            56.25
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "86c8b734-48ec-592e-b197-864e1de49744",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "gdal_metadata": null,
+        "geokeys": {
+          "keys": [
+            {
+              "id": 1024,
+              "name": "GTModelTypeGeoKey",
+              "value": 2
+            },
+            {
+              "id": 1025,
+              "name": "GTRasterTypeGeoKey",
+              "value": 2
+            },
+            {
+              "id": 2048,
+              "name": "GeodeticCRSGeoKey",
+              "value": 4326
+            },
+            {
+              "id": 2049,
+              "name": "GeodeticCitationGeoKey",
+              "value": "WGS 84"
+            },
+            {
+              "id": 2054,
+              "name": "GeogAngularUnitsGeoKey",
+              "value": 9102
+            },
+            {
+              "id": 2057,
+              "name": "EllipsoidSemiMajorAxisGeoKey",
+              "value": [
+                6378137.0
+              ]
+            },
+            {
+              "id": 2059,
+              "name": "EllipsoidInvFlatteningGeoKey",
+              "value": [
+                298.257223563
+              ]
+            }
+          ],
+          "minor_revision": 0,
+          "revision": 1,
+          "version": 1
+        },
+        "header": {
+          "byte_order": "II",
+          "first_ifd_offset": 8
+        },
+        "ifds": [
+          {
+            "next_ifd_offset": 0,
+            "offset": 8,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  16
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  32773
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "-9999"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  4
+                ]
+              },
+              "ModelPixelScaleTag": {
+                "type": "DOUBLE",
+                "value": [
+                  0.25,
+                  0.25,
+                  0.0
+                ]
+              },
+              "ModelTiepointTag": {
+                "type": "DOUBLE",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  20.625,
+                  56.625,
+                  0.0
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "RowsPerStrip": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  2
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              }
+            }
+          }
+        ],
+        "vertical": null,
+        "window": {
+          "block": 0,
+          "column": 0,
+          "count": 8,
+          "dtype": "Int16",
+          "encoding": "TIFF Compression 32773 (PackBits), Predictor 1 (none)",
+          "height": 2,
+          "ifd": 0,
+          "max": 1200,
+          "min": -3,
+          "missing_count": 0,
+          "missing_mechanism": null,
+          "row": 0,
+          "values": [
+            7,
+            7,
+            7,
+            7,
+            7,
+            -3,
+            -3,
+            1200
+          ],
+          "width": 4
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "route": null,
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells, from ModelTiepointTag, ModelPixelScaleTag and the image size in degrees of EPSG:4326, a PixelIsPoint tiepoint naming a cell centre",
+        "window: the values of block 0 of the full-resolution image, clipped to the image, decoded and summarised in the stored values; a sample equal to GDAL_NODATA, or a NaN, is missing"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EPSG:4326 4x2 at 20.5,56.75 cell 0.25x0.25 Int16",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

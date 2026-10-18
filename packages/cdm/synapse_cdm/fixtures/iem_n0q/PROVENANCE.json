@@ -1,0 +1,78 @@
+{
+  "directory": "iem_n0q",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "all_missing_no_gentime.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of an iem_n0q fixture, written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from the description the PNG was written from, never by decoding it; nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "all_missing_no_gentime.png",
+      "operational_data": false,
+      "origin": "Synthetic 12200 x 5400 indexed-colour PNG written on 2026-10-17 for the iem_n0q adapter's landing by fixtures/iem_n0q/spec/build_fixtures.py, in pure Python from literal cells, a literal palette ramp and literal chunks; no IEM file or value is used and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "corner_cells_paeth_average.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of an iem_n0q fixture, written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from the description the PNG was written from, never by decoding it; nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "corner_cells_paeth_average.png",
+      "operational_data": false,
+      "origin": "Synthetic 12200 x 5400 indexed-colour PNG written on 2026-10-17 for the iem_n0q adapter's landing by fixtures/iem_n0q/spec/build_fixtures.py, in pure Python from literal cells, a literal palette ramp and literal chunks; no IEM file or value is used and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "echo_patch_split_idat.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of an iem_n0q fixture, written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from the description the PNG was written from, never by decoding it; nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "echo_patch_split_idat.png",
+      "operational_data": false,
+      "origin": "Synthetic 12200 x 5400 indexed-colour PNG written on 2026-10-17 for the iem_n0q adapter's landing by fixtures/iem_n0q/spec/build_fixtures.py, in pure Python from literal cells, a literal palette ramp and literal chunks; no IEM file or value is used and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ramp_ends_every_filter_type.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic parsed twin of an iem_n0q fixture, written on 2026-10-17 by fixtures/iem_n0q/spec/build_fixtures.py from the description the PNG was written from, never by decoding it; nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ramp_ends_every_filter_type.png",
+      "operational_data": false,
+      "origin": "Synthetic 12200 x 5400 indexed-colour PNG written on 2026-10-17 for the iem_n0q adapter's landing by fixtures/iem_n0q/spec/build_fixtures.py, in pure Python from literal cells, a literal palette ramp and literal chunks; no IEM file or value is used and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "iem_n0q/spec/iem_n0q_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -1,0 +1,131 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, the chunk walk is linear in the octets read, the image data inflates into exactly the 65,885,400 octets of its rows and each filter is undone in one pass, and the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_decompressed_bytes": {
+            "enforced_at": "`IemN0qAdapter`'s `decode` holds IHDR to 12200 x 5400 x 8-bit indexed before anything is inflated, so the rows are exactly 65,885,400 octets; `raster_codec.read_png` compares them with the bound, inflates into a buffer of exactly that size with `zlib.decompressobj` and `max_length`, and refuses the first octet past it (`png-data-past-its-rows`) before it is kept",
+            "kind": "implementation_cap",
+            "source": "IHDR 12200 x 5400 paletted = 65,880,000 B of indices plus 5400 filter octets, 65,885,400 B of filtered rows (research-raster F4), the most the product constant admits. 80 MiB (83 886 080 octets, `MAX_DECOMPRESSED_BYTES`, `adapters/iem_n0q.py`) is DECISIONS L-09's bound above it. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_iem_n0q_adapter.py::test_the_image_data_is_held_to_its_rows_and_the_bound"
+          },
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on a dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The octets are never JSON; the dict form, the parsed twin, nests three containers (a palette entry inside the palette). 16 (`MAX_DEPTH`, `adapters/iem_n0q.py`) is the dis7 envelope's bound. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_iem_n0q_adapter.py::test_a_twin_past_the_depth_bound_is_refused_before_decode"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module reads the signature",
+            "kind": "implementation_cap",
+            "source": "the 2026-09-11 archive listing shows 2M PNGs (HM-01 N0Q row), and research-raster F1 reads the archive's files as 1 to 4 MB; PNG states no file size beyond a chunk's 2^31 - 1 octets. 8 MiB (8 388 608 octets, `MAX_INPUT_BYTES`, `adapters/iem_n0q.py`) is DECISIONS L-09's bound for one PNG, twice the largest. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`IemN0qAdapter.to_cdm` returns exactly one object",
+            "kind": "implementation_cap",
+            "source": "One object a file: one composite at one slot is one field (design-judge DJ-09's one product object a file). This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_iem_n0q_adapter.py::test_every_fixture_becomes_exactly_one_event"
+          }
+        },
+        "max_decompressed_bytes": 83886080,
+        "max_depth": 16,
+        "max_input_bytes": 8388608,
+        "max_objects": 1,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "IEM NEXRAD N0Q composite PNG (n0q_YYYYMMDDHHMM.png), 12200 x 5400 8-bit palette indices, IHDR held to the product constant, every chunk's CRC checked, the image data inflated and the five filter types undone, index 0 missing and index i (i - 65) / 2 dBZ; one ENVIRONMENTAL_OBSERVATION Event (gridded-field/1) at the caller's archive slot, the values by reference with a dBZ summary"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the dict form is held to be exactly what its own wire_hex decodes to, so a key injected into a twin is refused `not-a-twin` or `twin-disagrees`; on the wire, an ancillary chunk this module does not read is kept in the residual (a tEXt chunk as its keyword and text, any other as its octets), and an unknown critical chunk is refused",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "IEM NEXRAD N0Q composite PNG (W3C PNG, IEM product composite_n0q)",
+      "version": "Portable Network Graphics (PNG) Specification (Third Edition), W3C Recommendation 24 June 2025; IEM composite_n0q at 12200 x 5400 cells, the grid IEM has published since 2014-08-08"
+    },
+    "id": "iem_n0q",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "values-by-reference",
+        "notes": "the 65,880,000 palette indices are the PNG's image data inside the file's octets, which the twin holds as wire_hex; they are decoded for the summary and stay in the file, identified by SourceRef.source_hash when the caller gives it",
+        "severity": null,
+        "summary": "Array values are carried by reference \u2014 a locator, the shape and packing needed to open them, and a summary \u2014 and are not copied into the output.",
+        "unsupported_paths": [
+          "wire_hex"
+        ]
+      },
+      {
+        "id": "product-constant-grid",
+        "notes": null,
+        "severity": null,
+        "summary": "the grid is the IEM N0Q product constant \u2014 12200 x 5400 cells of 0.005 degree in EPSG:4326, the archive's world file read as the centre of the north-west cell, so the outline runs from 126.0025 W 50.0025 N to 65.0025 W 23.0025 N \u2014 and the .wld beside an archive PNG is not read: a PNG of any other size, bit depth or colour type is refused. Which registration IEM means is not stated on its pages; the half-cell reading is this module's",
+        "unsupported_paths": []
+      },
+      {
+        "id": "time-is-the-caller-slot",
+        "notes": null,
+        "severity": null,
+        "summary": "a PNG states no observation time: observed_at is the archive file name's slot (UTC, minutes divisible by five), the composite's nominal time, which the caller supplies with its basis (`IemN0qAdapter(slot=InjectedTime(instant, basis))`); no radar's scan time is recoverable from the image. The tEXt gentime chunk is IEM's generation clock and is carried verbatim as product_version.production_time_verbatim, never as a time",
+        "unsupported_paths": []
+      },
+      {
+        "id": "ramp-top-disagreement",
+        "notes": null,
+        "severity": null,
+        "summary": "index i is read as (i - 65) / 2 dBZ, so index 255 is 95.0 dBZ; IEM's composite documentation captions the ramp as -32 to 90 dBZ while its raster catalogue's table ends at 95, and the formula's value is emitted, not either page's ceiling",
+        "unsupported_paths": []
+      },
+      {
+        "id": "identity-from-the-slot",
+        "notes": null,
+        "severity": null,
+        "summary": "an object's id derives from the slot, followed by the caller's `source_hash` digest when it gives one: IEM re-publishes a slot's file under the same name, and without the digest two files of one slot share an id",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today in this package: `synapse_cdm.harness --adapter iem_n0q` over the packaged fixture set reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, the header, the palette, every ancillary chunk and the index summary a structured residual, the octets that hold the values a declared limitation) with no LOST leaf on any parsed twin. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed (ARCHITECTURE.md \u00a73.6, rule 4), and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "IEM NEXRAD N0Q composite reader",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

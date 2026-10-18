@@ -1,0 +1,164 @@
+[
+  {
+    "area": null,
+    "expires_at": null,
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.0,
+            57.0
+          ],
+          [
+            22.5,
+            57.0
+          ],
+          [
+            22.5,
+            57.75
+          ],
+          [
+            21.0,
+            57.75
+          ],
+          [
+            21.0,
+            57.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "label": null,
+    "object_id": "6f50cd07-dbac-5c20-b1d4-2c29fe960853",
+    "object_kind": "plan_object",
+    "object_type": "ANNOTATION",
+    "quality": null,
+    "residual": {
+      "data": {
+        "vrt": {
+          "bands": [
+            {
+              "band": 1,
+              "data_type": "Float32",
+              "fields": {
+                "ColorInterp": "Gray",
+                "NoDataValue": "-9999"
+              },
+              "metadata": [],
+              "sources": [
+                {
+                  "DstRect": {
+                    "xOff": "0",
+                    "xSize": "3",
+                    "yOff": "0",
+                    "ySize": "3"
+                  },
+                  "NODATA": "-9999",
+                  "SourceBand": "1",
+                  "SourceProperties": {
+                    "BlockXSize": "3",
+                    "BlockYSize": "3",
+                    "DataType": "Float32",
+                    "RasterXSize": "3",
+                    "RasterYSize": "3"
+                  },
+                  "SrcRect": {
+                    "xOff": "0",
+                    "xSize": "3",
+                    "yOff": "0",
+                    "ySize": "3"
+                  },
+                  "element": "ComplexSource",
+                  "relative_to_vrt": true,
+                  "shared": null,
+                  "source_filename": "float32_lzw_predictor3.tif"
+                },
+                {
+                  "DstRect": {
+                    "xOff": "3",
+                    "xSize": "3",
+                    "yOff": "0",
+                    "ySize": "3"
+                  },
+                  "NODATA": "-9999",
+                  "SourceBand": "1",
+                  "SourceProperties": {
+                    "BlockXSize": "3",
+                    "BlockYSize": "3",
+                    "DataType": "Float32",
+                    "RasterXSize": "3",
+                    "RasterYSize": "3"
+                  },
+                  "SrcRect": {
+                    "xOff": "0",
+                    "xSize": "3",
+                    "yOff": "0",
+                    "ySize": "3"
+                  },
+                  "element": "ComplexSource",
+                  "relative_to_vrt": true,
+                  "shared": null,
+                  "source_filename": "east/float32_east_half.tif"
+                }
+              ]
+            }
+          ],
+          "geo_transform": [
+            21.0,
+            0.25,
+            0.0,
+            57.75,
+            0.0,
+            -0.25
+          ],
+          "metadata": [
+            {
+              "domain": null,
+              "items": [
+                {
+                  "key": "AREA_OR_POINT",
+                  "value": "Area"
+                }
+              ]
+            }
+          ],
+          "raster_x_size": 6,
+          "raster_y_size": 3,
+          "srs": {
+            "data_axis_to_srs_axis_mapping": "2,1",
+            "text": "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"
+          }
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "route": null,
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells, from ModelTiepointTag, ModelPixelScaleTag and the image size in degrees of EPSG:4326, a PixelIsPoint tiepoint naming a cell centre"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "VRT EPSG:4326 6x3 at 21.0,57.75 cell 0.25x0.25 2 sources",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "style": {},
+    "validity": null
+  }
+]

@@ -1,0 +1,344 @@
+[
+  {
+    "event_id": "b5c2c434-220b-5dc4-b67d-891559481d47",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            24.0,
+            56.0
+          ],
+          [
+            24.5,
+            56.0
+          ],
+          [
+            24.5,
+            56.25
+          ],
+          [
+            24.0,
+            56.25
+          ],
+          [
+            24.0,
+            56.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "gridded-field/1",
+        "datum": null,
+        "grid": {
+          "cell_size": [
+            {
+              "unit": "10^-6 degree",
+              "unit_namespace": "GRIB2 Template 3.0 Note 1 (units of 10^-6 degree)",
+              "value": 250000.0
+            },
+            {
+              "unit": "10^-6 degree",
+              "unit_namespace": "GRIB2 Template 3.0 Note 1 (units of 10^-6 degree)",
+              "value": 250000.0
+            }
+          ],
+          "namespace": "GRIB2 Code Table 3.1",
+          "parameters": {
+            "basic_angle": 0,
+            "basic_angle_subdivisions": 4294967295,
+            "di": 250000,
+            "dj": 250000,
+            "earth_shape": 5,
+            "la1": 56000000,
+            "la2": 56250000,
+            "lo1": 24000000,
+            "lo2": 24500000,
+            "major_axis_scale_factor": 255,
+            "major_axis_scaled_value": 4294967295,
+            "minor_axis_scale_factor": 255,
+            "minor_axis_scaled_value": 4294967295,
+            "ni": 3,
+            "nj": 2,
+            "radius_scale_factor": 255,
+            "radius_scaled_value": 4294967295,
+            "resolution_flags": 48,
+            "scanning_mode": 64
+          },
+          "scanning_mode": "01000000",
+          "shape": [
+            2,
+            3
+          ],
+          "template": "3.0"
+        },
+        "level": {
+          "code": "1",
+          "namespace": "GRIB2 Code Table 4.5, GDAL 3.13.3 GDAL_DATA, generated from wmo-im/GRIB2 at a9c4acc: grib2_table_4_5",
+          "type": "Ground or water surface",
+          "unit": null,
+          "value": null
+        },
+        "locator": {
+          "byte_offset": 0,
+          "field": 0,
+          "frame_sha256": null,
+          "granule_id": null,
+          "kind": "grib",
+          "message": 0
+        },
+        "product_class": "forecast",
+        "product_version": {
+          "producer": "originating centre 7, subcentre 0, generating process 2.255.0",
+          "production_time_verbatim": null,
+          "run": null,
+          "version": "GRIB2 master tables version 2, local tables version 0"
+        },
+        "quality_flags": [
+          {
+            "applies_to": "message",
+            "name": "production_status",
+            "namespace": "GRIB2 Code Table 1.3",
+            "value": 0
+          },
+          {
+            "applies_to": "field",
+            "name": "bitmap_indicator",
+            "namespace": "GRIB2 Code Table 6.0",
+            "value": 255
+          },
+          {
+            "applies_to": "field",
+            "name": "points_without_value",
+            "namespace": "GRIB2 Section 6 bitmap",
+            "value": 0
+          },
+          {
+            "applies_to": "field",
+            "name": "missing_in_statistical_process",
+            "namespace": "GRIB2 Product Definition Template 4.8 octets 43-46",
+            "value": 0
+          }
+        ],
+        "quality_flags_basis": null,
+        "quantity": {
+          "code": "0.1.8",
+          "name": "APCP",
+          "namespace": "GRIB2 Code Table 4.2 (discipline.category.number), GDAL 3.13.3 GDAL_DATA, generated from wmo-im/GRIB2 at a9c4acc: grib2_table_4_2_0_1"
+        },
+        "time": {
+          "forecast_offset": {
+            "unit": "Hour",
+            "unit_namespace": "GRIB2 Code Table 4.4",
+            "value": 0.0
+          },
+          "reference_time": "2026-04-29T06:00:00.000Z",
+          "reference_time_significance": {
+            "code": "1",
+            "meaning": "Start of Forecast",
+            "namespace": "GRIB2 Code Table 1.2"
+          },
+          "source_time_system": {
+            "basis": "GRIB2 Section 1 octets 13-19, the reference time as year, month, day, hour, minute and second; GRIB2 states its times in UTC",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": {
+            "code": "1",
+            "meaning": "Accumulation",
+            "namespace": "GRIB2 Code Table 4.10"
+          }
+        },
+        "unit": {
+          "unit": "kg/(m^2)",
+          "unit_namespace": "GDAL 3.13.3 GDAL_DATA, generated from wmo-im/GRIB2 at a9c4acc: grib2_table_4_2_0_1"
+        },
+        "values": {
+          "dtype": "0-bit unsigned integers",
+          "encoding": "GRIB2 Code Table 5.0 template 0, Grid Point Data - Simple Packing: Y = (R + X x 2^E) / 10^D with R = 0.0, E = 0, D = 0",
+          "fill": null,
+          "locator": {
+            "byte_offset": 0,
+            "field": 0,
+            "frame_sha256": null,
+            "granule_id": null,
+            "kind": "grib",
+            "message": 0
+          },
+          "mode": "reference",
+          "offset": 0.0,
+          "scale": 1.0,
+          "shape": [
+            2,
+            3
+          ],
+          "summary": {
+            "count": 6,
+            "max": 0.0,
+            "min": 0.0,
+            "missing_count": 0
+          }
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "field": {
+          "bitmap": {
+            "indicator": 255,
+            "section_length": 6
+          },
+          "data": {
+            "section_length": 5
+          },
+          "grid": {
+            "optional_list_interpretation": 0,
+            "optional_list_octets": 0,
+            "parameters": {
+              "basic_angle": 0,
+              "basic_angle_subdivisions": 4294967295,
+              "di": 250000,
+              "dj": 250000,
+              "earth_shape": 5,
+              "la1": 56000000,
+              "la2": 56250000,
+              "lo1": 24000000,
+              "lo2": 24500000,
+              "major_axis_scale_factor": 255,
+              "major_axis_scaled_value": 4294967295,
+              "minor_axis_scale_factor": 255,
+              "minor_axis_scaled_value": 4294967295,
+              "ni": 3,
+              "nj": 2,
+              "radius_scale_factor": 255,
+              "radius_scaled_value": 4294967295,
+              "resolution_flags": 48,
+              "scanning_mode": 64
+            },
+            "points": 6,
+            "section_length": 72,
+            "source": 0,
+            "template": 0
+          },
+          "product": {
+            "coordinate_values": 0,
+            "parameters": {
+              "background_process": 255,
+              "category": 1,
+              "cutoff_hours": 0,
+              "cutoff_minutes": 0,
+              "end_day": 29,
+              "end_hour": 7,
+              "end_minute": 0,
+              "end_month": 4,
+              "end_second": 0,
+              "end_year": 2026,
+              "forecast_process": 0,
+              "forecast_time": 0,
+              "generating_process": 2,
+              "increment": 0,
+              "increment_type": 2,
+              "increment_unit": 255,
+              "missing_in_statistical_process": 0,
+              "number": 8,
+              "range_length": 1,
+              "range_unit": 1,
+              "statistical_process": 1,
+              "surface1_scale": 0,
+              "surface1_type": 1,
+              "surface1_value": 0,
+              "surface2_scale": 0,
+              "surface2_type": 255,
+              "surface2_value": 0,
+              "time_ranges": 1,
+              "time_unit": 1
+            },
+            "section_length": 58,
+            "template": 8
+          },
+          "representation": {
+            "parameters": {
+              "binary_scale": 0,
+              "bits": 0,
+              "decimal_scale": 0,
+              "original_type": 0,
+              "reference_value": 0.0
+            },
+            "points": 6,
+            "section_length": 21,
+            "template": 0
+          }
+        },
+        "identification": {
+          "centre": 7,
+          "data_type": 1,
+          "day": 29,
+          "hour": 6,
+          "local_table_version": 0,
+          "master_table_version": 2,
+          "minute": 0,
+          "month": 4,
+          "production_status": 0,
+          "reference_time_significance": 1,
+          "second": 0,
+          "section_length": 21,
+          "subcentre": 0,
+          "year": 2026
+        },
+        "indicator": {
+          "discipline": 0,
+          "edition": 2,
+          "total_length": 203
+        },
+        "local_use": null
+      },
+      "namespace": "GRIB2 (WMO FM 92 GRIB edition 2)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "grib2",
+      "adapter_version": "1.0.0",
+      "format_name": "GRIB2 (WMO FM 92 GRIB edition 2)",
+      "format_version": "GRIB edition 2, read against NCEP's WMO GRIB2 Documentation version 37.0.0 (2026-06-01)",
+      "observed_at": "2026-04-29T06:00:00.000Z",
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "GRIB2",
+      "transformations": [
+        "identification: the reference time is Section 1 octets 13-19 (year, month, day, hour, minute, second) in UTC; it is the contract's reference_time, SourceRef.observed_at and the Event's observed_at, which for every class this module emits is the reference time",
+        "fields[*].product: Template 4.0's validity is the instant reference time + forecast time in its Table 4.4 unit; Template 4.8's is the overall interval from that instant (Note 2) to octets 35-41's end, held to equal its start plus the one time range's length",
+        "fields[*].grid: the footprint is the Polygon through the four corner grid points, La1/Lo1 and La2/Lo2 in 10^-6 degree, longitudes past 180 degrees read west of Greenwich; a grid's edges are parallels and meridians, so the corners are its outline",
+        "derived: the values stay in the message, by reference; the contract's summary decodes every value as Y = (R + X x 2^E) / 10^D, counts the points the bitmap leaves out, the values Table 5.5 marks missing and the sentinels a parameter's table names, and states the minimum and maximum of the rest"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "centre 7.0/2026-04-29T06:00:00.000Z/parameter 0.1.8/process 2.255.0/level 1:0:0,255:0:0/time 1:0 to 2026-04-29T07:00:00Z process 1/grid 3.0 3x2 at 56000000,24000000",
+        "system": "GRIB2"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-29T07:00:00.000Z",
+        "start": "2026-04-29T06:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  }
+]

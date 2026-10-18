@@ -215,10 +215,15 @@ def test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter
     # The adapters whose format states no instant, READ from the declarations rather than named:
     # `geojson` (phase 1) and `geopackage` (phase 2, 2026-09-20) both carry the limitation, and
     # the set is held to exactly those two so a third arrives as a deliberate edit here.
+    # WIDENED 2026-10-17 (the `cog` landing, adapter #30): a DEM and a VRT index state no instant,
+    # so `cog` emits a PlanObject with no timestamp unless its caller supplies an as-of, and it
+    # declares the limitation; its two band-file fixtures state a sensing time and become Events,
+    # so its J is judged on their stamps and reads PASS, which the loop below still requires of
+    # every adapter whose J is not a declared SKIP. CI's derivation drops J from cog's --require.
     no_source_time = {name for name, cls in shipped().items()
                       if any(getattr(entry, "id", None) == suite.NO_SOURCE_TIME_LIMITATION
                              for entry in cls.metadata.limitations)}
-    assert no_source_time == {"geojson", "geopackage"}, no_source_time
+    assert no_source_time == {"cog", "geojson", "geopackage"}, no_source_time
     for name in shipped():
         entry = reports[name]["checks"]["J"]
         if entry["verdict"] == suite.SKIP:

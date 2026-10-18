@@ -221,8 +221,10 @@ and to the release and arc branches.
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas`, run over the roster with no
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. `python -m synapse_cdm.harness --list-adapters` prints `27 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+directions to agree. At `v3.5.0` `python -m synapse_cdm.harness --list-adapters` prints `27 adapters
+registered`. The rows marked **post-3.5.0** landed in the tree after that tag, `grib2`, `cog`
+and `iem_n0q` on 2026-10-17, and are in no release. Declared maturity and claim status are read from
+`manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -253,6 +255,9 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `ndbc_stdmet` | ingest | 8 | L3 | VERIFIED (new in the 3.5.0 arc) |
 | `coops_csv` | ingest | 7 | L3 | VERIFIED (new in the 3.5.0 arc) |
 | `airnow_hourly` | ingest | 8 | L3 | VERIFIED (new in the 3.5.0 arc) |
+| `grib2` | ingest | 26 | L3 | VERIFIED (**post-3.5.0**, in no release) |
+| `cog` | ingest | 20 | L3 | VERIFIED (**post-3.5.0**, in no release) |
+| `iem_n0q` | ingest | 8 | L3 | VERIFIED (**post-3.5.0**, in no release) |
 
 **670 fixture verdicts, 0 failed** across the twenty-seven, against the published 3.2.0 schemas —
 the 611 that 3.4.0 shipped, each golden re-stamped and otherwise unchanged but for the null keys

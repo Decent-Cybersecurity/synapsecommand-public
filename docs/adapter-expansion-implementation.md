@@ -28,6 +28,12 @@ so each new adapter's fixture directory is its own name.
 Excluded (master prompt §3): AIXM 4.5, ARINC 424, instrument procedures, free-text NOTAM, raster,
 STAC, OGC network services, DIS/HLA, NVG, weapon-control interfaces, and the rest of that list.
 
+**Raster, superseded on 2026-10-17.** The exclusion above was this arc's scope, not a ruling for the
+ones after it: the NYC observation adapters read raster formats inside the package, `grib2` (#29)
+one GRIB2 message's gridded fields, `cog` (#30) a GeoTIFF's or Cloud Optimized GeoTIFF's header
+and first block, or a GDAL VRT as an index, and `iem_n0q` (#31) one IEM N0Q composite PNG, with the
+standard-library codec `adapters/raster_codec.py`. STAC and OGC network services stay outside every arc so far.
+
 Constants at the baseline commit (`packages/cdm/synapse_cdm/version.py`): package 3.0.1, CDM
 schema 3.0.0, Adapter API 3.0.0, manifest schema 2.1.0, evidence schema 2.0.0, SC-OES 0.1.0 —
 the master prompt's table, unchanged.

@@ -70,7 +70,9 @@ observation covers is `Event.validity.effective`; an instant sets `end` equal to
   Since 2026-10-15 the host computes `frame_sha256` and hands it to an adapter that declares the
   argument (`nexrad2`, the first) whenever it unwrapped a gzip or a tar member or cut the file into
   frames; when the frame is the file as read it passes nothing, because `source_hash` already
-  digests those octets.
+  digests those octets. Since 2026-10-17 a framer's frames lie end to end, and the host also hands
+  an adapter that declares a frame-offset argument (`grib2`) the octet its frame begins at, so a
+  `grib` locator names the message, the field and that octet.
   Ordinals are 0-based, as `SourceRef.record_index` is, except the radar elevation and azimuth
   numbers, which are the volume's own 1-based numbers.
 - **Product class and version.** `product_class` is one of `observation`, `forecast`, `analysis`,
@@ -237,4 +239,20 @@ the text's own digest as each table locator's `frame_sha256` when a gzip was unw
 response answers — station, product, datum, units, time_zone, interval and, for `lst`, lst_offset —
 required, refused at exit `2` as the adapter's `CoopsRequest` refuses them, `lst_ldt` by name; and
 `--station-table` for the CSV form's position) and `airnow_hourly` (`--station-table`, the site
-table a HourlyData file does not state); each observation adapter adds its own row when it lands.
+table a HourlyData file does not state), and since 2026-10-17 `grib2` (`--received-at` required;
+the file's digest injected as `source_hash`; the file cut into its messages by each Section 0's
+total length, end to end, each message handed over with its ordinal, the octet it begins at and,
+when it is not the whole file, its own digest; a `.grib2.gz` unwrapped with `--container gzip`; a
+file that is not its messages end to end, or an edition 1 message, is exit `3`; the file, and a
+gzip's unwrapped octets, are held to the bound of one message, 8 MiB, until a ruling sets one for
+files, so a larger file is exit `3` before any message is cut), `cog` (2026-10-17, the first
+producer of `imagery-product/1`: `--received-at` required; the file's digest injected as
+`source_hash`; the file's name and its granule as `--request band_file=...` and
+`--request granule=...`, identifiers the host never reads off a path; and `--at`/`--basis` only with
+`--request time=sensing_time`, for a band file whose metadata states no sensing time, or
+`--request time=as_of`, for a DEM or a VRT, because which of the two a file needs is known only once
+it is read; a value the adapter's constructor refuses is exit `2`) and `iem_n0q` (2026-10-17:
+`--received-at` and `--at`/`--basis` required, `--at` the archive file name's slot, refused at exit
+`2` unless it falls on IEM's five-minute grid; the file's digest injected as `source_hash`, and the
+PNG's own digest as the raster locator's `frame_sha256` when a gzip or a tar was unwrapped around
+it); each observation adapter adds its own row when it lands.

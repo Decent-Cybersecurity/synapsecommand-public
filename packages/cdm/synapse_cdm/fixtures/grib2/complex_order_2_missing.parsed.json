@@ -1,0 +1,132 @@
+{
+  "wire_hex": "4752494200000002000000000000016d00000015010007000002000107ea041d06000000000000000502000000480300000000400000000005ffffffffffffffffffffffffffffff000000080000000800000000ffffffff036d74e8014fc50830036e86580150d678000027100000271040000000220400000000010100ff000000000100000000670000000002ff0000000000000000310500000040000346260400800300030e000101c61c3c00ffffffff0000000510010000000201000000160402030000000606ff0000009e07003e8000426880947000000009c400004e20508ec060ffff00000000a7f8947080e8a7f8ffff1770ffff8aac2422101d0a7f8407429fe0000128e0ffffa6161211080e853fc251c0000128e059d8ffff84d069786d6059d80000dac080e859d8ffff9858426880e800004a381b58251c203a3fffe1341a5e04e23b92251c203a1b58251c3fffe1343fffc0003f7a1b58251c1b58251c3fffc037373737",
+  "indicator": {
+    "discipline": 0,
+    "edition": 2,
+    "total_length": 365
+  },
+  "identification": {
+    "section_length": 21,
+    "centre": 7,
+    "subcentre": 0,
+    "master_table_version": 2,
+    "local_table_version": 0,
+    "reference_time_significance": 1,
+    "year": 2026,
+    "month": 4,
+    "day": 29,
+    "hour": 6,
+    "minute": 0,
+    "second": 0,
+    "production_status": 0,
+    "data_type": 0
+  },
+  "local_use": {
+    "section_length": 5,
+    "octets_hex": ""
+  },
+  "fields": [
+    {
+      "grid": {
+        "section_length": 72,
+        "source": 0,
+        "points": 64,
+        "optional_list_octets": 0,
+        "optional_list_interpretation": 0,
+        "template": 0,
+        "parameters": {
+          "earth_shape": 5,
+          "radius_scale_factor": 255,
+          "radius_scaled_value": 4294967295,
+          "major_axis_scale_factor": 255,
+          "major_axis_scaled_value": 4294967295,
+          "minor_axis_scale_factor": 255,
+          "minor_axis_scaled_value": 4294967295,
+          "ni": 8,
+          "nj": 8,
+          "basic_angle": 0,
+          "basic_angle_subdivisions": 4294967295,
+          "la1": 57505000,
+          "lo1": 22005000,
+          "resolution_flags": 48,
+          "la2": 57575000,
+          "lo2": 22075000,
+          "di": 10000,
+          "dj": 10000,
+          "scanning_mode": 64
+        }
+      },
+      "product": {
+        "section_length": 34,
+        "coordinate_values": 0,
+        "template": 0,
+        "parameters": {
+          "category": 1,
+          "number": 1,
+          "generating_process": 0,
+          "background_process": 255,
+          "forecast_process": 0,
+          "cutoff_hours": 0,
+          "cutoff_minutes": 0,
+          "time_unit": 1,
+          "forecast_time": 0,
+          "surface1_type": 103,
+          "surface1_scale": 0,
+          "surface1_value": 2,
+          "surface2_type": 255,
+          "surface2_scale": 0,
+          "surface2_value": 0
+        }
+      },
+      "representation": {
+        "section_length": 49,
+        "points": 64,
+        "template": 3,
+        "parameters": {
+          "reference_value": 10625.0,
+          "binary_scale": -3,
+          "decimal_scale": 3,
+          "bits": 14,
+          "original_type": 0,
+          "group_splitting": 1,
+          "missing_management": 1,
+          "groups": 5,
+          "group_width_reference": 16,
+          "group_width_bits": 1,
+          "group_length_reference": 2,
+          "group_length_increment": 1,
+          "last_group_length": 22,
+          "group_length_bits": 4,
+          "spatial_differencing_order": 2,
+          "spatial_differencing_octets": 3,
+          "primary_missing": -9999.0,
+          "secondary_missing": null
+        }
+      },
+      "bitmap": {
+        "section_length": 6,
+        "indicator": 255
+      },
+      "data": {
+        "section_length": 158
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "count": 64,
+      "missing_count": 10,
+      "min": 10.625,
+      "max": 15.25
+    }
+  ],
+  "arrays": [
+    {
+      "bitmap_hex": null,
+      "packed_hex": "003e8000426880947000000009c400004e20508ec060ffff00000000a7f8947080e8a7f8ffff1770ffff8aac2422101d0a7f8407429fe0000128e0ffffa6161211080e853fc251c0000128e059d8ffff84d069786d6059d80000dac080e859d8ffff9858426880e800004a381b58251c203a3fffe1341a5e04e23b92251c203a1b58251c3fffe1343fffc0003f7a1b58251c1b58251c3fffc0"
+    }
+  ],
+  "codestreams": [
+    null
+  ]
+}

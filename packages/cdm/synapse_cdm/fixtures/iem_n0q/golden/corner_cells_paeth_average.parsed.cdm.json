@@ -1,0 +1,1507 @@
+[
+  {
+    "event_id": "a083357c-5dc9-56c5-938a-22611f66ac64",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            -126.0025,
+            23.0025
+          ],
+          [
+            -65.0025,
+            23.0025
+          ],
+          [
+            -65.0025,
+            50.0025
+          ],
+          [
+            -126.0025,
+            50.0025
+          ],
+          [
+            -126.0025,
+            23.0025
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:05:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "gridded-field/1",
+        "datum": null,
+        "grid": {
+          "cell_size": [
+            {
+              "unit": "degree",
+              "unit_namespace": "EPSG:4326",
+              "value": 0.005
+            },
+            {
+              "unit": "degree",
+              "unit_namespace": "EPSG:4326",
+              "value": 0.005
+            }
+          ],
+          "namespace": "IEM N0Q composite product constant (research-raster F1, F11)",
+          "parameters": {
+            "registration": "the world file's last two terms are the centre of the north-west cell; the outline lies half a cell outside them",
+            "world_file": {
+              "north_west_cell_centre_x": -126.0,
+              "north_west_cell_centre_y": 50.0,
+              "rotation_x": 0.0,
+              "rotation_y": 0.0,
+              "x_cell_size": 0.005,
+              "y_cell_size": -0.005
+            }
+          },
+          "scanning_mode": "row 0 is the northernmost, column 0 the westernmost",
+          "shape": [
+            5400,
+            12200
+          ],
+          "template": "EPSG:4326"
+        },
+        "level": null,
+        "locator": {
+          "band_file": null,
+          "frame_sha256": null,
+          "granule_id": null,
+          "ifd": null,
+          "kind": "raster",
+          "tile": null,
+          "window": {
+            "column": 0,
+            "height": 5400,
+            "row": 0,
+            "width": 12200
+          }
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-04-29T06:04:59Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [],
+        "quality_flags_basis": "the PNG states no quality flag; palette index 0 marks a missing cell, counted in the summary's missing_count",
+        "quantity": {
+          "code": "composite_n0q",
+          "name": "composite reflectivity (N0Q)",
+          "namespace": "IEM raster catalogue (rasters.php?rid=2)"
+        },
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "IEM archive filename slot, UTC, composite nominal time",
+            "name": "UTC",
+            "stated_by": "caller"
+          },
+          "statistical_process": null
+        },
+        "unit": {
+          "unit": "dBZ",
+          "unit_namespace": "IEM raster catalogue (rasters.php?rid=2)"
+        },
+        "values": {
+          "dtype": "8-bit palette index (PNG colour type 3)",
+          "encoding": "PNG image data: zlib deflate, filter method 0 (filter types 0 to 4 a row)",
+          "fill": 0,
+          "locator": {
+            "band_file": null,
+            "frame_sha256": null,
+            "granule_id": null,
+            "ifd": null,
+            "kind": "raster",
+            "tile": null,
+            "window": {
+              "column": 0,
+              "height": 5400,
+              "row": 0,
+              "width": 12200
+            }
+          },
+          "mode": "reference",
+          "offset": -32.5,
+          "scale": 0.5,
+          "shape": [
+            5400,
+            12200
+          ],
+          "summary": {
+            "count": 65880000,
+            "max": 95.0,
+            "min": 17.5,
+            "missing_count": 65879996
+          }
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "ancillary": [
+          {
+            "chunk": "tEXt",
+            "keyword": "gentime",
+            "text": "2026-04-29T06:04:59Z"
+          },
+          {
+            "chunk": "tEXt",
+            "keyword": "Comment",
+            "text": "synthetic fixture: four corner cells"
+          },
+          {
+            "chunk": "tIME",
+            "octets_hex": "07ea041d06043b"
+          }
+        ],
+        "header": {
+          "bit_depth": 8,
+          "colour_type": 3,
+          "compression_method": 0,
+          "filter_method": 0,
+          "height": 5400,
+          "interlace_method": 0,
+          "width": 12200
+        },
+        "index_summary": {
+          "count": 65880000,
+          "max": 255,
+          "min": 100,
+          "missing_count": 65879996
+        },
+        "palette": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            254,
+            7
+          ],
+          [
+            2,
+            253,
+            14
+          ],
+          [
+            3,
+            252,
+            21
+          ],
+          [
+            4,
+            251,
+            28
+          ],
+          [
+            5,
+            250,
+            35
+          ],
+          [
+            6,
+            249,
+            42
+          ],
+          [
+            7,
+            248,
+            49
+          ],
+          [
+            8,
+            247,
+            56
+          ],
+          [
+            9,
+            246,
+            63
+          ],
+          [
+            10,
+            245,
+            70
+          ],
+          [
+            11,
+            244,
+            77
+          ],
+          [
+            12,
+            243,
+            84
+          ],
+          [
+            13,
+            242,
+            91
+          ],
+          [
+            14,
+            241,
+            98
+          ],
+          [
+            15,
+            240,
+            105
+          ],
+          [
+            16,
+            239,
+            112
+          ],
+          [
+            17,
+            238,
+            119
+          ],
+          [
+            18,
+            237,
+            126
+          ],
+          [
+            19,
+            236,
+            133
+          ],
+          [
+            20,
+            235,
+            140
+          ],
+          [
+            21,
+            234,
+            147
+          ],
+          [
+            22,
+            233,
+            154
+          ],
+          [
+            23,
+            232,
+            161
+          ],
+          [
+            24,
+            231,
+            168
+          ],
+          [
+            25,
+            230,
+            175
+          ],
+          [
+            26,
+            229,
+            182
+          ],
+          [
+            27,
+            228,
+            189
+          ],
+          [
+            28,
+            227,
+            196
+          ],
+          [
+            29,
+            226,
+            203
+          ],
+          [
+            30,
+            225,
+            210
+          ],
+          [
+            31,
+            224,
+            217
+          ],
+          [
+            32,
+            223,
+            224
+          ],
+          [
+            33,
+            222,
+            231
+          ],
+          [
+            34,
+            221,
+            238
+          ],
+          [
+            35,
+            220,
+            245
+          ],
+          [
+            36,
+            219,
+            252
+          ],
+          [
+            37,
+            218,
+            3
+          ],
+          [
+            38,
+            217,
+            10
+          ],
+          [
+            39,
+            216,
+            17
+          ],
+          [
+            40,
+            215,
+            24
+          ],
+          [
+            41,
+            214,
+            31
+          ],
+          [
+            42,
+            213,
+            38
+          ],
+          [
+            43,
+            212,
+            45
+          ],
+          [
+            44,
+            211,
+            52
+          ],
+          [
+            45,
+            210,
+            59
+          ],
+          [
+            46,
+            209,
+            66
+          ],
+          [
+            47,
+            208,
+            73
+          ],
+          [
+            48,
+            207,
+            80
+          ],
+          [
+            49,
+            206,
+            87
+          ],
+          [
+            50,
+            205,
+            94
+          ],
+          [
+            51,
+            204,
+            101
+          ],
+          [
+            52,
+            203,
+            108
+          ],
+          [
+            53,
+            202,
+            115
+          ],
+          [
+            54,
+            201,
+            122
+          ],
+          [
+            55,
+            200,
+            129
+          ],
+          [
+            56,
+            199,
+            136
+          ],
+          [
+            57,
+            198,
+            143
+          ],
+          [
+            58,
+            197,
+            150
+          ],
+          [
+            59,
+            196,
+            157
+          ],
+          [
+            60,
+            195,
+            164
+          ],
+          [
+            61,
+            194,
+            171
+          ],
+          [
+            62,
+            193,
+            178
+          ],
+          [
+            63,
+            192,
+            185
+          ],
+          [
+            64,
+            191,
+            192
+          ],
+          [
+            65,
+            190,
+            199
+          ],
+          [
+            66,
+            189,
+            206
+          ],
+          [
+            67,
+            188,
+            213
+          ],
+          [
+            68,
+            187,
+            220
+          ],
+          [
+            69,
+            186,
+            227
+          ],
+          [
+            70,
+            185,
+            234
+          ],
+          [
+            71,
+            184,
+            241
+          ],
+          [
+            72,
+            183,
+            248
+          ],
+          [
+            73,
+            182,
+            255
+          ],
+          [
+            74,
+            181,
+            6
+          ],
+          [
+            75,
+            180,
+            13
+          ],
+          [
+            76,
+            179,
+            20
+          ],
+          [
+            77,
+            178,
+            27
+          ],
+          [
+            78,
+            177,
+            34
+          ],
+          [
+            79,
+            176,
+            41
+          ],
+          [
+            80,
+            175,
+            48
+          ],
+          [
+            81,
+            174,
+            55
+          ],
+          [
+            82,
+            173,
+            62
+          ],
+          [
+            83,
+            172,
+            69
+          ],
+          [
+            84,
+            171,
+            76
+          ],
+          [
+            85,
+            170,
+            83
+          ],
+          [
+            86,
+            169,
+            90
+          ],
+          [
+            87,
+            168,
+            97
+          ],
+          [
+            88,
+            167,
+            104
+          ],
+          [
+            89,
+            166,
+            111
+          ],
+          [
+            90,
+            165,
+            118
+          ],
+          [
+            91,
+            164,
+            125
+          ],
+          [
+            92,
+            163,
+            132
+          ],
+          [
+            93,
+            162,
+            139
+          ],
+          [
+            94,
+            161,
+            146
+          ],
+          [
+            95,
+            160,
+            153
+          ],
+          [
+            96,
+            159,
+            160
+          ],
+          [
+            97,
+            158,
+            167
+          ],
+          [
+            98,
+            157,
+            174
+          ],
+          [
+            99,
+            156,
+            181
+          ],
+          [
+            100,
+            155,
+            188
+          ],
+          [
+            101,
+            154,
+            195
+          ],
+          [
+            102,
+            153,
+            202
+          ],
+          [
+            103,
+            152,
+            209
+          ],
+          [
+            104,
+            151,
+            216
+          ],
+          [
+            105,
+            150,
+            223
+          ],
+          [
+            106,
+            149,
+            230
+          ],
+          [
+            107,
+            148,
+            237
+          ],
+          [
+            108,
+            147,
+            244
+          ],
+          [
+            109,
+            146,
+            251
+          ],
+          [
+            110,
+            145,
+            2
+          ],
+          [
+            111,
+            144,
+            9
+          ],
+          [
+            112,
+            143,
+            16
+          ],
+          [
+            113,
+            142,
+            23
+          ],
+          [
+            114,
+            141,
+            30
+          ],
+          [
+            115,
+            140,
+            37
+          ],
+          [
+            116,
+            139,
+            44
+          ],
+          [
+            117,
+            138,
+            51
+          ],
+          [
+            118,
+            137,
+            58
+          ],
+          [
+            119,
+            136,
+            65
+          ],
+          [
+            120,
+            135,
+            72
+          ],
+          [
+            121,
+            134,
+            79
+          ],
+          [
+            122,
+            133,
+            86
+          ],
+          [
+            123,
+            132,
+            93
+          ],
+          [
+            124,
+            131,
+            100
+          ],
+          [
+            125,
+            130,
+            107
+          ],
+          [
+            126,
+            129,
+            114
+          ],
+          [
+            127,
+            128,
+            121
+          ],
+          [
+            128,
+            127,
+            128
+          ],
+          [
+            129,
+            126,
+            135
+          ],
+          [
+            130,
+            125,
+            142
+          ],
+          [
+            131,
+            124,
+            149
+          ],
+          [
+            132,
+            123,
+            156
+          ],
+          [
+            133,
+            122,
+            163
+          ],
+          [
+            134,
+            121,
+            170
+          ],
+          [
+            135,
+            120,
+            177
+          ],
+          [
+            136,
+            119,
+            184
+          ],
+          [
+            137,
+            118,
+            191
+          ],
+          [
+            138,
+            117,
+            198
+          ],
+          [
+            139,
+            116,
+            205
+          ],
+          [
+            140,
+            115,
+            212
+          ],
+          [
+            141,
+            114,
+            219
+          ],
+          [
+            142,
+            113,
+            226
+          ],
+          [
+            143,
+            112,
+            233
+          ],
+          [
+            144,
+            111,
+            240
+          ],
+          [
+            145,
+            110,
+            247
+          ],
+          [
+            146,
+            109,
+            254
+          ],
+          [
+            147,
+            108,
+            5
+          ],
+          [
+            148,
+            107,
+            12
+          ],
+          [
+            149,
+            106,
+            19
+          ],
+          [
+            150,
+            105,
+            26
+          ],
+          [
+            151,
+            104,
+            33
+          ],
+          [
+            152,
+            103,
+            40
+          ],
+          [
+            153,
+            102,
+            47
+          ],
+          [
+            154,
+            101,
+            54
+          ],
+          [
+            155,
+            100,
+            61
+          ],
+          [
+            156,
+            99,
+            68
+          ],
+          [
+            157,
+            98,
+            75
+          ],
+          [
+            158,
+            97,
+            82
+          ],
+          [
+            159,
+            96,
+            89
+          ],
+          [
+            160,
+            95,
+            96
+          ],
+          [
+            161,
+            94,
+            103
+          ],
+          [
+            162,
+            93,
+            110
+          ],
+          [
+            163,
+            92,
+            117
+          ],
+          [
+            164,
+            91,
+            124
+          ],
+          [
+            165,
+            90,
+            131
+          ],
+          [
+            166,
+            89,
+            138
+          ],
+          [
+            167,
+            88,
+            145
+          ],
+          [
+            168,
+            87,
+            152
+          ],
+          [
+            169,
+            86,
+            159
+          ],
+          [
+            170,
+            85,
+            166
+          ],
+          [
+            171,
+            84,
+            173
+          ],
+          [
+            172,
+            83,
+            180
+          ],
+          [
+            173,
+            82,
+            187
+          ],
+          [
+            174,
+            81,
+            194
+          ],
+          [
+            175,
+            80,
+            201
+          ],
+          [
+            176,
+            79,
+            208
+          ],
+          [
+            177,
+            78,
+            215
+          ],
+          [
+            178,
+            77,
+            222
+          ],
+          [
+            179,
+            76,
+            229
+          ],
+          [
+            180,
+            75,
+            236
+          ],
+          [
+            181,
+            74,
+            243
+          ],
+          [
+            182,
+            73,
+            250
+          ],
+          [
+            183,
+            72,
+            1
+          ],
+          [
+            184,
+            71,
+            8
+          ],
+          [
+            185,
+            70,
+            15
+          ],
+          [
+            186,
+            69,
+            22
+          ],
+          [
+            187,
+            68,
+            29
+          ],
+          [
+            188,
+            67,
+            36
+          ],
+          [
+            189,
+            66,
+            43
+          ],
+          [
+            190,
+            65,
+            50
+          ],
+          [
+            191,
+            64,
+            57
+          ],
+          [
+            192,
+            63,
+            64
+          ],
+          [
+            193,
+            62,
+            71
+          ],
+          [
+            194,
+            61,
+            78
+          ],
+          [
+            195,
+            60,
+            85
+          ],
+          [
+            196,
+            59,
+            92
+          ],
+          [
+            197,
+            58,
+            99
+          ],
+          [
+            198,
+            57,
+            106
+          ],
+          [
+            199,
+            56,
+            113
+          ],
+          [
+            200,
+            55,
+            120
+          ],
+          [
+            201,
+            54,
+            127
+          ],
+          [
+            202,
+            53,
+            134
+          ],
+          [
+            203,
+            52,
+            141
+          ],
+          [
+            204,
+            51,
+            148
+          ],
+          [
+            205,
+            50,
+            155
+          ],
+          [
+            206,
+            49,
+            162
+          ],
+          [
+            207,
+            48,
+            169
+          ],
+          [
+            208,
+            47,
+            176
+          ],
+          [
+            209,
+            46,
+            183
+          ],
+          [
+            210,
+            45,
+            190
+          ],
+          [
+            211,
+            44,
+            197
+          ],
+          [
+            212,
+            43,
+            204
+          ],
+          [
+            213,
+            42,
+            211
+          ],
+          [
+            214,
+            41,
+            218
+          ],
+          [
+            215,
+            40,
+            225
+          ],
+          [
+            216,
+            39,
+            232
+          ],
+          [
+            217,
+            38,
+            239
+          ],
+          [
+            218,
+            37,
+            246
+          ],
+          [
+            219,
+            36,
+            253
+          ],
+          [
+            220,
+            35,
+            4
+          ],
+          [
+            221,
+            34,
+            11
+          ],
+          [
+            222,
+            33,
+            18
+          ],
+          [
+            223,
+            32,
+            25
+          ],
+          [
+            224,
+            31,
+            32
+          ],
+          [
+            225,
+            30,
+            39
+          ],
+          [
+            226,
+            29,
+            46
+          ],
+          [
+            227,
+            28,
+            53
+          ],
+          [
+            228,
+            27,
+            60
+          ],
+          [
+            229,
+            26,
+            67
+          ],
+          [
+            230,
+            25,
+            74
+          ],
+          [
+            231,
+            24,
+            81
+          ],
+          [
+            232,
+            23,
+            88
+          ],
+          [
+            233,
+            22,
+            95
+          ],
+          [
+            234,
+            21,
+            102
+          ],
+          [
+            235,
+            20,
+            109
+          ],
+          [
+            236,
+            19,
+            116
+          ],
+          [
+            237,
+            18,
+            123
+          ],
+          [
+            238,
+            17,
+            130
+          ],
+          [
+            239,
+            16,
+            137
+          ],
+          [
+            240,
+            15,
+            144
+          ],
+          [
+            241,
+            14,
+            151
+          ],
+          [
+            242,
+            13,
+            158
+          ],
+          [
+            243,
+            12,
+            165
+          ],
+          [
+            244,
+            11,
+            172
+          ],
+          [
+            245,
+            10,
+            179
+          ],
+          [
+            246,
+            9,
+            186
+          ],
+          [
+            247,
+            8,
+            193
+          ],
+          [
+            248,
+            7,
+            200
+          ],
+          [
+            249,
+            6,
+            207
+          ],
+          [
+            250,
+            5,
+            214
+          ],
+          [
+            251,
+            4,
+            221
+          ],
+          [
+            252,
+            3,
+            228
+          ],
+          [
+            253,
+            2,
+            235
+          ],
+          [
+            254,
+            1,
+            242
+          ],
+          [
+            255,
+            0,
+            249
+          ]
+        ]
+      },
+      "namespace": "IEM NEXRAD N0Q composite PNG (W3C PNG, IEM product composite_n0q)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "iem_n0q",
+      "adapter_version": "1.0.0",
+      "format_name": "IEM NEXRAD N0Q composite PNG (W3C PNG, IEM product composite_n0q)",
+      "format_version": "Portable Network Graphics (PNG) Specification (Third Edition), W3C Recommendation 24 June 2025; IEM composite_n0q at 12200 x 5400 cells, the grid IEM has published since 2014-08-08",
+      "observed_at": "2026-04-29T06:05:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "IEM_N0Q",
+      "transformations": [
+        "slot: observed_at, validity.effective's two ends and SourceRef.observed_at are the caller's archive file-name slot, the composite's nominal time, which the PNG does not state \u2014 IEM archive filename slot, UTC, composite nominal time",
+        "grid: the footprint and the grid block are the IEM N0Q product constant, IHDR checked against it, the outline half a cell outside the world file's cell centres; no transformation, the grid being latitude/longitude",
+        "index_summary: palette index 0 is missing and index i is (i - 65) / 2 dBZ; the summary's least and greatest values are the least and greatest non-zero index so transformed"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "N0Q composite 2026-04-29T06:05:00.000Z",
+        "system": "IEM_N0Q"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-29T06:05:00.000Z",
+        "start": "2026-04-29T06:05:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  }
+]

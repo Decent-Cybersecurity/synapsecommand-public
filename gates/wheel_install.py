@@ -285,6 +285,25 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_ndbc_stdmet_adapter.py",
     "test_cdm_coops_csv_adapter.py",
     "test_cdm_airnow_hourly_adapter.py",
+    # `test_cdm_grib2_adapter.py` is package-only (2026-10-17, the NYC observations arc's 3.6.0
+    # content): it reads the adapter, its packaged fixtures, twins and goldens under
+    # `fixtures/grib2/`, loads the packaged builder in memory to build refused messages and runs
+    # its `--check` (which holds the GDAL-written messages to their recorded digests where no GDAL
+    # is installed), all through `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_grib2_adapter.py",
+    # `test_cdm_cog_adapter.py` and `test_cdm_cog_codec.py` are package-only (2026-10-17, the
+    # same arc's 3.6.0 content): the first reads the adapter, its packaged fixtures, twins and
+    # goldens under `fixtures/cog/`, loads the packaged builder in memory to build refused files
+    # and runs its `--check` (which holds the GDAL-written files to their recorded digests where
+    # no GDAL is installed); the second imports the codec and assembles every input itself; both
+    # go through `synapse_cdm.__file__` and write only under `tmp_path`.
+    "test_cdm_cog_adapter.py",
+    "test_cdm_cog_codec.py",
+    # `test_cdm_iem_n0q_adapter.py` is package-only (2026-10-17, the arc's last 3.6.0 content): it
+    # reads the adapter, its packaged fixtures, twins and goldens under `fixtures/iem_n0q/`, the
+    # codec it reads PNGs with, and loads the packaged builder in memory to write refused files and
+    # runs its `--check`, all through `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_iem_n0q_adapter.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason

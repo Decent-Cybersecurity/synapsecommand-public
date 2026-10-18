@@ -1,0 +1,641 @@
+[
+  {
+    "event_id": "0f9ecf18-2211-5b3c-acae-68ca5bfe4830",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            24.022969,
+            57.167839
+          ],
+          [
+            24.024125,
+            57.167867
+          ],
+          [
+            24.025281,
+            57.167894
+          ],
+          [
+            24.026437,
+            57.167922
+          ],
+          [
+            24.027593,
+            57.167949
+          ],
+          [
+            24.028749,
+            57.167976
+          ],
+          [
+            24.029905,
+            57.168004
+          ],
+          [
+            24.031061,
+            57.168031
+          ],
+          [
+            24.032217,
+            57.168059
+          ],
+          [
+            24.032167,
+            57.168687
+          ],
+          [
+            24.032116,
+            57.169315
+          ],
+          [
+            24.032066,
+            57.169942
+          ],
+          [
+            24.032016,
+            57.17057
+          ],
+          [
+            24.031965,
+            57.171198
+          ],
+          [
+            24.031915,
+            57.171826
+          ],
+          [
+            24.031864,
+            57.172454
+          ],
+          [
+            24.031814,
+            57.173082
+          ],
+          [
+            24.030658,
+            57.173055
+          ],
+          [
+            24.029502,
+            57.173028
+          ],
+          [
+            24.028346,
+            57.173
+          ],
+          [
+            24.02719,
+            57.172973
+          ],
+          [
+            24.026033,
+            57.172945
+          ],
+          [
+            24.024877,
+            57.172918
+          ],
+          [
+            24.023721,
+            57.172891
+          ],
+          [
+            24.022565,
+            57.172863
+          ],
+          [
+            24.022616,
+            57.172235
+          ],
+          [
+            24.022666,
+            57.171607
+          ],
+          [
+            24.022717,
+            57.170979
+          ],
+          [
+            24.022767,
+            57.170351
+          ],
+          [
+            24.022818,
+            57.169723
+          ],
+          [
+            24.022868,
+            57.169095
+          ],
+          [
+            24.022919,
+            57.168467
+          ],
+          [
+            24.022969,
+            57.167839
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T04:18:12.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "band": {
+          "code": "sample 0",
+          "name": "LST",
+          "namespace": "GDAL_METADATA (TIFF tag 42112) item DESCRIPTION of band 1, where stated"
+        },
+        "contract": "imagery-product/1",
+        "grid": {
+          "cell_size": [
+            {
+              "unit": "metre",
+              "unit_namespace": "OGC GeoTIFF 1.1 ModelPixelScaleTag",
+              "value": 70.0
+            },
+            {
+              "unit": "metre",
+              "unit_namespace": "OGC GeoTIFF 1.1 ModelPixelScaleTag",
+              "value": 70.0
+            }
+          ],
+          "namespace": "OGC GeoTIFF 1.1",
+          "parameters": {
+            "ModelPixelScaleTag": [
+              70.0,
+              70.0,
+              0.0
+            ],
+            "ModelTiepointTag": [
+              0.0,
+              0.0,
+              0.0,
+              320000.0,
+              6340560.0,
+              0.0
+            ],
+            "geokeys": {
+              "GTCitationGeoKey": "WGS 84 / UTM zone 35N",
+              "GTModelTypeGeoKey": 1,
+              "GTRasterTypeGeoKey": 1,
+              "GeodeticCitationGeoKey": "WGS 84",
+              "GeogAngularUnitsGeoKey": 9102,
+              "ProjLinearUnitsGeoKey": 9001,
+              "ProjectedCRSGeoKey": 32635
+            }
+          },
+          "scanning_mode": null,
+          "shape": [
+            8,
+            8
+          ],
+          "template": "ProjectedCRSGeoKey 32635"
+        },
+        "locator": {
+          "band_file": null,
+          "frame_sha256": null,
+          "granule_id": null,
+          "ifd": 0,
+          "kind": "raster",
+          "tile": 0,
+          "window": {
+            "column": 0,
+            "height": 8,
+            "row": 0,
+            "width": 8
+          }
+        },
+        "product": {
+          "code": "IFD 0",
+          "name": null,
+          "namespace": "TIFF 6.0: the file's first image file directory, named by its ImageDescription (tag 270) where it states one"
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-04-29T11:02:33.000000Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [],
+        "quality_flags_basis": "the file states no quality summary; a product's quality layers (HLS Fmask, ECOSTRESS QC) are band files of their own, each its own object",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "GDAL_METADATA (TIFF tag 42112) items RangeBeginningDate, RangeBeginningTime, RangeEndingDate and RangeEndingTime, each time ending Z",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        },
+        "unit": {
+          "unit": "K",
+          "unit_namespace": "GDAL_METADATA (TIFF tag 42112) item UNITTYPE, band 1"
+        },
+        "values": {
+          "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): nan",
+          "mode": "inline",
+          "shape": [
+            8,
+            8
+          ],
+          "values": [
+            280.0,
+            280.5,
+            281.0,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            280.25,
+            280.75,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            280.5,
+            281.0,
+            281.5,
+            null,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            280.75,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            281.0,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            284.5,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            284.75,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            284.5,
+            285.0,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            284.75,
+            285.25
+          ]
+        },
+        "wavelength": null
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "gdal_metadata": [
+          {
+            "domain": null,
+            "name": "ProductionDateTime",
+            "role": null,
+            "sample": null,
+            "value": "2026-04-29T11:02:33.000000Z"
+          },
+          {
+            "domain": null,
+            "name": "RangeBeginningDate",
+            "role": null,
+            "sample": null,
+            "value": "2026-04-29"
+          },
+          {
+            "domain": null,
+            "name": "RangeBeginningTime",
+            "role": null,
+            "sample": null,
+            "value": "04:17:20.000000Z"
+          },
+          {
+            "domain": null,
+            "name": "RangeEndingDate",
+            "role": null,
+            "sample": null,
+            "value": "2026-04-29"
+          },
+          {
+            "domain": null,
+            "name": "RangeEndingTime",
+            "role": null,
+            "sample": null,
+            "value": "04:18:12.000000Z"
+          },
+          {
+            "domain": null,
+            "name": "UNITTYPE",
+            "role": "unittype",
+            "sample": 0,
+            "value": "K"
+          },
+          {
+            "domain": null,
+            "name": "DESCRIPTION",
+            "role": "description",
+            "sample": 0,
+            "value": "LST"
+          }
+        ],
+        "geokeys": {
+          "keys": [
+            {
+              "id": 1024,
+              "name": "GTModelTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1025,
+              "name": "GTRasterTypeGeoKey",
+              "value": 1
+            },
+            {
+              "id": 1026,
+              "name": "GTCitationGeoKey",
+              "value": "WGS 84 / UTM zone 35N"
+            },
+            {
+              "id": 2049,
+              "name": "GeodeticCitationGeoKey",
+              "value": "WGS 84"
+            },
+            {
+              "id": 2054,
+              "name": "GeogAngularUnitsGeoKey",
+              "value": 9102
+            },
+            {
+              "id": 3072,
+              "name": "ProjectedCRSGeoKey",
+              "value": 32635
+            },
+            {
+              "id": 3076,
+              "name": "ProjLinearUnitsGeoKey",
+              "value": 9001
+            }
+          ],
+          "minor_revision": 0,
+          "revision": 1,
+          "version": 1
+        },
+        "header": {
+          "byte_order": "II",
+          "first_ifd_offset": 8
+        },
+        "ifds": [
+          {
+            "next_ifd_offset": 0,
+            "offset": 8,
+            "tags": {
+              "BitsPerSample": {
+                "type": "SHORT",
+                "value": [
+                  32
+                ]
+              },
+              "Compression": {
+                "type": "SHORT",
+                "value": [
+                  8
+                ]
+              },
+              "GDAL_NODATA": {
+                "type": "ASCII",
+                "value": "nan"
+              },
+              "ImageLength": {
+                "type": "SHORT",
+                "value": [
+                  8
+                ]
+              },
+              "ImageWidth": {
+                "type": "SHORT",
+                "value": [
+                  8
+                ]
+              },
+              "ModelPixelScaleTag": {
+                "type": "DOUBLE",
+                "value": [
+                  70.0,
+                  70.0,
+                  0.0
+                ]
+              },
+              "ModelTiepointTag": {
+                "type": "DOUBLE",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  320000.0,
+                  6340560.0,
+                  0.0
+                ]
+              },
+              "PhotometricInterpretation": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "PlanarConfiguration": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "Predictor": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SampleFormat": {
+                "type": "SHORT",
+                "value": [
+                  3
+                ]
+              },
+              "SamplesPerPixel": {
+                "type": "SHORT",
+                "value": [
+                  1
+                ]
+              },
+              "TileLength": {
+                "type": "SHORT",
+                "value": [
+                  16
+                ]
+              },
+              "TileWidth": {
+                "type": "SHORT",
+                "value": [
+                  16
+                ]
+              }
+            }
+          }
+        ],
+        "vertical": null,
+        "window": {
+          "block": 0,
+          "column": 0,
+          "count": 64,
+          "dtype": "Float32",
+          "encoding": "TIFF Compression 8 (Deflate), Predictor 3 (floating point)",
+          "height": 8,
+          "ifd": 0,
+          "max": 285.25,
+          "min": 280.0,
+          "missing_count": 1,
+          "missing_mechanism": "GDAL_NODATA (TIFF tag 42113): nan",
+          "row": 0,
+          "values": [
+            280.0,
+            280.5,
+            281.0,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            280.25,
+            280.75,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            280.5,
+            281.0,
+            281.5,
+            null,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            280.75,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            281.0,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            284.5,
+            281.25,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            284.75,
+            281.5,
+            282.0,
+            282.5,
+            283.0,
+            283.5,
+            284.0,
+            284.5,
+            285.0,
+            281.75,
+            282.25,
+            282.75,
+            283.25,
+            283.75,
+            284.25,
+            284.75,
+            285.25
+          ],
+          "width": 8
+        }
+      },
+      "namespace": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cog",
+      "adapter_version": "1.0.0",
+      "format_name": "GeoTIFF / Cloud Optimized GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0)",
+      "format_version": "OGC GeoTIFF Standard 1.1 (19-008r4) and OGC Cloud Optimized GeoTIFF Standard 1.0 (21-026), on classic TIFF Revision 6.0; GDAL VRT as GDAL's driver documentation describes it",
+      "observed_at": "2026-04-29T04:17:20.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "COG",
+      "transformations": [
+        "georeference: the footprint is the outline of the image's cells in a WGS84 UTM zone, each edge densified to at most 16 segments and every vertex converted with the transverse Mercator inverse (Kruger's series to third order in n), rounded to 10^-6 degree",
+        "window: the values of block 0 of the full-resolution image, clipped to the image, decoded and summarised in the stored values; a sample equal to GDAL_NODATA, or a NaN, is missing",
+        "gdal_metadata: the sensing interval runs from the RangeBeginningDate and RangeBeginningTime items to the RangeEndingDate and RangeEndingTime items, each time ending Z (UTC); observed_at is its end"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EPSG:32635 8x8 at 320000.0,6340560.0 cell 70.0x70.0 Float32 sensed 2026-04-29T04:17:20.000Z to 2026-04-29T04:18:12.000Z",
+        "system": "COG"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-04-29T04:18:12.000Z",
+        "start": "2026-04-29T04:17:20.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  }
+]

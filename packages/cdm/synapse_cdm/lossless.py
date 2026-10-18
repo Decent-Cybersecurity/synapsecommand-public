@@ -217,13 +217,14 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that returned `None` for "nothing left" would make every call site write the same branch. An
     adapter that wants the field absent tests `block.data` and passes `None`.
 
-    FOURTEEN OF THE TWENTY-SEVEN ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT USE THE CONTAINER THIS
+    FOURTEEN OF THE THIRTY ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT USE THE CONTAINER THIS
     RETURNS, and that is ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of
     Part 1 keep their `attributes` / `payload` parking under `source_extras` and declare
     `residual: legacy`. This exists for the Part 2 adapters, which declare `residual: structured`.
-    Of the thirteen that do, `geojson` and `geopackage` call it; `c2sim`, `aixm511` and `aixm52`
+    Of the sixteen that do, `geojson` and `geopackage` call it; `c2sim`, `aixm511` and `aixm52`
     (2026-09-20/21), `dis7` and `tacticalapi` (2026-10-06), `link16_gateway` (2026-10-10),
-    `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` (2026-10-15) build their `Residual` directly under the same namespace (`dis7` because its residual is the fixed
+    `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` (2026-10-15), and `grib2`,
+    `cog` and `iem_n0q` (2026-10-17) build their `Residual` directly under the same namespace (`dis7` because its residual is the fixed
     six-key record of its residual schema, not raw-minus-consumed leftovers; `tacticalapi` because
     its residual records the unknown fields its wire reader kept, on every Entity and every Event
     and with a `data` that is never empty; `link16_gateway` because its Entity's residual is the
@@ -232,7 +233,11 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     because its site Entity's residual is the volume header, the site and the record census, and
     each sweep Event's the sweep's radial headers as stated; `ndbc_stdmet`, `coops_csv` and
     `airnow_hourly` because each Event's residual is its own row or record as written, with the
-    header and, for `coops_csv`, the request beside it). It existed BEFORE the first of them so that it was written against a helper
+    header and, for `coops_csv`, the request beside it; `grib2` because each field's Event's residual
+    is the message's Sections 0 to 2 and the field's own Sections 3 to 7 as stated; `cog` because each
+    object's residual is the file's directories, GeoKeys, GDAL metadata and decoded window as stated;
+    `iem_n0q` because its Event's residual is the PNG's header, palette, ancillary chunks and index
+    summary as stated). It existed BEFORE the first of them so that it was written against a helper
     rather than against a shape it invents.
     """
     return Residual(namespace=adapter.metadata.format.name, data=residual(raw, consumed))
