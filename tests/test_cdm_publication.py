@@ -3,7 +3,7 @@
 WHY THIS MODULE EXISTS
 ----------------------
 `PUBLICATION.md` records what became true when this repository went public: the protections, the
-probes that witnessed them, and twenty-seven ledger entries — twenty-four settled, three still open. Most of it
+probes that witnessed them, and twenty-eight ledger entries — twenty-five settled, three still open. Most of it
 is a *witness statement* — a force-push was refused, a check ran and failed and then passed — and
 a witness statement is not gateable. The suite cannot reach GitHub, must not hold a token, and a test that needed one would
 fail for every outsider and turn green only for whoever holds it.
@@ -905,7 +905,7 @@ def test_every_place_that_states_the_ledger_count_states_the_derived_one():
              18: "Eighteen", 19: "Nineteen", 20: "Twenty", 21: "Twenty-one",
              22: "Twenty-two", 23: "Twenty-three",
              24: "Twenty-four", 25: "Twenty-five", 26: "Twenty-six",
-             27: "Twenty-seven"}
+             27: "Twenty-seven", 28: "Twenty-eight"}
     assert count in words, f"{count} ledger entries; extend the number words in this test"
     record = _flat(_read(RECORD))
     assert f"{words[count]} entries, and the set does not move" in record, (

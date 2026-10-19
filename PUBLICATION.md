@@ -148,8 +148,8 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Twenty-seven entries, and the set does not move — entries change **state**, they are not deleted. Twenty-four
-are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 and 27 are closed by acts, entry 7
+Twenty-eight entries, and the set does not move — entries change **state**, they are not deleted. Twenty-five
+are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 and 28 are closed by acts, entry 7
 is a disposition, entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
@@ -194,7 +194,7 @@ and the first this package has made with an **empty parks table**: the last two 
 profile delegates to that were not held closed inside its arc, so its subject is what an empty
 table does and does not say — every delegated document is held and pinned, which is a fact about
 acquisition and not about mapping — and its second subject is the second upload approved on a
-verdict rather than on somebody's attention, where entry 16's is the first. Entry 18 is the 2.0.0 release, the eleventh closed by an act and the first this package has made that a 1.x reader is meant to **refuse**: SC-OES ships, `Event.oes` and `Entity.ontology_types` appear on the wire, and the canonical objects reject an object carrying either rather than ignoring it — so its subject is what a version number can and cannot say, since the bump gate derived a MINOR floor and a person's ruling put the number above it, which is the first release to exercise that mechanism. Its second subject is a reading two witness rounds did not take: five rows of the sweep table below had stood at 1.6.0 and `5a908754` across two releases, and this round strikes them rather than adding a sixth silent one. Entry 19 is the 2.1.2 release, the twelfth closed by an act and the first this package has made after two of its own tags were **refused by its own gates**: `v2.1.0` fell to a `pip-audit --strict` step that resolves the candidate it is gating against an index the candidate is not on yet, `v2.1.1` to a CodeQL step that asked a tag ref for an analysis no tag ref in this repository carries, and both tags stay permanently over commits PyPI has never seen — so its subject is what a refused release costs and what it does not, since nothing was moved or rewritten to recover and the third tag published unchanged content. Its second subject is a record built **outside** the pipeline under a ruling, because the job that should have written it is the one job of that run that failed, and its third is a gap this entry states rather than closes: the release evidence is attached and retrievable while the fourteen adapter manifests still declare it unavailable. Entry 20 is the 2.2.0 release, the thirteenth closed by an act and the first since 2.1.0 whose number moved for what the distribution carries rather than for what a workflow refused — one tag, no refusal, a MINOR derived over eighty-three ruled units — so its first subject is that there is nothing to recover from; its second is the pipeline's `witness` job executing the repaired builder on a tag for the first time, building the record, and being refused by its own verifier because the `pypi` approval was given with an empty comment, so that the committed record is the second built by hand and carries a reference the maintainer designated afterwards, which the entry says in as many words; and its third is a closure rather than a gap, since the fourteen manifests entry 19 left saying `available: false` say `true` in this distribution. Entry 21 is the 3.0.1 release, the fourteenth closed by an act and the first of the audit remediation arc to reach the index — a corrective of `v3.0.0`, which was tagged the same day and refused by its own release run below the gate, so its first subject is the third burned tag and the class of defect that burned it, an environment a job built around the suite rather than anything about the ref; its second is the pipeline's `witness` job succeeding end to end for the first time, on its third execution, so that the committed record is the pipeline's own rather than a third built by hand; and its third is a PATCH derived over an arc that moved nothing installable, MAJOR on both first axes over what the index served before it. Entry 22 is the record of `v3.1.0`, the fourth tag this repository has burned and the second refused below the gate, written OPEN by the corrective release commit that repairs the step which refused it — the build job's package test, a conformance sweep run from the installed wheel with check J still required where the gate job's sweep holds it per adapter — so its subject is a defect class 3.0.1 had named, reaching a tag through a twin of a step already repaired — and it closed on 2026-09-22, when the corrective 3.1.1 was measured on the index, which is the state change entry 6 set the precedent for. Entry 23 is the 3.1.1 release, the fifteenth closed by an act and the corrective that closes entry 22: the repaired package test passed on a tag push for the first time — `19 adapters CONFORMANT from the installed wheel` — and every job of the run but one succeeded; so its first subject is that the twin was repaired and nothing else moved, a PATCH derived over an arc that touched a workflow and this file's companions; its second is the pipeline's `witness` job refused for the second time on an empty approval comment, run 35695633330 after run 35200069387, so that the committed record is the third built by hand, over the run's own inputs with a reference the maintainer designated after the fact, which the entry says in as many words; and its third is what the release carries that the burned tag did not — the five adapter modules' evidence records on a Release that exists. Entry 24 is the 3.2.0 release, the sixteenth closed by an act, published from one tag with no refusal anywhere in its run, where entry 21's run read the same but as the corrective of a burned tag — the `dis7` adapter and its host command `synapse-dis7`, the roster of twenty — so its first subject is that every one of the run's six jobs succeeded; its second is that the tag names not the release commit but the follow-up after it, because five npm advisories were reviewed into the advisory database after the arc's green run and four `overrides` floors cleared them; and its third is the pipeline's `witness` job succeeding end to end for the second time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 24 closes no earlier entry. Entry 25 is the 3.3.0 release, the seventeenth closed by an act, published from one tag with no refusal anywhere in its run, as entry 24's was — the `tacticalapi` adapter on its own wire reader, the roster of twenty-one — so its first subject is that every one of the run's six jobs succeeded again and that the tag names the release commit itself, since the documentation site's audit stayed green on it; its second is that the `pypi` hold was released the day after the tag was pushed, so that the tag is dated 2026-10-07 and the upload, the Release and the witness record 2026-10-08; and its third is the pipeline's `witness` job succeeding end to end for the third time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 25 closes no earlier entry. Entry 26 is the 3.4.0 release, the eighteenth closed by an act, published from one tag with no refusal anywhere in its run, as entries 24's and 25's were — the `link16_gateway` adapter, the JREAP C / Link 16 gateway contract translator, the roster of twenty-two, and CDM schema 3.1.0 — so its first subject is that every one of the run's six jobs succeeded and that the tag names the release commit itself again; its second is that the wire contract moved for the first time since 3.0.0, by a MINOR, and that the 3.1.0 contract frozen IN the release commit as `SELF` is resolved by this round to the commit the tag names, with the runtime bridge distribution released in the tag and not on the index; and its third is the pipeline's `witness` job succeeding end to end for the fourth time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 26 closes no earlier entry. Entry 27 is the 3.5.0 release, the nineteenth closed by an act, published from one tag with no refusal anywhere in its run, as entries 24's, 25's and 26's were — the NYC observation carrier, five ingest-only adapter modules, `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly`, the roster of twenty-seven, and CDM schema 3.2.0 — so its first subject is that every one of the run's six jobs succeeded and that the tag names the release commit itself again; its second is that the wire contract moved a MINOR for the second release running, and that the 3.2.0 contract frozen IN the release commit as `SELF` is resolved by this round to the commit the tag names, with the bridge distribution, now 1.1.0, released in the tag and not on the index; and its third is the pipeline's `witness` job succeeding end to end for the fifth time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 27 closes no earlier entry. Entries 2, 3 and 4 are open. None blocks
+verdict rather than on somebody's attention, where entry 16's is the first. Entry 18 is the 2.0.0 release, the eleventh closed by an act and the first this package has made that a 1.x reader is meant to **refuse**: SC-OES ships, `Event.oes` and `Entity.ontology_types` appear on the wire, and the canonical objects reject an object carrying either rather than ignoring it — so its subject is what a version number can and cannot say, since the bump gate derived a MINOR floor and a person's ruling put the number above it, which is the first release to exercise that mechanism. Its second subject is a reading two witness rounds did not take: five rows of the sweep table below had stood at 1.6.0 and `5a908754` across two releases, and this round strikes them rather than adding a sixth silent one. Entry 19 is the 2.1.2 release, the twelfth closed by an act and the first this package has made after two of its own tags were **refused by its own gates**: `v2.1.0` fell to a `pip-audit --strict` step that resolves the candidate it is gating against an index the candidate is not on yet, `v2.1.1` to a CodeQL step that asked a tag ref for an analysis no tag ref in this repository carries, and both tags stay permanently over commits PyPI has never seen — so its subject is what a refused release costs and what it does not, since nothing was moved or rewritten to recover and the third tag published unchanged content. Its second subject is a record built **outside** the pipeline under a ruling, because the job that should have written it is the one job of that run that failed, and its third is a gap this entry states rather than closes: the release evidence is attached and retrievable while the fourteen adapter manifests still declare it unavailable. Entry 20 is the 2.2.0 release, the thirteenth closed by an act and the first since 2.1.0 whose number moved for what the distribution carries rather than for what a workflow refused — one tag, no refusal, a MINOR derived over eighty-three ruled units — so its first subject is that there is nothing to recover from; its second is the pipeline's `witness` job executing the repaired builder on a tag for the first time, building the record, and being refused by its own verifier because the `pypi` approval was given with an empty comment, so that the committed record is the second built by hand and carries a reference the maintainer designated afterwards, which the entry says in as many words; and its third is a closure rather than a gap, since the fourteen manifests entry 19 left saying `available: false` say `true` in this distribution. Entry 21 is the 3.0.1 release, the fourteenth closed by an act and the first of the audit remediation arc to reach the index — a corrective of `v3.0.0`, which was tagged the same day and refused by its own release run below the gate, so its first subject is the third burned tag and the class of defect that burned it, an environment a job built around the suite rather than anything about the ref; its second is the pipeline's `witness` job succeeding end to end for the first time, on its third execution, so that the committed record is the pipeline's own rather than a third built by hand; and its third is a PATCH derived over an arc that moved nothing installable, MAJOR on both first axes over what the index served before it. Entry 22 is the record of `v3.1.0`, the fourth tag this repository has burned and the second refused below the gate, written OPEN by the corrective release commit that repairs the step which refused it — the build job's package test, a conformance sweep run from the installed wheel with check J still required where the gate job's sweep holds it per adapter — so its subject is a defect class 3.0.1 had named, reaching a tag through a twin of a step already repaired — and it closed on 2026-09-22, when the corrective 3.1.1 was measured on the index, which is the state change entry 6 set the precedent for. Entry 23 is the 3.1.1 release, the fifteenth closed by an act and the corrective that closes entry 22: the repaired package test passed on a tag push for the first time — `19 adapters CONFORMANT from the installed wheel` — and every job of the run but one succeeded; so its first subject is that the twin was repaired and nothing else moved, a PATCH derived over an arc that touched a workflow and this file's companions; its second is the pipeline's `witness` job refused for the second time on an empty approval comment, run 35695633330 after run 35200069387, so that the committed record is the third built by hand, over the run's own inputs with a reference the maintainer designated after the fact, which the entry says in as many words; and its third is what the release carries that the burned tag did not — the five adapter modules' evidence records on a Release that exists. Entry 24 is the 3.2.0 release, the sixteenth closed by an act, published from one tag with no refusal anywhere in its run, where entry 21's run read the same but as the corrective of a burned tag — the `dis7` adapter and its host command `synapse-dis7`, the roster of twenty — so its first subject is that every one of the run's six jobs succeeded; its second is that the tag names not the release commit but the follow-up after it, because five npm advisories were reviewed into the advisory database after the arc's green run and four `overrides` floors cleared them; and its third is the pipeline's `witness` job succeeding end to end for the second time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 24 closes no earlier entry. Entry 25 is the 3.3.0 release, the seventeenth closed by an act, published from one tag with no refusal anywhere in its run, as entry 24's was — the `tacticalapi` adapter on its own wire reader, the roster of twenty-one — so its first subject is that every one of the run's six jobs succeeded again and that the tag names the release commit itself, since the documentation site's audit stayed green on it; its second is that the `pypi` hold was released the day after the tag was pushed, so that the tag is dated 2026-10-07 and the upload, the Release and the witness record 2026-10-08; and its third is the pipeline's `witness` job succeeding end to end for the third time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 25 closes no earlier entry. Entry 26 is the 3.4.0 release, the eighteenth closed by an act, published from one tag with no refusal anywhere in its run, as entries 24's and 25's were — the `link16_gateway` adapter, the JREAP C / Link 16 gateway contract translator, the roster of twenty-two, and CDM schema 3.1.0 — so its first subject is that every one of the run's six jobs succeeded and that the tag names the release commit itself again; its second is that the wire contract moved for the first time since 3.0.0, by a MINOR, and that the 3.1.0 contract frozen IN the release commit as `SELF` is resolved by this round to the commit the tag names, with the runtime bridge distribution released in the tag and not on the index; and its third is the pipeline's `witness` job succeeding end to end for the fourth time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 26 closes no earlier entry. Entry 27 is the 3.5.0 release, the nineteenth closed by an act, published from one tag with no refusal anywhere in its run, as entries 24's, 25's and 26's were — the NYC observation carrier, five ingest-only adapter modules, `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly`, the roster of twenty-seven, and CDM schema 3.2.0 — so its first subject is that every one of the run's six jobs succeeded and that the tag names the release commit itself again; its second is that the wire contract moved a MINOR for the second release running, and that the 3.2.0 contract frozen IN the release commit as `SELF` is resolved by this round to the commit the tag names, with the bridge distribution, now 1.1.0, released in the tag and not on the index; and its third is the pipeline's `witness` job succeeding end to end for the fifth time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 27 closes no earlier entry. Entry 28 is the 3.6.0 release, the twentieth closed by an act, published from one tag with no refusal anywhere in its run, as entries 24's, 25's, 26's and 27's were — the `grib2`, `cog` and `iem_n0q` adapter modules on the shared codec `raster_codec`, the roster of thirty, on CDM schema 3.2.0 unchanged — so its first subject is that every one of the run's six jobs succeeded and that the tag names the release commit itself again; its second is that no wire contract moved, so that the release commit froze nothing and no `SELF` provenance waits for this round, with the bridge distribution, still 1.1.0, released in the tag and not on the index; and its third is the pipeline's `witness` job succeeding end to end for the sixth time, on an approval whose comment named the readiness report at the tagged commit, so that the committed record is the pipeline's own and nobody designated anything. Entry 28 closes no earlier entry. Entries 2, 3 and 4 are open. None blocks
 anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -4753,6 +4753,161 @@ docstring states doing what it says. This act writes one file, `PUBLICATION.md`:
 second file was the adapter's own implementation record, and the observation carrier has none, so
 there is no second record to date. It is not a page the site renders, nothing under `packages/cdm/`
 moves, and `PACKAGE_VERSION` still reads `3.5.0`.
+
+### 28. `synapse-cdm` 3.6.0 is on the index — CLOSED, and it is the release that carries the `grib2`, `cog` and `iem_n0q` adapters, #29 to #31, to the index (CDM schema 3.2.0 unchanged), whose tag names its release commit, and the sixth whose witness record the pipeline built, verified and attached
+
+**Published 2026-10-19** by
+[run 39190348178](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/39190348178),
+triggered at 02:31:14Z on 2026-10-19 by the push of the `v3.6.0` tag at `4aee3f67` — tag object
+`ec19c61b`, annotated, tagger Matej Michalko at 02:27:39Z, its message naming the release, the three
+gridded-observation adapter modules it ships, `grib2` as #29, `cog` as #30 and `iem_n0q` as #31, and
+the CDM 3.2.0 contract they ship on.
+**Every one of the run's six jobs reads `success`**: gate, build, attest, publish, release and
+witness. The gate job's condition 1 read `13292 passed, 222 skipped` and its conformance sweep
+`30 of 30 CONFORMANT`; the build job's condition 2 read `13 checks, 0 failed` (the harness over
+30 adapter modules in 2 schema modes, 1 448 fixture verdicts, and the installed-package slice
+`7420 passed, 114 skipped`; the mutation check's own reading `13 checks, 5 failed`, the mutation
+caught by the harness, manifest, prose, resources and scripts checks), `twine check --strict`
+`PASSED` on both files, its package test from the installed wheel `30 of 30 CONFORMANT`, and its
+condition 4 `13292 passed, 222 skipped`; the attest job's verify step set `verified_at`, which the
+witness job handed the builder as `2026-10-19T04:19:47Z`. The `pypi` environment held the upload
+from 04:19:50Z until it was approved at **07:09:48Z on 2026-10-19**, the day the tag was pushed, and
+deployment `7165604462` carries the sequence: `waiting` at 04:19:50Z, `queued` at 07:09:48Z,
+`in_progress` at 07:09:51Z, `success` at 07:10:17Z. The `release` job published the Release at
+**07:10:41Z**, and the `witness` job built, verified and attached the record — the paragraph below.
+
+**THE APPROVAL, AND WHAT IT WAS TAKEN ON.** `GET /actions/runs/39190348178/approvals` returns one
+entry: approver `decentcybersecurity`, `state: approved`, environment `pypi`, and the comment
+*Approved on the readiness report at the release commit:
+https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/4aee3f673f6f8ea19f3ad7f913dc1e5683bcfeaa/docs/soif-part1-release-readiness.md*.
+The entry's keys are `comment`, `environments`, `state` and `user`, and the approvals endpoint carries
+no instant; `07:09:48Z` is the deployment's `queued` status, which is where the builder reads
+`approved_at` from. The comment names the readiness report at `4aee3f67`, the release commit and the
+commit the tag names — the document the release-readiness protocol says an approval is taken on, at
+the tree that was published — and that is what this approval was taken on, in the approver's own
+words. The rule the release procedure has carried since 2026-09-17 was followed: the sixth time,
+after entry 21's approval, entry 24's, entry 25's, entry 26's and entry 27's. The hold stood from
+04:19:50Z, two seconds after the attest job completed at 04:19:48Z, to the approval at 07:09:48Z.
+
+**WHAT THE RELEASE CARRIES, AND WHY THE TAG NAMES THE RELEASE COMMIT AGAIN.** The release commit is
+`4aee3f673f6f8ea19f3ad7f913dc1e5683bcfeaa`, on the NYC raster landing `dc247ce2` — three ingest-only
+adapter modules, `grib2`, `cog` and `iem_n0q`, landing as #29 to #31 on the shared codec
+`adapters/raster_codec.py`, the roster moving to thirty, with their rows and a GRIB2 message framer
+in the offline host command `synapse-decode` — which is on `d695f56`, this ledger's 3.5.0 docs act,
+so the tag contains four commits past `v3.5.0`, the 3.5.0 witness round and docs act among them.
+**No wire contract moved**: `SCHEMA_VERSION` stays 3.2.0, no published schema and no frozen contract
+changed — `tests/frozen/` and `schemas/` are byte-identical between `21630a4` and `v3.6.0` — and the
+release commit froze nothing, so there is no `SELF` provenance for this round to resolve (below).
+`gates/bump_derivation.py --json`, read in the witness round before any edit, derives MINOR over the
+arc from `v3.5.0` to `v3.6.0` over 383 signals — 176 MINOR, 207 PATCH — with four units, every one
+of them `decode_host.py`'s and MINOR (`Hosted`, `HOSTED`, `decode` and `listing`), decided by the
+bump rulings in the 3.6.0 section of `MIGRATIONS.md`, no version ruling, and nothing unruled. The
+tag names that commit and not a follow-up: on the `main` push of `4aee3f67`, `CI` run 39190067608
+read the four suite, gates and manifests jobs red on the nine tag-conditional tests only, nine failed
+in each and each of the nine named in every leg's log, which a tag on the tree resolves — the gate
+job's condition 1, at the tag, read none failed — and every other job `success`, the
+`npm audit over docs/` job and the installed-package gate included; `CodeQL` run 39190067579 and
+`Gateway bridge package` run 39190067614 read `success`. Read out of the downloaded wheel rather than
+out of this tree, `synapse_cdm/version.py` line 601 reads `PACKAGE_VERSION = "3.6.0"`, line 457
+`SCHEMA_VERSION = "3.2.0"`, line 634 `ADAPTER_API_VERSION = "3.1.0"`, line 687
+`MANIFEST_SCHEMA_VERSION = "2.1.0"`, line 709 `EVIDENCE_SCHEMA_VERSION = "2.0.0"` and line 607
+`SC_OES_VERSION = "0.1.0"`: the package moved a MINOR and the wire contract did not, so the package
+is now four MINORs past the contract. **The bridge distribution was not uploaded**:
+`synapse-link16-bridge`, still 1.1.0, is in the tag's tree and in the Release's source archives, the
+Release carries no asset of it, and `GET /pypi/synapse-link16-bridge/json` answers 404 — no second
+project was created on the index in this release either, which is an act for the account owner, as
+the release notes say.
+
+**The digests, and all six were reachable from the Release alone.** `SHA256SUMS` names
+`111bea666635089a72e6e8892d8bd18f3ed83903763dd306b87d3c6b313bb2b3` for the wheel,
+`2cb40ab935ed8bfe4196719cab70cac796eb205cedd751717d2af0b0945033bc` for the sdist,
+`7c4341c3e39e7757e92bc8d5a80c425705e5bf40ecb5c10726d68910961b85a3` and
+`953b04ced81bbf03d37ee315f5d45f5bc1c15f84eb4e4c5add7a054820bf8cc2` for the CycloneDX and SPDX SBOMs,
+`8caccc32862a860512c3ed4b2278184d35888889b4f7a6a2fa38824290f50b41` for the conformance sweep and
+`19602b359fc5d10672e183e2fd69f15285a0fee1e3ec0af291ab132f427f4fa2` for the evidence bundle; Release
+`417001568`, *synapse-cdm 3.6.0*, reports the same six digests on the same six assets, at
+9 554 801, 6 707 793, 69 254, 110 994, 741 410 and 358 188 bytes, and a `gh release download v3.6.0`
+in the witness round re-hashed to all six. **The index agrees about the two that reach it**:
+`GET /pypi/synapse-cdm/3.6.0/json` returns the same wheel and sdist digests, with sizes 9 554 801 and
+6 707 793 bytes and upload times **07:10:09.680696Z** and **07:10:12.402352Z**, and the second of
+them is the instant this release became a thing a stranger could install; `GET /pypi/synapse-cdm/json`
+names `3.6.0` as the latest version. The bytes the index serves for both files were fetched and
+re-hashed to exactly those digests by `gates/witness_verify.py --download` in the witness round, and
+the Release's copies of both carry their archive magic (`PK\x03\x04`, `\x1f\x8b`). The Release body
+is byte-identical to the `release-notes-3.6.0.md` asset,
+`6d108d50ff0802c6bb992b934dce6374e3c1e344fbba563a314134cb97aff787` over 105 849 bytes on both. The
+evidence bundle carries ninety-one members, an `evidence.json` for each of the thirty adapter
+modules the sweep names, the three raster adapter modules among them, and the sweep reads each of
+the three CONFORMANT with E, I and M SKIP and every other check PASS.
+
+**THE PyPI PROVENANCE TRAP, EIGHTEENTH READING, AND IT READS AS THE FIFTH THROUGH SEVENTEENTH DID.**
+Read 2026-10-19 in the witness round, the two per-file objects for 3.6.0 in
+`GET /pypi/synapse-cdm/3.6.0/json` carry no `provenance` key at all — sixteen keys each, probed for the
+KEY and not for a value. `GET /simple/synapse-cdm/` with `Accept: application/vnd.pypi.simple.v1+json`
+lists twenty-one versions and forty-two files at serial 42426777, the last two 3.6.0's, and gives each
+a `provenance` URL under `https://pypi.org/integrity/synapse-cdm/3.6.0/<filename>/provenance`; both
+answer with one bundle holding one attestation. The bundle at the wheel's names `kind` **GitHub**,
+`repository` **Decent-Cybersecurity/synapsecommand-public**, `workflow` **publish.yml**, `environment`
+**pypi**, and its in-toto statement's `predicateType` is `https://docs.pypi.org/attestations/publish/v1`
+with `subject[0].digest.sha256` `111bea66…6b313bb2b3`, the wheel's own digest; the sdist's
+bundle reads the same four values with `2cb40ab9…0b0945033bc`. The witness record carries the
+attestation job's instant and the canonical digest of the wheel's bundle in the repository's
+attestation store, `c6cac02395bcffa8de3663119dd355b5a69f6b91f69bfc61ef2fed98e303f88a`, which the
+store's one bundle for the wheel hashes to when read in the witness round.
+
+**THE WITNESS JOB SUCCEEDED END TO END, FOR THE SIXTH TIME — AND THE COMMITTED RECORD IS THE
+PIPELINE'S OWN.** The `witness` job of run 39190348178 is the job's ninth execution on a tag push.
+Its build step read the run's one approval under `actions: read`, the `pypi` deployment's status
+history under `deployments: read`, fetched the attestation store by the wheel's digest, was handed
+`--attestation-bundles`, and wrote `witness-3.6.0.json for v3.6.0 (2 files, 1 approval(s))`, with
+`review_file` lifted from the approval's comment and `--review-file` not passed. Its verify step,
+`gates/witness_verify.py witness-3.6.0.json --download --assets assets` with a token, read
+`VERIFIED witness-3.6.0.json (3.6.0, against the index and Release and the assets under assets)` and
+`1 witness record(s), 0 disagreeing`; its attach step put the record on the Release as its ninth
+asset, 2 188 bytes, sha256 `c29fda09f22c8647abb59795df5bbaa842dfcec8f9ca066e1406163880914e09`.
+`releases/witness/3.6.0.json` is that asset **unchanged**, downloaded from the Release by the witness
+round and compared byte for byte. `approved_at` reads `2026-10-19T07:09:48Z`, the deployment's
+`queued` status; `attestation.verified_at` reads `2026-10-19T04:19:47Z`, the attest job's verify
+step; `released_at` reads `07:10:41Z`. `gates/witness_verify.py` reports `VERIFIED` over it in every
+mode — `--offline`, `--offline --assets` over the Release download, online, `--download` over the
+committed path, `--download --assets` with a token (the job's own invocation) — and
+`9 witness record(s), 0 disagreeing` over all nine records offline; `tests/test_cdm_witness.py`
+holds it by digest among the pipeline's records, beside entry 21's, entry 24's, entry 25's, entry
+26's and entry 27's. Nobody designated anything: the record's `comment` and `review_file` name the
+same document because the approver typed it.
+
+**NO `SELF` PROVENANCE WAITS FOR THIS ROUND.** Entries 26 and 27 each resolved a contract the
+release commit had frozen IN itself as `SELF`. 3.6.0 froze none: `tests/frozen/cdm/MANIFEST.json`
+reads no `SELF` provenance on any of its five contracts, the 3.2.0 row still names
+`da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names, and this round does not touch
+the file. The slot stays free for the next freeze.
+
+**This round writes six files**, and the two beside them are the test modules that state the ledger
+count and the record roster. No implementation record carries the raster adapter modules, so the
+round's dated account of the release is a paragraph in the pipeline section of `MIGRATIONS.md`
+rather than a page of its own, as it was for 3.5.0. `releases/witness/3.6.0.json` is new;
+`PUBLICATION.md` gains this entry; `docs/docs/changelog.mdx` gains a dated measurement beside the
+3.6.0 paragraph whose present-tense sentence about what the index serves stopped being true at
+07:10:12Z; `packages/cdm/synapse_cdm/MIGRATIONS.md` records the act and the release's account, opens
+the pending section this one-file change makes necessary, and dates its witness paragraphs with what
+run 39190348178 did; `releases/witness/README.md` and `docs/docs/security/release-pipeline.mdx` are
+dated the same way, and the README says what `review_file` means for 3.6.0;
+`tests/test_cdm_witness.py` adds `3.6.0.json` to the records it holds as the pipeline's, and
+`tests/test_cdm_publication.py` moves its docstring and its number vocabulary, which ended at
+twenty-seven. **Nothing under `packages/cdm/synapse_cdm/` moved except `MIGRATIONS.md`**, and
+`PACKAGE_VERSION` still reads `3.6.0`.
+
+**What this entry does not claim.** It does not claim the witness job will succeed on the next tag:
+it has now succeeded six times in nine executions, and both refusals that were not about a missing
+instant were about a human input. It does not claim the documentation site is deployed or gated: the
+docs act is a later act and not this round's, and the deployment record's next row is that act's. It
+does not claim that a real file of any of the three formats translates: every fixture of the three
+adapter modules is synthetic, as the release notes say, and each module's `independent_endpoint`
+evidence is ABSENT. It does not claim the contract owner's answer on the observation carrier has
+arrived. It does not claim the bridge distribution is on the index. It does not claim the length of
+the `pypi` hold says anything about the release beyond when it was approved. It does not claim the
+simple index's lag has a length. And it does not claim PyPI's `provenance` key is absent on any
+release but those this ledger has read.
 
 ## The deployment was not affected
 

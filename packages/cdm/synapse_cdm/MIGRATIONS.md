@@ -427,6 +427,25 @@ download, online with `--download` and over all eight records, and committed it 
 `tests/test_cdm_witness.py`; `PUBLICATION.md` entry 27 is the ledger's account. The directory holds
 eight records: three built by hand and five the pipeline's.
 
+**And on 2026-10-19 the ninth execution succeeded end to end: the `v3.6.0` push, run
+39190348178.** All six of the run's jobs read `success` — gate, build, attest, publish, release and
+witness — which is the reading the sentence above asks for before a witness round commits the
+pipeline's record. Its build step, under the same grants, read the run's one approval — given at
+07:09:48Z on 2026-10-19, the day the tag was pushed, by `decentcybersecurity` with the comment
+*Approved on the readiness report at the release commit:* and the readiness report's URL at
+`4aee3f67`, the release commit and the commit the tag names, so `review_file` is derived from the
+approval's own words and designated by nobody — and the `pypi` deployment's status history, fetched
+the attestation store by the wheel's digest, was handed `--attestation-bundles`, and wrote
+`witness-3.6.0.json for v3.6.0 (2 files, 1 approval(s))`; its verify step, `--download --assets
+assets` with a token, read `VERIFIED`; its attach step put the record on the Release as its ninth
+asset. The rule this procedure states for the approval — a non-empty comment naming what the
+approval was taken on — was followed, the sixth time, after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s,
+`v3.4.0`'s and `v3.5.0`'s. The witness round downloaded that asset, verified it again offline
+against the Release download, online with `--download` and over all nine records, and committed it
+as `releases/witness/3.6.0.json` — the same bytes, sha256 `c29fda09…`, held by digest in
+`tests/test_cdm_witness.py`; `PUBLICATION.md` entry 28 is the ledger's account. The directory holds
+nine records: three built by hand and six the pipeline's.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -624,6 +643,31 @@ index took the wheel at 04:04:07Z and the sdist at 04:04:09Z, and Release 415573
 adapter modules among its twenty-seven. The bridge distribution, `synapse-link16-bridge` 1.1.0, is
 in the tag and not on the index. `PUBLICATION.md` entry 27 is the measurement.
 
+**Also 2026-10-19: the ninth execution succeeded, on a non-empty comment again.** The `v3.6.0`
+push, run 39190348178, built, verified and attached `witness-3.6.0.json`, its approval comment
+naming the readiness report at the commit the tag names, and `releases/witness/3.6.0.json` is that
+asset byte for byte. The directory holds nine records: three built by hand and six by the
+pipeline. `PUBLICATION.md` entry 28 is the measurement.
+
+**Also 2026-10-19: the 3.6.0 release's account, here because no implementation record carries it.**
+The three raster adapter modules, `grib2`, `cog` and `iem_n0q`, and their shared codec have no
+`docs/*-implementation.md` page, so the release's dated account is this paragraph, as the 3.5.0
+release's is the one above. The release commit `4aee3f673f6f8ea19f3ad7f913dc1e5683bcfeaa`, on the
+landing `dc247ce2`, is the commit `main` points at on GitHub; on its `main` push `CI` run
+39190067608 read the four suite, gates and manifests jobs red on the nine tag-conditional tests
+only, nine failed in each and each of the nine named in every leg's log, and every other job
+`success`, and `CodeQL` run 39190067579 and `Gateway bridge package` run 39190067614 read
+`success`. The annotated tag `v3.6.0` (tag object `ec19c61b8af61c4d176eaa58d190c2547758026d`) names
+that commit, and the Release run 39190348178 on its push, at 02:31:14Z, read all six jobs
+`success`, the gate job's condition 1 `13292 passed, 222 skipped` with none failed and its
+conformance sweep `30 of 30 CONFORMANT`. The `pypi` hold began at 04:19:50Z and was released at
+07:09:48Z; the index took the wheel at 07:10:09Z and the sdist at 07:10:12Z, and Release 417001568
+was published at 07:10:41Z with nine assets, its evidence bundle carrying an `evidence.json` for
+each of the three new adapter modules among its thirty. No wire contract moved: `SCHEMA_VERSION`
+stays 3.2.0 and no contract was frozen, so this release leaves no `SELF` provenance to resolve. The
+bridge distribution, `synapse-link16-bridge` 1.1.0, is in the tag and not on the index.
+`PUBLICATION.md` entry 28 is the measurement.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -636,6 +680,31 @@ now true of it.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.6.0`, and `3.6.0` is what the index serves — `PUBLICATION.md` entry 28 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated witness paragraphs in the release procedure and the pipeline section, the release's dated
+account in the pipeline section, and the index note in the 3.6.0 section being what moved in it.
+Everything else the round touched ships in nothing: the ledger, the witness record and its README,
+the release-pipeline and changelog pages, and two test modules.
+
+**THE 3.6.0 WITNESS ROUND's RECORD, 2026-10-19 — the record is the pipeline's own, for the sixth
+time.** Run 39190348178's `witness` job built `witness-3.6.0.json`, its verify step read `VERIFIED`
+with `--download --assets assets` and a token, and its attach step put it on the Release, because
+the `pypi` approval carried a non-empty comment naming the readiness report at the commit the tag
+names. `releases/witness/3.6.0.json` is that Release asset byte for byte, verified by
+`gates/witness_verify.py` offline against the Release download, online with `--download`, and over
+all nine records, before it was committed. Ledger entry 28 records the upload and the readings
+behind it; the dated witness paragraphs say what this run did; `tests/test_cdm_witness.py` holds the
+record by digest among the pipeline's. This round resolves no `SELF` provenance: 3.6.0 froze no
+contract — the CDM schema stays 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the
+3.2.0 row still names `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names.
+Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.6.0`.
+
 ### 3.6.0 — 2026-10-18 — the NYC raster adapters: three observation adapter modules land, `grib2` as #29, `cog` as #30 and `iem_n0q` as #31, on the shared codec `raster_codec`, the roster moves twenty-seven to thirty, `synapse-decode` gains their rows and a GRIB2 message framer, and no wire contract moves
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
@@ -647,7 +716,8 @@ upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledg
 watched the upload and is not asserted here before it has happened. The paragraph this replaces
 said that nothing in the section was in a release, that the newest release tag was `v3.5.0` and
 that `3.5.0` was what the index served (`PUBLICATION.md` entry 27) — the first clause stops being
-true at this commit and the other two stay true until an upload changes them.
+true at this commit and the other two stay true until an upload changes them. **Measured after the upload, 2026-10-19:** `3.6.0` is what the
+index serves since 07:10:12Z, and `PUBLICATION.md` entry 28 is the measurement.
 
 **THE PACKAGE VERSION MOVED 3.5.0 -> 3.6.0 ON 2026-10-18, AND THE NUMBER IS THE DERIVED FLOOR.**
 `gates/bump_derivation.py` reads the arc from `v3.5.0` and derives MINOR with nothing unruled: on
