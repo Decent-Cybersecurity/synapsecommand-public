@@ -46,7 +46,7 @@
         "IEM NEXRAD N0Q composite PNG (n0q_YYYYMMDDHHMM.png), 12200 x 5400 8-bit palette indices, IHDR held to the product constant, every chunk's CRC checked, the image data inflated and the five filter types undone, index 0 missing and index i (i - 65) / 2 dBZ; one ENVIRONMENTAL_OBSERVATION Event (gridded-field/1) at the caller's archive slot, the values by reference with a dBZ summary"
       ],
       "unknown_fields": "none",
-      "unknown_fields_basis": "the dict form is held to be exactly what its own wire_hex decodes to, so a key injected into a twin is refused `not-a-twin` or `twin-disagrees`; on the wire, an ancillary chunk this module does not read is kept in the residual (a tEXt chunk as its keyword and text, any other as its octets), and an unknown critical chunk is refused",
+      "unknown_fields_basis": "the dict form is held to be exactly what its own wire_hex decodes to, so a key injected into a twin is refused `not-a-twin` or `twin-disagrees`; on the wire, an ancillary chunk this module does not read is kept in the residual (a tEXt chunk as its keyword and text, any other as its octets), at most 64 of them and 1 MiB of their data octets in all (`too-many-ancillary-chunks` and `ancillary-past-the-bound` past either; ANCILLARY_BOUNDS_BASIS, since 2026-10-18), and an unknown critical chunk is refused",
       "wire": true
     },
     "claim_external_system": null,
@@ -54,7 +54,7 @@
     "constituents": [],
     "direction": "ingest",
     "evidence": {
-      "available": false
+      "available": true
     },
     "format": {
       "name": "IEM NEXRAD N0Q composite PNG (W3C PNG, IEM product composite_n0q)",
@@ -104,7 +104,7 @@
         "id": "evidence-availability",
         "notes": null,
         "severity": null,
-        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "summary": "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains",
         "unsupported_paths": []
       }
     ],

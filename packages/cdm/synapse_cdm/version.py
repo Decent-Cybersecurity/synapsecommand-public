@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.5.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.6.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.2.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -111,7 +111,13 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   and ``Track`` gained ``attributes``, each an addition, for the
                                   observation adapters, so the schema read 3.2.0, and the
                                   package took 3.5.0 for those adapter modules and that schema
-                                  MINOR together, on the same two grounds as 3.4.0.)
+                                  MINOR together, on the same two grounds as 3.4.0. And on
+                                  2026-10-18, at 3.6.0 against 3.2.0, for the ordinary reason
+                                  again: the raster half of the observation arc added the
+                                  ``grib2``, ``cog`` and ``iem_n0q`` adapters and the shared
+                                  codec ``raster_codec``, and moved no model, enum or published
+                                  schema, so the package took a MINOR the wire contract had no
+                                  part in.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -164,8 +170,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.5.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
-sixteenth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.6.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
+seventeenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -265,7 +271,15 @@ the ``synapse-decode`` host command, and removed nothing, and it moved the wire 
 ``Track`` gained ``attributes``, MIGRATIONS.md's MINOR row ("an optional field added; an enum
 member added"). ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled once
 MIGRATIONS.md's rulings in the 3.5.0 section are read, and the two numbers read 3.5.0 and 3.2.0.
-MIGRATIONS.md's 3.5.0 section is the record.)
+MIGRATIONS.md's 3.5.0 section is the record. **Corrected a fourteenth time 2026-10-18, the 3.6.0
+release, and the parting is four MINORs wide, the fourth for the ordinary reason again**: the
+raster half of the NYC observation arc since ``v3.5.0`` added three ``Adapter`` subclasses,
+registered as ``grib2``, ``cog`` and ``iem_n0q``, with their fixture sets and the shared codec
+``raster_codec``, and the ``synapse-decode`` command gained their rows and a GRIB2 message framer,
+and removed nothing; ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled
+once MIGRATIONS.md's four rulings in the 3.6.0 section are read. The schema moved by nothing: no
+model, no enum, no published schema and no golden of the twenty-seven that predate the arc
+changed, and the two numbers read 3.6.0 and 3.2.0. MIGRATIONS.md's 3.6.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -571,7 +585,20 @@ SCHEMA_VERSION = "3.2.0"
 #: `synapse-link16-bridge` moves 1.0.0 -> 1.1.0 on its own version and stays outside this one.
 #: `ADAPTER_API_VERSION` stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and
 #: `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
-PACKAGE_VERSION = "3.5.0"
+#: Moved 3.5.0 -> 3.6.0 on 2026-10-18, a MINOR, and this one IS the derived floor — the ordinary
+#: reason, as 3.3.0 was: the raster half of the NYC observation arc since `v3.5.0` adds three
+#: `Adapter` subclasses, registered as `grib2`, `cog` and `iem_n0q`, with their fixture sets and
+#: the shared codec module `raster_codec`, gives `synapse-decode` their rows and a GRIB2 message
+#: framer, and removes nothing — the roster moves twenty-seven -> thirty.
+#: `gates/bump_derivation.py` read the arc as MINOR with nothing unruled and the next release at
+#: least 3.6.0 before this number was typed, and derives MINOR over it with nothing unruled once
+#: MIGRATIONS.md's rulings in the 3.6.0 section are read, so the gate's floor and this number are
+#: one number and no Version ruling is needed. `SCHEMA_VERSION` stays at 3.2.0: no model, enum,
+#: published schema or golden of the twenty-seven moved. The sibling distribution
+#: `synapse-link16-bridge` stays at 1.1.0 and outside this one. `ADAPTER_API_VERSION` stays at
+#: 3.1.0, and `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0
+#: release put them.
+PACKAGE_VERSION = "3.6.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

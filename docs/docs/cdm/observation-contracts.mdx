@@ -61,7 +61,11 @@ observation covers is `Event.validity.effective`; an instant sets `end` equal to
 - **Values.** `values` is `ValuesByReference` (`mode: "reference"`: a locator, `shape`, `dtype`,
   `encoding`, `scale`, `offset`, `fill` and an optional `summary` of `count`, `missing_count`,
   `min` and `max`) or `ValuesInline` (`mode: "inline"`: at most `MAX_INLINE_VALUES` = 4096 values,
-  `null` for a missing one with its `missing_mechanism`). Inline values need a unit.
+  `null` for a missing one with its `missing_mechanism`). Inline values need a unit. (Since
+  2026-10-18, the 3.6.0 release: the domain of `summary`'s `min` and `max` is the one its
+  producer declares, the stored values for `cog` and the decoded values, after `scale` and
+  `offset`, for `grib2` and `iem_n0q`, until the contract owner rules on one domain for every
+  producer.)
 - **Where in the source.** `locator` is one of seven kinds, by `kind`: `grib` (message ordinal,
   field ordinal, byte offset), `radar` (LDM record, message, elevation number, azimuth number,
   moment), `table` (data row, header lines), `raster` (band file, IFD, tile or window), `parquet`

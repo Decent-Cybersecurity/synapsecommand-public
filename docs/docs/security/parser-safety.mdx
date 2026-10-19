@@ -336,7 +336,10 @@ critical chunk and an interlaced image by name, inflates the stream with `zlib.d
 `max_length` into a buffer of exactly the rows, refusing the first octet past them and a stream
 that ends early or leaves octets after itself, and undoes the five filter types in place. A `tEXt`
 chunk is read under the PNG's keyword rules; every other ancillary chunk is kept as its octets and
-read for nothing.
+read for nothing. Since 2026-10-18 (the 3.6.0 release) the ancillary chunks are bounded as well: at most
+64 of them and at most 1 MiB of their data octets, the 65th chunk refused as `too-many-ancillary-chunks`
+and the octet past the bound as `ancillary-past-the-bound`, each in the chunk walk before anything is
+inflated (`iem_n0q.ANCILLARY_BOUNDS_BASIS`).
 
 ## 4. SQLite — Part 2 (GeoPackage)
 

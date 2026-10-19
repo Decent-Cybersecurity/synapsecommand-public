@@ -144,7 +144,8 @@ def test_the_adapter_is_registered_and_declares_what_the_round_ruled():
         "L3",
         "VERIFIED",
         "structured",
-        False,
+        # The 3.6.0 release commit (2026-10-18) flips the evidence declaration it landed with.
+        True,
     )
     limits = meta.capabilities.limits
     # U-07: one file <= 256 MiB; one 512 x 512 Float32 tile decoded; one object a file.

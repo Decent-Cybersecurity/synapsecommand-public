@@ -1036,3 +1036,42 @@ def test_idat_split_across_chunks_and_inflated_in_small_steps_is_one_stream(monk
     gap += chunk(b"IDAT", data[5:]) + chunk(b"IEND", b"")
     err = refusal(lambda: codec.read_png(gap, max_decompressed_bytes=35))
     assert str(err) == "png-chunk-order: the IDAT chunks are not consecutive"
+
+
+def test_the_ancillary_chunks_a_caller_bounds_are_refused_in_the_walk_at_either_bound():
+    # Added 2026-10-18 (the 3.6.0 release round, R7 review F-01): `read_png` takes an optional
+    # count and an optional total of data octets for the ancillary chunks it keeps. Three chunks
+    # of 2, 3 and 4 data octets, 9 in all, ahead of an IDAT that is not a zlib stream: a refusal
+    # through it proves the walk refused before anything was inflated.
+    extra = chunk(b"tEXt", b"a\x00") + chunk(b"teSt", b"xyz") + chunk(b"tIME", b"\x07\xea\x04\x1d")
+    never = png(6, 5, ROWS, [0] * 5, extra=extra, idat=b"never inflated")
+    for count, octets, text in (
+        (2, None, "too-many-ancillary-chunks: the file holds more than 2 ancillary chunks"),
+        (0, None, "too-many-ancillary-chunks: the file holds more than 0 ancillary chunks"),
+        (
+            None,
+            8,
+            "ancillary-past-the-bound: the ancillary chunks hold more than 8 data octets in all",
+        ),
+        (
+            3,
+            4,
+            "ancillary-past-the-bound: the ancillary chunks hold more than 4 data octets in all",
+        ),
+    ):
+        err = refusal(
+            lambda: codec.read_png(
+                never,
+                max_decompressed_bytes=1024,
+                max_ancillary_chunks=count,
+                max_ancillary_octets=octets,
+            )
+        )
+        assert str(err) == text, (count, octets)
+    # At both bounds exactly, and with neither (the default, as before the bounds existed), the
+    # three chunks are kept in file order.
+    good = png(6, 5, ROWS, [0] * 5, extra=extra)
+    kept = (("tEXt", b"a\x00"), ("teSt", b"xyz"), ("tIME", b"\x07\xea\x04\x1d"))
+    for bounds in ({"max_ancillary_chunks": 3, "max_ancillary_octets": 9}, {}):
+        image = codec.read_png(good, max_decompressed_bytes=1024, **bounds)
+        assert image.ancillary == kept, bounds

@@ -916,6 +916,28 @@ subject begins `Release 3.5.0` and its hash is deliberately not written here, fo
 section's first paragraph gives. The tag that names 3.5.0 is to be placed on it after `main`
 is fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-10-18, the 3.6.0 release commit.** `v3.5.0` was placed on
+**`da2e197d9c0612322ed9763e29f3ea4e2fa70132`** and published (`PUBLICATION.md` entry 27). `main`
+then moved twice by fast-forward, through the 3.5.0 witness round
+**`21630a492c9a7fc7692a8a59be4ba2ea73dfbfac`** and the docs-deploy commit
+**`d695f5635b8ada3bf19a875e6d6e3157b20cdd43`**, which is the tip of `main` and of `origin/main` at
+the time of writing. This report also describes the raster half of the NYC observation arc, landed
+on that tip as one commit on `soif/nyc-observations-3.6` and none on `main`:
+**`dc247ce25be95418559066cafdbfa11a3307a5e6`** (the adapter modules `grib2`, `cog` and `iem_n0q`
+with the codec `raster_codec` and their `synapse-decode` rows, the roster twenty-seven to thirty,
+the number untyped), the tip of that branch at the time of writing. On it `CI` run 39133076234 (a
+`push` event) read `success` on all eleven of its jobs — the suite, gates and manifests on Python
+3.11, 3.12, 3.13 and 3.14; lint; the conformance sweep; evidence records, provenance and badges;
+gitleaks; pip-audit; `npm audit` over `docs/`; and the wheel gate — so no job was red, the
+tag-conditional set included, which reads green on a tree whose `PACKAGE_VERSION`, 3.5.0 there, a
+tag already names. `CodeQL` run 39133076223 succeeded on both languages, and the bridge's own
+workflow, `Gateway bridge package` run 39133076213, read `success` on Python 3.11, 3.12, 3.13 and
+3.14. `git merge-base --is-ancestor d695f56 dc247ce` exits 0, so `main` can be fast-forwarded to
+it. The release commit itself sits on `soif/release-3.6.0`, a branch created from that tip; its
+subject begins `Release 3.6.0` and its hash is deliberately not written here, for the reason the
+section's first paragraph gives. The tag that names 3.6.0 is to be placed on it after `main`
+is fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1276,6 +1298,48 @@ request) have met the documents and not a real file; that the AirNow Data Exchan
 terms bind anyone but the consumer of AirNow data; and the bridge on the package index — it
 reaches the Release as source in the tag. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-18, the 3.6.0 release: the verdict is `ready for PR` (3.6.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.6.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.5.0` as `{"kind": "MINOR", "number": "3.6.0", "unruled": []}` on the landing commit
+before the number was typed), and the wire contract does not move: `SCHEMA_VERSION` stays
+**3.2.0**, because no model, enum or published schema changed (`schemas --check` CURRENT at 3.2.0,
+`git diff v3.5.0 -- schemas/` empty). `KNOWN_CONTRACTS`, the frozen contracts and the version matrix
+do not move. `ADAPTER_API_VERSION` 3.1.0, the manifest schema 2.1.0 and the evidence schema 2.0.0
+stay where they were, and the bridge `synapse-link16-bridge` stays at 1.1.0, nothing under it
+having moved. The four units the gate's table cannot decide — `decode_host.py`'s `Hosted`, `HOSTED`,
+`decode` and `listing`, each MINOR — are ruled in `MIGRATIONS.md`'s 3.6.0 section, so on the release
+commit without its tag the gate reads its rulings under the pending heading the roll removed and
+refuses those four units, and the bump tests join the tag-conditional set. What was verified on the
+release tree before it was committed: the full suite on Python 3.11, 3.12 and 3.14, read by
+subtracting the tag-conditional set test by test; `schemas --check` CURRENT at 3.2.0, `manifests
+--check` CURRENT for the thirty shipped adapters, the support-matrix, current-contracts,
+observation-contracts and schema-page checks CURRENT; the pin-path and parks-table gates; ruff
+0.16.9, the pin, on the package, the gates, the tests and the bridge; `harness --update-golden` over
+all thirty adapters moving no golden; the harness over all thirty and the conformance sweep from a
+wheel built from the staged tree; the three raster builders' `--check`; and the wheel gate without
+`--mutation-check`, `13 checks, 0 failed`, its slice among them, whose `resources` and `harness` readings
+are `30 adapters, 754 fixture files` and `30 adapters x 2 schema modes, 1448 fixture verdicts, 0 failed`. Read by the release round and not here: the same tree committed
+in a throwaway clone at a local annotated `v3.6.0`, the wheel gate's `--mutation-check`, the build
+job's package test, the docs build, CI and CodeQL on the pushed release commit, and everything
+about the upload. The evidence categories of each new adapter, as generated on this tree:
+`internal_fixture` PRESENT, `self_round_trip` NOT_APPLICABLE (each is ingest-only),
+`independent_expected`, `normative_schema` and `independent_endpoint` ABSENT. **What is judged,
+each with its source.** The maintainer's rulings of 2026-10-14 (the observation carrier, synthetic
+fixtures only, no new extras, the bounds, the pin route, the identifier convention, three batched
+releases) and the ones of 2026-10-16 and 2026-10-17 on this release's readiness list and on running
+it; the bounds the arc's reviews asked for, each declared with its basis — `grib2`'s grid-point
+bound and `iem_n0q`'s ancillary-chunk bounds, the second added by the release commit. **What is NOT
+claimed:** that a real file of any of the three formats translates — every fixture is synthetic and
+no real collection is in the repository, so the strict readings (the GRIB2 templates and code-table
+rows read, the GeoTIFF coordinate systems and compressions read, the N0Q product constant) have met
+the documents and not a real file; that the units of a GRIB2 parameter outside the rows the pin
+lists are known; that Code Table 3.2's two radii were read from a pinned copy of the table — they
+rest on GDAL 3.13.3's reading of it, recorded in the pin; that a values summary has one domain for
+every producer — `cog`'s is its stored values and `grib2`'s and `iem_n0q`'s the decoded ones, until
+the contract owner rules; and the bridge on the package index — it reaches the Release as source in
+the tag. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1345,6 +1409,26 @@ resolves, the wheel-gate failure CI read on the landing is repaired in the relea
 nothing in section 15 or in the arc's own open items (the private readings of real files the
 maintainer keeps, listed for the maintainer with the licence classes of the two documents this
 release cites by reference) rises to a blocker. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-18, the 3.6.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set, which a tag on the tree
+resolves, and nothing in section 15 or in the arc's own open items rises to a blocker. The open
+items are listed for the maintainer and not argued here: the licence classes of the documents this
+release cites by reference — WMO-No. 306 and the NCEP GRIB2 pages (`grib2`), TIFF 6.0 beside OGC
+GeoTIFF 1.1 and OGC COG 1.0 (`cog`), the W3C PNG specification, OPEN, and IEM's pages, cited by URL
+(`iem_n0q`) — beside the two the 3.5.0 release listed, the AirNow Data Exchange Guidelines and
+readsb's `README-json.md`; Code Table 3.2's two radii against the published table (`grib2`, recorded
+by reference in its pin with GDAL 3.13.3's agreeing reading); the GRIB2 parameter units, stated only
+for the rows the pin lists; the maintainer's own re-run of the `grib2` and `cog` builders' `--check
+--require-gdal` on a named GDAL build before the release, recorded in the pins (on the release tree
+with GDAL 3.13.3 on the path both read `CURRENT`, the seven messages and the eight files re-written
+by GDAL); the private readings of real files —
+the text of IEM's `gentime`, which ancillary chunks and filter types a real N0Q composite carries, a
+real GRIB2 message and GeoTIFF; one complex-packing field with fewer present values than its order
+of differencing is walked twice, linear in its points and with no memory held (`grib2`, recorded and
+not changed: the fix is not one line); and the domain of a values summary, the contract owner's.
+The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

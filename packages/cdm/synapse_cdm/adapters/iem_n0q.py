@@ -64,7 +64,10 @@ A file that is not a PNG; an IHDR of any other size, depth or colour type; an in
 chunk whose CRC fails, out of order or past the end; an unknown critical chunk; image data that
 does not inflate to exactly its rows, or would inflate past them; an index past the palette; a
 `tEXt` chunk whose keyword or text breaks the PNG rules; a `gentime` that is blank, longer than
-1024 characters or stated twice. A refusal is an `IemN0qRefused` (`ValueError`) whose code names
+1024 characters or stated twice; more than 64 ancillary chunks, or more than 1 MiB of data octets
+in them all (`ANCILLARY_BOUNDS_BASIS`, added 2026-10-18 at the 3.6.0 release: the file bound alone
+admits about 540 000 empty `tEXt` chunks, which a review measured at about 749 MB resident). A
+refusal is an `IemN0qRefused` (`ValueError`) whose code names
 the rule and whose text names the structure, never a value from the payload.
 """
 
@@ -175,6 +178,34 @@ MAX_DEPTH = 16
 
 _CAP = "This is an IMPLEMENTATION CAP and is NOT the format's normative maximum."
 _TESTS = "tests/test_cdm_iem_n0q_adapter.py::"
+
+#: The most ancillary chunks, and the most data octets in them all, one file may carry (the 3.6.0
+#: release round, 2026-10-18, R7 review F-01). `Limits` has no field for either, so the two bounds
+#: and their basis are declared here, in the form a declared limit takes (readsb_trace's
+#: MAX_POINTS, grib2's MAX_GRID_POINTS).
+MAX_ANCILLARY_CHUNKS = 64
+MAX_ANCILLARY_OCTETS = 1024 * 1024
+ANCILLARY_BOUNDS_BASIS = LimitBasis(
+    kind=LimitKind.IMPLEMENTATION_CAP,
+    source=(
+        "Every ancillary chunk is kept in the residual, a tEXt chunk as its keyword and text and "
+        "any other as its octets in hexadecimal, and the 8 MiB file bound alone does not bound "
+        "them: an in-bound file of about 540 000 empty tEXt chunks was accepted and cost about "
+        "749 MB resident through synapse-decode (R7 review F-01, 2026-10-18). The design record "
+        "knows one ancillary chunk in an archive file, the tEXt gentime (its N0Q row), and PNG "
+        "states no limit on their number. 64 chunks (`MAX_ANCILLARY_CHUNKS`) and 1 MiB "
+        "(1 048 576 data octets in them all, `MAX_ANCILLARY_OCTETS`, `adapters/iem_n0q.py`) sit "
+        "far above one chunk of at most 1024 characters, in the measure of cog's structure "
+        "bounds (128 entries a directory, 4 MiB of values in all, D-R6-13). " + _CAP
+    ),
+    enforced_at=(
+        "`raster_codec.read_png`, handed both bounds by this module's `decode`: the chunk walk "
+        "refuses the chunk that would be the 65th ancillary one (`too-many-ancillary-chunks`) or "
+        "take their data octets past 1 MiB (`ancillary-past-the-bound`) as it meets it, before "
+        "anything is inflated and before the residual's list of chunks is built"
+    ),
+    test=_TESTS + "test_the_ancillary_chunks_are_held_to_their_count_and_octet_bounds",
+)
 
 TWIN_KEYS = ("wire_hex", "header", "palette", "ancillary", "index_summary")
 _HEX = re.compile(r"[0-9a-f]*")
@@ -311,7 +342,12 @@ def decode(octets: bytes) -> dict:
     """Everything an N0Q PNG states that this module reads, as its twin holds it (no `wire_hex`)."""
     header = _product_header(octets)
     try:
-        image = codec.read_png(octets, max_decompressed_bytes=MAX_DECOMPRESSED_BYTES)
+        image = codec.read_png(
+            octets,
+            max_decompressed_bytes=MAX_DECOMPRESSED_BYTES,
+            max_ancillary_chunks=MAX_ANCILLARY_CHUNKS,
+            max_ancillary_octets=MAX_ANCILLARY_OCTETS,
+        )
     except codec.RasterRefused as refusal:
         raise IemN0qRefused(refusal.code, refusal.text) from None
     if header is None:
@@ -527,8 +563,10 @@ class IemN0qAdapter(Adapter):
                 "the dict form is held to be exactly what its own wire_hex decodes to, so a key "
                 "injected into a twin is refused `not-a-twin` or `twin-disagrees`; on the wire, an "
                 "ancillary chunk this module does not read is kept in the residual (a tEXt chunk "
-                "as its keyword and text, any other as its octets), and an unknown critical chunk "
-                "is refused"
+                "as its keyword and text, any other as its octets), at most 64 of them and 1 MiB "
+                "of their data octets in all (`too-many-ancillary-chunks` and "
+                "`ancillary-past-the-bound` past either; ANCILLARY_BOUNDS_BASIS, since "
+                "2026-10-18), and an unknown critical chunk is refused"
             ),
         ),
         limitations=[
@@ -578,16 +616,21 @@ class IemN0qAdapter(Adapter):
             ),
             Limitation(
                 id="evidence-availability",
-                summary="`evidence.available` is false because no published Release carries "
-                "this adapter's records yet; it becomes true at the first release that "
-                "attaches them",
+                summary="the evidence RECORD for this adapter is not IN the distribution: "
+                "`evidence/` is untracked and unpackaged, CI generates the set on every "
+                "run, and the release pipeline generates the records for every shipped "
+                "adapter and attaches them to the GitHub Release of the version it "
+                "publishes. `evidence.available` is true because every published "
+                "distribution that carries this adapter has that Release, so its records "
+                "are retrievable by a third party; it says nothing about what the wheel "
+                "contains",
             ),
         ],
         limitations_empty_reason=None,
         residual=ResidualStance.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     TRANSFORMS: dict[str, str] = {"wire_hex": T_WIRE}

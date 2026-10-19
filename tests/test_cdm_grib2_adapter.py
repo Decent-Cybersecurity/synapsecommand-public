@@ -871,6 +871,30 @@ def test_the_two_named_spheres_take_their_radii_from_code_table_3_2():
     assert _close_to(_ring(_simple_message(grid=grid)), PROJ_RING_6367470)
 
 
+def test_the_table_3_2_radii_are_cited_by_reference_with_gdal_s_reading_beside_them():
+    # The 3.6.0 release round (2026-10-18, R5 D-3): the radii are not read from a pinned copy of
+    # Code Table 3.2, so the pin record cites the table by reference and records GDAL 3.13.3's
+    # reading of shapes 0 and 6, which agrees with the module's two figures.
+    assert grib2.SPHERES == {0: 6367470.0, 6: 6371229.0}
+    pin = json.loads((FIXTURES / "spec" / "grib2_pin.json").read_text(encoding="utf-8"))
+    shapes = pin["tables_read_by_row"]["earth_shapes"]
+    assert shapes["carried_here"] is False
+    assert sorted(shapes) == [
+        "carried_here",
+        "cited_in",
+        "independent_reading",
+        "read_from",
+        "standing",
+        "table",
+    ]
+    assert shapes["independent_reading"]["tool"].startswith('GDAL 3.13.3 "Iowa City"')
+    assert shapes["independent_reading"]["result"] == (
+        "shape 0: +R=6367470; shape 6: +R=6371229; shape 1, whose message states 637122900 at "
+        "scale factor 2: +R=6371229"
+    )
+    assert "6,367,470 m" in shapes["table"] and "6,371,229 m" in shapes["table"]
+
+
 #: PROJ's reading of a 40 x 20 Lambert grid's outline (gdaltransform, GDAL 3.13.3, 2026-10-17;
 #: R5 review 1, F-04): 3 km cells, secant latitudes 55 and 59 N, LoV 22 E, the first point
 #: 56.2 N 20.5 E, the 6,371,229 m sphere of shape 6. The first point is projected forward, each

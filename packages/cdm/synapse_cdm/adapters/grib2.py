@@ -294,6 +294,9 @@ SURFACES_SOURCE = f"{_GDAL_TABLES}: grib2_table_4_5"
 
 #: Code Table 3.2's spheres and their radii in metres; shape 1 states its own radius. An
 #: ellipsoid is refused for the Lambert grid: the footprint is converted with spherical formulas.
+#: The two radii were written from the table as this module's author knows it; GDAL 3.13.3 reads
+#: shapes 0 and 6 as the same two spheres (2026-10-18, the 3.6.0 release round), recorded with
+#: the table's citation by reference in `fixtures/grib2/spec/grib2_pin.json`, `earth_shapes`.
 SPHERES = {0: 6367470.0, 6: 6371229.0}
 
 # -- the section layouts -------------------------------------------------------------------------
@@ -2122,16 +2125,21 @@ class Grib2Adapter(Adapter):
             ),
             Limitation(
                 id="evidence-availability",
-                summary="`evidence.available` is false because no published Release carries "
-                "this adapter's records yet; it becomes true at the first release that "
-                "attaches them",
+                summary="the evidence RECORD for this adapter is not IN the distribution: "
+                "`evidence/` is untracked and unpackaged, CI generates the set on every "
+                "run, and the release pipeline generates the records for every shipped "
+                "adapter and attaches them to the GitHub Release of the version it "
+                "publishes. `evidence.available` is true because every published "
+                "distribution that carries this adapter has that Release, so its records "
+                "are retrievable by a third party; it says nothing about what the wheel "
+                "contains",
             ),
         ],
         limitations_empty_reason=None,
         residual=ResidualStance.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     TRANSFORMS: dict[str, str] = {

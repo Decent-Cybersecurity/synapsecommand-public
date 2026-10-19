@@ -48,7 +48,19 @@
       "read_from": "research-grib2 F04, which quotes the row as read in a browser on 2026-10-14",
       "carried_here": false
     },
-    "earth_shapes": "Code Table 3.2's spheres 0 (radius 6,367,470 m) and 6 (radius 6,371,229 m) are written into the adapter from the table as its author knows it; the design record quotes neither radius, so the two figures are an open reading for the maintainer (reports/R5-build.md, section 7). Shape 1 states its radius in the message and needs no table; the fixtures use shape 1."
+    "earth_shapes": {
+      "table": "GRIB2 Code Table 3.2, shape of the reference system: shape 0 a sphere of radius 6,367,470 m and shape 6 a sphere of radius 6,371,229 m, the two figures the adapter's `SPHERES` holds",
+      "cited_in": "the NCEP GRIB2 documentation and WMO-No. 306 above, both by reference",
+      "carried_here": false,
+      "read_from": "the table as the adapter's author knows it: the design record quotes neither radius",
+      "independent_reading": {
+        "tool": "GDAL 3.13.3 \"Iowa City\", released 2026/08/13 (gdalinfo --version)",
+        "how": "gdalinfo -proj4 on three copies of one GDAL-written Lambert conformal message (Template 3.30, written from a synthetic ASCII grid) whose Section 3 octet 15, the shape of the earth, was set to 0, 6 and 1, outside this repository; the three messages are not fixtures and are not carried",
+        "read_on": "2026-10-18",
+        "result": "shape 0: +R=6367470; shape 6: +R=6371229; shape 1, whose message states 637122900 at scale factor 2: +R=6371229"
+      },
+      "standing": "GDAL's reading agrees with both figures. It is a second implementation's reading of the table, not the table, so the maintainer's confirmation against the published table stays on the 3.6.0 readiness list. Shape 1 states its radius in the message and needs no table; the fixtures use shape 1."
+    }
   },
   "licence": {
     "license_class": "PUBLIC_GOVERNMENT",

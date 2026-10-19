@@ -144,7 +144,8 @@ def test_the_adapter_is_registered_and_declares_what_the_round_ruled():
         "L3",
         "VERIFIED",
         "structured",
-        False,
+        # The 3.6.0 release commit (2026-10-18) flips the evidence declaration it landed with.
+        True,
     )
     limits = meta.capabilities.limits
     # L-09: one PNG <= 8 MiB; 80 MiB of rows above the constant grid's 65,885,400; one object.
@@ -885,6 +886,67 @@ def test_a_palette_short_of_an_index_is_refused_and_one_that_reaches_it_is_read(
     assert _refusal(_png(palette=short, rows={0: (0, {5: 200})})).code == "index-past-the-palette"
     (event,) = _translate(_png(palette=short, rows={0: (0, {5: 199})}))
     assert _observation(event)["values"]["summary"]["max"] == 67.0
+
+
+def test_the_ancillary_chunks_are_held_to_their_count_and_octet_bounds(monkeypatch):
+    """The 3.6.0 release round (2026-10-18, R7 review F-01): at most 64 ancillary chunks and
+    1 MiB of their data octets in all, each refused with its code and whole text as the chunk walk
+    meets it, before the image data is inflated and before the residual's chunk list is built."""
+    assert (iem_n0q.MAX_ANCILLARY_CHUNKS, iem_n0q.MAX_ANCILLARY_OCTETS) == (64, 1048576)
+    basis = iem_n0q.ANCILLARY_BOUNDS_BASIS
+    assert basis.kind is LimitKind.IMPLEMENTATION_CAP
+    assert basis.source.endswith(
+        "This is an IMPLEMENTATION CAP and is NOT the format's normative maximum."
+    )
+    assert "about 540 000 empty tEXt chunks" in basis.source
+    assert "749 MB resident" in basis.source
+    assert basis.test == (
+        "tests/test_cdm_iem_n0q_adapter.py::"
+        "test_the_ancillary_chunks_are_held_to_their_count_and_octet_bounds"
+    )
+    unknown = IemN0qAdapter.metadata.capabilities.unknown_fields_basis
+    assert "at most 64 of them and 1 MiB of their data octets in all" in unknown
+
+    # Generated files: 64 empty-text tEXt chunks k00 .. k63 (each 4 data octets: three keyword
+    # octets and the NUL), then one more; two private chunks of 524 288 data octets each (1 MiB in
+    # all, exactly the bound), then one octet more. The count at the bound is read whole.
+    texts = [(b"tEXt", b"k%02d\x00" % i) for i in range(64)]
+    half = 524288
+    at_count = _png(before_idat=texts)
+    past_count = _png(before_idat=[*texts, (b"tEXt", b"k64\x00")])
+    at_octets = _png(before_idat=[(b"prVt", b"\x00" * half), (b"prVt", b"\x01" * half)])
+    past_octets = _png(before_idat=[(b"prVt", b"\x00" * half), (b"prVt", b"\x01" * (half + 1))])
+    assert len(past_octets) <= iem_n0q.MAX_INPUT_BYTES
+
+    (event,) = _translate(at_count)
+    kept = event["residual"]["data"]["ancillary"]
+    assert len(kept) == 64
+    assert kept[0] == {"chunk": "tEXt", "keyword": "k00", "text": ""}
+    assert kept[63] == {"chunk": "tEXt", "keyword": "k63", "text": ""}
+    (event,) = _translate(at_octets)
+    assert [a["chunk"] for a in event["residual"]["data"]["ancillary"]] == ["prVt", "prVt"]
+    assert event["residual"]["data"]["ancillary"][1]["octets_hex"] == "01" * half
+
+    # Past either bound: refused with nothing inflated (the inflater would fail the test) and no
+    # chunk turned into its residual record, through the octets and through the twin alike.
+    def never(*_args, **_kwargs):
+        raise AssertionError("the image data was inflated")
+
+    monkeypatch.setattr(codec, "_png_inflate", never)
+    monkeypatch.setattr(iem_n0q, "_ancillary", never)
+    expected = {
+        "count": ("too-many-ancillary-chunks", "the file holds more than 64 ancillary chunks"),
+        "octets": (
+            "ancillary-past-the-bound",
+            "the ancillary chunks hold more than 1048576 data octets in all",
+        ),
+    }
+    for name, octets in (("count", past_count), ("octets", past_octets)):
+        refused = _refusal(octets)
+        assert (refused.code, refused.text) == expected[name], name
+        twin = {"wire_hex": octets.hex(), "header": {}, "palette": [], "ancillary": []}
+        refused = _refusal({**twin, "index_summary": {}})
+        assert (refused.code, refused.text) == expected[name], name
 
 
 # ================================================================== the dict form

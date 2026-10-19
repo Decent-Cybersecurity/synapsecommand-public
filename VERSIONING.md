@@ -87,7 +87,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.5.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.6.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.2.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
@@ -364,6 +364,18 @@ member of the contract moved; the new adapters implement it), and the manifest a
 stay 2.1.0 and 2.0.0. SC-OES, the ontology and the profiles did not move. The bridge moves 1.0.0 →
 1.1.0 on its own version, and its floor moves to `synapse-cdm` 3.5.0.
 
+**Dated note, 2026-10-18: the release after 3.5.0 is `3.6.0`, a MINOR for the ordinary reason.**
+The raster half of the NYC observation arc since `v3.5.0` added three `Adapter` subclasses,
+registered as `grib2`, `cog` and `iem_n0q` — the roster twenty-seven → thirty — with their fixture
+sets and the shared codec `raster_codec.py`, gave the `synapse-decode` command their rows and a
+GRIB2 message framer, and removed nothing. `gates/bump_derivation.py` read the arc as MINOR with
+nothing unruled before the number was typed, and derives MINOR over it once `MIGRATIONS.md`'s
+rulings in the 3.6.0 section are read; the release commit types that floor. The CDM schema stays
+3.2.0 (no model, enum or published schema moved; `schemas --check` CURRENT), the Adapter API stays
+3.1.0 (no member of the contract moved; the new adapters implement it), and the manifest and
+evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and the profiles did not move, and the
+bridge stays at 1.1.0 with its floor at `synapse-cdm` 3.5.0.
+
 ---
 
 ## 5. Main advancement
@@ -396,7 +408,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.5.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.6.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

@@ -31,7 +31,10 @@ WHAT IS READ, AND HOW FAR
   parameters, by the OGC GeoTIFF 1.1 key names.
 - `read_png` reads a PNG: IHDR, PLTE, IDAT and IEND, the five filters, every chunk's CRC; the
   rows are compared with the caller's bound before inflating and inflated into a buffer of
-  exactly their size.
+  exactly their size. A caller may also bound the ancillary chunks it is handed, by count and by
+  their data octets in all, and the walk refuses the first chunk past either before anything is
+  inflated (added 2026-10-18 for the IEM N0Q adapter, whose file bound alone admits hundreds of
+  thousands of empty chunks).
 
 Every refusal is a `RasterRefused` (a `ValueError`, the class the conformance suite reads as a
 refusal rather than a crash) whose `code` names the rule and whose text names the structure — the
@@ -906,14 +909,27 @@ class PngImage:
         return out
 
 
-def read_png(octets: bytes, *, max_decompressed_bytes: int) -> PngImage:
-    """A PNG's header, palette and unfiltered rows. Interlaced images are refused by name."""
+def read_png(
+    octets: bytes,
+    *,
+    max_decompressed_bytes: int,
+    max_ancillary_chunks: int | None = None,
+    max_ancillary_octets: int | None = None,
+) -> PngImage:
+    """A PNG's header, palette and unfiltered rows. Interlaced images are refused by name.
+
+    `max_ancillary_chunks` and `max_ancillary_octets`, when given, bound the ancillary chunks kept
+    for the caller: the chunk that would make one more than the count, or more data octets in all
+    than the total, is refused in the walk (`too-many-ancillary-chunks`,
+    `ancillary-past-the-bound`), so nothing is inflated and no list longer than the bound is
+    built. None leaves that count or total unbounded, as it was before the bounds existed."""
     if octets[:8] != PNG_SIGNATURE:
         raise RasterRefused("not-a-png", "the payload does not open with the PNG signature")
     position = 8
     header = None
     palette = None
     ancillary: list[tuple[str, bytes]] = []
+    ancillary_octets = 0
     idat: list[bytes] = []
     idat_closed = False
     ended = False
@@ -959,6 +975,18 @@ def read_png(octets: bytes, *, max_decompressed_bytes: int) -> PngImage:
                 "unknown-critical-chunk", f"the critical chunk {name} is not one this codec reads"
             )
         else:
+            if max_ancillary_chunks is not None and len(ancillary) >= max_ancillary_chunks:
+                raise RasterRefused(
+                    "too-many-ancillary-chunks",
+                    f"the file holds more than {max_ancillary_chunks} ancillary chunks",
+                )
+            ancillary_octets += length
+            if max_ancillary_octets is not None and ancillary_octets > max_ancillary_octets:
+                raise RasterRefused(
+                    "ancillary-past-the-bound",
+                    f"the ancillary chunks hold more than {max_ancillary_octets} data octets in "
+                    "all",
+                )
             ancillary.append((name, bytes(body)))
         if idat and name != "IDAT":
             idat_closed = True

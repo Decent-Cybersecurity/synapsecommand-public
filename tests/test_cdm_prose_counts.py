@@ -2420,21 +2420,10 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
      '--update-golden` for all twenty-two adapters and read, each moving by `"validity": null`',
      'a dated round record of the CDM 3.2.0 landing (2026-10-15): the goldens it re-wrote were those of the twenty-two adapters registered that day, and `readsb_trace` landed after it with goldens written once; kept as written because a later round annotates rather than tidies'),
     # ADDED 2026-10-17 (the `grib2` landing, the arc's 3.6.0 content), the NYC landing's shape
-    # again: four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the 3.5.0
-    # artefact beside one row marked as postdating it, and three the 3.5.0 readiness report's
-    # readings of its release tree. The release round that rewrites the notes retires the first four.
-    ('RELEASE_NOTES.md',
-     '`CURRENT: manifests vs 27 shipped adapters at manifest schema 2.1.0`',
-     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
-    ('RELEASE_NOTES.md',
-     'Twenty-seven adapters at 3.5.0, all harness-verified',
-     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
-    ('RELEASE_NOTES.md',
-     'At `v3.5.0` `python -m synapse_cdm.harness --list-adapters` prints `27 adapters registered`',
-     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
-    ('RELEASE_NOTES.md',
-     'read `27 adapters, 697 fixture files` and `27 adapters x 2 schema modes, 1340 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
-     'the 3.5.0 notes describe the 3.5.0 artefact, a roster of twenty-seven, beside the one row marked post-3.5.0 (`grib2`, 2026-10-17); a reading of the released tree, which the release round that rewrites the notes retires'),
+    # again: four rows exempted RELEASE_NOTES.md's roster counts while the notes described the
+    # 3.5.0 artefact beside rows marked as postdating it, and three the 3.5.0 readiness report's
+    # readings of its release tree. The first four retired 2026-10-18 with the 3.6.0 release commit,
+    # which rewrote the notes for a roster of thirty; the three readiness rows stay.
     ('docs/soif-part1-release-readiness.md',
      '`manifests --check` CURRENT for the twenty-seven shipped adapters, the support-matrix',
      "the 3.5.0 readiness report's readings of the release tree it certified, when the roster was twenty-seven; a dated certification, kept as written"),

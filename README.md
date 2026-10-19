@@ -141,11 +141,11 @@ The `coops_csv` adapter is part of the distribution built from this tree; no rel
 
 The `airnow_hourly` adapter is part of the distribution built from this tree; no release before 3.5.0 carries it.
 
-The `grib2` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
+The `grib2` adapter is part of the distribution built from this tree; no release before 3.6.0 carries it.
 
-The `cog` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
+The `cog` adapter is part of the distribution built from this tree; no release before 3.6.0 carries it.
 
-The `iem_n0q` adapter is not part of the published 3.5.0 distribution; it ships with the first release after it.
+The `iem_n0q` adapter is part of the distribution built from this tree; no release before 3.6.0 carries it.
 
 The observation contract models (`synapse_cdm.observation_contracts`) and the `synapse-decode` host command are part of the distribution built from this tree; no release before 3.5.0 carries them.
 
@@ -267,7 +267,7 @@ to refuse it — a gate nobody has seen fail is a gate nobody has seen.
 **A release is a pushed tag.** `.github/workflows/publish.yml` does the rest:
 
 ```bash
-git tag -a v3.5.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
+git tag -a v3.6.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
 git push origin main --follow-tags
 ```
 

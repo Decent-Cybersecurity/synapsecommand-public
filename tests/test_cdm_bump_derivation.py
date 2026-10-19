@@ -675,6 +675,21 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/models.py:Track",
         "synapse_cdm/models.py:_timestamp_in",
         "synapse_cdm/version.py:KNOWN_CONTRACTS"},
+    # The sixteenth row, written IN the 3.6.0 release commit (2026-10-18) from the gate's own
+    # `derive(snapshot_at("v3.5.0"), snapshot_at(None))` on that tree — the 3.4.0 and 3.5.0 route,
+    # so that the tag needs no re-tag for it. Four units, each ruled MINOR in MIGRATIONS.md's
+    # `### 3.6.0` section and each `decode_host.py`'s: `Hosted` gained a field with a default,
+    # `HOSTED` gained the `grib2`, `cog` and `iem_n0q` entries, and `decode` and `listing` serve a
+    # framed entry. The three adapter modules, their fixture sets and `raster_codec` are units the
+    # arc ADDED — the release's evidence flips, the ancillary-chunk bounds and `read_png`'s two
+    # optional arguments among them — and `version.py` moves by its assignment, which the gate
+    # excludes, and by comment and docstring lines. The arc's 379 signals (172 MINOR, 207 PATCH)
+    # derive the MINOR the number types; the schema did not move.
+    ("v3.5.0", "v3.6.0"): {
+        "synapse_cdm/decode_host.py:HOSTED",
+        "synapse_cdm/decode_host.py:Hosted",
+        "synapse_cdm/decode_host.py:decode",
+        "synapse_cdm/decode_host.py:listing"},
 }
 
 

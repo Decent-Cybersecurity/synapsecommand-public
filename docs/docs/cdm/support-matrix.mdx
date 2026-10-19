@@ -329,7 +329,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - classic TIFF only (BigTIFF refused by name); one sample a pixel; compression none, LZW, Deflate and PackBits (JPEG, LERC, ZSTD, LZMA, WebP and JPEG 2000 refused by name); predictors 1, 2 (integer samples) and 3 (Float32 and Float64); samples of 8, 16 or 32 bits signed or unsigned, Float32 and Float64
 - a VRT is read as an index: its size, SRS, GeoTransform, metadata and simple or complex sources, listed and never opened; a remote source, a DTD, an entity and any other element (a derived band, a pixel function, an overview) are refused by name
 - without `band_file` an object's id derives from what the file states: its coordinate system, size, north-west corner, cell, sample type and sensing interval (a VRT's: its system, size, corner, cell and source count), followed by the caller's `source_hash` digest when it gives one. With neither `band_file` nor `source_hash`, two band files of one granule that share a grid and a sensing time share an id; a caller that holds several bands of a granule passes `band_file` (and `granule_id`) or `source_hash`
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `coops_csv` — NOAA CO-OPS data API response (CSV and JSON) translator
 
@@ -449,7 +449,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - a parameter's name and unit and a surface's unit are stated only for the Code Table 4.2 and 4.5 rows this module lists, each with the file it was read from (GDAL's table files, its NCEP local table for NCEP's local rows, and NSSL's MRMS table for MRMS's); any other parameter keeps its discipline.category.number code with no unit, any other surface its code with no value, and a row whose unit column states a code's meanings (CFRZR) names the parameter and states no unit
 - the contract's level is the first fixed surface; a layer's second surface stays in the Event's residual with every other Template 4.x octet
 - Event.geometry is the outline of the grid POINTS, not of the cells around them: a lat/lon grid's corner points, a Lambert grid's edge points converted with the spherical inverse, at most 16 segments an edge and rounded to 10^-6 degree
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `iem_n0q` — IEM NEXRAD N0Q composite reader
 
@@ -466,7 +466,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - a PNG states no observation time: observed_at is the archive file name's slot (UTC, minutes divisible by five), the composite's nominal time, which the caller supplies with its basis (`IemN0qAdapter(slot=InjectedTime(instant, basis))`); no radar's scan time is recoverable from the image. The tEXt gentime chunk is IEM's generation clock and is carried verbatim as product_version.production_time_verbatim, never as a time
 - index i is read as (i - 65) / 2 dBZ, so index 255 is 95.0 dBZ; IEM's composite documentation captions the ramp as -32 to 90 dBZ while its raster catalogue's table ends at 95, and the formula's value is emitted, not either page's ceiling
 - an object's id derives from the slot, followed by the caller's `source_hash` digest when it gives one: IEM re-publishes a slot's file under the same name, and without the digest two files of one slot share an id
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `legion` — Picogrid Legion
 

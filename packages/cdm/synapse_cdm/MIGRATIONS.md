@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.5.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.6.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -24,7 +24,9 @@ apart at the 3.4.0 release of 2026-10-11, because both numbers moved a MINOR —
 first time since 3.0.0, when `PositionSource` gained `SENSOR` and `UNKNOWN`; and three MINORs apart
 again at the 3.5.0 release of 2026-10-16, both numbers moving a MINOR once more — the schema when
 `EventType` gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained `validity` and `Track` gained
-`attributes`.)
+`attributes`; and four MINORs apart at the 3.6.0 release of 2026-10-18, the fourth for the ordinary
+reason again — the package took a MINOR for three adapter modules and the wire contract had no
+part in it.)
 
 ## What each bump means
 
@@ -216,7 +218,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.5.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.6.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -532,7 +534,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.5.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.6.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -634,11 +636,105 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.6.0 — 2026-10-18 — the NYC raster adapters: three observation adapter modules land, `grib2` as #29, `cog` as #30 and `iem_n0q` as #31, on the shared codec `raster_codec`, the roster moves twenty-seven to thirty, `synapse-decode` gains their rows and a GRIB2 message framer, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.5.0`, and `3.5.0` is what the index serves — `PUBLICATION.md` entry 27 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.6.0` and
+`SCHEMA_VERSION` is `3.2.0` at this commit, in `version.py`, and the tag `v3.6.0` is to name the
+commit that carries this release state. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that
+watched the upload and is not asserted here before it has happened. The paragraph this replaces
+said that nothing in the section was in a release, that the newest release tag was `v3.5.0` and
+that `3.5.0` was what the index served (`PUBLICATION.md` entry 27) — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.5.0 -> 3.6.0 ON 2026-10-18, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.5.0` and derives MINOR with nothing unruled: on
+the landing commit, before any number was typed, it read "the arc since 3.5.0 derives MINOR with 0
+unruled, so the next release is at least 3.6.0", its `--json` reporting `pending.unruled` as the
+empty list and `pending.number` as `3.6.0`, and `--mutation-check` reads `1 check, 0 failed` on this
+tree from the moment the tag names it (until then the gate reads its rulings under the pending
+heading this commit removed and refuses the four units this section rules — the transitional
+reading every release commit whose arc carries a ruling records, and the release round reads the
+green at the tag). The floor comes from the public names, the modules and the fixture sets the
+landings below added and from nothing removed — the `Adapter` subclasses `Grib2Adapter`,
+`CogAdapter` and `IemN0qAdapter`, registered as `grib2`, `cog` and `iem_n0q`, their three fixture
+sets and the codec module `adapters/raster_codec.py`. The units the table cannot decide are ruled
+in this section's four `**Bump ruling.**` paragraphs, every one of them `decode_host.py`'s and
+MINOR — `Hosted`, `HOSTED`, `decode` and `listing` — which the `grib2` landing wrote and the
+`iem_n0q` landing extended; the release adds none, because what it moves is either a unit the arc
+added or text. Over the arc the gate's table decides 379 signals, 172 MINOR and 207
+PATCH, and the four rulings decide the rest. So the floor and the number are one number and no
+Version ruling is needed or present. `SCHEMA_VERSION` does not move and stays at `3.2.0`: no
+model, no enum, no published schema and no golden of an adapter that predates the arc moved
+(`python -m synapse_cdm.schemas --check` reads CURRENT at 3.2.0, `git diff v3.5.0 -- schemas/` is
+empty, and `harness --update-golden` over the thirty adapters moved no golden), and the two axes
+are four MINORs apart. `ADAPTER_API_VERSION` stays at `3.1.0`, and
+`MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release put
+them. The sibling distribution `synapse-link16-bridge` stays at 1.1.0 with its floor at
+`synapse-cdm>=3.5.0,<4`: nothing under `packages/link16_bridge/` moved since `v3.5.0`, and nothing
+there is read by this gate.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-18 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, the re-tensed sentences of the landing paragraphs below, a
+dated clause on the 3.5.0 witness round's paragraph, the introduction's two-number sentence and the
+two tag-command examples in the procedure and in the pipeline section; `RELEASE_NOTES.md`,
+rewritten for this release with every count derived; `README.md`'s tag example and its
+availability sentences for the three adapters, and the same sentences on the documentation site's
+introduction; `VERSIONING.md`'s package-version figure, its tag-command example and a dated note
+under §4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated paragraph;
+`docs/docs/current-contracts.mdx`, regenerated; a dated sentence on the observation-contracts page
+saying that the domain of a values summary is the one its producer declares — the stored values
+for `cog`, the decoded ones for `grib2` and `iem_n0q` — until the contract owner rules; the
+readiness report's re-qualification; the two version literals `tests/test_cdm_packaging.py` pins;
+the retired `RELEASE_NOTES.md` exemption rows in `tests/test_cdm_prose_counts.py`; the evidence
+literals of `tests/test_cdm_cog_adapter.py` and `tests/test_cdm_iem_n0q_adapter.py`; and the
+sixteenth `UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`, for `("v3.5.0",
+"v3.6.0")` at four units — the four this section rules, compared set to set, written before the tag
+exists by the raw derivation from `v3.5.0` to this tree. Three declarations move with the release
+and not with the arc: each new adapter landed declaring `evidence.available: false` — "it becomes
+true at the first release that attaches them", its own words — and `tests/test_cdm_evidence.py`
+holds the field to the newest tag's tree, so this commit flips each to `true` with a sentence beside
+it that names no version, the form the five of 3.5.0 took; the three manifests and the support
+matrix are regenerated. Three items the arc's reviews carried to the release land with it. The
+IEM N0Q adapter bounds the ancillary chunks a file may carry — at most 64, and at most 1 MiB of
+their data octets in all, each refused by name (`too-many-ancillary-chunks`,
+`ancillary-past-the-bound`) in the chunk walk, before anything is inflated and before the
+residual's list of chunks is built — because the 8 MiB file bound alone admitted about 540 000
+empty `tEXt` chunks, which a review measured at about 749 MB resident; the bounds are
+`iem_n0q.MAX_ANCILLARY_CHUNKS` and `MAX_ANCILLARY_OCTETS`, declared with their basis
+`ANCILLARY_BOUNDS_BASIS`, enforced by two optional arguments of `raster_codec.read_png` that
+leave every other caller as it was, and held by a generated-file test in
+`tests/test_cdm_iem_n0q_adapter.py` and one in `tests/test_cdm_cog_codec.py`; the manifest
+`manifests/iem_n0q.json` is regenerated. The `grib2` pin record states Code Table 3.2's two radii by
+reference, beside GDAL 3.13.3's reading of shapes 0 and 6, which agrees with the adapter's figures
+and is held by a test of `tests/test_cdm_grib2_adapter.py`; the adapter's comment on the radii is
+dated. One docstring line of `adapters/cog.py` is re-wrapped to the 100-column convention. Inside
+the distribution the transition touches `MIGRATIONS.md`, `version.py`, `FORMAT_COVERAGE.md`, the
+three adapter modules, `raster_codec.py` and `fixtures/grib2/spec/grib2_pin.json`, all already
+inside the count the paragraph after next states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Four things the
+release notes say and this section repeats because they are the honest boundary of the arc: every
+fixture of the three adapters is synthetic, written by its own builder — the IEM N0Q set in pure
+Python, eight `cog` files and seven `grib2` messages by GDAL 3.13.3, held to their recorded digests
+where GDAL is absent — and no byte or value of a real collection is in the tree, so the strict
+readings — the GRIB2 templates and code-table rows read, the GeoTIFF coordinate systems and
+compressions read, the N0Q product constant and its `gentime` — have met the documents and not yet
+a real file; the documents the adapters read are cited by reference and never carried — the NCEP
+GRIB2 pages and WMO-No. 306, OGC GeoTIFF 1.1, OGC COG 1.0 and TIFF 6.0, the W3C PNG specification
+and IEM's pages — and their licence classes are listed for the maintainer's confirmation; the
+units of a GRIB2 parameter are stated only for the code-table rows the pin lists, and Code Table
+3.2's two radii rest on GDAL's reading of them rather than on a pinned copy of the table; and a
+values summary's domain differs between `cog` (stored) and `grib2` and `iem_n0q` (decoded) until
+the contract owner rules on one.
 
 **What moved inside the distribution: 169 files** — for the `grib2` landing of 2026-10-17, 79: the
 adapter module `adapters/grib2.py`; its fixture set under `fixtures/grib2/`, the thirteen messages
@@ -672,13 +768,27 @@ rows, ordinal row 31 and the N0Q row set) and the roster count in `pyproject.tom
 `adapter.py`, `lossless.py`, `symbology.py` and `version.py`. For the 3.5.0 witness round, one: `MIGRATIONS.md` itself, this
 section, the dated witness paragraphs in the release procedure and the pipeline section, the
 release's dated account in the pipeline section, and the index note in the 3.5.0 section being what
-moved in it. Everything else the four touched ships in nothing: for the three landings, the
+moved in it. For the release transition of 2026-10-18, no file the arc had not moved before it:
+it moved again, within the files already counted, `version.py` (the constant, its dated comment
+and the live readings in its docstring), this file (this section's roll, the introduction's
+two-number sentence and the two tag-command examples), `adapters/grib2.py`, `adapters/cog.py` and
+`adapters/iem_n0q.py` (each its evidence declaration and the limitation beside it; `grib2.py` also
+a dated comment on Code Table 3.2's two radii, `cog.py` one docstring line re-wrapped, and
+`iem_n0q.py` its ancillary-chunk bounds with their basis and its docstring's sentence on them),
+`adapters/raster_codec.py` (the optional ancillary-chunk bounds of `read_png` and the docstring's
+sentence on them), `FORMAT_COVERAGE.md` (two rows of the N0Q row set) and
+`fixtures/grib2/spec/grib2_pin.json` (the record of the earth shapes' radii). Everything else the
+five touched ships in nothing: for the three landings, the
 generated manifests `manifests/grib2.json`, `manifests/cog.json` and `manifests/iem_n0q.json` and
 the support matrix, the
 repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md`,
 `.gitattributes`, the documentation pages, `gates/wheel_install.py` and the test modules; for the
 witness round, the ledger, the witness record and its README, the release-pipeline and
-changelog pages, the frozen-contract manifest, and three test modules.
+changelog pages, the frozen-contract manifest, and three test modules; for the release
+transition, the three manifests and the support matrix regenerated, the current-contracts page
+regenerated, `RELEASE_NOTES.md`, the repository's `README.md` and `VERSIONING.md`, the
+documentation site's introduction, changelog and observation-contracts pages, the readiness
+report, and the test modules named in the paragraph that begins THE RELEASE TRANSITION ITSELF.
 
 **THE `grib2` LANDING, 2026-10-17 — adapter #29, the roster twenty-seven to twenty-eight, the first
 of the arc's 3.6.0 content.** `adapters/grib2.py` reads one GRIB edition 2 message (8 MiB at most,
@@ -694,7 +804,8 @@ projection ledger is unchanged. `synapse-decode` gains a framer, so a GRIB2 file
 messages end to end and each is handed over with its ordinal, the octet it begins at and, when it
 is not the whole file, its own digest. Seven fixtures are written by GDAL 3.13.3 and six by the
 builder's own encoder; without GDAL the builder's `--check` holds the seven to their recorded
-digests and says so. `PACKAGE_VERSION` still reads `3.5.0`: the number is the release round's.
+digests and says so. `PACKAGE_VERSION` still read `3.5.0`: the number was the release round's,
+and the release commit of 2026-10-18 typed `3.6.0` (re-tensed at the 3.6.0 roll).
 
 **Bump ruling.** `synapse_cdm/decode_host.py:Hosted` — MINOR: one field with a default,
 `frame_offset_argument = None`, is added; every existing entry and every caller that builds one
@@ -728,10 +839,12 @@ NAVD88 height datum is stated beside the values, never as an ellipsoidal height.
 listed and never opened, and a remote one is refused by name. The decoding is the standard-library
 codec `adapters/raster_codec.py` (TIFF and GeoTIFF structure, block decoding and a PNG reader), which
 the IEM N0Q adapter reuses. No CDM field, member or contract moved: `SCHEMA_VERSION` stays `3.2.0`
-and the projection ledger is unchanged. `synapse-decode` does not serve the adapter yet. Eight
+and the projection ledger is unchanged. `synapse-decode` did not serve the adapter yet (the
+`iem_n0q` landing below gave it its row; re-tensed 2026-10-18, at the 3.6.0 roll). Eight
 fixtures are written by GDAL 3.13.3 and two VRT indexes by the builder; without GDAL the builder's
-`--check` holds the eight to their recorded digests and says so. `PACKAGE_VERSION` still reads
-`3.5.0`: the number is the release round's.
+`--check` holds the eight to their recorded digests and says so. `PACKAGE_VERSION` still read
+`3.5.0`: the number was the release round's, and the release commit of 2026-10-18 typed `3.6.0`
+(re-tensed at the 3.6.0 roll).
 
 **THE `iem_n0q` LANDING, 2026-10-17 — adapter #31, the roster twenty-nine to thirty, the third and
 last of the arc's 3.6.0 content.** `adapters/iem_n0q.py` reads one IEM NEXRAD N0Q composite PNG
@@ -752,7 +865,9 @@ granule and the role of a supplied instant as request parameters), so `cog`'s de
 `not-hosted` is retired. No CDM field, member or contract moved: `SCHEMA_VERSION` stays `3.2.0` and
 the projection ledger is unchanged. The four fixtures are 12200 x 5400 PNGs written by the builder in
 pure Python with its own DEFLATE writer, so `--check` gives the same octets on every machine.
-`PACKAGE_VERSION` still reads `3.5.0`: the number is the release round's.
+`PACKAGE_VERSION` still read `3.5.0`: the number was the release round's, and the release commit of
+2026-10-18 typed `3.6.0` (re-tensed at the 3.6.0 roll), which also bounds the ancillary chunks a
+file may carry, at 64 and 1 MiB of their data octets in all.
 
 **THE 3.5.0 WITNESS ROUND's RECORD, 2026-10-17 — the record is the pipeline's own, for the fifth
 time.** Run 38993508970's `witness` job built `witness-3.5.0.json`, its verify step read `VERIFIED`
@@ -767,6 +882,9 @@ provenance in `tests/frozen/cdm/MANIFEST.json` to `da2e197d9c0612322ed9763e29f3e
 commit `v3.5.0` names, which is the release commit itself, as the 3.4.0 witness round resolved the
 3.1.0 contract's; `tests/test_cdm_version_matrix.py` now proves it by `git rev-list -n1 v3.5.0`.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.5.0`.
+(Dated 2026-10-18, at the 3.6.0 roll: those two clauses covered the witness round alone — the
+landings recorded above moved the distribution beside it, the count clause above accounts for
+every file, and `PACKAGE_VERSION` reads `3.6.0` from the release commit on.)
 
 ### 3.5.0 — 2026-10-16 — the NYC observation carrier: five observation adapter modules land, `readsb_trace` as #24, `nexrad2` as #25, `ndbc_stdmet` as #26, `coops_csv` as #27 and `airnow_hourly` as #28, the roster moves twenty-two to twenty-seven, `EventType` gains `ENVIRONMENTAL_OBSERVATION`, `Event` gains `validity` and `Track` gains `attributes` and the CDM schema moves 3.1.0 → 3.2.0, and the offline host command `synapse-decode` lands
 

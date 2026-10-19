@@ -73,9 +73,9 @@ LERC, ZSTD, LZMA, WebP or any other compression than none, LZW, Deflate and Pack
 one sample a pixel; a block that would inflate past its size or past the bound; a rotation
 (`ModelTransformationTag`) or more than one tiepoint; any coordinate system outside the closed
 set; an outline that leaves -180 to 180 degrees of longitude or, in a UTM zone, reaches a pole
-(transverse Mercator runs on over it); a VRT with a DTD, an entity, an element this module does not read or a remote source. A
-refusal is a `CogRefused` (`ValueError`) whose code names the rule and whose text names the
-structure, never a value from the payload.
+(transverse Mercator runs on over it); a VRT with a DTD, an entity, an element this module does
+not read or a remote source. A refusal is a `CogRefused` (`ValueError`) whose code names the rule
+and whose text names the structure, never a value from the payload.
 """
 
 from __future__ import annotations
@@ -1562,16 +1562,21 @@ class CogAdapter(Adapter):
             ),
             Limitation(
                 id="evidence-availability",
-                summary="`evidence.available` is false because no published Release carries "
-                "this adapter's records yet; it becomes true at the first release that "
-                "attaches them",
+                summary="the evidence RECORD for this adapter is not IN the distribution: "
+                "`evidence/` is untracked and unpackaged, CI generates the set on every "
+                "run, and the release pipeline generates the records for every shipped "
+                "adapter and attaches them to the GitHub Release of the version it "
+                "publishes. `evidence.available` is true because every published "
+                "distribution that carries this adapter has that Release, so its records "
+                "are retrievable by a third party; it says nothing about what the wheel "
+                "contains",
             ),
         ],
         limitations_empty_reason=None,
         residual=ResidualStance.STRUCTURED,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
 
     TRANSFORMS: dict[str, str] = {"wire_hex": T_WIRE, "arrays": T_ARRAYS}
