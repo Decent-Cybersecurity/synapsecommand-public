@@ -772,7 +772,8 @@ def test_the_declaration_states_caps_licence_and_an_honest_claim():
         text = (pathlib.Path(__file__).resolve().parents[1] / module).read_text()
         assert f"def {function}(" in text, limits.declared_because[name].test
     assert metadata.license_class is LicenseClass.PUBLIC_GOVERNMENT
-    assert metadata.evidence.available is False
+    # The 3.7.0 release commit (2026-10-24) flips the evidence declaration it landed with.
+    assert metadata.evidence.available is True
     assert metadata.claim_status is ClaimStatus.VERIFIED
     assert metadata.capabilities.unknown_fields is UnknownFields.PRESERVED
     ids_ = {lim.id for lim in metadata.limitations}

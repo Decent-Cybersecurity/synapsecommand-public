@@ -229,7 +229,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the entity type is the ais adapter's MMSI rule and nothing else: a coast-station or aid-to-navigation MMSI (ais.MMSI_FACILITY_CATEGORIES) is a FACILITY whatever it transmits, every other MMSI is a PLATFORM, and the category is recorded at attributes.mmsi_category. A VIRTUAL aid to navigation, which the ais adapter reads from a type 21 message's own flag and types OVERLAY_OBJECT, cannot be told from a track file, so an aid-to-navigation MMSI here is always the physical FACILITY
 - the lossless ledger binds every source leaf to the residual and the MMSI to all three objects; it cannot express the time-order permutation from elements to samples, so the binding of latitude and longitude to Track.samples is proven by the adapter's tests, not by the ledger
 - every fixture is synthetic (MMSIs under the unallocated MID 299, as the ais fixtures use them, EX-prefixed names, positions inside CONTRIBUTING.md's Baltic rectangle); the shape follows the API's observed output, and no real response is part of the evidence
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `c2sim` — C2SIM
 
@@ -416,7 +416,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the data licence is the response's own license statement (observed: CC BY 3.0 NO), carried verbatim; MET Norway's terms page names NLOD 2.0 and CC BY 4.0, and reconciling the two is the consumer's, not this module's
 - an observation without a numeric value is refused (bad-value): Frost publishes no sentinel for it, so there is no documented absence to translate
 - every fixture is synthetic (stations in the SN0000x block, positions inside CONTRIBUTING.md's Baltic rectangle, invented values) written from the documented response shape, which is what the gates ran against; no recorded Frost response is part of the evidence
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `geojson` — GeoJSON
 

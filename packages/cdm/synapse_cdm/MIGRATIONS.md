@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.6.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.7.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -24,8 +24,10 @@ apart at the 3.4.0 release of 2026-10-11, because both numbers moved a MINOR —
 first time since 3.0.0, when `PositionSource` gained `SENSOR` and `UNKNOWN`; and three MINORs apart
 again at the 3.5.0 release of 2026-10-16, both numbers moving a MINOR once more — the schema when
 `EventType` gained `ENVIRONMENTAL_OBSERVATION`, `Event` gained `validity` and `Track` gained
-`attributes`; and four MINORs apart at the 3.6.0 release of 2026-10-18, the fourth for the ordinary
+`attributes`; four MINORs apart at the 3.6.0 release of 2026-10-18, the fourth for the ordinary
 reason again — the package took a MINOR for three adapter modules and the wire contract had no
+part in it; and five MINORs apart at the 3.7.0 release of 2026-10-24, the fifth for the ordinary
+reason once more — the package took a MINOR for two adapter modules and the wire contract had no
 part in it.)
 
 ## What each bump means
@@ -218,7 +220,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.6.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.7.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -553,7 +555,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.6.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.7.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -680,11 +682,81 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.7.0 — 2026-10-24 — the HIGH NORTH adapters: two observation adapter modules land, `barentswatch_hais` as #32 and `frost_observations` as #33, the roster moves thirty to thirty-two, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.6.0`, and `3.6.0` is what the index serves — `PUBLICATION.md` entry 28 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells the heading is read by the citation sweep as a pointer to a section this roll removed.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.7.0` and
+`SCHEMA_VERSION` is `3.2.0` at this commit, in `version.py`, and the tag `v3.7.0` is to name the
+commit that carries this release state. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that
+watched the upload and is not asserted here before it has happened. The paragraph this replaces
+said that nothing in the section was in a release, that the newest release tag was `v3.6.0` and
+that `3.6.0` was what the index served (`PUBLICATION.md` entry 28) — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.6.0 -> 3.7.0 ON 2026-10-24, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.6.0` and derives MINOR with nothing unruled: on
+the landing commit, before any number was typed, its `--json` reported `pending` as `{"kind":
+"MINOR", "number": "3.7.0", "unruled": []}`, and `derive(snapshot_at("v3.6.0"), snapshot_at(None))`
+on this release tree decides 136 signals, 70 MINOR and 66 PATCH, with no ambiguity left for a
+ruling. The floor comes from the public names, the modules and the fixture sets the landing below
+added and from nothing removed — the `Adapter` subclasses `BarentswatchHaisAdapter` and
+`FrostObservationsAdapter`, registered as `barentswatch_hais` and `frost_observations`, and their
+two fixture sets. This section carries no `**Bump ruling.**` paragraph because the table decided
+every unit of the arc on its own, so the gate reads the same MINOR with the tag and without it,
+and `tests/test_cdm_bump_derivation.py`'s historical table needs no row for `("v3.6.0", "v3.7.0")`.
+So the floor and the number are one number and no Version ruling is needed or present.
+`SCHEMA_VERSION` does not move and stays at `3.2.0`: no model, no enum, no published schema and no
+golden of an adapter that predates the arc moved (`python -m synapse_cdm.schemas --check` reads
+CURRENT at 3.2.0, `git diff v3.6.0 -- schemas/` is empty, and `harness --update-golden` over the
+thirty-two adapters moved no golden), and the two axes are five MINORs apart. `ADAPTER_API_VERSION`
+stays at `3.1.0`, and `MANIFEST_SCHEMA_VERSION` 2.1.0 and `EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where
+the 3.0.0 release put them. The sibling distribution `synapse-link16-bridge` stays at 1.1.0 with its
+floor at `synapse-cdm>=3.5.0,<4`: nothing under `packages/link16_bridge/` moved since `v3.6.0`, and
+nothing there is read by this gate.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-24 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, the re-tensed sentence of the landing paragraph below, a dated
+clause on the 3.6.0 witness round's paragraph, the introduction's two-number sentence and its
+parting clause, and the two tag-command examples in the procedure and in the pipeline section;
+`RELEASE_NOTES.md`, rewritten for this release with every count derived; `README.md`'s tag example
+and an availability sentence for each of the two adapters, and the same sentences on the
+documentation site's introduction; `VERSIONING.md`'s package-version figure, its tag-command
+example and a dated note under §4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated
+paragraph; `docs/docs/current-contracts.mdx`, regenerated; the readiness report's
+re-qualification; the two version literals `tests/test_cdm_packaging.py` pins; the four retired
+`RELEASE_NOTES.md` exemption rows in `tests/test_cdm_prose_counts.py`; the evidence literals of
+`tests/test_cdm_barentswatch_hais_adapter.py` and `tests/test_cdm_frost_observations_adapter.py`;
+and a dated comment in `tests/test_cdm_bump_derivation.py`'s historical table saying why the arc
+`("v3.6.0", "v3.7.0")` has no row. Two declarations move with the release and not with the arc:
+each new adapter landed declaring `evidence.available: false` — "it becomes true at the first
+release that attaches them", its own words — and `tests/test_cdm_evidence.py` holds the field to
+the newest tag's tree, so this commit flips each to `true` with a sentence beside it that names no
+version, the form the three of 3.6.0 took; the two manifests and the support matrix are
+regenerated. Inside the distribution the transition touches `MIGRATIONS.md`, `version.py` and
+the two adapter modules, all already inside the count the paragraph after next states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Four things the
+release notes say and this section repeats because they are the honest boundary of the arc: every
+fixture of the two adapters is synthetic, written by its own builder in pure Python, and no byte or
+value of a real BarentsWatch or Frost response is in the tree, so the strict readings — the
+Historic AIS track shape, the `ObservationResponse` shape and the two Frost time classes — have met
+the documents and not yet a real response; the documents the adapters read are cited by reference
+and never carried — the BarentsWatch Historic AIS API page for `GET /v1/historic/tracks` and the
+`ais` adapter's own MMSI-category rule for the entity type, MET Norway's Frost concepts page and
+its element table — each pin recording the licence class `PUBLIC_GOVERNMENT` for the maintainer's
+confirmation; the positions and the fallback units a Frost Event carries come from the caller's two
+tables and never from the response, so a station absent from the table is emitted without a
+position with the basis saying so, and a unit stated by neither the observation nor the table is an
+`Absence` of cause `unit_unknown` rather than a guess; and neither adapter is served by
+`synapse-decode`, which is a follow-on with its own landing.
 
 **THE HIGH NORTH ADAPTERS LAND, 2026-10-22: two observation adapter modules, `barentswatch_hais`
 as #32 and `frost_observations` as #33, the roster moves thirty to thirty-two, and no wire contract
@@ -708,9 +780,19 @@ each. `tests/observation_support.py` gains the `frost-station` id form and `mmsi
 `.gitattributes` gains `*.hais` and `*.jsonld`. Neither adapter is hosted by `synapse-decode` in this
 landing: `frost_observations` needs two caller tables the host has no request parameter for yet, and
 the row for both is a follow-on. The bump this derives is MINOR (two `Adapter` subclass names and two
-fixture directories appear; nothing is removed), so the next release is at least 3.7.0.
+fixture directories appear; nothing is removed), so the next release was at least 3.7.0, and the
+release commit of 2026-10-24 typed `3.7.0` (re-tensed at the 3.7.0 roll).
 
-**What moved inside the distribution: 90 files** — for the HIGH NORTH landing of 2026-10-22, every one but the records new: the adapter modules `barentswatch_hais.py` and `frost_observations.py` under `adapters/`; for `barentswatch_hais`, its fixture set under `fixtures/barentswatch_hais/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `duplicate_instants_unordered.hais`, `duplicate_instants_unordered.parsed.json`, `nulls_and_sentinels.hais`, `nulls_and_sentinels.parsed.json`, `single_point.hais`, `single_point.parsed.json`, `underway_newest_first.hais`, `underway_newest_first.parsed.json`, `unknown_extra_key.hais`, `unknown_extra_key.parsed.json`; the goldens under `golden/`, `duplicate_instants_unordered.cdm.json`, `duplicate_instants_unordered.parsed.cdm.json`, `nulls_and_sentinels.cdm.json`, `nulls_and_sentinels.parsed.cdm.json`, `single_point.cdm.json`, `single_point.parsed.cdm.json`, `underway_newest_first.cdm.json`, `underway_newest_first.parsed.cdm.json`, `unknown_extra_key.cdm.json`, `unknown_extra_key.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `duplicate_key.hais`, `element_not_object.json`, `empty_array.json`, `latitude_out_of_range.json`, `missing_latitude.json`, `missing_msgtime.json`, `mixed_mmsi.json`, `mmsi_as_text.json`, `msgtime_without_offset.json`, `nan_value.hais`, `negative_speed.json`, `no_positioned_point.json`, `not_utf8.hais`, `top_level_object.json`, `truncated.hais`; and under `spec/`, `barentswatch_hais_pin.json`, `barentswatch_hais_terms.json`, `build_fixtures.py`; for `frost_observations`, its fixture set under `fixtures/frost_observations/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `midnight_mixed_daily.jsonld`, `midnight_mixed_daily.parsed.json`, `observation_without_unit.jsonld`, `observation_without_unit.parsed.json`, `quality_codes_no_level_unknown_keys.jsonld`, `quality_codes_no_level_unknown_keys.parsed.json`, `station_missing_parallel_sensors.jsonld`, `station_missing_parallel_sensors.parsed.json`, `two_stations_hourly.jsonld`, `two_stations_hourly.parsed.json`; the goldens under `golden/`, `midnight_mixed_daily.cdm.json`, `midnight_mixed_daily.parsed.cdm.json`, `observation_without_unit.cdm.json`, `observation_without_unit.parsed.cdm.json`, `quality_codes_no_level_unknown_keys.cdm.json`, `quality_codes_no_level_unknown_keys.parsed.cdm.json`, `station_missing_parallel_sensors.cdm.json`, `station_missing_parallel_sensors.parsed.cdm.json`, `two_stations_hourly.cdm.json`, `two_stations_hourly.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `cut_short.jsonld`, `duplicate_key.jsonld`, `level_value_without_unit.json`, `no_data_item.json`, `not_an_observation_response.json`, `observation_with_blank_unit.json`, `quality_code_boolean.json`, `reference_time_without_zone.json`, `repeated_item.json`, `source_id_not_a_station.json`, `time_resolution_not_a_duration.json`, `value_as_text.json`; and under `spec/`, `build_fixtures.py`, `frost_observations_pin.json`, `frost_observations_terms.json`; and the package files the roster moved, `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `__init__.py`, `adapter.py`, `lossless.py`, `pyproject.toml`, `symbology.py`, `version.py` (`pyproject.toml`'s two roster comments; `FORMAT_COVERAGE.md`'s four status rows, ordinal rows 32 and 33 and the two row sets; `MIGRATIONS.md`, this section; the package `README.md`'s roster sentence, shipped-table rows and pair arithmetic; and the roster count in `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py` and `version.py`). Outside the distribution the landing moved the repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md`, `.gitattributes`, the docs pages, `gates/wheel_install.py`, the two generated manifests and the support matrix, `tests/observation_support.py`, the two new test modules and the pinned rosters in the gate tests.
+**What moved inside the distribution: 90 files** — for the HIGH NORTH landing of 2026-10-22, every one but the records new: the adapter modules `barentswatch_hais.py` and `frost_observations.py` under `adapters/`; for `barentswatch_hais`, its fixture set under `fixtures/barentswatch_hais/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `duplicate_instants_unordered.hais`, `duplicate_instants_unordered.parsed.json`, `nulls_and_sentinels.hais`, `nulls_and_sentinels.parsed.json`, `single_point.hais`, `single_point.parsed.json`, `underway_newest_first.hais`, `underway_newest_first.parsed.json`, `unknown_extra_key.hais`, `unknown_extra_key.parsed.json`; the goldens under `golden/`, `duplicate_instants_unordered.cdm.json`, `duplicate_instants_unordered.parsed.cdm.json`, `nulls_and_sentinels.cdm.json`, `nulls_and_sentinels.parsed.cdm.json`, `single_point.cdm.json`, `single_point.parsed.cdm.json`, `underway_newest_first.cdm.json`, `underway_newest_first.parsed.cdm.json`, `unknown_extra_key.cdm.json`, `unknown_extra_key.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `duplicate_key.hais`, `element_not_object.json`, `empty_array.json`, `latitude_out_of_range.json`, `missing_latitude.json`, `missing_msgtime.json`, `mixed_mmsi.json`, `mmsi_as_text.json`, `msgtime_without_offset.json`, `nan_value.hais`, `negative_speed.json`, `no_positioned_point.json`, `not_utf8.hais`, `top_level_object.json`, `truncated.hais`; and under `spec/`, `barentswatch_hais_pin.json`, `barentswatch_hais_terms.json`, `build_fixtures.py`; for `frost_observations`, its fixture set under `fixtures/frost_observations/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `midnight_mixed_daily.jsonld`, `midnight_mixed_daily.parsed.json`, `observation_without_unit.jsonld`, `observation_without_unit.parsed.json`, `quality_codes_no_level_unknown_keys.jsonld`, `quality_codes_no_level_unknown_keys.parsed.json`, `station_missing_parallel_sensors.jsonld`, `station_missing_parallel_sensors.parsed.json`, `two_stations_hourly.jsonld`, `two_stations_hourly.parsed.json`; the goldens under `golden/`, `midnight_mixed_daily.cdm.json`, `midnight_mixed_daily.parsed.cdm.json`, `observation_without_unit.cdm.json`, `observation_without_unit.parsed.cdm.json`, `quality_codes_no_level_unknown_keys.cdm.json`, `quality_codes_no_level_unknown_keys.parsed.cdm.json`, `station_missing_parallel_sensors.cdm.json`, `station_missing_parallel_sensors.parsed.cdm.json`, `two_stations_hourly.cdm.json`, `two_stations_hourly.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `cut_short.jsonld`, `duplicate_key.jsonld`, `level_value_without_unit.json`, `no_data_item.json`, `not_an_observation_response.json`, `observation_with_blank_unit.json`, `quality_code_boolean.json`, `reference_time_without_zone.json`, `repeated_item.json`, `source_id_not_a_station.json`, `time_resolution_not_a_duration.json`, `value_as_text.json`; and under `spec/`, `build_fixtures.py`, `frost_observations_pin.json`, `frost_observations_terms.json`; and the package files the roster moved, `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `__init__.py`, `adapter.py`, `lossless.py`, `pyproject.toml`, `symbology.py`, `version.py` (`pyproject.toml`'s two roster comments; `FORMAT_COVERAGE.md`'s four status rows, ordinal rows 32 and 33 and the two row sets; `MIGRATIONS.md`, this section; the package `README.md`'s roster sentence, shipped-table rows and pair arithmetic; and the roster count in `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py` and `version.py`). Outside the distribution the landing moved the repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md`, `.gitattributes`, the docs pages, `gates/wheel_install.py`, the two generated manifests and the support matrix, `tests/observation_support.py`, the two new test modules and the pinned rosters in the gate tests. For the release transition of
+2026-10-24, no file the arc had not moved before it: it moved again, within the files already
+counted, `version.py` (the constant, its dated comment and the live readings in its docstring), this
+file (this section's roll, the introduction's two-number sentence and parting clause, and the two
+tag-command examples), and `adapters/barentswatch_hais.py` and `adapters/frost_observations.py`
+(each its evidence declaration and the limitation beside it). Everything else the transition
+touched ships in nothing: the two manifests, the support matrix and the current-contracts page
+regenerated, `RELEASE_NOTES.md`, the repository's `README.md` and `VERSIONING.md`, the
+documentation site's introduction and changelog pages, the readiness report, and the test modules
+named in the paragraph that begins THE RELEASE TRANSITION ITSELF.
 
 **The 3.6.0 witness round (2026-10-19) had moved one shipped document** — `MIGRATIONS.md`, this section, the
 dated witness paragraphs in the release procedure and the pipeline section, the release's dated
@@ -730,6 +812,9 @@ record by digest among the pipeline's. This round resolves no `SELF` provenance:
 contract — the CDM schema stays 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the
 3.2.0 row still names `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.6.0`.
+(Dated 2026-10-24, at the 3.7.0 roll: those two clauses covered the witness round alone — the
+landing recorded above moved the distribution beside it, the count clause above accounts for every
+file, and `PACKAGE_VERSION` reads `3.7.0` from the release commit on.)
 
 ### 3.6.0 — 2026-10-18 — the NYC raster adapters: three observation adapter modules land, `grib2` as #29, `cog` as #30 and `iem_n0q` as #31, on the shared codec `raster_codec`, the roster moves twenty-seven to thirty, `synapse-decode` gains their rows and a GRIB2 message framer, and no wire contract moves
 

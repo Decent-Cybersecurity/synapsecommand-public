@@ -690,6 +690,11 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/decode_host.py:Hosted",
         "synapse_cdm/decode_host.py:decode",
         "synapse_cdm/decode_host.py:listing"},
+    # The arc ("v3.6.0", "v3.7.0") has no row, and that is the reading: on the 3.7.0 release tree
+    # (2026-10-24) `derive(snapshot_at("v3.6.0"), snapshot_at(None))` reported no ambiguity — the
+    # HIGH NORTH landing added two adapter modules and two fixture sets, units the table decides
+    # as MINOR on its own, and moved nothing it cannot decide — so `.get(..., set())` below is the
+    # empty set this table would otherwise have to spell.
 }
 
 

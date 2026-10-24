@@ -743,7 +743,8 @@ def test_the_declaration_is_what_the_evidence_supports():
     assert meta.id == BarentswatchHaisAdapter.name == "barentswatch_hais"
     assert meta.license_class is LicenseClass.PUBLIC_GOVERNMENT
     assert meta.maturity.level is MaturityLevel.L3
-    assert meta.evidence.available is False
+    # The 3.7.0 release commit (2026-10-24) flips the evidence declaration it landed with.
+    assert meta.evidence.available is True
     limits = meta.capabilities.limits
     assert limits.max_input_bytes == 16 * 1024 * 1024 and limits.max_depth == 64
     assert meta.capabilities.unknown_fields is UnknownFields.PRESERVED

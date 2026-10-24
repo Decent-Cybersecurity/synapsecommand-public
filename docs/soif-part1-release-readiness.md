@@ -938,6 +938,28 @@ subject begins `Release 3.6.0` and its hash is deliberately not written here, fo
 section's first paragraph gives. The tag that names 3.6.0 is to be placed on it after `main`
 is fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-10-24, the 3.7.0 release commit.** `v3.6.0` was placed on
+**`4aee3f67`** and published (`PUBLICATION.md` entry 28). `main` then moved twice by
+fast-forward, through the 3.6.0 witness round **`a81bf5a`** and the docs-deploy commit
+**`9d6310f`**, which is the tip of `main` and of `origin/main` at the time of writing. This report
+also describes the HIGH NORTH landing, landed on that tip as two commits on
+`soif/highnorth-adapters` and none on `main`: **`f0cdd0c`** (the adapter modules
+`barentswatch_hais` and `frost_observations` with their fixture sets, the roster thirty to
+thirty-two, the number untyped) and **`7ec7273`** (the docs lockfile's three high npm advisories
+moved to their patched versions, nothing under `packages/` touched), the tip of that branch at the
+time of writing. On it `CI` run 40103450994 (a `push` event) read `success` on all 11 of its
+jobs — the suite, gates and manifests on Python 3.11, 3.12, 3.13 and 3.14; lint; the conformance
+sweep; evidence records, provenance and badges; gitleaks; pip-audit; `npm audit` over `docs/`; and
+the wheel gate — so no job was red, the tag-conditional set included, which reads green on a tree
+whose `PACKAGE_VERSION`, 3.6.0 there, a tag already names. `CodeQL` run 40103451016 succeeded on
+both languages, and the bridge's own workflow, `Gateway bridge package` run 40103451028, read
+`success` on Python 3.11, 3.12, 3.13 and 3.14. `git merge-base --is-ancestor 9d6310f 7ec7273` exits
+0, so `main` can be fast-forwarded to it. The release commit itself sits on `soif/release-3.7.0`, a
+branch created from that tip; its subject begins `Release 3.7.0` and its hash is deliberately not
+written here, for the reason the section's first paragraph gives. The tag that names 3.7.0 is to
+be placed on it after `main` is fast-forwarded to it, and contains every commit named in this
+paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1340,6 +1362,49 @@ every producer — `cog`'s is its stored values and `grib2`'s and `iem_n0q`'s th
 the contract owner rules; and the bridge on the package index — it reaches the Release as source in
 the tag. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-24, the 3.7.0 release: the verdict is `ready for PR` (3.7.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.7.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.6.0` as `{"kind": "MINOR", "number": "3.7.0", "unruled": []}` on the landing commit
+before the number was typed), and the wire contract does not move: `SCHEMA_VERSION` stays
+**3.2.0**, because no model, enum or published schema changed (`schemas --check` CURRENT at 3.2.0,
+`git diff v3.6.0 -- schemas/` empty). `KNOWN_CONTRACTS`, the frozen contracts and the version matrix
+do not move. `ADAPTER_API_VERSION` 3.1.0, the manifest schema 2.1.0 and the evidence schema 2.0.0
+stay where they were, and the bridge `synapse-link16-bridge` stays at 1.1.0, nothing under it
+having moved. The gate's table decides every unit of the arc on its own — 136 signals on the
+release tree, 70 MINOR and 66 PATCH, no ambiguity — so `MIGRATIONS.md`'s 3.7.0 section carries no
+bump ruling, the bump tests read the same MINOR with the tag and without it, and the
+tag-conditional set on the untagged release commit is three tests: this report's empty-blocked-list
+test, the rehearsal plan's own test and `tests/test_cdm_evidence.py`'s availability test, which
+reads the newest tag's tree. What was verified on the release tree before it was committed: the
+full suite on Python 3.11, 3.12 and 3.14, read by subtracting that set test by test, the figures in
+the release commit's message; `schemas --check` CURRENT at 3.2.0, `manifests --check`
+CURRENT for the thirty-two shipped adapters, the support-matrix and current-contracts checks
+CURRENT; the pin-path and parks-table gates; ruff 0.16.9, the pin, on the package, the gates and the
+tests; `harness --update-golden` over all thirty-two adapters moving no golden; the wheel gate
+without `--mutation-check`, `13 checks, 0 failed`, whose `resources` and `harness` readings are
+`32 adapters, 776 fixture files` and `32 adapters x 2 schema modes, 1488 fixture verdicts, 0
+failed`; the two fixture builders' `--check`; the docs site's `npm --prefix docs run ci`, green;
+and `pip-audit --strict` over the third-party set the suite installs, `No known vulnerabilities
+found`. Read by the release round and not here: the same tree committed in a throwaway clone at a
+local annotated `v3.7.0`, the wheel gate's `--mutation-check`, the build job's package test, CI and
+CodeQL on the pushed release commit, and everything about the upload. The evidence categories of
+each new adapter, as generated on this tree: `internal_fixture` PRESENT, `self_round_trip`
+NOT_APPLICABLE (each is ingest-only), `independent_expected`, `normative_schema` and
+`independent_endpoint` ABSENT. **What is judged, each with its source.** The maintainer's rulings
+of 2026-10-24 on the landing (R-HN-1 to R-HN-7 in the lead's record: the ordinals #32 and #33, the
+`ais`-aligned MMSI typing, the single-token `FROST` source system, `evidence.available` false until
+a Release carries the records, the Baltic fixture rectangle and MID 299, the `SN0000x` station
+block, synthetic fixtures only) and the maintainer's instruction of the same day to run the full
+release; the bounds each adapter declares with their basis. **What is NOT claimed:** that a real
+response of either feed translates — every fixture is synthetic and no real BarentsWatch or Frost
+response is in the repository, so the strict readings (the Historic AIS track shape and its
+sentinels, the `ObservationResponse` shape, the two Frost time classes and the quality-code table)
+have met the documents and not a real response; that a Frost station's position or an unstated
+reading's unit comes from anywhere but the caller's two tables; that `synapse-decode` serves
+either adapter — it does not, and the rows are a follow-on; and the bridge on the package index —
+it reaches the Release as source in the tag. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1429,6 +1494,22 @@ real GRIB2 message and GeoTIFF; one complex-packing field with fewer present val
 of differencing is walked twice, linear in its points and with no memory held (`grib2`, recorded and
 not changed: the fix is not one line); and the domain of a values summary, the contract owner's.
 The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-24, the 3.7.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set, which a tag on the tree
+resolves, and nothing in section 15 or in the arc's own open items rises to a blocker. The open
+items are listed for the maintainer and not argued here: the licence classes of the documents this
+release cites by reference — the BarentsWatch Historic AIS API page (`barentswatch_hais`) and MET
+Norway's Frost concepts page and element table (`frost_observations`), each recorded as
+`PUBLIC_GOVERNMENT` in its pin — beside the ones the 3.5.0 and 3.6.0 releases listed; the private
+readings of real responses — a real Historic AIS track with its sentinels and duplicate instants, a
+real `ObservationResponse` with its quality codes and parallel sensors; the `synapse-decode` rows
+for the two adapters, a follow-on with its own landing; and, outside this release's tree, the HIGH
+NORTH pipeline's own fit window, which drops a replay day's daily Frost events because their
+`observed_at` is the next midnight and the window is end-exclusive — a defect of the pipeline that
+offered the adapters, not of anything in this repository, recorded for its author. The
+machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

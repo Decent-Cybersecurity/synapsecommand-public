@@ -418,6 +418,12 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     `cog` and `iem_n0q` adapter modules with their fixture sets and the shared `raster_codec`
     added, nothing removed — and no model, enum or published schema moved: the numbers are `3.6.0`
     and `3.2.0`, the package's MINOR one the wire contract had no part in.
+
+    **AND ON 2026-10-24 IT WIDENED TO FIVE MINORS, THE FIFTH FOR THE ORDINARY REASON AGAIN.** The
+    HIGH NORTH landing typed `3.7.0` at the derivation gate's floor — the `barentswatch_hais` and
+    `frost_observations` adapter modules with their fixture sets added, nothing removed — and no
+    model, enum or published schema moved: the numbers are `3.7.0` and `3.2.0`, the package's
+    MINOR one the wire contract had no part in.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -437,11 +443,11 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.6.0", "3.2.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("3.7.0", "3.2.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "3.6.0 and 3.2.0. They are four MINORs apart since 2026-10-18, the 3.6.0 release — the "
-        "raster half of the observation arc added three adapter modules, a package MINOR, and no "
-        "model, enum or published schema moved, so the schema stayed where 3.5.0 put it — so the "
+        "3.7.0 and 3.2.0. They are five MINORs apart since 2026-10-24, the 3.7.0 release — the "
+        "HIGH NORTH landing added two adapter modules, a package MINOR, and no model, enum or "
+        "published schema moved, so the schema stayed where 3.5.0 put it — so the "
         "sweep above is quiet and kept for the day a schema change closes the gap. If you bumped one of them just now: that is the expected event, "
         "and the fix is to update this assertion to the two numbers you now mean, not to re-link "
         "them"
