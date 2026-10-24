@@ -146,7 +146,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All thirty harnesses are green**, and at least one of them run against the INSTALLED
+2. **All thirty-two harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -686,7 +686,33 @@ now true of it.
 release tag is `v3.6.0`, and `3.6.0` is what the index serves — `PUBLICATION.md` entry 28 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+**THE HIGH NORTH ADAPTERS LAND, 2026-10-22: two observation adapter modules, `barentswatch_hais`
+as #32 and `frost_observations` as #33, the roster moves thirty to thirty-two, and no wire contract
+moves.** Both were written outside this repository for the HIGH NORTH data pack (Martin Uhrin,
+2026-10-20, as `hn_adapters.barentswatch_hais` 1.1.0 and `hn_adapters.frost_observations` 0.3.0) and
+offered for review; they land as `barentswatch_hais` 1.2.0 and `frost_observations` 1.0.0.
+`barentswatch_hais` reads one BarentsWatch Historic AIS track response (one MMSI, newest first) into
+an `Entity`, a `Track` and a `TRACK_UPDATE` `Event`, identified under the `ais` adapter's `AIS`
+system; its one behavioural change from 1.1.0 is the entity type, which now follows the `ais`
+adapter's MMSI rule (a coast-station or aid-to-navigation MMSI is a `FACILITY`) so one MMSI has one
+`entity_type` across both adapters. `frost_observations` reads one MET Norway Frost
+`ObservationResponse` into `ENVIRONMENTAL_OBSERVATION` Events carrying `point-observation/1`, one per
+data item and Frost time class (Case 1 instant, Case 2.2 daily), and one `SENSOR` Entity per
+station, with positions and element units from the caller's tables. The fixture sets were rewritten
+to this repository's rules: MMSIs under MID 299 (the `ais` fixtures' convention), station ids in a
+new `SN0000x` block CONTRIBUTING.md now states for Frost station fixtures, positions inside the
+Baltic rectangle, every octet payload beside its `.parsed.json` twin, a pin and a terms record in
+each `spec/`. `SCHEMA_VERSION` stays at 3.2.0: no model, enum, published schema or golden of the
+thirty moved, and `EventType.ENVIRONMENTAL_OBSERVATION` and `point-observation/1` gain a producer
+each. `tests/observation_support.py` gains the `frost-station` id form and `mmsi_problems`;
+`.gitattributes` gains `*.hais` and `*.jsonld`. Neither adapter is hosted by `synapse-decode` in this
+landing: `frost_observations` needs two caller tables the host has no request parameter for yet, and
+the row for both is a follow-on. The bump this derives is MINOR (two `Adapter` subclass names and two
+fixture directories appear; nothing is removed), so the next release is at least 3.7.0.
+
+**What moved inside the distribution: 90 files** — for the HIGH NORTH landing of 2026-10-22, every one but the records new: the adapter modules `barentswatch_hais.py` and `frost_observations.py` under `adapters/`; for `barentswatch_hais`, its fixture set under `fixtures/barentswatch_hais/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `duplicate_instants_unordered.hais`, `duplicate_instants_unordered.parsed.json`, `nulls_and_sentinels.hais`, `nulls_and_sentinels.parsed.json`, `single_point.hais`, `single_point.parsed.json`, `underway_newest_first.hais`, `underway_newest_first.parsed.json`, `unknown_extra_key.hais`, `unknown_extra_key.parsed.json`; the goldens under `golden/`, `duplicate_instants_unordered.cdm.json`, `duplicate_instants_unordered.parsed.cdm.json`, `nulls_and_sentinels.cdm.json`, `nulls_and_sentinels.parsed.cdm.json`, `single_point.cdm.json`, `single_point.parsed.cdm.json`, `underway_newest_first.cdm.json`, `underway_newest_first.parsed.cdm.json`, `unknown_extra_key.cdm.json`, `unknown_extra_key.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `duplicate_key.hais`, `element_not_object.json`, `empty_array.json`, `latitude_out_of_range.json`, `missing_latitude.json`, `missing_msgtime.json`, `mixed_mmsi.json`, `mmsi_as_text.json`, `msgtime_without_offset.json`, `nan_value.hais`, `negative_speed.json`, `no_positioned_point.json`, `not_utf8.hais`, `top_level_object.json`, `truncated.hais`; and under `spec/`, `barentswatch_hais_pin.json`, `barentswatch_hais_terms.json`, `build_fixtures.py`; for `frost_observations`, its fixture set under `fixtures/frost_observations/`, the five payloads and their twins, the record and the README at the top level, `PROVENANCE.json`, `README.md`, `midnight_mixed_daily.jsonld`, `midnight_mixed_daily.parsed.json`, `observation_without_unit.jsonld`, `observation_without_unit.parsed.json`, `quality_codes_no_level_unknown_keys.jsonld`, `quality_codes_no_level_unknown_keys.parsed.json`, `station_missing_parallel_sensors.jsonld`, `station_missing_parallel_sensors.parsed.json`, `two_stations_hourly.jsonld`, `two_stations_hourly.parsed.json`; the goldens under `golden/`, `midnight_mixed_daily.cdm.json`, `midnight_mixed_daily.parsed.cdm.json`, `observation_without_unit.cdm.json`, `observation_without_unit.parsed.cdm.json`, `quality_codes_no_level_unknown_keys.cdm.json`, `quality_codes_no_level_unknown_keys.parsed.cdm.json`, `station_missing_parallel_sensors.cdm.json`, `station_missing_parallel_sensors.parsed.cdm.json`, `two_stations_hourly.cdm.json`, `two_stations_hourly.parsed.cdm.json`; the refused payloads and their record under `malformed/`, `PROVENANCE.json`, `cut_short.jsonld`, `duplicate_key.jsonld`, `level_value_without_unit.json`, `no_data_item.json`, `not_an_observation_response.json`, `observation_with_blank_unit.json`, `quality_code_boolean.json`, `reference_time_without_zone.json`, `repeated_item.json`, `source_id_not_a_station.json`, `time_resolution_not_a_duration.json`, `value_as_text.json`; and under `spec/`, `build_fixtures.py`, `frost_observations_pin.json`, `frost_observations_terms.json`; and the package files the roster moved, `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `__init__.py`, `adapter.py`, `lossless.py`, `pyproject.toml`, `symbology.py`, `version.py` (`pyproject.toml`'s two roster comments; `FORMAT_COVERAGE.md`'s four status rows, ordinal rows 32 and 33 and the two row sets; `MIGRATIONS.md`, this section; the package `README.md`'s roster sentence, shipped-table rows and pair arithmetic; and the roster count in `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py` and `version.py`). Outside the distribution the landing moved the repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SECURITY.md`, `RELEASE_NOTES.md`, `.gitattributes`, the docs pages, `gates/wheel_install.py`, the two generated manifests and the support matrix, `tests/observation_support.py`, the two new test modules and the pinned rosters in the gate tests.
+
+**The 3.6.0 witness round (2026-10-19) had moved one shipped document** — `MIGRATIONS.md`, this section, the
 dated witness paragraphs in the release procedure and the pipeline section, the release's dated
 account in the pipeline section, and the index note in the 3.6.0 section being what moved in it.
 Everything else the round touched ships in nothing: the ledger, the witness record and its README,

@@ -304,6 +304,14 @@ PACKAGE_ONLY_TESTS = (
     # codec it reads PNGs with, and loads the packaged builder in memory to write refused files and
     # runs its `--check`, all through `synapse_cdm.__file__`, writing only under `tmp_path`.
     "test_cdm_iem_n0q_adapter.py",
+    # `test_cdm_barentswatch_hais_adapter.py` and `test_cdm_frost_observations_adapter.py` are
+    # package-only (2026-10-22, the HIGH NORTH adapters): each reads its adapter, its packaged
+    # fixtures, twins and goldens under `fixtures/barentswatch_hais/` or
+    # `fixtures/frost_observations/`, loads the packaged builder in memory and runs its `--check`,
+    # all through `synapse_cdm.__file__`, writing only under `tmp_path`; the first also reads the
+    # `ais` adapter it shares identities and typing with.
+    "test_cdm_barentswatch_hais_adapter.py",
+    "test_cdm_frost_observations_adapter.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason

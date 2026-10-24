@@ -1,0 +1,14 @@
+{
+  "@context": "https://frost.met.no/schema",
+  "@type": "ObservationResponse",
+  "apiVersion": "v0",
+  "license": "https://creativecommons.org/licenses/by/3.0/no/",
+  "createdAt": "2026-10-20T07:00:00.000Z",
+  "queryTime": 0.123,
+  "currentItemCount": 4,
+  "itemsPerPage": 4,
+  "offset": 0,
+  "totalItemCount": 4,
+  "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+  "data": []
+}

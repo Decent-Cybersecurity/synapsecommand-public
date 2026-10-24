@@ -1,0 +1,43 @@
+{
+  "adapter": "frost_observations",
+  "license_class_supported_by_these_readings": "PUBLIC_GOVERNMENT",
+  "mapping_rule_applied": "The mapping rule the ais terms record quotes (fixtures/ais/spec/ais_terms.json): a standard or data service the publisher states is a free public offering of a public body -> PUBLIC_GOVERNMENT; an open licence released by its author -> OPEN. Applied: Frost is the free data API of the Norwegian Meteorological Institute, a government agency, whose licensing page names the Norwegian Licence for Open Government Data (NLOD) and Creative Commons Attribution 4.0 International and asks for a credit. Two readings fit (both licences are open, so OPEN is defensible); the government-publisher reading is the one this package's precedents for agency data services take (ndbc_stdmet, coops_csv, airnow_hourly), and it is the one recorded. Both readings are stated here so a later ruling can take the other without re-reading the pages.",
+  "not_committed": "This record is a reading of the publisher's pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any page is claimed, and no clause is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says so rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one. A Frost response's own `license` field is carried verbatim by the adapter and may name another edition (CC BY 3.0 NO was observed); reconciling the response's statement with the licensing page is the consumer's, and this record does not do it.",
+  "read_at": "2026-10-22",
+  "standards": [
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "MET Norway licensing and crediting",
+      "name": "Licensing and crediting (dated 17.1.2017, modified 1.2.2021 as the page states), the page Frost's terms page links for the licence",
+      "notes": "The page suggests the wording 'Based on data from MET Norway'. It names 'Creative Commons 4.0 BY Internasjonal' with a link to creativecommons.org/licenses/by/4.0/ and NLOD without a version number.",
+      "page_url": "https://www.met.no/en/free-meteorological-data/Licensing-and-crediting",
+      "publisher": "The Norwegian Meteorological Institute (MET Norway)",
+      "quoted": "Data and products are licensed under Norwegian license for public data (NLOD) and Creative Commons 4.0 BY Internasjonal:",
+      "quoted_credit": "Credit should be given to The Norwegian Meteorological institute, shortened \"MET Norway\", as the source of data."
+    },
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "Frost API terms of use",
+      "name": "Frost's own terms page (termsofuse2.html; the older /termsofuse URL answers 404)",
+      "notes": "The page names no licence itself and defers to the licensing page above; the adapter's carrying of each response's `license` field verbatim follows this sentence.",
+      "page_url": "https://frost.met.no/termsofuse2.html",
+      "publisher": "The Norwegian Meteorological Institute (MET Norway)",
+      "quoted": "Data from frost.met.no are licensed and the license is found in every response."
+    },
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "Frost API concepts",
+      "name": "concepts2.html, the documentation the adapter's time classes and station identity are read from (quoted in frost_observations_pin.json)",
+      "notes": "States no licence; read for the format, not the terms.",
+      "page_url": "https://frost.met.no/concepts2.html",
+      "publisher": "The Norwegian Meteorological Institute (MET Norway)",
+      "quoted": "sourceId: SN<station identity number>:<parallel sensor number>."
+    }
+  ]
+}

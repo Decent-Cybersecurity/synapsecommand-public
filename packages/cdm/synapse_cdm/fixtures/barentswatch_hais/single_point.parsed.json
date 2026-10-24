@@ -1,0 +1,16 @@
+[
+  {
+    "courseOverGround": 0.0,
+    "latitude": 56.75,
+    "longitude": 20.95,
+    "name": "EX SOLO BUOY",
+    "rateOfTurn": null,
+    "shipType": 0,
+    "speedOverGround": 0.0,
+    "trueHeading": null,
+    "navigationalStatus": 15,
+    "mmsi": 992990010,
+    "msgtime": "2026-10-19T02:02:02+00:00",
+    "stream": "terra"
+  }
+]

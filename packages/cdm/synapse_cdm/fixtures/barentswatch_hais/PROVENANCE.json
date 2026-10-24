@@ -1,0 +1,96 @@
+{
+  "directory": "barentswatch_hais",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_instants_unordered.hais",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_instants_unordered.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nulls_and_sentinels.hais",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nulls_and_sentinels.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "single_point.hais",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "single_point.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "underway_newest_first.hais",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "underway_newest_first.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_extra_key.hais",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_extra_key.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic BarentsWatch Historic AIS track file written for the barentswatch_hais adapter by fixtures/barentswatch_hais/spec/build_fixtures.py from a literal document in that script, after the key set of the API's observed output; MMSIs are under the unallocated MID 299, names begin EX, positions lie inside CONTRIBUTING.md's Baltic rectangle, the day is 2026-10-19, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "barentswatch_hais/spec/barentswatch_hais_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -1,0 +1,96 @@
+{
+  "directory": "frost_observations",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_mixed_daily.jsonld",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_mixed_daily.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "observation_without_unit.jsonld",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "observation_without_unit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "quality_codes_no_level_unknown_keys.jsonld",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "quality_codes_no_level_unknown_keys.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "station_missing_parallel_sensors.jsonld",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "station_missing_parallel_sensors.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_stations_hourly.jsonld",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_stations_hourly.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic MET Norway Frost ObservationResponse written for the frost_observations adapter by fixtures/frost_observations/spec/build_fixtures.py from literals in that script, after the response shape Frost documents at https://frost.met.no/concepts2.html; stations are in the synthetic SN0000x block, every value is invented, and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "frost_observations/spec/frost_observations_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

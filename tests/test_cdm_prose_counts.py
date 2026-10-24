@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty adapters
-cannot grow thirty slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-two adapters
+cannot grow thirty-two slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2438,6 +2438,36 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('tests/observation_support.py',
      'five observation adapters on CI run 38976967421 while the kit, which sets',
      'a past run and a named subset: the builder-check tests of the five observation adapters `readsb_trace` to `airnow_hourly`, the ones this shared helper serves, as the wheel gate read them on one CI run of the landing commit; kept as written because the comment records why the check was repaired'),
+    # ADDED 2026-10-22 (the HIGH NORTH landing, `barentswatch_hais` #32 and `frost_observations`
+    # #33), the grib2 landing's shape again: four rows exempt RELEASE_NOTES.md's roster counts
+    # while the notes describe the 3.6.0 artefact beside two rows marked as postdating it, four
+    # the 3.6.0 readiness report's readings of its release tree, and one MIGRATIONS.md's 3.6.0
+    # record. The first four retire with the next release commit, which rewrites the notes for a
+    # roster of thirty-two; the other five stay.
+    ('RELEASE_NOTES.md',
+     '`CURRENT: manifests vs 30 shipped adapters at manifest schema 2.1.0`',
+     'the 3.6.0 notes describe the 3.6.0 artefact, a roster of thirty, beside the two rows marked post-3.6.0 (`barentswatch_hais` and `frost_observations`, 2026-10-22); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'Thirty adapters at 3.6.0, all harness-verified',
+     'the 3.6.0 notes describe the 3.6.0 artefact, a roster of thirty, beside the two rows marked post-3.6.0 (`barentswatch_hais` and `frost_observations`, 2026-10-22); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'At `v3.6.0` `python -m synapse_cdm.harness --list-adapters` prints `30 adapters registered`',
+     'the 3.6.0 notes describe the 3.6.0 artefact, a roster of thirty, beside the two rows marked post-3.6.0 (`barentswatch_hais` and `frost_observations`, 2026-10-22); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'read `30 adapters, 754 fixture files` and `30 adapters x 2 schema modes, 1448 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
+     'the 3.6.0 notes describe the 3.6.0 artefact, a roster of thirty, beside the two rows marked post-3.6.0 (`barentswatch_hais` and `frost_observations`, 2026-10-22); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('docs/soif-part1-release-readiness.md',
+     '`manifests --check` CURRENT for the thirty shipped adapters, the support-matrix',
+     "the 3.6.0 readiness report's readings of the release tree it certified, when the roster was thirty; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     '`harness --update-golden` over all thirty adapters moving no golden; the harness over all thirty',
+     "the 3.6.0 readiness report's readings of the release tree it certified, when the roster was thirty; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'readings are `30 adapters, 754 fixture files` and `30 adapters x 2 schema modes, 1448 fixture verdicts, 0 failed`. Read by the release round',
+     "the 3.6.0 readiness report's readings of the release tree it certified, when the roster was thirty; a dated certification, kept as written"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'empty, and `harness --update-golden` over the thirty adapters moved no golden), and the two axes',
+     "a dated round record in the history: the 3.6.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),

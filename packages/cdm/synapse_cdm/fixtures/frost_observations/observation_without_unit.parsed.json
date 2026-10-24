@@ -1,0 +1,77 @@
+{
+  "@context": "https://frost.met.no/schema",
+  "@type": "ObservationResponse",
+  "apiVersion": "v0",
+  "license": "https://creativecommons.org/licenses/by/3.0/no/",
+  "createdAt": "2026-10-20T07:00:00.000Z",
+  "queryTime": 0.123,
+  "currentItemCount": 1,
+  "itemsPerPage": 1,
+  "offset": 0,
+  "totalItemCount": 1,
+  "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+  "data": [
+    {
+      "sourceId": "SN00002:0",
+      "referenceTime": "2026-10-19T03:00:00.000Z",
+      "observations": [
+        {
+          "elementId": "wind_speed",
+          "value": 9.4,
+          "level": {
+            "levelType": "height_above_ground",
+            "unit": "m",
+            "value": 47
+          },
+          "timeOffset": "PT0H",
+          "timeResolution": "PT10M",
+          "timeSeriesId": 0,
+          "performanceCategory": "C",
+          "exposureCategory": "2",
+          "qualityCode": 0
+        },
+        {
+          "elementId": "wind_from_direction",
+          "value": 284,
+          "level": {
+            "levelType": "height_above_ground",
+            "unit": "m",
+            "value": 47
+          },
+          "timeOffset": "PT0H",
+          "timeResolution": "PT10M",
+          "timeSeriesId": 0,
+          "performanceCategory": "C",
+          "exposureCategory": "2",
+          "qualityCode": 0
+        },
+        {
+          "elementId": "synthetic_element_x",
+          "value": 17.5,
+          "timeOffset": "PT0H",
+          "timeResolution": "PT10M",
+          "timeSeriesId": 0,
+          "performanceCategory": "C",
+          "exposureCategory": "2",
+          "qualityCode": 0
+        },
+        {
+          "elementId": "air_temperature",
+          "value": -0.7,
+          "unit": "degC",
+          "level": {
+            "levelType": "height_above_ground",
+            "unit": "m",
+            "value": 2
+          },
+          "timeOffset": "PT0H",
+          "timeResolution": "PT1H",
+          "timeSeriesId": 0,
+          "performanceCategory": "C",
+          "exposureCategory": "2",
+          "qualityCode": 0
+        }
+      ]
+    }
+  ]
+}

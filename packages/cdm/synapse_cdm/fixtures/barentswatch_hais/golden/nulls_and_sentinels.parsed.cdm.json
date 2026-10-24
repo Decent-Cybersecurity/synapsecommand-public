@@ -1,0 +1,414 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN: AIS states an identity and no side, and nothing in it is authenticated",
+      "attribution": "Data delivered by BarentsWatch (the credit its API terms require); the data are collected by the Norwegian Coastal Administration and licensed under the Norwegian Licence for Open Government Data (NLOD), as read on 2026-10-22 (fixtures/barentswatch_hais/spec/barentswatch_hais_terms.json)",
+      "barentswatch_samples": {
+        "course_deg": [
+          0.0,
+          null,
+          null,
+          null
+        ],
+        "navigational_status": [
+          1,
+          null,
+          0,
+          15
+        ],
+        "null_fields": [
+          [
+            "name"
+          ],
+          [
+            "courseOverGround",
+            "name",
+            "navigationalStatus",
+            "rateOfTurn",
+            "shipType",
+            "speedOverGround",
+            "stream",
+            "trueHeading"
+          ],
+          [
+            "courseOverGround",
+            "name",
+            "rateOfTurn",
+            "trueHeading"
+          ],
+          [
+            "name"
+          ]
+        ],
+        "rate_of_turn": [
+          0,
+          null,
+          null,
+          null
+        ],
+        "sentinel_fields": [
+          [],
+          [],
+          [],
+          [
+            "courseOverGround",
+            "rateOfTurn",
+            "speedOverGround",
+            "trueHeading"
+          ]
+        ],
+        "source_index": [
+          5,
+          4,
+          2,
+          0
+        ],
+        "speed_at_or_above_maximum": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "speed_mps": [
+          0.0,
+          null,
+          52.5762,
+          null
+        ],
+        "stream": [
+          "terra",
+          null,
+          "terra",
+          "terra"
+        ],
+        "true_heading_deg": [
+          0,
+          null,
+          null,
+          null
+        ]
+      },
+      "barentswatch_samples_basis": "readings taken from each sampled element, keyed by sample index: index k is Track.samples[k] and residual.data.points[source_index[k]]. speed_mps is speedOverGround converted from knots; speed_at_or_above_maximum marks the 102.2 kn floor; course_deg and true_heading_deg are degrees; rate_of_turn is verbatim (unit not established); null and AIS sentinels read as null; sentinel_fields and null_fields name the keys each element marked unknown",
+      "duplicate_instants": [],
+      "duplicate_instants_basis": "groups of samples sharing one instant, every one kept: identical means the elements are equal key for key (a re-delivered report), otherwise the same instant is stated with different values and nothing here chooses between them",
+      "entity_id_basis": "the MMSI rendered as nine digits under AIS, as the ais adapter writes it, so a decoded AIS message and a BarentsWatch track of one vessel give one entity_id",
+      "entity_type_basis": "PLATFORM: the ais adapter's MMSI rule, so one MMSI has one entity type across both adapters; a coast-station or aid-to-navigation MMSI (mmsi_category) is a FACILITY whatever it transmits, every other is a PLATFORM",
+      "kinematics_basis": "the last sample's element: speedOverGround in knots converted to m/s, courseOverGround in degrees true; null and the AIS sentinels (102.3 kn; 360 deg and above) are unknown, never zero. trueHeading has no CDM field and is parked per sample",
+      "mmsi": "299000202",
+      "mmsi_category": "ship station",
+      "mmsi_mid": "299",
+      "names_basis": "the distinct non-null name and shipType values in file order, verbatim; a shipType of 0 is AIS 'not available' and is listed as stated",
+      "points_without_position": [
+        1,
+        3
+      ],
+      "points_without_position_basis": "file indices of elements whose latitude or longitude is null or the AIS 'not available' value; they have no Track sample and stay whole in residual.data.points",
+      "position_basis": "the Track's last sample: the latest element stating a position",
+      "position_source_basis": "ESTIMATED, as the ais adapter reads an AIS position that states no EPFD and no usable UTC second: a BarentsWatch track element states neither, and ESTIMATED understates rather than overstates the fix, which is the safe direction for this field",
+      "ship_types": [
+        0,
+        70
+      ],
+      "source_order": "descending",
+      "source_order_basis": "the order of msgtime across the file as delivered: descending (the API's observed newest-first order), ascending, single-instant or unordered; the samples are ascending whatever it was",
+      "symbol_basis": "derived from affiliation; the file states no symbol",
+      "unknown_keys": [],
+      "unknown_keys_basis": "keys outside the twelve the API is observed to write, preserved verbatim in residual.data.points and read for nothing",
+      "valid_from_basis": "the instant of the earliest sample",
+      "valid_to_basis": "the instant of the latest sample: the file holds nothing after it, which says nothing about the vessel after it",
+      "vessel_names": []
+    },
+    "confidence": null,
+    "entity_id": "c3479b5f-dba3-5756-8226-b1b58a0eee23",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 58.2,
+      "lon": 22.4,
+      "position_source": "ESTIMATED",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "points": [
+          {
+            "courseOverGround": 360.0,
+            "latitude": 58.2,
+            "longitude": 22.4,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T12:05:00+00:00",
+            "name": null,
+            "navigationalStatus": 15,
+            "rateOfTurn": -128,
+            "shipType": 0,
+            "speedOverGround": 102.3,
+            "stream": "terra",
+            "trueHeading": 511
+          },
+          {
+            "courseOverGround": null,
+            "latitude": 91.0,
+            "longitude": 181.0,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T12:03:20+00:00",
+            "name": null,
+            "navigationalStatus": 0,
+            "rateOfTurn": null,
+            "shipType": 70,
+            "speedOverGround": null,
+            "stream": "terra",
+            "trueHeading": null
+          },
+          {
+            "courseOverGround": null,
+            "latitude": 58.18,
+            "longitude": 22.36,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T12:01:40+00:00",
+            "name": null,
+            "navigationalStatus": 0,
+            "rateOfTurn": null,
+            "shipType": 70,
+            "speedOverGround": 102.2,
+            "stream": "terra",
+            "trueHeading": null
+          },
+          {
+            "courseOverGround": 45.0,
+            "latitude": null,
+            "longitude": 22.3,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T12:00:00+00:00",
+            "name": null,
+            "navigationalStatus": 0,
+            "rateOfTurn": 0,
+            "shipType": 70,
+            "speedOverGround": 10.0,
+            "stream": "terra",
+            "trueHeading": 44
+          },
+          {
+            "courseOverGround": null,
+            "latitude": 58.15,
+            "longitude": 22.3,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T11:58:20+00:00",
+            "name": null,
+            "navigationalStatus": null,
+            "rateOfTurn": null,
+            "shipType": null,
+            "speedOverGround": null,
+            "stream": null,
+            "trueHeading": null
+          },
+          {
+            "courseOverGround": 0.0,
+            "latitude": 58.14,
+            "longitude": 22.28,
+            "mmsi": 299000202,
+            "msgtime": "2026-10-19T11:56:40+00:00",
+            "name": null,
+            "navigationalStatus": 1,
+            "rateOfTurn": 0,
+            "shipType": 70,
+            "speedOverGround": 0.0,
+            "stream": "terra",
+            "trueHeading": 0
+          }
+        ]
+      },
+      "namespace": "BarentsWatch Historic AIS track JSON"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "barentswatch_hais",
+      "adapter_version": "1.2.0",
+      "format_name": "BarentsWatch Historic AIS track JSON",
+      "format_version": "Historic AIS API v1 (GET /v1/historic/tracks/{mmsi}/{from}/{to})",
+      "observed_at": null,
+      "original_id": "299000202",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "BARENTSWATCH",
+      "transformations": [
+        "[*].mmsi: the integer MMSI is rendered as nine decimal digits for its AIS source id, as the ais adapter writes it, so one vessel has one entity_id across both adapters",
+        "[*]: the elements, delivered newest first, are re-ordered ascending by msgtime into Track samples (sort key: instant, then descending file index); the residual keeps file order and attributes.barentswatch_samples.source_index maps each sample to its element",
+        "[*].msgtime: the RFC 3339 instant is converted to UTC and re-rendered in the CDM's three-decimal Z form, truncating any sub-millisecond digits",
+        "[*].latitude, [*].longitude: null, latitude 91 or longitude 181 ('not available') yields no Track sample rather than a coordinate; a real coordinate, 0.0 included, is carried unchanged",
+        "[*].speedOverGround: a speed in knots becomes metres per second (x 1852/3600, rounded to 4 decimals as the ais adapter does) in attributes.barentswatch_samples.speed_mps and, for the last sample, Kinematics.speed_mps; null and the 102.3 sentinel become absent",
+        "[*].courseOverGround: null, and 360 or above (the AIS 'not available' value), become an absent course; any other value is carried unchanged in degrees true",
+        "[*].trueHeading: null and the 511 sentinel become an absent heading",
+        "[*].rateOfTurn: null and the -128 sentinel become an absent rate; any other value is carried verbatim and never converted"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "299000202",
+        "system": "AIS"
+      }
+    ],
+    "status": null,
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-10-19T11:56:40.000Z",
+    "valid_to": "2026-10-19T12:05:00.000Z"
+  },
+  {
+    "attributes": {
+      "completeness": {
+        "carried_samples": 4,
+        "completeness_basis": "carried_samples counts the elements stating a usable position; a file is one requested window of the vessel's history under a limited retention period and the provider's filtering, so it is a fragment, and the API states no total",
+        "fragment": true,
+        "stated_samples": null
+      }
+    },
+    "entity_id": "c3479b5f-dba3-5756-8226-b1b58a0eee23",
+    "integrity": null,
+    "object_kind": "track",
+    "quality": null,
+    "residual": {
+      "data": {
+        "mmsi": 299000202
+      },
+      "namespace": "BarentsWatch Historic AIS track JSON"
+    },
+    "samples": [
+      {
+        "observed_at": "2026-10-19T11:56:40.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 58.14,
+          "lon": 22.28,
+          "position_source": "ESTIMATED",
+          "vertical": null
+        }
+      },
+      {
+        "observed_at": "2026-10-19T11:58:20.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 58.15,
+          "lon": 22.3,
+          "position_source": "ESTIMATED",
+          "vertical": null
+        }
+      },
+      {
+        "observed_at": "2026-10-19T12:01:40.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 58.18,
+          "lon": 22.36,
+          "position_source": "ESTIMATED",
+          "vertical": null
+        }
+      },
+      {
+        "observed_at": "2026-10-19T12:05:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": null,
+          "lat": 58.2,
+          "lon": 22.4,
+          "position_source": "ESTIMATED",
+          "vertical": null
+        }
+      }
+    ],
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "barentswatch_hais",
+      "adapter_version": "1.2.0",
+      "format_name": "BarentsWatch Historic AIS track JSON",
+      "format_version": "Historic AIS API v1 (GET /v1/historic/tracks/{mmsi}/{from}/{to})",
+      "observed_at": null,
+      "original_id": "299000202",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "BARENTSWATCH",
+      "transformations": [
+        "[*].mmsi: the integer MMSI is rendered as nine decimal digits for its AIS source id, as the ais adapter writes it, so one vessel has one entity_id across both adapters",
+        "[*]: the elements, delivered newest first, are re-ordered ascending by msgtime into Track samples (sort key: instant, then descending file index); the residual keeps file order and attributes.barentswatch_samples.source_index maps each sample to its element",
+        "[*].msgtime: the RFC 3339 instant is converted to UTC and re-rendered in the CDM's three-decimal Z form, truncating any sub-millisecond digits",
+        "[*].latitude, [*].longitude: null, latitude 91 or longitude 181 ('not available') yields no Track sample rather than a coordinate; a real coordinate, 0.0 included, is carried unchanged"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "299000202",
+        "system": "AIS"
+      }
+    ],
+    "status": null,
+    "track_id": "278ba3e3-175c-5e32-8042-90d1073be838",
+    "track_quality": null
+  },
+  {
+    "event_id": "b3c4b1db-9296-52c0-b603-a8623a0b306b",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-19T12:05:00.000Z",
+    "oes": null,
+    "payload": {
+      "element_count": 6,
+      "event_id_basis": "the MMSI and the first and last sample instants",
+      "event_type_basis": "TRACK_UPDATE: one track file is one update of a history",
+      "observed_at_basis": "the msgtime of the latest sample, the instant the provider recorded for that report, converted to UTC",
+      "received_at_basis": "the injected clock; the file states no delivery instant",
+      "sample_count": 4,
+      "severity_basis": "INFO: a history file states no urgency; navigational status is carried per sample and no alert is derived from it",
+      "track_id": "278ba3e3-175c-5e32-8042-90d1073be838",
+      "validity_basis": "no validity: the event is an instant, and the span is the Entity's valid_from and valid_to and the Track's samples"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "c3479b5f-dba3-5756-8226-b1b58a0eee23"
+    ],
+    "residual": {
+      "data": {
+        "mmsi": 299000202
+      },
+      "namespace": "BarentsWatch Historic AIS track JSON"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "barentswatch_hais",
+      "adapter_version": "1.2.0",
+      "format_name": "BarentsWatch Historic AIS track JSON",
+      "format_version": "Historic AIS API v1 (GET /v1/historic/tracks/{mmsi}/{from}/{to})",
+      "observed_at": null,
+      "original_id": "299000202",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "BARENTSWATCH",
+      "transformations": [
+        "[*].mmsi: the integer MMSI is rendered as nine decimal digits for its AIS source id, as the ais adapter writes it, so one vessel has one entity_id across both adapters",
+        "[*].msgtime: the RFC 3339 instant is converted to UTC and re-rendered in the CDM's three-decimal Z form, truncating any sub-millisecond digits"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "299000202",
+        "system": "AIS"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

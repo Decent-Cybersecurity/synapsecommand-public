@@ -1,0 +1,154 @@
+{
+  "adapter": {
+    "adapter_version": "1.2.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no compressed payload; HTTP content encoding is the caller's to undo, so there is no expansion to bound",
+          "max_objects": "not a bound this format needs: one file yields exactly three objects whatever it holds; the number of elements is bounded by max_input_bytes for octets and by MAX_POINTS = 200000 for every input (refused too-many-points before any element is read)",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock but the injected one, and the byte, depth and element bounds make every walk linear in a bounded input; the conformance suite's worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "the base class: `Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on the octets (read off the characters before json.loads) and on a parsed list (off its containers) before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "A track file nests two containers (the array and an element); an unknown key holding a structure can add more. 64 (`MAX_DEPTH`) is the harness loader's own bound and the figure synapse_cdm's JSON adapters declare. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the octets are measured and refused before this module decodes anything",
+            "kind": "implementation_cap",
+            "source": "The API documentation states no maximum response size. The largest real track file observed for one MMSI over one UTC day held a few thousand elements, roughly 1 MB at about 250 octets per element; 16 MiB (16 777 216 octets, `MAX_INPUT_BYTES`, `adapters/barentswatch_hais.py`) leaves an order of magnitude of headroom for a longer window. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 16777216,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "BarentsWatch Historic AIS track response (GET /v1/historic/tracks/{mmsi}/{from}/{to}): one JSON array of position reports for one MMSI per call, as its UTF-8 octets or as the parsed list; one Entity, one Track and one TRACK_UPDATE Event per file"
+      ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "the whole document, every element and every key in it, known or not, is the Entity's structured residual (`residual.data.points`, file order), and the names of keys outside the twelve the API is observed to write are listed at `attributes.unknown_keys`. The document is an ARRAY, so the conformance suite's check I, which injects keys into dict documents only, has no document to probe",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "BarentsWatch Historic AIS track JSON",
+      "version": "Historic AIS API v1 (GET /v1/historic/tracks/{mmsi}/{from}/{to})"
+    },
+    "id": "barentswatch_hais",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "one-track-file-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one track response per call, for one MMSI, as UTF-8 octets or as the parsed list; JSON text as str, a dict and a batch of files are not taken. A file holding more than one MMSI is refused mixed-mmsi",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-join-across-files",
+        "notes": null,
+        "severity": null,
+        "summary": "nothing is joined across files: two windows of one vessel are two Tracks with one entity_id. A Track's and its Event's ids derive from the MMSI and the first and last sample instants, so two files spanning the same two instants give one track_id; the id names the vessel's window, not the file",
+        "unsupported_paths": []
+      },
+      {
+        "id": "open-data-coverage",
+        "notes": null,
+        "severity": null,
+        "summary": "the open BarentsWatch AIS data EXCLUDE fishing vessels under 15 m and leisure craft under 45 m, so an absent vessel or an empty window is not evidence that nothing was there",
+        "unsupported_paths": []
+      },
+      {
+        "id": "retention-window",
+        "notes": null,
+        "severity": null,
+        "summary": "the historic API serves a limited retention window (the API documentation states 'No data older than 14 days', read 2026-10-22); older history is not retrievable through it, and this adapter states nothing about what lies outside the file",
+        "unsupported_paths": []
+      },
+      {
+        "id": "provider-satellite-filtering",
+        "notes": null,
+        "severity": null,
+        "summary": "the provider filters satellite-received positions when a terrestrial one exists (`stream` names the receiving network); the file is the provider's selection, not every report that was transmitted, and a gap may be a filtered report",
+        "unsupported_paths": []
+      },
+      {
+        "id": "rate-of-turn-unit-not-established",
+        "notes": null,
+        "severity": null,
+        "summary": "the API documentation does not establish whether rateOfTurn is the raw ROT_AIS integer or degrees per minute, so it is carried verbatim per sample and never converted; -128 is read as the AIS 'not available' value",
+        "unsupported_paths": []
+      },
+      {
+        "id": "per-sample-fields-on-the-entity",
+        "notes": null,
+        "severity": null,
+        "summary": "TrackSample holds a position and an instant only, so each element's speed, course, heading, rate of turn, navigational status and stream ride in `attributes.barentswatch_samples` (arrays keyed by sample index) and the whole element in `residual.data.points[source_index]`; only the last sample's speed and course reach Entity.kinematics",
+        "unsupported_paths": []
+      },
+      {
+        "id": "entity-type-from-the-mmsi-category",
+        "notes": null,
+        "severity": null,
+        "summary": "the entity type is the ais adapter's MMSI rule and nothing else: a coast-station or aid-to-navigation MMSI (ais.MMSI_FACILITY_CATEGORIES) is a FACILITY whatever it transmits, every other MMSI is a PLATFORM, and the category is recorded at attributes.mmsi_category. A VIRTUAL aid to navigation, which the ais adapter reads from a type 21 message's own flag and types OVERLAY_OBJECT, cannot be told from a track file, so an aid-to-navigation MMSI here is always the physical FACILITY",
+        "unsupported_paths": []
+      },
+      {
+        "id": "ledger-cannot-bind-reordered-samples",
+        "notes": null,
+        "severity": null,
+        "summary": "the lossless ledger binds every source leaf to the residual and the MMSI to all three objects; it cannot express the time-order permutation from elements to samples, so the binding of latitude and longitude to Track.samples is proven by the adapter's tests, not by the ledger",
+        "unsupported_paths": []
+      },
+      {
+        "id": "synthetic-evidence-only",
+        "notes": null,
+        "severity": null,
+        "summary": "every fixture is synthetic (MMSIs under the unallocated MID 299, as the ais fixtures use them, EX-prefixed names, positions inside CONTRIBUTING.md's Baltic rectangle); the shape follows the API's observed output, and no real response is part of the evidence",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today: `python -m synapse_cdm.harness --adapter barentswatch_hais` reports `translate`, `schema` and `provenance` PASS on every fixture, which carries L1 to L3, and its `lossless` column rests on the path-bound ledger (`MAPPINGS` declared, the whole document a structured residual on the Entity) with no LOST leaf. L4 is NOT declared: this adapter is ingest-only, so the roundtrip check is inapplicable rather than passed, and a rung passed vacuously is not a rung declared. Every fixture is synthetic; no real API response is part of the evidence.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "BarentsWatch Historic AIS track JSON translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

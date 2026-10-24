@@ -1,0 +1,49 @@
+{
+  "what_this_is": "The pin record of the barentswatch_hais adapter: the API documentation its format is read from, cited by URL and NOT carried; the facts the documentation states that the adapter leans on; the licence reading behind the adapter's class, with the terms record beside this file; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: gates/pin_paths.py's corpus is the pinned documents this tree carries, and this one is carried nowhere in it.",
+  "adapter": {
+    "name": "barentswatch_hais",
+    "ordinal": 32,
+    "direction": "ingest",
+    "fixture_directory": "barentswatch_hais",
+    "origin": "Written outside this repository as `hn_adapters.barentswatch_hais` 1.1.0 for the HIGH NORTH data pack (Martin Uhrin, 2026-10-20) and offered for review; landed here as 1.2.0 on 2026-10-22 with one behavioural change: the entity type follows the ais adapter's MMSI rule (a coast-station or aid-to-navigation MMSI is a FACILITY) where 1.1.0 wrote PLATFORM for every MMSI."
+  },
+  "standard": {
+    "document": "BarentsWatch Historic AIS API documentation, the page for GET /v1/historic/tracks/{mmsi}/{from}/{to}, the only documentation of the track response",
+    "publisher": "BarentsWatch, a service of the Norwegian state; the AIS data are collected by the Norwegian Coastal Administration",
+    "url": "https://developer.barentswatch.no/docs/AIS/historic-ais-api",
+    "carried_here": false,
+    "why_not_carried": "The page is a public web document retrievable at one URL and states no licence of its own text; carrying a copy would put a third party's text into an Apache-2.0 tree and pin nothing the URL does not. The adapter reads the response's observed key set and the AIS value ranges, which ITU-R M.1371 defines and the ais adapter already encodes; it quotes no text.",
+    "read_on": "2026-10-22",
+    "facts_read_from_the_page": [
+      {
+        "fact": "the open data exclude small vessels: 'No fishing vessels under 15 meters' and 'No leisure crafts or sailing vessels under 45 meters' (the adapter's limitation open-data-coverage)",
+        "where": "the page's list of limitations of the open AIS data"
+      },
+      {
+        "fact": "the historic API serves 'No data older than 14 days' (the adapter's limitation retention-window)",
+        "where": "the same list"
+      },
+      {
+        "fact": "the data are 'The Norwegian Coastal Administration's open AIS-data' (the attribution the adapter records)",
+        "where": "the page's opening sentence"
+      }
+    ],
+    "facts_observed_not_documented": [
+      "the response array is delivered newest first (descending msgtime); the page does not state an order, so the adapter accepts any order, sorts, and records the order it saw at attributes.source_order",
+      "the twelve keys the response is observed to write (courseOverGround, latitude, longitude, mmsi, msgtime, name, navigationalStatus, rateOfTurn, shipType, speedOverGround, stream, trueHeading); the page documents the endpoint and not the element schema, so a key outside the twelve is preserved and named, never refused",
+      "whether rateOfTurn is the raw ROT_AIS integer or degrees per minute is not stated anywhere read, so it is carried verbatim (the adapter's limitation rate-of-turn-unit-not-established)"
+    ]
+  },
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "Recorded in barentswatch_hais_terms.json beside this file, read 2026-10-22: BarentsWatch's API terms make the data available under the Norwegian Licence for Open Government Data (NLOD; no version is stated on the page) and require the credit 'Data delivered by BarentsWatch'. PUBLIC_GOVERNMENT is the class this package gives a government agency's free public data service (airnow_hourly, coops_csv, ndbc_stdmet); OPEN is the defensible alternative, NLOD being an open licence, and the government-publisher reading is the one the precedents take.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "No record of the BarentsWatch API enters this tree: not a position report, not an MMSI, not a vessel name. The fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only), so no NLOD credit is owed by this repository; a deployment that translates real responses owes the credit the terms page states, and the adapter writes it at attributes.attribution.",
+  "fixtures_are_synthetic": "Every payload under fixtures/barentswatch_hais/ and its malformed/ directory is built by spec/build_fixtures.py from a literal in that script, written on 2026-10-22 for this adapter. MMSIs are under MID 299, the European block no administration holds (the ais fixtures' convention, fixtures/ais/README.md), with one aid to navigation at 99|299|0010; names begin EX; positions are inside the Baltic rectangle of CONTRIBUTING.md; the day is 2026-10-19 UTC; no file states a real vessel, voyage or receiver.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "octets": "each valid fixture is written twice: <name>.hais, the document as compact UTF-8 JSON (json.dumps with separators (',', ':'), ensure_ascii False), the form the API's octets take, and <name>.parsed.json, the same document indented two spaces with a trailing newline; both are deterministic standard-library output and depend on no tool build"
+  }
+}

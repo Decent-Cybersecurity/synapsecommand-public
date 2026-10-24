@@ -184,8 +184,10 @@ and to the release and arc branches.
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas`, run over the roster with no
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. On this tree `python -m synapse_cdm.harness --list-adapters` prints `30 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+directions to agree. At `v3.6.0` `python -m synapse_cdm.harness --list-adapters` prints `30 adapters
+registered`. The rows marked **post-3.6.0** landed in the tree after that tag, `barentswatch_hais`
+and `frost_observations` on 2026-10-22, and are in no release. Declared maturity and claim status
+are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -219,6 +221,8 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `grib2` | ingest | 26 | L3 | VERIFIED (new in the 3.6.0 arc) |
 | `cog` | ingest | 20 | L3 | VERIFIED (new in the 3.6.0 arc) |
 | `iem_n0q` | ingest | 8 | L3 | VERIFIED (new in the 3.6.0 arc) |
+| `barentswatch_hais` | ingest | 10 | L3 | VERIFIED (**post-3.6.0**, in no release) |
+| `frost_observations` | ingest | 10 | L3 | VERIFIED (**post-3.6.0**, in no release) |
 
 **724 fixture verdicts, 0 failed** across the thirty, against the published 3.2.0 schemas — the 670
 that 3.5.0 shipped, every golden byte for byte as it was, plus 54 from the three new sets. The two readings the wheel gate takes,

@@ -1,0 +1,173 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "standard-encoding",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter inflates nothing: a compressed response is unwrapped by the host under its own bounds before it is handed over",
+          "max_parse_seconds": "no wall-clock bound is enforced: this module reads no clock, and every pass is one walk of the document; a synthetic 3,000-item document translates in seconds (tests/test_cdm_frost_observations_adapter.py perf test), and the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on the JSON text or the dict before this class's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "A Frost response nests six containers (response, data, item, observations, observation, level). 64 (`MAX_DEPTH`) is the harness loader's own bound and the figure the JSON-reading adapters of synapse_cdm declare. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum (the Frost API states none).",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time, so the octets are measured and refused before this module decodes them",
+            "kind": "implementation_cap",
+            "source": "No Frost document states a maximum response size. The largest batch response observed outside this repository (about 2,900 data items for about 20 stations over one day) is about 3.5 MB; 16 MiB (16 777 216 octets, `MAX_INPUT_BYTES`, `adapters/frost_observations.py`) leaves four times that headroom. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum (the Frost API states none).",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`FrostObservationsAdapter.to_cdm` counts the Events and the distinct stations after classifying every observation and before any object is built, and refuses `too-many-objects`",
+            "kind": "implementation_cap",
+            "source": "One Event per data item and time class plus one Entity per station. A batch observed outside this repository is about 2,900 items for about 20 stations; 50 000 objects (`MAX_OBJECTS`) is about seventeen times that. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum (the Frost API states none).",
+            "test": "tests/test_cdm_frost_observations_adapter.py::test_a_document_past_the_object_bound_is_refused"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 16777216,
+        "max_objects": 50000,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "MET Norway Frost GET /observations/v0.jsonld ObservationResponse, one document per call, as its UTF-8 octets or its parsed dict; ENVIRONMENTAL_OBSERVATION Events carrying point-observation/1, one per data item (sourceId x referenceTime) and time class (instant, or Case 2.2 daily), and one SENSOR Entity per Frost station"
+      ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "every Event's residual holds the response header (every top-level key but data) and its own data item verbatim, so a key this module does not know, at the top, in an item or in an observation, is carried under the format's namespace",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html"
+    },
+    "id": "frost_observations",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      {
+        "id": "observations-response-only",
+        "notes": null,
+        "severity": null,
+        "summary": "only the observations/v0.jsonld ObservationResponse is translated; sources and elements responses are read only through the caller's StationTable and ElementTable, and no other Frost endpoint is read",
+        "unsupported_paths": []
+      },
+      {
+        "id": "station-position-from-the-caller",
+        "notes": null,
+        "severity": null,
+        "summary": "the response states no position: a station's position comes only from the caller's StationTable keyed by the Frost station id (SN<n>); a station absent from it, or no table at all, gives an Entity with a null position and a position_basis saying so (the ndbc_stdmet/airnow_hourly precedent); masl and other SensorSystem fields are not carried",
+        "unsupported_paths": []
+      },
+      {
+        "id": "sensor-suffix-not-an-entity",
+        "notes": null,
+        "severity": null,
+        "summary": "the parallel sensor number (the ':N' of sourceId) does not make an Entity of its own: the station is the identity, and the full sourceId is carried verbatim on each Event (contract station_id and source identifier) and listed on the station Entity",
+        "unsupported_paths": []
+      },
+      {
+        "id": "observation-time-cases",
+        "notes": null,
+        "severity": null,
+        "summary": "instant Events for sub-daily observations and for any referenceTime not at midnight; a separate Case 2.2 daily Event for P1D observations at midnight (period by timeOffset, observed_at its end); an observation at midnight with no timeResolution, one longer than P1D (monthly, seasonal, annual) or a P1D without a usable timeOffset gets no reading and is listed on the station Entity as unresolved; an instantaneous P1D value stored at exactly 00:00 would be read as diurnal, which the response cannot distinguish",
+        "unsupported_paths": []
+      },
+      {
+        "id": "accumulation-window-not-resolved",
+        "notes": null,
+        "severity": null,
+        "summary": "the window a sub-daily elementId's calculation method names (sum(... PT1H)) is carried verbatim in the reading's name and not turned into an interval: validity.effective is the referenceTime instant, because the concepts page does not state where a sub-daily window lies relative to referenceTime",
+        "unsupported_paths": []
+      },
+      {
+        "id": "unit-from-the-caller",
+        "notes": null,
+        "severity": null,
+        "summary": "an observation without a unit takes the unit the caller's ElementTable names for its exact elementId, recorded as a transformation with the table's name; with no such row the reading is an Absence (unit_unknown) and the value stays only in the residual",
+        "unsupported_paths": []
+      },
+      {
+        "id": "series-in-the-reading-namespace",
+        "notes": null,
+        "severity": null,
+        "summary": "timeOffset, timeResolution and timeSeriesId have no field in point-observation/1; they are stated verbatim in each reading's namespace (and in the residual), which is also what keeps two series of one element apart",
+        "unsupported_paths": []
+      },
+      {
+        "id": "ledger-binds-items-to-any-event",
+        "notes": null,
+        "severity": null,
+        "summary": "because one item can make several Events (or none), the lossless ledger binds each item's leaves to the data_item residual of ANY Event, not to one object index; an item with no resolvable observation is carried in the station Entity's residual (unresolved_items), which the ledger does not bind",
+        "unsupported_paths": []
+      },
+      {
+        "id": "quality-flags-uninterpreted",
+        "notes": null,
+        "severity": null,
+        "summary": "qualityCode, performanceCategory and exposureCategory are carried verbatim as typed quality flags and never interpreted into a confidence or a pass/fail; Event.quality is not set",
+        "unsupported_paths": []
+      },
+      {
+        "id": "data-licence-as-stated",
+        "notes": null,
+        "severity": null,
+        "summary": "the data licence is the response's own license statement (observed: CC BY 3.0 NO), carried verbatim; MET Norway's terms page names NLOD 2.0 and CC BY 4.0, and reconciling the two is the consumer's, not this module's",
+        "unsupported_paths": []
+      },
+      {
+        "id": "missing-value-refused",
+        "notes": null,
+        "severity": null,
+        "summary": "an observation without a numeric value is refused (bad-value): Frost publishes no sentinel for it, so there is no documented absence to translate",
+        "unsupported_paths": []
+      },
+      {
+        "id": "synthetic-fixtures-only",
+        "notes": null,
+        "severity": null,
+        "summary": "every fixture is synthetic (stations in the SN0000x block, positions inside CONTRIBUTING.md's Baltic rectangle, invented values) written from the documented response shape, which is what the gates ran against; no recorded Frost response is part of the evidence",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today: `python -m synapse_cdm.harness --adapter frost_observations` reports translate, schema, provenance, lossless (basis: ledger, MAPPINGS declared, no LOST leaf) and golden PASS on every fixture. Every fixture is synthetic, written from the documented response shape and Frost's concepts page; the daily-at-midnight and missing-unit cases were found on real responses outside this repository, none of which is evidence here. L4 is NOT declared: the adapter is ingest-only, so the roundtrip check is inapplicable rather than passed, and a rung passed vacuously is not a rung declared.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "MET Norway Frost ObservationResponse (observations/v0.jsonld) translator",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

@@ -1,0 +1,43 @@
+{
+  "adapter": "barentswatch_hais",
+  "license_class_supported_by_these_readings": "PUBLIC_GOVERNMENT",
+  "mapping_rule_applied": "The mapping rule the ais terms record quotes (fixtures/ais/spec/ais_terms.json): a standard or data service the publisher states is a free public offering of a public body -> PUBLIC_GOVERNMENT; an open licence released by its author -> OPEN. Applied: BarentsWatch is a service of the Norwegian state publishing the Norwegian Coastal Administration's AIS data, its terms page names the Norwegian Licence for Open Government Data (NLOD) and requires a credit, and the API documentation is a free public page. Two readings fit (NLOD is an open licence, so OPEN is defensible); the government-publisher reading is the one this package's precedents for agency data services take (ndbc_stdmet, coops_csv, airnow_hourly), and it is the one recorded. Both readings are stated here so a later ruling can take the other without re-reading the pages.",
+  "not_committed": "This record is a reading of the publisher's pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any page is claimed, and no clause is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says so rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one. The pages name NLOD without a version number, and this record does not supply one.",
+  "read_at": "2026-10-22",
+  "standards": [
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "BarentsWatch API terms and conditions",
+      "name": "Terms of Use of the data from BarentsWatch (published 29 July 2016, last updated 02 November 2023 as the page states)",
+      "notes": "The page continues '... unless API documentation specify otherwise' and states that content demanding special access is not licensed by NLOD; the historic AIS track endpoint's page states no other licence. The credit is required in both languages, 'Data delivered by BarentsWatch' and 'Data levert av BarentsWatch'; the adapter writes the English form at attributes.attribution.",
+      "page_url": "https://www.barentswatch.no/en/articles/api-terms-and-conditions/",
+      "publisher": "BarentsWatch",
+      "quoted": "Information from BarentsWatch APIs are made available by the Norwegian Licence for Open Government Data (NLOD)",
+      "quoted_credit": "All usage of BarentsWatch API in applications shall be marked with the following text"
+    },
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "Open data via BarentsWatch",
+      "name": "BarentsWatch's open-data article (last updated 02 December 2024 as the page states), the page the API documentation links for the licence",
+      "notes": "The AIS section states 'The data is collected by the Norwegian Coastal Administration.', which is the data owner the adapter names.",
+      "page_url": "https://www.barentswatch.no/en/articles/open-data-via-barentswatch/",
+      "publisher": "BarentsWatch",
+      "quoted": "BarentsWatch's open data is available under the license agreement NLOD - \"Norwegian license for public data\"."
+    },
+    {
+      "availability": "free_public_page",
+      "fetched_at": "2026-10-22",
+      "http_status": 200,
+      "identifier": "BarentsWatch Historic AIS API documentation",
+      "name": "The documentation page of the historic AIS API, the only documentation of the track response",
+      "notes": "The page states no licence and no credit of its own; it links the two pages above. It states the coverage limits and the retention window the adapter's limitations cite: 'No fishing vessels under 15 meters', 'No leisure crafts or sailing vessels under 45 meters', 'No data older than 14 days'.",
+      "page_url": "https://developer.barentswatch.no/docs/AIS/historic-ais-api",
+      "publisher": "BarentsWatch",
+      "quoted": "The Norwegian Coastal Administration's open AIS-data is collected from:"
+    }
+  ]
+}

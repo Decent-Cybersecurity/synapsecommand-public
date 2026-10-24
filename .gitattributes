@@ -152,3 +152,16 @@ packages/cdm/synapse_cdm/fixtures/cog/** -text
 # fail it.
 *.png -text -diff
 packages/cdm/synapse_cdm/fixtures/iem_n0q/** -text
+
+# BarentsWatch Historic AIS track responses (the `barentswatch_hais` adapter): compact JSON octets
+# (`.hais`), and MET Norway Frost observation responses (the `frost_observations` adapter): compact
+# JSON octets (`.jsonld`). Both are text, and that is why they are listed, the station-text habit
+# above: the octet fixtures are compared byte for byte with what `spec/build_fixtures.py --check`
+# writes and translated beside their parsed twins, so a checkout that rewrote a line end would hand
+# the adapter other octets than the ones its golden was written from. Added 2026-10-22 in the
+# change that lands the two adapters; both directories are held out of line-ending conversion as a
+# whole.
+*.hais -text -diff
+*.jsonld -text -diff
+packages/cdm/synapse_cdm/fixtures/barentswatch_hais/** -text
+packages/cdm/synapse_cdm/fixtures/frost_observations/** -text

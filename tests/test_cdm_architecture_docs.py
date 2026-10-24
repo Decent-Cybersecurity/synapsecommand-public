@@ -56,9 +56,11 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
                 # Added 2026-10-17 (the same arc's 3.6.0 content, `grib2`): twenty-eight.
                 # Added 2026-10-17 (the same arc's 3.6.0 content, `cog`): twenty-nine.
                 # Added 2026-10-17 (the same arc's 3.6.0 content, `iem_n0q`): thirty.
+                # Added 2026-10-22 (the HIGH NORTH adapters, `barentswatch_hais` and
+                # `frost_observations`): thirty-one and thirty-two.
                 "twenty-one": 21, "twenty-two": 22, "twenty-three": 23, "twenty-four": 24,
                 "twenty-five": 25, "twenty-six": 26, "twenty-seven": 27, "twenty-eight": 28,
-                "twenty-nine": 29, "thirty": 30}
+                "twenty-nine": 29, "thirty": 30, "thirty-one": 31, "thirty-two": 32}
 _NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 

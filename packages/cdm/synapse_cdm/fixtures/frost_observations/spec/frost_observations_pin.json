@@ -1,0 +1,57 @@
+{
+  "what_this_is": "The pin record of the frost_observations adapter: the documentation its format and time semantics are read from, cited by URL and NOT carried; the sentences the adapter's time classes rest on, quoted short; the licence reading behind the adapter's class, with the terms record beside this file; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: gates/pin_paths.py's corpus is the pinned documents this tree carries, and this one is carried nowhere in it.",
+  "adapter": {
+    "name": "frost_observations",
+    "ordinal": 33,
+    "direction": "ingest",
+    "fixture_directory": "frost_observations",
+    "origin": "Written outside this repository as `hn_adapters.frost_observations` 0.3.0 for the HIGH NORTH data pack (Martin Uhrin, 2026-10-20) and offered for review; landed here as 1.0.0 on 2026-10-22 with no behavioural change, the fixtures rewritten to this repository's identifier and place rules."
+  },
+  "standard": {
+    "document": "Frost API concepts (concepts2.html): the sections on sourceId, parallel sensors and time series, and 'Relationship between referenceTime, timeOffset, and timeResolution' (Cases 1 and 2.1 to 2.5); the Frost element table and data clarifications pages are cited by URL in the adapter's namespaces",
+    "publisher": "The Norwegian Meteorological Institute (MET Norway)",
+    "url": "https://frost.met.no/concepts2.html",
+    "carried_here": false,
+    "why_not_carried": "The page is MET Norway's own web documentation, retrievable at one URL and revised in place; carrying a copy would put a third party's text into an Apache-2.0 tree. The adapter quotes the sentences its time classes rest on, listed below, and reads nothing else from it.",
+    "read_on": "2026-10-22",
+    "sentences_the_adapter_rests_on": [
+      {
+        "rule": "INSTANT, sub-daily (the adapter's T_SUB_DAILY)",
+        "quoted": "The referenceTime is then equal to the observation time, and no timeOffset should be added to referenceTime to get the original observation time.",
+        "where": "Case 1, observations with a timeResolution shorter than one day"
+      },
+      {
+        "rule": "INSTANT, a referenceTime that is not midnight (T_NOT_MIDNIGHT)",
+        "quoted": "If referenceTime is different from midnight, referenceTime is equal to observation time and timeOffset should not be added.",
+        "where": "a note under the Case 2 heading"
+      },
+      {
+        "rule": "DAILY (T_DAILY), the only Case 2 period the adapter places",
+        "quoted": "The end of the observation period, is referenceTime + timeOffset.",
+        "where": "Case 2.2, diurnal data, which also states that with timeOffset PT0H the value 'represents the period from midnight to midnight on the calendar date' and otherwise 'the last 24 hr, at the time after midnight equal to timeOffset'"
+      },
+      {
+        "rule": "UNRESOLVED: a timeResolution of one day or longer other than P1D at midnight is set aside on the station Entity, never placed",
+        "quoted": "Cases 2.1 (instantaneous observations stored with date and time), 2.3 (monthly), 2.4 (seasonal) and 2.5 (annual) place their periods by rules that depend on the element and the season; none is implemented",
+        "where": "Cases 2.1 and 2.3 to 2.5"
+      },
+      {
+        "rule": "STATIONS: the station is the identity and the parallel sensor is kept on the Event",
+        "quoted": "sourceId: SN<station identity number>:<parallel sensor number>.",
+        "where": "the sourceId section, which also states 'SN<station number> is by default alias for SN<station number>:0' and 'Data is sometimes returned in multiple timeseries, with different level heights or time offsets.'"
+      }
+    ]
+  },
+  "licence": {
+    "license_class": "PUBLIC_GOVERNMENT",
+    "reading": "Recorded in frost_observations_terms.json beside this file, read 2026-10-22: MET Norway's licensing page states its data are licensed under the Norwegian Licence for Open Government Data (NLOD) and Creative Commons Attribution 4.0 International and asks for the credit 'MET Norway'; Frost's own terms page states that 'the license is found in every response', and the adapter carries the response's license statement verbatim in every Event's residual (observed responses state CC BY 3.0 NO, which the adapter's limitation data-licence-as-stated records as the consumer's to reconcile). PUBLIC_GOVERNMENT is the class this package gives a government agency's free public data service.",
+    "not_a_grant": "This record states no permission. It records which class the adapter declares and why, and a later reading is a later record beside this one."
+  },
+  "data_posture": "No Frost response enters this tree: not a station, not a value, not a link. The fixtures are synthetic (CONTRIBUTING.md, Synthetic fixtures only), so no credit is owed by this repository; a deployment that translates real responses owes the credit MET Norway's licensing page states.",
+  "fixtures_are_synthetic": "Every payload under fixtures/frost_observations/ and its malformed/ directory is built by spec/build_fixtures.py from a literal in that script, written on 2026-10-22 for this adapter. Station ids are in the SN0000x block CONTRIBUTING.md reserves for Frost station fixtures; the fixture station table in the adapter (FIXTURE_STATIONS) places them inside the Baltic rectangle; every value is invented; no file states a real station, element unit source or response link.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing)",
+    "octets": "each valid fixture is written twice: <name>.jsonld, the document as compact UTF-8 JSON (json.dumps with separators (',', ':'), ensure_ascii False), and <name>.parsed.json, the same document indented two spaces with a trailing newline; both are deterministic standard-library output and depend on no tool build"
+  }
+}

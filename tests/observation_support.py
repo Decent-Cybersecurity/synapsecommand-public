@@ -37,9 +37,13 @@ STATION_ID_FORMS = {
     "numeric-7": re.compile(r"00000(?:0[1-9]|[1-9][0-9])"),
     "air-quality-9": re.compile(r"0000000(?:0[1-9]|[1-9][0-9])"),
     "air-quality-12": re.compile(r"0000000000(?:0[1-9]|[1-9][0-9])"),
+    "frost-station": re.compile(r"SN000(?:0[1-9]|[1-9][0-9])"),
 }
 RADAR_SITE = re.compile(r"ZZZZ|XZZ[A-Z]")
 AIRCRAFT_ADDRESS = re.compile(r"0029[0-9A-Fa-f]{2}")
+#: The `ais` fixtures' MMSI rule (fixtures/ais/README.md): MID 299, as a ship station, a coast
+#: station, an aid to navigation or an AIS-SART; nine digits, leading zeros kept.
+MMSI_MID_299 = re.compile(r"299[0-9]{6}|00299[0-9]{4}|99299[0-9]{4}|970299[0-9]{3}")
 
 #: (south, north, west, east), degrees: the Baltic rectangle.
 BALTIC_RECTANGLE = (56.0, 58.5, 20.0, 24.5)
@@ -62,6 +66,13 @@ def radar_site_problems(site: str) -> list[str]:
 def aircraft_address_problems(address: str) -> list[str]:
     if not isinstance(address, str) or AIRCRAFT_ADDRESS.fullmatch(address) is None:
         return [f"{address!r} is not in the 0029xx block"]
+    return []
+
+
+def mmsi_problems(mmsi: str) -> list[str]:
+    """An MMSI as its nine decimal digits, held to the MID 299 block."""
+    if not isinstance(mmsi, str) or MMSI_MID_299.fullmatch(mmsi) is None:
+        return [f"{mmsi!r} is not under MID 299"]
     return []
 
 

@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Thirty integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Thirty-two integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -13,9 +13,11 @@ the TacticalAPI blue-force read side (`rheinmetall.tactical_api.v0`),
 the SC Link16 Gateway report, readsb trace JSON (one `globe_history` trace file), NEXRAD
 Level II (one Archive II weather radar volume), NDBC standard meteorological text, NOAA CO-OPS
 data API responses, EPA AirNow hourly observation files, GRIB2 (one WMO FM 92 GRIB edition 2
-message), Cloud Optimized GeoTIFF (one GeoTIFF's header and first block, or a VRT index) and IEM
-NEXRAD N0Q composites (one 12200 x 5400 PNG). Without a canonical model in the middle, thirty
-adapters means four hundred and thirty-five translations and thirty private notions of "a contact".
+message), Cloud Optimized GeoTIFF (one GeoTIFF's header and first block, or a VRT index), IEM
+NEXRAD N0Q composites (one 12200 x 5400 PNG), BarentsWatch Historic AIS track JSON (one vessel's
+track response) and MET Norway Frost observation responses. Without a canonical model in the
+middle, thirty-two adapters means four hundred and ninety-six translations and thirty-two private
+notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -53,6 +55,8 @@ With one, an adapter is a thin translator and nothing else.
 | [`grib2`](adapters/grib2.py) 1.0.0 | ingest | GRIB edition 2 (NCEP's WMO GRIB2 documentation 37.0.0 and WMO-No. 306, cited by reference and not carried) — one message (8 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` per field (Sections 4 to 7 may repeat) carrying the `gridded-field/1` contract: the reference time and its Table 1.2 significance as `observed_at`, never a future valid instant; the forecast's validity (an instant, or Template 4.8's interval) as `validity.effective`; the grid verbatim with a WGS84 footprint Polygon (a lat/lon grid's corners, a Lambert conformal grid's outline converted point by point); the values by reference with a summary decoded from simple packing, complex packing with spatial differencing and PNG (rows inflated under 64 MiB), the bitmap's absent points, Table 5.5's missing values and a parameter's sentinels each counted as missing. JPEG 2000 is read in reference form and its values declared unsupported; `synapse-decode` cuts a file into its messages |
 | [`cog`](adapters/cog.py) 1.0.0 | ingest | Cloud Optimized GeoTIFF and classic GeoTIFF (OGC GeoTIFF 1.1, OGC COG 1.0 and TIFF 6.0, cited by reference and not carried), and GDAL VRT as an index — one file (256 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `imagery-product/1` contract when the file states a sensing time (HLS's `SENSING_TIME`, or the ECOSTRESS `RangeBeginning`/`RangeEnding` items ending Z) or the caller supplies one with its basis, otherwise one `ANNOTATION` `PlanObject` with the caller's as-of when given: every directory, the GeoKeys, GDAL_METADATA and GDAL_NODATA read and kept in the residual; block 0 of the full-resolution image decoded (none, LZW, Deflate, PackBits; predictors 2 and 3; 1 MiB at most) and summarised, inline when small; a WGS84 footprint Polygon from EPSG:4326, EPSG:4269 (stated without a datum shift) or a WGS84 UTM zone (converted point by point), every other system refused; a NAVD88 height datum stated beside the values, never as `alt_m`; processing clocks only in `product_version`. A VRT's sources are listed and never opened, and a remote one is refused by name. `synapse-decode` serves it (since 2026-10-17), the file's name and granule and the role of a supplied instant given as request parameters |
 | [`iem_n0q`](adapters/iem_n0q.py) 1.0.0 | ingest | IEM NEXRAD N0Q radar composites (the PNG Third Edition and IEM's composite and raster-catalogue pages, cited by URL and not carried) — one archive PNG (8 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `gridded-field/1` contract: the grid a product constant (12200 x 5400 cells of 0.005 degree, IHDR held to it before anything is inflated, the `.wld` never read), its outline a WGS84 footprint Polygon; palette index 0 missing and index i (i − 65) / 2 dBZ, the values by reference with a dBZ summary; `observed_at` the archive file name's slot, which the caller supplies with its basis on IEM's five-minute grid; IEM's `gentime` generation clock only in `product_version`. `synapse-decode` serves it with the slot as `--at` |
+| [`barentswatch_hais`](adapters/barentswatch_hais.py) 1.2.0 | ingest | BarentsWatch Historic AIS track JSON (the Historic AIS API's `GET /v1/historic/tracks/{mmsi}/{from}/{to}` response, documented by URL and not carried) — one vessel's track response (16 MiB at most), as its octets or its parsed array → one `Entity` typed by the `ais` adapter's MMSI rule and identified under its `AIS` system (one vessel, one `entity_id` across both), one `Track` with the reports re-ordered ascending from the API's newest-first delivery, and one `TRACK_UPDATE` `Event`; AIS sentinels read with the `ais` adapter's own constants, speed in knots converted, rate of turn carried verbatim, the whole array the Entity's residual |
+| [`frost_observations`](adapters/frost_observations.py) 1.0.0 | ingest | MET Norway Frost `ObservationResponse` (`GET /observations/v0.jsonld`, Frost API v0, documented by URL and not carried) — one response (16 MiB at most), as its octets or its parsed dict → `ENVIRONMENTAL_OBSERVATION` Events carrying the `point-observation/1` contract, one per data item and Frost time class (Case 1: the referenceTime is the instant; Case 2.2: a daily period placed by `timeOffset`), and one `SENSOR` `Entity` per station; positions from the caller's `StationTable` and units an observation omits from the caller's `ElementTable`, both constructor arguments; quality codes carried as typed flags, never interpreted |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -355,7 +359,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fifteen of the thirty
+clone. Every adapter that declares an egress direction was affected — fifteen of the thirty-two
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the four that shipped since
 (`geojson`, `c2sim`, `dis7` and, on 2026-10-10, `link16_gateway`) declared theirs from the start. The second
@@ -400,9 +404,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's thirty adapters it is 870 against 435.
+   contradiction. At today's thirty-two adapters it is 992 against 496.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that thirty adapters cannot grow thirty
+   `docs/docs/cdm/entity.mdx` both carry "so that thirty-two adapters cannot grow thirty-two
    slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

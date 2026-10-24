@@ -1,7 +1,7 @@
 # Contributing
 
 This repository holds the SynapseCommand **Canonical Data Model** — the contract layer that
-thirty integration adapters translate into. A contract is the wrong place for a surprise, so the
+thirty-two integration adapters translate into. A contract is the wrong place for a surprise, so the
 rules below are short and they are enforced by something that fails a build rather than by
 review alone.
 
@@ -205,6 +205,16 @@ copied wrongly the first time it is inconvenient.
   - *nine- and twelve-digit air-quality site ids*: zeros and two final digits, `000000001` to
     `000000099` and `000000000001` to `000000000099`; the run of leading zeros makes the id
     visibly synthetic, as in the seven-digit block.
+  - *Frost station ids* (MET Norway's `SN<station number>` form; the parallel-sensor suffix `:N`
+    is apart from it): `SN` and five digits with leading zeros, `SN00001` to `SN00099`. The zeros
+    make the id visibly synthetic, as in the seven-digit block; a Frost response states no
+    position, so the adapter's own fixture station table places them inside the rectangle below
+    (added 2026-10-22).
+- **AIS MMSIs keep the `ais` fixtures' rule: MID 299.** The European block no administration
+  holds — a ship station `299xxxxxx`, an aid to navigation `99|299|xxxx`, a coast station
+  `00|299|xxxx` — for the reason `fixtures/ais/README.md` gives against the `999xxxxxx` test
+  range: `99` is the aid-to-navigation prefix, so a vessel under it contradicts itself. A
+  BarentsWatch track fixture follows the same rule (added 2026-10-22).
 - **Radar site identifiers: `ZZZZ`, then `XZZA` to `XZZZ`.** A weather radar names itself with a
   four-letter location indicator. A synthetic radar takes `ZZZZ`, and a fixture that needs a
   second site takes `XZZA`, `XZZB` and so on, so every synthetic site is spelled from one visibly
@@ -266,7 +276,7 @@ directory; `load_builder` compiles the builder in memory for an in-process asser
 `tests/test_cdm_generator_loading.py` requires of every loader; `provenance_problems` and
 `twin_problems` hold the set to its `PROVENANCE.json` and every binary payload to its
 `.parsed.json` twin; and `station_id_problems`, `radar_site_problems`,
-`aircraft_address_problems` and `positions_outside_the_rectangle` hold it to the identifier rules
+`aircraft_address_problems`, `mmsi_problems` and `positions_outside_the_rectangle` hold it to the identifier rules
 above.
 
 ### Then

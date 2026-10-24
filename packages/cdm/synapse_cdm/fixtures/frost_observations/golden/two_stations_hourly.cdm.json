@@ -1,0 +1,1152 @@
+[
+  {
+    "event_id": "cbe000a2-cb09-5caf-ae4f-f48d1a38ef6e",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.3,
+        57.2
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-19T00:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 0,
+          "kind": "table",
+          "row": 0
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-10-20T07:00:00.000Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [
+          {
+            "applies_to": "readings[0]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[3]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[3]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[3]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[4]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[4]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[4]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "1"
+          },
+          {
+            "applies_to": "readings[5]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[5]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[5]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 2.0
+            },
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": -3.4
+            },
+            "name": "air_temperature",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 10.0
+            },
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 7.1
+            },
+            "name": "wind_speed",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 10.0
+            },
+            "measurement": {
+              "unit": "degrees",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 215.0
+            },
+            "name": "wind_from_direction",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "hPa",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 1002.7
+            },
+            "name": "air_pressure_at_sea_level",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "mm",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 0.4
+            },
+            "name": "sum(precipitation_amount PT1H)",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 2.0
+            },
+            "measurement": {
+              "unit": "percent",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 88.0
+            },
+            "name": "relative_humidity",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          }
+        ],
+        "station_id": "SN00001:0",
+        "station_namespace": "MET Norway Frost sourceId, SN<station identity number>:<parallel sensor number> (https://frost.met.no/concepts2.html)",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "Frost writes referenceTime in RFC 3339 with the Z designator (UTC)",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "4246f210-75a5-5649-a172-515eafa606da"
+    ],
+    "residual": {
+      "data": {
+        "@context": "https://frost.met.no/schema",
+        "@type": "ObservationResponse",
+        "apiVersion": "v0",
+        "createdAt": "2026-10-20T07:00:00.000Z",
+        "currentItemCount": 4,
+        "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+        "data_item": {
+          "observations": [
+            {
+              "elementId": "air_temperature",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 2
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "degC",
+              "value": -3.4
+            },
+            {
+              "elementId": "wind_speed",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 10
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "m/s",
+              "value": 7.1
+            },
+            {
+              "elementId": "wind_from_direction",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 10
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "degrees",
+              "value": 215
+            },
+            {
+              "elementId": "air_pressure_at_sea_level",
+              "exposureCategory": "2",
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "hPa",
+              "value": 1002.7
+            },
+            {
+              "elementId": "sum(precipitation_amount PT1H)",
+              "exposureCategory": "1",
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "mm",
+              "value": 0.4
+            },
+            {
+              "elementId": "relative_humidity",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 2
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "percent",
+              "value": 88
+            }
+          ],
+          "referenceTime": "2026-10-19T00:00:00.000Z",
+          "sourceId": "SN00001:0"
+        },
+        "itemsPerPage": 4,
+        "license": "https://creativecommons.org/licenses/by/3.0/no/",
+        "offset": 0,
+        "queryTime": 0.123,
+        "totalItemCount": 4
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T00:00:00.000Z",
+      "original_id": null,
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "referenceTime is the observation time (https://frost.met.no/concepts2.html, Case 1: each reading of this Event has a timeResolution shorter than one day; 'no timeOffset should be added'); validity.effective is that instant and timeOffset is carried verbatim, never added",
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00001:0/2026-10-19T00:00:00.000Z",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-10-19T00:00:00.000Z",
+        "start": "2026-10-19T00:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "b7d37a96-71f1-58ea-a43d-845e2d7749db",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        21.3,
+        57.2
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-19T01:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 0,
+          "kind": "table",
+          "row": 1
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-10-20T07:00:00.000Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [
+          {
+            "applies_to": "readings[0]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "2"
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "C"
+          },
+          {
+            "applies_to": "readings[2]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "1"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 2.0
+            },
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": -3.9
+            },
+            "name": "air_temperature",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 10.0
+            },
+            "measurement": {
+              "unit": "m/s",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 6.4
+            },
+            "name": "wind_speed",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "mm",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 0.0
+            },
+            "name": "sum(precipitation_amount PT1H)",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          }
+        ],
+        "station_id": "SN00001:0",
+        "station_namespace": "MET Norway Frost sourceId, SN<station identity number>:<parallel sensor number> (https://frost.met.no/concepts2.html)",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "Frost writes referenceTime in RFC 3339 with the Z designator (UTC)",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "4246f210-75a5-5649-a172-515eafa606da"
+    ],
+    "residual": {
+      "data": {
+        "@context": "https://frost.met.no/schema",
+        "@type": "ObservationResponse",
+        "apiVersion": "v0",
+        "createdAt": "2026-10-20T07:00:00.000Z",
+        "currentItemCount": 4,
+        "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+        "data_item": {
+          "observations": [
+            {
+              "elementId": "air_temperature",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 2
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "degC",
+              "value": -3.9
+            },
+            {
+              "elementId": "wind_speed",
+              "exposureCategory": "2",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 10
+              },
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "m/s",
+              "value": 6.4
+            },
+            {
+              "elementId": "sum(precipitation_amount PT1H)",
+              "exposureCategory": "1",
+              "performanceCategory": "C",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "mm",
+              "value": 0
+            }
+          ],
+          "referenceTime": "2026-10-19T01:00:00.000Z",
+          "sourceId": "SN00001:0"
+        },
+        "itemsPerPage": 4,
+        "license": "https://creativecommons.org/licenses/by/3.0/no/",
+        "offset": 0,
+        "queryTime": 0.123,
+        "totalItemCount": 4
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T01:00:00.000Z",
+      "original_id": null,
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "referenceTime is the observation time (https://frost.met.no/concepts2.html: a referenceTime different from midnight 'is equal to observation time and timeOffset should not be added'); validity.effective is that instant and timeOffset is carried verbatim, never added",
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00001:0/2026-10-19T01:00:00.000Z",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-10-19T01:00:00.000Z",
+        "start": "2026-10-19T01:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "49cfbeba-8dbf-5c42-884f-b70bd2e08518",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        23.9,
+        56.8
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-19T00:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 0,
+          "kind": "table",
+          "row": 2
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-10-20T07:00:00.000Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [
+          {
+            "applies_to": "readings[0]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "A"
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "1"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "A"
+          },
+          {
+            "applies_to": "readings[1]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "1"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 2.0
+            },
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 1.2
+            },
+            "name": "air_temperature",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          },
+          {
+            "absence": null,
+            "datum": null,
+            "level": null,
+            "measurement": {
+              "unit": "hPa",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 998.1
+            },
+            "name": "air_pressure_at_sea_level",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          }
+        ],
+        "station_id": "SN00002:0",
+        "station_namespace": "MET Norway Frost sourceId, SN<station identity number>:<parallel sensor number> (https://frost.met.no/concepts2.html)",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "Frost writes referenceTime in RFC 3339 with the Z designator (UTC)",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "065210fc-0add-5df6-a129-26b60f73803e"
+    ],
+    "residual": {
+      "data": {
+        "@context": "https://frost.met.no/schema",
+        "@type": "ObservationResponse",
+        "apiVersion": "v0",
+        "createdAt": "2026-10-20T07:00:00.000Z",
+        "currentItemCount": 4,
+        "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+        "data_item": {
+          "observations": [
+            {
+              "elementId": "air_temperature",
+              "exposureCategory": "1",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 2
+              },
+              "performanceCategory": "A",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "degC",
+              "value": 1.2
+            },
+            {
+              "elementId": "air_pressure_at_sea_level",
+              "exposureCategory": "1",
+              "performanceCategory": "A",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "hPa",
+              "value": 998.1
+            }
+          ],
+          "referenceTime": "2026-10-19T00:00:00.000Z",
+          "sourceId": "SN00002:0"
+        },
+        "itemsPerPage": 4,
+        "license": "https://creativecommons.org/licenses/by/3.0/no/",
+        "offset": 0,
+        "queryTime": 0.123,
+        "totalItemCount": 4
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T00:00:00.000Z",
+      "original_id": null,
+      "record_index": 2,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "referenceTime is the observation time (https://frost.met.no/concepts2.html, Case 1: each reading of this Event has a timeResolution shorter than one day; 'no timeOffset should be added'); validity.effective is that instant and timeOffset is carried verbatim, never added",
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00002:0/2026-10-19T00:00:00.000Z",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-10-19T00:00:00.000Z",
+        "start": "2026-10-19T00:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "event_id": "461670d2-739c-57b6-bd64-8a666c23f4ea",
+    "event_type": "ENVIRONMENTAL_OBSERVATION",
+    "geometry": {
+      "coordinates": [
+        23.9,
+        56.8
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-19T01:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "observation": {
+        "contract": "point-observation/1",
+        "locator": {
+          "frame_sha256": null,
+          "granule_id": null,
+          "header_lines": 0,
+          "kind": "table",
+          "row": 3
+        },
+        "product_class": "observation",
+        "product_version": {
+          "producer": null,
+          "production_time_verbatim": "2026-10-20T07:00:00.000Z",
+          "run": null,
+          "version": null
+        },
+        "quality_flags": [
+          {
+            "applies_to": "readings[0]",
+            "name": "qualityCode",
+            "namespace": "MET Norway Frost qualityCode (https://frost.met.no/dataclarifications.html)",
+            "value": 0
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "performanceCategory",
+            "namespace": "MET Norway Frost performanceCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "A"
+          },
+          {
+            "applies_to": "readings[0]",
+            "name": "exposureCategory",
+            "namespace": "MET Norway Frost exposureCategory (https://frost.met.no/dataclarifications.html)",
+            "value": "1"
+          }
+        ],
+        "quality_flags_basis": null,
+        "readings": [
+          {
+            "absence": null,
+            "datum": null,
+            "level": {
+              "code": null,
+              "namespace": "MET Norway Frost observation level (levelType, value and unit as stated)",
+              "type": "height_above_ground",
+              "unit": "m",
+              "value": 2.0
+            },
+            "measurement": {
+              "unit": "degC",
+              "unit_namespace": "MET Norway Frost observation unit, element table vocabulary (https://frost.met.no/elementtable)",
+              "value": 0.8
+            },
+            "name": "air_temperature",
+            "namespace": "MET Norway Frost elementId (https://frost.met.no/elementtable); time series timeOffset=PT0H, timeResolution=PT1H, timeSeriesId=0"
+          }
+        ],
+        "station_id": "SN00002:0",
+        "station_namespace": "MET Norway Frost sourceId, SN<station identity number>:<parallel sensor number> (https://frost.met.no/concepts2.html)",
+        "time": {
+          "forecast_offset": null,
+          "reference_time": null,
+          "reference_time_significance": null,
+          "source_time_system": {
+            "basis": "Frost writes referenceTime in RFC 3339 with the Z designator (UTC)",
+            "name": "UTC",
+            "stated_by": "source"
+          },
+          "statistical_process": null
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "065210fc-0add-5df6-a129-26b60f73803e"
+    ],
+    "residual": {
+      "data": {
+        "@context": "https://frost.met.no/schema",
+        "@type": "ObservationResponse",
+        "apiVersion": "v0",
+        "createdAt": "2026-10-20T07:00:00.000Z",
+        "currentItemCount": 4,
+        "currentLink": "https://frost.met.no/observations/v0.jsonld?sources=SYNTHETIC",
+        "data_item": {
+          "observations": [
+            {
+              "elementId": "air_temperature",
+              "exposureCategory": "1",
+              "level": {
+                "levelType": "height_above_ground",
+                "unit": "m",
+                "value": 2
+              },
+              "performanceCategory": "A",
+              "qualityCode": 0,
+              "timeOffset": "PT0H",
+              "timeResolution": "PT1H",
+              "timeSeriesId": 0,
+              "unit": "degC",
+              "value": 0.8
+            }
+          ],
+          "referenceTime": "2026-10-19T01:00:00.000Z",
+          "sourceId": "SN00002:0"
+        },
+        "itemsPerPage": 4,
+        "license": "https://creativecommons.org/licenses/by/3.0/no/",
+        "offset": 0,
+        "queryTime": 0.123,
+        "totalItemCount": 4
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T01:00:00.000Z",
+      "original_id": null,
+      "record_index": 3,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "referenceTime is the observation time (https://frost.met.no/concepts2.html: a referenceTime different from midnight 'is equal to observation time and timeOffset should not be added'); validity.effective is that instant and timeOffset is carried verbatim, never added",
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00002:0/2026-10-19T01:00:00.000Z",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "validity": {
+      "effective": {
+        "end": "2026-10-19T01:00:00.000Z",
+        "start": "2026-10-19T01:00:00.000Z"
+      },
+      "observed_at": null,
+      "valid_from": null,
+      "valid_to": null
+    }
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "station table frost-observations-fixture-stations: synthetic station positions written for the fixtures on 2026-10-22 (fixtures/frost_observations/README.md), inside CONTRIBUTING.md's Baltic rectangle; no real station is named",
+      "site_class": "weather_station",
+      "station_id_basis": "the Frost station id, the part of sourceId before ':' (https://frost.met.no/concepts2.html: SN<station identity number>:<parallel sensor number>); parallel sensors of one station are this one Entity",
+      "valid_from_basis": "the earliest referenceTime the response states for the station"
+    },
+    "confidence": null,
+    "entity_id": "4246f210-75a5-5649-a172-515eafa606da",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.2,
+      "lon": 21.3,
+      "position_source": "MANUAL",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "sourceIds": [
+          "SN00001:0"
+        ]
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T00:00:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00001",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-19T00:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "position_basis": "station table frost-observations-fixture-stations: synthetic station positions written for the fixtures on 2026-10-22 (fixtures/frost_observations/README.md), inside CONTRIBUTING.md's Baltic rectangle; no real station is named",
+      "site_class": "weather_station",
+      "station_id_basis": "the Frost station id, the part of sourceId before ':' (https://frost.met.no/concepts2.html: SN<station identity number>:<parallel sensor number>); parallel sensors of one station are this one Entity",
+      "valid_from_basis": "the earliest referenceTime the response states for the station"
+    },
+    "confidence": null,
+    "entity_id": "065210fc-0add-5df6-a129-26b60f73803e",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.8,
+      "lon": 23.9,
+      "position_source": "MANUAL",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "sourceIds": [
+          "SN00002:0"
+        ]
+      },
+      "namespace": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "frost_observations",
+      "adapter_version": "1.0.0",
+      "format_name": "MET Norway Frost ObservationResponse (GET /observations/v0.jsonld)",
+      "format_version": "Frost API v0 (apiVersion \"v0\"), as documented at https://frost.met.no/concepts2.html",
+      "observed_at": "2026-10-19T00:00:00.000Z",
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "FROST",
+      "transformations": [
+        "the station identity is the sourceId's part before ':' (the parallel sensor number is kept in each Event's station_id and source identifier)"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "SN00002",
+        "system": "FROST"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-19T00:00:00.000Z",
+    "valid_to": null
+  }
+]

@@ -499,6 +499,26 @@ _COG_EVENTS = ("ecostress_shaped_lst_tiled", "hls_shaped_band_cog")
 
 #: The `iem_n0q` fixtures (2026-10-17): each golden holds one Event stating `validity.effective`,
 #: the archive slot as an instant.
+#: The `barentswatch_hais` fixtures (2026-10-22): each golden holds one Track with populated 3.2.0
+#: `attributes` (its completeness block), the `readsb_trace` shape.
+_BARENTSWATCH_HAIS_FIXTURES = (
+    "duplicate_instants_unordered",
+    "nulls_and_sentinels",
+    "single_point",
+    "underway_newest_first",
+    "unknown_extra_key",
+)
+
+#: The `frost_observations` fixtures (2026-10-22): the Events of each golden, every one stating
+#: `validity.effective` (an instant, or a Case 2.2 daily period).
+_FROST_OBSERVATIONS_EVENTS = {
+    "midnight_mixed_daily": 5,
+    "observation_without_unit": 1,
+    "quality_codes_no_level_unknown_keys": 3,
+    "station_missing_parallel_sensors": 4,
+    "two_stations_hourly": 4,
+}
+
 _IEM_N0Q_EVENTS = (
     "all_missing_no_gentime",
     "corner_cells_paeth_average",
@@ -508,10 +528,11 @@ _IEM_N0Q_EVENTS = (
 
 
 def test_the_golden_census_is_what_the_tree_holds():
-    """744 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
+    """764 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
     wrote the same day, the 23 of the three station-text adapters the same day: 8 `ndbc_stdmet`,
     7 `coops_csv`, 8 `airnow_hourly`, the 26 `grib2` wrote on 2026-10-17, the 20 `cog` wrote the
-    same day and the 8 `iem_n0q` wrote the same day); the refusal branch
+    same day, the 8 `iem_n0q` wrote the same day, and the 10 `barentswatch_hais` and the 10
+    `frost_observations` wrote on 2026-10-22); the refusal branch
     below is reached by six objects at a 3.1.0
     position source, an Entity and its Track in each of three `link16_gateway` goldens (counted
     with grep when this was written), by the 26 `readsb_trace` Tracks at their populated 3.2.0
@@ -519,8 +540,10 @@ def test_the_golden_census_is_what_the_tree_holds():
     3.2.0 `validity`, one to three in each of its goldens, by the 56 station-text Events at
     theirs, one a row, sample or line, by the 28 `grib2` field Events at theirs, one a field, by
     the 4 `cog` Events at theirs, one in each golden of its two sensed band files, and by the 8
-    `iem_n0q` Events at theirs, one in each of its goldens."""
-    assert len(GOLDENS) == 744
+    `iem_n0q` Events at theirs, one in each of its goldens, by the 10 `barentswatch_hais` Tracks at
+    their populated 3.2.0 `attributes`, one in each of its goldens, and by the 34 `frost_observations`
+    Events at their 3.2.0 `validity`, one to five in each of its goldens."""
+    assert len(GOLDENS) == 764
     refused = []
     for path in GOLDENS:
         doc = json.loads(path.read_text(encoding="utf-8"))
@@ -567,6 +590,19 @@ def test_the_golden_census_is_what_the_tree_holds():
         for suffix in (".cdm.json", ".parsed.cdm.json")
     ]
     assert len(iem_n0q) == 8
+    barentswatch_hais = [
+        (f"barentswatch_hais/golden/{name}{suffix}", "track", ("attributes", "3.2.0"))
+        for name in _BARENTSWATCH_HAIS_FIXTURES
+        for suffix in (".cdm.json", ".parsed.cdm.json")
+    ]
+    assert len(barentswatch_hais) == 10
+    frost_observations = [
+        (f"frost_observations/golden/{name}{suffix}", "event", ("validity", "3.2.0"))
+        for name, events in _FROST_OBSERVATIONS_EVENTS.items()
+        for suffix in (".cdm.json", ".parsed.cdm.json")
+        for _ in range(events)
+    ]
+    assert len(frost_observations) == 34
     assert sorted(refused) == sorted(
         [
             (
@@ -606,6 +642,8 @@ def test_the_golden_census_is_what_the_tree_holds():
         + grib2
         + cog
         + iem_n0q
+        + barentswatch_hais
+        + frost_observations
     )
 
 
