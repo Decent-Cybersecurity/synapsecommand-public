@@ -204,6 +204,10 @@ def test_list_and_version_state_the_hosted_adapters():
         b"file-bound 268435456 unwrapped-bound 268435456\n"
         b"iem_n0q arguments --received-at --at/--basis source_hash injected frame_sha256 "
         b"injected file-bound 8388608 unwrapped-bound 8388608\n"
+        b"barentswatch_hais arguments --received-at source_hash injected file-bound 16777216 "
+        b"unwrapped-bound 16777216\n"
+        b"frost_observations arguments --element-table? --received-at --station-table? "
+        b"source_hash injected file-bound 16777216 unwrapped-bound 16777216\n"
     )
     version = _cli("--version")
     assert version.returncode == 0 and version.stderr == b""
@@ -212,7 +216,7 @@ def test_list_and_version_state_the_hosted_adapters():
         == (
             f"synapse-decode synapse-cdm {PACKAGE_VERSION}\n"
             "hosted dis7 geojson readsb_trace nexrad2 ndbc_stdmet coops_csv airnow_hourly grib2 "
-            "cog iem_n0q\n"
+            "cog iem_n0q barentswatch_hais frost_observations\n"
         ).encode()
     )
 
@@ -2215,9 +2219,11 @@ def test_request_parameters_are_key_value_pairs_and_a_value_is_never_echoed(
 def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert sorted(decode_host.HOSTED) == [
         "airnow_hourly",
+        "barentswatch_hais",
         "cog",
         "coops_csv",
         "dis7",
+        "frost_observations",
         "geojson",
         "grib2",
         "iem_n0q",
@@ -2292,7 +2298,45 @@ def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert grib.prepare(decode_host.Context(synthetic=True)) == {"synthetic": True}
     assert [
         decode_host.HOSTED[n].frame_offset_argument for n in sorted(decode_host.HOSTED) if n != "grib2"
-    ] == [None] * 9
+    ] == [None] * 11
+    # The HIGH NORTH adapters (2026-10-24): the receipt instant always and the file's digest
+    # injected; frost_observations's two caller tables as optional context files; no framer, no
+    # frame digest, because each reads its JSON file whole and never from a container.
+    high_north = {
+        name: (
+            decode_host.HOSTED[name].arguments,
+            decode_host.HOSTED[name].required,
+            decode_host.HOSTED[name].injects_source_hash,
+            decode_host.HOSTED[name].reads_clock,
+            decode_host.HOSTED[name].framer,
+            decode_host.HOSTED[name].frame_argument,
+            decode_host.HOSTED[name].frame_digest_argument,
+        )
+        for name in ("barentswatch_hais", "frost_observations")
+    }
+    assert high_north == {
+        "barentswatch_hais": (
+            frozenset({"received_at"}),
+            frozenset({"received_at"}),
+            True,
+            True,
+            decode_host.whole_file,
+            None,
+            None,
+        ),
+        "frost_observations": (
+            frozenset({"received_at", "station_table", "element_table"}),
+            frozenset({"received_at"}),
+            True,
+            True,
+            decode_host.whole_file,
+            None,
+            None,
+        ),
+    }
+    assert decode_host.HOSTED["barentswatch_hais"].prepare(decode_host.Context(synthetic=True)) == {
+        "synthetic": True
+    }
     # The three station-text adapters (2026-10-15): the receipt instant always, the digest and
     # the frame's own digest injected; a request for the two whose payload does not state it, and
     # a station table for the position no payload of the three states.
@@ -2425,3 +2469,196 @@ def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
         decode_host.EXIT_REJECTED,
         decode_host.EXIT_IO,
     ) == (0, 2, 3, 4)
+
+
+# -- barentswatch_hais and frost_observations (2026-10-24): one JSON file, read whole ------------
+
+HAIS_FILE = PKG / "fixtures" / "barentswatch_hais" / "underway_newest_first.hais"
+HAIS_DECODE = ["decode", "--adapter", "barentswatch_hais", "--synthetic"]
+FROST = PKG / "fixtures" / "frost_observations"
+FROST_FILE = FROST / "two_stations_hourly.jsonld"
+FROST_UNITLESS = FROST / "observation_without_unit.jsonld"
+FROST_DECODE = ["decode", "--adapter", "frost_observations", "--synthetic"]
+HN_RECEIVED = "2026-10-24T12:00:00Z"
+
+
+def _hn_receipt():
+    return dt.datetime(2026, 10, 24, 12, 0, tzinfo=dt.timezone.utc)
+
+
+def _frost_tables(tmp_path) -> tuple[str, str]:
+    """The fixture tables, written as the two context files the host reads: the station table in
+    the contract's own JSON, the element table in `ElementTable`'s shape."""
+    from synapse_cdm.adapters.frost_observations import FIXTURE_ELEMENTS, FIXTURE_STATIONS
+
+    stations = _write(tmp_path / "stations.json", FIXTURE_STATIONS.model_dump_json().encode())
+    elements = _write(
+        tmp_path / "elements.json",
+        json.dumps(
+            {
+                "name": FIXTURE_ELEMENTS.name,
+                "basis": FIXTURE_ELEMENTS.basis,
+                "units": dict(FIXTURE_ELEMENTS.units),
+            }
+        ).encode(),
+    )
+    return stations, elements
+
+
+def _usage(result, line: str) -> None:
+    assert (result.returncode, result.stdout, result.stderr) == (2, b"", line.encode() + b"\n")
+
+
+def test_barentswatch_hais_is_given_its_receipt_and_the_file_s_digest():
+    from synapse_cdm.adapters.barentswatch_hais import BarentswatchHaisAdapter
+
+    octets = HAIS_FILE.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    result = _accepted(_cli(*HAIS_DECODE, "--input", str(HAIS_FILE), "--received-at", HN_RECEIVED))
+    adapter = BarentswatchHaisAdapter(
+        _hn_receipt, synthetic=True, source_hash={"algorithm": "sha256", "value": digest}
+    )
+    assert result == [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+    entity, track, event = result
+    assert [o["source"]["source_hash"] for o in result] == [
+        {"algorithm": "sha256", "value": digest}
+    ] * 3
+    assert event["received_at"] == "2026-10-24T12:00:00.000Z"
+    assert entity["source_ids"][0]["system"] == "AIS"
+    # The receipt instant is the one value the file does not carry, and it is required; the
+    # adapter declares no table and no request.
+    _usage(
+        _cli(*HAIS_DECODE, "--input", str(HAIS_FILE)),
+        "synapse-decode: barentswatch_hais requires --received-at",
+    )
+    _usage(
+        _cli(*HAIS_DECODE, "--input", str(HAIS_FILE), "--received-at", HN_RECEIVED, "--request", "a=b"),
+        "synapse-decode: --request is not an argument barentswatch_hais declares",
+    )
+    _usage(
+        _cli(*HAIS_DECODE, "--input", str(HAIS_FILE), "--received-at", HN_RECEIVED, "--station-table", "t"),
+        "synapse-decode: --station-table is not an argument barentswatch_hais declares",
+    )
+
+
+def test_barentswatch_hais_refuses_a_file_that_is_not_one_track_at_exit_3(tmp_path):
+    empty = _write(tmp_path / "empty.hais", b"[]")
+    result = _cli(*HAIS_DECODE, "--input", empty, "--received-at", HN_RECEIVED)
+    assert (result.returncode, result.stdout) == (3, b"")
+    assert result.stderr == b"synapse-decode: frame 0 refused by barentswatch_hais: BarentswatchHaisRefused\n"
+
+
+def test_frost_observations_takes_its_two_tables_as_context_files(tmp_path):
+    from synapse_cdm.adapters.frost_observations import (
+        FIXTURE_ELEMENTS,
+        FIXTURE_STATIONS,
+        FrostObservationsAdapter,
+    )
+
+    octets = FROST_FILE.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    stations, elements = _frost_tables(tmp_path)
+    with_tables = _accepted(
+        _cli(
+            *FROST_DECODE,
+            "--input",
+            str(FROST_FILE),
+            "--received-at",
+            HN_RECEIVED,
+            "--station-table",
+            stations,
+            "--element-table",
+            elements,
+        )
+    )
+    adapter = FrostObservationsAdapter(
+        _hn_receipt,
+        synthetic=True,
+        station_table=FIXTURE_STATIONS,
+        element_table=FIXTURE_ELEMENTS,
+        source_hash={"algorithm": "sha256", "value": digest},
+    )
+    assert with_tables == [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+    assert all(o["source"]["source_hash"] == {"algorithm": "sha256", "value": digest} for o in with_tables)
+    # Both tables are optional: without them the adapter is constructed with neither, and its
+    # output says the positions were not supplied rather than carrying any.
+    bare = _accepted(_cli(*FROST_DECODE, "--input", str(FROST_FILE), "--received-at", HN_RECEIVED))
+    adapter = FrostObservationsAdapter(
+        _hn_receipt, synthetic=True, source_hash={"algorithm": "sha256", "value": digest}
+    )
+    assert bare == [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+    assert bare != with_tables
+    assert FIXTURE_STATIONS.name in json.dumps(with_tables)
+    assert FIXTURE_STATIONS.name not in json.dumps(bare)
+    # The element table is consulted only for an observation that states no unit.
+    unitless = FROST_UNITLESS.read_bytes()
+    unit_digest = hashlib.sha256(unitless).hexdigest()
+    with_units = _accepted(
+        _cli(
+            *FROST_DECODE,
+            "--input",
+            str(FROST_UNITLESS),
+            "--received-at",
+            HN_RECEIVED,
+            "--element-table",
+            elements,
+        )
+    )
+    adapter = FrostObservationsAdapter(
+        _hn_receipt,
+        synthetic=True,
+        element_table=FIXTURE_ELEMENTS,
+        source_hash={"algorithm": "sha256", "value": unit_digest},
+    )
+    assert with_units == [o.model_dump(mode="json") for o in adapter.to_cdm(unitless)]
+    assert FIXTURE_ELEMENTS.name in json.dumps(with_units)
+    _usage(
+        _cli(*FROST_DECODE, "--input", str(FROST_FILE)),
+        "synapse-decode: frost_observations requires --received-at",
+    )
+
+
+def test_an_element_table_is_refused_on_its_flag_s_line_and_never_quoted(tmp_path):
+    """The element table is the one context file the host reads for frost_observations alone:
+    an adapter that does not declare it refuses the flag, a document that is not the table's
+    shape or that the adapter's constructor refuses is exit 2 on the flag's line, and a value in
+    it is never echoed."""
+    stations, elements = _frost_tables(tmp_path)
+    _usage(
+        _cli(*GEOJSON, "--input", str(EQUATOR), "--element-table", elements),
+        "synapse-decode: --element-table is not an argument geojson declares",
+    )
+    line = "synapse-decode: --element-table is not an element table the adapter accepts"
+    for document in (
+        b"[]",
+        b'{"name": "e", "basis": "b"}',
+        b'{"name": "e", "basis": "b", "units": {}}',
+        b'{"name": "e", "basis": "b", "units": {"a": 1}}',
+        b'{"name": "", "basis": "' + SECRET.encode() + b'", "units": {"a": "b"}}',
+        b'{"name": "e", "basis": "b", "units": {"a": "b"}, "extra": "' + SECRET.encode() + b'"}',
+    ):
+        bad = _write(tmp_path / "bad.json", document)
+        result = _cli(
+            *FROST_DECODE, "--input", str(FROST_FILE), "--received-at", HN_RECEIVED, "--element-table", bad
+        )
+        _usage(result, line)
+        assert SECRET.encode() not in result.stderr
+    strict = _write(tmp_path / "strict.json", b'{"name": "e", "basis": "b", "units": {"a": "b", "a": "c"}}')
+    _usage(
+        _cli(*FROST_DECODE, "--input", str(FROST_FILE), "--received-at", HN_RECEIVED, "--element-table", strict),
+        "synapse-decode: --element-table is not a strict JSON document",
+    )
+    absent = str(tmp_path / "absent.json")
+    result = _cli(
+        *FROST_DECODE, "--input", str(FROST_FILE), "--received-at", HN_RECEIVED, "--element-table", absent
+    )
+    assert (result.returncode, result.stdout) == (4, b"")
+    # The station table is the contract's, refused as the station-text adapters' is.
+    _usage(
+        _cli(*FROST_DECODE, "--input", str(FROST_FILE), "--received-at", HN_RECEIVED, "--station-table", bad),
+        "synapse-decode: --station-table is not a station table the contract accepts",
+    )
+    # Given both, the context is the one the adapter's own fixture instance builds.
+    assert decode_host.HOSTED["frost_observations"].prepare(
+        decode_host.Context(synthetic=True, station_table="S", element_table="E")
+    ) == {"synthetic": True, "station_table": "S", "element_table": "E"}

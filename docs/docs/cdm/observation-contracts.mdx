@@ -178,7 +178,7 @@ synapse-decode decode --adapter A --input F (--synthetic | --live)
        [--sha256 HEX | --manifest-row FILE]
        [--container gzip | --container tar --member NAME]
        [--at T --basis B] [--session S] [--received-at T]
-       [--station-table FILE] [--request KEY=VALUE ...]
+       [--station-table FILE] [--element-table FILE] [--request KEY=VALUE ...]
 synapse-decode list
 synapse-decode --version
 ```
@@ -203,7 +203,7 @@ that reads the clock; the command never reads one.
 | Exit | Meaning |
 | --- | --- |
 | `0` | the canonical JSON array of every object, in frame order, on stdout |
-| `2` | usage or context: a command line the argument parser refuses; a remote locator (`/vsicurl/` or another GDAL virtual path, `http(s)://`, `s3://`, a DAP locator, any URL) at the start of the argument or behind a driver prefix or quotes (`NETCDF:"/vsicurl/…":var`), refused by name before anything is read; an adapter the host does not serve; an argument the adapter does not declare, a required one missing, or a malformed value; a manifest row or station table refused |
+| `2` | usage or context: a command line the argument parser refuses; a remote locator (`/vsicurl/` or another GDAL virtual path, `http(s)://`, `s3://`, a DAP locator, any URL) at the start of the argument or behind a driver prefix or quotes (`NETCDF:"/vsicurl/…":var`), refused by name before anything is read; an adapter the host does not serve; an argument the adapter does not declare, a required one missing, or a malformed value; a manifest row, station table or element table refused |
 | `3` | rejected data: a file past the bound, a digest that differs, a container refused, a frame the adapter refuses |
 | `4` | I/O: an absent or non-regular file (a FIFO is not waited on), or stdout that cannot be written |
 
@@ -259,4 +259,12 @@ it is read; a value the adapter's constructor refuses is exit `2`) and `iem_n0q`
 `--received-at` and `--at`/`--basis` required, `--at` the archive file name's slot, refused at exit
 `2` unless it falls on IEM's five-minute grid; the file's digest injected as `source_hash`, and the
 PNG's own digest as the raster locator's `frame_sha256` when a gzip or a tar was unwrapped around
-it); each observation adapter adds its own row when it lands.
+it), and since 2026-10-24 the two HIGH NORTH adapters, each reading one JSON file whole with
+`--received-at` required (neither file states a delivery instant) and the file's digest injected as
+`source_hash`: `barentswatch_hais` (one Historic AIS track response; nothing else is supplied) and
+`frost_observations` (one Frost `ObservationResponse`; `--station-table` for the positions a
+response does not state, keyed by the Frost station id, and `--element-table`, a JSON document in
+the adapter's `ElementTable` shape — `name`, `basis` and `units` mapping each `elementId` to its
+unit — for the unit an observation may omit; both optional, both read under the context-file bounds
+and refused at exit `2` as the adapter refuses them, and without one the output says the position
+or the unit was not supplied); each observation adapter adds its own row when it lands.

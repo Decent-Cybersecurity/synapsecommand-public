@@ -12,7 +12,7 @@ framing) happens here, where it is checked once instead of once per adapter.
            [--sha256 HEX | --manifest-row FILE]
            [--container gzip | --container tar --member NAME]
            [--at T --basis B] [--session S] [--received-at T]
-           [--station-table FILE] [--request KEY=VALUE ...]
+           [--station-table FILE] [--element-table FILE] [--request KEY=VALUE ...]
     list           the hosted adapters, the arguments each declares, and its bounds
     --version      the package version and the hosted adapters
 
@@ -25,7 +25,8 @@ WHAT IS REFUSED, AND WITH WHICH EXIT CODE
   driver prefix or quotes — refused by name before anything is stat'ed; an adapter this host
   does not serve; an argument the adapter does not declare, or a declared one missing or
   malformed; a manifest row that is not one JSON object with a `sha256`, or that carries a
-  credential in one of the shapes `_CREDENTIAL` names; a station table the contract refuses.
+  credential in one of the shapes `_CREDENTIAL` names; a station table the contract refuses; an
+  element table `frost_observations`'s `ElementTable` refuses.
 3 rejected data: a file over the adapter's bound; a SHA-256 that differs from the expected one;
   a container refused by its bounds or its shape; octets the adapter's framer cannot cut into
   frames; a frame the adapter refuses (`ValueError`).
@@ -74,6 +75,18 @@ file whose metadata states no sensing time) or `--request time=as_of` (a DEM or 
 adapter's two injected instants, because which one applies is known only once the file is read.
 `iem_n0q` takes one IEM N0Q composite PNG, and `--at`/`--basis` is the archive file name's slot,
 refused (exit 2) unless it falls on IEM's five-minute grid.
+
+Two JSON observation adapters are served since 2026-10-24, each reading its file whole, with
+`--received-at` required (neither file states a delivery instant) and the file's digest injected
+as `source_hash`. `barentswatch_hais` takes one BarentsWatch Historic AIS track response and needs
+nothing else supplied. `frost_observations` takes one Frost `ObservationResponse`, and its two
+caller tables — the positions a response does not state and the units an observation may omit —
+are `--station-table`, the station table the three station-text adapters take, keyed here by the
+Frost station id (`SN<n>`), and `--element-table`, a JSON document in the adapter's `ElementTable`
+shape (`name`, `basis` and `units`, the last mapping each `elementId` to its unit), read under the
+context-file bounds and refused (exit 2) as the adapter's constructor refuses it. Both are
+optional: without one the output says the position or the unit was not supplied, as the adapter
+does, and nothing is guessed in its place.
 """
 
 from __future__ import annotations
@@ -110,7 +123,7 @@ MAX_UNWRAP_RATIO = 256
 MAX_TAR_MEMBERS = 4096
 #: The most a single decompression step may take in and the most it may produce.
 UNWRAP_CHUNK = 65536
-#: A manifest row or a station table: one small JSON document, read with this bound.
+#: A manifest row, a station table or an element table: one small JSON document, read with this bound.
 MAX_CONTEXT_FILE_BYTES = 1048576
 #: How deep that document may nest, measured before it is decoded.
 MAX_CONTEXT_DEPTH = 16
@@ -161,9 +174,10 @@ BOUNDS_BASIS: Mapping[str, LimitBasis] = types.MappingProxyType(
         "MAX_CONTEXT_FILE_BYTES": LimitBasis(
             kind=LimitKind.IMPLEMENTATION_CAP,
             source=(
-                "A manifest row is one object holding a digest and a few columns, and a station "
-                "table one row of an identifier and two coordinates per station; 1 MiB holds "
-                "tens of thousands of such rows. This is an IMPLEMENTATION CAP and is NOT a "
+                "A manifest row is one object holding a digest and a few columns, a station "
+                "table one row of an identifier and two coordinates per station, and an element "
+                "table one short string per element; 1 MiB holds tens of thousands of such "
+                "rows. This is an IMPLEMENTATION CAP and is NOT a "
                 "format's normative maximum."
             ),
             enforced_at=(
@@ -175,8 +189,8 @@ BOUNDS_BASIS: Mapping[str, LimitBasis] = types.MappingProxyType(
         "MAX_CONTEXT_DEPTH": LimitBasis(
             kind=LimitKind.IMPLEMENTATION_CAP,
             source=(
-                "A station table nests three containers (the table, its rows, a row) and a "
-                "manifest row one; 16 leaves room for a register's own nesting and refuses a "
+                "A station table nests three containers (the table, its rows, a row), an "
+                "element table two (the table, its units) and a manifest row one; 16 leaves room for a register's own nesting and refuses a "
                 "document built to exhaust a recursive walk. This is an IMPLEMENTATION CAP and "
                 "is NOT a format's normative maximum."
             ),
@@ -321,6 +335,7 @@ class Context:
     session: str | None = None
     received_at: Any = None
     station_table: Any = None
+    element_table: Any = None
     request: tuple[tuple[str, str], ...] = ()
 
 
@@ -371,9 +386,9 @@ class Hosted:
     """One adapter this host serves, and how it is constructed.
 
     `arguments` are the flag groups the adapter declares — `time` (`--at` with `--basis`),
-    `session`, `received_at`, `station_table`, `request` — and `required` those it cannot do
-    without. `prepare` turns the checked `Context` into constructor keyword arguments, refusing
-    a value the adapter would refuse (a `ValueError`, exit 2), before the input is read.
+    `session`, `received_at`, `station_table`, `element_table`, `request` — and `required` those it
+    cannot do without. `prepare` turns the checked `Context` into constructor keyword arguments,
+    refusing a value the adapter would refuse (a `ValueError`, exit 2), before the input is read.
     `max_file_bytes` and `max_unwrapped_bytes` read the bounds off the adapter class.
     `frame_digest_argument` names the constructor argument that takes the SHA-256 of the frame
     when the frame is not the file as read, and `frame_offset_argument` the one that takes the
@@ -577,6 +592,35 @@ def _prepare_iem_n0q(context: Context) -> dict:
 
 #: Every adapter this host serves. An observation adapter adds its row here when it lands, with its
 #: framer when its payload unit is smaller than the file.
+def _load_barentswatch_hais() -> type:
+    from synapse_cdm.adapters.barentswatch_hais import BarentswatchHaisAdapter
+
+    return BarentswatchHaisAdapter
+
+
+def _prepare_barentswatch_hais(context: Context) -> dict:
+    # A track response states its MMSI and every position; the receipt instant is the one value
+    # the file does not carry, and it is the injected clock.
+    return {"synthetic": context.synthetic}
+
+
+def _load_frost_observations() -> type:
+    from synapse_cdm.adapters.frost_observations import FrostObservationsAdapter
+
+    return FrostObservationsAdapter
+
+
+def _prepare_frost_observations(context: Context) -> dict:
+    # A response states no station position and may omit an observation's unit: the caller's
+    # station table (keyed by the Frost station id) and element table supply them, each optional,
+    # and the adapter's output says which it was given.
+    return {
+        "synthetic": context.synthetic,
+        "station_table": context.station_table,
+        "element_table": context.element_table,
+    }
+
+
 HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
     {
         "dis7": Hosted(
@@ -676,6 +720,24 @@ HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
             reads_clock=True,
             frame_digest_argument="frame_sha256",
         ),
+        "barentswatch_hais": Hosted(
+            name="barentswatch_hais",
+            load=_load_barentswatch_hais,
+            arguments=frozenset({"received_at"}),
+            required=frozenset({"received_at"}),
+            prepare=_prepare_barentswatch_hais,
+            injects_source_hash=True,
+            reads_clock=True,
+        ),
+        "frost_observations": Hosted(
+            name="frost_observations",
+            load=_load_frost_observations,
+            arguments=frozenset({"received_at", "station_table", "element_table"}),
+            required=frozenset({"received_at"}),
+            prepare=_prepare_frost_observations,
+            injects_source_hash=True,
+            reads_clock=True,
+        ),
     }
 )
 
@@ -685,6 +747,7 @@ _FLAGS = {
     "session": "--session",
     "received_at": "--received-at",
     "station_table": "--station-table",
+    "element_table": "--element-table",
     "request": "--request",
 }
 
@@ -849,6 +912,25 @@ def load_station_table(path: str) -> Any:
         raise Refused(
             EXIT_USAGE, f"{PROG}: --station-table is not a station table the contract accepts"
         ) from None
+
+
+def load_element_table(path: str) -> Any:
+    """An element table in `frost_observations.ElementTable`'s own shape: one object with `name`,
+    `basis` and `units`, the last mapping each Frost `elementId` to its unit, validated by the
+    adapter's own constructor. A refusal names the flag, never a key, a unit or a value."""
+    from synapse_cdm.adapters.frost_observations import ElementTable
+
+    document = _context_document("--element-table", path)
+    refusal = Refused(
+        EXIT_USAGE, f"{PROG}: --element-table is not an element table the adapter accepts"
+    )
+    if not isinstance(document, dict) or set(document) != {"name", "basis", "units"}:
+        raise refusal
+    try:
+        return ElementTable(name=document["name"], basis=document["basis"], units=document["units"])
+    except (TypeError, ValueError):
+        # Never the constructor's text: it may quote a key.
+        raise refusal from None
 
 
 # -- containers ----------------------------------------------------------------------------------
@@ -1038,6 +1120,8 @@ def _given(args: argparse.Namespace) -> set[str]:
         given.add("received_at")
     if args.station_table is not None:
         given.add("station_table")
+    if args.element_table is not None:
+        given.add("element_table")
     if args.request:
         given.add("request")
     return given
@@ -1091,6 +1175,7 @@ def _context(args: argparse.Namespace, hosted: Hosted) -> Context:
             raise Refused(EXIT_USAGE, f"{PROG}: a --request key is given twice")
         request.append((key, value))
     table = load_station_table(args.station_table) if args.station_table is not None else None
+    elements = load_element_table(args.element_table) if args.element_table is not None else None
     return Context(
         synthetic=args.synthetic,
         at=args.at,
@@ -1098,6 +1183,7 @@ def _context(args: argparse.Namespace, hosted: Hosted) -> Context:
         session=args.session,
         received_at=received_at,
         station_table=table,
+        element_table=elements,
         request=tuple(request),
     )
 
@@ -1332,6 +1418,7 @@ def _parser() -> argparse.ArgumentParser:
     decode_.add_argument("--session", help="the session name, for an adapter that declares one")
     decode_.add_argument("--received-at", help="the receipt instant, for an adapter that reads it")
     decode_.add_argument("--station-table", help="a station table JSON file")
+    decode_.add_argument("--element-table", help="an element table JSON file (frost_observations)")
     decode_.add_argument("--request", action="append", help="a request parameter, KEY=VALUE")
     commands.add_parser("list", allow_abbrev=False, help="the hosted adapters and their bounds")
     return parser

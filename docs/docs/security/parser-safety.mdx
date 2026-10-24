@@ -485,7 +485,7 @@ readers and a small JSON loader before any adapter is called.
 
 | module | call | reached with | bounded before the call? |
 |---|---|---|---|
-| `decode_host` | `zlib.decompressobj` (`gunzip`), `tarfile.open(mode="r:")` (`untar`), `json.loads` (manifest row and station table) | the octets of the one `--input` file; the text of a `--manifest-row` or `--station-table` file | **yes** — `--input` is read to at most one octet past the hosted adapter's `max_input_bytes` and refused past it before it is digested or unwrapped; a remote locator is refused by name before anything is stat'ed; inflation and member reads run in 65 536-octet steps, the running total held to the adapter's bound and gzip to 256 times the octets read; 4 096 tar headers; the two context files to 1 MiB, strict UTF-8 without a byte-order mark and 16 levels before the decoder, which refuses repeated keys and `NaN`/`Infinity` |
+| `decode_host` | `zlib.decompressobj` (`gunzip`), `tarfile.open(mode="r:")` (`untar`), `json.loads` (manifest row, station table and element table) | the octets of the one `--input` file; the text of a `--manifest-row`, `--station-table` or `--element-table` file | **yes** — `--input` is read to at most one octet past the hosted adapter's `max_input_bytes` and refused past it before it is digested or unwrapped; a remote locator is refused by name before anything is stat'ed; inflation and member reads run in 65 536-octet steps, the running total held to the adapter's bound and gzip to 256 times the octets read; 4 096 tar headers; the three context files to 1 MiB, strict UTF-8 without a byte-order mark and 16 levels before the decoder, which refuses repeated keys and `NaN`/`Infinity` |
 
 ### The TacticalAPI wire reader
 

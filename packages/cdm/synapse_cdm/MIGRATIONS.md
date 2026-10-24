@@ -733,7 +733,8 @@ now true of it.
 release tag is `v3.7.0`, and `3.7.0` is what the index serves — `PUBLICATION.md` entry 29 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+**What moved inside the distribution: two files** — `decode_host.py`, with the HIGH NORTH rows the
+paragraph below records (2026-10-24), and `MIGRATIONS.md`, this section, the
 dated witness paragraphs in the release procedure and the pipeline section, the release's dated
 account in the pipeline section, and the index note in the 3.7.0 section being what moved in it.
 Everything else the round touched ships in nothing: the ledger, the witness record and its README,
@@ -751,6 +752,52 @@ record by digest among the pipeline's. This round resolves no `SELF` provenance:
 contract — the CDM schema stays 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the
 3.2.0 row still names `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.7.0`.
+
+**THE HIGH NORTH ROWS OF `synapse-decode`, 2026-10-24 — the follow-on the 3.7.0 landing named, and
+the first change to the distribution since `v3.7.0`.** `decode_host.HOSTED` gains the
+`barentswatch_hais` and `frost_observations` entries, so the hosted table has twelve entries: each reads
+its JSON file whole, with `--received-at` required (neither file states a delivery instant) and the
+file's digest injected as `source_hash`; neither declares a framer or a frame digest, because
+neither is ever handed a frame that is not the file. `frost_observations`'s two caller tables are
+the reason the 3.7.0 landing deferred its row, and they are now two context files: `--station-table`,
+the station table the three station-text adapters already take, keyed here by the Frost station id,
+and the new `--element-table`, a JSON document in the adapter's own `ElementTable` shape (`name`,
+`basis` and `units`, the last mapping each `elementId` to its unit), read by `load_element_table`
+under the context-file bounds (1 MiB, 16 levels, strict JSON) and validated by the adapter's own
+constructor — a document that is not that shape, or one the constructor refuses, is exit `2` on the
+flag's line and never quoted. Both tables are optional, as they are at the constructor: without one
+the output says the position or the unit was not supplied, as the adapter does. `_FLAGS`, `_given`,
+`_context` and `_parser` read the new flag; `Context` gains `element_table = None`; `BOUNDS_BASIS`'s
+two context-file entries now name the element table in their source text, and no bound moved. The
+observation-contracts and parser-safety pages state the rows and the third context file;
+`tests/test_cdm_decode_host.py` pins the listing, the roster and the two rows and drives both
+adapters through the command against their fixtures. No adapter module, fixture, schema or golden
+moved, and `PACKAGE_VERSION` still reads `3.7.0`: the bump this derives is MINOR (two table entries
+and a flag appear; nothing is removed), so the next release is at least 3.8.0.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:HOSTED` — MINOR: the table gains the `barentswatch_hais`
+and `frost_observations` entries; no entry is removed and none changes.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:Context` — MINOR: one field with a default,
+`element_table = None`, is added; every existing entry's `prepare` and every caller that builds a
+`Context` keeps working.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:_parser` — MINOR: the `decode` subcommand gains the
+`--element-table` flag; every command line that parsed before parses the same way.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:_FLAGS` — MINOR: the mapping gains the `element_table`
+group's flag for the diagnostics; no existing entry changes.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:_given` — MINOR: a given `--element-table` is counted
+among the flag groups; for a command line without it the set is what it was.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:_context` — MINOR: a given `--element-table` is read
+through `load_element_table` into the new `Context` field; for a command line without it every
+check and every value is what it was.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:BOUNDS_BASIS` — PATCH: the source text of
+`MAX_CONTEXT_FILE_BYTES` and `MAX_CONTEXT_DEPTH` names the element table beside the manifest row
+and the station table; no bound, kind, enforcement point or test name moved.
 
 ### 3.7.0 — 2026-10-24 — the HIGH NORTH adapters: two observation adapter modules land, `barentswatch_hais` as #32 and `frost_observations` as #33, the roster moves thirty to thirty-two, and no wire contract moves
 
