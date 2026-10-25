@@ -707,6 +707,20 @@ def test_every_witness_path_the_documents_quote_exists():
 # committed it as `releases/witness/3.7.0.json` — the same bytes, held below by digest beside
 # `3.0.1.json`, `3.2.0.json`, `3.3.0.json`, `3.4.0.json`, `3.5.0.json` and `3.6.0.json`. The
 # hand-built roster does not move, and the three paragraphs each also say what run 40119805634 did.
+#
+# 2026-10-25: THE ELEVENTH RECORD LANDED, AND IT IS THE PIPELINE'S FOR THE EIGHTH TIME. Run
+# 40178105604 (`v3.8.0`) was the job's eleventh execution on a tag push and its eighth success end
+# to end: the build step wrote `witness-3.8.0.json for v3.8.0 (2 files, 1 approval(s))` off an
+# approval whose comment named the readiness report at the tagged commit, the verify step read
+# `VERIFIED` with `--download --assets assets` and a token, and the attach step put the record on
+# the Release as its ninth asset. It is the eighth record the pipeline produced, and the eighth
+# approval since the rule about the approval comment was written down (2026-09-17) that followed
+# it at the approval — after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s,
+# `v3.6.0`'s and `v3.7.0`'s. The witness round downloaded that asset, verified it again offline and
+# online, and committed it as `releases/witness/3.8.0.json` — the same bytes, held below by digest
+# beside `3.0.1.json`, `3.2.0.json`, `3.3.0.json`, `3.4.0.json`, `3.5.0.json`, `3.6.0.json` and
+# `3.7.0.json`. The hand-built roster does not move, and the three paragraphs each also say what
+# run 40178105604 did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
@@ -738,7 +752,7 @@ ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bun
 HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]
 
 #: The records the paragraphs describe as the pipeline's own, by the digest of the Release asset
-#: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0, run 37618296352 for 3.3.0, run 38840201037 for 3.4.0, run 38993508970 for 3.5.0, run 39190348178 for 3.6.0, run 40119805634 for 3.7.0 — so a re-built or edited file under this name is refused, and the
+#: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0, run 37618296352 for 3.3.0, run 38840201037 for 3.4.0, run 38993508970 for 3.5.0, run 39190348178 for 3.6.0, run 40119805634 for 3.7.0, run 40178105604 for 3.8.0 — so a re-built or edited file under this name is refused, and the
 #: word "pipeline's" in three documents is a claim about bytes and not about intent.
 PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b37788934ea5049292acd",
                   "3.2.0.json": "b0bf6661ab519ff7bdcc87cdf34daa0d2c3d0af77c5b92e387d6c65f9f7277d8",
@@ -746,7 +760,8 @@ PIPELINE_BUILT = {"3.0.1.json": "32cd277e2f68157de29188a0d59ef136ebe19dc63b3b377
                   "3.4.0.json": "05b93eacc299bc0a82d54753c926a7d37e4a94aa13df176c9ba1ce98d75cdd10",
                   "3.5.0.json": "6fbb8a01271816d6657d7138c8b94630fbaa3055d40184175ba22a260eb569be",
                   "3.6.0.json": "c29fda09f22c8647abb59795df5bbaa842dfcec8f9ca066e1406163880914e09",
-                  "3.7.0.json": "448c436b03f65d9f650a371b15e7927c0266e52b19b36e685eedb16aa4bf0a78"}
+                  "3.7.0.json": "448c436b03f65d9f650a371b15e7927c0266e52b19b36e685eedb16aa4bf0a78",
+                  "3.8.0.json": "e9acaf1f29e8e2be066b3ff7219c0650368c29ccb5f8e37d73ecefb6e4b3c6ba"}
 
 #: The run whose witness job succeeded first, and the one it was refused on before it.
 FIRST_SUCCESS_RUN = "35514833652"

@@ -1,0 +1,51 @@
+{
+  "approvals": [
+    {
+      "approved_at": "2026-10-25T10:19:01Z",
+      "approver": "decentcybersecurity",
+      "comment": "Approved on the readiness report at the release commit: https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/c567cfac443c419e08c1ea142b80f2e05d6cd5d1/docs/soif-part1-release-readiness.md",
+      "environment": "pypi",
+      "review_file": "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/c567cfac443c419e08c1ea142b80f2e05d6cd5d1/docs/soif-part1-release-readiness.md"
+    }
+  ],
+  "artifact_sha256": {
+    "synapse_cdm-3.8.0-py3-none-any.whl": "f58be0a792606010fc3fca0840de34b8b4374fa8af11b22f627f0a099274cc27",
+    "synapse_cdm-3.8.0.tar.gz": "00dbae8e554fee1a9d99778db88f6983ecd89205f5c930543f47a6e06088bd61"
+  },
+  "attestation": {
+    "bundle_sha256": "682e83b215cf971c86f9f63e040c8387fc144fb17d710289d86f756ce11909ca",
+    "verified": true,
+    "verified_at": "2026-10-25T10:17:49Z"
+  },
+  "commit": "c567cfac443c419e08c1ea142b80f2e05d6cd5d1",
+  "conformance_sha256": "c113c943272fb6338d27aa0d8ae0d0dc468a043cb8ba6f533c31ca35b71dbb71",
+  "evidence_sha256": "6d86b0be4563e1903ac66e9fe8316ce10a9f0ce8e47d880737da8f3cb8789781",
+  "github_release": {
+    "id": 423317806,
+    "published_at": "2026-10-25T10:20:06Z",
+    "url": "https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v3.8.0"
+  },
+  "pypi": {
+    "files": [
+      {
+        "filename": "synapse_cdm-3.8.0-py3-none-any.whl",
+        "sha256": "f58be0a792606010fc3fca0840de34b8b4374fa8af11b22f627f0a099274cc27",
+        "upload_time": "2026-10-25T10:19:32.115170Z"
+      },
+      {
+        "filename": "synapse_cdm-3.8.0.tar.gz",
+        "sha256": "00dbae8e554fee1a9d99778db88f6983ecd89205f5c930543f47a6e06088bd61",
+        "upload_time": "2026-10-25T10:19:34.885607Z"
+      }
+    ],
+    "version": "3.8.0"
+  },
+  "release": "3.8.0",
+  "released_at": "2026-10-25T10:20:06Z",
+  "sbom_sha256": {
+    "cyclonedx": "5134fc64a91402fdbfacb42a198a29c58fa54ffedef2e2e75d8837c41149109c",
+    "spdx": "5ddf87610341cbdf3ac02aa2f802c47360d67bc3efb8e5451e0a9418f0241963"
+  },
+  "tag": "v3.8.0",
+  "tag_object": "87ead8b75f8ca49f8e3cc70d791be3b3334526b2"
+}

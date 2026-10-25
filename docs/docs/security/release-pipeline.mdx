@@ -325,3 +325,13 @@ symptom, and it is the one this refusal exists for.
   `PUBLICATION.md` entry 29 is the measurement. Ten records, three of them hand-built and seven the
   pipeline's; the rule about the approval comment was followed at the approval, the seventh time,
   after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s and `v3.6.0`'s.
+  On `v3.8.0` — run 40178105604, 2026-10-25 — all six jobs succeeded: the `pypi` approval, given
+  the day the tag was pushed, carried a comment naming the readiness report at the tagged commit,
+  the build step wrote the record with `review_file` derived from it, the verify step read
+  `VERIFIED` with `--download --assets assets` and a token, and the attach step put
+  `witness-3.8.0.json` on the Release as its ninth asset; `releases/witness/3.8.0.json` is the
+  eleventh committed record and the pipeline's own, byte for byte, held by digest, and
+  `PUBLICATION.md` entry 30 is the measurement. Eleven records, three of them hand-built and eight
+  the pipeline's; the rule about the approval comment was followed at the approval, the eighth
+  time, after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s and
+  `v3.7.0`'s.
