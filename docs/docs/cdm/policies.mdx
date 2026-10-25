@@ -133,7 +133,7 @@ because the first version of `lossless.residual()` was the latter and it turned 
 into two keys named `affected_constellations[0]` and `affected_constellations[1]` — the never-drop
 rule satisfied in the letter, and a consumer that could no longer read the field as a list.
 
-**Fourteen of the thirty-three adapters in this repository do not use the container, and that is ruled
+**Seventeen of the thirty-six adapters in this repository do not use the container, and that is ruled
 rather than pending.** The fourteen of Part 1 keep their `attributes` / `payload` parking under
 `source_extras` and declare `residual: legacy` in their manifests. The information is already
 preserved; only the placement would change, and paying for that with every golden file and every
@@ -143,4 +143,9 @@ namespace — the five of the adapter expansion (`geojson`, `geopackage`, `c2sim
 `aixm52`) are the first. `geojson` and `geopackage` build it with `lossless.residual_block()`;
 `c2sim`, `aixm511`, `aixm52`, `dis7`, `tacticalapi`, `link16_gateway` (since 2026-10-10),
 `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` (since 2026-10-15) and
-`grib2`, `cog` and `iem_n0q` (since 2026-10-17) build their `Residual` directly under the same namespace.
+`grib2`, `cog` and `iem_n0q` (since 2026-10-17), `barentswatch_hais` and `frost_observations`
+(since 2026-10-22) and `cesmo_internal` (since 2026-10-24) build their `Residual` directly under the
+same namespace. The three STANAG 4559 translators (`stanag4559_catalog`, `stanag4559_stream`,
+`stanag4559_workflow`, since 2026-10-24) are the one dated exception, by ruling: they carry the whole
+source record verbatim under `payload.record`, the specification's own golden form, leave `residual`
+null and declare `residual: legacy` (ARCHITECTURE.md §5).

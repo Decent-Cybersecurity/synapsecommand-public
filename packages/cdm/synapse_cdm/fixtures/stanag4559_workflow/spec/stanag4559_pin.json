@@ -1,0 +1,100 @@
+{
+  "what_this_is": "The pin record of the stanag4559_workflow adapter: the specification its record contract and translation rules are read from, cited and NOT carried; the bundle files its fixtures and its acceptance test derive from, each with the SHA-256 the bundle's SHA256SUMS.json records, carried verbatim as test data under tests/stanag4559_bundle/ or, for the record contract, as package data; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: gates/pin_paths.py's corpus is the pinned documents under fixtures/, and these files live elsewhere.",
+  "adapter": {
+    "name": "stanag4559_workflow",
+    "ordinal": 37,
+    "direction": "ingest",
+    "family": "workflow",
+    "fixture_directory": "stanag4559_workflow",
+    "origin": "Written in this repository and landed on 2026-10-24 as the pure translation layer of SC ISR 4559 001 (with synapse_cdm.isr_record and the two other family translators); the stateful gateway of the specification is not part of this distribution."
+  },
+  "standard": {
+    "document": "SynapseCommand STANAG 4559 engineering specification (SynapseCommand_STANAG4559_Engineering_Specification.docx)",
+    "identifier": "SC ISR 4559 001",
+    "revision": "1.0",
+    "date": "2026-10-04",
+    "bundle": "SynapseCommand_STANAG4559",
+    "sections_read": "5, 6, 7, 9, 14, 20 and 28",
+    "carried_here": false,
+    "why_not_carried": "The specification is the project's own engineering record, kept with its bundle outside the public tree; the translators state in their docstrings the rules they implement and the section each comes from, and read nothing else from it. NATO's STANAG 4559 and AEDP-17, AEDP-18 and AEDP-19 publications are neither read nor carried: no NATO binding package is held, and the bundle's own verification records NATO wire compatibility as not verified.",
+    "specification_sha256": "410303bc022b036884e095a91e29203d1456283db59e257568838776f32e9793",
+    "sha256sums_json_sha256": "719c8aaa0a93f50470f9d8de3210fbe97851b07573014208e87444da3e754d1a"
+  },
+  "bundle_files": [
+    {
+      "bundle_path": "examples/workflow-basic.record.json",
+      "sha256": "9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-basic.record.json",
+      "role": "the source record of basic.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/workflow-missing-source-time.record.json",
+      "sha256": "fd77a3b5bec9b64f13e634028551f4905479c73a253055ca04b25a567bbb0d87",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-missing-source-time.record.json",
+      "role": "the source record of missing_source_time.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/workflow-unknown-extension.record.json",
+      "sha256": "1d3f032340563c61cfa972ea36e4b8546350de6bfd74f9cc3ac31eb9cfd80271",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-unknown-extension.record.json",
+      "role": "the source record of unknown_extension.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/workflow-basic.expected-cdm.json",
+      "sha256": "90236528b6e9ca52e1123383b6f50f934a287e7f2c4656e2464169f8260b39d7",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-basic.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/workflow-missing-source-time.expected-cdm.json",
+      "sha256": "296bceee6a4f61a1d62281f98f1d5f734833510aeee2adb4131ea5853a3e4e37",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-missing-source-time.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/workflow-unknown-extension.expected-cdm.json",
+      "sha256": "2e046ef909759e7f91db7abede8cd119435ee9d6cea1857f62b9bb70a6d933d3",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/workflow-unknown-extension.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/fixture-manifest.json",
+      "sha256": "3d2a0666e7a396cc01c2059e2f0e309dadb225d33503a9e766a97e6b181a21a2",
+      "carried_here": false,
+      "not_carried_because": "its nine object_key values are base64url strings beside a field named key, which the repository's secret scanner (gitleaks, rule generic-api-key) flags, and .gitleaks.toml admits no allowlist by policy; its values are literals in tests/stanag4559_support.py (BUNDLE_CLOCK, BUNDLE_IDENTITY, manifest_entries)",
+      "role": "the clock and the expected object_key, record_id and event_id of every record"
+    },
+    {
+      "bundle_path": "contracts/isr-record.schema.json",
+      "sha256": "881f9cbfd8c564a1d4e6b7d820d3b1a27a8bcfdc9676825a10e105d2dc17d621",
+      "carried_here": true,
+      "carried_at": "packages/cdm/synapse_cdm/registry/isr/isr-record.schema.json",
+      "role": "the record contract urn:synapsecommand:isr:record:1, package data read by synapse_cdm.isr_record"
+    }
+  ],
+  "derivation": {
+    "rule": "A catalogue or stream record's coverage polygon is moved seven degrees east and seven degrees north (into CONTRIBUTING.md's Baltic rectangle, whole degrees kept) and revision.semantic_sha256 is recomputed by the bundle's rule: SHA-256 of the canonical JSON of family, origin, change, body and security (the workflow family without body.artifact.raw_ref), canonicalised as the bundle's validate_artifacts.py does for its ASCII and small-integer domain. A workflow record states no position and is copied byte for byte.",
+    "shift_degrees_east_north": [
+      0,
+      0
+    ],
+    "semantic_sha256": {
+      "basic.json": "667eb441c37ce39903db6629ac50cb1c8c6b7962022732955252dff44d458f08",
+      "missing_source_time.json": "39c1ef1ef322df19cc21e1aa9adcf621a096a731ec7245ea0d4bda9f2d4da027",
+      "unknown_extension.json": "2bbc478e59eda0d479b2eff8b7fc05a901a6605274047480e0e71f5e1162411a"
+    }
+  },
+  "fixtures_are_synthetic": "Every payload under fixtures/stanag4559_workflow/ and its malformed/ directory is written by spec/build_fixtures.py from the bundle's synthetic records; every identifier is a test- placeholder, every label TEST_ONLY, every position inside the Baltic rectangle, and no file is recorded data.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing; exits 3 where tests/stanag4559_bundle/ is absent, as in an installed wheel)",
+    "inputs": "the three records of this family under tests/stanag4559_bundle/, each checked against the sha256 above before anything is derived",
+    "octets": "each record is rendered as the bundle renders it: json.dumps with indent 2 and sorted keys, and a final newline"
+  }
+}

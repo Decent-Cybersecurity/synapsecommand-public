@@ -1,0 +1,182 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "provisional-internal-profile",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "no compressed payload is accepted: a record is JSON text, and the raw capture its raw_ref names is never opened",
+          "max_objects": "one record yields exactly one Event",
+          "max_parse_seconds": "no wall-clock bound is enforced: the translator reads no clock. Its passes are linear in the record except section 28's polygon pass, which is quadratic in one geometry's positions and is held to isr_record.MAX_GEOMETRY_POSITIONS (refused geometry-over-cap before it runs); section 20's parse_timeout_seconds is the gateway's isolated-worker timeout, and the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__`'s wrapper calls `adapter.enforce_depth_bound` on the JSON text or the parsed dict before the translator's `to_cdm` runs",
+            "kind": "implementation_cap",
+            "source": "The record contract states no nesting bound, and section 20's max_xml_depth (64) bounds the gateway's XML decoding, not this JSON record. A record nests eight containers at its deepest typed member (a workflow graph attribute), and the deepest JSON document shipped beside these fixtures is a workflow golden nesting eleven; 96 (`isr_record.MAX_DEPTH`, `isr_record.py`) is eight times that, rounded up to a multiple of 32. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum: the graph attribute `value` and stream `replay_capabilities` are open JSON the contract does not bound.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps each translator's own `to_cdm` with `enforce_input_bound` at class-definition time, so the octets are measured and refused before `isr_record.parse` decodes them",
+            "kind": "implementation_cap",
+            "source": "SC ISR 4559 001 section 20 states max_metadata_bytes = 16777216 ('16 MiB uncompressed per response/record boundary') as a PROJECT OPERATING DEFAULT of the gateway's configuration; it is not the normative maximum of any standard, and the record contract states none. The translator takes the same figure for one record (`MAX_INPUT_BYTES`, `adapters/stanag4559_common.py`), so a record the gateway's default admits is a record it admits. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 96,
+        "max_input_bytes": 16777216,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "SC ISR gateway record (urn:synapsecommand:isr:record:1), family workflow: one workflow record, as its UTF-8 octets or the parsed object, becomes one STATUS_CHANGE Event carrying the record verbatim"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the record contract is closed at every level and section 6 rejects unknown keys, so a key it does not define is REFUSED (unknown-key), never carried. Source extension material travels where the contract puts it \u2014 typed nodes and attributes of the body's graph, and stream replay_capabilities \u2014 and is carried verbatim under payload.record with the rest of the record",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "PROVISIONAL",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "SC ISR gateway record",
+      "version": "1.0.0"
+    },
+    "id": "stanag4559_workflow",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "provisional-internal-profile",
+        "notes": null,
+        "severity": null,
+        "summary": "provisional internal profile: the input is the SynapseCommand internal ISR gateway record urn:synapsecommand:isr:record:1 (SC ISR 4559 001 section 6), a contract chosen in this project and not a NATO encoding; no STANAG 4559 or AEDP-17/18/19 wire message is read, no NATO binding package is held, and no NATO wire interoperability is claimed (nato_wire_compatibility_verified: false)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "no-gateway",
+        "notes": null,
+        "severity": null,
+        "summary": "the stateful ISR gateway of the specification (authentication, authorisation, policy, persistence, product transfer, CORBA and SOAP sessions, subscriptions, replay control, workflow mutation) is not part of this distribution; the C17, S18 and W19 wire profiles are UNIMPLEMENTED and no peer was exercised",
+        "unsupported_paths": []
+      },
+      {
+        "id": "transport-rules-on-octets",
+        "notes": null,
+        "severity": null,
+        "summary": "section 6's transport rules (no byte-order mark, strict UTF-8, no duplicate key, no NaN or infinity, no trailing document, integers within 2**53-1) are enforced on octets or text; a parsed dict has passed through the caller's decoder first, which may already have collapsed a duplicate key",
+        "unsupported_paths": []
+      },
+      {
+        "id": "digests-copied",
+        "notes": null,
+        "severity": null,
+        "summary": "revision.semantic_sha256 and raw_ref.sha256 are copied, never recomputed: section 6 gives digest validation to the gateway, and only their syntax (64 lower-case hex digits) is checked here",
+        "unsupported_paths": []
+      },
+      {
+        "id": "labels-carried-not-enforced",
+        "notes": null,
+        "severity": null,
+        "summary": "security labels are carried verbatim in payload.record and enforce nothing (section 9: every event travels in an authenticated access-controlled gateway envelope); a DECLARED label's scheme is not checked against a policy vocabulary, which no binding package supplies",
+        "unsupported_paths": []
+      },
+      {
+        "id": "dictionary-cardinality",
+        "notes": null,
+        "severity": null,
+        "summary": "the metadata graph is held to the record contract's own cardinality only (unique node ids, resolving edges, contiguous occurrences of a repeated attribute, nil without a value); which attributes may repeat is a versioned NATO metadata dictionary's to say, none is held, so a conflicting duplicate of a scalar attribute is not detected (acceptance cases PARSE-009 and PARSE-010)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "observed-at-receipt-time",
+        "notes": null,
+        "severity": null,
+        "summary": "a record with no source_time is an Event of the gateway's receipt: observed_at is captured_at and payload.time_basis is GATEWAY_RECEIPT (section 9), so a consumer reads time_basis before treating observed_at as a source time",
+        "unsupported_paths": []
+      },
+      {
+        "id": "source-hash-representation",
+        "notes": null,
+        "severity": null,
+        "summary": "source.source_hash carries raw_ref.sha256 only: the capture representation section 9 asks to record beside it survives at payload.record.raw_ref.representation, because SourceHash is closed",
+        "unsupported_paths": []
+      },
+      {
+        "id": "polygon-topology",
+        "notes": null,
+        "severity": null,
+        "summary": "section 28's polygon topology is decided edge by edge and vertex by vertex in exact arithmetic (closed, distinct, non-degenerate, simple rings; no crossing or overlapping edges between rings; interior rings inside their exterior and not inside each other; MultiPolygon parts not inside one another at a vertex); interior connectivity is not decided, and a geometry of more than 2048 positions is refused (geometry-over-cap)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "workflow-geometry-gaoi-only",
+        "notes": null,
+        "severity": null,
+        "summary": "Event.geometry is a workflow record's geometry only when its service is gaoi (section 9: 'workflow GAOI geometry; otherwise null'); the geometry of any other service is validated and carried in payload.record only",
+        "unsupported_paths": []
+      },
+      {
+        "id": "workflow-read-only",
+        "notes": null,
+        "severity": null,
+        "summary": "native_state is the source's token, verbatim: no transition, tasking, publication or deletion is made, and an Event is never an authorisation or a command (sections 5 and 14)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "residual-legacy",
+        "notes": null,
+        "severity": null,
+        "summary": "the whole record is carried verbatim under payload.record and Event.residual is null, the specification's golden form; residual: legacy by the dated ruling of 2026-10-24 (ARCHITECTURE.md section 5)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "ingest-only",
+        "notes": null,
+        "severity": null,
+        "summary": "ingest only: from_cdm is the inherited refusal, and the gateway's outbound commands are separate contracts (section 5), never an Event",
+        "unsupported_paths": []
+      },
+      {
+        "id": "synthetic-fixtures-only",
+        "notes": null,
+        "severity": null,
+        "summary": "every fixture is synthetic: the specification bundle's records, with any footprint moved into CONTRIBUTING.md's Baltic rectangle and the semantic digest recomputed by the bundle's rule; no recorded record is evidence here",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today: `python -m synapse_cdm.harness --adapter stanag4559_workflow` reports translate, schema, provenance, lossless (basis: ledger, MAPPINGS declared, no LOST leaf) and golden PASS on every fixture, and tests/test_cdm_stanag4559_workflow_adapter.py reproduces the specification bundle's three expected Events for the workflow family byte for byte. Every fixture is synthetic: the bundle's records, written for SC ISR 4559 001, with any footprint moved into this repository's Baltic rectangle. L4 is NOT declared: the adapter is ingest-only, so the roundtrip check is inapplicable rather than passed, and a rung passed vacuously is not a rung declared. No NATO binding package, wire message or peer is part of this evidence.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "SC ISR gateway record, workflow family (STANAG 4559 translation layer, provisional internal profile)",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "legacy"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

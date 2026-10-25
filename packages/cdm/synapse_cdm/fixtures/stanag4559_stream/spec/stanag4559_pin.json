@@ -1,0 +1,100 @@
+{
+  "what_this_is": "The pin record of the stanag4559_stream adapter: the specification its record contract and translation rules are read from, cited and NOT carried; the bundle files its fixtures and its acceptance test derive from, each with the SHA-256 the bundle's SHA256SUMS.json records, carried verbatim as test data under tests/stanag4559_bundle/ or, for the record contract, as package data; and how the synthetic fixture set is built. No node here pairs a `local_path` with a `sha256`: gates/pin_paths.py's corpus is the pinned documents under fixtures/, and these files live elsewhere.",
+  "adapter": {
+    "name": "stanag4559_stream",
+    "ordinal": 36,
+    "direction": "ingest",
+    "family": "stream",
+    "fixture_directory": "stanag4559_stream",
+    "origin": "Written in this repository and landed on 2026-10-24 as the pure translation layer of SC ISR 4559 001 (with synapse_cdm.isr_record and the two other family translators); the stateful gateway of the specification is not part of this distribution."
+  },
+  "standard": {
+    "document": "SynapseCommand STANAG 4559 engineering specification (SynapseCommand_STANAG4559_Engineering_Specification.docx)",
+    "identifier": "SC ISR 4559 001",
+    "revision": "1.0",
+    "date": "2026-10-04",
+    "bundle": "SynapseCommand_STANAG4559",
+    "sections_read": "5, 6, 7, 9, 13, 20 and 28",
+    "carried_here": false,
+    "why_not_carried": "The specification is the project's own engineering record, kept with its bundle outside the public tree; the translators state in their docstrings the rules they implement and the section each comes from, and read nothing else from it. NATO's STANAG 4559 and AEDP-17, AEDP-18 and AEDP-19 publications are neither read nor carried: no NATO binding package is held, and the bundle's own verification records NATO wire compatibility as not verified.",
+    "specification_sha256": "410303bc022b036884e095a91e29203d1456283db59e257568838776f32e9793",
+    "sha256sums_json_sha256": "719c8aaa0a93f50470f9d8de3210fbe97851b07573014208e87444da3e754d1a"
+  },
+  "bundle_files": [
+    {
+      "bundle_path": "examples/stream-basic.record.json",
+      "sha256": "d3c792b96c936010436fb29011309f7dbf8fa0a377921ac7ffed75355e7e375d",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-basic.record.json",
+      "role": "the source record of basic.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/stream-missing-source-time.record.json",
+      "sha256": "6d84c86e368926e39f5d837bc565cc1291ef615916ca34a254bcbf600fcf340d",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-missing-source-time.record.json",
+      "role": "the source record of missing_source_time.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/stream-unknown-extension.record.json",
+      "sha256": "47d4b34080fe725a2b96f4bcfe7b3ad2e562111639dcf3c5be9f2c7b61ad42bf",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-unknown-extension.record.json",
+      "role": "the source record of unknown_extension.json, and the input of the acceptance test CDM-001"
+    },
+    {
+      "bundle_path": "examples/stream-basic.expected-cdm.json",
+      "sha256": "ae0e9a5830cec5eee910f36d25b02fc67bcb239b53f41996a4b61542ec95775a",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-basic.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/stream-missing-source-time.expected-cdm.json",
+      "sha256": "934ea644779d93a4e6e61d163cd91ceaf1e5c8cd05796643cb8ed9e8f35719f7",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-missing-source-time.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/stream-unknown-extension.expected-cdm.json",
+      "sha256": "18ef258aafc105fd46cd77068565d7767f39c0915643dea22fa636b817a28eeb",
+      "carried_here": true,
+      "carried_at": "tests/stanag4559_bundle/stream-unknown-extension.expected-cdm.json",
+      "role": "the Event the record must become (acceptance case CDM-001), written by the bundle's authors and read by the test as the expectation"
+    },
+    {
+      "bundle_path": "examples/fixture-manifest.json",
+      "sha256": "3d2a0666e7a396cc01c2059e2f0e309dadb225d33503a9e766a97e6b181a21a2",
+      "carried_here": false,
+      "not_carried_because": "its nine object_key values are base64url strings beside a field named key, which the repository's secret scanner (gitleaks, rule generic-api-key) flags, and .gitleaks.toml admits no allowlist by policy; its values are literals in tests/stanag4559_support.py (BUNDLE_CLOCK, BUNDLE_IDENTITY, manifest_entries)",
+      "role": "the clock and the expected object_key, record_id and event_id of every record"
+    },
+    {
+      "bundle_path": "contracts/isr-record.schema.json",
+      "sha256": "881f9cbfd8c564a1d4e6b7d820d3b1a27a8bcfdc9676825a10e105d2dc17d621",
+      "carried_here": true,
+      "carried_at": "packages/cdm/synapse_cdm/registry/isr/isr-record.schema.json",
+      "role": "the record contract urn:synapsecommand:isr:record:1, package data read by synapse_cdm.isr_record"
+    }
+  ],
+  "derivation": {
+    "rule": "A catalogue or stream record's coverage polygon is moved seven degrees east and seven degrees north (into CONTRIBUTING.md's Baltic rectangle, whole degrees kept) and revision.semantic_sha256 is recomputed by the bundle's rule: SHA-256 of the canonical JSON of family, origin, change, body and security (the workflow family without body.artifact.raw_ref), canonicalised as the bundle's validate_artifacts.py does for its ASCII and small-integer domain. A workflow record states no position and is copied byte for byte.",
+    "shift_degrees_east_north": [
+      7,
+      7
+    ],
+    "semantic_sha256": {
+      "basic.json": "927ce05c01de2defd0133b2b0703bf775a609e3b9beb46d6031b3a67b8d5488b",
+      "missing_source_time.json": "7bab24daf19e0495cbf475711a89be823612e82d46e7b2aca1785a9a76771282",
+      "unknown_extension.json": "90f1c2431b0d766ccb919a7a94b14f50721d3e8ef97b6be573d17cce46b69bbd"
+    }
+  },
+  "fixtures_are_synthetic": "Every payload under fixtures/stanag4559_stream/ and its malformed/ directory is written by spec/build_fixtures.py from the bundle's synthetic records; every identifier is a test- placeholder, every label TEST_ONLY, every position inside the Baltic rectangle, and no file is recorded data.",
+  "builder": {
+    "script": "spec/build_fixtures.py",
+    "check": "python -I -B spec/build_fixtures.py --check (prints CURRENT, exits 0, writes nothing; exits 3 where tests/stanag4559_bundle/ is absent, as in an installed wheel)",
+    "inputs": "the three records of this family under tests/stanag4559_bundle/, each checked against the sha256 above before anything is derived",
+    "octets": "each record is rendered as the bundle renders it: json.dumps with indent 2 and sorted keys, and a final newline"
+  }
+}

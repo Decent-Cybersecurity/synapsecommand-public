@@ -200,7 +200,14 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     census = {stance: sorted(cls.name for cls in roster.values()
                              if cls.metadata.residual is stance)
               for stance in ResidualStance}
-    assert len(census[ResidualStance.LEGACY]) == 14
+    # the STANAG 4559 translators (2026-10-24, DECISIONS L-03 of that arc and ARCHITECTURE.md §5's
+    # dated paragraph): `stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` declare
+    # `legacy` BY RULING, so the legacy census is the fourteen of Part 1 and these three, named;
+    # their bundle's goldens carry the whole record under `payload.record` and `residual` null,
+    # which the sweep below holds them to. The structured roster does not move.
+    assert len(census[ResidualStance.LEGACY]) == 17
+    assert [name for name in census[ResidualStance.LEGACY] if name.startswith("stanag4559_")] == [
+        "stanag4559_catalog", "stanag4559_stream", "stanag4559_workflow"]
     # phase 2 (2026-09-20): `geopackage` is the second `structured` adapter; fourteen-and-two.
     # phase 3 (2026-09-21): `c2sim` is the third; fourteen-and-three.
     # phase 4 (2026-09-21): `aixm511` is the fourth; fourteen-and-four.
@@ -235,7 +242,7 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
                                                  "geopackage", "grib2", "iem_n0q",
                                                  "link16_gateway", "ndbc_stdmet", "nexrad2",
                                                  "readsb_trace", "tacticalapi"]
-    assert len(roster) == 33
+    assert len(roster) == 36
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)
@@ -247,4 +254,14 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
                 assert structured_residual_offences(adapter, objects) == [], path.name
                 assert all(o.residual is not None and o.residual.data for o in objects), path.name
                 swept += len(objects)
+        elif cls.name.startswith("stanag4559_"):
+            # The ruled exception's own shape: one Event, the record verbatim in the payload, no
+            # container and nothing under `source_extras`.
+            for path in harness.select_fixtures(packaged_fixtures(cls)):
+                raw = harness.load_raw(path)
+                objects = adapter.to_cdm(raw)
+                assert [o.object_kind for o in objects] == ["event"], path.name
+                assert objects[0].residual is None, path.name
+                assert objects[0].payload["record"] == raw, path.name
+                assert "source_extras" not in objects[0].payload, path.name
     assert swept >= 4, "the structured branch swept real objects, not an empty list"

@@ -548,6 +548,9 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
                         "barentswatch_hais": "barentswatch_hais",
                         "frost_observations": "frost_observations",
                         "cesmo_internal": "cesmo_internal",
+                        "stanag4559_catalog": "stanag4559_catalog",
+                        "stanag4559_stream": "stanag4559_stream",
+                        "stanag4559_workflow": "stanag4559_workflow",
                         "readsb_trace": "readsb_trace",
                         "tacticalapi": "tacticalapi", "tak": "tak"}
 

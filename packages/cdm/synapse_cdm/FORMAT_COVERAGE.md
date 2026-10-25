@@ -93,6 +93,8 @@ run is a guess with a table around it.
 | `frost_observations 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each Event holds the response header (every top-level key but `data`) and its own data item verbatim (`residual.data.data_item`), and a station Entity holds the sourceIds it was seen under and, when no Event could carry an item, that item and the header (`residual.data.unresolved_items`, `response_header`) (landed 2026-10-22) |
 | `cesmo_internal 1.0.0` | implemented by `adapters/cesmo_internal.py` (with its contract `adapters/cesmo_internal_codec.py`), with the CESMO and EOB engineering kit's five internal-contract examples, documents written from them, an octet twin and a golden file each (landed 2026-10-24) |
 | `cesmo_internal 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: every object holds the Exchange's envelope without its `records` (`residual.data.envelope`, the `snapshot` included) and its own record verbatim (`residual.data.record`); the snapshot Event holds the envelope alone |
+| `stanag4559_* 1.0.0 · provisional` | implemented by each of `adapters/stanag4559_catalog.py`, `adapters/stanag4559_stream.py` and `adapters/stanag4559_workflow.py`, on the shared base in `adapters/stanag4559_common.py` and the record module `isr_record.py`, with three record fixtures and a golden file each per family — and **the record they read is this project's internal profile**, `urn:synapsecommand:isr:record:1`, not a NATO encoding (`binding: provisional-internal-profile`); no STANAG 4559 wire interoperability is claimed (landed 2026-10-24) |
+| `stanag4559_* 1.0.0 · record · provisional` | implemented, and the value is carried in `Event.payload` under `record`, the whole record verbatim, which is the specification's own form; `Event.residual` stays null (`residual: legacy`, by the dated ruling of 2026-10-24 in ARCHITECTURE.md §5) (landed 2026-10-24) |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -312,6 +314,9 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 32 | `barentswatch_hais` | shipped | `adapters/barentswatch_hais.py`, whose docstring claims the ordinal, `fixtures/barentswatch_hais/README.md` and `fixtures/barentswatch_hais/spec/barentswatch_hais_pin.json`, which records it beside the adapter's name. One BarentsWatch Historic AIS track response (one MMSI over one requested window) becomes an `Entity`, a `Track` and a `TRACK_UPDATE` `Event`, the Entity typed by the `ais` adapter's MMSI rule and identified under the `ais` adapter's `AIS` system so one vessel has one `entity_id` across both; ingest only, the seventeenth `residual: structured` adapter. Written outside this repository for the HIGH NORTH data pack as `hn_adapters.barentswatch_hais` 1.1.0 and landed here as 1.2.0 with its class, fixture set, goldens and tests together on 2026-10-22, so the row had no Phase 1 in this table |
 | 33 | `frost_observations` | shipped | `adapters/frost_observations.py`, whose docstring claims the ordinal, `fixtures/frost_observations/README.md` and `fixtures/frost_observations/spec/frost_observations_pin.json`, which records it beside the adapter's name. One MET Norway Frost `ObservationResponse` becomes `ENVIRONMENTAL_OBSERVATION` Events carrying the `point-observation/1` contract, one per data item and time class (Frost's Case 1 instant, or Case 2.2 daily), and one `SENSOR` Entity per station, positions and element units from the caller's tables; ingest only, the eighteenth `residual: structured` adapter. Written outside this repository for the HIGH NORTH data pack as `hn_adapters.frost_observations` 0.3.0 and landed here as 1.0.0 with its class, fixture set, goldens and tests together on 2026-10-22, so the row had no Phase 1 in this table |
 | 34 | `cesmo_internal` | shipped | `adapters/cesmo_internal.py`, whose docstring claims the ordinal, `fixtures/cesmo_internal/README.md` and `fixtures/cesmo_internal/spec/cesmo_internal_pin.json`, which records the kit's files beside the adapter's name. One SC CESMO Internal Exchange (`sc.cesmo.internal/1.0`, an internal JSON contract of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0, not STANAG 4658 bytes) becomes, per record, a `DETECTION` `Event`, an emitter `Entity` and its `TRACK_UPDATE` `Event`, or a `STATUS_CHANGE` `Event`, and one `STATUS_CHANGE` `Event` for an envelope snapshot; ingest only, the nineteenth `residual: structured` adapter. The kit declares the STANAG 4658 / AEDP-13 binding BLOCKED, and no `stanag4658` row, class or claim exists. The class, the fixture set, its goldens and its tests landed together on 2026-10-24, so the row had no Phase 1 in this table |
+| 35 | `stanag4559_catalog` | shipped | `adapters/stanag4559_catalog.py`, whose docstring claims the ordinal, `fixtures/stanag4559_catalog/README.md` and `fixtures/stanag4559_catalog/spec/stanag4559_pin.json`, which records it beside the adapter's name. One SC ISR gateway record of the catalogue family — this project's internal record contract of the STANAG 4559 translation layer (SC ISR 4559 001), not a NATO wire message — becomes one `STATUS_CHANGE` `Event` carrying the record verbatim; ingest only, binding `provisional-internal-profile`, the first of the three translators that declare `residual: legacy` by the dated ruling of that day. The class, the fixture set, its goldens and its tests landed together on 2026-10-24 with its two siblings, so the row had no Phase 1 in this table |
+| 36 | `stanag4559_stream` | shipped | `adapters/stanag4559_stream.py`, whose docstring claims the ordinal, `fixtures/stanag4559_stream/README.md` and `fixtures/stanag4559_stream/spec/stanag4559_pin.json`, which records it beside the adapter's name. One SC ISR gateway record of the stream family — this project's internal record contract of the STANAG 4559 translation layer (SC ISR 4559 001), not a NATO wire message — becomes one `STATUS_CHANGE` `Event` carrying the record verbatim; ingest only, binding `provisional-internal-profile`, the second of the three. The class, the fixture set, its goldens and its tests landed together on 2026-10-24 with its two siblings, so the row had no Phase 1 in this table |
+| 37 | `stanag4559_workflow` | shipped | `adapters/stanag4559_workflow.py`, whose docstring claims the ordinal, `fixtures/stanag4559_workflow/README.md` and `fixtures/stanag4559_workflow/spec/stanag4559_pin.json`, which records it beside the adapter's name. One SC ISR gateway record of the workflow family — this project's internal record contract of the STANAG 4559 translation layer (SC ISR 4559 001), not a NATO wire message — becomes one `STATUS_CHANGE` `Event` carrying the record verbatim; ingest only, binding `provisional-internal-profile`, the third of the three. The class, the fixture set, its goldens and its tests landed together on 2026-10-24 with its two siblings, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -347,6 +352,9 @@ with its class, fixtures, goldens and tests in one change and never at Phase 1 h
 still stays at one.
 `cesmo_internal` at #34 landed on 2026-10-24 the same way, with its class, fixtures, goldens and
 tests in one change and never at Phase 1 here, so the count still stays at one.
+`stanag4559_catalog` at #35, `stanag4559_stream` at #36 and `stanag4559_workflow` at #37 landed on
+2026-10-24 the same way, the three with their classes, fixtures, goldens and tests in one change and
+never at Phase 1 here, so the count still stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -15517,6 +15525,55 @@ one stated order — the caps, the discriminator, the schema by numeric path, th
 specification's order — where the validator sorts schema paths as text. Numbers are compared as
 binary64: the exact-decimal sentence of section 9 governs a native codec's unit conversions, which
 this adapter does not perform.
+
+## SC ISR gateway record (STANAG 4559 translation layer, internal profile) — ingest only
+
+`stanag4559_catalog` is #35, `stanag4559_stream` #36 and `stanag4559_workflow` #37 in the ordinal
+table: `adapters/stanag4559_catalog.py`, `adapters/stanag4559_stream.py` and
+`adapters/stanag4559_workflow.py`, on the shared base in `adapters/stanag4559_common.py` and the
+record module `isr_record.py`, ingest only, landed 2026-10-24. Each reads one internal ISR gateway
+record of its family — `urn:synapsecommand:isr:record:1`, the contract SC ISR 4559 001 (revision
+1.0, 4 October 2026) section 6 defines, whose JSON Schema ships byte for byte as package data at
+`registry/isr/isr-record.schema.json` — as its UTF-8 octets or as the parsed dict, and writes
+exactly one `STATUS_CHANGE` `Event`.
+
+**The capability report.** Translated: the record, under sections 6 (contract and transport
+rules), 7 (identity), 9 (the CDM mapping) and 28 (the second validation pass). Not implemented,
+and not part of this distribution: the stateful ISR gateway of the specification, so every wire
+profile of its section 3 — C17 (AEDP-17 library access), S18 (AEDP-18 streams) and W19 (AEDP-19
+workflow) — is UNIMPLEMENTED; no AEDP-17, AEDP-18 or AEDP-19 wire message is read or written, no
+NATO binding package is held, no peer was exercised, and no NATO wire interoperability is claimed:
+the bundle's own `nato_wire_compatibility_verified: false` stands. Binding
+`provisional-internal-profile`, claim PROVISIONAL, maturity L3. **The deviations from the
+specification, stated:** the claim is PROVISIONAL from the start, because this repository admits no
+DOCUMENTED or IMPLEMENTED claim beside that binding; the capture representation section 9 asks to
+record beside `source_hash` is kept at `payload.record.raw_ref.representation`, because `SourceHash`
+is closed; the `time_basis` value `SOURCE` is taken from the bundle's goldens, the text naming only
+`GATEWAY_RECEIPT`; and there is no gateway, wire profile or peer exercise. The bundle's nine
+expected Events are reproduced byte for byte by the three adapters' tests once projected to the
+CDM 3.0.0 contract the bundle was written against (its acceptance case CDM-001); the packaged
+fixtures are its records, a catalogue or stream footprint moved into the Baltic rectangle and the
+semantic digest recomputed, written by each fixture directory's `spec/build_fixtures.py`.
+
+| SC ISR gateway record | CDM field | Status | Notes |
+|---|---|---|---|
+| `kind`, `family` | `Event.event_type`, `Event.severity`, `Event.payload` | `stanag4559_* 1.0.0 · provisional` | `STATUS_CHANGE` and `INFO` for every record; `kind` copied to the payload's `kind`. `family` selects the translator: a record of another family is refused `wrong-family`, and a `kind` that does not correspond to its family `kind-family-mismatch` |
+| `tenant_id`, `security_domain`, `origin.authority`, `family`, `origin.object_id` | `Event.source_ids`, `SourceId.system`, `SourceId.external_id` | `stanag4559_* 1.0.0 · provisional` | `ISR-ID-001`: the object key, unpadded base64url of the RFC 8785 array of the five (lone surrogates refused by field), under the system `NSILI` |
+| the object key | `Event.payload` | `stanag4559_* 1.0.0 · provisional` | `record_id` = `ids.derive("NSILI", object_key, kind="isr-record")`, as a string |
+| the object key, `revision.token`, `revision.semantic_sha256` | `Event.event_id`, `Event.payload` | `stanag4559_* 1.0.0 · provisional` | `ISR-ID-001`: the revision key is the same encoding of the three (a null token is `null`, an empty one `""`), carried as `revision_key`, and the event id is `ids.derive("NSILI", revision_key, kind="event")`; the digest is copied, never recomputed (section 6 gives it to the gateway) |
+| `origin.object_id` | `SourceRef.original_id` | `stanag4559_* 1.0.0 · provisional` | Copied |
+| `raw_ref.sha256` | `SourceRef.source_hash` | `stanag4559_* 1.0.0 · provisional` | Algorithm `sha256` and the value copied; the capture representation stays in the record (`SourceHash` is closed) |
+| `source_time` | `Event.observed_at`, `SourceRef.observed_at`, `Event.payload` | `stanag4559_* 1.0.0 · provisional` | A source time: both `observed_at` fields, `time_basis` `SOURCE`. Null: `Event.observed_at` is `captured_at`, `SourceRef.observed_at` null and `time_basis` `GATEWAY_RECEIPT`, so the Event describes the gateway's receipt and never backdates; `modified_at` and `source_changed_at` are never promoted |
+| `captured_at` | `Event.observed_at` | `stanag4559_* 1.0.0 · provisional` | Only when `source_time` is null (above); every timestamp is held to `YYYY-MM-DDTHH:MM:SS.sssZ` in ASCII digits and to a real instant (`bad-timestamp`, `impossible-instant`) |
+| the injected clock | `Event.received_at` | `stanag4559_* 1.0.0 · provisional` | `self.now()`, never a value of the record |
+| `body.coverage` (catalogue, stream); `body.geometry` of a `gaoi` workflow record | `Event.geometry` | `stanag4559_* 1.0.0 · provisional` | The Polygon or MultiPolygon as stated, validated by section 28's polygon rules in exact arithmetic (closed, distinct, non-degenerate, simple rings; no crossing or overlapping edges between rings; holes inside their exterior and apart; parts apart), at most 2 048 positions (`geometry-over-cap`); a footprint is coverage only, never an Entity or a centre point. A workflow record of any other service keeps its geometry in the record only (section 9: otherwise null) |
+| the whole record, every leaf | `Event.payload` | `stanag4559_* 1.0.0 · record · provisional` | Under `record`, verbatim, beside `kind`, `record_id`, `revision_key` and `time_basis`: security labels, the typed graph with its vendor attributes and wide-integer strings, `files`, `associations`, `replay_capabilities`, the workflow artifact. The ledger binds every leaf there, LOST 0 |
+| — | `Event.related_entities`, `Event.integrity`, `Event.oes`, `Event.quality`, `Event.status`, `Event.residual`, `Event.validity` | `stanag4559_* 1.0.0 · provisional` | Empty or null by section 9: no Entity is invented, no signature or SC OES assertion fabricated, no validity window stated |
+| the record's provenance | `SourceRef.system`, `SourceRef.adapter`, `SourceRef.adapter_version`, `SourceRef.format_name`, `SourceRef.format_version`, `SourceRef.record_index`, `SourceRef.transformations`, `SourceRef.synthetic` | `stanag4559_* 1.0.0 · provisional` | `NSILI`, the translator's name and 1.0.0, `SC ISR gateway record` 1.0.0, record index 0, `["ISR-ID-001"]` (the one transformation; timestamps and geometry are projections) and the instance's `synthetic` |
+| octets with a byte-order mark, not UTF-8, not one JSON value, a trailing document, a duplicate key, `NaN` or an infinity, an integer past 2^53-1, a lone surrogate, a value that is not plain JSON | — | refused | `byte-order-mark`, `not-utf8`, `not-json`, `trailing-document`, `duplicate-key`, `non-finite-number`, `integer-out-of-range`, `lone-surrogate`, `not-a-json-value`, `non-string-key`; past 16 MiB or 96 containers the base class refuses first, and `isr_record.parse` and `isr_record.validate`, called directly, refuse past 96 containers themselves (`depth-over-cap`) |
+| a key the contract does not define, a missing member, any other breach of the published schema | — | refused | `unknown-key`, `missing-field`, `schema-violation`, naming the path and the schema keyword and never a value |
+| a reversed source interval, `LOCAL_LIBRARY` beside a foreign authority, an invalid polygon, a graph edge to no node, a repeated node id, occurrences not running from zero, a nil attribute with a value, a value neither normalised nor kept lexically | — | refused | `interval-reversed`, `local-library-authority`, `ring-not-closed`, `ring-repeated-vertex`, `ring-degenerate`, `ring-self-intersects`, `rings-cross`, `hole-outside-exterior`, `holes-nested`, `parts-overlap`, `graph-dangling-edge`, `graph-duplicate-node`, `graph-occurrence-gap`, `graph-nil-with-value`, `graph-value-unretained` |
+| egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress; the gateway's outbound commands are separate contracts (section 5) |
 
 ## Gaps, and what each one costs
 

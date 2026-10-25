@@ -1,0 +1,33 @@
+{
+  "directory": "stanag4559_stream",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "basic.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the stream family, written for the stanag4559_stream adapter by fixtures/stanag4559_stream/spec/build_fixtures.py from stream-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 d3c792b96c936010436fb29011309f7dbf8fa0a377921ac7ffed75355e7e375d as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_stream/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_source_time.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the stream family, written for the stanag4559_stream adapter by fixtures/stanag4559_stream/spec/build_fixtures.py from stream-missing-source-time.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 6d84c86e368926e39f5d837bc565cc1291ef615916ca34a254bcbf600fcf340d as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_stream/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_extension.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the stream family, written for the stanag4559_stream adapter by fixtures/stanag4559_stream/spec/build_fixtures.py from stream-unknown-extension.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 47d4b34080fe725a2b96f4bcfe7b3ad2e562111639dcf3c5be9f2c7b61ad42bf as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_stream/spec/stanag4559_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

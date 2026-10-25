@@ -402,6 +402,12 @@ REPO_BOUND_TESTS = {
     "test_cdm_observation_contracts.py": "schemas/observation/ at the repository root — the module holds the four published contract schemas to the models and validates its literals with them, and the wheel carries the generator, not the files",
     # Added 2026-10-24 (the `cesmo_internal` landing).
     "test_cdm_cesmo_internal_schema.py": "the published schemas/cesmo_internal/cesmo-internal-1.0.schema.json at the repository root, which the wheel does not carry (the codec carries the same schema as its literal)",
+    # Added 2026-10-24 (the STANAG 4559 translators). The acceptance oracle is the specification
+    # bundle's examples, carried verbatim as test data under tests/stanag4559_bundle/, and the
+    # packaged fixture builders these modules run read the same directory; tests/ is not packaged.
+    "test_cdm_stanag4559_catalog_adapter.py": "tests/stanag4559_bundle/ (the STANAG 4559 specification bundle's records, expected Events and fixture manifest, the acceptance oracle), the published schemas/event.schema.json and tests/frozen/cdm/3.0.0/, and the packaged fixture builder, which regenerates the fixtures from tests/stanag4559_bundle/ — none of which an installed wheel carries",
+    "test_cdm_stanag4559_stream_adapter.py": "tests/stanag4559_bundle/, schemas/event.schema.json, tests/frozen/cdm/3.0.0/ and the fixture builder that reads tests/stanag4559_bundle/, as test_cdm_stanag4559_catalog_adapter.py",
+    "test_cdm_stanag4559_workflow_adapter.py": "tests/stanag4559_bundle/, schemas/event.schema.json, tests/frozen/cdm/3.0.0/ and the fixture builder that reads tests/stanag4559_bundle/, as test_cdm_stanag4559_catalog_adapter.py",
 }
 
 def source_roster() -> tuple[str, ...]:

@@ -1,0 +1,167 @@
+[
+  {
+    "event_id": "ffa735d7-89e5-5f8d-81b8-e0d9a4171856",
+    "event_type": "STATUS_CHANGE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.0,
+            57.0
+          ],
+          [
+            22.0,
+            57.0
+          ],
+          [
+            22.0,
+            58.0
+          ],
+          [
+            21.0,
+            58.0
+          ],
+          [
+            21.0,
+            57.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "kind": "catalog.record",
+      "record": {
+        "body": {
+          "associations": [],
+          "coverage": {
+            "coordinates": [
+              [
+                [
+                  21,
+                  57
+                ],
+                [
+                  22,
+                  57
+                ],
+                [
+                  22,
+                  58
+                ],
+                [
+                  21,
+                  58
+                ],
+                [
+                  21,
+                  57
+                ]
+              ]
+            ],
+            "type": "Polygon"
+          },
+          "created_at": "2026-10-04T11:00:00.000Z",
+          "description": null,
+          "files": [],
+          "graph": {
+            "edges": [],
+            "nodes": []
+          },
+          "identity_scope": "ORIGIN_AUTHORITY",
+          "modified_at": "2026-10-04T12:00:00.000Z",
+          "product_type": "SYNTHETIC_REPORT",
+          "source_time_lexical": null,
+          "temporal_end": "2026-10-04T11:00:00.000Z",
+          "temporal_start": "2026-10-04T10:00:00.000Z",
+          "title": "Synthetic ISR test product"
+        },
+        "captured_at": "2026-10-04T12:00:01.000Z",
+        "change": "UPSERT",
+        "connector_id": "test-library-a",
+        "family": "catalog",
+        "kind": "catalog.record",
+        "library_id": "test-library-a",
+        "origin": {
+          "authority": "test-origin-a",
+          "object_id": "catalog-basic"
+        },
+        "raw_ref": {
+          "media_type": "application/json",
+          "representation": "decoded",
+          "sha256": "6b44ab5bb12c5eeb7c3c2fff1b2f8a813b184267f0a02af152b52b73f553f417",
+          "size_bytes": "88",
+          "uri": "fixture://raw/catalog-basic.json"
+        },
+        "revision": {
+          "ordinal": 1,
+          "semantic_sha256": "fa599b1c81963aa8aa64ab812a87be1dd1f987f7d6cc9a9f75c7b96353f133c1",
+          "token": "1"
+        },
+        "schema": "urn:synapsecommand:isr:record:1",
+        "security": {
+          "content": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          },
+          "metadata": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          }
+        },
+        "security_domain": "test-domain",
+        "source_time": "2026-10-04T12:00:00.000Z",
+        "tenant_id": "test-tenant"
+      },
+      "record_id": "3dd267d7-b1eb-50ca-afa3-fc59453c23dd",
+      "revision_key": "WyJXeUowWlhOMExYUmxibUZ1ZENJc0luUmxjM1F0Wkc5dFlXbHVJaXdpZEdWemRDMXZjbWxuYVc0dFlTSXNJbU5oZEdGc2IyY2lMQ0pqWVhSaGJHOW5MV0poYzJsaklsMCIsIjEiLCJmYTU5OWIxYzgxOTYzYWE4YWE2NGFiODEyYTg3YmUxZGQxZjk4N2Y3ZDZjYzlhOWY3NWM3Yjk2MzUzZjEzM2MxIl0",
+      "time_basis": "SOURCE"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": null,
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4559_catalog",
+      "adapter_version": "1.0.0",
+      "format_name": "SC ISR gateway record",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "catalog-basic",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "6b44ab5bb12c5eeb7c3c2fff1b2f8a813b184267f0a02af152b52b73f553f417"
+      },
+      "synthetic": true,
+      "system": "NSILI",
+      "transformations": [
+        "ISR-ID-001"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "WyJ0ZXN0LXRlbmFudCIsInRlc3QtZG9tYWluIiwidGVzdC1vcmlnaW4tYSIsImNhdGFsb2ciLCJjYXRhbG9nLWJhc2ljIl0",
+        "system": "NSILI"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

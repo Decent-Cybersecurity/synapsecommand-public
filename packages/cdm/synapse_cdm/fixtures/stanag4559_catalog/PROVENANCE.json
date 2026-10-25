@@ -1,0 +1,33 @@
+{
+  "directory": "stanag4559_catalog",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "basic.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the catalog family, written for the stanag4559_catalog adapter by fixtures/stanag4559_catalog/spec/build_fixtures.py from catalog-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 b2b5447d80c0614ee7add6640146ecfb0eafa954923451ccb50dff95ffcddab0 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_catalog/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_source_time.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the catalog family, written for the stanag4559_catalog adapter by fixtures/stanag4559_catalog/spec/build_fixtures.py from catalog-missing-source-time.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 b99e96366993ab86b1d64dda09439ca0baea51e85e2f7ae7cd62e88d089af173 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_catalog/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_extension.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the catalog family, written for the stanag4559_catalog adapter by fixtures/stanag4559_catalog/spec/build_fixtures.py from catalog-unknown-extension.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 8070d74de28fac09fcd3685b83a30abb32fe4b1b4b8981e9d00d0b9e2b3301c0 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; the coverage polygon moved seven degrees east and seven degrees north into the Baltic rectangle and revision.semantic_sha256 recomputed by the bundle's rule, every other value kept. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_catalog/spec/stanag4559_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

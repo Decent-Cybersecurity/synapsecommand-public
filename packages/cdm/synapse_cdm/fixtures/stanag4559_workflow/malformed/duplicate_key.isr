@@ -1,0 +1,76 @@
+{
+  "body": {
+    "artifact": {
+      "graph": {
+        "edges": [],
+        "nodes": []
+      },
+      "raw_ref": {
+        "media_type": "application/json",
+        "representation": "decoded",
+        "sha256": "3747f6bd0521759c8900605859d2d84caa0c2217015ff08af6f6731a5f8767b3",
+        "size_bytes": "90",
+        "uri": "fixture://raw/workflow-basic.json"
+      }
+    },
+    "entity_type": "SYNTHETIC_REQUIREMENT",
+    "geometry": null,
+    "identity_scope": "ORIGIN_AUTHORITY",
+    "native_id": "requirement-001",
+    "native_revision": "1",
+    "native_state": "TEST_DRAFT",
+    "owner_ref": null,
+    "references": [],
+    "service": "requirement",
+    "source_changed_at": "2026-10-04T12:00:00.000Z",
+    "source_time_lexical": null,
+    "title": "Synthetic requirement"
+  },
+  "captured_at": "2026-10-04T12:00:01.000Z",
+  "change": "UPSERT",
+  "connector_id": "test-library-a",
+  "family": "workflow",
+  "kind": "workflow.record",
+  "library_id": "test-library-a",
+  "origin": {
+    "authority": "test-origin-a",
+    "object_id": "workflow-basic"
+  },
+  "raw_ref": {
+    "media_type": "application/json",
+    "representation": "decoded",
+    "sha256": "3747f6bd0521759c8900605859d2d84caa0c2217015ff08af6f6731a5f8767b3",
+    "size_bytes": "90",
+    "uri": "fixture://raw/workflow-basic.json"
+  },
+  "revision": {
+    "ordinal": 1,
+    "semantic_sha256": "667eb441c37ce39903db6629ac50cb1c8c6b7962022732955252dff44d458f08",
+    "token": "1"
+  },
+  "schema": "urn:synapsecommand:isr:record:1",
+  "security": {
+    "content": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    },
+    "metadata": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    }
+  },
+  "security_domain": "test-domain",
+  "source_time": "2026-10-04T12:00:00.000Z",
+  "tenant_id": "test-tenant",
+  "tenant_id": "test-tenant-b"
+}

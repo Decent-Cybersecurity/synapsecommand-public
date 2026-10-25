@@ -217,10 +217,13 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that returned `None` for "nothing left" would make every call site write the same branch. An
     adapter that wants the field absent tests `block.data` and passes `None`.
 
-    FOURTEEN OF THE THIRTY-THREE ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT USE THE CONTAINER THIS
+    SEVENTEEN OF THE THIRTY-SIX ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT USE THE CONTAINER THIS
     RETURNS, and that is ARCHITECTURE.md §5's ruling rather than an oversight: the fourteen of
     Part 1 keep their `attributes` / `payload` parking under `source_extras` and declare
-    `residual: legacy`. This exists for the Part 2 adapters, which declare `residual: structured`.
+    `residual: legacy`, and the three STANAG 4559 translators (2026-10-24, a dated ruling in the
+    same section) carry the whole source record verbatim under `Event.payload.record`, the
+    specification's golden form, and declare `residual: legacy` as well. This exists for the Part 2
+    adapters, which declare `residual: structured`.
     Of the nineteen that do, `geojson` and `geopackage` call it; `c2sim`, `aixm511` and `aixm52`
     (2026-09-20/21), `dis7` and `tacticalapi` (2026-10-06), `link16_gateway` (2026-10-10),
     `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and `airnow_hourly` (2026-10-15), and `grib2`,

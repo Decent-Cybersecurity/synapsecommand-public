@@ -150,7 +150,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All thirty-three harnesses are green**, and at least one of them run against the INSTALLED
+2. **All thirty-six harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -780,11 +780,75 @@ now true of it.
 release tag is `v3.8.0`, and `3.8.0` is what the index serves — `PUBLICATION.md` entry 30 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.8.0 section being what moved in it.
-Everything else the round touched ships in nothing: the ledger, the witness record and its README,
-the release-pipeline and changelog pages, and two test modules.
+**THE STANAG 4559 TRANSLATORS LAND, 2026-10-24: three ingest-only adapter modules,
+`stanag4559_catalog` as #35, `stanag4559_stream` as #36 and `stanag4559_workflow` as #37, on the
+record module `isr_record`, the roster moves thirty-three to thirty-six, and no wire contract
+moves.** They are the pure translation layer of the SynapseCommand STANAG 4559 engineering
+specification (SC ISR 4559 001, revision 1.0 of 4 October 2026): each reads one internal ISR gateway
+record of its family — `urn:synapsecommand:isr:record:1`, this project's own record contract and not
+a NATO wire message, whose JSON Schema ships byte for byte as package data at
+`registry/isr/isr-record.schema.json` — as its octets or the parsed dict, and writes exactly one
+`STATUS_CHANGE` `Event` carrying the record verbatim under `payload.record` beside `kind`,
+`record_id`, `revision_key` and `time_basis`. `isr_record.py` holds what the three share: section 6's
+transport rules on octets (no byte-order mark, strict UTF-8, no duplicate key, no NaN or infinity, no
+trailing document, integers within 2^53 - 1), the packaged contract read through
+`importlib.resources`, section 28's second pass (timestamps, the source interval, the identity scope,
+polygon topology in exact arithmetic under a cap of 2 048 positions, the typed graph) and section 7's
+identity, `ISR-ID-001` — base64url keys over RFC 8785 arrays (`json.dumps` with `ensure_ascii=False`,
+measured equal to RFC 8785 on every Unicode scalar value; a lone surrogate refused by field) and
+`ids.derive` — with one typed refusal, `IsrRecordRefused`, and one code per rule;
+`adapters/stanag4559_common.py` holds the declaration and the wrapper rule. The stateful gateway of
+the specification is NOT built, since its wire half needs the NATO binding package, which is not
+held: the wire profiles C17, S18 and W19 are unimplemented, no peer was exercised, and no STANAG 4559
+wire interoperability is claimed — binding `provisional-internal-profile`, claim `PROVISIONAL`,
+maturity L3, and `INTEROPERABILITY.md` says so. The three declare `residual: legacy` by the dated
+ruling ARCHITECTURE.md §5 records (the specification's goldens carry the whole record in the
+payload and `residual` null), so the legacy census is seventeen. The fixture sets are the
+specification bundle's synthetic records, carried verbatim as test data under
+`tests/stanag4559_bundle/` and written into each fixture directory by its `spec/build_fixtures.py`, a
+catalogue or stream footprint moved into the Baltic rectangle and the semantic digest recomputed by
+the bundle's rule; each `malformed/` carries the octet-only refusals as `.isr` files, which
+`.gitattributes` gains and holds out of line-ending conversion. The bundle's nine expected Events are
+reproduced byte for byte by the three new test modules once projected to the CDM 3.0.0 contract the
+bundle was written against. `SCHEMA_VERSION` stays at 3.2.0: no model, enum, published schema or
+golden of the thirty-three moved. The bump this derives is MINOR (three `Adapter` subclass names,
+three fixture directories and the new module's public names appear; nothing is removed): the gate's
+table decides every one of those units itself, so they carry no ruling — a ruling for a unit the
+table decides is refused as stale — and the one ruling below is for the packaged contract, a
+shipped file kind the table has no class for. The next release is at least 3.9.0.
+
+**What moved inside the distribution: 95 files** — for the STANAG 4559 landing of 2026-10-24, every
+one new but the package files the roster moved: the record module `isr_record.py` and, under
+`registry/isr/`, its contract `isr-record.schema.json`; the adapter modules `stanag4559_common.py`,
+`stanag4559_catalog.py`, `stanag4559_stream.py` and `stanag4559_workflow.py` under `adapters/`; and,
+for each of `fixtures/stanag4559_catalog/`, `fixtures/stanag4559_stream/` and
+`fixtures/stanag4559_workflow/`, the three payloads and their record and README at the top level,
+`PROVENANCE.json`, `README.md`, `basic.json`, `missing_source_time.json`, `unknown_extension.json`;
+the goldens under `golden/`, `basic.cdm.json`, `missing_source_time.cdm.json`,
+`unknown_extension.cdm.json`; the refused payloads and their record under `malformed/`,
+`PROVENANCE.json`, `byte_order_mark.isr`, `depth_over_cap.isr`, `duplicate_key.isr`,
+`graph_edge_to_no_node.json`, `impossible_date.json`, `kind_of_another_family.json`,
+`local_library_scope_foreign_authority.json`, `lone_surrogate.isr`, `missing_captured_at.json`,
+`nan_value.isr`, `polygon_latitude_out_of_range.json`,
+`ring_self_intersects.json`, `semantic_digest_upper_case.json`, `size_bytes_not_an_integer.json`,
+`unknown_top_level_key.json` and, in the catalogue and stream sets only,
+`temporal_start_after_end.json`; and under `spec/`, `build_fixtures.py` and `stanag4559_pin.json`;
+and the package files the roster moved, `FORMAT_COVERAGE.md`, `README.md`, `__init__.py`,
+`adapter.py`, `lossless.py`, `pyproject.toml`, `symbology.py`, `version.py` (`pyproject.toml`'s two
+roster comments and its package-data note; `FORMAT_COVERAGE.md`'s two status rows, its ordinal rows
+for the three and the record's row set; the package `README.md`'s roster sentence, three
+shipped-table rows, the egress count and the pair arithmetic; and the roster count in `__init__.py`,
+`adapter.py`, `lossless.py` (with its legacy census), `symbology.py` and `version.py`), and
+`MIGRATIONS.md` — this section, release condition 2's roster count and, from the 3.8.0 witness
+round that reopened this section, the dated witness paragraphs in the release procedure and the
+pipeline section, the release's dated account in the pipeline section and the index note in the
+3.8.0 section being what moved in it. Everything else the landing and that witness round touched
+ships in nothing: the repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`,
+`INTEROPERABILITY.md`, `SECURITY.md`, `RELEASE_NOTES.md`, `.gitattributes`, the docs pages,
+`gates/wheel_install.py`, the three generated manifests and the support matrix, the bundle's
+examples under `tests/stanag4559_bundle/`, the shared helper `tests/stanag4559_support.py`, the
+three new test modules and the pinned rosters in the gate tests, and the witness round's ledger,
+witness record and its README, release-pipeline and changelog pages and two test modules.
 
 **THE 3.8.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is the pipeline's own, for the eighth
 time.** Run 40178105604's `witness` job built `witness-3.8.0.json`, its verify step read `VERIFIED`
@@ -798,6 +862,13 @@ record by digest among the pipeline's. This round resolves no `SELF` provenance:
 contract — the CDM schema stays 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the
 3.2.0 row still names `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.8.0`.
+
+**Bump ruling.** `synapse_cdm/registry/isr/isr-record.schema.json` — MINOR: a shipped file is
+added — the internal ISR record contract `urn:synapsecommand:isr:record:1`, byte for byte the STANAG
+4559 specification bundle's `contracts/isr-record.schema.json`, which the new module `isr_record`
+reads as package data through `importlib.resources` to validate a record before translating it.
+Nothing is removed and nothing existing changes; it is a new contract the three new adapters
+consume, which is the MINOR row's "a fixture set is added" one artefact along (2026-10-24).
 
 ### 3.8.0 — 2026-10-25 — the CESMO internal-contract adapter: `cesmo_internal` lands as #34, the roster moves thirty-two to thirty-three, `synapse-decode` gains the HIGH NORTH and `cesmo_internal` rows, the conformance suite parks `residual`, and no wire contract moves
 

@@ -8,7 +8,7 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Thirty-three integration adapters are shipped and harness-verified — PNTMAP
+Thirty-six integration adapters are shipped and harness-verified — PNTMAP
 GNSS alerts, TAK / Cursor-on-Target (bidirectional), AIS / NMEA 0183
 AIVDM (bidirectional), ADS-B 1090ES extended squitter (bidirectional),
 Picogrid Legion Platform API v3, ASTERIX category 021 ADS-B target
@@ -31,11 +31,13 @@ volumes (ingest), NDBC standard meteorological text (ingest), NOAA CO-OPS data A
 (ingest), EPA AirNow hourly observation files (ingest), GRIB2 messages (ingest), Cloud
 Optimized GeoTIFF headers and VRT indexes (ingest), IEM NEXRAD N0Q radar composites
 (ingest), BarentsWatch Historic AIS tracks (ingest), MET Norway Frost observation
-responses (ingest) and SC CESMO Internal Exchanges (ingest).
+responses (ingest), SC CESMO Internal Exchanges (ingest), and the SC ISR gateway record of the
+STANAG 4559 translation layer in its catalogue, stream and workflow families (ingest; this
+project's internal record contract, not a NATO wire message).
 
 Without a canonical model in the middle, N adapters means N(N−1)/2
-translations and N private notions of what "a contact" is — five hundred
-and twenty-eight and thirty-three as of today — and the integration layer becomes the place
+translations and N private notions of what "a contact" is — six hundred
+and thirty and thirty-six as of today — and the integration layer becomes the place
 where meaning is quietly lost. With one, an adapter is a thin
 translator and nothing else.
 
@@ -220,7 +222,7 @@ contributor's install and is documented in
 [`CONTRIBUTING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/CONTRIBUTING.md).
 A consumer never needs a clone.
 
-Everything it needs comes with it. The thirty-three shipped adapters' **fixtures are part of the
+Everything it needs comes with it. The thirty-six shipped adapters' **fixtures are part of the
 package**, so the harness runs against the payloads those adapters are verified on without a
 repository anywhere:
 

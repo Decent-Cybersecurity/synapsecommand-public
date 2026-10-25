@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-three adapters
-cannot grow thirty-three slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-six adapters
+cannot grow thirty-six slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -1629,10 +1629,27 @@ def test_the_reference_adapter_the_readme_calls_the_shortest_is_the_shortest():
     # 5.2 profile on `aixm511.py`'s `AixmAdapterBase` (2026-09-21) and is the shorter FILE; a
     # reader who opened it as "the shortest adapter" would find no reader in it at all, which is
     # the sentence the README now states and this derivation holds it to.
+    #
+    # AND WITH A SHARED READER OUTSIDE `adapters/` (2026-10-24): the three `stanag4559_*`
+    # translators run on `stanag4559_common.Stanag4559Adapter`, and the reader that base runs is
+    # `synapse_cdm/isr_record.py` — the record contract, its transport rules and its second pass,
+    # which their specification puts in shared code beside the adapters rather than in one of
+    # them. Named here, not derived from every import, because every adapter also imports
+    # framework modules that are not its reader; the guard below holds each name to an import the
+    # base module actually makes.
+    shared_reader_of = {"stanag4559_common.py": ("isr_record.py",)}
+    for base_file, readers in shared_reader_of.items():
+        base_source = (PKG / "adapters" / base_file).read_text()
+        for reader in readers:
+            stem = pathlib.Path(reader).stem
+            assert re.search(rf"^from synapse_cdm import [^\n]*\b{stem}\b", base_source, re.M), (
+                f"{base_file} no longer imports {stem}, so it is no longer the reader it runs on")
     lengths = {}
     for cls in shipped_adapters().values():
         files = {pathlib.Path(inspect.getsourcefile(base)) for base in cls.__mro__
                  if base.__module__.startswith("synapse_cdm.adapters.")}
+        files |= {PKG / reader for path in list(files)
+                  for reader in shared_reader_of.get(path.name, ())}
         own = pathlib.Path(inspect.getsourcefile(cls)).name
         lengths[own] = sum(len(path.read_text().splitlines()) for path in files)
     shortest = min(lengths, key=lengths.get)
@@ -2474,6 +2491,37 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      'empty, and `harness --update-golden` over the thirty-two adapters moved no golden), and the two axes',
      "a dated round record in the history: the 3.7.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
+    # ADDED 2026-10-25 (the STANAG 4559 translators, `stanag4559_catalog` #35, `stanag4559_stream`
+    # #36 and `stanag4559_workflow` #37, landed after `v3.8.0`), the `cesmo_internal` landing's
+    # shape again: four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the
+    # 3.8.0 artefact, a roster of thirty-three, beside three rows marked as postdating it; three the
+    # 3.8.0 readiness report's readings of its release tree; and one MIGRATIONS.md's 3.8.0 record.
+    # The first four retire with the next release commit, which rewrites the notes for a roster of
+    # thirty-six; the other four stay.
+    ('RELEASE_NOTES.md',
+     '`CURRENT: manifests vs 33 shipped adapters at manifest schema 2.1.0`',
+     'the 3.8.0 notes describe the 3.8.0 artefact, a roster of thirty-three, beside the three rows marked post-3.8.0 (`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow`, landed after `v3.8.0`); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'Thirty-three adapters at 3.8.0, all harness-verified',
+     'the 3.8.0 notes describe the 3.8.0 artefact, a roster of thirty-three, beside the three rows marked post-3.8.0 (`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow`, landed after `v3.8.0`); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'At `v3.8.0` `python -m synapse_cdm.harness --list-adapters` prints `33 adapters registered`',
+     'the 3.8.0 notes describe the 3.8.0 artefact, a roster of thirty-three, beside the three rows marked post-3.8.0 (`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow`, landed after `v3.8.0`); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'read `33 adapters, 789 fixture files` and `33 adapters x 2 schema modes, 1512 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
+     'the 3.8.0 notes describe the 3.8.0 artefact, a roster of thirty-three, beside the three rows marked post-3.8.0 (`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow`, landed after `v3.8.0`); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('docs/soif-part1-release-readiness.md',
+     '`manifests --check` CURRENT for the thirty-three shipped adapters, the support-matrix',
+     "the 3.8.0 readiness report's readings of the release tree it certified, when the roster was thirty-three; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     '`harness --update-golden` over all thirty-three adapters moving no golden; the harness over all thirty-three',
+     "the 3.8.0 readiness report's readings of the release tree it certified, when the roster was thirty-three; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'readings are `33 adapters, 789 fixture files` and `33 adapters x 2 schema modes, 1512 fixture verdicts, 0 failed`',
+     "the 3.8.0 readiness report's readings of the release tree it certified, when the roster was thirty-three; a dated certification, kept as written"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'and `harness --update-golden` over the thirty-three adapters moved no golden), and the two axes',
+     "a dated round record in the history: the 3.8.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),
