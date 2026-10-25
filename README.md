@@ -159,6 +159,12 @@ The `frost_observations` adapter is part of the distribution built from this tre
 
 The `cesmo_internal` adapter is part of the distribution built from this tree; no release before 3.8.0 carries it.
 
+The `stanag4559_catalog` adapter is part of the distribution built from this tree; no release before 3.9.0 carries it.
+
+The `stanag4559_stream` adapter is part of the distribution built from this tree; no release before 3.9.0 carries it.
+
+The `stanag4559_workflow` adapter is part of the distribution built from this tree; no release before 3.9.0 carries it.
+
 The observation contract models (`synapse_cdm.observation_contracts`) and the `synapse-decode` host command are part of the distribution built from this tree; no release before 3.5.0 carries them.
 
 `synapse-cdm` **1.0.0** was published on 2026-08-25 and the upload is recorded, measured and
@@ -279,7 +285,7 @@ to refuse it — a gate nobody has seen fail is a gate nobody has seen.
 **A release is a pushed tag.** `.github/workflows/publish.yml` does the rest:
 
 ```bash
-git tag -a v3.8.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
+git tag -a v3.9.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
 git push origin main --follow-tags
 ```
 

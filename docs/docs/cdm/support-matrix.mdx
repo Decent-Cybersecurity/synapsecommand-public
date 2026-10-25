@@ -692,7 +692,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the whole record is carried verbatim under payload.record and Event.residual is null, the specification's golden form; residual: legacy by the dated ruling of 2026-10-24 (ARCHITECTURE.md section 5)
 - ingest only: from_cdm is the inherited refusal, and the gateway's outbound commands are separate contracts (section 5), never an Event
 - every fixture is synthetic: the specification bundle's records, with any footprint moved into CONTRIBUTING.md's Baltic rectangle and the semantic digest recomputed by the bundle's rule; no recorded record is evidence here
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `stanag4559_stream` — SC ISR gateway record, stream family (STANAG 4559 translation layer, provisional internal profile)
 
@@ -717,7 +717,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the whole record is carried verbatim under payload.record and Event.residual is null, the specification's golden form; residual: legacy by the dated ruling of 2026-10-24 (ARCHITECTURE.md section 5)
 - ingest only: from_cdm is the inherited refusal, and the gateway's outbound commands are separate contracts (section 5), never an Event
 - every fixture is synthetic: the specification bundle's records, with any footprint moved into CONTRIBUTING.md's Baltic rectangle and the semantic digest recomputed by the bundle's rule; no recorded record is evidence here
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `stanag4559_workflow` — SC ISR gateway record, workflow family (STANAG 4559 translation layer, provisional internal profile)
 
@@ -743,7 +743,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the whole record is carried verbatim under payload.record and Event.residual is null, the specification's golden form; residual: legacy by the dated ruling of 2026-10-24 (ARCHITECTURE.md section 5)
 - ingest only: from_cdm is the inherited refusal, and the gateway's outbound commands are separate contracts (section 5), never an Event
 - every fixture is synthetic: the specification bundle's records, with any footprint moved into CONTRIBUTING.md's Baltic rectangle and the semantic digest recomputed by the bundle's rule; no recorded record is evidence here
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `stanag4586` — STANAG 4586 DLI
 

@@ -474,8 +474,9 @@ def test_parse_001_a_duplicate_key_is_refused_on_octets_and_lost_in_a_parsed_twi
 
 def test_the_declaration_is_the_ruled_one():
     """L-01, L-03 to L-05 and L-09: provisional internal profile, claim PROVISIONAL, maturity L3,
-    residual LEGACY, the format and its version, unknown keys refused, evidence not yet
-    available, the two bounds with their basis, and ISR-ID-001 the one derivation."""
+    residual LEGACY, the format and its version, unknown keys refused, evidence available
+    from the release that attaches the records, the two bounds with their basis, and ISR-ID-001
+    the one derivation."""
     cls = load_adapter(f"stanag4559_{FAMILY}")
     meta = cls.metadata
     assert (cls.name, cls.version, cls.direction, cls.system, cls.FAMILY) == (
@@ -491,7 +492,8 @@ def test_the_declaration_is_the_ruled_one():
     assert meta.maturity.level is MaturityLevel.L3 and meta.maturity.external_exercise is None
     assert meta.residual is ResidualStance.LEGACY
     assert meta.capabilities.unknown_fields is UnknownFields.NONE
-    assert meta.evidence.available is False
+    # The 3.9.0 release commit (2026-10-25) flips the evidence declaration they landed with.
+    assert meta.evidence.available is True
     limits = meta.capabilities.limits
     assert (limits.max_input_bytes, limits.max_depth, limits.max_objects) == (16_777_216, 96, None)
     assert {k: v.kind for k, v in limits.declared_because.items()} == {
@@ -510,6 +512,15 @@ def test_the_declaration_is_the_ruled_one():
         "residual-legacy",
     ):
         assert required in ids
+    text = {entry.id: entry.summary for entry in meta.limitations}
+    assert text["evidence-availability"] == (
+        "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
+        "untracked and unpackaged, CI generates the set on every run, and the release pipeline "
+        "generates the records for every shipped adapter and attaches them to the GitHub "
+        "Release of the version it publishes. `evidence.available` is true because every "
+        "published distribution that carries this adapter has that Release, so its records "
+        "are retrievable by a third party; it says nothing about what the wheel contains"
+    )
     assert set(cls.TRANSFORMS) == {
         "tenant_id",
         "security_domain",

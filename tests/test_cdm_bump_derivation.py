@@ -717,6 +717,18 @@ UNRULED_HISTORICAL_ARCS = {
         "synapse_cdm/decode_host.py:_given",
         "synapse_cdm/decode_host.py:_parser",
         "synapse_cdm/suite.py:PARKED"},
+    # The eighteenth row, written IN the 3.9.0 release commit (2026-10-25) from the gate's own
+    # `derive(snapshot_at("v3.8.0"), snapshot_at(None))` on that tree — the 3.4.0 to 3.8.0 route,
+    # so that the tag needs no re-tag for it. One unit, ruled MINOR in MIGRATIONS.md's `### 3.9.0`
+    # section by the STANAG 4559 landing: the packaged record contract
+    # `registry/isr/isr-record.schema.json`, a shipped file kind the table has no class for. The
+    # three adapter modules, their shared module `adapters/stanag4559_common.py`, the record
+    # module `isr_record` and the three fixture sets are units the arc ADDED — the release's
+    # evidence flip among them — and `version.py` moves by its assignment, which the gate
+    # excludes, and by comment and docstring lines. The arc's 114 signals (36 MINOR, 78 PATCH)
+    # derive the MINOR the number types; the schema did not move.
+    ("v3.8.0", "v3.9.0"): {
+        "synapse_cdm/registry/isr/isr-record.schema.json"},
 }
 
 

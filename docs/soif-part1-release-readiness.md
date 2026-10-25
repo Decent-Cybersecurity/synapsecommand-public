@@ -982,6 +982,43 @@ subject begins `Release 3.8.0` and its hash is deliberately not written here, fo
 section's first paragraph gives. The tag that names 3.8.0 is to be placed on it after `main` is
 fast-forwarded to it, and contains every commit named in this paragraph.
 
+**Re-qualification, 2026-10-25, the 3.9.0 release commit.** `v3.8.0` was placed on
+**`c567cfa`** and published (`PUBLICATION.md` entry 30). `main` then moved twice by fast-forward,
+through the 3.8.0 witness round **`0d4cf0e`** and the 3.8.0 docs-deploy commit **`10af73f`**,
+which is the tip of `main` and of `origin/main` at the time of writing. This report also describes
+the STANAG 4559 translators' landing, landed on that tip as one commit and none on `main`:
+**`e875280`** (the adapter modules `stanag4559_catalog`, `stanag4559_stream` and
+`stanag4559_workflow` with their shared module `stanag4559_common`, the record module `isr_record`
+and its packaged contract, and their three fixture sets, the roster thirty-three to thirty-six,
+the number untyped), its full hash `e8752809951971bf0d0ddc5a0cdef7ec1b77776f`, the tip of the
+remote branch `soif/release-3.9.0` at the time of writing. It is the third form of one landing.
+`c8487c1`, the landing as first pushed on `soif/stanag4559-1.0`, read `success` on 10 of the 11
+jobs of `CI` run 40189991185 and `failure` on gitleaks, whose nine `generic-api-key` findings were
+the nine `object_key` lines of the specification bundle's fixture manifest — base64url identities
+of synthetic test strings beside a field named `key`, not credentials — and `.gitleaks.toml` admits
+no allowlist; so, by the run lead's ruling of this date, the manifest is no longer carried (its
+SHA-256 is pinned in each fixture set's `spec/stanag4559_pin.json` and its values are the literals
+of `tests/stanag4559_support.py`), and the commit was amended with nothing else changed into
+`e01b9e1`, whose `CI` run 40195350013 read `success` on all 11 jobs, gitleaks included, as did its
+`CodeQL` run 40195350028 and its bridge run 40195350014. `main` then took the docs-deploy commit,
+so `e01b9e1` was rebased onto `10af73f` with nothing changed (`git range-diff` reads it equal) into
+`e875280`, pushed as the remote branch `soif/release-3.9.0`, `soif/stanag4559-1.0` staying at
+`e01b9e1`. On
+`e875280` `CI` run 40198811543 (a `push` event) read `success` on all 11 of its jobs — the suite,
+gates and manifests on Python 3.11, 3.12, 3.13 and 3.14; lint; the conformance sweep; evidence
+records, provenance and badges; gitleaks, the same scanner, 8.30.1, which run locally with the
+repository's configuration over the commit's whole history reads no leak; pip-audit; `npm audit`
+over `docs/`; and the wheel gate — so no job was red, the tag-conditional set included, which reads
+green on a tree whose `PACKAGE_VERSION`, 3.8.0 there, a tag already names. `CodeQL` run 40198811626
+succeeded on both languages, and the bridge's own workflow, `Gateway bridge package` run 40198811537,
+read `success` on Python 3.11, 3.12, 3.13 and 3.14. `git merge-base --is-ancestor 10af73f e875280`
+exits 0, so `main` can be fast-forwarded to it. The release commit itself sits on
+`soif/release-3.9.0`, on that tip; its subject begins `Release 3.9.0` and its hash is deliberately
+not written here, for the reason the section's first paragraph gives. The tag that names 3.9.0 is
+to be placed on it after `main` is fast-forwarded to it, and contains every commit named in this
+paragraph but `c8487c1` and `e01b9e1`, the two earlier forms of the landing, which are named by
+their short hashes only.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1470,6 +1507,54 @@ is looser than the kit's own specification the adapter follows the specification
 `FORMAT_COVERAGE.md` records; and the bridge on the package index — it reaches the Release as
 source in the tag. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-25, the 3.9.0 release: the verdict is `ready for PR` (3.9.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.9.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.8.0` as `{"kind": "MINOR", "number": "3.9.0", "unruled": []}` on the landing commit
+before the number was typed), and the wire contract does not move: `SCHEMA_VERSION` stays
+**3.2.0**, because no model, enum or published CDM schema changed (`schemas --check` CURRENT at
+3.2.0; `git diff v3.8.0 -- schemas/` is empty — the record contract the three new adapters read
+ships as package data under `registry/isr/` and is not a CDM schema). `KNOWN_CONTRACTS`, the
+frozen contracts and the version matrix do not move. `ADAPTER_API_VERSION` 3.1.0, the manifest
+schema 2.1.0 and the evidence schema 2.0.0 stay where they were, and the bridge
+`synapse-link16-bridge` stays at 1.1.0, nothing under it having moved. The one unit the gate's
+table cannot decide — the packaged record contract `registry/isr/isr-record.schema.json`, a
+shipped file kind it has no class for (MINOR) — is ruled in `MIGRATIONS.md`'s 3.9.0 section, so on
+the release commit without its tag the gate reads its ruling under the pending heading the roll
+removed and refuses that one unit, and the bump tests join the tag-conditional set. What was
+verified on the release tree before it was committed: the full suite on Python 3.11, 3.12 and
+3.14, read by subtracting the tag-conditional set test by test; `schemas --check` CURRENT at
+3.2.0, `manifests --check` CURRENT for the thirty-six shipped adapters, the support-matrix,
+current-contracts and schema-page checks CURRENT; the pin-path and parks-table gates; ruff 0.16.9,
+the pin, on the package, the gates and the tests; `harness --update-golden` over all thirty-six
+adapters and the Digital NOTAM set moving no golden; the harness over all thirty-six and the
+conformance sweep from a wheel built from the staged tree; the three STANAG 4559 fixture builders'
+`--check`; and the wheel gate without `--mutation-check`, `13 checks, 0 failed`, its slice among
+them, whose `resources` and `harness` readings are `36 adapters, 801 fixture files` and `36
+adapters x 2 schema modes, 1530 fixture verdicts, 0 failed`. Read by the release round and not
+here: the same tree committed in a throwaway clone at a local annotated `v3.9.0`, the wheel gate's
+`--mutation-check`, the build job's package test, the docs build, CI and CodeQL on the pushed
+release commit, and everything about the upload. The evidence categories of the three new
+adapters, as generated on this tree: `internal_fixture` PRESENT, `self_round_trip`
+NOT_APPLICABLE (each is ingest-only), `independent_expected`, `normative_schema` and
+`independent_endpoint` ABSENT. **What is judged, each with its source.** The maintainer's
+instruction of 2026-10-24 to implement the STANAG 4559 specification bundle, to decide its open
+points without asking and to publish the result on GitHub and on the package index, and the
+rulings the run lead took under it on those points, listed by id in section 20 for the
+maintainer; the bounds the adapters declare with their basis; and the bundle's nine expected
+Events, which the three adapters' tests reproduce byte for byte once projected to the CDM 3.0.0
+contract the bundle was written against. **What is NOT claimed:** STANAG 4559 wire
+interoperability of any kind — no AEDP-17, AEDP-18 or AEDP-19 wire message is read or written, no
+NATO binding package is held, the stateful gateway of the specification is not in this
+repository, its wire profiles C17, S18 and W19 are unimplemented, no peer was exercised, and the
+bundle's own `nato_wire_compatibility_verified: false` stands; that a record a gateway wrote
+translates — every fixture is synthetic, the bundle's records with a catalogue or stream footprint
+moved into the Baltic rectangle, so the contract's strict readings have met the specification and
+its bundle and not a producer's output; the half of seven acceptance cases that is the gateway's —
+CDM-005, PARSE-003, PARSE-004, PARSE-006, PARSE-007, PARSE-008 and PARSE-010, each test naming its
+case; and the bridge on the package index — it reaches the Release as source in the tag. No §58
+line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1598,6 +1683,44 @@ recorded deviations from the kit's validator; the kit's own unresolved register 
 blocks the STANAG 4658 binding and is the kit owner's to resolve, not this repository's; and an
 Exchange written by a real gateway, which nothing in this repository has read. The
 machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-25, the 3.9.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set, which a tag on the tree
+resolves, and nothing in section 15 or in the arc's own open items rises to a blocker. The open
+items are listed for the maintainer and not argued here: the licence class of the contract this
+release carries — the internal ISR gateway record `urn:synapsecommand:isr:record:1` of SC ISR 4559
+001, the SynapseCommand STANAG 4559 engineering specification (revision 1.0, 4 October 2026), the
+repository owner's own specification, recorded as `OPEN`, whose contract schema ships byte for
+byte as package data, whose nine synthetic records and nine expected Events are carried verbatim
+as test data, and whose fixture manifest is pinned by digest and not carried; no third-party
+standard text ships, and the NATO AEDP-17, AEDP-18 and AEDP-19 texts and binding files are not in
+the tree and not claimed — beside the ones the 3.5.0 to 3.8.0 releases listed; the rulings the run
+lead took on the bundle's open points under the maintainer's instruction of 2026-10-24, L-01 to
+L-18 in the lead's record, each for the maintainer to confirm or reverse — L-01 the translation
+layer alone, the gateway not built and its capability report, L-02 and L-16 the numbers (the
+ordinals #35 to #37 and this release's 3.9.0 after the 3.8.0 release of the same day), L-03 the
+`residual: legacy` stance and the legacy census of seventeen, L-04 the provisional binding, claim
+and evidence declaration, L-05 `ISR-ID-001` as the one transformation, L-06 the identity's
+canonical form, L-07 the bundle's files as test data and the byte-for-byte oracle, L-08 the
+packaged contract, L-09 the transport rules on octets and the §20 caps as project defaults, L-10
+the acceptance-case accounting, L-11 the fixtures moved into the Baltic rectangle and the
+one-octet-over case fed in memory, L-12 to L-14 the roles and the concurrent arcs, and L-15 the
+Homebrew SQLite 3.54.1 behaviour of the `geopackage` authorizer that the arc's Python 3.14 reading
+pinned around and did not repair, and L-17 the bundle's fixture manifest pinned by digest and not
+carried, because the repository's secret scanner reads its `object_key` lines as key assignments and
+`.gitleaks.toml` admits no allowlist, with the landing amended for it and the arc's unreleased
+branch force-pushed once, and L-18 the amended landing rebased unchanged onto `main`'s 3.8.0
+docs-deploy commit and published as `soif/release-3.9.0`, `soif/stanag4559-1.0` left at the
+superseded first push for the maintainer to delete — and the accepted round decisions beside them,
+among them the
+2,048-position geometry cap, which a sweep of n log n would let rise; the gateway increments the
+specification describes, which the arc did not build; the NATO binding package (IDL, WSDL, XSD,
+metadata dictionary, amendments), which the bundle declares blocked and which no wire profile can
+be designed without; an independent S18 or W19 peer, which nothing in this repository has
+exercised; the wire profiles C17, S18 and W19 themselves; the `synapse-decode` rows for the three
+translators, which the hosted table does not carry; and a record written by a real gateway, which
+nothing in this repository has read. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

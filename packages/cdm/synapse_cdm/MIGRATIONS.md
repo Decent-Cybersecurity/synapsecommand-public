@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.8.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.9.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -28,9 +28,12 @@ again at the 3.5.0 release of 2026-10-16, both numbers moving a MINOR once more 
 reason again — the package took a MINOR for three adapter modules and the wire contract had no
 part in it; five MINORs apart at the 3.7.0 release of 2026-10-24, the fifth for the ordinary
 reason once more — the package took a MINOR for two adapter modules and the wire contract had no
-part in it; and six MINORs apart at the 3.8.0 release of 2026-10-25, the sixth for the ordinary
+part in it; six MINORs apart at the 3.8.0 release of 2026-10-25, the sixth for the ordinary
 reason again — the package took a MINOR for one adapter module, three `synapse-decode` rows and
-a conformance-check scope correction, and the wire contract had no part in it.)
+a conformance-check scope correction, and the wire contract had no part in it; and seven MINORs
+apart at the 3.9.0 release of the same day, the seventh for the ordinary reason once more — the
+package took a MINOR for three adapter modules, the record module they share and its packaged
+contract, and the wire contract had no part in it.)
 
 ## What each bump means
 
@@ -222,7 +225,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.8.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.9.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -595,7 +598,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.8.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.9.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -774,11 +777,90 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.9.0 — 2026-10-25 — the STANAG 4559 translators: three ingest-only adapter modules land, `stanag4559_catalog` as #35, `stanag4559_stream` as #36 and `stanag4559_workflow` as #37, on the record module `isr_record`, the roster moves thirty-three to thirty-six, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.8.0`, and `3.8.0` is what the index serves — `PUBLICATION.md` entry 30 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells the heading is read by the citation sweep as a pointer to a section this roll removed.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.9.0` and
+`SCHEMA_VERSION` is `3.2.0` at this commit, in `version.py`, and the tag `v3.9.0` is to name the
+commit that carries this release state. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that
+watched the upload and is not asserted here before it has happened. The paragraph this replaces
+said that nothing in the section was in a release, that the newest release tag was `v3.8.0` and
+that `3.8.0` was what the index served (`PUBLICATION.md` entry 30) — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.8.0 -> 3.9.0 ON 2026-10-25, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.8.0` and derives MINOR with nothing unruled: on
+the landing commit, before any number was typed, it read "the arc since 3.8.0 derives MINOR with 0
+unruled, so the next release is at least 3.9.0", its `--json` reporting `pending` as `{"kind":
+"MINOR", "number": "3.9.0", "unruled": []}`, and `--mutation-check` reads `1 check, 0 failed` on
+this tree from the moment the tag names it (until then the gate reads its ruling under the pending
+heading this commit removed and refuses the one unit this section rules — the transitional reading
+every release commit whose arc carries a ruling records, and the release round reads the green at
+the tag). The floor comes from the public names, the modules and the fixture sets the landing below
+added and from nothing removed — the `Adapter` subclasses `Stanag4559CatalogAdapter`,
+`Stanag4559StreamAdapter` and `Stanag4559WorkflowAdapter`, registered as `stanag4559_catalog`,
+`stanag4559_stream` and `stanag4559_workflow`, their shared module `adapters/stanag4559_common.py`,
+the record module `isr_record` and the three fixture sets. The one unit the table cannot decide is
+ruled in this section's one `**Bump ruling.**` paragraph, which the landing wrote: the packaged
+contract `registry/isr/isr-record.schema.json`, MINOR, a shipped file kind the table has no class
+for; the release adds none, because what it moves is either a unit the arc added or text. Over the
+arc the gate's table decides 114 signals, 36 MINOR and 78 PATCH, and the one ruling decides the
+rest. So the floor and the number are one number and no Version ruling is needed or present.
+`SCHEMA_VERSION` does not move and stays at `3.2.0`: no model, no enum, no published CDM schema and
+no golden of an adapter that predates the arc moved (`python -m synapse_cdm.schemas --check` reads
+CURRENT at 3.2.0, `git diff v3.8.0 -- schemas/` is empty — the record contract ships as package
+data under `registry/isr/` and is not a CDM schema — and `harness --update-golden` over the
+thirty-six adapters moved no golden), and the two axes are seven MINORs apart.
+`ADAPTER_API_VERSION` stays at `3.1.0`, and `MANIFEST_SCHEMA_VERSION` 2.1.0 and
+`EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release put them. The sibling distribution
+`synapse-link16-bridge` stays at 1.1.0 with its floor at `synapse-cdm>=3.5.0,<4`: nothing under
+`packages/link16_bridge/` moved since `v3.8.0`, and nothing there is read by this gate.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-25 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, the re-tensed sentence of the landing paragraph below, a dated
+clause on the 3.8.0 witness round's paragraph, the transition's clause in the count paragraph, the
+introduction's two-number sentence and its parting clause, and the two tag-command examples in the
+procedure and in the pipeline section; `RELEASE_NOTES.md`, rewritten for this release with every
+count derived; `README.md`'s tag example and an availability sentence for each of the three
+adapters, and the same sentences on the documentation site's introduction; `VERSIONING.md`'s
+package-version figure, its tag-command example and a dated note under §4;
+`docs/docs/changelog.mdx`'s live pair of numbers in a dated paragraph;
+`docs/docs/current-contracts.mdx`, regenerated; the readiness report's re-qualification; the two
+version literals `tests/test_cdm_packaging.py` pins; the four retired `RELEASE_NOTES.md` exemption
+rows in `tests/test_cdm_prose_counts.py`; the evidence literals of the three adapters' test
+modules; and the eighteenth `UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`,
+for `("v3.8.0", "v3.9.0")` at one unit — the one this section rules, compared set to set, written
+before the tag exists by the raw derivation from `v3.8.0` to this tree. One declaration moves with
+the release and not with the arc: the three adapters landed declaring `evidence.available: false`
+— "it becomes true at the first release that attaches them", their own words — and
+`tests/test_cdm_evidence.py` holds the field to the newest tag's tree, so this commit flips it to
+`true` in their shared declaration, `adapters/stanag4559_common.py`, with a sentence beside it that
+names no version, the form the two of 3.7.0 and the one of 3.8.0 took; the three manifests and the
+support matrix are regenerated. Inside the distribution the transition touches `MIGRATIONS.md`,
+`version.py` and `adapters/stanag4559_common.py`, all already inside the count the paragraph after
+the landing paragraph states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Four things the
+release notes say and this section repeats because they are the honest boundary of the arc: the
+three translators are **not** STANAG 4559 wire interoperability — they read
+`urn:synapsecommand:isr:record:1`, this project's own internal record contract, and no AEDP-17,
+AEDP-18 or AEDP-19 wire message is read or written; the stateful gateway of the specification is
+not in this repository, so its wire profiles C17, S18 and W19 are unimplemented, no NATO binding
+package is held, no peer was exercised and the bundle's own `nato_wire_compatibility_verified:
+false` stands, which is why the binding is `provisional-internal-profile` and the claim
+`PROVISIONAL`; every fixture is synthetic — the specification bundle's records, a catalogue or
+stream footprint moved into the Baltic rectangle and the semantic digest recomputed by the bundle's
+rule — so the contract's strict readings have met the specification and its bundle and not a
+gateway's output; and the bundle's nine expected Events are reproduced byte for byte once projected
+to the CDM 3.0.0 contract the bundle was written against, the adapters themselves writing 3.2.0.
 
 **THE STANAG 4559 TRANSLATORS LAND, 2026-10-24: three ingest-only adapter modules,
 `stanag4559_catalog` as #35, `stanag4559_stream` as #36 and `stanag4559_workflow` as #37, on the
@@ -815,7 +897,8 @@ golden of the thirty-three moved. The bump this derives is MINOR (three `Adapter
 three fixture directories and the new module's public names appear; nothing is removed): the gate's
 table decides every one of those units itself, so they carry no ruling — a ruling for a unit the
 table decides is refused as stale — and the one ruling below is for the packaged contract, a
-shipped file kind the table has no class for. The next release is at least 3.9.0.
+shipped file kind the table has no class for. The next release was at least 3.9.0, and the
+release commit of 2026-10-25 typed `3.9.0` (re-tensed at the 3.9.0 roll).
 
 **What moved inside the distribution: 95 files** — for the STANAG 4559 landing of 2026-10-24, every
 one new but the package files the roster moved: the record module `isr_record.py` and, under
@@ -849,6 +932,16 @@ ships in nothing: the repository's `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE
 examples under `tests/stanag4559_bundle/`, the shared helper `tests/stanag4559_support.py`, the
 three new test modules and the pinned rosters in the gate tests, and the witness round's ledger,
 witness record and its README, release-pipeline and changelog pages and two test modules.
+For the release transition of 2026-10-25, no file the arc had not moved before it: it moved again,
+within the files already counted, `version.py` (the constant, its dated comment and the live
+readings in its docstring), this file (this section's roll, the re-tensed landing sentence, the
+dated witness clause, the introduction's two-number sentence and parting clause, and the two
+tag-command examples) and `adapters/stanag4559_common.py` (the three adapters' shared evidence
+declaration and the limitation beside it). Everything else the transition touched ships in
+nothing: the three manifests, the support matrix and the current-contracts page regenerated,
+`RELEASE_NOTES.md`, the repository's `README.md` and `VERSIONING.md`, the documentation site's
+introduction and changelog pages, the readiness report, and the test modules named in the
+paragraph that begins THE RELEASE TRANSITION ITSELF.
 
 **THE 3.8.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is the pipeline's own, for the eighth
 time.** Run 40178105604's `witness` job built `witness-3.8.0.json`, its verify step read `VERIFIED`
@@ -862,6 +955,9 @@ record by digest among the pipeline's. This round resolves no `SELF` provenance:
 contract — the CDM schema stays 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the
 3.2.0 row still names `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names.
 Nothing in the distribution moved except this file, and `PACKAGE_VERSION` still reads `3.8.0`.
+(Dated 2026-10-25, at the 3.9.0 roll: those two clauses covered the witness round alone — the
+landing recorded above moved the distribution beside it, the count clause above accounts for
+every file, and `PACKAGE_VERSION` reads `3.9.0` from the release commit on.)
 
 **Bump ruling.** `synapse_cdm/registry/isr/isr-record.schema.json` — MINOR: a shipped file is
 added — the internal ISR record contract `urn:synapsecommand:isr:record:1`, byte for byte the STANAG
