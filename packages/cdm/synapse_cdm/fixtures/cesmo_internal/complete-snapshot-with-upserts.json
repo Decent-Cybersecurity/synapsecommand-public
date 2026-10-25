@@ -1,0 +1,58 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-7",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "EOB-3",
+      "kind": "eob_upsert",
+      "revision": 8,
+      "observed_at": "2026-10-04T11:59:30Z",
+      "object_id": "EMITTER-2",
+      "position": {
+        "latitude_deg": 57.5,
+        "longitude_deg": 22.25,
+        "hae_m": 312.5,
+        "method": "gnss"
+      },
+      "signal": {
+        "frequency_hz": 2900000000,
+        "bandwidth_hz": 5000000,
+        "pulse_width_s": 1e-06,
+        "pri_s": 0.001,
+        "power_dbm": -71.5,
+        "sensor_id": "SENSOR-2"
+      },
+      "uncertainty": {
+        "semi_major_m": 250,
+        "semi_minor_m": 250,
+        "orientation_deg": 0,
+        "probability": 1,
+        "frame": "ENU_TRUE_NORTH"
+      },
+      "affiliation": "HOSTILE",
+      "confidence": 0.75,
+      "extensions": {
+        "notice": "Invented synthetic values; no operational source"
+      }
+    },
+    {
+      "record_id": "EOB-4",
+      "kind": "eob_upsert",
+      "revision": 8,
+      "observed_at": "2026-10-04T11:59:31Z",
+      "object_id": "EMITTER-4"
+    }
+  ],
+  "snapshot": {
+    "snapshot_id": "SNAP-2",
+    "complete": true,
+    "revision": 8
+  }
+}

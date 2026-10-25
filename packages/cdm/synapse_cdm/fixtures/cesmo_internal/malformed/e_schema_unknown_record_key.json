@@ -1,0 +1,42 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-2",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "EOB-1",
+      "kind": "eob_upsert",
+      "revision": 4,
+      "observed_at": "2026-10-04T12:00:00Z",
+      "object_id": "EMITTER-1",
+      "position": {
+        "latitude_deg": 0,
+        "longitude_deg": 0,
+        "method": "estimated"
+      },
+      "signal": {
+        "frequency_hz": 1000000000
+      },
+      "uncertainty": {
+        "semi_major_m": 400,
+        "semi_minor_m": 100,
+        "orientation_deg": 30,
+        "probability": 0.95,
+        "frame": "ENU_TRUE_NORTH"
+      },
+      "confidence": 0,
+      "affiliation": "UNKNOWN",
+      "extensions": {
+        "source_category": "synthetic-emitter",
+        "notice": "Zero coordinates intentionally test a real coordinate, not unknown"
+      },
+      "operation": "upsert"
+    }
+  ]
+}

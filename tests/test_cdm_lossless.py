@@ -226,14 +226,16 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # the HIGH NORTH adapters (2026-10-22): `barentswatch_hais` is the seventeenth and
     # `frost_observations` the eighteenth; fourteen-and-eighteen. The first's Entity carries the
     # whole track array, the second's Events the response header and their own data item.
+    # `cesmo_internal` (2026-10-24) is the nineteenth; fourteen-and-nineteen. Every object carries
+    # the Exchange's envelope without its records and its own record verbatim.
     assert census[ResidualStance.STRUCTURED] == ["airnow_hourly", "aixm511", "aixm52",
-                                                 "barentswatch_hais", "c2sim",
+                                                 "barentswatch_hais", "c2sim", "cesmo_internal",
                                                  "cog", "coops_csv", "dis7",
                                                  "frost_observations", "geojson",
                                                  "geopackage", "grib2", "iem_n0q",
                                                  "link16_gateway", "ndbc_stdmet", "nexrad2",
                                                  "readsb_trace", "tacticalapi"]
-    assert len(roster) == 32
+    assert len(roster) == 33
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

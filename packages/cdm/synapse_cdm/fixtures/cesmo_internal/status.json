@@ -1,0 +1,23 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-5",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "STATE-1",
+      "kind": "status",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:00Z",
+      "extensions": {
+        "state": "available",
+        "state_namespace": "synthetic-test-only"
+      }
+    }
+  ]
+}

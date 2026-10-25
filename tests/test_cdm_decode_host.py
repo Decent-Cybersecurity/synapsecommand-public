@@ -208,6 +208,8 @@ def test_list_and_version_state_the_hosted_adapters():
         b"unwrapped-bound 16777216\n"
         b"frost_observations arguments --element-table? --received-at --station-table? "
         b"source_hash injected file-bound 16777216 unwrapped-bound 16777216\n"
+        b"cesmo_internal arguments --received-at source_hash injected file-bound 1048576 "
+        b"unwrapped-bound 1048576\n"
     )
     version = _cli("--version")
     assert version.returncode == 0 and version.stderr == b""
@@ -216,7 +218,7 @@ def test_list_and_version_state_the_hosted_adapters():
         == (
             f"synapse-decode synapse-cdm {PACKAGE_VERSION}\n"
             "hosted dis7 geojson readsb_trace nexrad2 ndbc_stdmet coops_csv airnow_hourly grib2 "
-            "cog iem_n0q barentswatch_hais frost_observations\n"
+            "cog iem_n0q barentswatch_hais frost_observations cesmo_internal\n"
         ).encode()
     )
 
@@ -2220,6 +2222,7 @@ def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert sorted(decode_host.HOSTED) == [
         "airnow_hourly",
         "barentswatch_hais",
+        "cesmo_internal",
         "cog",
         "coops_csv",
         "dis7",
@@ -2298,7 +2301,7 @@ def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert grib.prepare(decode_host.Context(synthetic=True)) == {"synthetic": True}
     assert [
         decode_host.HOSTED[n].frame_offset_argument for n in sorted(decode_host.HOSTED) if n != "grib2"
-    ] == [None] * 11
+    ] == [None] * 12
     # The HIGH NORTH adapters (2026-10-24): the receipt instant always and the file's digest
     # injected; frost_observations's two caller tables as optional context files; no framer, no
     # frame digest, because each reads its JSON file whole and never from a container.
@@ -2337,6 +2340,18 @@ def test_the_hosted_table_and_the_bounds_are_the_ones_documented():
     assert decode_host.HOSTED["barentswatch_hais"].prepare(decode_host.Context(synthetic=True)) == {
         "synthetic": True
     }
+    # `cesmo_internal` (2026-10-24), the barentswatch_hais row's shape: the receipt instant always
+    # and the file's digest injected as the trusted `source_hash` the kit asks for; no framer, no
+    # frame digest, no table and no request.
+    cesmo = decode_host.HOSTED["cesmo_internal"]
+    assert (
+        cesmo.arguments, cesmo.required, cesmo.injects_source_hash, cesmo.reads_clock,
+        cesmo.framer, cesmo.frame_argument, cesmo.frame_digest_argument, cesmo.frame_offset_argument,
+    ) == (
+        frozenset({"received_at"}), frozenset({"received_at"}), True, True,
+        decode_host.whole_file, None, None, None,
+    )
+    assert cesmo.prepare(decode_host.Context(synthetic=False)) == {"synthetic": False}
     # The three station-text adapters (2026-10-15): the receipt instant always, the digest and
     # the frame's own digest injected; a request for the two whose payload does not state it, and
     # a station table for the position no payload of the three states.
@@ -2662,3 +2677,55 @@ def test_an_element_table_is_refused_on_its_flag_s_line_and_never_quoted(tmp_pat
     assert decode_host.HOSTED["frost_observations"].prepare(
         decode_host.Context(synthetic=True, station_table="S", element_table="E")
     ) == {"synthetic": True, "station_table": "S", "element_table": "E"}
+
+
+# -- cesmo_internal (2026-10-24): one SC CESMO Internal Exchange, read whole ---------------------
+
+CESMO = PKG / "fixtures" / "cesmo_internal"
+CESMO_DECODE = ["decode", "--adapter", "cesmo_internal", "--synthetic"]
+CESMO_RECEIVED = "2026-10-04T12:00:01Z"
+
+
+def test_cesmo_internal_is_given_its_receipt_and_the_file_s_digest():
+    """The output is the adapter constructed in process with the same receipt and digest; the kit's
+    two identities and the receipt as the kit's expected projection states it."""
+    from synapse_cdm.adapters.cesmo_internal import CesmoInternalAdapter
+
+    source = CESMO / "upsert.json"
+    octets = source.read_bytes()
+    digest = hashlib.sha256(octets).hexdigest()
+    result = _accepted(_cli(*CESMO_DECODE, "--input", str(source), "--received-at", CESMO_RECEIVED))
+    adapter = CesmoInternalAdapter(
+        lambda: dt.datetime(2026, 10, 4, 12, 0, 1, tzinfo=dt.timezone.utc),
+        synthetic=True,
+        source_hash={"algorithm": "sha256", "value": digest},
+    )
+    assert result == [o.model_dump(mode="json") for o in adapter.to_cdm(octets)]
+    entity, event = result
+    assert entity["entity_id"] == "75ccd4f2-f73a-5d32-9c27-82585ce69f55"
+    assert event["event_id"] == "64e3ed4a-b5c5-5ec3-9653-adfc5324d3e0"
+    assert event["received_at"] == "2026-10-04T12:00:01.000Z"
+    assert [o["source"]["source_hash"] for o in result] == [{"algorithm": "sha256", "value": digest}] * 2
+    _usage(
+        _cli(*CESMO_DECODE, "--input", str(source)),
+        "synapse-decode: cesmo_internal requires --received-at",
+    )
+    _usage(
+        _cli(*CESMO_DECODE, "--input", str(source), "--received-at", CESMO_RECEIVED, "--request", "a=b"),
+        "synapse-decode: --request is not an argument cesmo_internal declares",
+    )
+
+
+def test_cesmo_internal_refuses_a_malformed_exchange_and_a_mode_mismatch_at_exit_3(tmp_path):
+    """A refusal names the frame and the class, never a byte of the file; a synthetic Exchange
+    handed over as `--live` is the contract's E_MODE_MISMATCH."""
+    for name in ("malformed/e_schema_duplicate_key.bin", "malformed/e_mode_mismatch_live.json"):
+        result = _cli(*CESMO_DECODE, "--input", str(CESMO / name), "--received-at", CESMO_RECEIVED)
+        assert (result.returncode, result.stdout) == (3, b"")
+        assert result.stderr == b"synapse-decode: frame 0 refused by cesmo_internal: CesmoError\n"
+    live = _cli(
+        "decode", "--adapter", "cesmo_internal", "--live", "--input", str(CESMO / "upsert.json"),
+        "--received-at", CESMO_RECEIVED,
+    )
+    assert (live.returncode, live.stdout) == (3, b"")
+    assert live.stderr == b"synapse-decode: frame 0 refused by cesmo_internal: CesmoError\n"

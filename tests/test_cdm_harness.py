@@ -547,6 +547,7 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
                         "grib2": "grib2", "cog": "cog", "iem_n0q": "iem_n0q",
                         "barentswatch_hais": "barentswatch_hais",
                         "frost_observations": "frost_observations",
+                        "cesmo_internal": "cesmo_internal",
                         "readsb_trace": "readsb_trace",
                         "tacticalapi": "tacticalapi", "tak": "tak"}
 

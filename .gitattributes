@@ -165,3 +165,11 @@ packages/cdm/synapse_cdm/fixtures/iem_n0q/** -text
 *.jsonld -text -diff
 packages/cdm/synapse_cdm/fixtures/barentswatch_hais/** -text
 packages/cdm/synapse_cdm/fixtures/frost_observations/** -text
+
+# SC CESMO Internal Exchange documents (the `cesmo_internal` adapter): the CESMO and EOB engineering
+# kit's five synthetic examples, its expected projection and its contract schema are carried
+# byte-identical, and `fixtures/cesmo_internal/spec/cesmo_internal_pin.json` records the SHA-256 of
+# each, so no line ending may be rewritten on checkout; the `.bin` refusals and the octet twin are
+# `*.bin` above. Added 2026-10-24 in the change that lands the adapter.
+packages/cdm/synapse_cdm/fixtures/cesmo_internal/** -text
+schemas/cesmo_internal/** -text

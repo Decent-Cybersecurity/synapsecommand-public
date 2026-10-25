@@ -1,0 +1,110 @@
+{
+  "what_this_is": "The pin record for the cesmo_internal fixture set: the SHA-256 and byte count of every file of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), as the kit's own SHA256SUMS.txt states them, the files this repository carries and the files it does not. This is INTERNAL CONTRACT EVIDENCE for an exchange this repository's owner defines; it is not STANAG 4658 or AEDP-13 evidence, the kit declares that binding BLOCKED, and none of these files is a CESMO unit or a native byte vector.",
+  "adapter": {
+    "name": "cesmo_internal",
+    "direction": "ingest",
+    "fixture_directory": "cesmo_internal"
+  },
+  "kit": {
+    "identifier": "SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit",
+    "version": "1.0",
+    "date": "2026-10-04",
+    "contract": "SC CESMO Internal Exchange 1.0 (contract sc.cesmo.internal/1.0)",
+    "carried_here": "in part",
+    "why_not_carried": "The engineering specification and the kit README are handoff documents (*.txt, which this repository's .gitignore excludes) and are cited by title and date, not carried. Its five synthetic fixtures, its expected CDM projection and its contract schema are carried, byte-identical, released into this repository by the maintainer on 2026-10-24. The reference validator and its tests, the offline gateway configuration example and the normative dependency register are not carried: they belong to components outside this repository, and the adapter re-implements the contract's rules instead of importing the validator.",
+    "binding": "BLOCKED: the kit's dependency register N01-N12 is unresolved"
+  },
+  "files": [
+    {
+      "file": "cesmo-internal-1.0.schema.json",
+      "sha256": "daa02a5817c3f1c6a317b3733e5aac308cb837befbbb8c08c1b9af2833488531",
+      "bytes": 5692,
+      "carried_here": true,
+      "carried_as": "schemas/cesmo_internal/cesmo-internal-1.0.schema.json at the repository root (not in the wheel), and as the module literal SCHEMA of adapters/cesmo_internal_codec.py"
+    },
+    {
+      "file": "expected-upsert-cdm.json",
+      "sha256": "425b77be2b671de814f30e818497b287651c363adf48999cba25e11cd5827f54",
+      "bytes": 6624,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/reference/expected-upsert-cdm.json"
+    },
+    {
+      "file": "fixtures/empty-complete-snapshot.json",
+      "sha256": "7a5d1b8f78d56c2364e5b7ffaa28d64d6aa388aadcd0fae01734d6847821d492",
+      "bytes": 360,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/empty-complete-snapshot.json"
+    },
+    {
+      "file": "fixtures/observation.json",
+      "sha256": "c5cacd97f4af77bb134a7d2d84e687c29a5ca46331a2f7e3784b6ec557bc97e2",
+      "bytes": 634,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/observation.json"
+    },
+    {
+      "file": "fixtures/status.json",
+      "sha256": "178a325047ec8fa51c31d555ae13795afd3b998e7e46a4d794e95d1f2acaf40e",
+      "bytes": 514,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/status.json"
+    },
+    {
+      "file": "fixtures/upsert.json",
+      "sha256": "5bb87565a27794e293b610c4c352b84410103b820be5f7e40572e0d55c1b7780",
+      "bytes": 1019,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/upsert.json"
+    },
+    {
+      "file": "fixtures/withdrawal.json",
+      "sha256": "e015339a9059080e2bb3667c47af31be480e4d1a63a219a54ca785231d585d11",
+      "bytes": 438,
+      "carried_here": true,
+      "carried_as": "cesmo_internal/withdrawal.json"
+    },
+    {
+      "file": "Engineering_Specification.txt",
+      "sha256": "67fc1b489be9f9c50d7a1be73fc0e41232a2172909619726aa9845f9d72379ad",
+      "bytes": 55585,
+      "carried_here": false
+    },
+    {
+      "file": "README.txt",
+      "sha256": "8e0ca7e0a583f91f9060f6ac1fb6e9d0d4ff3e6341372c031697fabf2ab5aa35",
+      "bytes": 2524,
+      "carried_here": false
+    },
+    {
+      "file": "normative-dependencies.json",
+      "sha256": "13129c6d2961a560596815bd973eff19869c5b24465248a64b364d295708704d",
+      "bytes": 1487,
+      "carried_here": false
+    },
+    {
+      "file": "offline-config.json",
+      "sha256": "3e12ac11bf1b221cd3d2ca9086a204f7f8e506c3d7442c0a3861b175c607f331",
+      "bytes": 609,
+      "carried_here": false
+    },
+    {
+      "file": "requirements.txt",
+      "sha256": "756cc9e506ae4ee1a6f6c0507088b5cfc0dc8ba350fb2d2d46f1ffa72033adb6",
+      "bytes": 19,
+      "carried_here": false
+    },
+    {
+      "file": "test_contract.py",
+      "sha256": "5ff0a86b78aab44fa1e71693779b3b565fe63492096eecb3d4ef1ebaab918751",
+      "bytes": 3377,
+      "carried_here": false
+    },
+    {
+      "file": "validate_contract.py",
+      "sha256": "305ce455eac866ca6c77b2590617e70a8402e5b631114af4b71e6a6768414ac7",
+      "bytes": 5705,
+      "carried_here": false
+    }
+  ]
+}

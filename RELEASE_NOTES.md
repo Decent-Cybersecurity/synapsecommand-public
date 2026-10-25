@@ -157,7 +157,9 @@ and to the release and arc branches.
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
 directions to agree. At `v3.7.0` `python -m synapse_cdm.harness --list-adapters` prints `32 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+registered`. The row marked **post-3.7.0** landed in the tree after that tag, `cesmo_internal` on
+2026-10-24, and is in no release. Declared maturity and claim status are read from
+`manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -193,6 +195,7 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `iem_n0q` | ingest | 8 | L3 | VERIFIED |
 | `barentswatch_hais` | ingest | 10 | L3 | VERIFIED (new in the 3.7.0 arc) |
 | `frost_observations` | ingest | 10 | L3 | VERIFIED (new in the 3.7.0 arc) |
+| `cesmo_internal` | ingest | 12 | L3 | PROVISIONAL (**post-3.7.0**, in no release) |
 
 **744 fixture verdicts, 0 failed** across the thirty-two, against the published 3.2.0 schemas — the
 724 that 3.6.0 shipped, every golden byte for byte as it was, plus 20 from the two new sets. The

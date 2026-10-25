@@ -2,16 +2,16 @@
 
 WHY THIS EXISTS
 ---------------
-Thirty-two integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
+Thirty-three integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
 ADS-B 1090ES, Picogrid Legion, ASTERIX category 021, STANAG 4676 NITS, STANAG 4607 GMTI,
 STANAG 4609 UAS Datalink LS KLV, ASTERIX category 048, ASTERIX category 034, ASTERIX category 062,
 ASTERIX category 023, STANAG 4586 DLI, GeoJSON, OGC GeoPackage, C2SIM, AIXM 5.1.1, AIXM 5.2,
 DIS 7 Entity State, the TacticalAPI blue-force read side, the SC Link16 Gateway report, readsb
 trace JSON, NEXRAD Level II, NDBC standard meteorological text, NOAA CO-OPS data API responses,
 EPA AirNow hourly files, GRIB2 messages, Cloud Optimized GeoTIFF headers, IEM NEXRAD N0Q
-composites, BarentsWatch AIS tracks and MET Norway Frost observations). Without a canonical
-model in the middle, thirty-two adapters means four hundred and ninety-six translations and
-thirty-two private notions of "a contact", and the integration layer
+composites, BarentsWatch AIS tracks, MET Norway Frost observations and SC CESMO Internal
+Exchanges). Without a canonical model in the middle, thirty-three adapters means five hundred and
+twenty-eight translations and thirty-three private notions of "a contact", and the integration layer
 becomes the
 place where meaning is quietly lost. With one, an adapter is a thin translator and nothing else:
 external format in, CDM out.

@@ -1,0 +1,27 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-1",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "OBS-1",
+      "kind": "observation",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:00Z",
+      "signal": {
+        "frequency_hz": 1000000000,
+        "bearing_deg_true": 45,
+        "sensor_id": "SENSOR-1"
+      },
+      "extensions": {
+        "notice": "Invented synthetic values; no operational source"
+      }
+    }
+  ]
+}

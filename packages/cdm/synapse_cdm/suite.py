@@ -245,7 +245,12 @@ IDENTITY_FIELDS = ("entity_id", "event_id", "track_id", "object_id")
 #: Keys whose subtrees hold PARKED SOURCE VALUES rather than CDM fields. J does not walk into
 #: them: a source timestamp parked verbatim in `attributes` is evidence that nothing was dropped,
 #: and holding it to the CDM's serialisation rule would punish the adapter for keeping it.
-PARKED = ("attributes", "payload", "source_extras")
+#: `residual` joined on 2026-10-24 (the `cesmo_internal` landing), and K skips the four for the
+#: same reason: §28's structured container holds the source's own record verbatim, so its
+#: `observed_at` strings and native `object_id` tokens are the source's spelling and never CDM
+#: fields. `lossless.PARKED_KEYS` already parked it, and no shipped golden had a residual leaf J
+#: or K would judge.
+PARKED = ("attributes", "payload", "source_extras", "residual")
 
 #: The `Limitation.id` an adapter declares when its FORMAT states no instant for any object, so
 #: that J's "no timestamp to judge" is a declared inapplicability and not an omission

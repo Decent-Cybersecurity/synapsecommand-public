@@ -1,0 +1,79 @@
+[
+  {
+    "event_id": "dae34b1f-741c-5dbb-8aec-fc35e04bc3e3",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "cesmo": {
+        "kind": "eob_delete",
+        "object_id": "EMITTER-1",
+        "observed_at": "2026-10-04T12:00:00Z",
+        "operation": "withdraw",
+        "record_id": "DEL-1",
+        "revision": 5,
+        "source_scope": {
+          "identity_epoch": "EXERCISE-1",
+          "network_id": "TEST-NET",
+          "originator_id": "TEST-SOURCE-A"
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "75ccd4f2-f73a-5d32-9c27-82585ce69f55"
+    ],
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-3",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "kind": "eob_delete",
+          "object_id": "EMITTER-1",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "record_id": "DEL-1",
+          "revision": 5
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "DEL-1",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"MSG-3\",\"DEL-1\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

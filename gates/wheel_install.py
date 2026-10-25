@@ -312,6 +312,14 @@ PACKAGE_ONLY_TESTS = (
     # `ais` adapter it shares identities and typing with.
     "test_cdm_barentswatch_hais_adapter.py",
     "test_cdm_frost_observations_adapter.py",
+    # `test_cdm_cesmo_internal_adapter.py`, `test_cdm_cesmo_internal_contract.py` and
+    # `test_cdm_cesmo_internal_fuzz.py` are package-only (2026-10-24, the `cesmo_internal`
+    # landing): they read the adapter, its codec, its packaged fixtures, goldens and the kit's
+    # expected projection under `fixtures/cesmo_internal/`, and run the packaged builder's
+    # `--check`, all through `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_cesmo_internal_adapter.py",
+    "test_cdm_cesmo_internal_contract.py",
+    "test_cdm_cesmo_internal_fuzz.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -392,6 +400,8 @@ REPO_BOUND_TESTS = {
     "test_cdm_projection.py": "tests/frozen/cdm/3.0.0/ and the published schemas/ at the repository root — the module derives synapse_cdm.projection's ledger from the two and holds dump_for's output to the frozen 3.0.0 contract, and the wheel carries neither directory",
     # Added 2026-10-15 (the observation arc's shared layer).
     "test_cdm_observation_contracts.py": "schemas/observation/ at the repository root — the module holds the four published contract schemas to the models and validates its literals with them, and the wheel carries the generator, not the files",
+    # Added 2026-10-24 (the `cesmo_internal` landing).
+    "test_cdm_cesmo_internal_schema.py": "the published schemas/cesmo_internal/cesmo-internal-1.0.schema.json at the repository root, which the wheel does not carry (the codec carries the same schema as its literal)",
 }
 
 def source_roster() -> tuple[str, ...]:

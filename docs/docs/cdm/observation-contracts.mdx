@@ -267,4 +267,7 @@ response does not state, keyed by the Frost station id, and `--element-table`, a
 the adapter's `ElementTable` shape — `name`, `basis` and `units` mapping each `elementId` to its
 unit — for the unit an observation may omit; both optional, both read under the context-file bounds
 and refused at exit `2` as the adapter refuses them, and without one the output says the position
-or the unit was not supplied); each observation adapter adds its own row when it lands.
+or the unit was not supplied), and since 2026-10-24 `cesmo_internal`, one SC CESMO Internal Exchange
+(the internal JSON contract of the CESMO and EOB engineering kit, not STANAG 4658) read whole with
+`--received-at` required and the file's digest injected as `source_hash`; each observation adapter
+adds its own row when it lands.

@@ -1,0 +1,72 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-6",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "OBS-2",
+      "kind": "observation",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:05Z",
+      "object_id": "EMITTER-2",
+      "position": {
+        "latitude_deg": 57.25,
+        "longitude_deg": 21.5,
+        "hae_m": 41.5,
+        "method": "inertial"
+      },
+      "signal": {
+        "frequency_hz": 9400000000.5,
+        "bandwidth_hz": 0,
+        "bearing_deg_true": 0,
+        "sensor_id": "SENSOR-1"
+      },
+      "extensions": {
+        "notice": "Invented synthetic values; no operational source"
+      }
+    },
+    {
+      "record_id": "EOB-2",
+      "kind": "eob_upsert",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:06Z",
+      "object_id": "EMITTER-2",
+      "position": {
+        "latitude_deg": 57.25,
+        "longitude_deg": 21.5,
+        "method": "manual"
+      },
+      "signal": {
+        "frequency_hz": 9400000000.5
+      },
+      "affiliation": "FRIENDLY",
+      "confidence": 1,
+      "extensions": {
+        "notice": "Invented synthetic values; no operational source"
+      }
+    },
+    {
+      "record_id": "DEL-2",
+      "kind": "eob_delete",
+      "revision": 2,
+      "observed_at": "2026-10-04T12:00:07Z",
+      "object_id": "EMITTER-3"
+    },
+    {
+      "record_id": "STATE-2",
+      "kind": "status",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:08Z",
+      "extensions": {
+        "state": "degraded",
+        "state_namespace": "synthetic-test-only"
+      }
+    }
+  ]
+}

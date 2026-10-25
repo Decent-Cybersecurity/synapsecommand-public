@@ -148,7 +148,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All thirty-two harnesses are green**, and at least one of them run against the INSTALLED
+2. **All thirty-three harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -733,12 +733,44 @@ now true of it.
 release tag is `v3.7.0`, and `3.7.0` is what the index serves — `PUBLICATION.md` entry 29 is the
 measurement.
 
-**What moved inside the distribution: two files** — `decode_host.py`, with the HIGH NORTH rows the
-paragraph below records (2026-10-24), and `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.7.0 section being what moved in it.
-Everything else the round touched ships in nothing: the ledger, the witness record and its README,
-the release-pipeline and changelog pages, and two test modules.
+**What moved inside the distribution: 81 files** — `decode_host.py`, with the HIGH NORTH rows and
+the `cesmo_internal` row the paragraphs below record (2026-10-24), and `MIGRATIONS.md`, this
+section, the dated witness paragraphs in the release procedure and the pipeline section, the
+release's dated account in the pipeline section, the index note in the 3.7.0 section and the release
+procedure's harness count being what moved in it; and, for the `cesmo_internal` landing of
+2026-10-24, every one of the rest but the records new: the adapter modules `cesmo_internal.py` and
+`cesmo_internal_codec.py` under `adapters/`; `suite.py`, whose `PARKED` gains `residual`; the roster
+counts in `__init__.py`, `adapter.py`, `lossless.py`, `symbology.py`, `version.py`, `pyproject.toml`
+(comments only) and `README.md` (with its roster row); `FORMAT_COVERAGE.md`, with the two status
+rows, ordinal row 34 and the contract's section; and the fixture set under
+`fixtures/cesmo_internal/` — at the top level `PROVENANCE.json`, `README.md`,
+`cdm-shaped-extension-keys.json`, `complete-snapshot-with-upserts.json`,
+`empty-complete-snapshot.json`, `every-kind.json`, `observation-position-no-object.json`,
+`observation.json`, `status.json`, `sub-millisecond.json`, `tokens-at-64.json`, `upsert.json`,
+`upsert_octets.bin`, `withdrawal.json`; under `golden/` `cdm-shaped-extension-keys.cdm.json`,
+`complete-snapshot-with-upserts.cdm.json`, `empty-complete-snapshot.cdm.json`,
+`every-kind.cdm.json`, `observation-position-no-object.cdm.json`, `observation.cdm.json`,
+`status.cdm.json`, `sub-millisecond.cdm.json`, `tokens-at-64.cdm.json`, `upsert.cdm.json`,
+`upsert_octets.cdm.json`, `withdrawal.cdm.json`; under `malformed/` `PROVENANCE.json`,
+`e_limit_depth_17.bin`, `e_mode_mismatch_live.json`, `e_schema_byte_order_mark.bin`,
+`e_schema_duplicate_key.bin`, `e_schema_february_30.json`, `e_schema_hour_24.json`,
+`e_schema_infinity_literal.bin`, `e_schema_integer_past_binary64.bin`, `e_schema_invalid_utf8.bin`,
+`e_schema_latitude_91.json`, `e_schema_lone_surrogate_escape.bin`,
+`e_schema_missing_required_key.json`, `e_schema_nan_literal.bin`, `e_schema_non_ascii_digit.json`,
+`e_schema_number_overflow.bin`, `e_schema_number_underflow.bin`, `e_schema_orientation_180.json`,
+`e_schema_probability_zero.json`, `e_schema_revision_not_integer.json`, `e_schema_second_60.json`,
+`e_schema_snapshot_record_id.json`, `e_schema_top_level_array.bin`, `e_schema_trailing_content.bin`,
+`e_schema_trailing_newline_token.json`, `e_schema_unknown_record_key.json`,
+`e_schema_unknown_top_level_key.json`, `e_semantic_ellipse_axes_reversed.json`,
+`e_semantic_ellipse_without_position.json`, `e_semantic_empty_records_without_snapshot.json`,
+`e_semantic_repeated_record_id.json`, `e_semantic_snapshot_repeats_object_id.json`,
+`e_semantic_snapshot_revision_mismatch.json`, `e_semantic_snapshot_with_observation.json`,
+`e_semantic_status_with_object_id.json`, `e_semantic_upsert_without_object_id.json`,
+`e_semantic_withdrawal_with_position.json`, `e_unsupported_message_unknown_contract.json`; under
+`reference/` `PROVENANCE.json`, `expected-upsert-cdm.json`; and under `spec/` `build_fixtures.py`,
+`cesmo_internal_pin.json`. Everything else the witness round touched ships in nothing: the ledger,
+the witness record and its README, the release-pipeline and changelog pages, and two test modules;
+what else the landing touched outside the distribution is listed in its paragraph below.
 
 **THE 3.7.0 WITNESS ROUND's RECORD, 2026-10-24 — the record is the pipeline's own, for the seventh
 time.** Run 40119805634's `witness` job built `witness-3.7.0.json`, its verify step read `VERIFIED`
@@ -798,6 +830,53 @@ check and every value is what it was.
 **Bump ruling.** `synapse_cdm/decode_host.py:BOUNDS_BASIS` — PATCH: the source text of
 `MAX_CONTEXT_FILE_BYTES` and `MAX_CONTEXT_DEPTH` names the element table beside the manifest row
 and the station table; no bound, kind, enforcement point or test name moved.
+
+**THE CESMO INTERNAL-CONTRACT ADAPTER LANDS, 2026-10-24: `cesmo_internal` as #34, the roster moves
+thirty-two to thirty-three, and no wire contract moves.** Stage A of the SynapseCommand STANAG 4658
+CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026): `cesmo_internal` 1.0.0
+reads one SC CESMO Internal Exchange (`sc.cesmo.internal/1.0`), the kit's internal JSON contract,
+as its octets or its parsed dict, and writes per record an observation `DETECTION` `Event`, an
+`eob_upsert` emitter `Entity` (`UNKNOWN`, `attributes.cesmo.role` `emitter`) then its
+`TRACK_UPDATE` `Event`, an `eob_delete` (`withdraw`) or `status` `STATUS_CHANGE` `Event`, and one
+`STATUS_CHANGE` `Event` for an envelope snapshot, in the kit's order, with the kit's section 11
+identities and the envelope without its records and the record verbatim in every residual. It is
+**not** STANAG 4658: the kit declares that binding BLOCKED on its unresolved register N01 to N12,
+no `stanag4658` class, manifest or claim exists, and the gateway, the EOB projector, the journal,
+egress and the normative plugin are not in this repository. The binding is
+`provisional-internal-profile` with claim `PROVISIONAL` and licence `OPEN`, the `link16_gateway`
+precedent for an interface this repository's owner defines; maturity L3, ingest only,
+`evidence.available` false until a release attaches its records. The contract — the kit's schema as
+a module literal and published byte-identical at `schemas/cesmo_internal/`, the strict parser, the
+section 19 caps (1 MiB of input octets, depth 16 inside the manifest's 64, 100,000 values, 4,096
+code points, 1,000 records, 2,001 objects), the timestamp grammar and calendar, the rules the
+schema cannot state and `CesmoError` with the kit's codes — is `adapters/cesmo_internal_codec.py`;
+the byte and depth refusals are both a `CesmoError` with code `E_LIMIT` and the SDK's
+`InputTooLarge` / `InputTooDeep`, and where the kit's `validate_contract.py` 1.0 is looser than its
+own specification (a trailing newline in a token, hour 24 on Python 3.14, a non-ASCII digit, a
+re-serialisation byte cap, a number past binary64) the adapter follows the specification, as
+`FORMAT_COVERAGE.md`'s section records. The kit's five synthetic examples and its expected projection
+are carried byte-identical, and the projection is reproduced byte for byte under `cdm_schema="3.0.0"`
+and `projection.dump_for`. `synapse-decode` serves it from the same day (`HOSTED` gains its row,
+`--received-at` required and the file's digest injected as `source_hash`). Outside the
+distribution: the published schema copy, `manifests/cesmo_internal.json`, the support matrix and the
+parser-safety, observation-contracts and roster-count pages, `.gitattributes`, `gates/wheel_install.py`'s
+classification of four new test modules (`test_cdm_cesmo_internal_adapter.py`,
+`test_cdm_cesmo_internal_contract.py` and `test_cdm_cesmo_internal_fuzz.py` package-only,
+`test_cdm_cesmo_internal_schema.py` repository-bound), the decode-host, suite, support-matrix and
+roster-pin tests, and the release notes' post-3.7.0 row. `SCHEMA_VERSION` stays at 3.2.0: no model,
+enum, published CDM schema or golden of the thirty-two moved, and `PACKAGE_VERSION` still reads
+`3.7.0`. The bump this derives is MINOR (an `Adapter` subclass, a fixture set and a hosted row
+appear, and the conformance suite's parked set gains one key; nothing is removed), so the next
+release is at least 3.8.0.
+
+**Bump ruling.** `synapse_cdm/suite.py:PARKED` — MINOR: the conformance suite's parked subtrees gain
+`residual`, §28's structured container, so checks J and K no longer judge a source's own record
+held there as CDM fields (`lossless.PARKED_KEYS` already parked it, and no golden shipped before
+this landing had a residual leaf either check would judge); a conformance-check scope correction,
+no wire contract moves, and every adapter that was CONFORMANT stays CONFORMANT.
+
+**Bump ruling.** `synapse_cdm/decode_host.py:HOSTED` — MINOR: on 2026-10-24 the table gains the
+`cesmo_internal` entry as well; no entry is removed and none changes.
 
 ### 3.7.0 — 2026-10-24 — the HIGH NORTH adapters: two observation adapter modules land, `barentswatch_hais` as #32 and `frost_observations` as #33, the roster moves thirty to thirty-two, and no wire contract moves
 

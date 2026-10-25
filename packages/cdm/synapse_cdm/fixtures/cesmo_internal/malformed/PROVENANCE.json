@@ -1,0 +1,339 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "cesmo_internal/malformed",
+  "fixtures": [
+    {
+      "file": "e_limit_depth_17.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (17 nested containers), refused as E_LIMIT; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_mode_mismatch_live.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`mode` live under the default (synthetic) constructor), refused as E_MODE_MISMATCH; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_byte_order_mark.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a UTF-8 byte order mark), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_duplicate_key.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`mode` twice), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_february_30.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (30 February in the envelope's `observed_at`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_hour_24.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (hour 24 in the record's `observed_at`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_infinity_literal.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`Infinity`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_integer_past_binary64.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a 310-digit integer), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_invalid_utf8.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a byte 0xFF in a string), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_latitude_91.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`latitude_deg` 91), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_lone_surrogate_escape.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (an escaped lone surrogate), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_missing_required_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (no `message_id`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_nan_literal.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`NaN`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_non_ascii_digit.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (an Arabic-Indic digit four in the envelope's `observed_at`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_number_overflow.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`1e400`, past binary64), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_number_underflow.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`1e-400`, which binary64 holds only as zero), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_orientation_180.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (ellipse `orientation_deg` 180), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_probability_zero.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (ellipse `probability` 0), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_revision_not_integer.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`revision` 4.0, a number and not an integer), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_second_60.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (second 60 (a leap second) in the record's `observed_at`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_snapshot_record_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (the reserved `$snapshot` as a `record_id`), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_top_level_array.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (the document inside a JSON array), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_trailing_content.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a second JSON text after the document), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_trailing_newline_token.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`object_id` ending in a newline), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_unknown_record_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a key the record does not define), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_schema_unknown_top_level_key.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a key the envelope does not define), refused as E_SCHEMA; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_ellipse_axes_reversed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (`semi_minor_m` above `semi_major_m`), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_ellipse_without_position.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (an ellipse and no position), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_empty_records_without_snapshot.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (no record and no snapshot), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_repeated_record_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (two records with one `record_id`), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_snapshot_repeats_object_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a snapshot naming one `object_id` twice), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_snapshot_revision_mismatch.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a snapshot at revision 5 holding a record at revision 4), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_snapshot_with_observation.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a snapshot holding an `observation`), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_status_with_object_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a `status` naming an emitter), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_upsert_without_object_id.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (an `eob_upsert` without `object_id`), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_semantic_withdrawal_with_position.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (an `eob_delete` carrying a position), refused as E_SEMANTIC; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "e_unsupported_message_unknown_contract.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic refusal payload written on 2026-10-24 by spec/build_fixtures.py: a synthetic example of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, with one defect (a contract this adapter does not implement), refused as E_UNSUPPORTED_MESSAGE; README.md lists each file. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    }
+  ]
+}

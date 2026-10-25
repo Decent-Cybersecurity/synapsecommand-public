@@ -1,0 +1,114 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "cesmo_internal",
+  "fixtures": [
+    {
+      "file": "cdm-shaped-extension-keys.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "complete-snapshot-with-upserts.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "empty-complete-snapshot.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document, byte-identical to fixtures/empty-complete-snapshot.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; invented identifiers (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic), no capture and no operational source. Its sha256 is in spec/cesmo_internal_pin.json.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "every-kind.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "observation-position-no-object.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "observation.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document, byte-identical to fixtures/observation.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; invented identifiers (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic), no capture and no operational source. Its sha256 is in spec/cesmo_internal_pin.json.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "status.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document, byte-identical to fixtures/status.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; invented identifiers (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic), no capture and no operational source. Its sha256 is in spec/cesmo_internal_pin.json.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "sub-millisecond.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "tokens-at-64.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document written on 2026-10-24 for the cesmo_internal adapter's landing by spec/build_fixtures.py, derived from the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24, in its invented vocabulary (TEST-NET, TEST-SOURCE-A, EXERCISE-1, EMITTER-n, mode synthetic); README.md says what it exercises. Nothing derives from recorded data.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "upsert.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document, byte-identical to fixtures/upsert.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; invented identifiers (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic), no capture and no operational source. Its sha256 is in spec/cesmo_internal_pin.json.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "upsert_octets.bin",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The octets of upsert.json, byte for byte, as a non-.json payload so the harness and the conformance suite run the strict octet path on a valid document; the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    },
+    {
+      "file": "withdrawal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC CESMO Internal Exchange 1.0 document, byte-identical to fixtures/withdrawal.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; invented identifiers (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic), no capture and no operational source. Its sha256 is in spec/cesmo_internal_pin.json.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    }
+  ]
+}

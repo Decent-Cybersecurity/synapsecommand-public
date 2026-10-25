@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-two adapters
-cannot grow thirty-two slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-three adapters
+cannot grow thirty-three slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2456,6 +2456,36 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      'empty, and `harness --update-golden` over the thirty adapters moved no golden), and the two axes',
      "a dated round record in the history: the 3.6.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
+    # ADDED 2026-10-24 (the `cesmo_internal` landing, adapter #34), the HIGH NORTH landing's shape
+    # again: four rows exempt RELEASE_NOTES.md's roster counts while the notes describe the 3.7.0
+    # artefact, a roster of thirty-two, beside one row marked as postdating it; three the 3.7.0
+    # readiness report's readings of its release tree; and one MIGRATIONS.md's 3.7.0 record. The
+    # first four retire with the next release commit, which rewrites the notes for a roster of
+    # thirty-three; the other four stay.
+    ('RELEASE_NOTES.md',
+     '`CURRENT: manifests vs 32 shipped adapters at manifest schema 2.1.0`',
+     'the 3.7.0 notes describe the 3.7.0 artefact, a roster of thirty-two, beside the one row marked post-3.7.0 (`cesmo_internal`, 2026-10-24); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'Thirty-two adapters at 3.7.0, all harness-verified',
+     'the 3.7.0 notes describe the 3.7.0 artefact, a roster of thirty-two, beside the one row marked post-3.7.0 (`cesmo_internal`, 2026-10-24); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'At `v3.7.0` `python -m synapse_cdm.harness --list-adapters` prints `32 adapters registered`',
+     'the 3.7.0 notes describe the 3.7.0 artefact, a roster of thirty-two, beside the one row marked post-3.7.0 (`cesmo_internal`, 2026-10-24); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'read `32 adapters, 776 fixture files` and `32 adapters x 2 schema modes, 1488 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
+     'the 3.7.0 notes describe the 3.7.0 artefact, a roster of thirty-two, beside the one row marked post-3.7.0 (`cesmo_internal`, 2026-10-24); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('docs/soif-part1-release-readiness.md',
+     '`manifests --check` CURRENT for the thirty-two shipped adapters, the support-matrix',
+     "the 3.7.0 readiness report's readings of the release tree it certified, when the roster was thirty-two; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     '`harness --update-golden` over all thirty-two adapters moving no golden; the wheel gate',
+     "the 3.7.0 readiness report's readings of the release tree it certified, when the roster was thirty-two; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'readings are `32 adapters, 776 fixture files` and `32 adapters x 2 schema modes, 1488 fixture verdicts, 0 failed`; the two fixture builders',
+     "the 3.7.0 readiness report's readings of the release tree it certified, when the roster was thirty-two; a dated certification, kept as written"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'empty, and `harness --update-golden` over the thirty-two adapters moved no golden), and the two axes',
+     "a dated round record in the history: the 3.7.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),

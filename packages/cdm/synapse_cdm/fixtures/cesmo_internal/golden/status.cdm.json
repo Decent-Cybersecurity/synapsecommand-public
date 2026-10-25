@@ -1,0 +1,83 @@
+[
+  {
+    "event_id": "7b23decc-4522-5d7e-9076-4d4eea97cab0",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "cesmo": {
+        "extensions": {
+          "state": "available",
+          "state_namespace": "synthetic-test-only"
+        },
+        "kind": "status",
+        "observed_at": "2026-10-04T12:00:00Z",
+        "operation": "status",
+        "record_id": "STATE-1",
+        "revision": 1,
+        "source_scope": {
+          "identity_epoch": "EXERCISE-1",
+          "network_id": "TEST-NET",
+          "originator_id": "TEST-SOURCE-A"
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-5",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "extensions": {
+            "state": "available",
+            "state_namespace": "synthetic-test-only"
+          },
+          "kind": "status",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "record_id": "STATE-1",
+          "revision": 1
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "STATE-1",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"MSG-5\",\"STATE-1\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

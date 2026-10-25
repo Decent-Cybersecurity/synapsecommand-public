@@ -91,6 +91,8 @@ run is a guess with a table around it.
 | `barentswatch_hais 1.2.0 · residual` | implemented, and the value lands in the STRUCTURED residual: the Entity holds the whole response array in file order (`residual.data.points`, so `points[i]` is element i as the API stated it), and the Track and the Event hold the MMSI as stated (`residual.data.mmsi`) (landed 2026-10-22) |
 | `frost_observations 1.0.0` | implemented by `adapters/frost_observations.py`, with a Frost `ObservationResponse` fixture as its octets, its parsed twin and a golden file (landed 2026-10-22) |
 | `frost_observations 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: each Event holds the response header (every top-level key but `data`) and its own data item verbatim (`residual.data.data_item`), and a station Entity holds the sourceIds it was seen under and, when no Event could carry an item, that item and the header (`residual.data.unresolved_items`, `response_header`) (landed 2026-10-22) |
+| `cesmo_internal 1.0.0` | implemented by `adapters/cesmo_internal.py` (with its contract `adapters/cesmo_internal_codec.py`), with the CESMO and EOB engineering kit's five internal-contract examples, documents written from them, an octet twin and a golden file each (landed 2026-10-24) |
+| `cesmo_internal 1.0.0 · residual` | implemented, and the value lands in the STRUCTURED residual: every object holds the Exchange's envelope without its `records` (`residual.data.envelope`, the `snapshot` included) and its own record verbatim (`residual.data.record`); the snapshot Event holds the envelope alone |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -309,6 +311,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 31 | `iem_n0q` | shipped | `adapters/iem_n0q.py`, whose docstring claims the ordinal, `fixtures/iem_n0q/README.md` and `fixtures/iem_n0q/spec/iem_n0q_pin.json`, which records it beside the adapter's name. One IEM NEXRAD N0Q composite PNG becomes one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `gridded-field/1` contract, at the caller's archive slot; ingest only, the sixteenth `residual: structured` adapter and the third and last of the arc's 3.6.0 content, on the PNG reader of `adapters/raster_codec.py`. The class, the fixture set, its goldens and its tests landed together on 2026-10-17, so the row had no Phase 1 in this table |
 | 32 | `barentswatch_hais` | shipped | `adapters/barentswatch_hais.py`, whose docstring claims the ordinal, `fixtures/barentswatch_hais/README.md` and `fixtures/barentswatch_hais/spec/barentswatch_hais_pin.json`, which records it beside the adapter's name. One BarentsWatch Historic AIS track response (one MMSI over one requested window) becomes an `Entity`, a `Track` and a `TRACK_UPDATE` `Event`, the Entity typed by the `ais` adapter's MMSI rule and identified under the `ais` adapter's `AIS` system so one vessel has one `entity_id` across both; ingest only, the seventeenth `residual: structured` adapter. Written outside this repository for the HIGH NORTH data pack as `hn_adapters.barentswatch_hais` 1.1.0 and landed here as 1.2.0 with its class, fixture set, goldens and tests together on 2026-10-22, so the row had no Phase 1 in this table |
 | 33 | `frost_observations` | shipped | `adapters/frost_observations.py`, whose docstring claims the ordinal, `fixtures/frost_observations/README.md` and `fixtures/frost_observations/spec/frost_observations_pin.json`, which records it beside the adapter's name. One MET Norway Frost `ObservationResponse` becomes `ENVIRONMENTAL_OBSERVATION` Events carrying the `point-observation/1` contract, one per data item and time class (Frost's Case 1 instant, or Case 2.2 daily), and one `SENSOR` Entity per station, positions and element units from the caller's tables; ingest only, the eighteenth `residual: structured` adapter. Written outside this repository for the HIGH NORTH data pack as `hn_adapters.frost_observations` 0.3.0 and landed here as 1.0.0 with its class, fixture set, goldens and tests together on 2026-10-22, so the row had no Phase 1 in this table |
+| 34 | `cesmo_internal` | shipped | `adapters/cesmo_internal.py`, whose docstring claims the ordinal, `fixtures/cesmo_internal/README.md` and `fixtures/cesmo_internal/spec/cesmo_internal_pin.json`, which records the kit's files beside the adapter's name. One SC CESMO Internal Exchange (`sc.cesmo.internal/1.0`, an internal JSON contract of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0, not STANAG 4658 bytes) becomes, per record, a `DETECTION` `Event`, an emitter `Entity` and its `TRACK_UPDATE` `Event`, or a `STATUS_CHANGE` `Event`, and one `STATUS_CHANGE` `Event` for an envelope snapshot; ingest only, the nineteenth `residual: structured` adapter. The kit declares the STANAG 4658 / AEDP-13 binding BLOCKED, and no `stanag4658` row, class or claim exists. The class, the fixture set, its goldens and its tests landed together on 2026-10-24, so the row had no Phase 1 in this table |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -342,6 +345,8 @@ one change and never at Phase 1 here, so the count still stays at one.
 `barentswatch_hais` at #32 and `frost_observations` at #33 landed on 2026-10-22 the same way, each
 with its class, fixtures, goldens and tests in one change and never at Phase 1 here, so the count
 still stays at one.
+`cesmo_internal` at #34 landed on 2026-10-24 the same way, with its class, fixtures, goldens and
+tests in one change and never at Phase 1 here, so the count still stays at one.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -15445,6 +15450,73 @@ states neither. Fixtures: `fixtures/frost_observations/`, written by its `spec/b
 | octets with a byte-order mark, not UTF-8, not one JSON value, a duplicate key, `NaN` or `Infinity`, a lone surrogate; more objects than 50 000 (`MAX_OBJECTS`) | — | refused | `byte-order-mark`, `not-utf8`, `not-json`, `duplicate-key`, `not-a-number-literal`, `not-utf8-text`, `too-many-objects` (counted before any object is built); past 16 MiB or 64 containers the base class refuses first |
 | sources and elements responses, any other Frost endpoint | — | refused | Only through the caller's `StationTable` and `ElementTable` (`station_table_from_sources`, `element_table_from_elements`); the adapter reads one observations response per call |
 | egress | — | refused | Ingest only: `from_cdm` is the base class's refusal and the manifest advertises no egress |
+
+## SC CESMO Internal Exchange 1.0 (`sc.cesmo.internal/1.0`) — ingest only
+
+`cesmo_internal` is #34 in the ordinal table: `adapters/cesmo_internal.py` with its contract
+`adapters/cesmo_internal_codec.py`, ingest only, the nineteenth adapter to declare
+`residual: structured`, landed 2026-10-24. It reads one Exchange of the internal JSON contract of
+the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October
+2026) — the document a gateway outside this repository emits after it has decoded, checked and
+journalled its native traffic — as its UTF-8 octets or as the parsed dict, and writes Entities and
+Events in the kit's order. **It is not STANAG 4658 interoperability.** The kit declares the STANAG
+4658 / AEDP-13 Edition B wire binding BLOCKED on its unresolved dependency register N01 to N12; no
+CESMO unit, no AEDP-13 message and no native byte is parsed or produced, no `stanag4658` class,
+manifest or claim exists, and the gateway, the EOB state projector, the journal, egress and the
+normative plugin of the kit's sections 13 to 18 and 20 are not in this repository. The kit is cited
+by title and date and its prose is not carried; its schema is the codec's literal `SCHEMA`,
+published byte-identical at `schemas/cesmo_internal/cesmo-internal-1.0.schema.json`, and its five
+synthetic examples and its expected projection of `upsert.json` are carried byte-identical
+(`fixtures/cesmo_internal/spec/cesmo_internal_pin.json` records their SHA-256 as the kit's
+`SHA256SUMS.txt` states them). Identity is the kit's section 11 exactly: the compact ASCII JSON of
+`[mode, network_id, originator_id, identity_epoch, object_id]` for an emitter and of
+`[mode, network_id, originator_id, identity_epoch, message_id, record_id]` for an event,
+`record_id` `$snapshot` for the snapshot Event, under `SC_CESMO_INTERNAL`; the kit's two expected
+identities, `75ccd4f2-f73a-5d32-9c27-82585ce69f55` and `64e3ed4a-b5c5-5ec3-9653-adfc5324d3e0`,
+are reproduced. Fixtures: `fixtures/cesmo_internal/`, the authored ones written by its
+`spec/build_fixtures.py`.
+
+| CESMO internal Exchange | CDM field | Status | Notes |
+|---|---|---|---|
+| an `eob_upsert` record | `Entity.entity_type`, `Entity.attributes`, `Entity.valid_from`, `Entity.valid_to`, `Event.event_type` | `cesmo_internal 1.0.0` | An emitter `Entity` of type `UNKNOWN` (no EMITTER member; a collector is never an Entity in this contract) with `attributes.cesmo` holding the contract, `role` `emitter`, `operation` `upsert`, the revision, the signal and the ellipse when present and the mapping basis, `valid_from` the record time and `valid_to` null; then its `TRACK_UPDATE` `Event` naming it. A replacement assertion, applied to no state |
+| an `observation` record | `Event.event_type`, `Event.related_entities` | `cesmo_internal 1.0.0` | One `DETECTION` `Event`, operation `observation`; with `object_id` it names the scoped emitter (whether or not that Entity is in the message), without one it names nothing; an observation never makes an Entity |
+| an `eob_delete` record | `Event.event_type`, `Event.related_entities` | `cesmo_internal 1.0.0` | One `STATUS_CHANGE` `Event`, operation `withdraw`, naming the scoped emitter: a source withdrawing its record, never a destruction, and no Entity is removed |
+| a `status` record | `Event.event_type`, `Event.related_entities` | `cesmo_internal 1.0.0` | One `STATUS_CHANGE` `Event`, operation `status`, naming no emitter; the state stays in the record's `extensions` |
+| the envelope's `snapshot` | `Event.event_type`, `Event.payload`, `SourceRef.original_id`, `SourceRef.record_index`, `SourceRef.observed_at`, `Event.observed_at` | `cesmo_internal 1.0.0` | One `STATUS_CHANGE` `Event` after every record object, operation `snapshot`, `payload.cesmo` the snapshot and the source scope, `original_id` the `snapshot_id`, `record_index` null, both times the envelope's `observed_at`, no related entity. A complete snapshot withdraws nothing here: that is the projector's |
+| `record_id` | `SourceRef.original_id`, `Event.event_id`, `Event.source_ids` | `cesmo_internal 1.0.0` | The record's own identifier as `original_id` on its objects, and part of the event key |
+| `object_id` | `Entity.entity_id`, `Entity.source_ids`, `Event.related_entities` | `cesmo_internal 1.0.0` | Part of the emitter key with the mode and the source scope, so two originators or two epochs never share an Entity; the native token stays in the residual |
+| `mode`, `source.network_id`, `source.originator_id`, `source.identity_epoch`, `message_id` | `SourceRef.synthetic`, `Entity.source_ids`, `Event.source_ids` | `cesmo_internal 1.0.0` | The identity scope, in every key; `mode` must agree with the constructor's `synthetic` flag (`E_MODE_MISMATCH`), so a live and a synthetic record never share an identity |
+| `observed_at`, a record's | `Event.observed_at`, `SourceRef.observed_at`, `Entity.valid_from` | `cesmo_internal 1.0.0` | The source's assertion time, rendered to the millisecond; `SourceRef.transformations` lists `timestamp-millisecond-truncation-v1` only when a non-zero fourth to sixth fraction digit is dropped. The receipt time is the injected clock's `Event.received_at`, never substituted |
+| `position.latitude_deg`, `position.longitude_deg`, `position.hae_m` | `Event.geometry`, `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `cesmo_internal 1.0.0` | Only for an explicitly asserted emitter position: a `Point` `[lon, lat]`, with `hae_m` as the third coordinate and `alt_m`; latitude 0 and longitude 0 are a position; `Position.vertical` stays null |
+| `position.method` | `Position.position_source`, `SourceRef.transformations` | `cesmo_internal 1.0.0` | `estimated`, `gnss`, `inertial`, `manual` to the CDM members of the same name; `position-method-enum-v1` listed on every object of a record carrying a position |
+| `uncertainty`, the ellipse | `Entity.attributes`, `Event.payload`, `Position.accuracy_m` | `cesmo_internal 1.0.0` | Verbatim in `attributes.cesmo` and `payload.cesmo`; `accuracy_m` stays null: a probability ellipse is not a one-sigma scalar, and no covariance is inferred |
+| `signal` | `Entity.attributes`, `Event.payload` | `cesmo_internal 1.0.0` | Verbatim; a bearing never becomes a geometry and a frequency never an identity |
+| `affiliation` | `Entity.affiliation` | `cesmo_internal 1.0.0` | The contract's four tokens are the CDM's four, a literal table with no transformation listed; absent is `UNKNOWN` |
+| `confidence` | `Entity.confidence` | `cesmo_internal 1.0.0` | Copied, 0 kept as 0.0 and absent as null |
+| `revision`, `extensions` and the whole record | `Event.payload`, `Entity.attributes` | `cesmo_internal 1.0.0` | `payload.cesmo` is the whole validated record plus `operation` and `source_scope` (the envelope's `source`); the Entity's revision in `attributes.cesmo` |
+| the event the adapter writes | `Event.severity`, `Event.received_at`, `Event.validity` | `cesmo_internal 1.0.0` | `INFO`, the adapter's informational category and never a threat judgement; the injected clock; `validity` null |
+| the trusted caller's digest of the Exchange | `SourceRef.source_hash` | `cesmo_internal 1.0.0` | Carried onto every object when the constructor is given it; never computed here and never read from the document |
+| the envelope without `records` and the record, every leaf | `Entity.residual`, `Event.residual` | `cesmo_internal 1.0.0 · residual` | `residual.data.envelope` and `residual.data.record`, verbatim and in the source's own order, on both objects of an upsert; the snapshot Event's residual is the envelope alone (the snapshot is inside it) |
+| a token outside `[A-Za-z0-9_.-]{1,64}` (a trailing newline included), a timestamp outside the grammar or the calendar (hour 24, 30 February, second 60, a non-ASCII digit, seven fraction digits), a value outside a stated range, an unknown key, a missing required key, `4.0` as an integer, more than 1,000 records | — | refused | `E_SCHEMA` with the path and the keyword, the first by numeric path order; never a payload value in the message |
+| a repeated `record_id`, empty records without a snapshot, an `object_id` repeated in a snapshot, an upsert or withdrawal without `object_id`, a status naming an emitter, a withdrawal carrying a measurement, an ellipse without a position or with its axes reversed, a snapshot holding a record that is not an upsert at its revision | — | refused | `E_SEMANTIC`, in the order the kit states the rules; `$snapshot` as a token is outside the alphabet and so `E_SCHEMA` |
+| octets past 1,048,576, nesting past 16 containers (past 64 the SDK's bound, raised as `CesmoInputTooDeep`), more than 100,000 JSON values, a string or key past 4,096 code points | — | refused | `E_LIMIT`; the byte and depth refusals are both a `CesmoError` and the SDK's `InputTooLarge` / `InputTooDeep` |
+| a byte-order mark, invalid UTF-8, a duplicate key, `NaN` or `Infinity`, a number past binary64 or underflowing to zero, trailing content, a lone surrogate; on a dict a non-string key or a value no JSON text holds | — | refused | `E_SCHEMA` at the root, before any object exists |
+| a `contract` other than `sc.cesmo.internal/1.0`; `mode` other than the constructor's | — | refused | `E_UNSUPPORTED_MESSAGE`; `E_MODE_MISMATCH` |
+| a CESMO unit or any STANAG 4658 / AEDP-13 message; egress | — | refused | The binding is BLOCKED (kit N01 to N12) and nothing of it is here; ingest only, `from_cdm` is the base class's refusal |
+
+**Where the adapter departs from the kit's `validate_contract.py` 1.0**, each on the
+specification's own words: a token ending in a newline is refused (section 8, L104: letters, digits,
+underscore, hyphen and dot only), where the validator's Python `$` admits one; hour 24 is refused on
+every interpreter (L108: ordinary seconds), where the validator's `fromisoformat` admits it on Python
+3.14; a non-ASCII digit is refused by the pattern itself (ECMA-262 `\d`); the 1,048,576-byte cap is on
+the input octets before the parse (L237), never on the validator's re-serialisation, so a dict is never
+refused for its re-serialised size; 1,001 records are `E_SCHEMA` by the schema's `maxItems`, as the
+validator reads them; a number past binary64 or a non-zero literal that underflows to zero is refused
+(L134: overflow or unrepresentable values fail rather than clamp); and the first failure is chosen in
+one stated order — the caps, the discriminator, the schema by numeric path, then the rules in the
+specification's order — where the validator sorts schema paths as text. Numbers are compared as
+binary64: the exact-decimal sentence of section 9 governs a native codec's unit conversions, which
+this adapter does not perform.
 
 ## Gaps, and what each one costs
 

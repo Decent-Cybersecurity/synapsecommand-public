@@ -1,0 +1,498 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {
+      "cesmo": {
+        "contract": "sc.cesmo.internal/1.0",
+        "mapping_basis": "source-asserted EOB object; no RF identification performed",
+        "operation": "upsert",
+        "revision": 8,
+        "role": "emitter",
+        "signal": {
+          "bandwidth_hz": 5000000,
+          "frequency_hz": 2900000000,
+          "power_dbm": -71.5,
+          "pri_s": 0.001,
+          "pulse_width_s": 1e-06,
+          "sensor_id": "SENSOR-2"
+        },
+        "uncertainty": {
+          "frame": "ENU_TRUE_NORTH",
+          "orientation_deg": 0,
+          "probability": 1,
+          "semi_major_m": 250,
+          "semi_minor_m": 250
+        }
+      }
+    },
+    "confidence": 0.75,
+    "entity_id": "c4a46db1-aa53-5938-b541-b920d97efd0c",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 312.5,
+      "lat": 57.5,
+      "lon": 22.25,
+      "position_source": "GNSS",
+      "vertical": null
+    },
+    "quality": null,
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-7",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "snapshot": {
+            "complete": true,
+            "revision": 8,
+            "snapshot_id": "SNAP-2"
+          },
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "affiliation": "HOSTILE",
+          "confidence": 0.75,
+          "extensions": {
+            "notice": "Invented synthetic values; no operational source"
+          },
+          "kind": "eob_upsert",
+          "object_id": "EMITTER-2",
+          "observed_at": "2026-10-04T11:59:30Z",
+          "position": {
+            "hae_m": 312.5,
+            "latitude_deg": 57.5,
+            "longitude_deg": 22.25,
+            "method": "gnss"
+          },
+          "record_id": "EOB-3",
+          "revision": 8,
+          "signal": {
+            "bandwidth_hz": 5000000,
+            "frequency_hz": 2900000000,
+            "power_dbm": -71.5,
+            "pri_s": 0.001,
+            "pulse_width_s": 1e-06,
+            "sensor_id": "SENSOR-2"
+          },
+          "uncertainty": {
+            "frame": "ENU_TRUE_NORTH",
+            "orientation_deg": 0,
+            "probability": 1,
+            "semi_major_m": 250,
+            "semi_minor_m": 250
+          }
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T11:59:30.000Z",
+      "original_id": "EOB-3",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1",
+        "position-method-enum-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"EMITTER-2\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T11:59:30.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ec058193-5159-5d73-8529-c545b7061c81",
+    "event_type": "TRACK_UPDATE",
+    "geometry": {
+      "coordinates": [
+        22.25,
+        57.5,
+        312.5
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T11:59:30.000Z",
+    "oes": null,
+    "payload": {
+      "cesmo": {
+        "affiliation": "HOSTILE",
+        "confidence": 0.75,
+        "extensions": {
+          "notice": "Invented synthetic values; no operational source"
+        },
+        "kind": "eob_upsert",
+        "object_id": "EMITTER-2",
+        "observed_at": "2026-10-04T11:59:30Z",
+        "operation": "upsert",
+        "position": {
+          "hae_m": 312.5,
+          "latitude_deg": 57.5,
+          "longitude_deg": 22.25,
+          "method": "gnss"
+        },
+        "record_id": "EOB-3",
+        "revision": 8,
+        "signal": {
+          "bandwidth_hz": 5000000,
+          "frequency_hz": 2900000000,
+          "power_dbm": -71.5,
+          "pri_s": 0.001,
+          "pulse_width_s": 1e-06,
+          "sensor_id": "SENSOR-2"
+        },
+        "source_scope": {
+          "identity_epoch": "EXERCISE-1",
+          "network_id": "TEST-NET",
+          "originator_id": "TEST-SOURCE-A"
+        },
+        "uncertainty": {
+          "frame": "ENU_TRUE_NORTH",
+          "orientation_deg": 0,
+          "probability": 1,
+          "semi_major_m": 250,
+          "semi_minor_m": 250
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "c4a46db1-aa53-5938-b541-b920d97efd0c"
+    ],
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-7",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "snapshot": {
+            "complete": true,
+            "revision": 8,
+            "snapshot_id": "SNAP-2"
+          },
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "affiliation": "HOSTILE",
+          "confidence": 0.75,
+          "extensions": {
+            "notice": "Invented synthetic values; no operational source"
+          },
+          "kind": "eob_upsert",
+          "object_id": "EMITTER-2",
+          "observed_at": "2026-10-04T11:59:30Z",
+          "position": {
+            "hae_m": 312.5,
+            "latitude_deg": 57.5,
+            "longitude_deg": 22.25,
+            "method": "gnss"
+          },
+          "record_id": "EOB-3",
+          "revision": 8,
+          "signal": {
+            "bandwidth_hz": 5000000,
+            "frequency_hz": 2900000000,
+            "power_dbm": -71.5,
+            "pri_s": 0.001,
+            "pulse_width_s": 1e-06,
+            "sensor_id": "SENSOR-2"
+          },
+          "uncertainty": {
+            "frame": "ENU_TRUE_NORTH",
+            "orientation_deg": 0,
+            "probability": 1,
+            "semi_major_m": 250,
+            "semi_minor_m": 250
+          }
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T11:59:30.000Z",
+      "original_id": "EOB-3",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1",
+        "position-method-enum-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"MSG-7\",\"EOB-3\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "validity": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "cesmo": {
+        "contract": "sc.cesmo.internal/1.0",
+        "mapping_basis": "source-asserted EOB object; no RF identification performed",
+        "operation": "upsert",
+        "revision": 8,
+        "role": "emitter"
+      }
+    },
+    "confidence": null,
+    "entity_id": "306a6a10-3f74-538f-abe9-4b18bc2d1405",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-7",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "snapshot": {
+            "complete": true,
+            "revision": 8,
+            "snapshot_id": "SNAP-2"
+          },
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "kind": "eob_upsert",
+          "object_id": "EMITTER-4",
+          "observed_at": "2026-10-04T11:59:31Z",
+          "record_id": "EOB-4",
+          "revision": 8
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T11:59:31.000Z",
+      "original_id": "EOB-4",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"EMITTER-4\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T11:59:31.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "864bb30f-58fe-57bc-b4e4-44402d79075f",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T11:59:31.000Z",
+    "oes": null,
+    "payload": {
+      "cesmo": {
+        "kind": "eob_upsert",
+        "object_id": "EMITTER-4",
+        "observed_at": "2026-10-04T11:59:31Z",
+        "operation": "upsert",
+        "record_id": "EOB-4",
+        "revision": 8,
+        "source_scope": {
+          "identity_epoch": "EXERCISE-1",
+          "network_id": "TEST-NET",
+          "originator_id": "TEST-SOURCE-A"
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "306a6a10-3f74-538f-abe9-4b18bc2d1405"
+    ],
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-7",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "snapshot": {
+            "complete": true,
+            "revision": 8,
+            "snapshot_id": "SNAP-2"
+          },
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        },
+        "record": {
+          "kind": "eob_upsert",
+          "object_id": "EMITTER-4",
+          "observed_at": "2026-10-04T11:59:31Z",
+          "record_id": "EOB-4",
+          "revision": 8
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T11:59:31.000Z",
+      "original_id": "EOB-4",
+      "record_index": 1,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"MSG-7\",\"EOB-4\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "validity": null
+  },
+  {
+    "event_id": "5ee17725-ab49-5357-b4f0-d6b57085075e",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "cesmo": {
+        "operation": "snapshot",
+        "snapshot": {
+          "complete": true,
+          "revision": 8,
+          "snapshot_id": "SNAP-2"
+        },
+        "source_scope": {
+          "identity_epoch": "EXERCISE-1",
+          "network_id": "TEST-NET",
+          "originator_id": "TEST-SOURCE-A"
+        }
+      }
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": {
+      "data": {
+        "envelope": {
+          "contract": "sc.cesmo.internal/1.0",
+          "message_id": "MSG-7",
+          "mode": "synthetic",
+          "observed_at": "2026-10-04T12:00:00Z",
+          "snapshot": {
+            "complete": true,
+            "revision": 8,
+            "snapshot_id": "SNAP-2"
+          },
+          "source": {
+            "identity_epoch": "EXERCISE-1",
+            "network_id": "TEST-NET",
+            "originator_id": "TEST-SOURCE-A"
+          }
+        }
+      },
+      "namespace": "SC CESMO Internal Exchange"
+    },
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cesmo_internal",
+      "adapter_version": "1.0.0",
+      "format_name": "SC CESMO Internal Exchange",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "SNAP-2",
+      "record_index": null,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "SC_CESMO_INTERNAL",
+      "transformations": [
+        "identity-scoping-v1"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"synthetic\",\"TEST-NET\",\"TEST-SOURCE-A\",\"EXERCISE-1\",\"MSG-7\",\"$snapshot\"]",
+        "system": "SC_CESMO_INTERNAL"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

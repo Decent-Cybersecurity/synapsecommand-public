@@ -13,17 +13,17 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Thirty-two
+This is the contract layer, and it is public because that is what a contract is for. **Thirty-three
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
 `cat062`, `cat023`, `stanag4586` (ingest), `geojson`, `geopackage` (ingest), `c2sim`,
 `aixm511` (ingest), `aixm52` (ingest), `dis7`, `tacticalapi` (ingest), `link16_gateway`,
 `readsb_trace` (ingest), `nexrad2` (ingest), `ndbc_stdmet` (ingest), `coops_csv` (ingest),
 `airnow_hourly` (ingest), `grib2` (ingest), `cog` (ingest), `iem_n0q` (ingest), `barentswatch_hais`
-(ingest) and `frost_observations` (ingest) — byte-exact on the wire
+(ingest), `frost_observations` (ingest) and `cesmo_internal` (ingest) — byte-exact on the wire
 wherever the format is binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — four hundred and ninety-six and thirty-two as of today; with one, an adapter is a
+"a contact" — five hundred and twenty-eight and thirty-three as of today; with one, an adapter is a
 thin translator and nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
 forms, message families, exclusions and evidence scope — is the generated
 [support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
@@ -117,7 +117,7 @@ may not be made.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the thirty-two shipped adapters are verified against** — which is what
+harness and **every fixture the thirty-three shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:

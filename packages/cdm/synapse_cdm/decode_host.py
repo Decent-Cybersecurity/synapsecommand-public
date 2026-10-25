@@ -87,6 +87,12 @@ shape (`name`, `basis` and `units`, the last mapping each `elementId` to its uni
 context-file bounds and refused (exit 2) as the adapter's constructor refuses it. Both are
 optional: without one the output says the position or the unit was not supplied, as the adapter
 does, and nothing is guessed in its place.
+
+One internal-contract adapter is served since 2026-10-24, the same way: `cesmo_internal` takes one
+SC CESMO Internal Exchange (`sc.cesmo.internal/1.0`, the internal JSON contract of the CESMO and EOB
+engineering kit, not STANAG 4658) and reads its file whole, with `--received-at` required (an
+Exchange states its assertion times and never a delivery instant) and the file's digest injected
+as `source_hash`, the trusted digest the kit asks for; nothing else is supplied.
 """
 
 from __future__ import annotations
@@ -621,6 +627,18 @@ def _prepare_frost_observations(context: Context) -> dict:
     }
 
 
+def _load_cesmo_internal() -> type:
+    from synapse_cdm.adapters.cesmo_internal import CesmoInternalAdapter
+
+    return CesmoInternalAdapter
+
+
+def _prepare_cesmo_internal(context: Context) -> dict:
+    # An Exchange states every identifier and assertion time; the receipt instant is the one
+    # value the file does not carry, and it is the injected clock.
+    return {"synthetic": context.synthetic}
+
+
 HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
     {
         "dis7": Hosted(
@@ -735,6 +753,15 @@ HOSTED: Mapping[str, Hosted] = types.MappingProxyType(
             arguments=frozenset({"received_at", "station_table", "element_table"}),
             required=frozenset({"received_at"}),
             prepare=_prepare_frost_observations,
+            injects_source_hash=True,
+            reads_clock=True,
+        ),
+        "cesmo_internal": Hosted(
+            name="cesmo_internal",
+            load=_load_cesmo_internal,
+            arguments=frozenset({"received_at"}),
+            required=frozenset({"received_at"}),
+            prepare=_prepare_cesmo_internal,
             injects_source_hash=True,
             reads_clock=True,
         ),

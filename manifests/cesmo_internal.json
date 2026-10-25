@@ -1,0 +1,173 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "provisional-internal-profile",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "no compression is accepted (kit L234, L247): this adapter is handed one already-assembled Exchange, and any transport compression is the gateway's, undone under its own bounds before the Exchange exists",
+          "max_parse_seconds": "no wall-clock bound is enforced here: the kit's two-second decoder deadline is a gateway worker watchdog (kit L243, L247), this module reads no clock, and the byte, depth, value and record caps make every walk linear in a bounded input; the conformance suite's parser worker kills a decode that overruns its deadline"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "`CesmoInternalAdapter.to_cdm` calls the SDK's `enforce_depth_bound` on the JSON text or the dict before the codec runs, and re-raises `InputTooDeep` as `CesmoInputTooDeep` (also a `CesmoError`, E_LIMIT)",
+            "kind": "implementation_cap",
+            "source": "The kit's \u00a719 caps JSON nesting at 16, the root object counted as level 1, and the codec enforces that inside (`MAX_CONTRACT_DEPTH`), refusing 17 to 64 as E_LIMIT. 64 (`MAX_DEPTH`) is the SDK's bound, the figure most JSON-reading adapters of synapse_cdm declare, and at least eight times the deepest JSON document this adapter ships (tests/test_cdm_parser_safety.py's eight-times rule). This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_cesmo_internal_adapter.py::test_depth_16_and_64_and_their_successors"
+          },
+          "max_input_bytes": {
+            "enforced_at": "`CesmoInternalAdapter.to_cdm` is marked `__input_bounded__` at class-definition time, so the base class does not wrap it again; it calls the SDK's `enforce_input_bound` first and re-raises `InputTooLarge` as `CesmoInputTooLarge` (also a `CesmoError`, E_LIMIT) before the codec reads an octet; the codec judges the same cap on the input octets for a direct caller",
+            "kind": "implementation_cap",
+            "source": "The CESMO and EOB engineering kit's \u00a719 caps a single internal input at 1,048,576 bytes, enforced before the JSON parse (`MAX_INPUT_BYTES`, `adapters/cesmo_internal_codec.py`); the kit says its caps are implementation caps, not statements about CESMO normative maxima. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "structurally, before any object is built: the schema's maxItems refuses a 1,001st record as E_SCHEMA, a record makes at most two objects and an Exchange at most one snapshot event",
+            "kind": "implementation_cap",
+            "source": "The kit's \u00a719 caps CDM objects per Exchange at 2,001: its worst case, 1,000 eob_upsert records (an Entity and an Event each) plus the snapshot event (`MAX_OBJECTS`). This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_cesmo_internal_adapter.py::test_the_object_cap_is_reached_exactly_and_not_passed"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 64,
+        "max_input_bytes": 1048576,
+        "max_objects": 2001,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "SC CESMO Internal Exchange 1.0 (contract sc.cesmo.internal/1.0), one Exchange per call, as UTF-8 JSON octets or a dict: per record an observation Event (DETECTION), an eob_upsert emitter Entity and its TRACK_UPDATE Event, an eob_delete or status STATUS_CHANGE Event, and one STATUS_CHANGE Event for an envelope snapshot"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the contract rejects every key it does not define, at every level, as E_SCHEMA (kit L102: unknown fields are rejected except inside explicit extensions objects); a record's `extensions` object is the contract's own open object, carried whole in residual.data.record like every other leaf, so an injected unknown key is refused, not preserved",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "PROVISIONAL",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "SC CESMO Internal Exchange",
+      "version": "1.0.0"
+    },
+    "id": "cesmo_internal",
+    "license_class": "OPEN",
+    "limitations": [
+      {
+        "id": "provisional-internal-profile",
+        "notes": null,
+        "severity": null,
+        "summary": "the wire form is SC CESMO Internal Exchange 1.0 (sc.cesmo.internal/1.0), an internal JSON contract defined by this repository's owner in its CESMO and EOB engineering kit: a provisional internal profile bound to no normative document. Green gates prove agreement with that contract only",
+        "unsupported_paths": []
+      },
+      {
+        "id": "stanag-4658-binding-blocked",
+        "notes": null,
+        "severity": null,
+        "summary": "this adapter is not STANAG 4658 interoperability: no CESMO unit, no AEDP-13 Edition B message and no native byte is parsed or produced. The STANAG 4658 / AEDP-13 wire binding is BLOCKED on the kit's unresolved dependency register N01-N12, and the internal contract's producer, the gateway, is not in this repository",
+        "unsupported_paths": []
+      },
+      {
+        "id": "stateless-translation",
+        "notes": null,
+        "severity": null,
+        "summary": "the EOB state projector, the gateway's journal, receipts, policy and egress, the offline configuration and the normative edition plugin (kit sections 13 to 18 and 20) are not in this repository: each Exchange is translated alone, so a revision, a withdrawal or a complete snapshot is carried as an assertion and applied to no state, and a reused message_id or a conflicting revision (E_ID_CONFLICT, E_REVISION_CONFLICT) is not detected here",
+        "unsupported_paths": []
+      },
+      {
+        "id": "one-exchange-per-call",
+        "notes": null,
+        "severity": null,
+        "summary": "exactly one Exchange per call, as UTF-8 JSON octets or as a dict; text, a list, a stream and a chunked snapshot are refused (E_SCHEMA)",
+        "unsupported_paths": []
+      },
+      {
+        "id": "octet-only-refusals",
+        "notes": null,
+        "severity": null,
+        "summary": "duplicate keys, a byte order mark, invalid UTF-8, non-finite literals, numbers past binary64 and the 1,048,576-octet cap are judged on octets only: a dict was parsed by its caller, who already lost them, and is never re-serialised to be measured",
+        "unsupported_paths": []
+      },
+      {
+        "id": "contract-limits",
+        "notes": null,
+        "severity": null,
+        "summary": "the kit's section 19 caps are enforced as E_LIMIT: 1,048,576 input octets, nesting 16 containers, 100,000 JSON values and 4,096 code points per text value or key; 1,000 records is the schema's maxItems (E_SCHEMA); past the manifest's 64 containers the SDK's InputTooDeep refuses first, raised as CesmoInputTooDeep, also E_LIMIT",
+        "unsupported_paths": []
+      },
+      {
+        "id": "stricter-than-the-kit-validator",
+        "notes": null,
+        "severity": null,
+        "summary": "the adapter refuses what the kit's validate_contract.py 1.0 admits against its own specification: a token ending in a newline, hour 24 (admitted on Python 3.14), a non-ASCII digit, and a number past binary64 or underflowing to zero; it caps the input octets, not a re-serialisation, and reports the first failure by numeric path order",
+        "unsupported_paths": []
+      },
+      {
+        "id": "emitter-entity-only",
+        "notes": null,
+        "severity": null,
+        "summary": "no Track and no PlanObject: one assertion is not a motion history. An emitter is an Entity of type UNKNOWN with attributes.cesmo.role 'emitter', made only by an eob_upsert; an observation never fabricates one. No geolocation, signal identification, emitter correlation or threat ranking is performed, and severity INFO is a category, not a threat judgement",
+        "unsupported_paths": []
+      },
+      {
+        "id": "asserted-position-only",
+        "notes": null,
+        "severity": null,
+        "summary": "a Point geometry and an Entity position exist only for a record's explicitly asserted emitter position, hae_m as the third coordinate and alt_m; Position.vertical and accuracy_m stay null, the uncertainty ellipse stays verbatim in attributes and payload (a probability ellipse is not a one-sigma scalar), and a bearing never becomes geometry",
+        "unsupported_paths": []
+      },
+      {
+        "id": "millisecond-rendering",
+        "notes": null,
+        "severity": null,
+        "summary": "the CDM writes instants to the millisecond: a source time with a non-zero fourth to sixth fraction digit is truncated in observed_at and valid_from, its SourceRef lists timestamp-millisecond-truncation-v1, and the source string stays in payload and residual",
+        "unsupported_paths": []
+      },
+      {
+        "id": "binary64-numbers",
+        "notes": null,
+        "severity": null,
+        "summary": "numbers are compared and carried as binary64: the kit's exact-decimal rule (section 9) governs a native codec's unit conversions, which this adapter does not perform, so a frequency's digits beyond binary64 are not preserved",
+        "unsupported_paths": []
+      },
+      {
+        "id": "synthetic-fixtures-only",
+        "notes": null,
+        "severity": null,
+        "summary": "every packaged fixture is synthetic and labelled so (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic): the kit's five examples carried byte-identical and documents written from them; nothing is a capture, a native vector or an order-of-battle datum",
+        "unsupported_paths": []
+      },
+      {
+        "id": "evidence-availability",
+        "notes": null,
+        "severity": null,
+        "summary": "`evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them",
+        "unsupported_paths": []
+      }
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED for the SC CESMO Internal Exchange 1.0 contract (sc.cesmo.internal/1.0), from evidence that runs today: `python -m synapse_cdm.harness --adapter cesmo_internal` reports translate, schema, provenance, lossless (basis: ledger, MAPPINGS declared, no LOST leaf) and golden PASS on every packaged fixture, and tests/test_cdm_cesmo_internal_adapter.py reproduces the kit's expected-upsert-cdm.json byte for byte. L4 is NOT declared: the adapter is ingest-only, so the roundtrip check is inapplicable rather than passed. The rung is about the internal contract and says nothing about STANAG 4658, whose binding is BLOCKED.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "SC CESMO Internal Exchange",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Thirty-two integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Thirty-three integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -15,9 +15,10 @@ Level II (one Archive II weather radar volume), NDBC standard meteorological tex
 data API responses, EPA AirNow hourly observation files, GRIB2 (one WMO FM 92 GRIB edition 2
 message), Cloud Optimized GeoTIFF (one GeoTIFF's header and first block, or a VRT index), IEM
 NEXRAD N0Q composites (one 12200 x 5400 PNG), BarentsWatch Historic AIS track JSON (one vessel's
-track response) and MET Norway Frost observation responses. Without a canonical model in the
-middle, thirty-two adapters means four hundred and ninety-six translations and thirty-two private
-notions of "a contact".
+track response), MET Norway Frost observation responses and SC CESMO Internal Exchanges (the
+internal contract of the CESMO and EOB engineering kit, not STANAG 4658). Without a canonical
+model in the middle, thirty-three adapters means five hundred and twenty-eight translations and
+thirty-three private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -57,6 +58,7 @@ With one, an adapter is a thin translator and nothing else.
 | [`iem_n0q`](adapters/iem_n0q.py) 1.0.0 | ingest | IEM NEXRAD N0Q radar composites (the PNG Third Edition and IEM's composite and raster-catalogue pages, cited by URL and not carried) — one archive PNG (8 MiB at most), as its octets or its parsed twin → one `ENVIRONMENTAL_OBSERVATION` `Event` carrying the `gridded-field/1` contract: the grid a product constant (12200 x 5400 cells of 0.005 degree, IHDR held to it before anything is inflated, the `.wld` never read), its outline a WGS84 footprint Polygon; palette index 0 missing and index i (i − 65) / 2 dBZ, the values by reference with a dBZ summary; `observed_at` the archive file name's slot, which the caller supplies with its basis on IEM's five-minute grid; IEM's `gentime` generation clock only in `product_version`. `synapse-decode` serves it with the slot as `--at` |
 | [`barentswatch_hais`](adapters/barentswatch_hais.py) 1.2.0 | ingest | BarentsWatch Historic AIS track JSON (the Historic AIS API's `GET /v1/historic/tracks/{mmsi}/{from}/{to}` response, documented by URL and not carried) — one vessel's track response (16 MiB at most), as its octets or its parsed array → one `Entity` typed by the `ais` adapter's MMSI rule and identified under its `AIS` system (one vessel, one `entity_id` across both), one `Track` with the reports re-ordered ascending from the API's newest-first delivery, and one `TRACK_UPDATE` `Event`; AIS sentinels read with the `ais` adapter's own constants, speed in knots converted, rate of turn carried verbatim, the whole array the Entity's residual |
 | [`frost_observations`](adapters/frost_observations.py) 1.0.0 | ingest | MET Norway Frost `ObservationResponse` (`GET /observations/v0.jsonld`, Frost API v0, documented by URL and not carried) — one response (16 MiB at most), as its octets or its parsed dict → `ENVIRONMENTAL_OBSERVATION` Events carrying the `point-observation/1` contract, one per data item and Frost time class (Case 1: the referenceTime is the instant; Case 2.2: a daily period placed by `timeOffset`), and one `SENSOR` `Entity` per station; positions from the caller's `StationTable` and units an observation omits from the caller's `ElementTable`, both constructor arguments; quality codes carried as typed flags, never interpreted |
+| [`cesmo_internal`](adapters/cesmo_internal.py) 1.0.0 | ingest | SC CESMO Internal Exchange 1.0 (`sc.cesmo.internal/1.0`), the internal JSON contract of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (4 October 2026), cited by title and date and not carried; **not STANAG 4658**: the kit declares that wire binding BLOCKED and nothing of it is here — one Exchange (1 MiB at most), as its octets or its parsed dict → per record an observation `DETECTION` `Event`, an `eob_upsert` emitter `Entity` (`UNKNOWN`, `attributes.cesmo.role` `emitter`) then its `TRACK_UPDATE` `Event`, an `eob_delete` or `status` `STATUS_CHANGE` `Event`, and one `STATUS_CHANGE` `Event` for an envelope snapshot; identities scoped by mode, network, originator, epoch and the source's own identifiers; the envelope and the record verbatim in every residual; the contract's schema in `adapters/cesmo_internal_codec.py`, published at `schemas/cesmo_internal/` |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -359,7 +361,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fifteen of the thirty-two
+clone. Every adapter that declares an egress direction was affected — fifteen of the thirty-three
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the four that shipped since
 (`geojson`, `c2sim`, `dis7` and, on 2026-10-10, `link16_gateway`) declared theirs from the start. The second
@@ -404,9 +406,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's thirty-two adapters it is 992 against 496.
+   contradiction. At today's thirty-three adapters it is 1056 against 528.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that thirty-two adapters cannot grow thirty-two
+   `docs/docs/cdm/entity.mdx` both carry "so that thirty-three adapters cannot grow thirty-three
    slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

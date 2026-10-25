@@ -1,0 +1,50 @@
+{
+  "contract": "sc.cesmo.internal/1.0",
+  "mode": "synthetic",
+  "source": {
+    "network_id": "TEST-NET",
+    "originator_id": "TEST-SOURCE-A",
+    "identity_epoch": "EXERCISE-1"
+  },
+  "message_id": "MSG-10",
+  "observed_at": "2026-10-04T12:00:00Z",
+  "records": [
+    {
+      "record_id": "OBS-4",
+      "kind": "observation",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:11Z",
+      "object_id": "EMITTER-8",
+      "signal": {
+        "bearing_deg_true": 359.5,
+        "sensor_id": "SENSOR-3"
+      },
+      "extensions": {
+        "track_id": "TRK-7",
+        "object_id": "NATIVE-9",
+        "entity_id": "NATIVE-10",
+        "event_id": "NATIVE-11",
+        "last_seen_at": "2026-10-04T11:59:00Z",
+        "valid_from": "2026-10-04T11:58:00Z",
+        "notice": "Invented synthetic values; no operational source"
+      }
+    },
+    {
+      "record_id": "EOB-8",
+      "kind": "eob_upsert",
+      "revision": 1,
+      "observed_at": "2026-10-04T12:00:12Z",
+      "object_id": "EMITTER-8",
+      "affiliation": "NEUTRAL",
+      "extensions": {
+        "track_id": "TRK-7",
+        "object_id": "NATIVE-9",
+        "entity_id": "NATIVE-10",
+        "event_id": "NATIVE-11",
+        "last_seen_at": "2026-10-04T11:59:00Z",
+        "valid_from": "2026-10-04T11:58:00Z",
+        "notice": "Invented synthetic values; no operational source"
+      }
+    }
+  ]
+}

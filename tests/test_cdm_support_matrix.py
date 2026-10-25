@@ -171,14 +171,20 @@ def test_the_page_the_manifest_the_listing_and_the_class_agree_on_the_binding(na
     assert line.rstrip().endswith(declared), f"{name}: --list-adapters ends its row with {line!r}"
 
 
-def test_stanag4676_and_link16_gateway_are_provisional_and_every_other_shipped_adapter_is_the_standard_encoding():
+def test_stanag4676_link16_gateway_and_cesmo_internal_are_provisional_and_every_other_shipped_adapter_is_the_standard_encoding():
     """Derived, not typed: an adapter whose limitations say "provisional" declares the provisional
     binding and the reverse — the model enforces one direction, this test the other.
 
     RENAMED AND WIDENED 2026-10-10 (the Link 16 gateway arc): `link16_gateway` declares the
     provisional binding because its wire form is an interface this repository defines, bound to no
     normative document (the binding legend says so since the same day). The pinned set grew by
-    that one name; anything else declaring or stating the binding still fails here."""
+    that one name; anything else declaring or stating the binding still fails here.
+
+    RENAMED AND WIDENED 2026-10-24 (the `cesmo_internal` landing, adapter #34): the SC CESMO
+    Internal Exchange is an internal JSON contract this repository's owner defines in its CESMO
+    and EOB engineering kit, bound to no normative document, so it declares the same binding for
+    the same reason, which the legend's 2026-10-10 sentence already states; the set grew by that
+    one name."""
     from synapse_cdm.manifest import limitation_text
     bindings = {name: cls.metadata.binding for name, cls in adapter.shipped().items()}
     says_provisional = {name for name, cls in adapter.shipped().items()
@@ -186,7 +192,8 @@ def test_stanag4676_and_link16_gateway_are_provisional_and_every_other_shipped_a
                                for line in cls.metadata.limitations)}
     declares_provisional = {name for name, b in bindings.items()
                             if b is WireBinding.PROVISIONAL_INTERNAL_PROFILE}
-    assert says_provisional == declares_provisional == {"link16_gateway", "stanag4676"}
+    assert says_provisional == declares_provisional == {
+        "cesmo_internal", "link16_gateway", "stanag4676"}
     assert not [name for name, b in bindings.items() if b is WireBinding.NORMATIVE_VERIFIED], (
         "an adapter declares normative-verified; tests/test_cdm_manifests.py holds that to an "
         "exercise report and this page's status paragraph would have to move")

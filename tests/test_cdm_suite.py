@@ -536,6 +536,46 @@ def test_K_does_not_judge_the_sources_own_identifier():
     assert report["checks"]["K"]["verdict"] == suite.PASS
 
 
+class _ResidualInSourceForm(_Base):
+    """An Entity whose §28 residual carries the source's own spelling of an instant and of its
+    identifiers — keys a CDM field has too, values in the source's form."""
+    name = "probe-residual-source-form"
+    metadata = probe_metadata("probe-residual-source-form")
+
+    def to_cdm(self, raw):
+        from synapse_cdm.models import Residual
+
+        entity = self._entity(raw)
+        entity.attributes = {}
+        entity.residual = Residual(namespace="probe", data={"record": {
+            "observed_at": "2026-10-04T12:00:00Z", "last_seen_at": "2026-10-04T11:59:00.5Z",
+            "object_id": "EMITTER-1", "track_id": "TRK-7", "event_id": "NATIVE-9"}})
+        return [entity]
+
+
+def test_J_and_K_do_not_walk_the_residual_and_judge_the_same_values_outside_it(probe_fixtures):
+    """ADDED 2026-10-24 (the `cesmo_internal` landing): `suite.PARKED` gained `residual`, §28's
+    structured container, so J and K no longer judge the source's own record held there as CDM
+    fields. A source-form instant and native identifiers in the residual leave both checks PASS;
+    the same leaves outside a parked key are still walked; and `cesmo_internal`, whose residual is
+    the kit's verbatim envelope and record (its `cdm-shaped-extension-keys.json` fixture puts
+    `track_id`, `object_id`, `last_seen_at` and `valid_from` there too), is CONFORMANT with J and
+    K PASS. Before the change the same fixture read J FAIL and K FAIL."""
+    assert suite.PARKED == ("attributes", "payload", "source_extras", "residual")
+    clock = times.frozen_clock()
+    j = suite.check_temporal(_ResidualInSourceForm(clock=clock), _payloads(probe_fixtures),
+                             clock=clock, frozen_at=times.FROZEN_NOW)
+    k = suite.check_identity(_ResidualInSourceForm(clock=clock), _payloads(probe_fixtures),
+                             clock=clock)
+    assert (j["verdict"], k["verdict"]) == (suite.PASS, suite.PASS), (j, k)
+    leaves = {"residual": {"data": {"observed_at": "x"}}, "valid_from": "y", "object_id": "z"}
+    assert dict(suite._walk(leaves)) == {"valid_from": "y", "object_id": "z"}
+    report = _report("cesmo_internal")
+    assert report["result"] == "CONFORMANT"
+    assert (report["checks"]["J"]["verdict"], report["checks"]["K"]["verdict"]) == \
+        (suite.PASS, suite.PASS)
+
+
 def test_L_reads_the_objects_against_this_package_and_this_manifest(probe_fixtures):
     clock = times.frozen_clock()
     # The supported range is this package's own major, derived: it read the literal "2.x" until

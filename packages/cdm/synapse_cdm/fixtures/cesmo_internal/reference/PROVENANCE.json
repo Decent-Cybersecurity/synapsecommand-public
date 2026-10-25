@@ -1,0 +1,15 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "cesmo_internal/reference",
+  "fixtures": [
+    {
+      "file": "expected-upsert-cdm.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The kit's expected CDM projection of upsert.json (an Entity and an Event, CDM 3.0.0, receipt clock 2026-10-04T12:00:01Z), byte-identical to expected-upsert-cdm.json of the SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October 2026), synthetic example; released into this repository by the maintainer on 2026-10-24; synthetic, no capture.",
+      "standard_ref": "cesmo_internal/spec/cesmo_internal_pin.json"
+    }
+  ]
+}
