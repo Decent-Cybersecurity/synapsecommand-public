@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.7.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.8.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.2.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -122,7 +122,13 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   ``barentswatch_hais`` and ``frost_observations`` adapters with
                                   their fixture sets and moved no model, enum or published
                                   schema, so the package took a MINOR the wire contract had no
-                                  part in.)
+                                  part in. And on 2026-10-25, at 3.8.0 against 3.2.0, for the
+                                  ordinary reason again: the arc since 3.7.0 added the
+                                  ``cesmo_internal`` adapter with its fixture set, gave
+                                  ``synapse-decode`` the HIGH NORTH and ``cesmo_internal`` rows
+                                  and parked ``residual`` from the conformance suite's checks J
+                                  and K, and moved no model, enum or published CDM schema, so
+                                  the package took a MINOR the wire contract had no part in.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -175,8 +181,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.7.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
-eighteenth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.8.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
+nineteenth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -291,7 +297,16 @@ the fifth for the ordinary reason again**: the HIGH NORTH landing since ``v3.6.0
 fixture sets, and removed nothing; ``gates/bump_derivation.py`` derived MINOR over the arc with
 nothing unruled and no ruling to read. The schema moved by nothing: no model, no enum, no published
 schema and no golden of the thirty that predate the arc changed, and the two numbers read 3.7.0 and
-3.2.0. MIGRATIONS.md's 3.7.0 section is the record.)
+3.2.0. MIGRATIONS.md's 3.7.0 section is the record.
+**Corrected a sixteenth time 2026-10-25, the 3.8.0 release, and the parting is six MINORs wide,
+the sixth for the ordinary reason again**: the arc since ``v3.7.0`` added one ``Adapter``
+subclass, registered as ``cesmo_internal``, with its fixture set, gave the ``synapse-decode``
+command the ``barentswatch_hais``, ``frost_observations`` and ``cesmo_internal`` rows and the
+``--element-table`` flag, and parked ``residual`` from the conformance suite's checks J and K,
+and removed nothing; ``gates/bump_derivation.py`` derived MINOR over the arc with nothing
+unruled once MIGRATIONS.md's rulings in the 3.8.0 section are read. The schema moved by nothing:
+no model, no enum, no published CDM schema and no golden of the thirty-two that predate the arc
+changed, and the two numbers read 3.8.0 and 3.2.0. MIGRATIONS.md's 3.8.0 section is the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -621,7 +636,20 @@ SCHEMA_VERSION = "3.2.0"
 #: distribution `synapse-link16-bridge` stays at 1.1.0 and outside this one. `ADAPTER_API_VERSION`
 #: stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the
 #: 3.0.0 release put them.
-PACKAGE_VERSION = "3.7.0"
+#: Moved 3.7.0 -> 3.8.0 on 2026-10-25, a MINOR, and this one IS the derived floor — the ordinary
+#: reason, as 3.7.0 was: the arc since `v3.7.0` adds one `Adapter` subclass, registered as
+#: `cesmo_internal`, with its fixture set, gives `synapse-decode` the `barentswatch_hais`,
+#: `frost_observations` and `cesmo_internal` rows and the `--element-table` flag, parks
+#: `residual` from the conformance suite's checks J and K, and removes nothing — the roster
+#: moves thirty-two -> thirty-three. `gates/bump_derivation.py` read the arc as MINOR with
+#: nothing unruled and the next release at least 3.8.0 before this number was typed, and derives
+#: MINOR over it with nothing unruled once MIGRATIONS.md's rulings in the 3.8.0 section are
+#: read, so the gate's floor and this number are one number and no Version ruling is needed.
+#: `SCHEMA_VERSION` stays at 3.2.0: no model, enum, published CDM schema or golden of the
+#: thirty-two moved. The sibling distribution `synapse-link16-bridge` stays at 1.1.0 and outside
+#: this one. `ADAPTER_API_VERSION` stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and
+#: `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.8.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

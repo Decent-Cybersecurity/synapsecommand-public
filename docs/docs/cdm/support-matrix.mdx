@@ -360,7 +360,7 @@ The five evidence categories of `evidence.EvidenceCategory`, per adapter. The fi
 - the CDM writes instants to the millisecond: a source time with a non-zero fourth to sixth fraction digit is truncated in observed_at and valid_from, its SourceRef lists timestamp-millisecond-truncation-v1, and the source string stays in payload and residual
 - numbers are compared and carried as binary64: the kit's exact-decimal rule (section 9) governs a native codec's unit conversions, which this adapter does not perform, so a frequency's digits beyond binary64 are not preserved
 - every packaged fixture is synthetic and labelled so (TEST-NET, TEST-SOURCE-A, EXERCISE-1, mode synthetic): the kit's five examples carried byte-identical and documents written from them; nothing is a capture, a native vector or an order-of-battle datum
-- `evidence.available` is false because no published Release carries this adapter's records yet; it becomes true at the first release that attaches them
+- the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run, and the release pipeline generates the records for every shipped adapter and attaches them to the GitHub Release of the version it publishes. `evidence.available` is true because every published distribution that carries this adapter has that Release, so its records are retrievable by a third party; it says nothing about what the wheel contains
 
 ### `cog` — Cloud Optimized GeoTIFF header reader
 

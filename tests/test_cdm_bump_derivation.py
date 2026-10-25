@@ -695,6 +695,28 @@ UNRULED_HISTORICAL_ARCS = {
     # HIGH NORTH landing added two adapter modules and two fixture sets, units the table decides
     # as MINOR on its own, and moved nothing it cannot decide — so `.get(..., set())` below is the
     # empty set this table would otherwise have to spell.
+    # The seventeenth row, written IN the 3.8.0 release commit (2026-10-25) from the gate's own
+    # `derive(snapshot_at("v3.7.0"), snapshot_at(None))` on that tree — the 3.4.0, 3.5.0 and 3.6.0
+    # route, so that the tag needs no re-tag for it. Eight units, each ruled in MIGRATIONS.md's
+    # `### 3.8.0` section: seven of `decode_host.py`'s, which the HIGH NORTH rows of
+    # `synapse-decode` wrote — `HOSTED` gained the `barentswatch_hais` and `frost_observations`
+    # entries and then, at the `cesmo_internal` landing, a third; `Context` a field with a default;
+    # `_parser`, `_FLAGS`, `_given` and `_context` the `--element-table` flag (all MINOR); and
+    # `BOUNDS_BASIS` a source text naming the element table (PATCH) — and `suite.py`'s `PARKED`,
+    # which gained `residual` at the `cesmo_internal` landing (MINOR). The adapter module, its
+    # contract module, its fixture set and `decode_host.load_element_table` are units the arc
+    # ADDED — the release's evidence flip among them — and `version.py` moves by its assignment,
+    # which the gate excludes, and by comment and docstring lines. The arc's 110 signals (43
+    # MINOR, 67 PATCH) derive the MINOR the number types; the schema did not move.
+    ("v3.7.0", "v3.8.0"): {
+        "synapse_cdm/decode_host.py:BOUNDS_BASIS",
+        "synapse_cdm/decode_host.py:Context",
+        "synapse_cdm/decode_host.py:HOSTED",
+        "synapse_cdm/decode_host.py:_FLAGS",
+        "synapse_cdm/decode_host.py:_context",
+        "synapse_cdm/decode_host.py:_given",
+        "synapse_cdm/decode_host.py:_parser",
+        "synapse_cdm/suite.py:PARKED"},
 }
 
 

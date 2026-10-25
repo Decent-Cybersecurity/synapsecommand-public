@@ -87,7 +87,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.7.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `3.8.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `PACKAGE_VERSION` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `3.2.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SCHEMA_VERSION` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `SC_OES_VERSION` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` is `3.1.0` | `packages/cdm/synapse_cdm/version.py`, the top-level assignment of `ADAPTER_API_VERSION` |
@@ -386,6 +386,19 @@ types that floor. The CDM schema stays 3.2.0 (no model, enum or published schema
 implement it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0. SC-OES, the ontology and
 the profiles did not move, and the bridge stays at 1.1.0 with its floor at `synapse-cdm` 3.5.0.
 
+**Dated note, 2026-10-25: the release after 3.7.0 is `3.8.0`, a MINOR for the ordinary reason.**
+The arc since `v3.7.0` added one `Adapter` subclass, registered as `cesmo_internal` — the roster
+thirty-two → thirty-three — with its fixture set, gave the `synapse-decode` command the
+`barentswatch_hais`, `frost_observations` and `cesmo_internal` rows and an `--element-table` flag,
+parked `residual` from the conformance suite's checks J and K, and removed nothing.
+`gates/bump_derivation.py` read the arc as MINOR with nothing unruled before the number was typed,
+and derives MINOR over it once `MIGRATIONS.md`'s rulings in the 3.8.0 section are read; the
+release commit types that floor. The CDM schema stays 3.2.0 (no model, enum or published CDM
+schema moved; `schemas --check` CURRENT), the Adapter API stays 3.1.0 (no member of the contract
+moved; the new adapter implements it), and the manifest and evidence schemas stay 2.1.0 and 2.0.0.
+SC-OES, the ontology and the profiles did not move, and the bridge stays at 1.1.0 with its floor at
+`synapse-cdm` 3.5.0.
+
 ---
 
 ## 5. Main advancement
@@ -418,7 +431,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v3.7.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v3.8.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

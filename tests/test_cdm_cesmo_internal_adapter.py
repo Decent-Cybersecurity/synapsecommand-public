@@ -1230,7 +1230,8 @@ def test_registration_and_class_attributes():
 
 def test_metadata_values_field_by_field():
     """C38 and DECISIONS C-01/C-04: provisional internal profile, PROVISIONAL, OPEN, ingest, L3,
-    structured residual, no profiles, no evidence claim before a release; the limits with bases."""
+    structured residual, no profiles, evidence available from the release that attaches the
+    records; the limits with bases."""
     m = CesmoInternalAdapter.metadata
     assert (m.id, m.name, m.adapter_version) == (
         "cesmo_internal",
@@ -1242,7 +1243,8 @@ def test_metadata_values_field_by_field():
     assert m.claim_status is ClaimStatus.PROVISIONAL and m.license_class is LicenseClass.OPEN
     assert m.direction is Direction.INGEST and m.maturity.level is MaturityLevel.L3
     assert m.residual is Residual.STRUCTURED and m.profiles == [] and m.constituents == []
-    assert m.evidence.available is False and m.claim_external_system is None
+    # The 3.8.0 release commit (2026-10-25) flips the evidence declaration it landed with.
+    assert m.evidence.available is True and m.claim_external_system is None
     assert m.capabilities.unknown_fields is UnknownFields.NONE
     limits = m.capabilities.limits
     assert (limits.max_input_bytes, limits.max_depth, limits.max_objects) == (1_048_576, 64, 2_001)
@@ -1279,7 +1281,14 @@ def test_metadata_values_field_by_field():
         and "N01-N12" in text["stanag-4658-binding-blocked"]
     )
     assert "gateway, is not in this repository" in text["stanag-4658-binding-blocked"]
-    assert text["evidence-availability"].startswith("`evidence.available` is false")
+    assert text["evidence-availability"] == (
+        "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
+        "untracked and unpackaged, CI generates the set on every run, and the release pipeline "
+        "generates the records for every shipped adapter and attaches them to the GitHub "
+        "Release of the version it publishes. `evidence.available` is true because every "
+        "published distribution that carries this adapter has that Release, so its records "
+        "are retrievable by a third party; it says nothing about what the wheel contains"
+    )
 
 
 def test_the_builder_regenerates_the_set_exactly(tmp_path):

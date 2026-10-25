@@ -960,6 +960,28 @@ written here, for the reason the section's first paragraph gives. The tag that n
 be placed on it after `main` is fast-forwarded to it, and contains every commit named in this
 paragraph.
 
+**Re-qualification, 2026-10-25, the 3.8.0 release commit.** `v3.7.0` was placed on
+**`d0b7030`** and published (`PUBLICATION.md` entry 29). `main` then moved three times by
+fast-forward, through the 3.7.0 witness round **`823c409`**, the docs-deploy commit **`27a4f89`**
+and **`58571db`** (the `synapse-decode` rows of `barentswatch_hais` and `frost_observations` and the
+`--element-table` context file, the number untyped), which is the tip of `main` and of
+`origin/main` at the time of writing. This report also describes the CESMO internal-contract
+landing, landed on that tip as one commit on `soif/cesmo-internal` and none on `main`:
+**`b967f5d`** (the adapter module `cesmo_internal` with its contract module and fixture set, its
+`synapse-decode` row and the conformance suite's parked `residual`, the roster thirty-two to
+thirty-three, the number untyped), the tip of that branch at the time of writing. On it `CI` run
+40164892239 (a `push` event) read `success` on all 11 of its jobs — the suite, gates and manifests
+on Python 3.11, 3.12, 3.13 and 3.14; lint; the conformance sweep; evidence records, provenance and
+badges; gitleaks; pip-audit; `npm audit` over `docs/`; and the wheel gate — so no job was red, the
+tag-conditional set included, which reads green on a tree whose `PACKAGE_VERSION`, 3.7.0 there, a
+tag already names. `CodeQL` run 40164892156 succeeded on both languages, and the bridge's own
+workflow, `Gateway bridge package` run 40164892158, read `success` on Python 3.11, 3.12, 3.13 and
+3.14. `git merge-base --is-ancestor 58571db b967f5d` exits 0, so `main` can be fast-forwarded to
+it. The release commit itself sits on `soif/release-3.8.0`, a branch created from that tip; its
+subject begins `Release 3.8.0` and its hash is deliberately not written here, for the reason the
+section's first paragraph gives. The tag that names 3.8.0 is to be placed on it after `main` is
+fast-forwarded to it, and contains every commit named in this paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1405,6 +1427,49 @@ reading's unit comes from anywhere but the caller's two tables; that `synapse-de
 either adapter — it does not, and the rows are a follow-on; and the bridge on the package index —
 it reaches the Release as source in the tag. No §58 line and no blocker.
 
+**Re-qualification, 2026-10-25, the 3.8.0 release: the verdict is `ready for PR` (3.8.0), read
+on the arc section 18's paragraph of this date names.** The release commit types
+`PACKAGE_VERSION` **3.8.0** (MINOR, derived: `gates/bump_derivation.py --json` reported the arc
+since `v3.7.0` as `{"kind": "MINOR", "number": "3.8.0", "unruled": []}` on the landing commit
+before the number was typed), and the wire contract does not move: `SCHEMA_VERSION` stays
+**3.2.0**, because no model, enum or published CDM schema changed (`schemas --check` CURRENT at
+3.2.0; `git diff v3.7.0 -- schemas/` adds one file and changes none, the published copy of the new
+adapter's input contract, `schemas/cesmo_internal/cesmo-internal-1.0.schema.json`, which is not a
+CDM schema). `KNOWN_CONTRACTS`, the frozen contracts and the version matrix do not move.
+`ADAPTER_API_VERSION` 3.1.0, the manifest schema 2.1.0 and the evidence schema 2.0.0 stay where
+they were, and the bridge `synapse-link16-bridge` stays at 1.1.0, nothing under it having moved.
+The eight units the gate's table cannot decide — seven of `decode_host.py`'s (`HOSTED`, `Context`,
+`_parser`, `_FLAGS`, `_given` and `_context` MINOR, `BOUNDS_BASIS` PATCH) and `suite.py`'s
+`PARKED` (MINOR) — are ruled in `MIGRATIONS.md`'s 3.8.0 section, so on the release commit without
+its tag the gate reads its rulings under the pending heading the roll removed and refuses those
+eight units, and the bump tests join the tag-conditional set. What was verified on the release tree
+before it was committed: the full suite on Python 3.11, 3.12 and 3.14, read by subtracting the
+tag-conditional set test by test; `schemas --check` CURRENT at 3.2.0, `manifests --check` CURRENT
+for the thirty-three shipped adapters, the support-matrix, current-contracts and schema-page checks
+CURRENT; the pin-path and parks-table gates; ruff 0.16.9, the pin, on the package, the gates and the
+tests; `harness --update-golden` over all thirty-three adapters moving no golden; the harness over
+all thirty-three and the conformance sweep from a wheel built from the staged tree; the
+`cesmo_internal` builder's `--check`; and the wheel gate without `--mutation-check`, `13 checks, 0
+failed`, its slice among them, whose `resources` and `harness` readings are `33 adapters, 789 fixture files` and
+`33 adapters x 2 schema modes, 1512 fixture verdicts, 0 failed`. Read by the release round and not here: the same tree committed in a throwaway clone
+at a local annotated `v3.8.0`, the wheel gate's `--mutation-check`, the build job's package test,
+the docs build, CI and CodeQL on the pushed release commit, and everything about the upload. The
+evidence categories of the new adapter, as generated on this tree: `internal_fixture` PRESENT,
+`self_round_trip` NOT_APPLICABLE (it is ingest-only), `independent_expected`, `normative_schema`
+and `independent_endpoint` ABSENT. **What is judged, each with its source.** The maintainer's
+instruction of 2026-10-24 to implement the kit's Stage A, to decide its open points without asking
+and to run the release, and the rulings the run lead took under it on those points, listed by id
+in section 20 for the maintainer; the bounds the adapter declares with their basis. **What is NOT
+claimed:** STANAG 4658 or AEDP-13 interoperability of any kind — the kit declares that binding
+BLOCKED on its unresolved register N01 to N12, and no `stanag4658` class, manifest or claim exists;
+that an Exchange a gateway wrote translates — every fixture is synthetic, and the gateway, the EOB
+projector, the journal, egress and the normative plugin are not in this repository, so the
+contract's strict readings have met the kit's specification, schema and examples and not a
+producer's output; that the kit's reference validator agrees with the adapter everywhere — where it
+is looser than the kit's own specification the adapter follows the specification, as
+`FORMAT_COVERAGE.md` records; and the bridge on the package index — it reaches the Release as
+source in the tag. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1509,6 +1574,29 @@ for the two adapters, a follow-on with its own landing; and, outside this releas
 NORTH pipeline's own fit window, which drops a replay day's daily Frost events because their
 `observed_at` is the next midnight and the window is end-exclusive — a defect of the pipeline that
 offered the adapters, not of anything in this repository, recorded for its author. The
+machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-25, the 3.8.0 release: none.** On the arc section 18's paragraph of
+this date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every
+check read on the release tree is green outside the tag-conditional set, which a tag on the tree
+resolves, and nothing in section 15 or in the arc's own open items rises to a blocker. The open
+items are listed for the maintainer and not argued here: the licence class of the contract this
+release carries — SC CESMO Internal Exchange 1.0.0, the internal JSON contract of the
+SynapseCommand STANAG 4658 CESMO and EOB Engineering Kit 1.0 (Decent Cybersecurity, 4 October
+2026), the repository owner's own kit, recorded as `OPEN`, whose schema, five synthetic examples
+and expected projection the maintainer released into this repository on 2026-10-24 — beside the
+ones the 3.5.0, 3.6.0 and 3.7.0 releases listed; the rulings the run lead took on the kit's open
+points under the maintainer's instruction of 2026-10-24, C-01 to C-15 in the lead's record, each
+for the maintainer to confirm or reverse — C-01 the Stage A scope and the BLOCKED binding, C-02 the
+parked `residual`, C-03 the two depth bounds, C-04 the provisional binding, claim and licence, C-05
+the mapping values the kit leaves open, C-06 the contract's strictness over the kit's validator,
+C-07 the refusals that are both a `CesmoError` and the base class's, C-08 the kit's artefacts
+carried into the tree, C-09 the ordinal #34 (its roster figure corrected by the landing to
+thirty-two to thirty-three), C-10 the identities, C-11 the tests and the fuzz target, C-12 the
+acceptance ledger kept outside the tree, C-13 the hosting, C-14 the constructor and C-15 the
+recorded deviations from the kit's validator; the kit's own unresolved register N01 to N12, which
+blocks the STANAG 4658 binding and is the kit owner's to resolve, not this repository's; and an
+Exchange written by a real gateway, which nothing in this repository has read. The
 machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
