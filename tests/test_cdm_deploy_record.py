@@ -493,6 +493,9 @@ NUMBER_WORDS = {
     # Extended 2026-10-16 for the same reason, when the 3.4.0 docs deploy made the live count thirty
     # and the mutation guard asked for thirty-one. Five more again.
     31: "thirty-one", 32: "thirty-two", 33: "thirty-three", 34: "thirty-four", 35: "thirty-five",
+    # Extended 2026-10-25 for the same reason, when the 3.8.0 docs act recorded two uploads and
+    # made the live count thirty-five, so the mutation guard asked for thirty-six. Five more again.
+    36: "thirty-six", 37: "thirty-seven", 38: "thirty-eight", 39: "thirty-nine", 40: "forty",
 }
 
 
