@@ -1,0 +1,33 @@
+{
+  "directory": "stanag4559_workflow",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "basic.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; copied byte for byte, since a workflow record of the bundle states no position. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_source_time.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-missing-source-time.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 fd77a3b5bec9b64f13e634028551f4905479c73a253055ca04b25a567bbb0d87 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; copied byte for byte, since a workflow record of the bundle states no position. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_extension.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-unknown-extension.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 1d3f032340563c61cfa972ea36e4b8546350de6bfd74f9cc3ac31eb9cfd80271 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; copied byte for byte, since a workflow record of the bundle states no position. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -229,7 +229,18 @@ def test_the_deepest_shipped_document_is_inside_the_declared_bound_and_translate
 
 #: The adapters whose `to_cdm` decodes JSON text. Derived below, from the syntax tree, so a sixth
 #: would be swept without an edit here and a comment that mentions the call would not.
-JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "barentswatch_hais", "c2sim", "cesmo_internal", "coops_csv", "frost_observations", "geojson", "legion", "link16_gateway", "pntmap", "readsb_trace", "tak")
+JSON_ADAPTERS = ("adsb", "ais", "aixm511", "aixm52", "barentswatch_hais", "c2sim", "cesmo_internal", "coops_csv", "frost_observations", "geojson", "legion", "link16_gateway", "pntmap", "readsb_trace", "stanag4559_catalog", "stanag4559_stream", "stanag4559_workflow", "tak")
+
+#: Package modules OUTSIDE `synapse_cdm/adapters/` that an adapter reads its payload through, by
+#: name (2026-10-24, the STANAG 4559 translators): `isr_record` holds the SC ISR gateway record's
+#: transport rules and decoder, which that record's specification puts in shared code beside the
+#: adapters, and `stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` decode through
+#: it from their shared base. Named rather than derived from every import, because every adapter
+#: also imports framework modules that call `json.loads` for reasons of their own, and a rule that
+#: followed those would sweep the whole roster in. An adapter whose class's modules import one of
+#: these is a JSON adapter; the test below also holds each named module to decoding JSON itself,
+#: so the list cannot quietly name a module that has stopped doing so.
+SHARED_READERS = ("isr_record",)
 
 
 def _decodes_json(tree: ast.Module) -> bool:
@@ -248,6 +259,23 @@ def _decodes_json(tree: ast.Module) -> bool:
     return False
 
 
+def _imports_a_shared_reader(tree: ast.Module) -> bool:
+    """`from synapse_cdm import isr_record`, `import synapse_cdm.isr_record` or
+    `from synapse_cdm.isr_record import ...`, for a module named in `SHARED_READERS`."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "synapse_cdm":
+            if any(alias.name in SHARED_READERS for alias in node.names):
+                return True
+        if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith(
+                "synapse_cdm.") and node.module.split(".", 1)[1] in SHARED_READERS:
+            return True
+        if isinstance(node, ast.Import) and any(
+                alias.name.startswith("synapse_cdm.") and alias.name.split(".", 1)[1]
+                in SHARED_READERS for alias in node.names):
+            return True
+    return False
+
+
 def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
     """Derived from the tree by parsing it, not by grepping it: an adapter that starts decoding
     JSON must not slip past this module, and a docstring that names the call must not pull one in.
@@ -257,13 +285,21 @@ def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
     module that decodes JSON, or a class that inherits from one, is in the set."""
     root = pathlib.Path(synapse_cdm.__file__).parent / "adapters"
     by_module = {p.stem: _decodes_json(ast.parse(p.read_text())) for p in root.glob("*.py")}
+    # A shared reader outside `adapters/` decodes JSON itself, and an adapter module that imports
+    # one decodes through it (`SHARED_READERS`, 2026-10-24).
+    for reader in SHARED_READERS:
+        path = root.parent / f"{reader}.py"
+        assert _decodes_json(ast.parse(path.read_text())), (
+            f"{reader} is named a shared JSON reader and no longer calls the decoder")
+    through_shared = {p.stem for p in root.glob("*.py")
+                      if _imports_a_shared_reader(ast.parse(p.read_text()))}
     decoding = set()
     for name, cls in discover().items():
         if not is_shipped(cls):                               # test doubles register too
             continue
         modules = {c.__module__.rsplit(".", 1)[1] for c in cls.__mro__
                    if c.__module__.startswith("synapse_cdm.adapters.")}
-        if any(by_module.get(m, False) for m in modules):
+        if any(by_module.get(m, False) or m in through_shared for m in modules):
             decoding.add(name)
     assert sorted(decoding) == list(JSON_ADAPTERS), sorted(decoding)
     assert {m for m, d in by_module.items() if d} == {"adsb", "ais", "aixm511", "barentswatch_hais", "c2sim", "cesmo_internal", "cesmo_internal_codec", "coops_csv", "frost_observations", "geojson", "legion", "link16_gateway", "pntmap", "readsb_trace", "tak"}, \

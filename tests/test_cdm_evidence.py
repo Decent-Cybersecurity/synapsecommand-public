@@ -236,12 +236,15 @@ def test_the_shipped_fixture_counts_are_unchanged_by_the_new_exclusion():
     parsed twins at the top level) it is 724. With `barentswatch_hais` and `frost_observations`
     (2026-10-22: five track responses and five Frost responses, each beside its parsed twin, at
     the top level) it is 744. With `cesmo_internal` (2026-10-24: the kit's five Exchanges, six
-    written from them and one octet twin, at the top level) it is 756.
+    written from them and one octet twin, at the top level) it is 756. With the three STANAG 4559
+    translators (2026-10-24: three SC ISR gateway records at the top level of each of their three
+    directories, parsed JSON with no octet twin; their octet-only refused payloads are under
+    `malformed/`) it is 765.
     """
     total = sum(len(harness_paths) for harness_paths in
                 (evidence.harness_selects(ROOT / name) for name in sorted(
                     p.name for p in ROOT.iterdir() if p.is_dir())))
-    assert total == 756, f"the harness now selects {total} top-level fixtures, not 756"
+    assert total == 765, f"the harness now selects {total} top-level fixtures, not 765"
 
 
 # ================================================================= §34: the six categories
@@ -545,8 +548,8 @@ def test_evidence_available_is_true_on_every_shipped_adapter():
     `true`, every adapter it does not carry declares `false`, and the roster is the registry's.
     """
     declared = {name: cls.metadata.evidence.available for name, cls in shipped().items()}
-    assert len(declared) == len(shipped()) == 33, \
-        f"the shipped roster is {sorted(declared)}, not the thirty-three"
+    assert len(declared) == len(shipped()) == 36, \
+        f"the shipped roster is {sorted(declared)}, not the thirty-six"
     released = _released_adapter_modules()
     if released is None:
         pytest.skip("no git or no release tag here, so which adapters a Release has carried "
@@ -784,7 +787,7 @@ def test_the_generator_names_itself_and_the_package_version(record):
 def test_generating_the_whole_roster_writes_one_record_per_adapter(tmp_path):
     assert evidence.main(["generate", "--all", "--out", str(tmp_path)]) == 0
     written = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("evidence.json"))
-    assert len(written) == len(shipped()) == 33
+    assert len(written) == len(shipped()) == 36
     for name, cls in shipped().items():
         assert f"{name}/{cls.metadata.adapter_version}/evidence.json" in written
 

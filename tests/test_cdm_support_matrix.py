@@ -171,7 +171,7 @@ def test_the_page_the_manifest_the_listing_and_the_class_agree_on_the_binding(na
     assert line.rstrip().endswith(declared), f"{name}: --list-adapters ends its row with {line!r}"
 
 
-def test_stanag4676_link16_gateway_and_cesmo_internal_are_provisional_and_every_other_shipped_adapter_is_the_standard_encoding():
+def test_stanag4676_link16_gateway_cesmo_internal_and_the_stanag4559_translators_are_provisional_and_every_other_shipped_adapter_is_the_standard_encoding():
     """Derived, not typed: an adapter whose limitations say "provisional" declares the provisional
     binding and the reverse — the model enforces one direction, this test the other.
 
@@ -184,7 +184,13 @@ def test_stanag4676_link16_gateway_and_cesmo_internal_are_provisional_and_every_
     Internal Exchange is an internal JSON contract this repository's owner defines in its CESMO
     and EOB engineering kit, bound to no normative document, so it declares the same binding for
     the same reason, which the legend's 2026-10-10 sentence already states; the set grew by that
-    one name."""
+    one name.
+
+    RENAMED AND WIDENED AGAIN 2026-10-24 (the STANAG 4559 translators, DECISIONS L-04 of that arc):
+    `stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` read the SC ISR gateway
+    record, this project's internal record contract and not a NATO encoding, so they declare the
+    provisional binding and claim PROVISIONAL. The pinned set grew by those three names and by
+    nothing else."""
     from synapse_cdm.manifest import limitation_text
     bindings = {name: cls.metadata.binding for name, cls in adapter.shipped().items()}
     says_provisional = {name for name, cls in adapter.shipped().items()
@@ -193,7 +199,8 @@ def test_stanag4676_link16_gateway_and_cesmo_internal_are_provisional_and_every_
     declares_provisional = {name for name, b in bindings.items()
                             if b is WireBinding.PROVISIONAL_INTERNAL_PROFILE}
     assert says_provisional == declares_provisional == {
-        "cesmo_internal", "link16_gateway", "stanag4676"}
+        "cesmo_internal", "link16_gateway", "stanag4559_catalog", "stanag4559_stream",
+        "stanag4559_workflow", "stanag4676"}
     assert not [name for name, b in bindings.items() if b is WireBinding.NORMATIVE_VERIFIED], (
         "an adapter declares normative-verified; tests/test_cdm_manifests.py holds that to an "
         "exercise report and this page's status paragraph would have to move")

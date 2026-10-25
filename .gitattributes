@@ -173,3 +173,19 @@ packages/cdm/synapse_cdm/fixtures/frost_observations/** -text
 # `*.bin` above. Added 2026-10-24 in the change that lands the adapter.
 packages/cdm/synapse_cdm/fixtures/cesmo_internal/** -text
 schemas/cesmo_internal/** -text
+
+# SC ISR gateway records (the three `stanag4559_*` adapters): `.isr` holds the octet-only refused
+# payloads of their `malformed/` directories — a duplicate key, a NaN literal, a lone surrogate
+# escape, a byte-order mark and a document one container too deep — which exist only as octets,
+# because the harness's loader parses a `.json` file before an adapter sees it. Text, listed for
+# the reason every entry above gives: `spec/build_fixtures.py --check` compares each file byte for
+# byte, and a rewritten line end would hand the adapter other octets. The three fixture
+# directories are held out of line-ending conversion as a whole, and so are the specification
+# bundle's examples under `tests/stanag4559_bundle/`, which are carried verbatim and checked
+# against the digests the bundle records before anything is derived from them. Added 2026-10-24
+# in the change that lands the three adapters.
+*.isr -text -diff
+packages/cdm/synapse_cdm/fixtures/stanag4559_catalog/** -text
+packages/cdm/synapse_cdm/fixtures/stanag4559_stream/** -text
+packages/cdm/synapse_cdm/fixtures/stanag4559_workflow/** -text
+tests/stanag4559_bundle/** -text

@@ -1,0 +1,92 @@
+{
+  "body": {
+    "associations": [],
+    "coverage": {
+      "coordinates": [
+        [
+          [
+            14,
+            50
+          ],
+          [
+            15,
+            50
+          ],
+          [
+            15,
+            51
+          ],
+          [
+            14,
+            51
+          ],
+          [
+            14,
+            50
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "created_at": "2026-10-04T11:00:00.000Z",
+    "description": null,
+    "files": [],
+    "graph": {
+      "edges": [],
+      "nodes": []
+    },
+    "identity_scope": "ORIGIN_AUTHORITY",
+    "modified_at": "2026-10-04T12:00:00.000Z",
+    "product_type": "SYNTHETIC_REPORT",
+    "source_time_lexical": null,
+    "temporal_end": "2026-10-04T11:00:00.000Z",
+    "temporal_start": "2026-10-04T10:00:00.000Z",
+    "title": "Synthetic ISR test product"
+  },
+  "captured_at": "2026-10-04T12:00:01.000Z",
+  "change": "UPSERT",
+  "connector_id": "test-library-a",
+  "family": "catalog",
+  "kind": "catalog.record",
+  "library_id": "test-library-a",
+  "origin": {
+    "authority": "test-origin-a",
+    "object_id": "catalog-missing-source-time"
+  },
+  "raw_ref": {
+    "media_type": "application/json",
+    "representation": "decoded",
+    "sha256": "836c7a3946a830c38ce368fe48b844f94eb4d3081ef65a7e9fa3ea6e74954660",
+    "size_bytes": "116",
+    "uri": "fixture://raw/catalog-missing-source-time.json"
+  },
+  "revision": {
+    "ordinal": 1,
+    "semantic_sha256": "ddaa0e35cfa72a95e7dbd859b779d3010726d5c48e802702552b94320474a961",
+    "token": "1"
+  },
+  "schema": "urn:synapsecommand:isr:record:1",
+  "security": {
+    "content": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    },
+    "metadata": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    }
+  },
+  "security_domain": "test-domain",
+  "source_time": null,
+  "tenant_id": "test-tenant"
+}

@@ -198,7 +198,9 @@ and to the release and arc branches.
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
 directions to agree. At `v3.8.0` `python -m synapse_cdm.harness --list-adapters` prints `33 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+registered`. The rows marked **post-3.8.0** landed in the tree after that tag, `stanag4559_catalog`,
+`stanag4559_stream` and `stanag4559_workflow` on 2026-10-25, and are in the tree since 3.8.0, in no
+release. Declared maturity and claim status are read from `manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -235,6 +237,9 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `barentswatch_hais` | ingest | 10 | L3 | VERIFIED |
 | `frost_observations` | ingest | 10 | L3 | VERIFIED |
 | `cesmo_internal` | ingest | 12 | L3 | PROVISIONAL (new in the 3.8.0 arc) |
+| `stanag4559_catalog` | ingest | 3 | L3 | PROVISIONAL (**post-3.8.0**, in no release) |
+| `stanag4559_stream` | ingest | 3 | L3 | PROVISIONAL (**post-3.8.0**, in no release) |
+| `stanag4559_workflow` | ingest | 3 | L3 | PROVISIONAL (**post-3.8.0**, in no release) |
 
 **756 fixture verdicts, 0 failed** across the thirty-three, against the published 3.2.0 schemas —
 the 744 that 3.7.0 shipped, every golden byte for byte as it was, plus 12 from the new set. The two

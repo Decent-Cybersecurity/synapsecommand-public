@@ -1,0 +1,93 @@
+{
+  "body": {
+    "associations": [],
+    "coverage": {
+      "coordinates": [
+        [
+          [
+            21,
+            57
+          ],
+          [
+            22,
+            57
+          ],
+          [
+            22,
+            58
+          ],
+          [
+            21,
+            58
+          ],
+          [
+            21,
+            57
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "created_at": "2026-10-04T11:00:00.000Z",
+    "description": null,
+    "files": [],
+    "graph": {
+      "edges": [],
+      "nodes": []
+    },
+    "identity_scope": "ORIGIN_AUTHORITY",
+    "modified_at": "2026-10-04T12:00:00.000Z",
+    "product_type": "SYNTHETIC_REPORT",
+    "source_time_lexical": null,
+    "temporal_end": "2026-10-04T11:00:00.000Z",
+    "temporal_start": "2026-10-04T10:00:00.000Z",
+    "title": "Synthetic ISR test product"
+  },
+  "captured_at": "2026-10-04T12:00:01.000Z",
+  "change": "UPSERT",
+  "connector_id": "test-library-a",
+  "family": "catalog",
+  "kind": "catalog.record",
+  "library_id": "test-library-a",
+  "origin": {
+    "authority": "test-origin-a",
+    "object_id": "catalog-basic"
+  },
+  "raw_ref": {
+    "media_type": "application/json",
+    "representation": "decoded",
+    "sha256": "6b44ab5bb12c5eeb7c3c2fff1b2f8a813b184267f0a02af152b52b73f553f417",
+    "size_bytes": "88",
+    "uri": "fixture://raw/catalog-basic.json"
+  },
+  "revision": {
+    "ordinal": 1,
+    "semantic_sha256": "fa599b1c81963aa8aa64ab812a87be1dd1f987f7d6cc9a9f75c7b96353f133c1",
+    "token": "1"
+  },
+  "schema": "urn:synapsecommand:isr:record:1",
+  "security": {
+    "content": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    },
+    "metadata": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    }
+  },
+  "security_domain": "test-domain",
+  "source_time": "2026-10-04T12:00:00.000Z",
+  "tenant_id": "test-tenant",
+  "unexpected": 1
+}

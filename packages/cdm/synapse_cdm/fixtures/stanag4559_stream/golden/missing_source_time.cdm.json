@@ -1,0 +1,171 @@
+[
+  {
+    "event_id": "b2e641b0-c7eb-5694-8bd2-2ce2618064f2",
+    "event_type": "STATUS_CHANGE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.0,
+            57.0
+          ],
+          [
+            22.0,
+            57.0
+          ],
+          [
+            22.0,
+            58.0
+          ],
+          [
+            21.0,
+            58.0
+          ],
+          [
+            21.0,
+            57.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:01.000Z",
+    "oes": null,
+    "payload": {
+      "kind": "stream.record",
+      "record": {
+        "body": {
+          "archived": false,
+          "controller_ref": "controller://test-1",
+          "coverage": {
+            "coordinates": [
+              [
+                [
+                  21,
+                  57
+                ],
+                [
+                  22,
+                  57
+                ],
+                [
+                  22,
+                  58
+                ],
+                [
+                  21,
+                  58
+                ],
+                [
+                  21,
+                  57
+                ]
+              ]
+            ],
+            "type": "Polygon"
+          },
+          "files": [],
+          "graph": {
+            "edges": [],
+            "nodes": []
+          },
+          "identity_scope": "ORIGIN_AUTHORITY",
+          "live": true,
+          "replay_capabilities": {
+            "delivery": [
+              "UNICAST"
+            ]
+          },
+          "source_time_lexical": null,
+          "stream_id": "stream-001",
+          "stream_type": "VIDEO",
+          "temporal_end": null,
+          "temporal_start": "2026-10-04T11:00:00.000Z"
+        },
+        "captured_at": "2026-10-04T12:00:01.000Z",
+        "change": "UPSERT",
+        "connector_id": "test-library-a",
+        "family": "stream",
+        "kind": "stream.record",
+        "library_id": "test-library-a",
+        "origin": {
+          "authority": "test-origin-a",
+          "object_id": "stream-missing-source-time"
+        },
+        "raw_ref": {
+          "media_type": "application/json",
+          "representation": "decoded",
+          "sha256": "a16e4c35cf7ad4e09d136a1820d055e338bbec3a4c5948af3545f6ad57422443",
+          "size_bytes": "114",
+          "uri": "fixture://raw/stream-missing-source-time.json"
+        },
+        "revision": {
+          "ordinal": 1,
+          "semantic_sha256": "7bab24daf19e0495cbf475711a89be823612e82d46e7b2aca1785a9a76771282",
+          "token": "1"
+        },
+        "schema": "urn:synapsecommand:isr:record:1",
+        "security": {
+          "content": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          },
+          "metadata": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          }
+        },
+        "security_domain": "test-domain",
+        "source_time": null,
+        "tenant_id": "test-tenant"
+      },
+      "record_id": "dba3a001-0626-5e55-9047-88c807f09ba0",
+      "revision_key": "WyJXeUowWlhOMExYUmxibUZ1ZENJc0luUmxjM1F0Wkc5dFlXbHVJaXdpZEdWemRDMXZjbWxuYVc0dFlTSXNJbk4wY21WaGJTSXNJbk4wY21WaGJTMXRhWE56YVc1bkxYTnZkWEpqWlMxMGFXMWxJbDAiLCIxIiwiN2JhYjI0ZGFmMTllMDQ5NWNiZjQ3NTcxMWE4OWJlODIzNjEyZTgyZDQ2ZTdiMmFjYTE3ODVhOWE3Njc3MTI4MiJd",
+      "time_basis": "GATEWAY_RECEIPT"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": null,
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4559_stream",
+      "adapter_version": "1.0.0",
+      "format_name": "SC ISR gateway record",
+      "format_version": "1.0.0",
+      "observed_at": null,
+      "original_id": "stream-missing-source-time",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "a16e4c35cf7ad4e09d136a1820d055e338bbec3a4c5948af3545f6ad57422443"
+      },
+      "synthetic": true,
+      "system": "NSILI",
+      "transformations": [
+        "ISR-ID-001"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "WyJ0ZXN0LXRlbmFudCIsInRlc3QtZG9tYWluIiwidGVzdC1vcmlnaW4tYSIsInN0cmVhbSIsInN0cmVhbS1taXNzaW5nLXNvdXJjZS10aW1lIl0",
+        "system": "NSILI"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

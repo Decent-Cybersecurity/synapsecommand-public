@@ -1,0 +1,181 @@
+[
+  {
+    "event_id": "247988e6-ec12-54a9-b379-f622f4d82417",
+    "event_type": "STATUS_CHANGE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            14.0,
+            50.0
+          ],
+          [
+            15.0,
+            50.0
+          ],
+          [
+            15.0,
+            51.0
+          ],
+          [
+            14.0,
+            51.0
+          ],
+          [
+            14.0,
+            50.0
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "kind": "catalog.record",
+      "record": {
+        "body": {
+          "associations": [],
+          "coverage": {
+            "coordinates": [
+              [
+                [
+                  14,
+                  50
+                ],
+                [
+                  15,
+                  50
+                ],
+                [
+                  15,
+                  51
+                ],
+                [
+                  14,
+                  51
+                ],
+                [
+                  14,
+                  50
+                ]
+              ]
+            ],
+            "type": "Polygon"
+          },
+          "created_at": "2026-10-04T11:00:00.000Z",
+          "description": null,
+          "files": [],
+          "graph": {
+            "edges": [],
+            "nodes": [
+              {
+                "attributes": [
+                  {
+                    "lexical": "18446744073709551615",
+                    "name": "urn:synthetic:vendor:largeCounter",
+                    "nil": false,
+                    "occurrence": 0,
+                    "source_type": "unsignedLong",
+                    "value": "18446744073709551615"
+                  }
+                ],
+                "entity": "urn:synthetic:vendor:Extension",
+                "id": "n1"
+              }
+            ]
+          },
+          "identity_scope": "ORIGIN_AUTHORITY",
+          "modified_at": "2026-10-04T12:00:00.000Z",
+          "product_type": "SYNTHETIC_REPORT",
+          "source_time_lexical": null,
+          "temporal_end": "2026-10-04T11:00:00.000Z",
+          "temporal_start": "2026-10-04T10:00:00.000Z",
+          "title": "Synthetic ISR test product"
+        },
+        "captured_at": "2026-10-04T12:00:01.000Z",
+        "change": "UPSERT",
+        "connector_id": "test-library-a",
+        "family": "catalog",
+        "kind": "catalog.record",
+        "library_id": "test-library-a",
+        "origin": {
+          "authority": "test-origin-a",
+          "object_id": "catalog-unknown-extension"
+        },
+        "raw_ref": {
+          "media_type": "application/json",
+          "representation": "decoded",
+          "sha256": "45036806c3d12b1dc97403508341d5b9e5abdc618a22375c0772a0e0936ecf6f",
+          "size_bytes": "112",
+          "uri": "fixture://raw/catalog-unknown-extension.json"
+        },
+        "revision": {
+          "ordinal": 1,
+          "semantic_sha256": "221c314c8a40db5a808e438dc2b5b30eade8ef737861fcd127c8c03509e592cd",
+          "token": "1"
+        },
+        "schema": "urn:synapsecommand:isr:record:1",
+        "security": {
+          "content": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          },
+          "metadata": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          }
+        },
+        "security_domain": "test-domain",
+        "source_time": "2026-10-04T12:00:00.000Z",
+        "tenant_id": "test-tenant"
+      },
+      "record_id": "3dec8982-c535-5a9b-a3c1-8373bfeed8a9",
+      "revision_key": "WyJXeUowWlhOMExYUmxibUZ1ZENJc0luUmxjM1F0Wkc5dFlXbHVJaXdpZEdWemRDMXZjbWxuYVc0dFlTSXNJbU5oZEdGc2IyY2lMQ0pqWVhSaGJHOW5MWFZ1YTI1dmQyNHRaWGgwWlc1emFXOXVJbDAiLCIxIiwiMjIxYzMxNGM4YTQwZGI1YTgwOGU0MzhkYzJiNWIzMGVhZGU4ZWY3Mzc4NjFmY2QxMjdjOGMwMzUwOWU1OTJjZCJd",
+      "time_basis": "SOURCE"
+    },
+    "quality": null,
+    "received_at": "2026-10-04T12:00:02.000Z",
+    "related_entities": [],
+    "residual": null,
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4559_catalog",
+      "adapter_version": "1.0.0",
+      "format_name": "SC ISR gateway record",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "catalog-unknown-extension",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "45036806c3d12b1dc97403508341d5b9e5abdc618a22375c0772a0e0936ecf6f"
+      },
+      "synthetic": true,
+      "system": "NSILI",
+      "transformations": [
+        "ISR-ID-001"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "WyJ0ZXN0LXRlbmFudCIsInRlc3QtZG9tYWluIiwidGVzdC1vcmlnaW4tYSIsImNhdGFsb2ciLCJjYXRhbG9nLXVua25vd24tZXh0ZW5zaW9uIl0",
+        "system": "NSILI"
+      }
+    ],
+    "status": null
+  }
+]

@@ -1,7 +1,7 @@
 # Contributing
 
 This repository holds the SynapseCommand **Canonical Data Model** — the contract layer that
-thirty-three integration adapters translate into. A contract is the wrong place for a surprise, so the
+thirty-six integration adapters translate into. A contract is the wrong place for a surprise, so the
 rules below are short and they are enforced by something that fails a build rather than by
 review alone.
 
@@ -230,6 +230,11 @@ copied wrongly the first time it is inconvenient.
   rectangle, and a grid fixture states an extent inside it whatever projection the format uses.
 - **Aircraft addresses keep the ADS-B rule**: a readsb trace fixture uses the `0029xx` block that
   `fixtures/adsb/README.md` argues for and its test pins.
+- **SC ISR gateway records keep their specification bundle's placeholders.** A `stanag4559_*`
+  fixture states its tenant, security domain, connector, library and origin authority as the
+  bundle's `test-…` identifiers and every security label as `TEST_ONLY` under the scheme
+  `SYNTHETIC_TEST`, so no fixture names a real deployment, library or marking; a footprint lies
+  inside the rectangle above, the bundle's own having been moved into it (added 2026-10-24).
 
 Three further readings behind the identifier forms are conventions taken here on 2026-10-15 and
 not verified against the allocating registers in this repository: that `ZZZZ` is the indicator for

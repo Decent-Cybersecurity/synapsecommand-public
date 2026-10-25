@@ -1,0 +1,141 @@
+{
+  "directory": "stanag4559_workflow/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "byte_order_mark.isr",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: the octets begin with a UTF-8 byte-order mark. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "depth_over_cap.isr",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-unknown-extension.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 1d3f032340563c61cfa972ea36e4b8546350de6bfd74f9cc3ac31eb9cfd80271 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: one graph attribute value nests the document one container past the adapter's declared max_depth. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_key.isr",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: the top-level key tenant_id stated twice. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "graph_edge_to_no_node.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-unknown-extension.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 1d3f032340563c61cfa972ea36e4b8546350de6bfd74f9cc3ac31eb9cfd80271 as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: a graph edge to a node the graph does not hold. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "impossible_date.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: source_time on 30 February. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "kind_of_another_family.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: kind names another family's record kind. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_library_scope_foreign_authority.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: identity_scope LOCAL_LIBRARY beside an origin authority that is not the library. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "lone_surrogate.isr",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: origin.object_id ends in a lone surrogate escape. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_captured_at.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: the required captured_at removed. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nan_value.isr",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: revision.ordinal written as the NaN literal. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "polygon_latitude_out_of_range.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: a polygon vertex at latitude 91, outside the contract's range. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ring_self_intersects.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: a polygon whose ring crosses itself. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "semantic_digest_upper_case.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: revision.semantic_sha256 in upper-case hex, which the contract's pattern refuses. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "size_bytes_not_an_integer.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: raw_ref.size_bytes is not an integer lexeme. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_top_level_key.json",
+      "operational_data": false,
+      "origin": "Synthetic SC ISR gateway record (urn:synapsecommand:isr:record:1) of the workflow family, written for the stanag4559_workflow adapter by fixtures/stanag4559_workflow/spec/build_fixtures.py from workflow-basic.record.json of the SynapseCommand STANAG 4559 specification bundle (SC ISR 4559 001 revision 1.0, examples/, SHA-256 9677432fbd0ba53f95fb55b9f04defff0f45d4fef31e8026d7f6e22ae7dbcd6e as the bundle's SHA256SUMS.json records it), carried verbatim under tests/stanag4559_bundle/; refused variant: a top-level key the contract does not define. Every identifier is a test placeholder and nothing is recorded data.",
+      "personal_data": false,
+      "standard_ref": "stanag4559_workflow/spec/stanag4559_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

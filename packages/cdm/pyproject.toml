@@ -43,7 +43,7 @@ keywords = [
 ]
 classifiers = [
     # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
-    # exactly one voice: thirty-three adapters shipped and harness-verified, the Adapter contract
+    # exactly one voice: thirty-six adapters shipped and harness-verified, the Adapter contract
     # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
     # tree does not have.
     "Development Status :: 5 - Production/Stable",
@@ -272,7 +272,7 @@ include = ["synapse_cdm*"]
 # any file that is neither shipped nor in a stated do-not-ship class.
 #
 # SHIPS
-#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, thirty-three adapters.
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, thirty-six adapters.
 #   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
 #                                      partner writing an adapter reads; MIGRATIONS is also what
 #                                      tells them what `schema_version` will and will not do.
@@ -334,6 +334,11 @@ include = ["synapse_cdm*"]
 #                                      checkout and no network, and be read as DATA. A recursive
 #                                      glob for the same reason the fixtures one is recursive: the
 #                                      second artefact must not depend on somebody remembering.
+#                                      It did not: `registry/isr/isr-record.schema.json`, the
+#                                      internal ISR record contract the three `stanag4559_*`
+#                                      translators validate against (byte for byte the STANAG 4559
+#                                      specification bundle's), joined on 2026-10-24 and ships
+#                                      through this glob with no edit here but this note.
 #
 # THE TWO LARGE DOCUMENTS SHIP WHOLE, AND THEIR SIZE IS RECORDED HERE RATHER THAN BOUNDED. Noted
 # 2026-09-16 by the repo-hygiene audit, which found the fact stated nowhere in the tree. The

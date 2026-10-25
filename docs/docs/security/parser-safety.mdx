@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the thirty-three shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the thirty-six shipped adapters.
 ---
 
 # Parser safety
@@ -10,7 +10,7 @@ description: The five bounds and where they live, the rules an adapter MUST foll
 Every adapter in this repository is handed bytes somebody else produced. This page is the policy
 those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
 KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
-parser's default behaviour is dangerous, and it is enforced today on the thirty-three adapters that
+parser's default behaviour is dangerous, and it is enforced today on the thirty-six adapters that
 ship — since 2026-09-20/21 that roster includes the Part 2 formats it was written for: AIXM 5.1.1
 and 5.2 and C2SIM (XML), GeoPackage (a SQLite database) and GeoJSON.
 
@@ -39,7 +39,7 @@ hardened against a figure the report does not print.
 > `enforced_at` point, and the `test` that proves the refusal.
 
 > A bound **MUST NOT** be described as the format's normative maximum unless the specification
-> actually says so. Twenty-eight of the thirty-three adapters declare an implementation cap and say so in
+> actually says so. Thirty-one of the thirty-six adapters declare an implementation cap and say so in
 > the enum and in the prose; the five ASTERIX categories declare the normative `LEN` field.
 
 Which bound runs before which allocation — size before the depth scan, the depth scan before
@@ -51,7 +51,7 @@ worker and the hosting application each add on top is the subject of
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all thirty-three**. `max_depth` is declared and
+`max_input_bytes` is declared and enforced on **all thirty-six**. `max_depth` is declared and
 enforced on the **five XML readers** — `tak` and `stanag4676` since 2026-09-16, and `c2sim`,
 `aixm511` and `aixm52` since 2026-09-21, the last three inside expat's start-element handler
 through `secure_xml` — on the **five that decode JSON** — `adsb`, `ais`, `legion` and `pntmap`
@@ -75,7 +75,12 @@ base class at 16 on the parsed twin; a PNG's octets have no nesting to measure),
 text of the octets and on a parsed document, before either module decodes anything), and on
 `cesmo_internal` (since 2026-10-24: the base class's bound at 64, run by the adapter itself on the
 octets' text and on a dict, a dict's value count first, and inside the codec the internal
-contract's own depth 16, refused as `E_LIMIT`).
+contract's own depth 16, refused as `E_LIMIT`), and on the three STANAG 4559 translators
+`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` (since 2026-10-24: the base
+class at 96 on the JSON text of the octets and on a parsed record, before `synapse_cdm.isr_record`
+decodes anything; 96 is eight times the deepest JSON document shipped beside their fixtures,
+rounded up, because a record's graph attribute `value` and a stream's `replay_capabilities` are
+open JSON).
 `max_objects` is declared and enforced on the five of the adapter expansion (`geojson`,
 `geopackage`, `c2sim`, `aixm511`, `aixm52`), on `tacticalapi` (since 2026-10-06) and on `nexrad2`
 (since 2026-10-15: 33, Table XVII-A's 32 elevation numbers and the site, held by refusing an
@@ -85,7 +90,7 @@ and on `iem_n0q` (since 2026-10-17: one Event a PNG), and on `frost_observations
 50 000 Events and Entities a response, counted after every observation is classified and before any
 object is built), and on `cesmo_internal` (since 2026-10-24: 2,001, the kit's worst case of 1,000
 upserts and the snapshot Event, held by the schema's 1,000 records before any object is built), each before the objects it bounds are built, and declared absent with a reason on
-the other twenty-one.
+the other twenty-four.
 `max_decompressed_bytes` is declared and enforced on `readsb_trace` (since 2026-10-15: 64 MiB,
 held while zlib inflates the trace file's one gzip member, the first octet past it refused before
 it is kept) and on `nexrad2` (since 2026-10-15: 402,979,072 octets a volume, held while each LDM
@@ -98,8 +103,8 @@ decoded size compared with the bound before an octet is decompressed and LZW, De
 each held to exactly the block's size) and on `iem_n0q` (since 2026-10-17: 80 MiB, above the 65,885,400
 octets of rows the product's 12200 x 5400 grid inflates to; IHDR is held to that grid before an octet
 is inflated, and the image data is inflated into a buffer of exactly its rows, the first octet past
-them refused) and declared absent with a reason on the other twenty-eight.
-`max_parse_seconds` is declared absent with a reason on all thirty-three, and `max_depth` on the other nine; none of those absences is
+them refused) and declared absent with a reason on the other thirty-one.
+`max_parse_seconds` is declared absent with a reason on all thirty-six, and `max_depth` on the other nine; none of those absences is
 enforced, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
@@ -153,7 +158,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 > same number — `stanag4676`'s included, although that reader never descends past what the class
 > model names.
 
-### The thirty declarations
+### The thirty-six declarations
 
 | adapter | `max_input_bytes` | kind | where the figure comes from |
 |---|---|---|---|
@@ -190,6 +195,9 @@ nested one thousand deep, so check **H** records the refusal on every run.
 | `barentswatch_hais` | 16 777 216 | implementation cap | JSON, one BarentsWatch Historic AIS track response; the API documentation states no maximum response size, and the largest file observed for one MMSI over one UTC day held a few thousand elements, about 1 MB (`barentswatch_hais.MAX_INPUT_BYTES`, 2026-10-22) |
 | `frost_observations` | 16 777 216 | implementation cap | JSON, one Frost ObservationResponse; no Frost document states a maximum response size, and the largest batch response observed is about 3.5 MB for about 2,900 data items (`frost_observations.MAX_INPUT_BYTES`, 2026-10-22) |
 | `cesmo_internal` | 1 048 576 | implementation cap | JSON, one SC CESMO Internal Exchange; the CESMO and EOB engineering kit's section 19 caps a single internal input at 1,048,576 bytes before the JSON parse and calls its caps implementation caps, not CESMO normative maxima (`cesmo_internal_codec.MAX_INPUT_BYTES`, 2026-10-24) |
+| `stanag4559_catalog` | 16 777 216 | implementation cap | JSON, one SC ISR gateway record; the record contract states no maximum, and SC ISR 4559 001 section 20's `max_metadata_bytes` (16 MiB a response or record) is a PROJECT operating default of the gateway, taken here for one record (`stanag4559_common.MAX_INPUT_BYTES`, 2026-10-24) |
+| `stanag4559_stream` | 16 777 216 | implementation cap | as `stanag4559_catalog` (2026-10-24) |
+| `stanag4559_workflow` | 16 777 216 | implementation cap | as `stanag4559_catalog` (2026-10-24) |
 
 ## 2. XML
 
@@ -432,7 +440,7 @@ Linux-only and is refused where it cannot be enforced — `docs/docs/security/de
 no adapter declared a bound to check; it is now in the required set for every adapter in the
 sweep, which is what would notice a bound being quietly removed from a manifest.
 
-## 7. The audit: every parser call in the thirty-three
+## 7. The audit: every parser call in the thirty-six
 
 Taken with
 `grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.
@@ -467,6 +475,7 @@ Line numbers are as at round P5 and move; the grep is the durable form.
 | `frost_observations` | `json.loads` (`frost_observations.py`, `parse_document`, with `object_pairs_hook` refusing a duplicate key and `parse_constant` refusing `NaN`/`Infinity`) | the UTF-8 octets of one Frost `ObservationResponse`, or the parsed dict | **yes** — 16 MiB and `max_depth` 64 in the base class before the module runs, on the octets' text and on a dict's containers; then a byte-order mark, invalid UTF-8, a duplicate key, a non-finite literal and a lone surrogate refused, every item and observation held to its grammar before any object is built, and `max_objects` 50 000 counted after classification and before construction (2026-10-22) |
 | `cesmo_internal_codec` | `json.loads` (`cesmo_internal_codec.py`, `_parse_octets`, with `object_pairs_hook` refusing a duplicate key, `parse_constant` refusing `NaN`/`Infinity` and `parse_int`/`parse_float` refusing a number binary64 does not hold) | the UTF-8 octets of one SC CESMO Internal Exchange | **yes** — 1 MiB and `max_depth` 64 run by the adapter's own `to_cdm` with the base class's functions before the codec runs, and again inside the codec for a direct caller; then a byte-order mark and invalid UTF-8 refused; after the decode 100 000 JSON values, depth 16 and 4 096 code points a string |
 | `cesmo_internal` | `json.loads` (`cesmo_internal.py`, `detect`) | the octets or text `detect` is handed | **yes** — 1 MiB and 64 containers, read off the characters, before the decoder; any refusal of the decoder is `False`, never a raise |
+| `stanag4559_catalog`, `stanag4559_stream`, `stanag4559_workflow` | `json.loads` (`isr_record.py`, `parse`, with `object_pairs_hook` refusing a duplicate key, `parse_constant` refusing `NaN`/`Infinity`, `parse_float` refusing an overflow and `parse_int` refusing more than sixteen digits before `int()` reads them), `jsonschema` through `schemas.EcmaPatternValidator` (`isr_record.py`, `_check_schema`) | the UTF-8 octets of one SC ISR gateway record, or the parsed dict | **yes** — 16 MiB and `max_depth` 96 in the base class before the module runs, on the octets' text and on a dict's containers (and the same 96 in `isr_record.parse`, off the characters before `json.loads`, and in `isr_record.validate`, for a caller with no base class in front of them: `depth-over-cap`); then a byte-order mark, invalid UTF-8, a duplicate key, a non-finite number, an integer past 2^53-1, a trailing document and a lone surrogate refused, every value held to plain JSON types, the packaged record contract, and section 28's second pass, whose one super-linear check (polygon topology) is held to 2 048 positions a geometry before it runs; every refusal names a path and never a value (2026-10-24) |
 | the rest of the roster | none | — | the ASTERIX, GMTI and KLV families decode octets with their own codecs and call no general-purpose parser |
 | all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** — a reading from before 2026-09-20; `sqlite3` now hits in `geopackage` and its row is above |
 

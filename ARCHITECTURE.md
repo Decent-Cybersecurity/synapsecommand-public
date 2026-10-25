@@ -362,7 +362,7 @@ free-form dictionary; the source-identifying container of §5 is P3's addition.
 
 **LANDED 2026-09-08, round P3.** `models.Residual{namespace, data}` and
 `lossless.residual_block(adapter, raw, consumed)` exist. What has NOT changed is §5's Part 1
-stance: the fourteen of the thirty-three adapters shipped here that predate Part 2 keep the
+stance: the fourteen of the thirty-six adapters shipped here that predate Part 2 keep the
 `attributes` / `payload` parking and keep declaring `residual: legacy`, so no golden moved for
 residual placement. The container is there for Part 2 — the five of the adapter expansion
 (`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, 2026-09-20/21) are the first to declare
@@ -488,13 +488,30 @@ standard's vocabulary it belongs to. A consumer MUST NOT promote a residual valu
 field, and a later adapter MUST NOT read another adapter's residual as an input.
 
 **The Part 1 stance for the adapters already shipped, ruled and stated rather than left to a later
-round to discover.** Fourteen of the thirty-three adapters in this repository park their leftovers today
+round to discover.** Fourteen of the thirty-six adapters in this repository park their leftovers today
 in `Entity.attributes` / `Event.payload` via `lossless.residual()`, under `source_extras`. They KEEP
 that placement through Part 1 and declare it in their manifests as `residual: legacy`. Every Part 2
-adapter uses the structured container. The goldens are therefore NOT rewritten for residual
+adapter uses the structured container, with the one dated exception the next paragraph states. The
+goldens are therefore NOT rewritten for residual
 placement in Part 1, on the specification's own instruction not to introduce a breaking change for
 stylistic cleanliness: the information is already preserved, the placement is what changes, and
 paying for that with every golden file and every downstream consumer buys nothing a reader can use.
+
+**THE STANAG 4559 TRANSLATORS, 2026-10-24: three more translators declare `residual: legacy`, by
+ruling, and the legacy census is seventeen.** `stanag4559_catalog` (#35), `stanag4559_stream`
+(#36) and `stanag4559_workflow` (#37) carry the WHOLE source record, verbatim, under
+`Event.payload.record`, leave `Event.residual` null, and declare `residual: legacy`. That is the
+specification's own form and not a convenience: SC ISR 4559 001 section 9 puts "kind, record_id,
+revision_key, time_basis and complete record" in the payload, and the nine expected Events of its
+bundle — the oracle of its acceptance case CDM-001, written by the bundle's authors and compared
+byte for byte by the three translators' tests — carry `"residual": null`. A structured container
+would hold a second copy of a record the payload already holds whole and would change the oracle's
+bytes. Nothing of theirs is parked by `lossless.residual()` or under `source_extras`: each declares
+the record a residual subtree in its `MAPPINGS`, and the ledger binds every leaf to
+`payload.record` with no LOST leaf. So `tests/test_cdm_lossless.py`'s legacy census reads
+seventeen — the fourteen of Part 1 and these three — while its structured roster is unchanged, and
+the exception is these three translators' and no other adapter's: a later adapter that wants it needs a ruling
+of its own.
 
 **Added 2026-09-08, round P3.** The four policies this section and §4 state normatively — geometry
 and CRS, units, time, and residual — are also written for a reader rather than for an implementer

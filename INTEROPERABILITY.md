@@ -51,6 +51,18 @@ their absence.
 semantics. This repository translates formats; it does not compete with them, and a translation is
 not an authority over the thing translated.
 
+**Not STANAG 4559 wire interoperability.** The three ingest-only translators `stanag4559_catalog`,
+`stanag4559_stream` and `stanag4559_workflow` (since 2026-10-24) read this project's own internal
+ISR gateway record, `urn:synapsecommand:isr:record:1` — SC ISR 4559 001 section 6 says of it that
+it "is not a representation to send to a NATO peer" — and turn one record into one `STATUS_CHANGE`
+Event. No NATO STANAG 4559 wire interoperability is claimed: no AEDP-17, AEDP-18 or AEDP-19 wire
+message is read or written, no NATO binding package (IDL, WSDL, XSD, metadata dictionary) is held,
+the stateful gateway that would speak to a library peer is not part of this distribution and its
+wire profiles C17, S18 and W19 are unimplemented, and no peer has been exercised. Their binding is
+`provisional-internal-profile` and their claim PROVISIONAL, which is what Step 1's declaration
+exists to say; the capability report is each translator's module docstring and its
+`FORMAT_COVERAGE.md` section.
+
 **Not, in its foundation work, a new adapter portfolio.** The foundation part of this framework
 deliberately implements no new source format. It does not add:
 

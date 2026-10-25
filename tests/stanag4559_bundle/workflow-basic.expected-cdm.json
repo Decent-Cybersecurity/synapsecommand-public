@@ -1,0 +1,123 @@
+[
+  {
+    "event_id": "7e2bb539-a761-566a-a04d-189df59ac132",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "kind": "workflow.record",
+      "record": {
+        "body": {
+          "artifact": {
+            "graph": {
+              "edges": [],
+              "nodes": []
+            },
+            "raw_ref": {
+              "media_type": "application/json",
+              "representation": "decoded",
+              "sha256": "3747f6bd0521759c8900605859d2d84caa0c2217015ff08af6f6731a5f8767b3",
+              "size_bytes": "90",
+              "uri": "fixture://raw/workflow-basic.json"
+            }
+          },
+          "entity_type": "SYNTHETIC_REQUIREMENT",
+          "geometry": null,
+          "identity_scope": "ORIGIN_AUTHORITY",
+          "native_id": "requirement-001",
+          "native_revision": "1",
+          "native_state": "TEST_DRAFT",
+          "owner_ref": null,
+          "references": [],
+          "service": "requirement",
+          "source_changed_at": "2026-10-04T12:00:00.000Z",
+          "source_time_lexical": null,
+          "title": "Synthetic requirement"
+        },
+        "captured_at": "2026-10-04T12:00:01.000Z",
+        "change": "UPSERT",
+        "connector_id": "test-library-a",
+        "family": "workflow",
+        "kind": "workflow.record",
+        "library_id": "test-library-a",
+        "origin": {
+          "authority": "test-origin-a",
+          "object_id": "workflow-basic"
+        },
+        "raw_ref": {
+          "media_type": "application/json",
+          "representation": "decoded",
+          "sha256": "3747f6bd0521759c8900605859d2d84caa0c2217015ff08af6f6731a5f8767b3",
+          "size_bytes": "90",
+          "uri": "fixture://raw/workflow-basic.json"
+        },
+        "revision": {
+          "ordinal": 1,
+          "semantic_sha256": "667eb441c37ce39903db6629ac50cb1c8c6b7962022732955252dff44d458f08",
+          "token": "1"
+        },
+        "schema": "urn:synapsecommand:isr:record:1",
+        "security": {
+          "content": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          },
+          "metadata": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          }
+        },
+        "security_domain": "test-domain",
+        "source_time": "2026-10-04T12:00:00.000Z",
+        "tenant_id": "test-tenant"
+      },
+      "record_id": "8c70506b-8561-58ae-86b8-3de2947a10db",
+      "revision_key": "WyJXeUowWlhOMExYUmxibUZ1ZENJc0luUmxjM1F0Wkc5dFlXbHVJaXdpZEdWemRDMXZjbWxuYVc0dFlTSXNJbmR2Y210bWJHOTNJaXdpZDI5eWEyWnNiM2N0WW1GemFXTWlYUSIsIjEiLCI2NjdlYjQ0MWMzN2NlMzk5MDNkYjY2MjlhYzUwY2IxYzhjNmI3OTYyMDIyNzMyOTU1MjUyZGZmNDRkNDU4ZjA4Il0",
+      "time_basis": "SOURCE"
+    },
+    "quality": null,
+    "received_at": "2026-10-04T12:00:02.000Z",
+    "related_entities": [],
+    "residual": null,
+    "schema_version": "3.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4559_workflow",
+      "adapter_version": "1.0.0",
+      "format_name": "SC ISR gateway record",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "workflow-basic",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "3747f6bd0521759c8900605859d2d84caa0c2217015ff08af6f6731a5f8767b3"
+      },
+      "synthetic": true,
+      "system": "NSILI",
+      "transformations": [
+        "ISR-ID-001"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "WyJ0ZXN0LXRlbmFudCIsInRlc3QtZG9tYWluIiwidGVzdC1vcmlnaW4tYSIsIndvcmtmbG93Iiwid29ya2Zsb3ctYmFzaWMiXQ",
+        "system": "NSILI"
+      }
+    ],
+    "status": null
+  }
+]

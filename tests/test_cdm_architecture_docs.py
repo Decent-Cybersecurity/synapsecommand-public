@@ -59,10 +59,12 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
                 # Added 2026-10-22 (the HIGH NORTH adapters, `barentswatch_hais` and
                 # `frost_observations`): thirty-one and thirty-two.
                 # Added 2026-10-24 (the `cesmo_internal` landing, adapter #34): thirty-three.
+                # Added 2026-10-24 (the STANAG 4559 translators, `stanag4559_catalog`,
+                # `stanag4559_stream` and `stanag4559_workflow`): thirty-four to thirty-six.
                 "twenty-one": 21, "twenty-two": 22, "twenty-three": 23, "twenty-four": 24,
                 "twenty-five": 25, "twenty-six": 26, "twenty-seven": 27, "twenty-eight": 28,
                 "twenty-nine": 29, "thirty": 30, "thirty-one": 31, "thirty-two": 32,
-                "thirty-three": 33}
+                "thirty-three": 33, "thirty-four": 34, "thirty-five": 35, "thirty-six": 36}
 _NUMBER_WORD = "|".join(sorted(NUMBER_WORDS, key=len, reverse=True))
 
 

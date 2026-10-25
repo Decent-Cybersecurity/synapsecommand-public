@@ -1,0 +1,111 @@
+{
+  "body": {
+    "archived": false,
+    "controller_ref": "controller://test-1",
+    "coverage": {
+      "coordinates": [
+        [
+          [
+            21,
+            57
+          ],
+          [
+            22,
+            57
+          ],
+          [
+            22,
+            58
+          ],
+          [
+            21,
+            58
+          ],
+          [
+            21,
+            57
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "files": [],
+    "graph": {
+      "edges": [],
+      "nodes": [
+        {
+          "attributes": [
+            {
+              "lexical": "18446744073709551615",
+              "name": "urn:synthetic:vendor:largeCounter",
+              "nil": false,
+              "occurrence": 0,
+              "source_type": "unsignedLong",
+              "value": "18446744073709551615"
+            }
+          ],
+          "entity": "urn:synthetic:vendor:Extension",
+          "id": "n1"
+        }
+      ]
+    },
+    "identity_scope": "ORIGIN_AUTHORITY",
+    "live": true,
+    "replay_capabilities": {
+      "delivery": [
+        "UNICAST"
+      ]
+    },
+    "source_time_lexical": null,
+    "stream_id": "stream-001",
+    "stream_type": "VIDEO",
+    "temporal_end": null,
+    "temporal_start": "2026-10-04T11:00:00.000Z"
+  },
+  "captured_at": "2026-10-04T12:00:01.000Z",
+  "change": "UPSERT",
+  "connector_id": "test-library-a",
+  "family": "stream",
+  "kind": "stream.record",
+  "library_id": "test-library-a",
+  "origin": {
+    "authority": "test-origin-a",
+    "object_id": "stream-unknown-extension"
+  },
+  "raw_ref": {
+    "media_type": "application/json",
+    "representation": "decoded",
+    "sha256": "399ba3b3948e38b686a7d6e14a67ff1cf1e0686ec0a46c6a06c2eded04c90d96",
+    "size_bytes": "110",
+    "uri": "fixture://raw/stream-unknown-extension.json"
+  },
+  "revision": {
+    "ordinal": 1,
+    "semantic_sha256": "90f1c2431b0d766ccb919a7a94b14f50721d3e8ef97b6be573d17cce46b69bbd",
+    "token": "1"
+  },
+  "schema": "urn:synapsecommand:isr:record:1",
+  "security": {
+    "content": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    },
+    "metadata": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    }
+  },
+  "security_domain": "test-domain",
+  "source_time": "2026-10-04T12:00:00.000Z",
+  "tenant_id": "test-tenant"
+}

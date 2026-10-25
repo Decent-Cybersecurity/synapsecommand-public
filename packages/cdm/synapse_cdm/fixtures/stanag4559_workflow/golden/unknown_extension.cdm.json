@@ -1,0 +1,139 @@
+[
+  {
+    "event_id": "5cfda2cc-a932-5779-92a1-fb4f00149971",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-10-04T12:00:00.000Z",
+    "oes": null,
+    "payload": {
+      "kind": "workflow.record",
+      "record": {
+        "body": {
+          "artifact": {
+            "graph": {
+              "edges": [],
+              "nodes": [
+                {
+                  "attributes": [
+                    {
+                      "lexical": "18446744073709551615",
+                      "name": "urn:synthetic:vendor:largeCounter",
+                      "nil": false,
+                      "occurrence": 0,
+                      "source_type": "unsignedLong",
+                      "value": "18446744073709551615"
+                    }
+                  ],
+                  "entity": "urn:synthetic:vendor:Extension",
+                  "id": "n1"
+                }
+              ]
+            },
+            "raw_ref": {
+              "media_type": "application/json",
+              "representation": "decoded",
+              "sha256": "f272a9ff1e78472246f1350859c0f4d8d52433fc53cf10a5423886c83de4b470",
+              "size_bytes": "114",
+              "uri": "fixture://raw/workflow-unknown-extension.json"
+            }
+          },
+          "entity_type": "SYNTHETIC_REQUIREMENT",
+          "geometry": null,
+          "identity_scope": "ORIGIN_AUTHORITY",
+          "native_id": "requirement-001",
+          "native_revision": "1",
+          "native_state": "TEST_DRAFT",
+          "owner_ref": null,
+          "references": [],
+          "service": "requirement",
+          "source_changed_at": "2026-10-04T12:00:00.000Z",
+          "source_time_lexical": null,
+          "title": "Synthetic requirement"
+        },
+        "captured_at": "2026-10-04T12:00:01.000Z",
+        "change": "UPSERT",
+        "connector_id": "test-library-a",
+        "family": "workflow",
+        "kind": "workflow.record",
+        "library_id": "test-library-a",
+        "origin": {
+          "authority": "test-origin-a",
+          "object_id": "workflow-unknown-extension"
+        },
+        "raw_ref": {
+          "media_type": "application/json",
+          "representation": "decoded",
+          "sha256": "f272a9ff1e78472246f1350859c0f4d8d52433fc53cf10a5423886c83de4b470",
+          "size_bytes": "114",
+          "uri": "fixture://raw/workflow-unknown-extension.json"
+        },
+        "revision": {
+          "ordinal": 1,
+          "semantic_sha256": "2bbc478e59eda0d479b2eff8b7fc05a901a6605274047480e0e71f5e1162411a",
+          "token": "1"
+        },
+        "schema": "urn:synapsecommand:isr:record:1",
+        "security": {
+          "content": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          },
+          "metadata": {
+            "caveats": [],
+            "classification": "TEST_ONLY",
+            "marking_state": "DECLARED",
+            "releasability": [
+              "TEST_TEAM"
+            ],
+            "scheme": "SYNTHETIC_TEST"
+          }
+        },
+        "security_domain": "test-domain",
+        "source_time": "2026-10-04T12:00:00.000Z",
+        "tenant_id": "test-tenant"
+      },
+      "record_id": "9596150c-49e7-59c2-b661-7728113789da",
+      "revision_key": "WyJXeUowWlhOMExYUmxibUZ1ZENJc0luUmxjM1F0Wkc5dFlXbHVJaXdpZEdWemRDMXZjbWxuYVc0dFlTSXNJbmR2Y210bWJHOTNJaXdpZDI5eWEyWnNiM2N0ZFc1cmJtOTNiaTFsZUhSbGJuTnBiMjRpWFEiLCIxIiwiMmJiYzQ3OGU1OWVkYTBkNDc5YjJlZmY4YjdmYzA1YTkwMWE2NjA1Mjc0MDQ3NDgwZTBlNzFmNWUxMTYyNDExYSJd",
+      "time_basis": "SOURCE"
+    },
+    "quality": null,
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [],
+    "residual": null,
+    "schema_version": "3.2.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4559_workflow",
+      "adapter_version": "1.0.0",
+      "format_name": "SC ISR gateway record",
+      "format_version": "1.0.0",
+      "observed_at": "2026-10-04T12:00:00.000Z",
+      "original_id": "workflow-unknown-extension",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "f272a9ff1e78472246f1350859c0f4d8d52433fc53cf10a5423886c83de4b470"
+      },
+      "synthetic": true,
+      "system": "NSILI",
+      "transformations": [
+        "ISR-ID-001"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "WyJ0ZXN0LXRlbmFudCIsInRlc3QtZG9tYWluIiwidGVzdC1vcmlnaW4tYSIsIndvcmtmbG93Iiwid29ya2Zsb3ctdW5rbm93bi1leHRlbnNpb24iXQ",
+        "system": "NSILI"
+      }
+    ],
+    "status": null,
+    "validity": null
+  }
+]

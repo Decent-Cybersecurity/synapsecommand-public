@@ -1,0 +1,96 @@
+﻿{
+  "body": {
+    "archived": false,
+    "controller_ref": "controller://test-1",
+    "coverage": {
+      "coordinates": [
+        [
+          [
+            21,
+            57
+          ],
+          [
+            22,
+            57
+          ],
+          [
+            22,
+            58
+          ],
+          [
+            21,
+            58
+          ],
+          [
+            21,
+            57
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "files": [],
+    "graph": {
+      "edges": [],
+      "nodes": []
+    },
+    "identity_scope": "ORIGIN_AUTHORITY",
+    "live": true,
+    "replay_capabilities": {
+      "delivery": [
+        "UNICAST"
+      ]
+    },
+    "source_time_lexical": null,
+    "stream_id": "stream-001",
+    "stream_type": "VIDEO",
+    "temporal_end": null,
+    "temporal_start": "2026-10-04T11:00:00.000Z"
+  },
+  "captured_at": "2026-10-04T12:00:01.000Z",
+  "change": "UPSERT",
+  "connector_id": "test-library-a",
+  "family": "stream",
+  "kind": "stream.record",
+  "library_id": "test-library-a",
+  "origin": {
+    "authority": "test-origin-a",
+    "object_id": "stream-basic"
+  },
+  "raw_ref": {
+    "media_type": "application/json",
+    "representation": "decoded",
+    "sha256": "833e9c67f3016064b1357d9997f27eeb2c5d752e7573d8e324ba79eccc149ec5",
+    "size_bytes": "86",
+    "uri": "fixture://raw/stream-basic.json"
+  },
+  "revision": {
+    "ordinal": 1,
+    "semantic_sha256": "927ce05c01de2defd0133b2b0703bf775a609e3b9beb46d6031b3a67b8d5488b",
+    "token": "1"
+  },
+  "schema": "urn:synapsecommand:isr:record:1",
+  "security": {
+    "content": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    },
+    "metadata": {
+      "caveats": [],
+      "classification": "TEST_ONLY",
+      "marking_state": "DECLARED",
+      "releasability": [
+        "TEST_TEAM"
+      ],
+      "scheme": "SYNTHETIC_TEST"
+    }
+  },
+  "security_domain": "test-domain",
+  "source_time": "2026-10-04T12:00:00.000Z",
+  "tenant_id": "test-tenant"
+}
