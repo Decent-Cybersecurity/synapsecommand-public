@@ -1,0 +1,46 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "stanag4545/malformed",
+  "fixtures": [
+    {
+      "file": "bad_count.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence. Refused by the adapter: E_DIGITS."
+    },
+    {
+      "file": "bad_file_length.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence. Refused by the adapter: E_LENGTH."
+    },
+    {
+      "file": "trailing.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence. Refused by the adapter: E_LENGTH."
+    },
+    {
+      "file": "truncated.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence. Refused by the adapter: E_LENGTH."
+    },
+    {
+      "file": "unsupported_stype.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence. Refused by the adapter: E_PROFILE."
+    }
+  ]
+}

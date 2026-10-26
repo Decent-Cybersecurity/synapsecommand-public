@@ -1,6 +1,6 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Thirty-six integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Thirty-seven integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
@@ -16,11 +16,12 @@ data API responses, EPA AirNow hourly observation files, GRIB2 (one WMO FM 92 GR
 message), Cloud Optimized GeoTIFF (one GeoTIFF's header and first block, or a VRT index), IEM
 NEXRAD N0Q composites (one 12200 x 5400 PNG), BarentsWatch Historic AIS track JSON (one vessel's
 track response), MET Norway Frost observation responses, SC CESMO Internal Exchanges (the
-internal contract of the CESMO and EOB engineering kit, not STANAG 4658), and the SC ISR gateway
+internal contract of the CESMO and EOB engineering kit, not STANAG 4658), the SC ISR gateway
 record of the STANAG 4559 translation layer in its catalogue, stream and workflow families (this
-project's internal record contract, not a NATO wire message). Without a canonical model in the
-middle, thirty-six adapters means six hundred and thirty translations and thirty-six private
-notions of "a contact".
+project's internal record contract, not a NATO wire message), and STANAG 4545 NSIF/NITF still
+imagery (one SC4545-CORE-1 container). Without a canonical model in the middle, thirty-seven
+adapters means six hundred and sixty-six translations and thirty-seven private notions of "a
+contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -64,6 +65,7 @@ With one, an adapter is a thin translator and nothing else.
 | [`stanag4559_catalog`](adapters/stanag4559_catalog.py) 1.0.0 | ingest | SC ISR gateway record `urn:synapsecommand:isr:record:1`, catalogue family (this project's internal record contract of the STANAG 4559 translation layer, SC ISR 4559 001 rev 1.0; not a NATO wire message, binding `provisional-internal-profile`) — one record (16 MiB at most), as its octets or its parsed dict → exactly one `STATUS_CHANGE` `Event` carrying the record verbatim under `payload.record` beside `kind`, `record_id`, `revision_key` and `time_basis`; `observed_at` the source time, or the gateway's receipt time with `time_basis` GATEWAY_RECEIPT; the coverage polygon as `geometry`, no Entity; identity `ISR-ID-001` (`isr_record`): base64url keys over RFC 8785 arrays and `ids.derive`; transport rules on octets, the packaged contract and section 28's second pass refuse before any output |
 | [`stanag4559_stream`](adapters/stanag4559_stream.py) 1.0.0 | ingest | the same record contract, stream family — one stream record → one `STATUS_CHANGE` `Event` under the same rule; stream metadata only, `replay_capabilities` carried verbatim, no replay started |
 | [`stanag4559_workflow`](adapters/stanag4559_workflow.py) 1.0.0 | ingest | the same record contract, workflow family — one workflow record → one `STATUS_CHANGE` `Event` under the same rule; `geometry` only for a `gaoi` record, `native_state` and the typed artifact carried verbatim, no workflow mutation |
+| [`stanag4545`](adapters/stanag4545.py) 1.0.0 | ingest | STANAG 4545 NSIF/NITF still imagery under the SC4545-CORE-1 engineering profile — one NSIF 01.01, NSIF 01.00 or NITF 02.10 container (16 MiB at most), as its octets or its parsed twin → one `OVERLAY_OBJECT` product `Entity` carrying the container inventory, every security label with the package's assessment of them and the whole input once in a structured residual, then one `ANNOTATION` footprint `PlanObject` per image whose IGEOLO G or D corners give one, in image order; on its own tested container parser ([`nsif_codec`](adapters/nsif_codec.py)) and corner reader ([`nsif_geometry`](adapters/nsif_geometry.py)). **A provisional internal profile**: no standards text is held; compressed and masked images are inventoried and never decoded, and labels are assessed and never enforced |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -366,7 +368,7 @@ structurally, and the SKIP text read "the adapter must ship its own round-trip t
 an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
 a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
 wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
-clone. Every adapter that declares an egress direction was affected — fifteen of the thirty-six
+clone. Every adapter that declares an egress direction was affected — fifteen of the thirty-seven
 shipped adapters, every one of which now declares its tolerance: the eleven that existed on
 2026-09-16 each emitted something the check could not parse as JSON, and the four that shipped since
 (`geojson`, `c2sim`, `dis7` and, on 2026-10-10, `link16_gateway`) declared theirs from the start. The second
@@ -411,9 +413,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's thirty-six adapters it is 1260 against 630.
+   contradiction. At today's thirty-seven adapters it is 1332 against 666.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that thirty-six adapters cannot grow thirty-six
+   `docs/docs/cdm/entity.mdx` both carry "so that thirty-seven adapters cannot grow thirty-seven
    slightly different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

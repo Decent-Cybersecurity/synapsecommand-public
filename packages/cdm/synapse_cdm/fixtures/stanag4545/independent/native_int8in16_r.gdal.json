@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_int8in16_r.ntf",
+ "bytes": 855,
+ "sha256": "6cb34863eeea0b956933b18e1d7d66a6fe91ffdcdf74ea0bc111084de985eee7",
+ "gdal_data_type": "UInt16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  0,
+  255,
+  256,
+  511,
+  65280,
+  128
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_pjust_l_12in16_dirty.ntf",
+ "bytes": 855,
+ "sha256": "b4fe7c4d66c239b7bac39f399da4cf7b4fb2c0942e77420c121f1164c07d3b7d",
+ "gdal_data_type": "UInt16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  0,
+  16,
+  32757,
+  32768,
+  65504,
+  65520
+ ]
+}

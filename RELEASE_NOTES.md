@@ -87,7 +87,8 @@ README says, and no workflow runs its tests.
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas`, run over the roster with no
 `--fixtures` on this tree, every verdict read from the run; declared maturity and claim status
 are read from `manifests/<name>.json`. `python -m synapse_cdm.harness --list-adapters` prints `36
-adapters registered`.
+adapters registered`. The row marked **post-3.9.1** landed in the tree after the `v3.9.1` tag,
+`stanag4545` on 2026-10-25, and is in no release.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -127,6 +128,7 @@ adapters registered`.
 | `stanag4559_catalog` | ingest | 3 | L3 | PROVISIONAL |
 | `stanag4559_stream` | ingest | 3 | L3 | PROVISIONAL |
 | `stanag4559_workflow` | ingest | 3 | L3 | PROVISIONAL |
+| `stanag4545` | ingest | 22 | L3 | PROVISIONAL (**post-3.9.1**, in no release) |
 
 **765 fixture verdicts, 0 failed** across the thirty-six, against the published 3.2.0
 schemas, every golden byte for byte as 3.9.0 shipped it. The wheel gate's `resources` and

@@ -1,0 +1,382 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "stanag4545/vectors",
+  "fixtures": [
+    {
+      "file": "native_edge16_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge16_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge16_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge16_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge8_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge8_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge8_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_edge8_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_geo_d_northup.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_geo_d_southup.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_geo_g_northup.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_geo_g_southup.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_int5in8_r_dirty.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_int8in16_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_lit_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_lit_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_lit_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_lit_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_lut3.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nbands9_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nbands9_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nbands9_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nbands9_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nppb_zero.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_nppbh_zero_only.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_one_block_padded.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_pjust_l_12in16.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_pjust_l_12in16_dirty.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_pjust_l_5in8.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_pjust_r_12in16_dirty.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si12_l.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si12_l_dirty.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si12_r_mixed.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si12_r_signext.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si12_r_zerofill.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si16.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si1in8_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si5in8_l_dirty.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_si8.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands10_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands10_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands10_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands10_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands256_b.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands256_p.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands256_r.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    },
+    {
+      "file": "native_xbands256_s.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Authored for this repository by spec/build_fixtures.py; a native NC vector for the decoder and the independent reading; not an official NSIF test file."
+    }
+  ]
+}

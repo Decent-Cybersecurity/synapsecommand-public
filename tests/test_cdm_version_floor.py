@@ -253,7 +253,9 @@ ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO
          REPO / "packages" / "link16_bridge" / "synapse_link16_bridge",
          REPO / "packages" / "link16_bridge" / "tests",
          REPO / "packages" / "hla" / "src" / "synapse_hla",
-         REPO / "packages" / "hla" / "tests")
+         REPO / "packages" / "hla" / "tests",
+         REPO / "packages" / "imagery" / "synapse_imagery",
+         REPO / "packages" / "imagery" / "tests")
 
 
 def discover() -> list[pathlib.Path]:
@@ -296,6 +298,12 @@ def discover() -> list[pathlib.Path]:
     and its tests run on the interpreters it declares. The two directories are named rather than
     `packages/hla` itself, for the same reason as the Link 16 bridge's: a virtualenv or a build
     directory created in the distribution root must not put the walk and the size check out of step.
+
+    `packages/imagery/synapse_imagery` and `packages/imagery/tests` joined the same way on
+    2026-10-25, with the separate `synapse-imagery` distribution, the host of the `stanag4545`
+    adapter: the closure test failed on the change that put its first module there. IN SCOPE for
+    the same reason as the bridge: that distribution declares the same 3.11 floor in its own
+    `pyproject.toml` and its tests run on the interpreters it declares.
     """
     out = []
     for root in ROOTS:

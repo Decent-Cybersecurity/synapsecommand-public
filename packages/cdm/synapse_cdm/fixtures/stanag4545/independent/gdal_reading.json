@@ -1,0 +1,26 @@
+{
+ "gdal_version": "GDAL 3.13.3 \"Iowa City\", released 2026/08/13",
+ "commands": [
+  [
+   "gdalinfo",
+   "--version"
+  ],
+  [
+   "gdalinfo",
+   "-json",
+   "<file>"
+  ],
+  [
+   "gdallocationinfo",
+   "-valonly",
+   "<file>"
+  ]
+ ],
+ "file_paths": "relative to fixtures/stanag4545/, the directory every command is run in",
+ "gdallocationinfo_input": "every `column row` pair of the image on stdin, row by row",
+ "environment": {
+  "GDAL_PAM_ENABLED": "NO"
+ },
+ "date": "2026-10-25",
+ "statement": "storage integers and corner numbers only; synthetic vectors; unpinned Homebrew build; not a header, label, negative-vector or seam oracle"
+}

@@ -189,3 +189,15 @@ packages/cdm/synapse_cdm/fixtures/stanag4559_catalog/** -text
 packages/cdm/synapse_cdm/fixtures/stanag4559_stream/** -text
 packages/cdm/synapse_cdm/fixtures/stanag4559_workflow/** -text
 tests/stanag4559_bundle/** -text
+
+# NSIF/NITF still-imagery containers (the STANAG 4545 imagery adapter, `stanag4545`): one file a
+# container (`.ntf`), raw binary with NUL octets, marked explicitly for the reason every entry
+# above gives. Added 2026-10-24 with the parser and the kit's vectors. `spec/build_fixtures.py
+# --check` compares every vector and parsed twin byte for byte and the tests hold every vector to
+# the kit's digest, so the whole directory is held out of line-ending conversion: a checkout that
+# rewrote one byte would fail them.
+*.ntf -text -diff
+packages/cdm/synapse_cdm/fixtures/stanag4545/** -text
+# The same adapter's filled acceptance table (added 2026-10-25): a CSV that people review, so its
+# changes are shown as text; the `*.csv -text -diff` row above was written for binary-like data.
+docs/stanag4545-acceptance.csv diff

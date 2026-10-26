@@ -1,0 +1,182 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "stanag4545",
+  "fixtures": [
+    {
+      "file": "geo_dms.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "geo_dms.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of geo_dms.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "image_and_text.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "image_and_text.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of image_and_text.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mode_B.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mode_B.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mode_B.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mode_P.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mode_P.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mode_P.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mode_R.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mode_R.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mode_R.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mode_S.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mode_S.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mode_S.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mono_nitf210.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mono_nitf210.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mono_nitf210.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mono_nsif100.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mono_nsif100.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mono_nsif100.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "mono_nsif101.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "mono_nsif101.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of mono_nsif101.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "uint16.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "uint16.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of uint16.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    },
+    {
+      "file": "unknown_duplicate_tre.ntf",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Synthetic SC4545-CORE-1 engineering vector from the SC-4545-ENG-1.0 handoff kit's generator, contributed by the maintainer under Apache-2.0 and tracked byte-identical to the kit; `spec/build_fixtures.py` reproduces it byte for byte. It is not an official NSIF test file and is claimed as no independent evidence."
+    },
+    {
+      "file": "unknown_duplicate_tre.parsed.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The parsed twin of unknown_duplicate_tre.ntf: the closed SC4545-CORE-1 envelope {profile, wire_b64} holding the same octets as canonical base64, written by `spec/build_fixtures.py`; a wire envelope, not a decoded form."
+    }
+  ]
+}

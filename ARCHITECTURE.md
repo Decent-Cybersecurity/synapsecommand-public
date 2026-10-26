@@ -362,7 +362,7 @@ free-form dictionary; the source-identifying container of §5 is P3's addition.
 
 **LANDED 2026-09-08, round P3.** `models.Residual{namespace, data}` and
 `lossless.residual_block(adapter, raw, consumed)` exist. What has NOT changed is §5's Part 1
-stance: the fourteen of the thirty-six adapters shipped here that predate Part 2 keep the
+stance: the fourteen of the thirty-seven adapters shipped here that predate Part 2 keep the
 `attributes` / `payload` parking and keep declaring `residual: legacy`, so no golden moved for
 residual placement. The container is there for Part 2 — the five of the adapter expansion
 (`geojson`, `geopackage`, `c2sim`, `aixm511`, `aixm52`, 2026-09-20/21) are the first to declare
@@ -475,6 +475,16 @@ subclass and registers nothing, so it is outside the adapter registry and outsid
 test above, and it is judged by its own tests under `packages/hla/tests` (the handoff's R03: not a
 registered CDM adapter). It observes and never controls a simulation.
 
+**The imagery host lives outside the registry too (2026-10-25).** The `stanag4545` adapter
+inventories and translates one NSIF/NITF container and decides nothing: staging, the SHA-256 of the
+staged octets, the policy decision, quarantine, the immutable original, derivatives, replay and the
+experimental NC8 writer are host acts. They live in the separate distribution `synapse-imagery`
+(`packages/imagery/`), which calls the adapter and is not an `Adapter` subclass, so it is outside
+the adapter registry and outside the boundary test above, and is judged by its own tests. Its
+policy code is an interface, a test fake, a default gate that admits only material the adapter
+assesses as declared unclassified and a lattice interface that refuses undecidable label
+combinations; it is not a classification-policy engine or a cross-domain guard.
+
 ### 4.7 SKIP, once, for all six
 
 A check that does not apply to an adapter reports **SKIP**, never PASS, and the report states which
@@ -497,7 +507,7 @@ standard's vocabulary it belongs to. A consumer MUST NOT promote a residual valu
 field, and a later adapter MUST NOT read another adapter's residual as an input.
 
 **The Part 1 stance for the adapters already shipped, ruled and stated rather than left to a later
-round to discover.** Fourteen of the thirty-six adapters in this repository park their leftovers today
+round to discover.** Fourteen of the thirty-seven adapters in this repository park their leftovers today
 in `Entity.attributes` / `Event.payload` via `lossless.residual()`, under `source_extras`. They KEEP
 that placement through Part 1 and declare it in their manifests as `residual: legacy`. Every Part 2
 adapter uses the structured container, with the one dated exception the next paragraph states. The

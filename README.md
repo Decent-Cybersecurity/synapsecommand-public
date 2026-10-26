@@ -13,7 +13,7 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Thirty-six
+This is the contract layer, and it is public because that is what a contract is for. **Thirty-seven
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
 `cat062`, `cat023`, `stanag4586` (ingest), `geojson`, `geopackage` (ingest), `c2sim`,
@@ -21,10 +21,10 @@ integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak
 `readsb_trace` (ingest), `nexrad2` (ingest), `ndbc_stdmet` (ingest), `coops_csv` (ingest),
 `airnow_hourly` (ingest), `grib2` (ingest), `cog` (ingest), `iem_n0q` (ingest), `barentswatch_hais`
 (ingest), `frost_observations` (ingest), `cesmo_internal` (ingest), `stanag4559_catalog` (ingest),
-`stanag4559_stream` (ingest) and `stanag4559_workflow` (ingest) — byte-exact on the wire
-wherever the format is binary and the direction is bidirectional. Without a
+`stanag4559_stream` (ingest), `stanag4559_workflow` (ingest) and `stanag4545` (ingest) — byte-exact
+on the wire wherever the format is binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — six hundred and thirty and thirty-six as of today; with one, an adapter is a
+"a contact" — six hundred and sixty-six and thirty-seven as of today; with one, an adapter is a
 thin translator and nothing else. The precise support boundary of each — edition, wire binding, directions, replayed
 forms, message families, exclusions and evidence scope — is the generated
 [support matrix](docs/docs/cdm/support-matrix.mdx), drift-checked against the declarations.
@@ -122,7 +122,7 @@ may not be made.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the thirty-six shipped adapters are verified against** — which is what
+harness and **every fixture the thirty-seven shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:

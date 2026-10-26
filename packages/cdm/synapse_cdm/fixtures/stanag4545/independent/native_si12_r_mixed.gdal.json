@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_si12_r_mixed.ntf",
+ "bytes": 855,
+ "sha256": "fa588254ff738548de874fdf4cc2daab1559c3493064bdb0c0cabfc90b77676b",
+ "gdal_data_type": "Int16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  -2048,
+  4095,
+  4096,
+  6143,
+  -2049,
+  -30720
+ ]
+}

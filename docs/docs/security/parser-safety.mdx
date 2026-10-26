@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the thirty-six shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the thirty-seven shipped adapters.
 ---
 
 # Parser safety
@@ -10,7 +10,7 @@ description: The five bounds and where they live, the rules an adapter MUST foll
 Every adapter in this repository is handed bytes somebody else produced. This page is the policy
 those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
 KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
-parser's default behaviour is dangerous, and it is enforced today on the thirty-six adapters that
+parser's default behaviour is dangerous, and it is enforced today on the thirty-seven adapters that
 ship — since 2026-09-20/21 that roster includes the Part 2 formats it was written for: AIXM 5.1.1
 and 5.2 and C2SIM (XML), GeoPackage (a SQLite database) and GeoJSON.
 
@@ -39,7 +39,7 @@ hardened against a figure the report does not print.
 > `enforced_at` point, and the `test` that proves the refusal.
 
 > A bound **MUST NOT** be described as the format's normative maximum unless the specification
-> actually says so. Thirty-one of the thirty-six adapters declare an implementation cap and say so in
+> actually says so. Thirty-two of the thirty-seven adapters declare an implementation cap and say so in
 > the enum and in the prose; the five ASTERIX categories declare the normative `LEN` field.
 
 Which bound runs before which allocation — size before the depth scan, the depth scan before
@@ -51,7 +51,7 @@ worker and the hosting application each add on top is the subject of
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all thirty-six**. `max_depth` is declared and
+`max_input_bytes` is declared and enforced on **all thirty-seven**. `max_depth` is declared and
 enforced on the **five XML readers** — `tak` and `stanag4676` since 2026-09-16, and `c2sim`,
 `aixm511` and `aixm52` since 2026-09-21, the last three inside expat's start-element handler
 through `secure_xml` — on the **five that decode JSON** — `adsb`, `ais`, `legion` and `pntmap`
@@ -80,7 +80,9 @@ contract's own depth 16, refused as `E_LIMIT`), and on the three STANAG 4559 tra
 class at 96 on the JSON text of the octets and on a parsed record, before `synapse_cdm.isr_record`
 decodes anything; 96 is eight times the deepest JSON document shipped beside their fixtures,
 rounded up, because a record's graph attribute `value` and a stream's `replay_capabilities` are
-open JSON).
+open JSON), and on `stanag4545` (since 2026-10-25: the base class at 4 on the parsed twin, whose
+only accepted shape nests one container; the container's octets open with no `{` or `[` and are
+not measured).
 `max_objects` is declared and enforced on the five of the adapter expansion (`geojson`,
 `geopackage`, `c2sim`, `aixm511`, `aixm52`), on `tacticalapi` (since 2026-10-06) and on `nexrad2`
 (since 2026-10-15: 33, Table XVII-A's 32 elevation numbers and the site, held by refusing an
@@ -89,8 +91,10 @@ seventeenth Section 4 refused before it is read), on `cog` (since 2026-10-17: on
 and on `iem_n0q` (since 2026-10-17: one Event a PNG), and on `frost_observations` (since 2026-10-22:
 50 000 Events and Entities a response, counted after every observation is classified and before any
 object is built), and on `cesmo_internal` (since 2026-10-24: 2,001, the kit's worst case of 1,000
-upserts and the snapshot Event, held by the schema's 1,000 records before any object is built), each before the objects it bounds are built, and declared absent with a reason on
-the other twenty-four.
+upserts and the snapshot Event, held by the schema's 1,000 records before any object is built), and
+on `stanag4545` (since 2026-10-25: 65, one product Entity and at most one footprint PlanObject per
+image segment, counted before any object is built), each before the objects it bounds are built,
+and declared absent with a reason on the other twenty-four.
 `max_decompressed_bytes` is declared and enforced on `readsb_trace` (since 2026-10-15: 64 MiB,
 held while zlib inflates the trace file's one gzip member, the first octet past it refused before
 it is kept) and on `nexrad2` (since 2026-10-15: 402,979,072 octets a volume, held while each LDM
@@ -103,8 +107,8 @@ decoded size compared with the bound before an octet is decompressed and LZW, De
 each held to exactly the block's size) and on `iem_n0q` (since 2026-10-17: 80 MiB, above the 65,885,400
 octets of rows the product's 12200 x 5400 grid inflates to; IHDR is held to that grid before an octet
 is inflated, and the image data is inflated into a buffer of exactly its rows, the first octet past
-them refused) and declared absent with a reason on the other thirty-one.
-`max_parse_seconds` is declared absent with a reason on all thirty-six, and `max_depth` on the other nine; none of those absences is
+them refused) and declared absent with a reason on the other thirty-two.
+`max_parse_seconds` is declared absent with a reason on all thirty-seven, and `max_depth` on the other nine; none of those absences is
 enforced, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
@@ -198,6 +202,7 @@ nested one thousand deep, so check **H** records the refusal on every run.
 | `stanag4559_catalog` | 16 777 216 | implementation cap | JSON, one SC ISR gateway record; the record contract states no maximum, and SC ISR 4559 001 section 20's `max_metadata_bytes` (16 MiB a response or record) is a PROJECT operating default of the gateway, taken here for one record (`stanag4559_common.MAX_INPUT_BYTES`, 2026-10-24) |
 | `stanag4559_stream` | 16 777 216 | implementation cap | as `stanag4559_catalog` (2026-10-24) |
 | `stanag4559_workflow` | 16 777 216 | implementation cap | as `stanag4559_catalog` (2026-10-24) |
+| `stanag4545` | 16 777 216 | implementation cap | binary, one NSIF/NITF container under the SC4545-CORE-1 engineering profile; the parsed twin's base64 is held to 22 369 624 characters before decoding, and the profile's untyped caps (256 segments, 64 images, 256 bands, 65 536 blocks, 1 000 000 per dimension, 4 096 TREs, 4 MiB of parsed metadata, 1 MiB per LUT, 64 MiB of serialised output, 128 MiB per native sample window; the per-LUT, native-window, serialised-output and twin-depth caps cannot be reached by a CORE-1 container and are tested with an injected `Limits`) are module constants (`nsif_codec.CORE1_LIMITS`, 2026-10-25) |
 
 ## 2. XML
 
@@ -440,7 +445,7 @@ Linux-only and is refused where it cannot be enforced — `docs/docs/security/de
 no adapter declared a bound to check; it is now in the required set for every adapter in the
 sweep, which is what would notice a bound being quietly removed from a manifest.
 
-## 7. The audit: every parser call in the thirty-six
+## 7. The audit: every parser call in the thirty-seven
 
 Taken with
 `grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.

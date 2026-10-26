@@ -1,0 +1,94 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "binding": "provisional-internal-profile",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "to_cdm decompresses nothing: image data whose IC is not NC is inventoried and preserved as a slice, never decoded in this package; the compressed worker's decode limits are published by the imagery host distribution",
+          "max_parse_seconds": "no wall-clock bound is enforced in this package: SC4545-CORE-1's 5-second core parsing deadline is the host's isolated-worker timeout (the imagery host distribution kills the worker), not a claim this module makes about itself"
+        },
+        "declared_because": {
+          "max_depth": {
+            "enforced_at": "the adapter's coded guard measures a parsed twin's containers first, before any key is read, and refuses past 4 with E_LIMIT (`NsifInputTooDeep`, also an `InputTooDeep`); behind it `Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_depth_bound` beside `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), and `decode_twin` refuses the same depth again; octets are never read as JSON, and the guard keeps every payload that does not begin with a supported magic away from the wrapper's text decode",
+            "kind": "implementation_cap",
+            "source": "SC4545-CORE-1 caps the parsed twin's JSON depth at 4 before base64 decoding. The only twin the profile accepts, `{\"profile\", \"wire_b64\"}`, nests one container, so a dict two to four deep reaches the adapter's own shape check and is refused there. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_stanag4545_adapter.py::test_the_twin_depth_bound_admits_depth_four_shapes_and_refuses_five"
+          },
+          "max_input_bytes": {
+            "enforced_at": "the adapter's coded guard, installed on `to_cdm` after the class statement, measures the argument first and refuses with E_LIMIT (`NsifInputTooLarge`, also an `InputTooLarge`); behind it `Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs; `parse_container` and `validate_source` refuse the same size again with E_LIMIT",
+            "kind": "implementation_cap",
+            "source": "SC4545-CORE-1 (the engineering profile's resource table, `CORE1_LIMITS` in `adapters/nsif_codec.py`) admits a binary container of at most 16,777,216 octets; files above it are the host's to stage separately. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          },
+          "max_objects": {
+            "enforced_at": "`Stanag4545Adapter.to_cdm` counts the objects it will emit before it builds any and raises NsifError E_LIMIT; at the production values the image-segment cap in `parse_container` refuses a 65th image first, so the test lowers the cap to reach the refusal",
+            "kind": "implementation_cap",
+            "source": "SC4545-CORE-1 emits one product Entity and at most one footprint PlanObject per image segment, and caps image segments at 64, so a translation yields at most 65 objects. This is an IMPLEMENTATION CAP and is NOT the format's normative maximum. Caps the manifest schema has no field for are declared beside it as module constants: 256 segments, 64 image segments, 256 bands, 65,536 blocks, 1,000,000 per dimension, 4,096 TREs, 4,194,304 octets of parsed metadata, 1,048,576 octets per LUT, 22,369,624 twin characters, 67,108,864 octets of serialised output and 134,217,728 octets per native sample window.",
+            "test": "tests/test_cdm_stanag4545_adapter.py::test_the_object_bound_admits_sixty_five_and_refuses_one_more_by_injection"
+          }
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": 4,
+        "max_input_bytes": 16777216,
+        "max_objects": 65,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "NSIF 01.01, NSIF 01.00 and NITF 02.10 still-imagery containers read under the SC4545-CORE-1 engineering profile (the octets) \u2014 one OVERLAY_OBJECT product Entity, then one ANNOTATION footprint PlanObject per image with valid IGEOLO G or D corners, in image order",
+        "the parsed twin `{\"profile\": \"SC4545-CORE-1\", \"wire_b64\": \u2026}` \u2014 the same objects through the same parser"
+      ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "the parsed twin is a closed two-key wire envelope (`profile`, `wire_b64`) and any other key is refused, so an unknown field in the document form has no carrier; unknown TREs, DES and RES on the wire are a different thing and are preserved as ordered records and slices in the structured residual",
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "PROVISIONAL",
+    "constituents": [],
+    "direction": "ingest",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "NSIF/NITF imagery",
+      "version": "SC4545-CORE-1; STANAG 4545 Ed 2 target"
+    },
+    "id": "stanag4545",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      "the wire grammar this adapter reads is a PROVISIONAL internal profile (`binding: provisional-internal-profile`): SC4545-CORE-1, an engineering profile whose field order and widths were cross-checked against an independent implementation's source because the NSIF 01.01 BIIF profile, its errata and the Edition 2 normative text are not held here. Passing this repository's gates shows the profile is self-consistent and nothing more; the broad STANAG 4545 conformance gate stays open",
+      "ingest only: `from_cdm` is the base class's refusal (`NotImplementedError`) and no NSIF/NITF file is written by this adapter; original-byte replay and the experimental SC4545-WRITE-NC8-1 writer belong to the imagery host distribution and are not egress",
+      "`validate_source` checks the SC4545-CORE-1 engineering profile's structure, local semantics and resource caps; an empty list is not full STANAG 4545 validation",
+      "no pixel is decompressed or decoded in `to_cdm`: native NC samples are read only by `decode_nc_window` on request, and every compressed or masked image (IC other than NC) is inventoried, preserved and answered E_CODEC; per-image `pixel_status` and `geometry_status` say when pixels or a footprint are unavailable",
+      "`security_status` is this package's assessment of the source labels, never an authorisation: labels are preserved verbatim on the product and on every footprint, no TRE, DES or RES is known to be security-neutral so any one makes the status `unresolved`, and no access decision is enforced here",
+      "footprints come from IGEOLO G and D corners only and are approximate coverage overlays: UTM, MGRS, other ICORDS codes and sensor models are preserved and not projected",
+      "the parsed twin is a closed wire envelope (`profile`, `wire_b64`), so the `MAPPINGS` ledger proves byte retention and not the interpretation of any field",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged. `evidence.available` is false because no published Release carries this adapter yet; the release round that attaches its records flips it",
+      "of \u00a73.5's five resource limits this adapter enforces THREE \u2014 `max_input_bytes` and `max_depth` by its coded guard and, behind it, the base class before decode, and `max_objects` in this module \u2014 plus the SC4545-CORE-1 caps the manifest schema has no field for. The other two are absent with their reasons in `capabilities.limits.absent_because`"
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L3 PROVENANCE VERIFIED, from evidence that runs today. The harness's `translate`, `schema` and `provenance` checks are PASS on every fixture of this adapter (L1 to L3). Its `lossless` column rests on the PATH-BOUND LEDGER: `MAPPINGS` binds both leaves of the parsed twin \u2014 `wire_b64` to the product Entity's `residual.data.stanag4545.wire_b64` and `profile` to its `attributes.stanag4545.profile`, each by identity \u2014 so a PASS proves the source octets are retained, not that any field is interpreted correctly; field interpretation is held by tests/test_cdm_stanag4545_adapter.py. This adapter is INGEST ONLY: `from_cdm` is the base class's refusal, the harness's `roundtrip` column is a declared SKIP, and `synapse conformance run --adapter stanag4545` computes E as a declared inapplicability. A rung passed vacuously is not a rung declared (ARCHITECTURE.md \u00a73.6, rule 4): L4 is NOT declared. The wire grammar is a provisional internal profile, SC4545-CORE-1, which is why the claim is PROVISIONAL and not VERIFIED.",
+      "external_exercise": null,
+      "level": "L3"
+    },
+    "name": "STANAG 4545 NSIF/NITF imagery",
+    "payload_adapter": null,
+    "profiles": [
+      "SC4545-CORE-1"
+    ],
+    "residual": "structured"
+  },
+  "api": {
+    "version": "3"
+  },
+  "cdm": {
+    "schema_version": "3.2.0",
+    "supported": "3.x"
+  },
+  "manifest_schema_version": "2.1.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}
