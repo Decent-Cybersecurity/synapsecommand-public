@@ -153,7 +153,7 @@ behind it.
    stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
    already, and what a clone changes is only whether the finding arrives before the tag or after
    it.
-2. **All thirty-six harnesses are green**, and at least one of them run against the INSTALLED
+2. **All thirty-seven harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
    proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
@@ -844,11 +844,102 @@ now true of it.
 release tag is `v3.9.0`, and `3.9.0` is what the index serves — `PUBLICATION.md` entry 31 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.9.0 section being what moved in it.
-Everything else the round touched ships in nothing: the ledger, the witness record and its README,
-the release-pipeline and changelog pages, and two test modules.
+**What moved inside the distribution: 178 files** — `MIGRATIONS.md`, this section and, from the
+3.9.0 witness round that reopened this section, the dated witness paragraphs in the release
+procedure and the pipeline section, the release's dated account in the pipeline section and the
+index note in the 3.9.0 section being what moved in it, and the STANAG 4545 imagery adapter's, by
+the round that moved them. Thirty-five are its parser (2026-10-24), which registered nothing in
+its round: the container
+parser `nsif_codec.py` beside the adapters, and under `fixtures/stanag4545/` the kit's seventeen
+vectors, eleven at the top level each beside its parsed twin (`mono_nsif101.ntf` and
+`mono_nsif101.parsed.json`, `mono_nsif100.ntf` and `mono_nsif100.parsed.json`, `mono_nitf210.ntf`
+and `mono_nitf210.parsed.json`, `geo_dms.ntf` and `geo_dms.parsed.json`,
+`unknown_duplicate_tre.ntf` and `unknown_duplicate_tre.parsed.json`, `mode_B.ntf` and
+`mode_B.parsed.json`, `mode_P.ntf` and `mode_P.parsed.json`, `mode_R.ntf` and
+`mode_R.parsed.json`, `mode_S.ntf` and `mode_S.parsed.json`, `uint16.ntf` and
+`uint16.parsed.json`, `image_and_text.ntf` and `image_and_text.parsed.json`), the five refused
+ones under `malformed/` (`bad_file_length.ntf`, `truncated.ntf`, `trailing.ntf`, `bad_count.ntf`,
+`unsupported_stype.ntf`), `header_only.ntf` and `header_only.parsed.json` under `context/`, a
+`PROVENANCE.json` record in each of the three directories, the fixture `README.md`, and the
+builder `build_fixtures.py` under `spec/`. Outside the distribution that round adds the codec's test
+module and moves the evidence test's top-level fixture count, the wheel gate's package-only roster
+and the `.ntf` rows of `.gitattributes`. A hundred and nine are the same adapter's native
+window decoder and footprints (2026-10-25), which change `nsif_codec.py`, `build_fixtures.py` and
+the fixture `README.md` (counted above) and add the footprint module `nsif_geometry.py` beside the
+parser; under `fixtures/stanag4545/vectors/` the native vectors the builder now also writes,
+`native_edge16_b.ntf`, `native_edge16_p.ntf`, `native_edge16_r.ntf`, `native_edge16_s.ntf`,
+`native_edge8_b.ntf`, `native_edge8_p.ntf`, `native_edge8_r.ntf`, `native_edge8_s.ntf`,
+`native_geo_d_northup.ntf`, `native_geo_d_southup.ntf`, `native_geo_g_northup.ntf`,
+`native_geo_g_southup.ntf`, `native_int5in8_r_dirty.ntf`, `native_int8in16_r.ntf`,
+`native_lit_b.ntf`, `native_lit_p.ntf`, `native_lit_r.ntf`, `native_lit_s.ntf`, `native_lut3.ntf`,
+`native_nbands9_b.ntf`, `native_nbands9_p.ntf`, `native_nbands9_r.ntf`, `native_nbands9_s.ntf`,
+`native_nppb_zero.ntf`, `native_nppbh_zero_only.ntf`, `native_one_block_padded.ntf`,
+`native_pjust_l_12in16.ntf`, `native_pjust_l_12in16_dirty.ntf`, `native_pjust_l_5in8.ntf`,
+`native_pjust_r_12in16_dirty.ntf`, `native_si12_l.ntf`, `native_si12_l_dirty.ntf`,
+`native_si12_r_mixed.ntf`, `native_si12_r_signext.ntf`, `native_si12_r_zerofill.ntf`,
+`native_si16.ntf`, `native_si1in8_r.ntf`, `native_si5in8_l_dirty.ntf`, `native_si8.ntf`,
+`native_xbands10_b.ntf`, `native_xbands10_p.ntf`, `native_xbands10_r.ntf`, `native_xbands10_s.ntf`,
+`native_xbands256_b.ntf`, `native_xbands256_p.ntf`, `native_xbands256_r.ntf` and
+`native_xbands256_s.ntf`, with their `PROVENANCE.json`; and under `fixtures/stanag4545/independent/`
+GDAL's recorded reading of every image-bearing vector, `geo_dms.gdal.json`,
+`image_and_text.gdal.json`, `mode_B.gdal.json`, `mode_P.gdal.json`, `mode_R.gdal.json`,
+`mode_S.gdal.json`, `mono_nitf210.gdal.json`, `mono_nsif100.gdal.json`, `mono_nsif101.gdal.json`,
+`native_edge16_b.gdal.json`, `native_edge16_p.gdal.json`, `native_edge16_r.gdal.json`,
+`native_edge16_s.gdal.json`, `native_edge8_b.gdal.json`, `native_edge8_p.gdal.json`,
+`native_edge8_r.gdal.json`, `native_edge8_s.gdal.json`, `native_geo_d_northup.gdal.json`,
+`native_geo_d_southup.gdal.json`, `native_geo_g_northup.gdal.json`,
+`native_geo_g_southup.gdal.json`, `native_int5in8_r_dirty.gdal.json`, `native_int8in16_r.gdal.json`,
+`native_lit_b.gdal.json`, `native_lit_p.gdal.json`, `native_lit_r.gdal.json`,
+`native_lit_s.gdal.json`, `native_lut3.gdal.json`, `native_nbands9_b.gdal.json`,
+`native_nbands9_p.gdal.json`, `native_nbands9_r.gdal.json`, `native_nbands9_s.gdal.json`,
+`native_nppb_zero.gdal.json`, `native_nppbh_zero_only.gdal.json`,
+`native_one_block_padded.gdal.json`, `native_pjust_l_12in16.gdal.json`,
+`native_pjust_l_12in16_dirty.gdal.json`, `native_pjust_l_5in8.gdal.json`,
+`native_pjust_r_12in16_dirty.gdal.json`, `native_si12_l.gdal.json`, `native_si12_l_dirty.gdal.json`,
+`native_si12_r_mixed.gdal.json`, `native_si12_r_signext.gdal.json`,
+`native_si12_r_zerofill.gdal.json`, `native_si16.gdal.json`, `native_si1in8_r.gdal.json`,
+`native_si5in8_l_dirty.gdal.json`, `native_si8.gdal.json`, `native_xbands10_b.gdal.json`,
+`native_xbands10_p.gdal.json`, `native_xbands10_r.gdal.json`, `native_xbands10_s.gdal.json`,
+`native_xbands256_b.gdal.json`, `native_xbands256_p.gdal.json`, `native_xbands256_r.gdal.json`,
+`native_xbands256_s.gdal.json`, `uint16.gdal.json` and `unknown_duplicate_tre.gdal.json`, the record
+of how it was taken, `gdal_reading.json`, and their `PROVENANCE.json`. Outside the distribution that
+round adds the footprint test module and the recorder `gates/nsif_gdal_reading.py`, extends the
+codec's test module and adds the footprint tests to the wheel gate's package-only roster.
+Thirty-three are the same adapter's registration (2026-10-25): the adapter module
+`stanag4545.py` beside the parser; under `fixtures/stanag4545/golden/` the goldens of the eleven
+top-level vectors, `mono_nsif101.cdm.json` and `mono_nsif101.parsed.cdm.json`, `mono_nsif100.cdm.json` and `mono_nsif100.parsed.cdm.json`, `mono_nitf210.cdm.json` and `mono_nitf210.parsed.cdm.json`, `geo_dms.cdm.json` and `geo_dms.parsed.cdm.json`, `unknown_duplicate_tre.cdm.json` and `unknown_duplicate_tre.parsed.cdm.json`, `mode_B.cdm.json` and `mode_B.parsed.cdm.json`, `mode_P.cdm.json` and `mode_P.parsed.cdm.json`, `mode_R.cdm.json` and `mode_R.parsed.cdm.json`, `mode_S.cdm.json` and `mode_S.parsed.cdm.json`, `uint16.cdm.json` and `uint16.parsed.cdm.json`, `image_and_text.cdm.json` and `image_and_text.parsed.cdm.json`; under `fixtures/stanag4545/context/golden/`
+`header_only.cdm.json` and `header_only.parsed.cdm.json`; and the files the roster's growth moves:
+`__init__.py`, `adapter.py`, `lossless.py`, `symbology.py` and `version.py` (docstring and comment
+counts only), the package `README.md` and `FORMAT_COVERAGE.md` (the counts, the roster table's row,
+the ordinal row and the format section) and `pyproject.toml` (comment counts only), with
+`MIGRATIONS.md` and the fixture `README.md` counted above. Outside the distribution that round adds
+the adapter's test module and its manifest, regenerates the support matrix, moves the shared
+tests' roster literals and the documents' counts, and adds the adapter's tests to the wheel gate's
+package-only roster. Its host distribution `synapse-imagery` (2026-10-25) lies under `packages/imagery/`,
+outside `packages/cdm`, and adds nothing to the count; the arc's replays onto `v3.8.0` and
+`v3.9.0` (2026-10-25) moved no file of their own: they re-typed the ordinal, the roster counts and
+the release floor the paragraph below states, in files already counted. Everything else the
+3.9.0 witness round touched ships in nothing: the ledger, the witness record and its README, the
+release-pipeline and changelog pages, and two test modules.
+
+**THE STANAG 4545 IMAGERY ADAPTER LANDS, 2026-10-25 — `stanag4545` as #38, the roster moves
+thirty-six to thirty-seven, and no wire contract moves.** It reads NSIF 01.01, NSIF 01.00 and NITF
+02.10 still-imagery containers under the SC4545-CORE-1 engineering profile, as their octets or as
+a parsed twin holding the same octets as canonical base64, and writes one `OVERLAY_OBJECT` product
+`Entity` and zero or more `ANNOTATION` footprint `PlanObject`s, one per image whose IGEOLO G or D
+corners give a footprint. The product carries the container inventory, every security block as a
+label with the package's assessment of them, and the whole input once in its structured residual;
+each footprint carries its own image's labels and the product-wide assessment, so a detached
+footprint is labelled too, and nothing is enforced. Its binding is `provisional-internal-profile`
+and its claim PROVISIONAL: the profile was cross-checked against an independent implementation's
+source, and no standards text is held. `SCHEMA_VERSION` stays 3.2.0 and `ADAPTER_API_VERSION`
+3.1.0: no model, enum, published schema or golden of the other adapters moved. Its host is the
+sibling distribution `synapse-imagery` 1.0.0 under `packages/imagery/` (import `synapse_imagery`,
+command `sc-imagery`, floor `synapse-cdm>=3.10.0,<4`), added 2026-10-25: source in the tag and in the
+Release's source archives, installable from a `git+https` URL with `#subdirectory=packages/imagery`,
+not uploaded to the package index, and outside what the bump gate reads, which is `packages/cdm`
+alone. The bump this derives is MINOR (an `Adapter` subclass name and a fixture set appear; nothing
+is removed), so the next release is at least 3.10.0.
 
 **THE 3.9.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is hand-built, for the fourth time, and
 for the first time because the job never started.** Run 40231960322 published 3.9.0 to the index

@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_si12_r_signext.ntf",
+ "bytes": 855,
+ "sha256": "217fbb9481aabf018df4cc30a53199096172ae0b5441bf0b26ddf2e71bb6b6bd",
+ "gdal_data_type": "Int16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  -2048,
+  -1,
+  0,
+  2047,
+  1,
+  -2
+ ]
+}

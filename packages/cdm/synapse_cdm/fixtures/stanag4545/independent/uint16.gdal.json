@@ -1,0 +1,17 @@
+{
+ "file": "uint16.ntf",
+ "bytes": 851,
+ "sha256": "77c8be04836b0e086dd19c895747184dfb982805fbffa78854babc82549f1fd6",
+ "gdal_data_type": "UInt16",
+ "size": [
+  2,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  0,
+  256,
+  4095,
+  65535
+ ]
+}

@@ -118,17 +118,18 @@ it came from. It **identifies its origin** and it is **never semantically truste
 that the source said something the CDM has no home for, which is a fact about the source record
 and not an assertion about the world. See [CDM Policies](./policies.mdx).
 
-Seventeen of the thirty-six adapters shipped today do not use it. Fourteen keep parking leftovers
+Seventeen of the thirty-seven adapters shipped today do not use it. Fourteen keep parking leftovers
 in `attributes.source_extras` and declare `residual: legacy`, because the information is already
 preserved and moving the placement would cost every golden file and every consumer for nothing a
 reader can use; and the three STANAG 4559 translators (`stanag4559_catalog`, `stanag4559_stream`,
 `stanag4559_workflow`, since 2026-10-24) carry the whole source record verbatim under
 `payload.record`, which is their specification's own golden form, and declare `residual: legacy`
-by a dated ruling. The other nineteen — the five of the adapter expansion (`geojson`,
+by a dated ruling. The other twenty — the five of the adapter expansion (`geojson`,
 `geopackage`, `c2sim`, `aixm511`, `aixm52`), `dis7`, `tacticalapi`, since 2026-10-10
 `link16_gateway`, and since 2026-10-15 `readsb_trace`, `nexrad2`, `ndbc_stdmet`, `coops_csv` and
 `airnow_hourly`, since 2026-10-17 `grib2`, `cog` and `iem_n0q`, since 2026-10-22
-`barentswatch_hais` and `frost_observations`, and since 2026-10-24 `cesmo_internal` — declare
+`barentswatch_hais` and `frost_observations`, since 2026-10-24 `cesmo_internal`, and since
+2026-10-25 `stanag4545` — declare
 `residual: structured` and carry their leftovers in it.
 
 ## Why `additionalProperties: false` everywhere

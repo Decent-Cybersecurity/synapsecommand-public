@@ -551,6 +551,7 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "aixm511": "aixm511", "aixm52": "aixm52"
                         "stanag4559_catalog": "stanag4559_catalog",
                         "stanag4559_stream": "stanag4559_stream",
                         "stanag4559_workflow": "stanag4559_workflow",
+                        "stanag4545": "stanag4545",
                         "readsb_trace": "readsb_trace",
                         "tacticalapi": "tacticalapi", "tak": "tak"}
 

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:imagery:write-nc8-recipe:1",
+  "title": "SC4545-WRITE-NC8-1 recipe",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recipe", "producer_id", "product_id", "product_time", "capture_time", "source_attribution", "security", "raster"],
+  "properties": {
+    "recipe": {"const": "SC4545-WRITE-NC8-1"},
+    "magic": {"enum": ["NSIF01.01", "NITF02.10"]},
+    "producer_id": {"type": "string", "minLength": 1, "maxLength": 8},
+    "product_id": {"type": "string", "minLength": 1, "maxLength": 10},
+    "product_time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "capture_time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "source_attribution": {"type": "string", "minLength": 1, "maxLength": 42},
+    "security": {"type": "object", "additionalProperties": false, "required": ["classification"], "properties": {"classification": {"const": "U"}}},
+    "raster": {
+      "type": "object", "additionalProperties": false,
+      "required": ["representation", "width", "height", "bits", "samples_b64"],
+      "properties": {
+        "representation": {"enum": ["MONO", "RGB"]},
+        "width": {"type": "integer", "minimum": 1, "maximum": 2048},
+        "height": {"type": "integer", "minimum": 1, "maximum": 2048},
+        "bits": {"const": 8},
+        "samples_b64": {"type": "string", "pattern": "^[A-Za-z0-9+/]*={0,2}$"}
+      }
+    },
+    "corners": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ul", "ur", "lr", "ll"],
+      "properties": {"ul": {"$ref": "#/$defs/corner"}, "ur": {"$ref": "#/$defs/corner"}, "lr": {"$ref": "#/$defs/corner"}, "ll": {"$ref": "#/$defs/corner"}}
+    },
+    "parent": {"type": "object", "additionalProperties": false, "required": ["record_id"], "properties": {"record_id": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}}}
+  },
+  "$defs": {
+    "corner": {
+      "type": "object", "additionalProperties": false, "required": ["lat", "lon"],
+      "properties": {
+        "lat": {"type": "string", "pattern": "^-?[0-9]{1,3}(\\.[0-9]{1,12})?$"},
+        "lon": {"type": "string", "pattern": "^-?[0-9]{1,3}(\\.[0-9]{1,12})?$"}
+      }
+    }
+  }
+}

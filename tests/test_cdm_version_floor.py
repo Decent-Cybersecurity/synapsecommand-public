@@ -251,7 +251,9 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 #: step for one fact — and the closure test exists precisely to catch a root nobody added.
 ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO / "examples",
          REPO / "packages" / "link16_bridge" / "synapse_link16_bridge",
-         REPO / "packages" / "link16_bridge" / "tests")
+         REPO / "packages" / "link16_bridge" / "tests",
+         REPO / "packages" / "imagery" / "synapse_imagery",
+         REPO / "packages" / "imagery" / "tests")
 
 
 def discover() -> list[pathlib.Path]:
@@ -286,6 +288,12 @@ def discover() -> list[pathlib.Path]:
     interpreters it declares. The two directories are named rather than `packages/link16_bridge`
     itself, so a virtualenv or a build directory created in the distribution root cannot put the
     walk and the size check below out of step.
+
+    `packages/imagery/synapse_imagery` and `packages/imagery/tests` joined the same way on
+    2026-10-25, with the separate `synapse-imagery` distribution, the host of the `stanag4545`
+    adapter: the closure test failed on the change that put its first module there. IN SCOPE for
+    the same reason as the bridge: that distribution declares the same 3.11 floor in its own
+    `pyproject.toml` and its tests run on the interpreters it declares.
     """
     out = []
     for root in ROOTS:

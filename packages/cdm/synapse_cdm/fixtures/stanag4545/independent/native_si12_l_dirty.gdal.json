@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_si12_l_dirty.ntf",
+ "bytes": 855,
+ "sha256": "d9220bb92b21c827d609663474d4aa810b9aead8a21f9be8aa958eb56bb3308d",
+ "gdal_data_type": "Int16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  -32753,
+  -16,
+  0,
+  32752,
+  16,
+  -31
+ ]
+}

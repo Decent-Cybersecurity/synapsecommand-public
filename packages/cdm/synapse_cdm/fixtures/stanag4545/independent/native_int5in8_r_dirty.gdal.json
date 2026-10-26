@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_int5in8_r_dirty.ntf",
+ "bytes": 849,
+ "sha256": "9722d39c8b6e31cd448f6c26cad12e7f65e55fbe7bca7ebd093ffa5c223de9a5",
+ "gdal_data_type": "Byte",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  0,
+  1,
+  31,
+  32,
+  224,
+  255
+ ]
+}

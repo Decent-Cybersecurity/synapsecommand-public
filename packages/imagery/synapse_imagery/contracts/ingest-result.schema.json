@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:imagery:ingest-result:1",
+  "title": "Proposed imagery host result version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "record_id", "state", "sha256", "source_bytes", "profile", "synthetic", "asset_id", "cdm_ids", "images", "diagnostics"],
+  "properties": {
+    "schema": {"const": "sc-imagery-result/1"},
+    "record_id": {"type": "string", "format": "uuid"},
+    "state": {"enum": ["committed", "policy_blocked", "rejected", "failed"]},
+    "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "source_bytes": {"type": "integer", "minimum": 0},
+    "profile": {"const": "SC4545-CORE-1"},
+    "synthetic": {"type": "boolean"},
+    "asset_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "cdm_ids": {"type": "array", "maxItems": 65, "uniqueItems": true, "items": {"type": "string", "format": "uuid"}},
+    "images": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/image"}},
+    "diagnostics": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/diagnostic"}}
+  },
+  "allOf": [{
+    "if": {"properties": {"state": {"const": "committed"}}},
+    "then": {"properties": {"sha256": {"type": "string"}, "asset_id": {"type": "string"}, "cdm_ids": {"minItems": 1}}},
+    "else": {"properties": {"cdm_ids": {"maxItems": 0}}}
+  }],
+  "$defs": {
+    "image": {
+      "type": "object", "additionalProperties": false,
+      "required": ["index", "pixel_status", "geometry_status"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0, "maximum": 63},
+        "pixel_status": {"enum": ["native_supported", "backend_supported", "unsupported", "decode_failed", "policy_blocked", "not_assessed"]},
+        "geometry_status": {"enum": ["available", "absent", "unsupported", "invalid", "policy_blocked"]}
+      }
+    },
+    "diagnostic": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "stage", "offset", "path", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$"},
+        "stage": {"enum": ["input", "header", "segment", "extension", "security", "geometry", "pixels", "cdm", "storage", "export"]},
+        "offset": {"type": ["integer", "null"], "minimum": 0},
+        "path": {"type": "string", "maxLength": 256},
+        "message": {"type": "string", "maxLength": 512}
+      }
+    }
+  }
+}

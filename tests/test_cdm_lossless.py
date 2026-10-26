@@ -235,14 +235,17 @@ def test_the_shipped_adapters_declare_legacy_and_the_sweep_says_so_rather_than_p
     # whole track array, the second's Events the response header and their own data item.
     # `cesmo_internal` (2026-10-24) is the nineteenth; fourteen-and-nineteen. Every object carries
     # the Exchange's envelope without its records and its own record verbatim.
+    # the STANAG 4545 imagery adapter (2026-10-25): `stanag4545` is the twentieth;
+    # fourteen-and-twenty. Its product Entity carries the container inventory and the whole
+    # file once as `wire_b64`, and each footprint the image's corner record.
     assert census[ResidualStance.STRUCTURED] == ["airnow_hourly", "aixm511", "aixm52",
                                                  "barentswatch_hais", "c2sim", "cesmo_internal",
                                                  "cog", "coops_csv", "dis7",
                                                  "frost_observations", "geojson",
                                                  "geopackage", "grib2", "iem_n0q",
                                                  "link16_gateway", "ndbc_stdmet", "nexrad2",
-                                                 "readsb_trace", "tacticalapi"]
-    assert len(roster) == 36
+                                                 "readsb_trace", "stanag4545", "tacticalapi"]
+    assert len(roster) == 37
     swept = 0
     for cls in roster.values():
         adapter = cls.fixture_instance(synthetic=True)

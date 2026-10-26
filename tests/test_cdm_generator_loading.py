@@ -95,6 +95,11 @@ LOADERS = {
     # decodes only. So the assertion that the octets on disk are the generator's output is the
     # only place anything checks that this repository can still produce the bytes it reads.
     "test_cdm_stanag4586_adapter": "_build_fixtures_module",
+    # `stanag4545`'s harness loads its builder for the reason #10's does — to assert every payload
+    # it owns, the kit's vectors, their twins and the native vectors, is what the builder writes —
+    # and for one of its own: the mutated containers its tests are built from come from the
+    # builder's kit helpers, so the expectations never pass through the parser under test.
+    "test_cdm_stanag4545_adapter": "_build_fixtures_module",
 }
 
 #: The adapter test modules. The ones absent from `LOADERS` are the other half of the closure:

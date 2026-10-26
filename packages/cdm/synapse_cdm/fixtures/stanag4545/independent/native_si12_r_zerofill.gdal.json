@@ -1,0 +1,19 @@
+{
+ "file": "vectors/native_si12_r_zerofill.ntf",
+ "bytes": 855,
+ "sha256": "2c3ed157424db1137298e3a55163c182030f8452ee5e8453a135ff6175ff550c",
+ "gdal_data_type": "Int16",
+ "size": [
+  3,
+  2
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  2048,
+  4095,
+  0,
+  2047,
+  1,
+  4094
+ ]
+}

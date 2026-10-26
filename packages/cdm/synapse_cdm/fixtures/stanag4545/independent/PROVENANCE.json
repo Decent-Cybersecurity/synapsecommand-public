@@ -1,0 +1,478 @@
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "stanag4545/independent",
+  "fixtures": [
+    {
+      "file": "gdal_reading.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "The record of the GDAL 3.13.3 reading of the synthetic vectors, taken by gates/nsif_gdal_reading.py on 2026-10-25: the version, the three command forms, the environment and the statement of what the readings are and are not."
+    },
+    {
+      "file": "geo_dms.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "image_and_text.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mode_B.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mode_P.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mode_R.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mode_S.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mono_nitf210.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mono_nsif100.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "mono_nsif101.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge16_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge16_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge16_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge16_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge8_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge8_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge8_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_edge8_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_geo_d_northup.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_geo_d_southup.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_geo_g_northup.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_geo_g_southup.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_int5in8_r_dirty.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_int8in16_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_lit_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_lit_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_lit_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_lit_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_lut3.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nbands9_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nbands9_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nbands9_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nbands9_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nppb_zero.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_nppbh_zero_only.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_one_block_padded.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_pjust_l_12in16.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_pjust_l_12in16_dirty.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_pjust_l_5in8.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_pjust_r_12in16_dirty.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si12_l.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si12_l_dirty.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si12_r_mixed.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si12_r_signext.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si12_r_zerofill.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si16.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si1in8_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si5in8_l_dirty.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_si8.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands10_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands10_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands10_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands10_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands256_b.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands256_p.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands256_r.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "native_xbands256_s.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "uint16.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    },
+    {
+      "file": "unknown_duplicate_tre.gdal.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "GDAL 3.13.3 reading of a synthetic vector, taken by gates/nsif_gdal_reading.py on 2026-10-25."
+    }
+  ]
+}

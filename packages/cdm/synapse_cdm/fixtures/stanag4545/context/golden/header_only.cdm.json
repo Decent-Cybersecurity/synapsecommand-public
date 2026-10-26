@@ -1,0 +1,264 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "stanag4545": {
+        "asset_ref": "exercise-asset-0001",
+        "diagnostics": [],
+        "images": [],
+        "product_key": "EXERCISE-HEADER-ONLY-0001",
+        "product_time": "2026-10-04T12:00:00.000Z",
+        "profile": "SC4545-CORE-1",
+        "security_status": "declared_unclassified",
+        "wire_signature": "NSIF01.01"
+      }
+    },
+    "confidence": null,
+    "entity_id": "a964033a-9e32-5563-ba4e-f490fadceab7",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "stanag4545": {
+          "extensions": [],
+          "file_header": {
+            "directory": {
+              "des": [],
+              "graphic": [],
+              "image": [],
+              "res": [],
+              "text": []
+            },
+            "fields": {
+              "CLEVEL": {
+                "length": 2,
+                "offset": 9,
+                "text": "03"
+              },
+              "ENCRYP": {
+                "length": 1,
+                "offset": 296,
+                "text": "0"
+              },
+              "FBKGC": {
+                "length": 3,
+                "offset": 297,
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "FDT": {
+                "length": 14,
+                "offset": 25,
+                "text": "20261004120000"
+              },
+              "FHDR": {
+                "length": 4,
+                "offset": 0,
+                "text": "NSIF"
+              },
+              "FL": {
+                "length": 12,
+                "offset": 342,
+                "text": "000000000388"
+              },
+              "FSCOP": {
+                "length": 5,
+                "offset": 286,
+                "text": "00000"
+              },
+              "FSCPYS": {
+                "length": 5,
+                "offset": 291,
+                "text": "00000"
+              },
+              "FTITLE": {
+                "length": 80,
+                "offset": 39,
+                "text": "SYNTHETIC ENGINEERING VECTOR"
+              },
+              "FVER": {
+                "length": 5,
+                "offset": 4,
+                "text": "01.01"
+              },
+              "HL": {
+                "length": 6,
+                "offset": 354,
+                "text": "000388"
+              },
+              "NUMDES": {
+                "length": 3,
+                "offset": 372,
+                "text": "000"
+              },
+              "NUMI": {
+                "length": 3,
+                "offset": 360,
+                "text": "000"
+              },
+              "NUMRES": {
+                "length": 3,
+                "offset": 375,
+                "text": "000"
+              },
+              "NUMS": {
+                "length": 3,
+                "offset": 363,
+                "text": "000"
+              },
+              "NUMT": {
+                "length": 3,
+                "offset": 369,
+                "text": "000"
+              },
+              "NUMX": {
+                "length": 3,
+                "offset": 366,
+                "text": "000"
+              },
+              "ONAME": {
+                "length": 24,
+                "offset": 300,
+                "text": "SYNAPSECOMMAND TEST"
+              },
+              "OPHONE": {
+                "length": 18,
+                "offset": 324,
+                "text": ""
+              },
+              "OSTAID": {
+                "length": 10,
+                "offset": 15,
+                "text": "SCFIX"
+              },
+              "STYPE": {
+                "length": 4,
+                "offset": 11,
+                "text": "BF01"
+              },
+              "UDHDL": {
+                "length": 5,
+                "offset": 378,
+                "text": "00000"
+              },
+              "XHDL": {
+                "length": 5,
+                "offset": 383,
+                "text": "00000"
+              }
+            },
+            "length": 388,
+            "offset": 0,
+            "security": {
+              "length": 167,
+              "offset": 119
+            }
+          },
+          "parse_profile": {
+            "adapter_version": "1.0.0",
+            "capabilities": {
+              "cdm_translation": "complete",
+              "compressed_samples": "disabled",
+              "container_inventory": "complete",
+              "geographic_footprint": "per_image",
+              "metadata_preservation": "byte_preserving",
+              "native_samples": "per_image",
+              "new_export": "not_in_core",
+              "replay": "host_operation"
+            },
+            "profile": "SC4545-CORE-1",
+            "profile_revision": 1,
+            "tre_plugins": []
+          },
+          "security": {
+            "assessment": {
+              "clas_values": [
+                "U"
+              ],
+              "combination": "not_performed",
+              "kind": "core_assessment",
+              "reasons": [],
+              "scopes": 1,
+              "status": "declared_unclassified",
+              "uniform_clas": true,
+              "unknown_extensions": {
+                "des": 0,
+                "res": 0,
+                "tre": 0
+              }
+            },
+            "labels": [
+              {
+                "fields": {
+                  "CAPT": "",
+                  "CAUT": "",
+                  "CLAS": "U",
+                  "CLSY": "",
+                  "CLTX": "",
+                  "CODE": "",
+                  "CRSN": "",
+                  "CTLH": "",
+                  "CTLN": "",
+                  "DCDT": "",
+                  "DCTP": "",
+                  "DCXM": "",
+                  "DG": "",
+                  "DGDT": "",
+                  "REL": "",
+                  "SRDT": ""
+                },
+                "index": null,
+                "length": 167,
+                "offset": 119,
+                "scope": "file",
+                "uninterpreted": []
+              }
+            ]
+          },
+          "segments": [],
+          "wire_b64": "TlNJRjAxLjAxMDNCRjAxU0NGSVggICAgIDIwMjYxMDA0MTIwMDAwU1lOVEhFVElDIEVOR0lORUVSSU5HIFZFQ1RPUiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBVICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAwMDAwMDAwMDAwAAAAU1lOQVBTRUNPTU1BTkQgVEVTVCAgICAgICAgICAgICAgICAgICAgICAgMDAwMDAwMDAwMzg4MDAwMzg4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA=="
+        }
+      },
+      "namespace": "NSIF/NITF imagery"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "stanag4545",
+      "adapter_version": "1.0.0",
+      "format_name": "NSIF/NITF imagery",
+      "format_version": "SC4545-CORE-1; STANAG 4545 Ed 2 target",
+      "observed_at": null,
+      "original_id": "EXERCISE-HEADER-ONLY-0001",
+      "record_index": 0,
+      "source_hash": {
+        "algorithm": "sha256",
+        "value": "e6f5af50b4b59b86ff0008ea06987ff5f9f345055b76b120a448f38ddecb877f"
+      },
+      "synthetic": true,
+      "system": "STANAG4545",
+      "transformations": [
+        "trailing ASCII spaces of a fixed-width text field are trimmed for its display value (attributes, the footprint label, residual `text`); the padded bytes stay addressable by the field's offset and length in the preserved container",
+        "a valid 14-digit YYYYMMDDhhmmss field (FDT, IDATIM) is rendered as RFC 3339 UTC with three decimals; the 14 source bytes stay addressable by offset and length",
+        "decimal ASCII count, dimension and bit-depth fields are carried as integers in attributes and FBKGC as three unsigned integers; the source bytes stay addressable"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "EXERCISE-HEADER-ONLY-0001",
+        "system": "STANAG4545:exercise"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T12:00:00.000Z",
+    "valid_to": null
+  }
+]

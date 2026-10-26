@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-six adapters
-cannot grow thirty-six slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirty-seven adapters
+cannot grow thirty-seven slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -2510,6 +2510,40 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ('packages/cdm/synapse_cdm/MIGRATIONS.md',
      'and `harness --update-golden` over the thirty-three adapters moved no golden), and the two axes',
      "a dated round record in the history: the 3.8.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
+    # ADDED 2026-10-25 (the STANAG 4545 landing, `stanag4545` #38, landed after `v3.9.0`), the
+    # STANAG 4559 translators' shape again: four rows exempt RELEASE_NOTES.md's roster counts while
+    # the notes describe the 3.9.0 artefact, a roster of thirty-six, beside the row marked as
+    # postdating it; three the 3.9.0 readiness report's readings of its release tree; one
+    # MIGRATIONS.md's 3.9.0 record; and one the publication ledger's entry 31, the 3.9.0 release
+    # run's reading of the notes it rendered. The first four retire with the release commit that
+    # rewrites the notes; the other five stay.
+    ('RELEASE_NOTES.md',
+     '`CURRENT: manifests vs 36 shipped adapters at manifest schema 2.1.0`',
+     'the 3.9.0 notes describe the 3.9.0 artefact, a roster of thirty-six, beside the row marked post-3.9.0 (`stanag4545`, 2026-10-25); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'Thirty-six adapters at 3.9.0, all harness-verified',
+     'the 3.9.0 notes describe the 3.9.0 artefact, a roster of thirty-six, beside the row marked post-3.9.0 (`stanag4545`, 2026-10-25); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'At `v3.9.0` `python -m synapse_cdm.harness --list-adapters` prints `36 adapters registered`',
+     'the 3.9.0 notes describe the 3.9.0 artefact, a roster of thirty-six, beside the row marked post-3.9.0 (`stanag4545`, 2026-10-25); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('RELEASE_NOTES.md',
+     'read `36 adapters, 801 fixture files` and `36 adapters x 2 schema modes, 1530 fixture verdicts, 0 failed`; `gates/wheel_install.py`',
+     'the 3.9.0 notes describe the 3.9.0 artefact, a roster of thirty-six, beside the row marked post-3.9.0 (`stanag4545`, 2026-10-25); a reading of the released tree, which the release round that rewrites the notes retires'),
+    ('docs/soif-part1-release-readiness.md',
+     '`manifests --check` CURRENT for the thirty-six shipped adapters, the support-matrix',
+     "the 3.9.0 readiness report's readings of the release tree it certified, when the roster was thirty-six; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     '`harness --update-golden` over all thirty-six adapters and the Digital NOTAM set moving no golden; the harness over all thirty-six',
+     "the 3.9.0 readiness report's readings of the release tree it certified, when the roster was thirty-six; a dated certification, kept as written"),
+    ('docs/soif-part1-release-readiness.md',
+     'readings are `36 adapters, 801 fixture files` and `36 adapters x 2 schema modes, 1530 fixture verdicts, 0 failed`',
+     "the 3.9.0 readiness report's readings of the release tree it certified, when the roster was thirty-six; a dated certification, kept as written"),
+    ('packages/cdm/synapse_cdm/MIGRATIONS.md',
+     'and `harness --update-golden` over the thirty-six adapters moved no golden), and the two axes',
+     "a dated round record in the history: the 3.9.0 release commit's reading of the goldens over the roster of its own day, kept as written because a later round annotates rather than tidies"),
+    ('PUBLICATION.md',
+     'and printed `wrote release-notes-3.9.0.md (133865 bytes, 36 adapters in the sweep)`',
+     "the publication ledger's dated record of a release run: what a named run printed or carried on its day; a record of a past run, which does not move when the tree does"),
     ('docs/adapter-expansion-implementation.md',
      'reworded as the named subset ("fourteen of the nineteen adapters … keep `residual: legacy`"; `ARCHITECTURE.md`',
      "a dated reading in the adapter expansion's implementation record: what a named command, gate or release run printed on its day, when the roster was nineteen; the record annotates rather than tidies"),

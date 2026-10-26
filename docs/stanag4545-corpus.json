@@ -1,0 +1,1290 @@
+{
+  "schema_id": "synapse.stanag4545-corpus/v1",
+  "profile": "SC4545-CORE-1",
+  "entries": [
+    {
+      "name": "bad_count",
+      "file": "malformed/bad_count.ntf",
+      "sha256": "ca1ac997db6b82cfc66f4da292a60cb994e8ad42d00285a08f08b7d6003949ed",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "refused",
+        "code": "E_DIGITS",
+        "stage": "header",
+        "offset": 360
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)"
+      ]
+    },
+    {
+      "name": "bad_file_length",
+      "file": "malformed/bad_file_length.ntf",
+      "sha256": "dbd7f1edae1f325e7846a86588f72bfb5a9ca013bcc0a32328ebe47257c28385",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "refused",
+        "code": "E_LENGTH",
+        "stage": "header",
+        "offset": 342
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)"
+      ]
+    },
+    {
+      "name": "customer-samples",
+      "file": null,
+      "sha256": null,
+      "bytes": null,
+      "origin": "customer-supplied imagery: none received",
+      "authority": "customer material; not held",
+      "redistribution": "outside the public repository unless publication is authorised",
+      "expected": null,
+      "oracle": []
+    },
+    {
+      "name": "geo_dms",
+      "file": "geo_dms.ntf",
+      "sha256": "8848dd25910e03aaca8596ee4800b1dcd660dbb92a0ea31f22814267fc8d61d4",
+      "bytes": 907,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/geo_dms.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "header_only",
+      "file": "context/header_only.ntf",
+      "sha256": "e6f5af50b4b59b86ff0008ea06987ff5f9f345055b76b120a448f38ddecb877f",
+      "bytes": 388,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "image_and_text",
+      "file": "image_and_text.ntf",
+      "sha256": "68d11c0d3123b3a20ce2140db95b1c4844359b2f0cf7a8346098a89613310f48",
+      "bytes": 1177,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/image_and_text.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "jitc-compliance-files",
+      "file": null,
+      "sha256": null,
+      "bytes": null,
+      "origin": "JITC NITF compliance test program [S7]: description read, files not obtained",
+      "authority": "external compliance test program; files not held",
+      "redistribution": "not held; a request-only file stays outside the public repository",
+      "expected": null,
+      "oracle": []
+    },
+    {
+      "name": "mode_B",
+      "file": "mode_B.ntf",
+      "sha256": "5b184def682d6f0a02b07e0c3cca7fb15ca62206e0f450baa1c90ef82f8f17ca",
+      "bytes": 917,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mode_B.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "mode_P",
+      "file": "mode_P.ntf",
+      "sha256": "bcbf4f7cafaa0395675d712cd9d44fedfd10d0f0ba1e7f7887574aaf0c16d6f8",
+      "bytes": 917,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mode_P.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "mode_R",
+      "file": "mode_R.ntf",
+      "sha256": "09ffe8ed581c75ec811ec5d177abdde45c98e4ef4fc869cc6a06e8819fdf3f00",
+      "bytes": 917,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mode_R.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run): header layout verified, samples not verified (IMODE R)"
+      ]
+    },
+    {
+      "name": "mode_S",
+      "file": "mode_S.ntf",
+      "sha256": "869bcbdd2c43a594aaf46dff71ebf6f2718599b648645ba3a689b516c1d831f6",
+      "bytes": 917,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mode_S.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "mono_nitf210",
+      "file": "mono_nitf210.ntf",
+      "sha256": "4dc3a218dc49394cf9b1fe23afd5ebd27bc2469e247475a8757e540f2038cec9",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mono_nitf210.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "mono_nsif100",
+      "file": "mono_nsif100.ntf",
+      "sha256": "436a7d7aa77a4a21faf5590849412d1e0aa5dd4f70292916f0a49af47c4599ad",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mono_nsif100.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "mono_nsif101",
+      "file": "mono_nsif101.ntf",
+      "sha256": "934a6382dae1f512b4d7c7b426507f017725a92b1bf7d9694c48ee4c6acb8cc8",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/mono_nsif101.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "native_edge16_b",
+      "file": "vectors/native_edge16_b.ntf",
+      "sha256": "798540b4b65d2872d67c455577b5618c7c919f370b145316b63f262b49ce1d40",
+      "bytes": 1193,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge16_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge16_p",
+      "file": "vectors/native_edge16_p.ntf",
+      "sha256": "dbbfd03dbf469151f609046bd1465dc10f5ff638099059771c7a63a3537ae536",
+      "bytes": 1193,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge16_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge16_r",
+      "file": "vectors/native_edge16_r.ntf",
+      "sha256": "04c53500ab940b7473283a3f38e0aa64ca88092f1031196354654cb4d26888d3",
+      "bytes": 1193,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge16_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge16_s",
+      "file": "vectors/native_edge16_s.ntf",
+      "sha256": "ae85635c0db01bc1435e23d250539821525d0db4eea00c9b63b72cbf74c4912d",
+      "bytes": 1193,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge16_s.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge8_b",
+      "file": "vectors/native_edge8_b.ntf",
+      "sha256": "17387cc72ae6865b771920f5acf105ba50c16dd44957f1478416be1eaad0d7af",
+      "bytes": 1061,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge8_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge8_p",
+      "file": "vectors/native_edge8_p.ntf",
+      "sha256": "2515e6623b971040f538decdacaacf68b46b727abbc5a84919d3c9d5cbda2d4e",
+      "bytes": 1061,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge8_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge8_r",
+      "file": "vectors/native_edge8_r.ntf",
+      "sha256": "a8d557600ac87b078afc1b82f15786e6a654b50cecbe26bda66bb4afd29bdcda",
+      "bytes": 1061,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge8_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_edge8_s",
+      "file": "vectors/native_edge8_s.ntf",
+      "sha256": "7c778b04585eed95d6872f32f1690093b71261a4aec3fa5a626ff6ea4946dad4",
+      "bytes": 1061,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_edge8_s.gdal.json"
+      ]
+    },
+    {
+      "name": "native_geo_d_northup",
+      "file": "vectors/native_geo_d_northup.ntf",
+      "sha256": "215e49e98b3a6e961105f6f69759e92ccfc6b837e96c1279f0e902fbcf99eea1",
+      "bytes": 918,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_geo_d_northup.gdal.json"
+      ]
+    },
+    {
+      "name": "native_geo_d_southup",
+      "file": "vectors/native_geo_d_southup.ntf",
+      "sha256": "8fa7717223c7fffe7ce920fd0d92ac2107224033d0c09d953eae4323e89f4c08",
+      "bytes": 918,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_geo_d_southup.gdal.json"
+      ]
+    },
+    {
+      "name": "native_geo_g_northup",
+      "file": "vectors/native_geo_g_northup.ntf",
+      "sha256": "179ed3777466938eee43fd13e064a0abb30bab4f1198765ff331b2fbb34f7e71",
+      "bytes": 918,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_geo_g_northup.gdal.json"
+      ]
+    },
+    {
+      "name": "native_geo_g_southup",
+      "file": "vectors/native_geo_g_southup.ntf",
+      "sha256": "0b28ff93f7b27f4e04d7df859bba74dcd2827d8a99ca4d45c57dec26f5338885",
+      "bytes": 918,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_geo_g_southup.gdal.json"
+      ]
+    },
+    {
+      "name": "native_int5in8_r_dirty",
+      "file": "vectors/native_int5in8_r_dirty.ntf",
+      "sha256": "9722d39c8b6e31cd448f6c26cad12e7f65e55fbe7bca7ebd093ffa5c223de9a5",
+      "bytes": 849,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_int5in8_r_dirty.gdal.json"
+      ]
+    },
+    {
+      "name": "native_int8in16_r",
+      "file": "vectors/native_int8in16_r.ntf",
+      "sha256": "6cb34863eeea0b956933b18e1d7d66a6fe91ffdcdf74ea0bc111084de985eee7",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_int8in16_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_lit_b",
+      "file": "vectors/native_lit_b.ntf",
+      "sha256": "585eedec8f3281d4120cb18902c53877dd1c9e848b98f3187cdf6ab0b39b7134",
+      "bytes": 928,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_lit_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_lit_p",
+      "file": "vectors/native_lit_p.ntf",
+      "sha256": "bd27e9a0cb8e89039076c2fe3d8c67f83591773de1f04203e89a8eddd01eb5f0",
+      "bytes": 928,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_lit_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_lit_r",
+      "file": "vectors/native_lit_r.ntf",
+      "sha256": "7589ec42f54b6e3a9b318e5eedc365c9089ef86c515141c0dd7569c4f21ad2f5",
+      "bytes": 928,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_lit_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_lit_s",
+      "file": "vectors/native_lit_s.ntf",
+      "sha256": "46a4f92042a7510bd69acabacfb7e4c953158daa6da9b68f22b6269cc1f4f7b5",
+      "bytes": 928,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_lit_s.gdal.json"
+      ]
+    },
+    {
+      "name": "native_lut3",
+      "file": "vectors/native_lut3.ntf",
+      "sha256": "ad1ab0b9ca1c784b9cb62fea269a33148fc429305a83e7ada9e2b9be2a5a82b9",
+      "bytes": 864,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_lut3.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nbands9_b",
+      "file": "vectors/native_nbands9_b.ntf",
+      "sha256": "980e02ad78ff824a6e13e3a82da87eb9ce85e55a9620b0ae441eeb8de22e80a9",
+      "bytes": 1163,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nbands9_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nbands9_p",
+      "file": "vectors/native_nbands9_p.ntf",
+      "sha256": "3a39a399a99d2474606f3e884b35209e92629f282bf43d13e73db8269038f68b",
+      "bytes": 1163,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nbands9_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nbands9_r",
+      "file": "vectors/native_nbands9_r.ntf",
+      "sha256": "79fbcfcf4635f8cd387691369900acf48c1898b407c34e2071b744eb1e865ac6",
+      "bytes": 1163,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nbands9_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nbands9_s",
+      "file": "vectors/native_nbands9_s.ntf",
+      "sha256": "a7205ad1c93d4cb4985ae861638080fca4bcec75ad6a3b06b746eaf38d87645e",
+      "bytes": 1163,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nbands9_s.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nppb_zero",
+      "file": "vectors/native_nppb_zero.ntf",
+      "sha256": "e7bf767835e16c3320cd546144010cab05052012ba55d0a33cf317add91d2355",
+      "bytes": 858,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nppb_zero.gdal.json"
+      ]
+    },
+    {
+      "name": "native_nppbh_zero_only",
+      "file": "vectors/native_nppbh_zero_only.ntf",
+      "sha256": "b580539290ff691f880331187942d0bb301b9b674d9b7399dcad2c6dfb240757",
+      "bytes": 863,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_nppbh_zero_only.gdal.json"
+      ]
+    },
+    {
+      "name": "native_one_block_padded",
+      "file": "vectors/native_one_block_padded.ntf",
+      "sha256": "e0a1ace47f6e3c9fa04d3f8d614a38f2e3140ce8068f83d41b599355f50264f2",
+      "bytes": 875,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_one_block_padded.gdal.json"
+      ]
+    },
+    {
+      "name": "native_pjust_l_12in16",
+      "file": "vectors/native_pjust_l_12in16.ntf",
+      "sha256": "a01d127139561777c8f235b153006e45825185b740a904dae6bb87245f4cd0a0",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_pjust_l_12in16.gdal.json"
+      ]
+    },
+    {
+      "name": "native_pjust_l_12in16_dirty",
+      "file": "vectors/native_pjust_l_12in16_dirty.ntf",
+      "sha256": "b4fe7c4d66c239b7bac39f399da4cf7b4fb2c0942e77420c121f1164c07d3b7d",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_pjust_l_12in16_dirty.gdal.json"
+      ]
+    },
+    {
+      "name": "native_pjust_l_5in8",
+      "file": "vectors/native_pjust_l_5in8.ntf",
+      "sha256": "c4aeb659ee22440b57bf3981b11dfec803f38ab20297617408106e06ac4134d3",
+      "bytes": 849,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_pjust_l_5in8.gdal.json"
+      ]
+    },
+    {
+      "name": "native_pjust_r_12in16_dirty",
+      "file": "vectors/native_pjust_r_12in16_dirty.ntf",
+      "sha256": "99f3e58f25cd77d4becccb7c092c9d0edf87e36496d4545e7eeb5c982a94d206",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_pjust_r_12in16_dirty.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si12_l",
+      "file": "vectors/native_si12_l.ntf",
+      "sha256": "0bf66901670d5058dc8bd24a91b8a2668546c605ed7df3554826492eccc5b5cd",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si12_l.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si12_l_dirty",
+      "file": "vectors/native_si12_l_dirty.ntf",
+      "sha256": "d9220bb92b21c827d609663474d4aa810b9aead8a21f9be8aa958eb56bb3308d",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si12_l_dirty.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si12_r_mixed",
+      "file": "vectors/native_si12_r_mixed.ntf",
+      "sha256": "fa588254ff738548de874fdf4cc2daab1559c3493064bdb0c0cabfc90b77676b",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si12_r_mixed.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si12_r_signext",
+      "file": "vectors/native_si12_r_signext.ntf",
+      "sha256": "217fbb9481aabf018df4cc30a53199096172ae0b5441bf0b26ddf2e71bb6b6bd",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si12_r_signext.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si12_r_zerofill",
+      "file": "vectors/native_si12_r_zerofill.ntf",
+      "sha256": "2c3ed157424db1137298e3a55163c182030f8452ee5e8453a135ff6175ff550c",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si12_r_zerofill.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si16",
+      "file": "vectors/native_si16.ntf",
+      "sha256": "00e18d5b084bf1de61c072bc0c3b324ff6d8674d9be7dd958462b75c72544793",
+      "bytes": 855,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si16.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si1in8_r",
+      "file": "vectors/native_si1in8_r.ntf",
+      "sha256": "88b55830e0958c3593b3991a5186ad89a9a61e40dac2fff8883167c2281a6bfd",
+      "bytes": 849,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si1in8_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si5in8_l_dirty",
+      "file": "vectors/native_si5in8_l_dirty.ntf",
+      "sha256": "2b502f6768a76861a9edcb92defe6c6efc52430c5ea75575a80c0a5b49c78705",
+      "bytes": 849,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si5in8_l_dirty.gdal.json"
+      ]
+    },
+    {
+      "name": "native_si8",
+      "file": "vectors/native_si8.ntf",
+      "sha256": "03afd63031a327856ee4ea3c86a368a44dc0acd3af8e058942dfe7cccf2fd71a",
+      "bytes": 849,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_si8.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands10_b",
+      "file": "vectors/native_xbands10_b.ntf",
+      "sha256": "07b65b8f0ea91b73869d6ca36d803e084f11386215c179c7b6f337e2c50ca51d",
+      "bytes": 1205,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands10_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands10_p",
+      "file": "vectors/native_xbands10_p.ntf",
+      "sha256": "b888a89d974a09e12b73274391bd8f521147826bd84ec9161b56f9c5c28ebc0c",
+      "bytes": 1205,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands10_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands10_r",
+      "file": "vectors/native_xbands10_r.ntf",
+      "sha256": "edea47f51b6fbfe3f369a4a0cea64ccf95473eec97d5835e506124af8a3feb1c",
+      "bytes": 1205,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands10_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands10_s",
+      "file": "vectors/native_xbands10_s.ntf",
+      "sha256": "ff16608610012ac321ec7a575cca0cff9e47e228d3fede38510b93cf404d0465",
+      "bytes": 1205,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands10_s.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands256_b",
+      "file": "vectors/native_xbands256_b.ntf",
+      "sha256": "ba9fe11c3f4a91d6aa604d4c323299779abf5bc865aea2dbaa5180a3671fd9b9",
+      "bytes": 10307,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands256_b.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands256_p",
+      "file": "vectors/native_xbands256_p.ntf",
+      "sha256": "a39ed28960c055676b37d3ce05c8ed5f410e736587445f7727b63e0fd3d462ed",
+      "bytes": 10307,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands256_p.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands256_r",
+      "file": "vectors/native_xbands256_r.ntf",
+      "sha256": "5cdb04fcf6897f7dbb1512a220ffc6c361a935120e99dc633c893151e66a0ccb",
+      "bytes": 10307,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands256_r.gdal.json"
+      ]
+    },
+    {
+      "name": "native_xbands256_s",
+      "file": "vectors/native_xbands256_s.ntf",
+      "sha256": "3cc1147cb4e6c3efcdf10dd461513dae56305d01d2bfd74e3bbb6ffdba49fb09",
+      "bytes": 10307,
+      "origin": "authored for this repository by spec/build_fixtures.py",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok"
+      },
+      "oracle": [
+        "GDAL 3.13.3 storage reading, independent/native_xbands256_s.gdal.json"
+      ]
+    },
+    {
+      "name": "nga-ntb-test-files",
+      "file": null,
+      "sha256": null,
+      "bytes": null,
+      "origin": "NGA NITFS NTB test objectives [S5]: objectives read, files not obtained; some require a request",
+      "authority": "test objectives of the issuing agency; files not held",
+      "redistribution": "not held; a request-only file stays outside the public repository",
+      "expected": null,
+      "oracle": []
+    },
+    {
+      "name": "official-nsif0101-samples",
+      "file": null,
+      "sha256": null,
+      "bytes": null,
+      "origin": "official or accepted NSIF 01.01 sample files: not obtained",
+      "authority": "official samples; not held",
+      "redistribution": "outside the public repository unless publication is authorised",
+      "expected": null,
+      "oracle": []
+    },
+    {
+      "name": "trailing",
+      "file": "malformed/trailing.ntf",
+      "sha256": "689588b79af9a73db5b985cd46efa78d1721f5aa216741095de616de78bd8f0f",
+      "bytes": 848,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "refused",
+        "code": "E_LENGTH",
+        "stage": "header",
+        "offset": 342
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)"
+      ]
+    },
+    {
+      "name": "truncated",
+      "file": "malformed/truncated.ntf",
+      "sha256": "54e7a8d93c2a59301f48b28c9969124e29bb7690a98a234757cb4ad27dc33c99",
+      "bytes": 846,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "refused",
+        "code": "E_LENGTH",
+        "stage": "header",
+        "offset": 342
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)"
+      ]
+    },
+    {
+      "name": "uint16",
+      "file": "uint16.ntf",
+      "sha256": "77c8be04836b0e086dd19c895747184dfb982805fbffa78854babc82549f1fd6",
+      "bytes": 851,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          256,
+          4095,
+          65535
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/uint16.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "unknown_duplicate_tre",
+      "file": "unknown_duplicate_tre.ntf",
+      "sha256": "bfa3feec7d309097fc23268b9ae3406bd0b0d967e44169db2ff9184f18f224a2",
+      "bytes": 878,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "ok",
+        "samples_band_major": [
+          0,
+          64,
+          128,
+          255
+        ]
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome, band-major samples)",
+        "GDAL 3.13.3 storage reading, independent/unknown_duplicate_tre.gdal.json",
+        "SarPy fdcff94e surrogate layout check, kit oracle-results.json (retained, not re-run)"
+      ]
+    },
+    {
+      "name": "unsupported_stype",
+      "file": "malformed/unsupported_stype.ntf",
+      "sha256": "8eac401a58f51d3b063ee67e854f2c311fb07c0b263c2395b7b0b03a563b0274",
+      "bytes": 847,
+      "origin": "SC-4545-ENG-1.0 kit generator, contributed under Apache-2.0 by the maintainer",
+      "authority": "synthetic engineering vector; no normative authority",
+      "redistribution": "Apache-2.0 (this repository)",
+      "expected": {
+        "outcome": "refused",
+        "code": "E_PROFILE",
+        "stage": "header",
+        "offset": 11
+      },
+      "oracle": [
+        "kit expected.json (digest, outcome)"
+      ]
+    }
+  ]
+}

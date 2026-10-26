@@ -1,0 +1,524 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "stanag4545": {
+        "asset_ref": null,
+        "diagnostics": [],
+        "images": [
+          {
+            "abpp": 8,
+            "bands": 1,
+            "capture_time": "2026-10-04T12:00:00.000Z",
+            "columns": 2,
+            "composition_status": "segment_only",
+            "compression": "NC",
+            "geometry_status": "absent",
+            "iid1": "SCFIX0001",
+            "index": 0,
+            "mode": "B",
+            "nbpp": 8,
+            "pixel_status": "native_supported",
+            "pvtype": "INT",
+            "rows": 2
+          }
+        ],
+        "product_key": "[\"NSIF\",\"01.01\",\"SCFIX     \",\"20261004120000\",[\"SCFIX0001 \"]]",
+        "product_time": "2026-10-04T12:00:00.000Z",
+        "profile": "SC4545-CORE-1",
+        "security_status": "declared_unclassified",
+        "wire_signature": "NSIF01.01"
+      }
+    },
+    "confidence": null,
+    "entity_id": "10b992a0-7c4d-5e74-a4dd-5e36f553bb00",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [],
+    "position": null,
+    "quality": null,
+    "residual": {
+      "data": {
+        "stanag4545": {
+          "extensions": [],
+          "file_header": {
+            "directory": {
+              "des": [],
+              "graphic": [],
+              "image": [
+                {
+                  "data_length": {
+                    "length": 10,
+                    "offset": 369,
+                    "text": "0000000004"
+                  },
+                  "subheader_length": {
+                    "length": 6,
+                    "offset": 363,
+                    "text": "000439"
+                  }
+                }
+              ],
+              "res": [],
+              "text": []
+            },
+            "fields": {
+              "CLEVEL": {
+                "length": 2,
+                "offset": 9,
+                "text": "03"
+              },
+              "ENCRYP": {
+                "length": 1,
+                "offset": 296,
+                "text": "0"
+              },
+              "FBKGC": {
+                "length": 3,
+                "offset": 297,
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "FDT": {
+                "length": 14,
+                "offset": 25,
+                "text": "20261004120000"
+              },
+              "FHDR": {
+                "length": 4,
+                "offset": 0,
+                "text": "NSIF"
+              },
+              "FL": {
+                "length": 12,
+                "offset": 342,
+                "text": "000000000847"
+              },
+              "FSCOP": {
+                "length": 5,
+                "offset": 286,
+                "text": "00000"
+              },
+              "FSCPYS": {
+                "length": 5,
+                "offset": 291,
+                "text": "00000"
+              },
+              "FTITLE": {
+                "length": 80,
+                "offset": 39,
+                "text": "SYNTHETIC ENGINEERING VECTOR"
+              },
+              "FVER": {
+                "length": 5,
+                "offset": 4,
+                "text": "01.01"
+              },
+              "HL": {
+                "length": 6,
+                "offset": 354,
+                "text": "000404"
+              },
+              "NUMDES": {
+                "length": 3,
+                "offset": 388,
+                "text": "000"
+              },
+              "NUMI": {
+                "length": 3,
+                "offset": 360,
+                "text": "001"
+              },
+              "NUMRES": {
+                "length": 3,
+                "offset": 391,
+                "text": "000"
+              },
+              "NUMS": {
+                "length": 3,
+                "offset": 379,
+                "text": "000"
+              },
+              "NUMT": {
+                "length": 3,
+                "offset": 385,
+                "text": "000"
+              },
+              "NUMX": {
+                "length": 3,
+                "offset": 382,
+                "text": "000"
+              },
+              "ONAME": {
+                "length": 24,
+                "offset": 300,
+                "text": "SYNAPSECOMMAND TEST"
+              },
+              "OPHONE": {
+                "length": 18,
+                "offset": 324,
+                "text": ""
+              },
+              "OSTAID": {
+                "length": 10,
+                "offset": 15,
+                "text": "SCFIX"
+              },
+              "STYPE": {
+                "length": 4,
+                "offset": 11,
+                "text": "BF01"
+              },
+              "UDHDL": {
+                "length": 5,
+                "offset": 394,
+                "text": "00000"
+              },
+              "XHDL": {
+                "length": 5,
+                "offset": 399,
+                "text": "00000"
+              }
+            },
+            "length": 404,
+            "offset": 0,
+            "security": {
+              "length": 167,
+              "offset": 119
+            }
+          },
+          "parse_profile": {
+            "adapter_version": "1.0.0",
+            "capabilities": {
+              "cdm_translation": "complete",
+              "compressed_samples": "disabled",
+              "container_inventory": "complete",
+              "geographic_footprint": "per_image",
+              "metadata_preservation": "byte_preserving",
+              "native_samples": "per_image",
+              "new_export": "not_in_core",
+              "replay": "host_operation"
+            },
+            "profile": "SC4545-CORE-1",
+            "profile_revision": 1,
+            "tre_plugins": []
+          },
+          "security": {
+            "assessment": {
+              "clas_values": [
+                "U"
+              ],
+              "combination": "not_performed",
+              "kind": "core_assessment",
+              "reasons": [],
+              "scopes": 2,
+              "status": "declared_unclassified",
+              "uniform_clas": true,
+              "unknown_extensions": {
+                "des": 0,
+                "res": 0,
+                "tre": 0
+              }
+            },
+            "labels": [
+              {
+                "fields": {
+                  "CAPT": "",
+                  "CAUT": "",
+                  "CLAS": "U",
+                  "CLSY": "",
+                  "CLTX": "",
+                  "CODE": "",
+                  "CRSN": "",
+                  "CTLH": "",
+                  "CTLN": "",
+                  "DCDT": "",
+                  "DCTP": "",
+                  "DCXM": "",
+                  "DG": "",
+                  "DGDT": "",
+                  "REL": "",
+                  "SRDT": ""
+                },
+                "index": null,
+                "length": 167,
+                "offset": 119,
+                "scope": "file",
+                "uninterpreted": []
+              },
+              {
+                "fields": {
+                  "CAPT": "",
+                  "CAUT": "",
+                  "CLAS": "U",
+                  "CLSY": "",
+                  "CLTX": "",
+                  "CODE": "",
+                  "CRSN": "",
+                  "CTLH": "",
+                  "CTLN": "",
+                  "DCDT": "",
+                  "DCTP": "",
+                  "DCXM": "",
+                  "DG": "",
+                  "DGDT": "",
+                  "REL": "",
+                  "SRDT": ""
+                },
+                "index": 0,
+                "length": 167,
+                "offset": 527,
+                "scope": "image",
+                "uninterpreted": []
+              }
+            ]
+          },
+          "segments": [
+            {
+              "bands": [
+                {
+                  "fields": {
+                    "IFC": {
+                      "length": 1,
+                      "offset": 788,
+                      "text": "N"
+                    },
+                    "IMFLT": {
+                      "length": 3,
+                      "offset": 789,
+                      "text": ""
+                    },
+                    "IREPBAND": {
+                      "length": 2,
+                      "offset": 780,
+                      "text": "M"
+                    },
+                    "ISUBCAT": {
+                      "length": 6,
+                      "offset": 782,
+                      "text": ""
+                    },
+                    "NLUTS": {
+                      "length": 1,
+                      "offset": 792,
+                      "text": "0"
+                    }
+                  },
+                  "luts": []
+                }
+              ],
+              "comments": [],
+              "data": {
+                "length": 4,
+                "offset": 843
+              },
+              "fields": {
+                "ABPP": {
+                  "length": 2,
+                  "offset": 772,
+                  "text": "08"
+                },
+                "ENCRYP": {
+                  "length": 1,
+                  "offset": 694,
+                  "text": "0"
+                },
+                "IALVL": {
+                  "length": 3,
+                  "offset": 816,
+                  "text": "000"
+                },
+                "IC": {
+                  "length": 2,
+                  "offset": 777,
+                  "text": "NC"
+                },
+                "ICAT": {
+                  "length": 8,
+                  "offset": 764,
+                  "text": "VIS"
+                },
+                "ICORDS": {
+                  "length": 1,
+                  "offset": 775,
+                  "text": ""
+                },
+                "IDATIM": {
+                  "length": 14,
+                  "offset": 416,
+                  "text": "20261004120000"
+                },
+                "IDLVL": {
+                  "length": 3,
+                  "offset": 813,
+                  "text": "001"
+                },
+                "IID1": {
+                  "length": 10,
+                  "offset": 406,
+                  "text": "SCFIX0001"
+                },
+                "IID2": {
+                  "length": 80,
+                  "offset": 447,
+                  "text": "SYNTHETIC TEST ONLY"
+                },
+                "ILOC": {
+                  "length": 10,
+                  "offset": 819,
+                  "text": "0000000000"
+                },
+                "IM": {
+                  "length": 2,
+                  "offset": 404,
+                  "text": "IM"
+                },
+                "IMAG": {
+                  "length": 4,
+                  "offset": 829,
+                  "text": "1.0"
+                },
+                "IMODE": {
+                  "length": 1,
+                  "offset": 794,
+                  "text": "B"
+                },
+                "IREP": {
+                  "length": 8,
+                  "offset": 756,
+                  "text": "MONO"
+                },
+                "ISORCE": {
+                  "length": 42,
+                  "offset": 695,
+                  "text": "SYNTHETIC"
+                },
+                "ISYNC": {
+                  "length": 1,
+                  "offset": 793,
+                  "text": "0"
+                },
+                "IXSHDL": {
+                  "length": 5,
+                  "offset": 838,
+                  "text": "00000"
+                },
+                "NBANDS": {
+                  "length": 1,
+                  "offset": 779,
+                  "text": "1"
+                },
+                "NBPC": {
+                  "length": 4,
+                  "offset": 799,
+                  "text": "0001"
+                },
+                "NBPP": {
+                  "length": 2,
+                  "offset": 811,
+                  "text": "08"
+                },
+                "NBPR": {
+                  "length": 4,
+                  "offset": 795,
+                  "text": "0001"
+                },
+                "NCOLS": {
+                  "length": 8,
+                  "offset": 745,
+                  "text": "00000002"
+                },
+                "NICOM": {
+                  "length": 1,
+                  "offset": 776,
+                  "text": "0"
+                },
+                "NPPBH": {
+                  "length": 4,
+                  "offset": 803,
+                  "text": "0002"
+                },
+                "NPPBV": {
+                  "length": 4,
+                  "offset": 807,
+                  "text": "0002"
+                },
+                "NROWS": {
+                  "length": 8,
+                  "offset": 737,
+                  "text": "00000002"
+                },
+                "PJUST": {
+                  "length": 1,
+                  "offset": 774,
+                  "text": "R"
+                },
+                "PVTYPE": {
+                  "length": 3,
+                  "offset": 753,
+                  "text": "INT"
+                },
+                "TGTID": {
+                  "length": 17,
+                  "offset": 430,
+                  "text": ""
+                },
+                "UDIDL": {
+                  "length": 5,
+                  "offset": 833,
+                  "text": "00000"
+                }
+              },
+              "index": 0,
+              "kind": "image",
+              "ordinal": 0,
+              "security": {
+                "length": 167,
+                "offset": 527
+              },
+              "subheader": {
+                "length": 439,
+                "offset": 404
+              }
+            }
+          ],
+          "wire_b64": "TlNJRjAxLjAxMDNCRjAxU0NGSVggICAgIDIwMjYxMDA0MTIwMDAwU1lOVEhFVElDIEVOR0lORUVSSU5HIFZFQ1RPUiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBVICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAwMDAwMDAwMDAwAAAAU1lOQVBTRUNPTU1BTkQgVEVTVCAgICAgICAgICAgICAgICAgICAgICAgMDAwMDAwMDAwODQ3MDAwNDA0MDAxMDAwNDM5MDAwMDAwMDAwNDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBJTVNDRklYMDAwMSAyMDI2MTAwNDEyMDAwMCAgICAgICAgICAgICAgICAgU1lOVEhFVElDIFRFU1QgT05MWSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBVICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDBTWU5USEVUSUMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwMDAwMDAwMjAwMDAwMDAySU5UTU9OTyAgICBWSVMgICAgIDA4UiAwTkMxTSAgICAgICBOICAgMDBCMDAwMTAwMDEwMDAyMDAwMjA4MDAxMDAwMDAwMDAwMDAwMDEuMCAwMDAwMDAwMDAwAECA/w=="
+        }
+      },
+      "namespace": "NSIF/NITF imagery"
+    },
+    "schema_version": "3.2.0",
+    "source": {
+      "adapter": "stanag4545",
+      "adapter_version": "1.0.0",
+      "format_name": "NSIF/NITF imagery",
+      "format_version": "SC4545-CORE-1; STANAG 4545 Ed 2 target",
+      "observed_at": null,
+      "original_id": "[\"NSIF\",\"01.01\",\"SCFIX     \",\"20261004120000\",[\"SCFIX0001 \"]]",
+      "record_index": 0,
+      "source_hash": null,
+      "synthetic": true,
+      "system": "STANAG4545",
+      "transformations": [
+        "trailing ASCII spaces of a fixed-width text field are trimmed for its display value (attributes, the footprint label, residual `text`); the padded bytes stay addressable by the field's offset and length in the preserved container",
+        "a valid 14-digit YYYYMMDDhhmmss field (FDT, IDATIM) is rendered as RFC 3339 UTC with three decimals; the 14 source bytes stay addressable by offset and length",
+        "decimal ASCII count, dimension and bit-depth fields are carried as integers in attributes and FBKGC as three unsigned integers; the source bytes stay addressable"
+      ]
+    },
+    "source_ids": [
+      {
+        "external_id": "[\"NSIF\",\"01.01\",\"SCFIX     \",\"20261004120000\",[\"SCFIX0001 \"]]",
+        "system": "STANAG4545:default"
+      }
+    ],
+    "status": null,
+    "symbol": null,
+    "valid_from": "2026-10-04T12:00:00.000Z",
+    "valid_to": null
+  }
+]

@@ -225,7 +225,9 @@ and to the release and arc branches.
 `--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
 and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
 directions to agree. At `v3.9.0` `python -m synapse_cdm.harness --list-adapters` prints `36 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+registered`. The row marked **post-3.9.0** landed in the tree after that tag, `stanag4545` on
+2026-10-25, and is in no release. Declared maturity and claim status are read from
+`manifests/<name>.json`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -265,6 +267,7 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `stanag4559_catalog` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
 | `stanag4559_stream` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
 | `stanag4559_workflow` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
+| `stanag4545` | ingest | 22 | L3 | PROVISIONAL (**post-3.9.0**, in no release) |
 
 **765 fixture verdicts, 0 failed** across the thirty-six, against the published 3.2.0 schemas —
 the 756 that 3.8.0 shipped, every golden byte for byte as it was, plus 9 from the three new sets.

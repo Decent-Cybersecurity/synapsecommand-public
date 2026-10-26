@@ -80,6 +80,9 @@ Guidance, not a requirement — a report missing any of it is still worth making
   (2026-10-11: the separate distribution `synapse-link16-bridge` under `packages/link16_bridge/`
   is outside this policy's package scope, and it has no security policy of its own in this
   release.)
+  (2026-10-25: the separate distribution `synapse-imagery` under `packages/imagery/` is outside
+  this policy's package scope in the same way, and it has no security policy of its own in this
+  release.)
 - The adapters: a payload that makes one crash, hang, consume unbounded memory, or emit a CDM
   object that misrepresents its source.
 - The bounds and refusals this repository publishes as active — an input larger than a declared
@@ -116,7 +119,7 @@ payload by its caller, who is the party entitled to decide what to connect to.
 This is not an assurance offered on trust. `tests/test_cdm_no_network.py` proves it twice: it
 sweeps every module under `synapse_cdm` for an import of any networking module — the syntax tree,
 so an import inside a function body is caught as well as one at the top — and then it takes
-`socket.socket` away and runs the conformance suite over all thirty-six adapters underneath, which
+`socket.socket` away and runs the conformance suite over all thirty-seven adapters underneath, which
 exits 0 with no socket obtainable in the process.
 
 What that test does **not** claim: that no dependency of this package opens a socket. `pydantic`

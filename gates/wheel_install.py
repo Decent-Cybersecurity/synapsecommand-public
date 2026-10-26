@@ -320,6 +320,27 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_cesmo_internal_adapter.py",
     "test_cdm_cesmo_internal_contract.py",
     "test_cdm_cesmo_internal_fuzz.py",
+    # `test_cdm_nsif_codec.py` is package-only (2026-10-24, the STANAG 4545 imagery adapter's
+    # parser): it reads the codec, the packaged vectors and twins under `fixtures/stanag4545/`,
+    # loads the packaged builder in memory and runs its `--check`, all through
+    # `synapse_cdm.__file__`, writing only under `tmp_path`.
+    "test_cdm_nsif_codec.py",
+    # `test_cdm_nsif_geometry.py` is package-only (2026-10-25, the same adapter's footprints): it
+    # reads the geometry module and the codec, the packaged vectors and the recorded independent
+    # readings under `fixtures/stanag4545/`, and loads the packaged builder in memory, all through
+    # `synapse_cdm.__file__`, writing nothing.
+    "test_cdm_nsif_geometry.py",
+    # `test_cdm_stanag4545_adapter.py` is package-only (2026-10-25, the same adapter's
+    # registration): it reads the adapter, its packaged vectors, twins and goldens under
+    # `fixtures/stanag4545/`, loads the packaged builder in memory and runs its `--check`, and
+    # replays the harness over the packaged directories, all through `synapse_cdm.__file__`,
+    # writing only under `tmp_path`.
+    "test_cdm_stanag4545_adapter.py",
+    # `test_cdm_nsif_robustness.py` is package-only (2026-10-25, the same adapter's evidence): it
+    # reads the three adapter modules, the packaged vectors, twins, goldens and builder under
+    # `fixtures/stanag4545/`, and runs one child interpreter over the installed package, all
+    # through `synapse_cdm.__file__`, writing nothing.
+    "test_cdm_nsif_robustness.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -408,6 +429,11 @@ REPO_BOUND_TESTS = {
     "test_cdm_stanag4559_catalog_adapter.py": "tests/stanag4559_bundle/ (the STANAG 4559 specification bundle's records, expected Events and fixture manifest, the acceptance oracle), the published schemas/event.schema.json and tests/frozen/cdm/3.0.0/, and the packaged fixture builder, which regenerates the fixtures from tests/stanag4559_bundle/ — none of which an installed wheel carries",
     "test_cdm_stanag4559_stream_adapter.py": "tests/stanag4559_bundle/, schemas/event.schema.json, tests/frozen/cdm/3.0.0/ and the fixture builder that reads tests/stanag4559_bundle/, as test_cdm_stanag4559_catalog_adapter.py",
     "test_cdm_stanag4559_workflow_adapter.py": "tests/stanag4559_bundle/, schemas/event.schema.json, tests/frozen/cdm/3.0.0/ and the fixture builder that reads tests/stanag4559_bundle/, as test_cdm_stanag4559_catalog_adapter.py",
+    # Added 2026-10-25 (the STANAG 4545 imagery adapter's evidence): its fuzz gate, its benchmark
+    # and its handoff record live at the repository root, outside the wheel.
+    "test_cdm_nsif_fuzz.py": "gates/nsif_fuzz.py, which the wheel does not carry — the reduced campaign loads that gate by path from the repository",
+    "test_cdm_nsif_benchmark.py": "gates/nsif_benchmark.py, which the wheel does not carry — the reduced workload loads that gate by path from the repository",
+    "test_cdm_stanag4545_evidence.py": "docs/stanag4545-implementation.md, docs/stanag4545-acceptance.csv, docs/stanag4545-corpus.json and manifests/stanag4545.json at the repository root, none of which ships in the wheel",
 }
 
 def source_roster() -> tuple[str, ...]:

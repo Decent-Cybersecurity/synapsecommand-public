@@ -1,0 +1,71 @@
+# Packaging for synapse-imagery, the host half of the SynapseCommand STANAG 4545 (NSIF/NITF)
+# imagery adapter: staged ingest, the asset store, the policy seam, the isolated worker,
+# original-byte replay, the experimental SC4545-WRITE-NC8-1 writer and the `sc-imagery`
+# command. It is a separate distribution beside synapse-cdm and outside the adapter registry;
+# the parser and translator it calls is the `stanag4545` adapter of synapse-cdm.
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapse-imagery"
+dynamic = ["version"]
+description = "Host operations for the SynapseCommand STANAG 4545 imagery adapter: staged ingest, a local asset store, a policy seam, an isolated worker, original-byte replay and an experimental NC8 writer (no codec, no HTTP service)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+# Byte copies of the repository-root files: a wheel is a redistribution and has to carry them.
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Decent Cybersecurity s.r.o." }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+]
+# synapse-cdm 3.10.0 is the first release that carries the `stanag4545` adapter; below the next
+# package major. jsonschema validates the host result (it is already a synapse-cdm dependency,
+# declared here because this package imports it). Everything else is the standard library.
+dependencies = ["synapse-cdm>=3.10.0,<4", "jsonschema>=4.0"]
+
+[project.scripts]
+sc-imagery = "synapse_imagery.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Source = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Issues = "https://github.com/Decent-Cybersecurity/synapsecommand-public/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "synapse_imagery._version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["synapse_imagery*"]
+
+[tool.setuptools.package-data]
+synapse_imagery = ["contracts/*.json"]
+
+[tool.pytest.ini_options]
+# This table makes `packages/imagery` the rootdir; without it pytest climbs to the repository's
+# pytest.ini, which neither collects these tests nor puts the package on the path. Tests marked
+# `linux` are deselected here and selected with `-m linux`, which overrides this `-m`.
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-p", "no:cacheprovider", "--strict-markers", "--strict-config", "-m", "not linux"]
+filterwarnings = ["error"]
+markers = [
+    "linux: needs a Linux kernel (RLIMIT_AS enforcement) or the reference environment's pip and setuptools; deselected by default, selected with -m linux",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9", "F", "E7", "W"]

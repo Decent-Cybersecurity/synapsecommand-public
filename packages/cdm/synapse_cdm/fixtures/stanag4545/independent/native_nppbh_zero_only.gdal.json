@@ -1,0 +1,28 @@
+{
+ "file": "vectors/native_nppbh_zero_only.ntf",
+ "bytes": 863,
+ "sha256": "b580539290ff691f880331187942d0bb301b9b674d9b7399dcad2c6dfb240757",
+ "gdal_data_type": "Byte",
+ "size": [
+  5,
+  3
+ ],
+ "band_count": 1,
+ "storage_band_major": [
+  1,
+  4,
+  7,
+  10,
+  13,
+  12,
+  15,
+  18,
+  21,
+  24,
+  23,
+  26,
+  29,
+  32,
+  35
+ ]
+}

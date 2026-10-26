@@ -528,14 +528,16 @@ _IEM_N0Q_EVENTS = (
 
 
 def test_the_golden_census_is_what_the_tree_holds():
-    """785 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
+    """809 golden files (631 at R0, the 26 `readsb_trace` wrote on 2026-10-15, the 10 `nexrad2`
     wrote the same day, the 23 of the three station-text adapters the same day: 8 `ndbc_stdmet`,
     7 `coops_csv`, 8 `airnow_hourly`, the 26 `grib2` wrote on 2026-10-17, the 20 `cog` wrote the
     same day, the 8 `iem_n0q` wrote the same day, the 10 `barentswatch_hais` and the 10
     `frost_observations` wrote on 2026-10-22, the 12 `cesmo_internal` wrote on 2026-10-24, whose
-    Events carry `"validity": null` and so reach no refusal, and the 9 of the three STANAG 4559
+    Events carry `"validity": null` and so reach no refusal, the 9 of the three STANAG 4559
     translators, 3 each, wrote on 2026-10-24, whose Events state no 3.2.0 member and so reach no
-    refusal); the refusal branch
+    refusal, and the 24 `stanag4545` wrote on 2026-10-25 (22 at the top level, 2 for its context
+    vector, none of whose objects reaches the refusal branch: the product is an Entity with no
+    position and each footprint a PlanObject with no route); the refusal branch
     below is reached by six objects at a 3.1.0
     position source, an Entity and its Track in each of three `link16_gateway` goldens (counted
     with grep when this was written), by the 26 `readsb_trace` Tracks at their populated 3.2.0
@@ -546,7 +548,7 @@ def test_the_golden_census_is_what_the_tree_holds():
     `iem_n0q` Events at theirs, one in each of its goldens, by the 10 `barentswatch_hais` Tracks at
     their populated 3.2.0 `attributes`, one in each of its goldens, and by the 34 `frost_observations`
     Events at their 3.2.0 `validity`, one to five in each of its goldens."""
-    assert len(GOLDENS) == 785
+    assert len(GOLDENS) == 809
     refused = []
     for path in GOLDENS:
         doc = json.loads(path.read_text(encoding="utf-8"))
