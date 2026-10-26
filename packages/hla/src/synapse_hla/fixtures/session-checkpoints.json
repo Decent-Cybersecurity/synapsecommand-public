@@ -1,0 +1,37 @@
+{
+  "upserts": [
+    {
+      "seq": 5,
+      "revision": 1,
+      "entity_id": "781e68de-166f-531c-b906-4a2d087f817e",
+      "lat": 0,
+      "lon": 0,
+      "alt_m": 0,
+      "speed_mps": 10,
+      "course_deg": 90,
+      "climb_mps": 0,
+      "valid_from": "2026-01-01T00:00:01.000Z"
+    },
+    {
+      "seq": 6,
+      "revision": 2,
+      "entity_id": "781e68de-166f-531c-b906-4a2d087f817e",
+      "lat": 0,
+      "lon": 0,
+      "alt_m": 10,
+      "speed_mps": 10,
+      "course_deg": 90,
+      "climb_mps": 0,
+      "valid_from": "2026-01-01T00:00:02.000Z"
+    }
+  ],
+  "snapshots_at": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "removed_at": 7,
+  "invalidations": 0,
+  "diagnostics": 0
+}

@@ -1,0 +1,20 @@
+{
+  "profile": "SC-HLA-RPR2-OBS-1",
+  "session_id": "example-001",
+  "source_system": "synthetic-reference",
+  "synthetic": true,
+  "mode": "demo",
+  "endpoint": "rti://127.0.0.1:14321",
+  "allow_remote": false,
+  "federation_name": "SC_DEMO_0123456789abcdef",
+  "federate_name": "SC_OBSERVER",
+  "profile_declaration": "bundled-fom-created",
+  "time_policy": {
+    "mode": "external_elapsed",
+    "epoch": "2026-01-01T00:00:00.000000Z",
+    "basis": "Synthetic 1x scenario clock asserted by fixture author"
+  },
+  "force_map": {
+    "1": "FRIENDLY"
+  }
+}

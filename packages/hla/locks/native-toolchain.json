@@ -1,0 +1,97 @@
+{
+  "toolchain_version": 1,
+  "about": "The native build tools of synapse-hla 1.0.0, locked (R43): the pinned OpenRTI source archive by SHA-256, the reference toolchain the specification names, and every toolchain that actually built the native part, with its exact versions as its build record and package database state them. Read by tests/release_sbom.py, which writes locks/sbom.cdx.json.",
+  "openrti": {
+    "commit": "814a210978b7faafd65affbe70a2e25679921b23",
+    "archive": "openrti-814a210.tar.gz",
+    "sha256": "16de11df983c8074feed252a7de1fc7c05c4e9520c050df6bcff8b3a899adb80",
+    "bytes": 677523,
+    "options": [
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_CXX_STANDARD=14",
+      "-DOPENRTI_ENABLE_RTI13=OFF",
+      "-DOPENRTI_ENABLE_RTI1516=OFF",
+      "-DOPENRTI_ENABLE_RTI1516E=ON",
+      "-DOPENRTI_ENABLE_PYTHON_BINDINGS=OFF",
+      "-DOPENRTI_BUILD_SHARED=ON",
+      "-DOPENRTI_INSTALL_WITH_RPATH=OFF",
+      "-DCMAKE_INSTALL_RPATH=$ORIGIN/../lib"
+    ],
+    "licence_offered": "LGPL-2.1-only OR LGPL-3.0-only OR MPL-2.0",
+    "licence_elected": "LGPL-2.1-or-later",
+    "libraries": [
+      "libOpenRTI",
+      "librti1516e",
+      "libfedtime1516e"
+    ],
+    "programs": [
+      "rtinode"
+    ],
+    "bundled_expat_compiled": false
+  },
+  "reference": {
+    "evidence_class": "REFERENCE-linux-x86_64",
+    "system": "Linux x86_64, Ubuntu 24.04, 4 vCPU, 8 GiB",
+    "compiler": "GCC 13 (C++14)",
+    "cmake": "3.28 to 3.31",
+    "status": "BLOCKED",
+    "missing": "no build on the reference platform exists yet: the reference run of this release was on an aarch64 machine (CR-L04, D-24)"
+  },
+  "builds": [
+    {
+      "evidence_class": "DEV-macOS-arm64",
+      "source": "build record of round R7 (tools/build_openrti.sh) and the native build of check.sh step 8",
+      "system": "macOS 26.5.2 (Darwin 25.5.0) arm64",
+      "cmake": "4.4.2 (Homebrew)",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "openrti_cxx_standard": "98 (NAT-02: the C++14 OpenRTI client cannot connect on macOS)",
+      "native_cxx_standard": "14",
+      "policy_version_minimum_added": true,
+      "linked": {
+        "expat": "/usr/lib/libexpat.1.dylib (the system's)",
+        "zlib": "/usr/lib/libz.1.dylib (the system's)",
+        "c++ runtime": "/usr/lib/libc++.1.dylib (the system's)"
+      },
+      "packages": {}
+    },
+    {
+      "evidence_class": "DEV-linux-aarch64",
+      "source": "the Linux reference run ref-1 of 2026-10-25: build-record.txt, dpkg.txt, ldd.txt",
+      "system": "Ubuntu 24.04.5 userland on an Ubuntu 24.04.4 aarch64 VM (kernel 6.8.0-117-generic), glibc 2.39",
+      "cmake": "3.28.3",
+      "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "openrti_cxx_standard": "14",
+      "native_cxx_standard": "14",
+      "policy_version_minimum_added": false,
+      "linked": {
+        "expat": "libexpat.so.1 (the system's, package libexpat1)",
+        "zlib": "libz.so.1 (the system's, package zlib1g)",
+        "c++ runtime": "libstdc++.so.6 (package libstdc++6)"
+      },
+      "packages": {
+        "binutils": "2.42-4ubuntu2.10",
+        "cmake": "3.28.3-1build7",
+        "cmake-data": "3.28.3-1build7",
+        "g++": "4:13.2.0-7ubuntu1",
+        "g++-13": "13.3.0-6ubuntu2~24.04.1",
+        "gcc-13": "13.3.0-6ubuntu2~24.04.1",
+        "cpp-13": "13.3.0-6ubuntu2~24.04.1",
+        "libstdc++-13-dev": "13.3.0-6ubuntu2~24.04.1",
+        "libc6-dev": "2.39-0ubuntu8.9",
+        "make": "4.3-4.1build2",
+        "libexpat1": "2.6.1-2ubuntu0.6",
+        "libexpat1-dev": "2.6.1-2ubuntu0.6",
+        "zlib1g": "1:1.3.dfsg-3.1ubuntu2.3",
+        "zlib1g-dev": "1:1.3.dfsg-3.1ubuntu2.3",
+        "libstdc++6": "14.2.0-4ubuntu2~24.04.1",
+        "proj-bin": "9.4.0-1build2",
+        "lsof": "4.95.0-1build3",
+        "python3.12": "3.12.3-1ubuntu0.17"
+      }
+    }
+  ],
+  "package_hashes": {
+    "status": "BLOCKED",
+    "missing": "the SHA-256 of the distribution packages above (.deb files, Homebrew bottles): they are published by the distributions' archives, which this release was not allowed to reach (D-25: the Python package index only); the versions are exact"
+  }
+}

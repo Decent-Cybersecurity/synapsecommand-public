@@ -1,0 +1,350 @@
+[
+  {
+    "id": "SPATIAL-1",
+    "name": "Spatial",
+    "hex": "0100000000000000415854a6400000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": {
+      "algorithm": 1,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": null,
+      "acceleration_mps2": null,
+      "angular_velocity_radps": null,
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-2",
+    "name": "Spatial",
+    "hex": "0200000000000000415854a6400000000000000000000000000000000000000000000000000000000000000000000000000000004120000000000000",
+    "expected": {
+      "algorithm": 2,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": null,
+      "angular_velocity_radps": null,
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-3",
+    "name": "Spatial",
+    "hex": "0300000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003e8000003f0000003f400000",
+    "expected": {
+      "algorithm": 3,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": null,
+      "angular_velocity_radps": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-4",
+    "name": "Spatial",
+    "hex": "0400000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003f80000040000000404000003e8000003f0000003f400000",
+    "expected": {
+      "algorithm": 4,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "angular_velocity_radps": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-5",
+    "name": "Spatial",
+    "hex": "0500000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003f8000004000000040400000",
+    "expected": {
+      "algorithm": 5,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "angular_velocity_radps": null,
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-6",
+    "name": "Spatial",
+    "hex": "0600000000000000415854a6400000000000000000000000000000000000000000000000000000000000000000000000000000004120000000000000",
+    "expected": {
+      "algorithm": 6,
+      "frame": "BODY",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": null,
+      "angular_velocity_radps": null,
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-7",
+    "name": "Spatial",
+    "hex": "0700000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003e8000003f0000003f400000",
+    "expected": {
+      "algorithm": 7,
+      "frame": "BODY",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": null,
+      "angular_velocity_radps": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-8",
+    "name": "Spatial",
+    "hex": "0800000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003f80000040000000404000003e8000003f0000003f400000",
+    "expected": {
+      "algorithm": 8,
+      "frame": "BODY",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "angular_velocity_radps": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "SPATIAL-9",
+    "name": "Spatial",
+    "hex": "0900000000000000415854a64000000000000000000000000000000000000000000000000000000000000000000000000000000041200000000000003f8000004000000040400000",
+    "expected": {
+      "algorithm": 9,
+      "frame": "BODY",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "angular_velocity_radps": null,
+      "padding_hex": "00000000000000000000"
+    }
+  },
+  {
+    "id": "ID-123",
+    "name": "EntityIdentifier",
+    "hex": "000100020003",
+    "expected": {
+      "site": 1,
+      "application": 2,
+      "entity": 3
+    }
+  },
+  {
+    "id": "TYPE-PLATFORM",
+    "name": "EntityType",
+    "hex": "010100e101020304",
+    "expected": {
+      "kind": 1,
+      "domain": 1,
+      "country": 225,
+      "category": 1,
+      "subcategory": 2,
+      "specific": 3,
+      "extra": 4
+    }
+  },
+  {
+    "id": "FORCE-1",
+    "name": "ForceIdentifier",
+    "hex": "01",
+    "expected": {
+      "value": 1
+    }
+  },
+  {
+    "id": "FORCE-255",
+    "name": "ForceIdentifier",
+    "hex": "ff",
+    "expected": {
+      "value": 255
+    }
+  },
+  {
+    "id": "SPATIAL-PADDING",
+    "name": "Spatial",
+    "hex": "02a5a5a5a5a5a5a5415854a64000000000000000000000000000000000000000005a5a5a000000000000000000000000000000004120000000000000",
+    "expected": {
+      "algorithm": 2,
+      "frame": "WORLD",
+      "frozen": false,
+      "position_ecef_m": [
+        6378137.0,
+        0.0,
+        0.0
+      ],
+      "orientation_rad": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity_mps": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "acceleration_mps2": null,
+      "angular_velocity_radps": null,
+      "padding_hex": "a5a5a5a5a5a5a55a5a5a"
+    }
+  }
+]

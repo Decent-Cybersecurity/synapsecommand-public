@@ -79,7 +79,8 @@ Guidance, not a requirement — a report missing any of it is still worth making
 - The `synapse-cdm` distribution published on PyPI, and the code in `packages/cdm/`.
   (2026-10-11: the separate distribution `synapse-link16-bridge` under `packages/link16_bridge/`
   is outside this policy's package scope, and it has no security policy of its own in this
-  release.)
+  release.) (2026-10-25: the separate distribution `synapse-hla` under `packages/hla/` is outside
+  this policy's package scope as well, and it has no security policy of its own in this release.)
 - The adapters: a payload that makes one crash, hang, consume unbounded memory, or emit a CDM
   object that misrepresents its source.
 - The bounds and refusals this repository publishes as active — an input larger than a declared

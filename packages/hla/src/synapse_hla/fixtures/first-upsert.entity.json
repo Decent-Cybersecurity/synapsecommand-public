@@ -1,0 +1,123 @@
+{
+  "schema_version": "3.0.0",
+  "object_kind": "entity",
+  "entity_id": "781e68de-166f-531c-b906-4a2d087f817e",
+  "entity_type": "PLATFORM",
+  "affiliation": "FRIENDLY",
+  "symbol": null,
+  "position": {
+    "lat": 0.0,
+    "lon": 0.0,
+    "alt_m": 0.0,
+    "position_source": "ESTIMATED",
+    "accuracy_m": null,
+    "vertical": null
+  },
+  "kinematics": {
+    "speed_mps": 10.0,
+    "course_deg": 90.0,
+    "climb_mps": 0.0
+  },
+  "attributes": {
+    "hla": {
+      "profile": "SC-HLA-RPR2-OBS-1",
+      "session_id": "example-001",
+      "generation": 1,
+      "object_token": "o1",
+      "reported_class": "HLAobjectRoot.BaseEntity.PhysicalEntity",
+      "name": "SYNTHETIC-001",
+      "identifier": {
+        "site": 1,
+        "application": 2,
+        "entity": 3
+      },
+      "entity_type": {
+        "kind": 1,
+        "domain": 1,
+        "country": 225,
+        "category": 1,
+        "subcategory": 2,
+        "specific": 3,
+        "extra": 4
+      },
+      "force_identifier": 1,
+      "spatial": {
+        "algorithm": 2,
+        "frame": "WORLD",
+        "frozen": false,
+        "position_ecef_m": [
+          6378137.0,
+          0.0,
+          0.0
+        ],
+        "orientation_rad": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "velocity_mps": [
+          0.0,
+          10.0,
+          0.0
+        ],
+        "acceleration_mps2": null,
+        "angular_velocity_radps": null,
+        "padding_hex": "00000000000000000000"
+      },
+      "attribute_sequences": {
+        "EntityIdentifier": 3,
+        "EntityType": 3,
+        "ForceIdentifier": 4,
+        "Spatial": 5
+      },
+      "attribute_hashes": {
+        "EntityIdentifier": "958f471f5477894347dcbff396bd76f96a462df65c79f3b9cac58e340cd8a61e",
+        "EntityType": "a02d510b57ea2813e41ab4b547120eb1c04a69afb3413962c679626a8c5ae757",
+        "ForceIdentifier": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",
+        "Spatial": "67cd7e47f9dcf5b6556e173b92fc7e930584f3c4ddbba761180463d2ab544dfb"
+      },
+      "time": {
+        "kind": "external_elapsed",
+        "basis": "Synthetic 1x scenario clock asserted by fixture author",
+        "effective_at": "2026-01-01T00:00:01.000000Z",
+        "spatial_seq": 5
+      },
+      "profile_verification": "bundled-fom-created",
+      "capture_complete": true
+    }
+  },
+  "ontology_types": [],
+  "valid_from": "2026-01-01T00:00:01.000Z",
+  "valid_to": null,
+  "confidence": null,
+  "source": {
+    "system": "synthetic-reference",
+    "adapter": "hla-rpr2",
+    "adapter_version": "1.0.0",
+    "synthetic": true,
+    "format_name": "HLA RPR FOM",
+    "format_version": "IEEE 1516-2010 / RPR FOM 2.0 / SC-HLA-RPR2-OBS-1",
+    "original_id": "example-001/1/o1/5",
+    "source_hash": {
+      "algorithm": "sha256",
+      "value": "06dd4f63197b1a49945cd419d4860577a7795d427a91c43afe3d8605497e2264"
+    },
+    "record_index": 4,
+    "observed_at": null,
+    "transformations": [
+      "external-time-context",
+      "ecef-to-wgs84",
+      "ecef-velocity-to-enu"
+    ]
+  },
+  "source_ids": [
+    {
+      "system": "hla-rpr2",
+      "external_id": "[\"example-001\",\"1\",\"1\",\"2\",\"3\",\"1\"]"
+    }
+  ],
+  "integrity": null,
+  "quality": null,
+  "status": null,
+  "residual": null
+}

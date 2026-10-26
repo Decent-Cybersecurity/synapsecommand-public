@@ -466,6 +466,15 @@ outside the adapter registry and outside the boundary test above, and is judged 
 (the handoff's REQ181: no transport adapter is registered). Its policy is exact-match configuration,
 not a classification-policy engine or a cross-domain guard.
 
+**The HLA observer lives outside the registry as well (2026-10-25).** Joining a federation through
+a native worker, keeping a durable hash-chained capture of what the RTI delivered, the session's
+state and its processes, sockets and files are runtime concerns, not a translator's. They live in
+the separate distribution `synapse-hla` (`packages/hla/`), which reduces its capture to per-object
+state and projects that state to CDM `Entity` objects with its own code. It is not an `Adapter`
+subclass and registers nothing, so it is outside the adapter registry and outside the boundary
+test above, and it is judged by its own tests under `packages/hla/tests` (the handoff's R03: not a
+registered CDM adapter). It observes and never controls a simulation.
+
 ### 4.7 SKIP, once, for all six
 
 A check that does not apply to an adapter reports **SKIP**, never PASS, and the report states which

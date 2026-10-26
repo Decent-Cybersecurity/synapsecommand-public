@@ -1,0 +1,102 @@
+# Packaging for synapse-hla, the receive-only HLA observer of profile SC-HLA-RPR2-OBS-1.
+#
+# A separate distribution beside packages/cdm and NOT a registered CDM adapter (R03): it has no
+# manifest, no adapter entry point and no module under synapse_cdm.adapters. Its one runtime
+# dependency is the CDM it projects into; jsonschema and pydantic arrive through it. The wheel is
+# pure Python (py3-none-any): the native worker, the synthetic publisher and the pinned OpenRTI
+# runtime are built from this directory by the commands of README.md and installed beside the
+# package by `cmake --install` (docs/installation.md).
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapse-hla"
+version = "1.0.0"
+description = "SynapseCommand HLA observer, profile SC-HLA-RPR2-OBS-1: capture, replay and CDM projection of a bounded RPR FOM 2.0 physical-entity attribute subset"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+# Byte copies of the repository-root files, for the reason packages/cdm gives: setuptools
+# resolves this list against the distribution root, and a wheel without them would carry a
+# licence identifier and no licence text. The two LGPL texts are OpenRTI's (NAT-14), verbatim
+# from the pinned source archive: the installed product links the OpenRTI libraries that
+# `cmake --install` puts beside the package, and they are the only files of licences/openrti that
+# carry a copyright line, which the repository admits only in a declared licence file. The
+# archive's LICENSE (the licence offer) and the MPL text sit beside them; licences/README.md
+# states the licence this release elects.
+license-files = ["LICENSE", "NOTICE", "licences/openrti/lgpl-2.1", "licences/openrti/lgpl-3"]
+authors = [{ name = "Decent Cybersecurity s.r.o." }]
+classifiers = [
+    # Beta, not Production/Stable: the product is complete for its profile, but the release
+    # evidence (docs/evidence/) still reads BLOCKED for every gate that needs the reference
+    # platform (CR-L04), the performance run of R42 among them.
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    # The two interpreters the specification names (D-17). The floor is a real declaration:
+    # tests/test_cdm_version_floor.py parses this package at 3.11 grammar.
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+]
+# The CDM this package was landed and tested against is the floor (D-28); below the next major,
+# the shape of the sibling distributions. The handoff's own baseline, synapse-cdm 3.1.1 with
+# schema 3.0.0, is history: the vendored 3.0.0 Entity schema stays the contract every emitted
+# Entity is validated against, and the installed SDK must stay additive over it (README, "The
+# CDM").
+dependencies = [
+    "synapse-cdm>=3.8.0,<4",
+]
+
+[project.optional-dependencies]
+# Pinned exactly: the acceptance evidence of this package was taken with this pytest.
+test = ["pytest==9.1.1"]
+
+# The command line of R36. Not an adapter entry point: synapse-hla is not a
+# registered CDM adapter (R03).
+[project.scripts]
+synapse-hla = "synapse_hla.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Source = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["synapse_hla*"]
+
+# The vendored contract travels in the wheel: the thirteen schemas, the product's own schemas,
+# the fixtures with their provenance record, and the pin list. The RPR FOM modules do not: they
+# are read from the directory SYNAPSE_HLA_FOM_DIR names and checked against pins.json (OPS-11,
+# OPV-03).
+[tool.setuptools.package-data]
+synapse_hla = ["pins.json", "schemas/*.json", "local_schemas/*.json", "fixtures/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The package is not installed into the test interpreter (an editable install would write an
+# egg-info directory into the tree); tests import it from src.
+pythonpath = ["src", "tests"]
+addopts = ["--strict-markers", "--strict-config", "-p", "no:cacheprovider"]
+xfail_strict = true
+# A warning is a finding: a deprecation in jsonschema or pydantic reaches this package first as a
+# warning, and a warning that scrolls past is a failure postponed to the release that removes it.
+filterwarnings = ["error"]
+markers = [
+    "rti: needs the built OpenRTI, the native worker or the synthetic publisher",
+    "perf: the performance acceptance runs of R42",
+    "reference: needs an external reference tool such as cs2cs",
+    "hla_case: binds a test to acceptance case ids; apply it through hla_support.case",
+]
+
+# The repository's rule set and style, read by the package's own lint command
+# (ruff check --config packages/hla/pyproject.toml packages/hla). The root command lints
+# packages/cdm, gates and tests only, so without this table nothing here would be linted.
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9", "F", "E7", "W"]

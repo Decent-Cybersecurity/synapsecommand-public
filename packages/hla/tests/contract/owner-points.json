@@ -1,0 +1,648 @@
+{
+ "about": "The specification points this release logs for the owner of SC HLA SPEC 001 v1.0 (the handoff document; not in this repository): the CR-L06 list of the run's lead rulings with every extension the rounds added, each with the ruling taken and the tests that bind it. These are rulings of the run, not of the specification owner, who may overrule any of them. tests/release_evidence.py copies them into the evidence report.",
+ "points": [
+  {
+   "id": "OPV-03",
+   "source": "CR-L06",
+   "point": "R05 asks for packaged FOM modules; the repository's rules refuse the five RPR XML modules and the OpenRTI archive anywhere in the tree.",
+   "ruling": "Recorded deviation: the modules and the archive are never in the repository or the wheel; the release evidence kit supplies them, SYNAPSE_HLA_FOM_DIR names their directory and every module is checked against pins.json before use.",
+   "bound_at": [
+    "tests/test_hla_packaging.py::test_the_package_directory_is_what_the_wheel_carries_and_nothing_else",
+    "tests/test_hla_cli.py::test_observe_without_its_dependencies_is_exit_4_before_the_run_directory"
+   ]
+  },
+  {
+   "id": "NAT-05",
+   "source": "CR-L06",
+   "point": "R12's literal evokeMultipleCallbacks(0.0, 0.05) returns at once when nothing is pending and keeps a processor busy.",
+   "ruling": "The literal parameters are kept; after a call that delivered no callback the worker pauses 5 ms. Changing R12's parameters is the owner's call.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_an_idle_worker_does_not_keep_a_processor_busy"
+   ]
+  },
+  {
+   "id": "NAT-01",
+   "source": "CR-L06",
+   "point": "Through the pinned OpenRTI a subscription at PhysicalEntity reaches only federates that publish PhysicalEntity itself; a publisher at GroundVehicle alone is never discovered, so the demo as written yields no observation.",
+   "ruling": "The synthetic publisher publishes the four attributes at PhysicalEntity and at GroundVehicle and registers at GroundVehicle; the observer is unchanged. README, installation guide and evidence report state the limitation.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_the_demo_object_is_reported_at_physical_entity_though_registered_at_ground_vehicle",
+    "tests/test_hla_rti.py::test_an_existing_mode_session_reports_physical_entity_for_a_ground_vehicle",
+    "tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations"
+   ]
+  },
+  {
+   "id": "NAT-02",
+   "source": "CR-L06",
+   "point": "On macOS a C++14 OpenRTI client cannot connect (two clocks with different origins inside OpenRTI).",
+   "ruling": "Linux keeps R43 exactly; on macOS OpenRTI alone is built as C++98 and the worker and publisher stay C++14; macOS results are development evidence only.",
+   "bound_at": [
+    "tests/test_hla_native_sources.py::test_the_openrti_wrapper_runs_the_bundles_commands_with_only_the_ruled_additions"
+   ]
+  },
+  {
+   "id": "NAT-03, NAV-02",
+   "source": "CR-L06",
+   "point": "An orderly RTI exit (rtinode ends, or FIN) gives no connectionLost; OpenRTI removes every known object instead.",
+   "ruling": "Both are handled: a reset is E_RTI_CONNECT with the 1/2/4 s retry; an orderly close gives one removal per known object and the generation stays open. Last-received values are never claimed to be kept.",
+   "bound_at": [
+    "tests/test_hla_rti.py::test_a_tcp_reset_is_connection_lost_then_a_rejoin_under_the_same_name",
+    "tests/test_hla_rti.py::test_an_orderly_close_is_no_connection_lost_but_one_removal_per_known_object"
+   ]
+  },
+  {
+   "id": "OPS-01",
+   "source": "CR-L06",
+   "point": "The interoperability field has three spellings in the handoff.",
+   "ruling": "external_customer_interoperability everywhere (run.json, demo.json, the evidence report), NOT_TESTED unless a witnessed report exists.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_replay_of_the_bundled_capture_writes_four_files_and_exits_0",
+    "tests/test_hla_release.py::test_the_evidence_report_never_hides_not_tested_or_blocked_behind_a_pass"
+   ]
+  },
+  {
+   "id": "OPS-02",
+   "source": "CR-L06",
+   "point": "No E_ code is mapped to an exit class; the exit of a COMPLETE capture with a recovered error is undetermined.",
+   "ruling": "Codes mapped to classes 2 to 6; the exit is the highest class of the terminal failures, else 3 for any E_ diagnostic, else 0; usage errors are a structured E_CONFIG with exit 2.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_every_e_code_has_the_exit_class_ops_02_gives_it"
+   ]
+  },
+  {
+   "id": "OPS-04",
+   "source": "CR-L06",
+   "point": "The endpoint pattern admits non-canonical hosts.",
+   "ruling": "Semantic validation: a canonical dotted quad with octets up to 255 and a port 1 to 65535.",
+   "bound_at": [
+    "tests/test_hla_config.py::test_the_endpoint_rule_agrees_with_the_standard_library_on_the_address_classes"
+   ]
+  },
+  {
+   "id": "OPS-05, NAT-07",
+   "source": "CR-L06",
+   "point": "A-UNSUBSCRIBED, A-RETRACT and A-EMPTY cannot be produced through the pinned RTI.",
+   "ruling": "A test harness drives the worker's own callback code inside an OpenRTI federation of its own process; those cases are bound to its scenarios.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_an_unsubscribed_attribute_is_captured_under_its_name_and_rejects_the_reflection",
+    "tests/test_hla_native.py::test_both_retraction_handle_overloads_are_captured_retractable_and_quarantine",
+    "tests/test_hla_native.py::test_an_empty_map_is_a_captured_empty_reflection_with_no_state_output"
+   ]
+  },
+  {
+   "id": "OPS-21",
+   "source": "CR-L06",
+   "point": "The fixed limits are unreachable at their real values in a test.",
+   "ruling": "A test-only seam lowers one limit while keeping the rest; no option, key or variable reaches a limit; the real values are held to the table.",
+   "bound_at": [
+    "tests/test_hla_limits.py::test_a_test_variant_can_lower_one_limit_and_keeps_the_rest",
+    "tests/test_hla_cli.py::test_no_limit_or_timing_value_is_reachable_from_an_option_a_key_or_a_variable"
+   ]
+  },
+  {
+   "id": "RED-09, COD-12",
+   "source": "CR-L06",
+   "point": "E_TIME_REGRESSION and E_GEODESY cannot arise from valid data.",
+   "ruling": "Both are reached through direct calls and crafted inputs and keep their table behaviour.",
+   "bound_at": [
+    "tests/test_hla_reducer.py::test_e_time_regression_through_a_direct_reduce_frame_call",
+    "tests/test_hla_geodesy.py::test_convergence_on_the_last_allowed_step_counts_and_one_fewer_is_e_geodesy"
+   ]
+  },
+  {
+   "id": "OPS-27",
+   "source": "CR-L06",
+   "point": "requirements.json and the gates carry only the first paragraph of each requirement.",
+   "ruling": "A paragraph map assigns every continuation paragraph and table to its requirements; a gate is bound only when its tests name every paragraph mapped to it.",
+   "bound_at": [
+    "tests/test_hla_trace.py::test_the_paragraph_map_records_ops_27",
+    "tests/test_hla_trace.py::test_the_tree_satisfies_the_ratchet"
+   ]
+  },
+  {
+   "id": "NAT-12",
+   "source": "CR-L06",
+   "point": "SPEC:20 says CMake 3.28 or later; CMake 4 refuses OpenRTI's minimum version.",
+   "ruling": "The handoff's command byte for byte on 3.28 to 3.31; -DCMAKE_POLICY_VERSION_MINIMUM=3.5 only on 4.x, recorded in the build record; 4.x is development use.",
+   "bound_at": [
+    "tests/test_hla_native_sources.py::test_the_openrti_wrapper_runs_the_bundles_commands_with_only_the_ruled_additions"
+   ]
+  },
+  {
+   "id": "NAT-14",
+   "source": "CR-L06",
+   "point": "The handoff's licence note says LGPL-2.1-or-later and points to COPYING files the archive does not have; the archive offers LGPL-2.1, LGPL-3.0 or MPL-2.0.",
+   "ruling": "The release carries the archive's LICENSE and the three licence texts verbatim and elects LGPL-2.1-or-later, dynamically linked, with the pinned archive shipped alongside; the SBOM records the system expat and zlib.",
+   "bound_at": [
+    "tests/test_hla_packaging.py::test_the_openrti_licence_texts_are_the_archives_own_bytes_and_the_election_is_stated",
+    "tests/test_hla_packaging.py::test_the_sbom_is_what_the_locks_give_and_enumerates_what_r43_names"
+   ]
+  },
+  {
+   "id": "CDV-02",
+   "source": "CR-L06",
+   "point": "The handoff's geodesy tool prints a fixed PROJ version string whatever ran.",
+   "ruling": "Evidence records the PROJ version cs2cs states at run time, never a copied string.",
+   "bound_at": [
+    "tests/test_hla_rti.py::test_the_product_inverse_agrees_with_proj_forward_on_the_175_point_grid"
+   ]
+  },
+  {
+   "id": "CDV-01, COD-08",
+   "source": "CR-L06",
+   "point": "The supplied vectors leave whole classes of decoder and geodesy mistakes undetected.",
+   "ruling": "Hand-derived vectors were added for every slot of every variant, every interpreted offset and non-trivial latitudes and longitudes.",
+   "bound_at": [
+    "tests/test_hla_geodesy.py::test_the_cdv01_worked_point_exactly",
+    "tests/test_hla_codec.py::test_every_slot_of_every_variant_lands_where_the_table_puts_it"
+   ]
+  },
+  {
+   "id": "COD-01",
+   "source": "C.5",
+   "point": "Rounding of emitted floats is not specified to the bit.",
+   "ruling": "CPython's round of the binary64 value, ties to even.",
+   "bound_at": [
+    "tests/test_hla_projector.py::test_rounding_is_half_even_and_a_rounded_plus_180_is_written_minus_180"
+   ]
+  },
+  {
+   "id": "COD-03",
+   "source": "C.5",
+   "point": "What the kinematics object holds below the course threshold.",
+   "ruling": "Kinematics is kept below the 1e-6 m/s threshold with course_deg null, and the ENU step is listed.",
+   "bound_at": [
+    "tests/test_hla_geodesy.py::test_the_course_threshold_compares_the_unrounded_speed",
+    "tests/test_hla_projector.py::test_course_threshold_rounding_and_360"
+   ]
+  },
+  {
+   "id": "COD-10",
+   "source": "C.5",
+   "point": "Longitude +180 and the ENU basis at the antimeridian.",
+   "ruling": "A literal +180 is written -180; ENU uses the unwrapped atan2.",
+   "bound_at": [
+    "tests/test_hla_geodesy.py::test_longitude_is_atan2_and_plus_180_is_written_minus_180",
+    "tests/test_hla_projector.py::test_enu_at_plus_180_uses_the_unnormalised_atan2"
+   ]
+  },
+  {
+   "id": "COD-13",
+   "source": "C.5",
+   "point": "The iteration's converged latitude and its last step.",
+   "ruling": "The converged latitude is the last next value; convergence on the 32nd step counts; N is recomputed at the final latitude.",
+   "bound_at": [
+    "tests/test_hla_geodesy.py::test_convergence_on_the_last_allowed_step_counts_and_one_fewer_is_e_geodesy"
+   ]
+  },
+  {
+   "id": "RED-18, COD-15",
+   "source": "C.5",
+   "point": "Negative zero in decoded and projected values.",
+   "ruling": "-0.0 is kept in attributes.hla.spatial and normalised only in position and kinematics.",
+   "bound_at": [
+    "tests/test_hla_projector.py::test_negative_zero_is_kept_in_the_provenance_and_normalised_in_position_and_motion"
+   ]
+  },
+  {
+   "id": "CR-R3-06",
+   "source": "C.5",
+   "point": "The order of suppression reasons.",
+   "ruling": "Reasons are unique and sorted in code-point order.",
+   "bound_at": [
+    "tests/test_hla_projector.py::test_reasons_are_complete_sorted_and_unique"
+   ]
+  },
+  {
+   "id": "CR-L09",
+   "source": "C.5",
+   "point": "A generation_start whose federation_name differs from the configuration's.",
+   "ruling": "Refused by verify, the reader and the chain as E_CAPTURE_SCHEMA at line:<n>#/event/federation_name.",
+   "bound_at": [
+    "tests/test_hla_capture.py::test_a_generation_of_another_federation_is_refused_by_verify_and_the_reader"
+   ]
+  },
+  {
+   "id": "CR-L10",
+   "source": "C.5",
+   "point": "What a prefix replay's capture.jsonl holds.",
+   "ruling": "The whole input file, unverified tail included, with its SHA-256; the summary's verification member says how far verification read.",
+   "bound_at": [
+    "tests/test_hla_replay.py::test_a_truncated_capture_is_refused_and_replays_as_a_prefix_on_request"
+   ]
+  },
+  {
+   "id": "CR-L11",
+   "source": "C.5",
+   "point": "A quarantined token that keeps asserting an identity.",
+   "ruling": "No diagnostic and no claim (the catalogue is closed); the snapshot shows the quarantine.",
+   "bound_at": [
+    "tests/test_hla_reducer.py::test_removal_releases_the_triple_but_never_unquarantines_a_survivor"
+   ]
+  },
+  {
+   "id": "CR-L12",
+   "source": "C.5",
+   "point": "Which objects generation_end invalidates.",
+   "ruling": "Every non-removed object with an allocated entity_id, whether or not it ever produced an Entity.",
+   "bound_at": [
+    "tests/test_hla_reducer.py::test_generation_end_invalidates_every_identified_object_in_token_number_order"
+   ]
+  },
+  {
+   "id": "CR-L13",
+   "source": "C.5",
+   "point": "How often a geography error is emitted.",
+   "ruling": "E_ECEF_RANGE or E_GEODESY on every snapshot that lists GEOGRAPHY_UNPROJECTABLE and no MISSING_ or INVALID_ reason, under time policy none too.",
+   "bound_at": [
+    "tests/test_hla_reducer.py::test_e_ecef_range_suppresses_with_its_diagnostic_once_the_state_is_otherwise_complete"
+   ]
+  },
+  {
+   "id": "CR-L14",
+   "source": "C.5",
+   "point": "A vertical ECEF velocity at longitude +-180 or +-90 gains a horizontal component from roundoff.",
+   "ruling": "SPEC:146 as written, no clipping threshold (R31 forbids one); a course appears above about 1e10 m/s.",
+   "bound_at": [
+    "tests/test_hla_projector.py::test_enu_at_plus_180_uses_the_unnormalised_atan2"
+   ]
+  },
+  {
+   "id": "CR-R2-06",
+   "source": "C.2",
+   "point": "Bytes after a verified footer.",
+   "ruling": "E_CAPTURE_SCHEMA, never INCOMPLETE: such a file has no prefix replay (stricter than RED-06's text).",
+   "bound_at": [
+    "tests/test_hla_capture.py::test_nothing_may_follow_the_footer"
+   ]
+  },
+  {
+   "id": "CR-R4-05",
+   "source": "C.5",
+   "point": "Replay of a FAILED capture without allow_prefix.",
+   "ruling": "Refused as E_CAPTURE_INCOMPLETE at line:<footer>#/status; an INCOMPLETE capture whose header did not verify is refused even with allow_prefix.",
+   "bound_at": [
+    "tests/test_hla_replay.py::test_a_failed_capture_is_refused_unless_replayed_as_a_prefix"
+   ]
+  },
+  {
+   "id": "RED-V-01, CR-R2-01, CR-R2-10",
+   "source": "C.5",
+   "point": "A header configuration that fails a semantic rule.",
+   "ruling": "The capture is INVALID (verify reports, replay raises); schema faults of the header's config are E_CAPTURE_SCHEMA, semantic faults E_CONFIG; captures recorded before a later tightening of the configuration rules become unreplayable.",
+   "bound_at": [
+    "tests/test_hla_capture.py::test_the_headers_configuration_is_validated_in_full"
+   ]
+  },
+  {
+   "id": "CR-R2-13",
+   "source": "C.2",
+   "point": "A carriage return in a configuration file.",
+   "ruling": "A raw CR is refused (E_CONFIG with a line path), so a CRLF-saved configuration is refused.",
+   "bound_at": [
+    "tests/test_hla_config.py::test_the_file_rules_of_r07"
+   ]
+  },
+  {
+   "id": "SPEC:68 key order",
+   "source": "C.5",
+   "point": "\"Sorted ASCII property names\" when a key is not ASCII.",
+   "ruling": "Python's code-point key order of the named json.dumps call; only header pin keys can be non-ASCII.",
+   "bound_at": [
+    "tests/test_hla_canonical.py::test_canonical_bytes_are_the_one_spelling_spec_68_describes"
+   ]
+  },
+  {
+   "id": "CR-R2-22",
+   "source": "C.2",
+   "point": "The encoding of a FOM module.",
+   "ruling": "Strict UTF-8, no NUL, an XML declaration naming UTF-8 or none; expat is created with UTF-8 so the codec registry is never consulted.",
+   "bound_at": [
+    "tests/test_hla_fom.py::test_no_encoding_name_but_utf_8_is_read_whatever_the_codec_registry_knows"
+   ]
+  },
+  {
+   "id": "CR-R4-08",
+   "source": "C.4",
+   "point": "R15: the audit time never affects the output; but the hash chain covers the header's record_created_at.",
+   "ruling": "Held as: identical state, identity, values and diagnostics, observations differing only in source_hash.",
+   "bound_at": [
+    "tests/test_hla_replay.py::test_the_audit_time_of_the_header_reaches_the_output_only_through_the_cited_digests"
+   ]
+  },
+  {
+   "id": "CR-R4-09",
+   "source": "C.4",
+   "point": "Retractable callbacks on unknown or removed tokens.",
+   "ruling": "Only E_UNKNOWN_OBJECT or W_DUPLICATE_REMOVE (there is no object to quarantine); adding E_RETRACTION_UNSUPPORTED is a possible other reading.",
+   "bound_at": [
+    "tests/test_hla_reducer.py::test_retractable_callbacks_for_a_token_that_is_not_an_object_quarantine_nothing"
+   ]
+  },
+  {
+   "id": "CR-R5-01",
+   "source": "C.6",
+   "point": "The retraction footer: NAT-08's table says FAILED, RED-08 says COMPLETE.",
+   "ruling": "RED-08 wins: E_RETRACTION_UNSUPPORTED, generation_end retraction, footer COMPLETE with reason_code null, exit 3.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_request_retraction_ends_the_generation_and_the_session_complete",
+    "tests/test_hla_native.py::test_request_retraction_ends_the_generation_with_reason_retraction"
+   ]
+  },
+  {
+   "id": "CR-R5-20",
+   "source": "C.6",
+   "point": "A worker that cannot be started again in mid-session (RED-01 does not list it).",
+   "ruling": "A captured generation-0 E_DEPENDENCY_PIN, never retried, footer FAILED E_DEPENDENCY_PIN, exit class 4.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_worker_that_cannot_be_started_again_is_a_dependency_failure"
+   ]
+  },
+  {
+   "id": "CR-R5-21",
+   "source": "C.6",
+   "point": "A never-retried failure that competes with a first condition.",
+   "ruling": "It still ends the session with its own diagnostic frame; generation_end and the footer name the same code.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_never_retried_failure_that_competes_with_a_lost_connection_ends_the_session"
+   ]
+  },
+  {
+   "id": "Terminal code of two pending pipes",
+   "source": "C.12",
+   "point": "When a frame and a status record are pending at one poll, which is read first decides the first terminal code.",
+   "ruling": "Logged as observed behaviour; the test row is deterministic.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_never_retried_failure_that_competes_with_a_lost_connection_ends_the_session"
+   ]
+  },
+  {
+   "id": "CR-R6-01",
+   "source": "C.8",
+   "point": "What validate-config's dependency check covers.",
+   "ruling": "The configuration and the five FOM modules against their pins and the XML scan; the worker is not probed there (observe's pre-flight does); the higher class wins.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_validate_config_with_a_changed_or_absent_fom_module_is_exit_4"
+   ]
+  },
+  {
+   "id": "CR-R6-03",
+   "source": "C.8",
+   "point": "Exit of verify, inspect and export-capture for a faulty capture.",
+   "ruling": "3 for every verdict other than COMPLETE whatever the fault's class (E_LIMIT and E_CONFIG faults included), 6 for an unreadable file; replay keeps its code's class.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_verify_of_any_other_capture_exits_3_with_the_fault_on_stderr"
+   ]
+  },
+  {
+   "id": "CR-R6-05",
+   "source": "C.8",
+   "point": "An offline command stopped by a signal.",
+   "ruling": "It stops at its next safe point, removes what it created and exits 130 or 143 with nothing printed; observe stops its session in order once one exists, and a stop during its own configuration and FOM pre-flight exits 130 or 143 like the other commands.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_an_interrupted_command_takes_back_what_it_made"
+   ]
+  },
+  {
+   "id": "CR-R6-07",
+   "source": "C.8",
+   "point": "What stderr carries.",
+   "ruling": "Refusals and terminal failures only; diagnostics that are records of the output are in diagnostics.jsonl and the summary, not repeated on stderr.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_a_complete_capture_whose_records_hold_an_e_code_replays_with_exit_3"
+   ]
+  },
+  {
+   "id": "CR-R6-F2",
+   "source": "C.8",
+   "point": "A host whose parent has gone.",
+   "ruling": "Treated as an orderly stop request: the session ends in order and run.json is absent, which is the visible mark.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_parent_that_has_gone_stops_the_session_in_order",
+    "tests/test_hla_cli.py::test_a_command_killed_from_outside_leaves_a_session_stopped_in_order_without_run_json"
+   ]
+  },
+  {
+   "id": "CR-R6F-04",
+   "source": "C.9",
+   "point": "SPEC:184 says forced termination cannot produce COMPLETE.",
+   "ruling": "Read as the command: a command killed from outside leaves a session the host ends in order (COMPLETE when the worker exited by itself) and no run.json; a parent gone before the first worker is FAILED E_RTI_CONNECT.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_parent_gone_before_the_first_worker_ends_the_session_before_it_starts"
+   ]
+  },
+  {
+   "id": "CR-R7-03",
+   "source": "C.11",
+   "point": "The worker's parent dies.",
+   "ruling": "getppid() differing from the recorded parent, checked once per idle pause: resign NO_ACTION, disconnect, drain, exit 72, no report.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_a_worker_whose_parent_has_gone_resigns_disconnects_and_exits"
+   ]
+  },
+  {
+   "id": "CR-R7-04",
+   "source": "C.11",
+   "point": "The worker's diagnostic frames.",
+   "ruling": "object_token and attribute null, the failure record's text, enqueued when the queue has room, never for E_QUEUE_OVERFLOW.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_a_terminal_condition_is_one_failure_record_then_resign_and_disconnect"
+   ]
+  },
+  {
+   "id": "CR-R7-05",
+   "source": "C.11",
+   "point": "What the worker's queue bound counts.",
+   "ruling": "One bound of 4096 frames and 16 MiB of copied bytes covers the batch, the queue and the record being written; the refused record is the newest.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_a_batch_beyond_the_queue_bound_overflows_keeping_everything_accepted"
+   ]
+  },
+  {
+   "id": "CR-R7-06",
+   "source": "C.11",
+   "point": "Which code wins when a callback breaks several rules.",
+   "ruling": "Count, sizes (E_LIMIT), metadata validity (E_CAPTURE_SCHEMA), token budget, queue, in that order.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_a_callback_refused_on_a_full_queue_reports_its_own_fault_first"
+   ]
+  },
+  {
+   "id": "CR-R7-09",
+   "source": "C.11",
+   "point": "A reflection or removal of a handle never discovered.",
+   "ruling": "It takes the next token, mapped as not active (E_UNKNOWN_OBJECT or W_DUPLICATE_REMOVE downstream); a later discovery is a new object with a new token.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_a_handle_keeps_its_token_after_removal_and_a_new_discovery_is_a_new_object"
+   ]
+  },
+  {
+   "id": "CR-R7-10",
+   "source": "C.11",
+   "point": "RTI exceptions without a code of their own.",
+   "ruling": "Mapped per service (connect, join, resolve, evoke, request, getAttributeName, resign, disconnect) to E_RTI_CONNECT, E_FEDERATE_NAME, E_FOM_PROFILE or E_CAPTURE_SCHEMA.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_each_rti_exception_maps_to_its_code_and_the_worker_ends_in_order"
+   ]
+  },
+  {
+   "id": "CR-R7-22",
+   "source": "C.11",
+   "point": "When a failing resign or disconnect is reported.",
+   "ruling": "Immediately after the running record of that stage; the session ends FAILED E_RTI_CONNECT, no retry after a stop.",
+   "bound_at": [
+    "tests/test_hla_native.py::test_each_rti_exception_maps_to_its_code_and_the_worker_ends_in_order"
+   ]
+  },
+  {
+   "id": "CR-R8-14",
+   "source": "C.12",
+   "point": "What the demo accepts from the publisher.",
+   "ruling": "Twelve event kinds with exactly their members, printable ASCII lines of at most 768 bytes, R38's order; anything else fails the run with a fixed reason.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_publisher_events_out_of_their_order_end_the_run",
+    "tests/test_hla_demo.py::test_hostile_publisher_events_end_the_run_cleanly_and_never_reach_the_record"
+   ]
+  },
+  {
+   "id": "CR-R8-15",
+   "source": "C.12",
+   "point": "An rtinode start ended by an exception.",
+   "ruling": "rtinode is ended by its PID before the exception leaves the start.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_a_stop_while_rtinode_starts_ends_it_by_its_pid_and_its_port_refuses"
+   ]
+  },
+  {
+   "id": "CR-R8-16",
+   "source": "C.12",
+   "point": "Which class the publisher registered at.",
+   "ruling": "Read back from the RTI and named by the handle it equals; any class but GroundVehicle fails the run.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_the_demo_object_is_reported_at_physical_entity_though_registered_at_ground_vehicle"
+   ]
+  },
+  {
+   "id": "CR-R8-17",
+   "source": "C.12",
+   "point": "Draining a child's pipes after it ended.",
+   "ruling": "One more R14 deadline at most, then closed; a process the child left behind is not the demo's.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_the_end_of_a_child_never_waits_on_a_pipe_another_process_holds"
+   ]
+  },
+  {
+   "id": "CR-R8-18",
+   "source": "C.12",
+   "point": "The couplings of demo.json.",
+   "ruling": "Held by demo.schema.json where JSON Schema can express them (now also the seven steps by position) and by code and tests otherwise.",
+   "bound_at": [
+    "tests/test_hla_demo.py::test_the_demo_schema_refuses_each_broken_rule"
+   ]
+  },
+  {
+   "id": "CR-L17, CR-R8-12",
+   "source": "C.8, C.12, C.14",
+   "point": "R42's 1000 reflections per second against R44's per-upsert validation in pure Python.",
+   "ruling": "Per-upsert CDM validation with format checking stays; with external_elapsed the worker's queue overflowed on a 4-vCPU aarch64 machine in two of three R42-shaped runs and on the development Mac under load; the gate is BLOCKED (no x86_64 run) and at risk. What the live path no longer checks, made concrete: an EntityType whose kind is outside uint8 is refused by the public project_state (the snapshot schema) and projected by the reducer's entry, which the decoder never hands such a value.",
+   "bound_at": [
+    "tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target",
+    "tests/test_hla_rti.py::test_the_perf_load_shape_runs_under_the_host_without_loss"
+   ]
+  },
+  {
+   "id": "CR-L18",
+   "source": "D",
+   "point": "R44 names synapse-cdm 3.1.1 as the baseline; the package landed on 3.8.0 (schema 3.2.0).",
+   "ruling": "Recorded deviation: the dependency is synapse-cdm>=3.8.0,<4; the vendored 3.0.0 Entity schema stays the contract; the installed SDK's schema must be additive over it; the migration is recorded in the README.",
+   "bound_at": [
+    "tests/test_hla_projector.py::test_the_cdm_baseline_and_its_complete_entity_schema",
+    "tests/test_hla_release.py::test_the_cdm_history_and_the_upgrade_rule_are_recorded"
+   ]
+  },
+  {
+   "id": "CR-L20",
+   "source": "C.14",
+   "point": "Byte identity across platforms: the specification's 1e-6 threshold is the unit of the difference seen between C libraries.",
+   "ruling": "Pins are per platform: darwin-arm64, recorded where Python 3.11, 3.12 and 3.14 agreed, and linux-aarch64, recorded from one interpreter (Python 3.12.3, reference run ref-1 of 2026-10-25), so identity across interpreters on one platform, what each pin holds, is shown on darwin-arm64 and not observable on linux-aarch64; across platforms 674 of the 10,000 inputs differ in the last place of position_ecef_m (612 coordinate values by 1 ulp, 79 by 2 ulp) and 5 altitudes at 27,451 to 89,704 km differ by 1e-6 m.",
+   "bound_at": [
+    "tests/test_hla_geodesy.py::test_ten_thousand_projected_points_are_identical_on_every_interpreter"
+   ]
+  },
+  {
+   "id": "CR-new-R9-03",
+   "source": "R9",
+   "point": "R05 asks for the source commit in every report; a report cannot name the commit that will contain it, and OPS-10 forbids fabricating one.",
+   "ruling": "Reports carry source_commit null; the evidence report names the base commit and the SHA-256 of the package's files, which identifies the tree.",
+   "bound_at": [
+    "tests/test_hla_release.py::test_the_evidence_report_identifies_its_build_and_lists_every_case"
+   ]
+  },
+  {
+   "id": "F-native-03",
+   "source": "C.16",
+   "point": "A SIGTERM in the milliseconds between the worker's spawn and the installation of its handler ends it by the signal, before its orderly stop exists (SPEC:277).",
+   "ruling": "No change: the host never spawns once a stop is requested, and a stop that lands in that window gives E_RTI_CONNECT with a FAILED footer, exit class 5, the outcome OPS-15 rules for a stop before the first join; closing the window needs native work (the spawn's signal mask).",
+   "bound_at": [
+    "tests/test_hla_host.py::test_a_stop_before_any_join_is_failed",
+    "tests/test_hla_native.py::test_sigterm_during_connect_is_honoured_once_connect_returns"
+   ]
+  },
+  {
+   "id": "F-native-04",
+   "source": "C.16",
+   "point": "On macOS the OpenRTI build record spells its evidence line 'development evidence only (macOS: OpenRTI configured as C++98, NAT-02)', not CR-L04's label DEV-macOS-arm64.",
+   "ruling": "Kept as CR-R9-06 accepted it; the evidence report labels the native build DEV-macOS-arm64.",
+   "bound_at": [
+    "tests/test_hla_native_sources.py::test_the_openrti_wrapper_runs_the_bundles_commands_with_only_the_ruled_additions"
+   ]
+  },
+  {
+   "id": "F-release-03",
+   "source": "C.16",
+   "point": "The SBOM names the distribution pkg:pypi/synapse-hla@1.0.0 while it is released in the tag's tree and the release archives, not uploaded to the index (D-30).",
+   "ruling": "Kept: a pkg:pypi package URL names the ecosystem of a Python distribution, not an upload.",
+   "bound_at": [
+    "tests/test_hla_packaging.py::test_the_sbom_is_what_the_locks_give_and_enumerates_what_r43_names"
+   ]
+  },
+  {
+   "id": "CR-L26",
+   "source": "D.2",
+   "point": "OPS-11 refuses a failing worker pre-flight or a missing rtinode before the output directory exists; OPS-18 has the demo without rtinode write DIR/demo.json with status BLOCKED and exit 4.",
+   "ruling": "OPS-18 governs the demo: a missing or wrong rtinode, worker or publisher after the FOM check gives DIR/demo.json BLOCKED and exit 4 (CR-L16's reading for the publisher applies to all three); OPS-11's 'before the output directory exists' governs validate-config and observe; the FOM pin check precedes the directory for all three commands.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_demo_without_its_dependencies_is_blocked_with_exit_4",
+    "tests/test_hla_cli.py::test_observe_without_its_dependencies_is_exit_4_before_the_run_directory"
+   ]
+  },
+  {
+   "id": "F-trace-03",
+   "source": "C.16",
+   "point": "A FOM module given as a symbolic link to the pinned bytes is accepted.",
+   "ruling": "The bytes decide (OPV-03, OPS-11): the pin is checked over the bytes read through the link.",
+   "bound_at": [
+    "tests/test_hla_fom.py::test_a_module_reached_through_a_symlink_is_judged_by_its_bytes"
+   ]
+  },
+  {
+   "id": "F-host-05",
+   "source": "C.16",
+   "point": "A SIGINT or SIGTERM before the program has installed its handlers (the interpreter's start-up) ends any command by the signal, with nothing started and nothing written.",
+   "ruling": "No change: before the handlers exist there is nothing of the product to stop; CR-R6-05's exit 130 or 143 applies from their installation on.",
+   "bound_at": [
+    "tests/test_hla_cli.py::test_an_interrupted_command_takes_back_what_it_made"
+   ]
+  },
+  {
+   "id": "F-host-03",
+   "source": "C.16",
+   "point": "The pre-flight 'sc-hla-federate --version' probe runs with the command's stderr: an executable named by SYNAPSE_HLA_WORKER that writes to stderr is heard there.",
+   "ruling": "Kept as CR-R5-04 rules (the worker's stderr is the host's): a misconfigured SYNAPSE_HLA_WORKER can put lines that are not JSON on stderr beside the E_DEPENDENCY_PIN diagnostic.",
+   "bound_at": [
+    "tests/test_hla_host.py::test_the_pre_flight_refuses_before_the_run_directory_exists",
+    "tests/test_hla_host.py::test_the_worker_gets_its_arguments_environment_and_descriptors"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:local:1:replay-summary",
+  "title": "synapse-hla replay summary",
+  "description": "What replay returns after writing a replay directory (R35, SPEC:168, CR-L02, CR-L03). status is the verify status of the capture replayed: COMPLETE (every record capture_complete true), or FAILED or INCOMPLETE (a prefix replay, every record capture_complete false). records counts the output records by kind, suppressions the suppressed snapshots listing each reason, errors and warnings the diagnostic records by code (only codes that occurred), files the size and SHA-256 of each file written. verification is the whole verify report of the capture (CR-L08): how far verification read and, for a prefix replay, why it stopped.",
+  "type": "object",
+  "properties": {
+    "replay_summary_version": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "FAILED",
+        "INCOMPLETE"
+      ]
+    },
+    "capture_complete": {
+      "type": "boolean"
+    },
+    "verified_seq": {
+      "$ref": "#/$defs/count"
+    },
+    "frames": {
+      "$ref": "#/$defs/count"
+    },
+    "records": {
+      "type": "object",
+      "properties": {
+        "diagnostic": {
+          "$ref": "#/$defs/count"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/count"
+        },
+        "upsert": {
+          "$ref": "#/$defs/count"
+        },
+        "removed": {
+          "$ref": "#/$defs/count"
+        },
+        "invalidated": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "diagnostic",
+        "snapshot",
+        "upsert",
+        "removed",
+        "invalidated"
+      ],
+      "additionalProperties": false
+    },
+    "suppressions": {
+      "type": "object",
+      "properties": {
+        "MISSING_ENTITY_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "MISSING_ENTITY_TYPE": {
+          "$ref": "#/$defs/count"
+        },
+        "MISSING_SPATIAL": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_ENTITY_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_ENTITY_TYPE": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_SPATIAL": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_FORCE_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "NULL_ID": {
+          "$ref": "#/$defs/count"
+        },
+        "QUARANTINED": {
+          "$ref": "#/$defs/count"
+        },
+        "TIME_UNRESOLVED": {
+          "$ref": "#/$defs/count"
+        },
+        "GEOGRAPHY_UNPROJECTABLE": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "MISSING_ENTITY_IDENTIFIER",
+        "MISSING_ENTITY_TYPE",
+        "MISSING_SPATIAL",
+        "INVALID_ENTITY_IDENTIFIER",
+        "INVALID_ENTITY_TYPE",
+        "INVALID_SPATIAL",
+        "INVALID_FORCE_IDENTIFIER",
+        "NULL_ID",
+        "QUARANTINED",
+        "TIME_UNRESOLVED",
+        "GEOGRAPHY_UNPROJECTABLE"
+      ],
+      "additionalProperties": false
+    },
+    "errors": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "E_CONFIG",
+          "E_DEPENDENCY_PIN",
+          "E_OUTPUT_EXISTS",
+          "E_FOM_PROFILE",
+          "E_FEDERATE_NAME",
+          "E_RTI_CONNECT",
+          "E_RTI_TIMEOUT",
+          "E_ATTRIBUTE_LENGTH",
+          "E_NONFINITE",
+          "E_BOOLEAN",
+          "E_SPATIAL_VARIANT",
+          "E_UNSUBSCRIBED_ATTRIBUTE",
+          "E_NULL_ID",
+          "E_ECEF_RANGE",
+          "E_GEODESY",
+          "E_TIME_REGRESSION",
+          "E_IDENTITY_CHANGED",
+          "E_IDENTITY_COLLISION",
+          "E_RETRACTION_UNSUPPORTED",
+          "E_UNKNOWN_OBJECT",
+          "E_LIMIT",
+          "E_QUEUE_OVERFLOW",
+          "E_IO",
+          "E_CAPTURE_SCHEMA",
+          "E_CAPTURE_HASH",
+          "E_CAPTURE_SEQUENCE",
+          "E_CAPTURE_INCOMPLETE"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/positive"
+      }
+    },
+    "warnings": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "W_FOM_UNVERIFIED",
+          "W_TIME_UNRESOLVED",
+          "W_FORCE_UNMAPPED",
+          "W_DUPLICATE_DISCOVERY",
+          "W_DUPLICATE_REMOVE"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/positive"
+      }
+    },
+    "verification": {
+      "$ref": "urn:synapsecommand:hla:local:1:verify-report"
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "capture.jsonl": {
+          "$ref": "#/$defs/file"
+        },
+        "observations.jsonl": {
+          "$ref": "#/$defs/file"
+        },
+        "diagnostics.jsonl": {
+          "$ref": "#/$defs/file"
+        }
+      },
+      "required": [
+        "capture.jsonl",
+        "observations.jsonl",
+        "diagnostics.jsonl"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "replay_summary_version",
+    "status",
+    "capture_complete",
+    "verified_seq",
+    "frames",
+    "records",
+    "suppressions",
+    "errors",
+    "warnings",
+    "verification",
+    "files"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capture_complete": {
+            "const": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "capture_complete": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "FAILED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "status": {
+                "const": "FAILED"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "INCOMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "status": {
+                "const": "INCOMPLETE"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positive": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "bytes": {
+          "$ref": "#/$defs/count"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "bytes",
+        "sha256"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

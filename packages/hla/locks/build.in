@@ -1,0 +1,2 @@
+# The build backend uv build used for the wheel (setuptools>=77 resolved to it), locked.
+setuptools==84.2.1

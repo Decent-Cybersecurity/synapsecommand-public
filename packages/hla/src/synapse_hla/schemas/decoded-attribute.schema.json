@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:1:decoded-attribute",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "EntityIdentifier"
+        },
+        "value": {
+          "type": "object",
+          "properties": {
+            "site": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "application": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "entity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            }
+          },
+          "required": [
+            "site",
+            "application",
+            "entity"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "EntityType"
+        },
+        "value": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "domain": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "country": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "category": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "subcategory": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "specific": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "extra": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          },
+          "required": [
+            "kind",
+            "domain",
+            "country",
+            "category",
+            "subcategory",
+            "specific",
+            "extra"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "ForceIdentifier"
+        },
+        "value": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "Spatial"
+        },
+        "value": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            "frame": {
+              "enum": [
+                "WORLD",
+                "BODY"
+              ]
+            },
+            "frozen": {
+              "type": "boolean"
+            },
+            "position_ecef_m": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "orientation_rad": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "velocity_mps": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "acceleration_mps2": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "angular_velocity_radps": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "padding_hex": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{20}$(?![\\s\\S])"
+            }
+          },
+          "required": [
+            "algorithm",
+            "frame",
+            "frozen",
+            "position_ecef_m",
+            "orientation_rad",
+            "velocity_mps",
+            "acceleration_mps2",
+            "angular_velocity_radps",
+            "padding_hex"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

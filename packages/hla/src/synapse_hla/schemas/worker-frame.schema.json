@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:1:worker-frame",
+  "type": "object",
+  "properties": {
+    "monotonic_ns": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$(?![\\s\\S])",
+      "maxLength": 24
+    },
+    "event": {
+      "$ref": "event.schema.json"
+    }
+  },
+  "required": [
+    "monotonic_ns",
+    "event"
+  ],
+  "additionalProperties": false
+}

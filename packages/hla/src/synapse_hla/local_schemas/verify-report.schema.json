@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:local:1:verify-report",
+  "title": "synapse-hla verify report",
+  "description": "What verify_capture returns for a capture it could read (RED-06, CR-L02, CR-L03). status COMPLETE or FAILED: every line verified and the footer says which; INCOMPLETE: every whole line verified but the footer is missing or the last line is not whole (E_CAPTURE_INCOMPLETE); INVALID: verification stopped at a line that broke a rule. path follows lead ruling CR-L01: line:<n>, optionally #<JSON Pointer>. verified_seq is 0 when only the header verified and null when not even the header did; verified_bytes counts the verified prefix with its line ends.",
+  "type": "object",
+  "properties": {
+    "verify_report_version": {"const": 1},
+    "status": {"enum": ["COMPLETE", "FAILED", "INCOMPLETE", "INVALID"]},
+    "code": {"enum": [null, "E_CAPTURE_SCHEMA", "E_CAPTURE_HASH", "E_CAPTURE_SEQUENCE", "E_CAPTURE_INCOMPLETE", "E_CONFIG", "E_LIMIT"]},
+    "path": {
+      "anyOf": [
+        {"type": "string", "pattern": "^line:[1-9][0-9]*(#/[\\s\\S]*)?$(?![\\s\\S])"},
+        {"type": "null"}
+      ]
+    },
+    "message": {
+      "anyOf": [
+        {"type": "string", "minLength": 1, "maxLength": 256},
+        {"type": "null"}
+      ]
+    },
+    "verified_seq": {
+      "anyOf": [
+        {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        {"type": "null"}
+      ]
+    },
+    "verified_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "frames": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "header_sha256": {
+      "anyOf": [
+        {"type": "string", "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"},
+        {"type": "null"}
+      ]
+    },
+    "last_sha256": {
+      "anyOf": [
+        {"type": "string", "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"},
+        {"type": "null"}
+      ]
+    },
+    "capture_complete": {"type": "boolean"},
+    "footer": {
+      "anyOf": [
+        {"$ref": "urn:synapsecommand:hla:1:footer"},
+        {"type": "null"}
+      ]
+    }
+  },
+  "required": ["verify_report_version", "status", "code", "path", "message", "verified_seq", "verified_bytes", "frames", "header_sha256", "last_sha256", "capture_complete", "footer"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "COMPLETE"}}},
+      "then": {"properties": {"code": {"const": null}, "path": {"const": null}, "message": {"const": null}, "capture_complete": {"const": true}, "verified_seq": {"type": "integer", "minimum": 1}, "header_sha256": {"type": "string"}, "footer": {"type": "object", "properties": {"status": {"const": "COMPLETE"}}}}},
+      "else": {"properties": {"capture_complete": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "FAILED"}}},
+      "then": {"properties": {"code": {"const": null}, "path": {"const": null}, "message": {"const": null}, "verified_seq": {"type": "integer", "minimum": 1}, "header_sha256": {"type": "string"}, "footer": {"type": "object", "properties": {"status": {"const": "FAILED"}}}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "INCOMPLETE"}}},
+      "then": {"properties": {"code": {"const": "E_CAPTURE_INCOMPLETE"}, "path": {"type": "string"}, "message": {"type": "string"}, "footer": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "INVALID"}}},
+      "then": {"properties": {"code": {"enum": ["E_CAPTURE_SCHEMA", "E_CAPTURE_HASH", "E_CAPTURE_SEQUENCE", "E_CONFIG", "E_LIMIT"]}, "path": {"type": "string"}, "message": {"type": "string"}}}
+    }
+  ]
+}

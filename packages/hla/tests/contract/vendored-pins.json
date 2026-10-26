@@ -1,0 +1,161 @@
+{
+  "about": "Byte pins of every file packages/hla vendors from the handoff bundle of SC HLA SPEC 001 v1.0 (the bundle is not in this repository). 'bytes' and 'sha256' are copied from the bundle's own manifest; 'path' is relative to packages/hla.",
+  "files": [
+    {
+      "path": "src/synapse_hla/schemas/cdm-entity.schema.json",
+      "bundle_path": "schemas/cdm-entity.schema.json",
+      "bytes": 32824,
+      "sha256": "310d04623b4647e0f92abd384a48683df783495ec9e1ffd1bedf85ee18bf092a"
+    },
+    {
+      "path": "src/synapse_hla/schemas/config.schema.json",
+      "bundle_path": "schemas/config.schema.json",
+      "bytes": 2600,
+      "sha256": "4ccfc7a50986ec57c7cfea744104a15adbddd80de60bd64e1049b3e05dc9f604"
+    },
+    {
+      "path": "src/synapse_hla/schemas/decoded-attribute.schema.json",
+      "bundle_path": "schemas/decoded-attribute.schema.json",
+      "bytes": 5706,
+      "sha256": "1710f111b92d1e99477fc0df24e0f328dc135913aa053fa3b3092509aab92ac9"
+    },
+    {
+      "path": "src/synapse_hla/schemas/diagnostic.schema.json",
+      "bundle_path": "schemas/diagnostic.schema.json",
+      "bytes": 1141,
+      "sha256": "97e6e8610028ad18b7cb710423022bb9434139c935175e91dd0eee02610eff39"
+    },
+    {
+      "path": "src/synapse_hla/schemas/event.schema.json",
+      "bundle_path": "schemas/event.schema.json",
+      "bytes": 6766,
+      "sha256": "a062d25a3d113cb2c597f522fda606511b98e0246043da9151412b4eec1d3ee0"
+    },
+    {
+      "path": "src/synapse_hla/schemas/footer.schema.json",
+      "bundle_path": "schemas/footer.schema.json",
+      "bytes": 1018,
+      "sha256": "07cc0b09f066c518facafa177ea0dff08f09e51bd836544c90a39814f6dbf010"
+    },
+    {
+      "path": "src/synapse_hla/schemas/frame.schema.json",
+      "bundle_path": "schemas/frame.schema.json",
+      "bytes": 926,
+      "sha256": "166d98f0fa7ec7fb1ee8d9108a3b84c0704ef1e26269de81dc871e89e0a109ea"
+    },
+    {
+      "path": "src/synapse_hla/schemas/header.schema.json",
+      "bundle_path": "schemas/header.schema.json",
+      "bytes": 938,
+      "sha256": "299ce524086dc6a2d6d073f662442d55a7ebf1db89f9da9d1f3b0abb3f993988"
+    },
+    {
+      "path": "src/synapse_hla/schemas/hla-provenance.schema.json",
+      "bundle_path": "schemas/hla-provenance.schema.json",
+      "bytes": 8393,
+      "sha256": "1df32f444dabc641b5cbb36ae146c3d6544d55582822201c5bb9a9364fc7cc17"
+    },
+    {
+      "path": "src/synapse_hla/schemas/output.schema.json",
+      "bundle_path": "schemas/output.schema.json",
+      "bytes": 11319,
+      "sha256": "8eff63fc05d408d543d903693db50e5268ed1b7a8ad22d26c8e4b0a29493281f"
+    },
+    {
+      "path": "src/synapse_hla/schemas/snapshot.schema.json",
+      "bundle_path": "schemas/snapshot.schema.json",
+      "bytes": 16234,
+      "sha256": "5c9eadbe08564f682dd19e422093d7751334b7f0c222dbfc8c5fc9c454bd1d14"
+    },
+    {
+      "path": "src/synapse_hla/schemas/worker-frame.schema.json",
+      "bundle_path": "schemas/worker-frame.schema.json",
+      "bytes": 423,
+      "sha256": "2cab158a3eb594091fd6029141e74307def9ca77621bfe4cab3c6d0414cc7140"
+    },
+    {
+      "path": "src/synapse_hla/schemas/worker-status.schema.json",
+      "bundle_path": "schemas/worker-status.schema.json",
+      "bytes": 991,
+      "sha256": "fe86c5dd819579ce939501034c76603b554c71071ee13037907af521ce887817"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/attributes-negative.json",
+      "bundle_path": "fixtures/attributes-negative.json",
+      "bytes": 6819,
+      "sha256": "15e2122c9a133e7c4510316f187c4be03a98af423e7d5664559e44de17bdef51"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/attributes-positive.json",
+      "bundle_path": "fixtures/attributes-positive.json",
+      "bytes": 7392,
+      "sha256": "f14d264e69f9d8250b4a01042a6dd8b707c03ff3ed62afb5ffdc2d5c7dc72607"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/expected.observations.jsonl",
+      "bundle_path": "fixtures/expected.observations.jsonl",
+      "bytes": 10822,
+      "sha256": "d55fd510bf633395192f4ead01cab1753216d870a9219d023a8525138ef05125"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/first-upsert.entity.json",
+      "bundle_path": "fixtures/first-upsert.entity.json",
+      "bytes": 3250,
+      "sha256": "66a3d1357bf455d9817ad9d865ba394c14d0817664f51e38bbf856fb30a07a17"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/geodesy.json",
+      "bundle_path": "fixtures/geodesy.json",
+      "bytes": 890,
+      "sha256": "ad0976a2902ae29c79ebd029632327cb7ac1b15f0c321fa384f474e62b1f2e53"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/identity.json",
+      "bundle_path": "fixtures/identity.json",
+      "bytes": 186,
+      "sha256": "f37e82165eb1711675fc7e2c3f407534182379874c8d3681322e071bdef9920d"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/session-checkpoints.json",
+      "bundle_path": "fixtures/session-checkpoints.json",
+      "bytes": 686,
+      "sha256": "7f2f65d3d86d31703256d8b5e05f2e3fcd022b6c50d3600164c00364f183ba33"
+    },
+    {
+      "path": "src/synapse_hla/fixtures/session.capture.jsonl",
+      "bundle_path": "fixtures/session.capture.jsonl",
+      "bytes": 5013,
+      "sha256": "d740677a716a1618a1bb07ae62850a7ece6ce6304926c1305304ac479fd0d9b7"
+    },
+    {
+      "path": "examples/config-demo.json",
+      "bundle_path": "examples/config-demo.json",
+      "bytes": 556,
+      "sha256": "898a971bfb3ca2906cd01726019cc4b87f966a74d3522408dec653dc1f5e1eac"
+    },
+    {
+      "path": "examples/config-existing.json",
+      "bundle_path": "examples/config-existing.json",
+      "bytes": 420,
+      "sha256": "12907b73aaf90c6325329b2362866537d6558015de358a9f9c84aef077eb4396"
+    },
+    {
+      "path": "src/synapse_hla/pins.json",
+      "bundle_path": "references/pins.json",
+      "bytes": 1683,
+      "sha256": "97a2fdef8a99169216f385123c0e582a51d62dc6af337b7023eadd41b280caa4"
+    },
+    {
+      "path": "tools/reference/reference_encode.cpp",
+      "bundle_path": "tools/reference_encode.cpp",
+      "bytes": 1511,
+      "sha256": "dd0659d459815d2b97cda1c4c5eff3f7579935879ae801fb9fd47c1381b21d68"
+    },
+    {
+      "path": "tools/reference/reference_fom_check.cpp",
+      "bundle_path": "tools/reference_fom_check.cpp",
+      "bytes": 1678,
+      "sha256": "488d78c2843633c9d7e0762d3ce6d14a79cecf3c03abebfdc7423b2381b69ac1"
+    }
+  ]
+}

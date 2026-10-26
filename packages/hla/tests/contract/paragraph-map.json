@@ -1,0 +1,373 @@
+{
+  "SPEC:8": {
+    "kind": "prose",
+    "requirements": [
+      "R02",
+      "R05"
+    ],
+    "rule": "CR-new-R0-03"
+  },
+  "SPEC:10": {
+    "kind": "prose",
+    "requirements": [
+      "R50"
+    ],
+    "rule": "CR-new-R0-03"
+  },
+  "SPEC:20": {
+    "kind": "prose",
+    "requirements": [
+      "R02",
+      "R03",
+      "R43"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:28": {
+    "kind": "prose",
+    "requirements": [
+      "R05"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:32": {
+    "kind": "prose",
+    "requirements": [
+      "R06"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:38": {
+    "kind": "prose",
+    "requirements": [
+      "R07"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:42": {
+    "kind": "prose",
+    "requirements": [
+      "R08"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:50": {
+    "kind": "prose",
+    "requirements": [
+      "R10"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:56": {
+    "kind": "prose",
+    "requirements": [
+      "R12"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:62": {
+    "kind": "prose",
+    "requirements": [
+      "R14"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:68": {
+    "kind": "prose",
+    "requirements": [
+      "R15"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:72": {
+    "kind": "prose",
+    "requirements": [
+      "R16"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:80": {
+    "kind": "table",
+    "last_line": 84,
+    "requirements": [
+      "R18"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:88": {
+    "kind": "table",
+    "last_line": 97,
+    "requirements": [
+      "R19"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:99": {
+    "kind": "table",
+    "last_line": 108,
+    "requirements": [
+      "R19"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:118": {
+    "kind": "prose",
+    "requirements": [
+      "R22"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:126": {
+    "kind": "prose",
+    "requirements": [
+      "R25"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:134": {
+    "kind": "prose",
+    "requirements": [
+      "R27"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:142": {
+    "kind": "prose",
+    "requirements": [
+      "R29"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:146": {
+    "kind": "prose",
+    "requirements": [
+      "R30"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:154": {
+    "kind": "prose",
+    "requirements": [
+      "R32"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:158": {
+    "kind": "prose",
+    "requirements": [
+      "R33"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:166": {
+    "kind": "prose",
+    "requirements": [
+      "R35"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:168": {
+    "kind": "prose",
+    "requirements": [
+      "R35"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:174": {
+    "kind": "table",
+    "last_line": 182,
+    "requirements": [
+      "R36"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:184": {
+    "kind": "prose",
+    "requirements": [
+      "R36"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:190": {
+    "kind": "table",
+    "last_line": 199,
+    "requirements": [
+      "R37"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:201": {
+    "kind": "prose",
+    "requirements": [
+      "R37"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:207": {
+    "kind": "prose",
+    "requirements": [
+      "R38"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:211": {
+    "kind": "prose",
+    "requirements": [
+      "R39"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:217": {
+    "kind": "table",
+    "last_line": 231,
+    "requirements": [
+      "R40"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:241": {
+    "kind": "prose",
+    "requirements": [
+      "R43"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:251": {
+    "kind": "prose",
+    "requirements": [
+      "R46"
+    ],
+    "rule": "nearest-preceding"
+  },
+  "SPEC:259": {
+    "kind": "prose",
+    "requirements": [
+      "R45",
+      "R46"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:267": {
+    "kind": "prose",
+    "requirements": [
+      "R50"
+    ],
+    "rule": "CR-new-R0-02"
+  },
+  "SPEC:269": {
+    "kind": "prose",
+    "requirements": [
+      "R50"
+    ],
+    "rule": "CR-new-R0-02"
+  },
+  "SPEC:271": {
+    "kind": "prose",
+    "requirements": [
+      "R50"
+    ],
+    "rule": "CR-new-R0-02"
+  },
+  "SPEC:275": {
+    "kind": "prose",
+    "requirements": [
+      "R06",
+      "R08",
+      "R14",
+      "R16"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:277": {
+    "kind": "prose",
+    "requirements": [
+      "R06",
+      "R14",
+      "R41"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:279": {
+    "kind": "prose",
+    "requirements": [
+      "R12",
+      "R22",
+      "R41"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:281": {
+    "kind": "prose",
+    "requirements": [
+      "R13",
+      "R18",
+      "R19",
+      "R22",
+      "R24"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:283": {
+    "kind": "prose",
+    "requirements": [
+      "R12",
+      "R21",
+      "R22"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:285": {
+    "kind": "prose",
+    "requirements": [
+      "R23",
+      "R25",
+      "R32"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:287": {
+    "kind": "prose",
+    "requirements": [
+      "R32",
+      "R33",
+      "R45"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:289": {
+    "kind": "prose",
+    "requirements": [
+      "R07",
+      "R08",
+      "R09",
+      "R11",
+      "R15",
+      "R32",
+      "R37",
+      "R40"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:291": {
+    "kind": "prose",
+    "requirements": [
+      "R12",
+      "R25",
+      "R40"
+    ],
+    "rule": "OPS-27"
+  },
+  "SPEC:293": {
+    "kind": "prose",
+    "requirements": [
+      "R04",
+      "R15",
+      "R17",
+      "R34",
+      "R35",
+      "R40",
+      "R41"
+    ],
+    "rule": "OPS-27"
+  }
+}

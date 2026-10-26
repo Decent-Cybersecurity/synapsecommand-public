@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:1:event",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "generation_start"
+        },
+        "federation_name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,64}$(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "type",
+        "federation_name"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "discover"
+        },
+        "object_token": {
+          "type": "string",
+          "pattern": "^o[1-9][0-9]*$(?![\\s\\S])",
+          "maxLength": 16
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "reported_class": {
+          "type": "string",
+          "maxLength": 1024
+        }
+      },
+      "required": [
+        "type",
+        "object_token",
+        "name",
+        "reported_class"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "reflect"
+        },
+        "object_token": {
+          "type": "string",
+          "pattern": "^o[1-9][0-9]*$(?![\\s\\S])",
+          "maxLength": 16
+        },
+        "attributes": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 128
+              },
+              "hex": {
+                "type": "string",
+                "pattern": "^(?:[0-9a-f]{2})*$(?![\\s\\S])",
+                "maxLength": 8192
+              }
+            },
+            "required": [
+              "name",
+              "hex"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tag_hex": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{2})*$(?![\\s\\S])",
+          "maxLength": 8192
+        },
+        "sent_order": {
+          "enum": [
+            "RECEIVE",
+            "TIMESTAMP"
+          ]
+        },
+        "received_order": {
+          "enum": [
+            "RECEIVE",
+            "TIMESTAMP"
+          ]
+        },
+        "transport": {
+          "enum": [
+            "RELIABLE",
+            "BEST_EFFORT"
+          ]
+        },
+        "logical_time": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "implementation": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "hex": {
+                  "type": "string",
+                  "pattern": "^(?:[0-9a-f]{2})*$(?![\\s\\S])",
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "implementation",
+                "hex"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retractable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "object_token",
+        "attributes",
+        "tag_hex",
+        "sent_order",
+        "received_order",
+        "transport",
+        "logical_time",
+        "retractable"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "remove"
+        },
+        "object_token": {
+          "type": "string",
+          "pattern": "^o[1-9][0-9]*$(?![\\s\\S])",
+          "maxLength": 16
+        },
+        "tag_hex": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{2})*$(?![\\s\\S])",
+          "maxLength": 8192
+        },
+        "received_order": {
+          "enum": [
+            "RECEIVE",
+            "TIMESTAMP"
+          ]
+        },
+        "logical_time": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "implementation": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "hex": {
+                  "type": "string",
+                  "pattern": "^(?:[0-9a-f]{2})*$(?![\\s\\S])",
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "implementation",
+                "hex"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retractable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "object_token",
+        "tag_hex",
+        "received_order",
+        "logical_time",
+        "retractable"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "diagnostic"
+        },
+        "object_token": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^o[1-9][0-9]*$(?![\\s\\S])",
+              "maxLength": 16
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnostic": {
+          "type": "object",
+          "properties": {
+            "severity": {
+              "enum": [
+                "ERROR",
+                "WARNING"
+              ]
+            },
+            "code": {
+              "type": "string",
+              "pattern": "^[EW]_[A-Z_]+$(?![\\s\\S])"
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "attribute": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "severity",
+            "code",
+            "message",
+            "attribute"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "object_token",
+        "diagnostic"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "generation_end"
+        },
+        "reason": {
+          "enum": [
+            "stop",
+            "connection_lost",
+            "timeout",
+            "limit",
+            "failure",
+            "retraction"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

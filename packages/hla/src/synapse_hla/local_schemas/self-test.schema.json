@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:local:1:self-test",
+  "title": "synapse-hla self-test report",
+  "description": "DIR/self-test.json (OPS-26, R46, D-14): every case the packaged runner ran, in order, with its result (PASS, FAIL, or BLOCKED for a resource that is absent), the SHA-256 of its input, what the packaged fixture expects and what the product gave; the counts; and a global result that is PASS only when every case passed (never hiding a FAIL or a BLOCKED). fixture_replay names the replay directory of the packaged capture inside DIR.",
+  "type": "object",
+  "properties": {
+    "self_test_version": {
+      "const": 1
+    },
+    "profile": {
+      "const": "SC-HLA-RPR2-OBS-1"
+    },
+    "adapter_version": {
+      "const": "1.0.0"
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "PASS": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "FAIL": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "BLOCKED": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,128}$(?![\\s\\S])"
+          },
+          "group": {
+            "enum": [
+              "vector",
+              "geodesy",
+              "identity",
+              "config",
+              "schema",
+              "fixture",
+              "pins",
+              "replay"
+            ]
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED"
+            ]
+          },
+          "input_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected": {},
+          "actual": {},
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "group",
+          "result",
+          "input_sha256",
+          "expected",
+          "actual",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fixture_replay": {
+      "const": "fixture-replay"
+    }
+  },
+  "required": [
+    "self_test_version",
+    "profile",
+    "adapter_version",
+    "result",
+    "counts",
+    "cases",
+    "fixture_replay"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "counts": {
+            "properties": {
+              "FAIL": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "const": "FAIL"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "counts": {
+            "properties": {
+              "FAIL": {
+                "const": 0
+              },
+              "BLOCKED": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "const": "BLOCKED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "counts": {
+            "properties": {
+              "FAIL": {
+                "const": 0
+              },
+              "BLOCKED": {
+                "const": 0
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "const": "PASS"
+          }
+        }
+      }
+    }
+  ]
+}

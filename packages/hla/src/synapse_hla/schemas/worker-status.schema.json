@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:1:worker-status",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "stage"
+        },
+        "stage": {
+          "enum": [
+            "connect",
+            "join",
+            "resolve",
+            "request_update",
+            "resign",
+            "disconnect",
+            "running"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "stage"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "failure"
+        },
+        "code": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 1024
+        }
+      },
+      "required": [
+        "type",
+        "code",
+        "message"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

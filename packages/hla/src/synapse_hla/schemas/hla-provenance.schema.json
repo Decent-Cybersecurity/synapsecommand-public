@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:1:hla-provenance",
+  "type": "object",
+  "properties": {
+    "profile": {
+      "const": "SC-HLA-RPR2-OBS-1"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,64}$(?![\\s\\S])"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "object_token": {
+      "type": "string",
+      "pattern": "^o[1-9][0-9]*$(?![\\s\\S])",
+      "maxLength": 16
+    },
+    "reported_class": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "identifier": {
+      "type": "object",
+      "properties": {
+        "site": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "application": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "entity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      },
+      "required": [
+        "site",
+        "application",
+        "entity"
+      ],
+      "additionalProperties": false
+    },
+    "entity_type": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "domain": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "country": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "category": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "subcategory": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "specific": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "extra": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "kind",
+        "domain",
+        "country",
+        "category",
+        "subcategory",
+        "specific",
+        "extra"
+      ],
+      "additionalProperties": false
+    },
+    "force_identifier": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "spatial": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        },
+        "frame": {
+          "enum": [
+            "WORLD",
+            "BODY"
+          ]
+        },
+        "frozen": {
+          "type": "boolean"
+        },
+        "position_ecef_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "orientation_rad": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "velocity_mps": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "acceleration_mps2": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "angular_velocity_radps": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "padding_hex": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{20}$(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "algorithm",
+        "frame",
+        "frozen",
+        "position_ecef_m",
+        "orientation_rad",
+        "velocity_mps",
+        "acceleration_mps2",
+        "angular_velocity_radps",
+        "padding_hex"
+      ],
+      "additionalProperties": false
+    },
+    "attribute_sequences": {
+      "type": "object",
+      "properties": {
+        "EntityIdentifier": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "EntityType": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ForceIdentifier": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "Spatial": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "EntityIdentifier",
+        "EntityType",
+        "ForceIdentifier",
+        "Spatial"
+      ],
+      "additionalProperties": false
+    },
+    "attribute_hashes": {
+      "type": "object",
+      "properties": {
+        "EntityIdentifier": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "EntityType": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ForceIdentifier": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "Spatial": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "EntityIdentifier",
+        "EntityType",
+        "ForceIdentifier",
+        "Spatial"
+      ],
+      "additionalProperties": false
+    },
+    "time": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "external_elapsed"
+        },
+        "basis": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "effective_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$(?![\\s\\S])",
+          "format": "date-time"
+        },
+        "spatial_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "kind",
+        "basis",
+        "effective_at",
+        "spatial_seq"
+      ],
+      "additionalProperties": false
+    },
+    "profile_verification": {
+      "enum": [
+        "external-fom-unverified",
+        "bundled-fom-created"
+      ]
+    },
+    "capture_complete": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "profile",
+    "session_id",
+    "generation",
+    "object_token",
+    "reported_class",
+    "name",
+    "identifier",
+    "entity_type",
+    "force_identifier",
+    "spatial",
+    "attribute_sequences",
+    "attribute_hashes",
+    "time",
+    "profile_verification",
+    "capture_complete"
+  ],
+  "additionalProperties": false
+}

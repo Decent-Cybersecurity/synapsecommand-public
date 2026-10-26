@@ -1,0 +1,94 @@
+{
+  "directory": "fixtures",
+  "statement": "Every file in this directory is hand-authored synthetic data from the handoff bundle of SC HLA SPEC 001 v1.0 (not in this repository), copied byte for byte. The capture is synthetic callback data written by the bundle's author, not a recording of a real RTI exercise, and no file holds operational or personal data.",
+  "fixtures": [
+    {
+      "file": "attributes-negative.json",
+      "bytes": 6819,
+      "sha256": "15e2122c9a133e7c4510316f187c4be03a98af423e7d5664559e44de17bdef51",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "attributes-positive.json",
+      "bytes": 7392,
+      "sha256": "f14d264e69f9d8250b4a01042a6dd8b707c03ff3ed62afb5ffdc2d5c7dc72607",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "expected.observations.jsonl",
+      "bytes": 10822,
+      "sha256": "d55fd510bf633395192f4ead01cab1753216d870a9219d023a8525138ef05125",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "first-upsert.entity.json",
+      "bytes": 3250,
+      "sha256": "66a3d1357bf455d9817ad9d865ba394c14d0817664f51e38bbf856fb30a07a17",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "geodesy.json",
+      "bytes": 890,
+      "sha256": "ad0976a2902ae29c79ebd029632327cb7ac1b15f0c321fa384f474e62b1f2e53",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "identity.json",
+      "bytes": 186,
+      "sha256": "f37e82165eb1711675fc7e2c3f407534182379874c8d3681322e071bdef9920d",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "session-checkpoints.json",
+      "bytes": 686,
+      "sha256": "7f2f65d3d86d31703256d8b5e05f2e3fcd022b6c50d3600164c00364f183ba33",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    },
+    {
+      "file": "session.capture.jsonl",
+      "bytes": 5013,
+      "sha256": "d740677a716a1618a1bb07ae62850a7ece6ce6304926c1305304ac479fd0d9b7",
+      "synthetic": true,
+      "recorded_from_rti": false,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "Hand-authored synthetic callback data and expected outputs supplied with the handoff bundle of SC HLA SPEC 001 v1.0; not a recording of a real RTI exercise."
+    }
+  ]
+}

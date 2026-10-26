@@ -251,7 +251,9 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 #: step for one fact — and the closure test exists precisely to catch a root nobody added.
 ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts", REPO / "examples",
          REPO / "packages" / "link16_bridge" / "synapse_link16_bridge",
-         REPO / "packages" / "link16_bridge" / "tests")
+         REPO / "packages" / "link16_bridge" / "tests",
+         REPO / "packages" / "hla" / "src" / "synapse_hla",
+         REPO / "packages" / "hla" / "tests")
 
 
 def discover() -> list[pathlib.Path]:
@@ -286,6 +288,14 @@ def discover() -> list[pathlib.Path]:
     interpreters it declares. The two directories are named rather than `packages/link16_bridge`
     itself, so a virtualenv or a build directory created in the distribution root cannot put the
     walk and the size check below out of step.
+
+    `packages/hla/src/synapse_hla/` and `packages/hla/tests/` joined the same way on 2026-10-04
+    (the HLA observer arc, landed on this main on 2026-10-25): the closure test failed as soon as
+    the first Python file of the separate `synapse-hla` distribution existed beside `packages/cdm`.
+    IN SCOPE, because that distribution declares the same 3.11 floor in its own `pyproject.toml`
+    and its tests run on the interpreters it declares. The two directories are named rather than
+    `packages/hla` itself, for the same reason as the Link 16 bridge's: a virtualenv or a build
+    directory created in the distribution root must not put the walk and the size check out of step.
     """
     out = []
     for root in ROOTS:

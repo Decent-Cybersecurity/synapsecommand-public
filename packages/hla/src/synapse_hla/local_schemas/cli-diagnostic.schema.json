@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:local:1:cli-diagnostic",
+  "title": "synapse-hla command-line diagnostic",
+  "description": "One line on stderr (R36, OPS-09, CR-L03): severity, a catalogue code, a message that is not contract (CR-L01) and the path of CR-L01 (an argument name such as --config, --capture or --out, a JSON Pointer into the configuration, line:<n>[#<pointer>] in a capture, a pinned file's name, sc-hla-federate, rtinode or sc-hla-publisher), or null when the condition has no place. Written as ASCII JSON, every other character escaped (R40).",
+  "type": "object",
+  "properties": {
+    "cli_diagnostic_version": {
+      "const": 1
+    },
+    "severity": {
+      "enum": [
+        "ERROR",
+        "WARNING"
+      ]
+    },
+    "code": {
+      "enum": [
+        "E_CONFIG",
+        "E_DEPENDENCY_PIN",
+        "E_OUTPUT_EXISTS",
+        "E_FOM_PROFILE",
+        "E_FEDERATE_NAME",
+        "E_RTI_CONNECT",
+        "E_RTI_TIMEOUT",
+        "E_ATTRIBUTE_LENGTH",
+        "E_NONFINITE",
+        "E_BOOLEAN",
+        "E_SPATIAL_VARIANT",
+        "E_UNSUBSCRIBED_ATTRIBUTE",
+        "E_NULL_ID",
+        "E_ECEF_RANGE",
+        "E_GEODESY",
+        "E_TIME_REGRESSION",
+        "E_IDENTITY_CHANGED",
+        "E_IDENTITY_COLLISION",
+        "E_RETRACTION_UNSUPPORTED",
+        "E_UNKNOWN_OBJECT",
+        "E_LIMIT",
+        "E_QUEUE_OVERFLOW",
+        "E_IO",
+        "E_CAPTURE_SCHEMA",
+        "E_CAPTURE_HASH",
+        "E_CAPTURE_SEQUENCE",
+        "E_CAPTURE_INCOMPLETE",
+        "W_FOM_UNVERIFIED",
+        "W_TIME_UNRESOLVED",
+        "W_FORCE_UNMAPPED",
+        "W_DUPLICATE_DISCOVERY",
+        "W_DUPLICATE_REMOVE"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "cli_diagnostic_version",
+    "severity",
+    "code",
+    "message",
+    "path"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "code": {
+            "pattern": "^E_"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "severity": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "severity": {
+            "const": "WARNING"
+          }
+        }
+      }
+    }
+  ]
+}

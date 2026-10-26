@@ -1,0 +1,736 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:synapsecommand:hla:local:1:run",
+  "title": "synapse-hla run manifest",
+  "description": "run.json of a run directory (SPEC:168, OPS-10 as corrected, OPS-01, D-14): profile, package versions, the source commit (null until a build stamps it), the session, the configuration's canonical SHA-256, the FOM digests and the header's pin map, the capture and output files with their sizes and digests, record counts by kind, completion (capture_complete true exactly when the capture's footer is COMPLETE, in a live run directory as in a replay one: SPEC:158, CR-R6-F8), suppression, error and warning counts, the evidence statuses (offline_replay PASS only for a replay of a capture verified COMPLETE, PREFIX_ONLY for every prefix replay, NOT_RUN for a live session; external_customer_interoperability NOT_TESTED) and the audit times (null in a replay, which reads no clock).",
+  "type": "object",
+  "properties": {
+    "run_version": {
+      "const": 1
+    },
+    "command": {
+      "enum": [
+        "observe",
+        "replay"
+      ]
+    },
+    "profile": {
+      "const": "SC-HLA-RPR2-OBS-1"
+    },
+    "adapter_version": {
+      "const": "1.0.0"
+    },
+    "source_commit": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$(?![\\s\\S])"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "package_versions": {
+      "type": "object",
+      "properties": {
+        "synapse_hla": {
+          "const": "1.0.0"
+        },
+        "synapse_cdm": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "synapse_hla",
+        "synapse_cdm"
+      ],
+      "additionalProperties": false
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,64}$(?![\\s\\S])"
+    },
+    "config_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "fom_sha256": {
+      "type": "object",
+      "properties": {
+        "RPR-Foundation_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Enumerations_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Base_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Physical_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Switches_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "RPR-Foundation_v2.0.xml",
+        "RPR-Enumerations_v2.0.xml",
+        "RPR-Base_v2.0.xml",
+        "RPR-Physical_v2.0.xml",
+        "RPR-Switches_v2.0.xml"
+      ],
+      "additionalProperties": false
+    },
+    "pins": {
+      "type": "object",
+      "properties": {
+        "CDM-LICENSE.txt": {
+          "$ref": "#/$defs/sha256"
+        },
+        "NOTICES.txt": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Base_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Enumerations_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Foundation_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Physical_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "RPR-Switches_v2.0.xml": {
+          "$ref": "#/$defs/sha256"
+        },
+        "openrti-814a210.tar.gz": {
+          "$ref": "#/$defs/sha256"
+        },
+        "reference-encoding-results.txt": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "CDM-LICENSE.txt",
+        "NOTICES.txt",
+        "RPR-Base_v2.0.xml",
+        "RPR-Enumerations_v2.0.xml",
+        "RPR-Foundation_v2.0.xml",
+        "RPR-Physical_v2.0.xml",
+        "RPR-Switches_v2.0.xml",
+        "openrti-814a210.tar.gz",
+        "reference-encoding-results.txt"
+      ],
+      "additionalProperties": false
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "const": "capture.jsonl"
+        },
+        "bytes": {
+          "$ref": "#/$defs/count"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "FAILED",
+            "INCOMPLETE"
+          ]
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "E_CONFIG",
+                "E_DEPENDENCY_PIN",
+                "E_OUTPUT_EXISTS",
+                "E_FOM_PROFILE",
+                "E_FEDERATE_NAME",
+                "E_RTI_CONNECT",
+                "E_RTI_TIMEOUT",
+                "E_ATTRIBUTE_LENGTH",
+                "E_NONFINITE",
+                "E_BOOLEAN",
+                "E_SPATIAL_VARIANT",
+                "E_UNSUBSCRIBED_ATTRIBUTE",
+                "E_NULL_ID",
+                "E_ECEF_RANGE",
+                "E_GEODESY",
+                "E_TIME_REGRESSION",
+                "E_IDENTITY_CHANGED",
+                "E_IDENTITY_COLLISION",
+                "E_RETRACTION_UNSUPPORTED",
+                "E_UNKNOWN_OBJECT",
+                "E_LIMIT",
+                "E_QUEUE_OVERFLOW",
+                "E_IO",
+                "E_CAPTURE_SCHEMA",
+                "E_CAPTURE_HASH",
+                "E_CAPTURE_SEQUENCE",
+                "E_CAPTURE_INCOMPLETE"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_seq": {
+          "$ref": "#/$defs/count"
+        },
+        "frames": {
+          "$ref": "#/$defs/count"
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "urn:synapsecommand:hla:local:1:verify-report"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "file",
+        "bytes",
+        "sha256",
+        "status",
+        "reason_code",
+        "last_seq",
+        "frames",
+        "verification"
+      ],
+      "additionalProperties": false
+    },
+    "outputs": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "properties": {
+            "file": {
+              "const": "observations.jsonl"
+            },
+            "bytes": {
+              "$ref": "#/$defs/count"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "records": {
+              "$ref": "#/$defs/count"
+            }
+          },
+          "required": [
+            "file",
+            "bytes",
+            "sha256",
+            "records"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "file": {
+              "const": "diagnostics.jsonl"
+            },
+            "bytes": {
+              "$ref": "#/$defs/count"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "records": {
+              "$ref": "#/$defs/count"
+            }
+          },
+          "required": [
+            "file",
+            "bytes",
+            "sha256",
+            "records"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2,
+      "items": false
+    },
+    "record_counts": {
+      "type": "object",
+      "properties": {
+        "diagnostic": {
+          "$ref": "#/$defs/count"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/count"
+        },
+        "upsert": {
+          "$ref": "#/$defs/count"
+        },
+        "removed": {
+          "$ref": "#/$defs/count"
+        },
+        "invalidated": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "diagnostic",
+        "snapshot",
+        "upsert",
+        "removed",
+        "invalidated"
+      ],
+      "additionalProperties": false
+    },
+    "capture_complete": {
+      "type": "boolean"
+    },
+    "suppression_counts": {
+      "type": "object",
+      "properties": {
+        "MISSING_ENTITY_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "MISSING_ENTITY_TYPE": {
+          "$ref": "#/$defs/count"
+        },
+        "MISSING_SPATIAL": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_ENTITY_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_ENTITY_TYPE": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_SPATIAL": {
+          "$ref": "#/$defs/count"
+        },
+        "INVALID_FORCE_IDENTIFIER": {
+          "$ref": "#/$defs/count"
+        },
+        "NULL_ID": {
+          "$ref": "#/$defs/count"
+        },
+        "QUARANTINED": {
+          "$ref": "#/$defs/count"
+        },
+        "TIME_UNRESOLVED": {
+          "$ref": "#/$defs/count"
+        },
+        "GEOGRAPHY_UNPROJECTABLE": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "MISSING_ENTITY_IDENTIFIER",
+        "MISSING_ENTITY_TYPE",
+        "MISSING_SPATIAL",
+        "INVALID_ENTITY_IDENTIFIER",
+        "INVALID_ENTITY_TYPE",
+        "INVALID_SPATIAL",
+        "INVALID_FORCE_IDENTIFIER",
+        "NULL_ID",
+        "QUARANTINED",
+        "TIME_UNRESOLVED",
+        "GEOGRAPHY_UNPROJECTABLE"
+      ],
+      "additionalProperties": false
+    },
+    "error_counts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "E_CONFIG",
+          "E_DEPENDENCY_PIN",
+          "E_OUTPUT_EXISTS",
+          "E_FOM_PROFILE",
+          "E_FEDERATE_NAME",
+          "E_RTI_CONNECT",
+          "E_RTI_TIMEOUT",
+          "E_ATTRIBUTE_LENGTH",
+          "E_NONFINITE",
+          "E_BOOLEAN",
+          "E_SPATIAL_VARIANT",
+          "E_UNSUBSCRIBED_ATTRIBUTE",
+          "E_NULL_ID",
+          "E_ECEF_RANGE",
+          "E_GEODESY",
+          "E_TIME_REGRESSION",
+          "E_IDENTITY_CHANGED",
+          "E_IDENTITY_COLLISION",
+          "E_RETRACTION_UNSUPPORTED",
+          "E_UNKNOWN_OBJECT",
+          "E_LIMIT",
+          "E_QUEUE_OVERFLOW",
+          "E_IO",
+          "E_CAPTURE_SCHEMA",
+          "E_CAPTURE_HASH",
+          "E_CAPTURE_SEQUENCE",
+          "E_CAPTURE_INCOMPLETE"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/positive"
+      }
+    },
+    "warning_counts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "W_FOM_UNVERIFIED",
+          "W_TIME_UNRESOLVED",
+          "W_FORCE_UNMAPPED",
+          "W_DUPLICATE_DISCOVERY",
+          "W_DUPLICATE_REMOVE"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/positive"
+      }
+    },
+    "session": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "terminal_codes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "E_CONFIG",
+                  "E_DEPENDENCY_PIN",
+                  "E_OUTPUT_EXISTS",
+                  "E_FOM_PROFILE",
+                  "E_FEDERATE_NAME",
+                  "E_RTI_CONNECT",
+                  "E_RTI_TIMEOUT",
+                  "E_ATTRIBUTE_LENGTH",
+                  "E_NONFINITE",
+                  "E_BOOLEAN",
+                  "E_SPATIAL_VARIANT",
+                  "E_UNSUBSCRIBED_ATTRIBUTE",
+                  "E_NULL_ID",
+                  "E_ECEF_RANGE",
+                  "E_GEODESY",
+                  "E_TIME_REGRESSION",
+                  "E_IDENTITY_CHANGED",
+                  "E_IDENTITY_COLLISION",
+                  "E_RETRACTION_UNSUPPORTED",
+                  "E_UNKNOWN_OBJECT",
+                  "E_LIMIT",
+                  "E_QUEUE_OVERFLOW",
+                  "E_IO",
+                  "E_CAPTURE_SCHEMA",
+                  "E_CAPTURE_HASH",
+                  "E_CAPTURE_SEQUENCE",
+                  "E_CAPTURE_INCOMPLETE"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "workers": {
+              "$ref": "#/$defs/count"
+            },
+            "last_generation": {
+              "$ref": "#/$defs/count"
+            }
+          },
+          "required": [
+            "terminal_codes",
+            "workers",
+            "last_generation"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "offline_replay": {
+          "enum": [
+            "PASS",
+            "PREFIX_ONLY",
+            "FAIL",
+            "NOT_RUN"
+          ]
+        },
+        "external_customer_interoperability": {
+          "const": "NOT_TESTED"
+        }
+      },
+      "required": [
+        "offline_replay",
+        "external_customer_interoperability"
+      ],
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "started_at",
+        "ended_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "run_version",
+    "command",
+    "profile",
+    "adapter_version",
+    "source_commit",
+    "package_versions",
+    "session_id",
+    "config_sha256",
+    "fom_sha256",
+    "pins",
+    "capture",
+    "outputs",
+    "record_counts",
+    "capture_complete",
+    "suppression_counts",
+    "error_counts",
+    "warning_counts",
+    "session",
+    "evidence",
+    "audit"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "replay"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capture": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "COMPLETE",
+                  "FAILED",
+                  "INCOMPLETE"
+                ]
+              },
+              "verification": {
+                "type": "object"
+              }
+            }
+          },
+          "session": {
+            "type": "null"
+          },
+          "evidence": {
+            "properties": {
+              "offline_replay": {
+                "enum": [
+                  "PASS",
+                  "PREFIX_ONLY"
+                ]
+              }
+            }
+          },
+          "audit": {
+            "properties": {
+              "started_at": {
+                "type": "null"
+              },
+              "ended_at": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "capture": {
+            "properties": {
+              "verification": {
+                "type": "null"
+              }
+            }
+          },
+          "session": {
+            "type": "object"
+          },
+          "evidence": {
+            "properties": {
+              "offline_replay": {
+                "const": "NOT_RUN"
+              }
+            }
+          },
+          "audit": {
+            "properties": {
+              "started_at": {
+                "type": "string"
+              },
+              "ended_at": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capture": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capture_complete": {
+            "const": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "capture_complete": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "replay"
+          },
+          "capture": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "offline_replay": {
+                "const": "PASS"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "replay"
+          },
+          "capture": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "FAILED",
+                  "INCOMPLETE"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "offline_replay": {
+                "const": "PREFIX_ONLY"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "positive": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+    },
+    "utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$(?![\\s\\S])"
+    }
+  }
+}

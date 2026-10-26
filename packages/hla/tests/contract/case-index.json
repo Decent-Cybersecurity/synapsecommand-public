@@ -1,0 +1,737 @@
+[
+  {
+    "id": "G-R01",
+    "requirement": "R01",
+    "layer": "release"
+  },
+  {
+    "id": "G-R02",
+    "requirement": "R02",
+    "layer": "release"
+  },
+  {
+    "id": "G-R03",
+    "requirement": "R03",
+    "layer": "release"
+  },
+  {
+    "id": "G-R04",
+    "requirement": "R04",
+    "layer": "release"
+  },
+  {
+    "id": "G-R05",
+    "requirement": "R05",
+    "layer": "release"
+  },
+  {
+    "id": "G-R06",
+    "requirement": "R06",
+    "layer": "release"
+  },
+  {
+    "id": "G-R07",
+    "requirement": "R07",
+    "layer": "release"
+  },
+  {
+    "id": "G-R08",
+    "requirement": "R08",
+    "layer": "release"
+  },
+  {
+    "id": "G-R09",
+    "requirement": "R09",
+    "layer": "release"
+  },
+  {
+    "id": "G-R10",
+    "requirement": "R10",
+    "layer": "release"
+  },
+  {
+    "id": "G-R11",
+    "requirement": "R11",
+    "layer": "release"
+  },
+  {
+    "id": "G-R12",
+    "requirement": "R12",
+    "layer": "release"
+  },
+  {
+    "id": "G-R13",
+    "requirement": "R13",
+    "layer": "release"
+  },
+  {
+    "id": "G-R14",
+    "requirement": "R14",
+    "layer": "release"
+  },
+  {
+    "id": "G-R15",
+    "requirement": "R15",
+    "layer": "release"
+  },
+  {
+    "id": "G-R16",
+    "requirement": "R16",
+    "layer": "release"
+  },
+  {
+    "id": "G-R17",
+    "requirement": "R17",
+    "layer": "release"
+  },
+  {
+    "id": "G-R18",
+    "requirement": "R18",
+    "layer": "release"
+  },
+  {
+    "id": "G-R19",
+    "requirement": "R19",
+    "layer": "release"
+  },
+  {
+    "id": "G-R20",
+    "requirement": "R20",
+    "layer": "release"
+  },
+  {
+    "id": "G-R21",
+    "requirement": "R21",
+    "layer": "release"
+  },
+  {
+    "id": "G-R22",
+    "requirement": "R22",
+    "layer": "release"
+  },
+  {
+    "id": "G-R23",
+    "requirement": "R23",
+    "layer": "release"
+  },
+  {
+    "id": "G-R24",
+    "requirement": "R24",
+    "layer": "release"
+  },
+  {
+    "id": "G-R25",
+    "requirement": "R25",
+    "layer": "release"
+  },
+  {
+    "id": "G-R26",
+    "requirement": "R26",
+    "layer": "release"
+  },
+  {
+    "id": "G-R27",
+    "requirement": "R27",
+    "layer": "release"
+  },
+  {
+    "id": "G-R28",
+    "requirement": "R28",
+    "layer": "release"
+  },
+  {
+    "id": "G-R29",
+    "requirement": "R29",
+    "layer": "release"
+  },
+  {
+    "id": "G-R30",
+    "requirement": "R30",
+    "layer": "release"
+  },
+  {
+    "id": "G-R31",
+    "requirement": "R31",
+    "layer": "release"
+  },
+  {
+    "id": "G-R32",
+    "requirement": "R32",
+    "layer": "release"
+  },
+  {
+    "id": "G-R33",
+    "requirement": "R33",
+    "layer": "release"
+  },
+  {
+    "id": "G-R34",
+    "requirement": "R34",
+    "layer": "release"
+  },
+  {
+    "id": "G-R35",
+    "requirement": "R35",
+    "layer": "release"
+  },
+  {
+    "id": "G-R36",
+    "requirement": "R36",
+    "layer": "release"
+  },
+  {
+    "id": "G-R37",
+    "requirement": "R37",
+    "layer": "release"
+  },
+  {
+    "id": "G-R38",
+    "requirement": "R38",
+    "layer": "release"
+  },
+  {
+    "id": "G-R39",
+    "requirement": "R39",
+    "layer": "release"
+  },
+  {
+    "id": "G-R40",
+    "requirement": "R40",
+    "layer": "release"
+  },
+  {
+    "id": "G-R41",
+    "requirement": "R41",
+    "layer": "release"
+  },
+  {
+    "id": "G-R42",
+    "requirement": "R42",
+    "layer": "release"
+  },
+  {
+    "id": "G-R43",
+    "requirement": "R43",
+    "layer": "release"
+  },
+  {
+    "id": "G-R44",
+    "requirement": "R44",
+    "layer": "release"
+  },
+  {
+    "id": "G-R45",
+    "requirement": "R45",
+    "layer": "release"
+  },
+  {
+    "id": "G-R46",
+    "requirement": "R46",
+    "layer": "release"
+  },
+  {
+    "id": "G-R47",
+    "requirement": "R47",
+    "layer": "release"
+  },
+  {
+    "id": "G-R48",
+    "requirement": "R48",
+    "layer": "release"
+  },
+  {
+    "id": "G-R49",
+    "requirement": "R49",
+    "layer": "release"
+  },
+  {
+    "id": "G-R50",
+    "requirement": "R50",
+    "layer": "release"
+  },
+  {
+    "id": "V-SPATIAL-1",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-2",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-3",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-4",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-5",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-6",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-7",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-8",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-9",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-ID-123",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-TYPE-PLATFORM",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-FORCE-1",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-FORCE-255",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "V-SPATIAL-PADDING",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-1",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-1",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-2",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-2",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-3",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-3",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-4",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-4",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-5",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-5",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-6",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-6",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-7",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-7",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-8",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-8",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRUNC-9",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-TRAIL-9",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-ALG-0",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-ALG-10",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-ALG-255",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-NONFINITE-8",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-NONFINITE-36",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-NONFINITE-48",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-NONFINITE-60",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-NONFINITE-72",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-BOOL-2",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-LENGTH-EntityIdentifier",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-LENGTH-EntityType",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "N-LENGTH-ForceIdentifier",
+    "requirement": "R18",
+    "layer": "codec"
+  },
+  {
+    "id": "A-PARTIAL-ORDER",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-ATOMIC",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-REPAIR",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-FORCE-ABSENT",
+    "requirement": "R23",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-FORCE-INVALID",
+    "requirement": "R23",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-FORCE-UNMAPPED",
+    "requirement": "R09",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-NULL-ID",
+    "requirement": "R19",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-COLLISION",
+    "requirement": "R24",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-ID-CHANGE",
+    "requirement": "R24",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-REINCARNATE",
+    "requirement": "R25",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-RECONNECT",
+    "requirement": "R14",
+    "layer": "integration"
+  },
+  {
+    "id": "A-NO-TIME",
+    "requirement": "R08",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-TIME-CONTEXT",
+    "requirement": "R32",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-BODY",
+    "requirement": "R30",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-STATIC",
+    "requirement": "R30",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-ATTITUDE",
+    "requirement": "R31",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-POLE",
+    "requirement": "R30",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-EMPTY",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-REPEATED",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-UNKNOWN",
+    "requirement": "R22",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-UNSUBSCRIBED",
+    "requirement": "R12",
+    "layer": "integration"
+  },
+  {
+    "id": "A-REMOVE",
+    "requirement": "R25",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-END",
+    "requirement": "R25",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-RETRACT",
+    "requirement": "R13",
+    "layer": "integration"
+  },
+  {
+    "id": "A-DUPLICATE-KEY",
+    "requirement": "R07",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-UTF8",
+    "requirement": "R07",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-HASH",
+    "requirement": "R15",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-TRUNCATED",
+    "requirement": "R17",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-SEQ-GAP",
+    "requirement": "R15",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-CANONICAL",
+    "requirement": "R15",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-REPLAY",
+    "requirement": "R35",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-PREFIX",
+    "requirement": "R17",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-OUTPUT-IDEMPOTENCE",
+    "requirement": "R33",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-NO-PUBLISH",
+    "requirement": "R39",
+    "layer": "integration"
+  },
+  {
+    "id": "A-NO-CREATE",
+    "requirement": "R10",
+    "layer": "integration"
+  },
+  {
+    "id": "A-MISSING-FOM",
+    "requirement": "R10",
+    "layer": "integration"
+  },
+  {
+    "id": "A-CLASS",
+    "requirement": "R10",
+    "layer": "integration"
+  },
+  {
+    "id": "A-NAME-CONFLICT",
+    "requirement": "R14",
+    "layer": "integration"
+  },
+  {
+    "id": "A-TIMEOUT",
+    "requirement": "R14",
+    "layer": "integration"
+  },
+  {
+    "id": "A-OVERFLOW",
+    "requirement": "R41",
+    "layer": "integration"
+  },
+  {
+    "id": "A-OBJECT-LIMIT",
+    "requirement": "R40",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-ATTRIBUTE-LIMIT",
+    "requirement": "R40",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-TAG-LIMIT",
+    "requirement": "R40",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-FILE-LIMIT",
+    "requirement": "R40",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-DISK",
+    "requirement": "R34",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-SIGNAL",
+    "requirement": "R36",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-REMOTE",
+    "requirement": "R07",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-DEPENDENCY",
+    "requirement": "R04",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-XML",
+    "requirement": "R40",
+    "layer": "behavior"
+  },
+  {
+    "id": "A-DEMO",
+    "requirement": "R38",
+    "layer": "integration"
+  },
+  {
+    "id": "A-ENCODING",
+    "requirement": "R47",
+    "layer": "integration"
+  },
+  {
+    "id": "A-PERFORMANCE",
+    "requirement": "R42",
+    "layer": "integration"
+  },
+  {
+    "id": "A-EVIDENCE",
+    "requirement": "R48",
+    "layer": "behavior"
+  }
+]

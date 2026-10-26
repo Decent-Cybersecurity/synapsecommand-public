@@ -1,0 +1,4 @@
+# The repository's root .gitignore ignores every *.txt at any depth. CMake's input file is the
+# one .txt this distribution must track (the native worker and the tools under src/native and
+# tools are built from it), so it is re-included here, by name and nothing wider.
+!CMakeLists.txt

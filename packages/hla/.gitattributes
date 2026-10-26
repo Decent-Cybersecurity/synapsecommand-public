@@ -1,0 +1,15 @@
+# The vendored contract is compared byte for byte against the pins in
+# tests/contract/vendored-pins.json, and the capture's hash chain covers exact line bytes. A
+# checkout that rewrote line endings would fail those checks on a difference no reader could see
+# in a diff, so every vendored file and every fixture is marked binary-safe here.
+src/synapse_hla/schemas/*.json -text
+src/synapse_hla/fixtures/* -text
+src/synapse_hla/pins.json -text
+examples/*.json -text
+tools/reference/*.cpp -text
+# The OpenRTI licence texts are the pinned archive's bytes (a test compares them), the SBOM is
+# compared byte for byte with what tests/release_sbom.py makes of the locks, and the evidence
+# report with its own rendering: no line-ending conversion for any of them.
+licences/openrti/* -text
+locks/* -text
+docs/evidence/* -text

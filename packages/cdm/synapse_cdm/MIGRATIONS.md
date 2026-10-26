@@ -846,9 +846,14 @@ measurement.
 
 **What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
 dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.9.0 section being what moved in it.
-Everything else the round touched ships in nothing: the ledger, the witness record and its README,
-the release-pipeline and changelog pages, and two test modules.
+account in the pipeline section, and the index note in the 3.9.0 section being what moved in it;
+and, from 2026-10-25, the `synapse-hla` landing paragraph (below). Everything else the round
+touched ships in nothing: the ledger, the witness record and its README, the release-pipeline and
+changelog pages, and two test modules; and so does everything else the landing touched: the
+sibling distribution under `packages/hla/`, the two roots it adds to
+`tests/test_cdm_version_floor.py` and the two rows it adds to `tests/test_cdm_prose_counts.py`, a
+paragraph of `ARCHITECTURE.md`, a scope note in `SECURITY.md` and one sentence of the boundary
+page.
 
 **THE 3.9.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is hand-built, for the fourth time, and
 for the first time because the job never started.** Run 40231960322 published 3.9.0 to the index
@@ -867,6 +872,32 @@ ones. This round resolves no `SELF` provenance: 3.9.0 froze no contract — the 
 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the 3.2.0 row still names
 `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names. Nothing in the distribution
 moved except this file, and `PACKAGE_VERSION` still reads `3.9.0`.
+
+**THE `synapse-hla` LANDING, 2026-10-25 — the HLA observer and replay pipeline, as a sibling
+distribution.** `packages/hla/` holds a third distribution, `synapse-hla` 1.0.0 (import
+`synapse_hla`, command `synapse-hla`, and the native worker `sc-hla-federate`, which is built from
+the tree against the pinned OpenRTI and ships in no wheel), whose one declared runtime dependency
+is `synapse-cdm` 3.8.0 or later and below 4 (jsonschema and pydantic arrive through it), beside
+the standard library. It implements profile `SC-HLA-RPR2-OBS-1` of the handoff specification SC
+HLA SPEC 001 v1.0: a receive-only observer of a bounded subset of the RPR FOM 2.0 physical-entity
+attributes over OpenRTI's rti1516e API, which publishes nothing and controls no simulation; a raw
+capture that keeps every callback's bytes unchanged in a durable, hash-chained file; a
+deterministic reducer of that capture to per-object state; a projection of eligible state to CDM
+3.0.0 `Entity` objects, each validated against the packaged contract, the handoff's `cdm-entity`
+schema byte for byte; an offline replay that writes the same records from the same capture, byte
+for byte; and a synthetic publisher for its demo, which is not part of the receive-only runtime.
+Nothing of it ships in the `synapse-cdm` wheel, and it is outside the adapter registry. It is part
+of the tag and of the Release's source archives, it installs from the tag with `pip install` of a
+`git+` URL naming `#subdirectory=packages/hla` after `synapse-cdm` is installed from the index, and
+no upload of it to the package index is made in this release (creating a second project there is
+the maintainer's act). OpenRTI is its tested reference: no customer simulator and no second RTI
+implementation was tested, its evidence report reads `BLOCKED` for every release gate that needs
+the reference platform (Linux x86_64, Ubuntu 24.04, GCC 13), the performance run among them, and
+holds development evidence only (`DEV-macOS-arm64` and `DEV-linux-aarch64`), and
+`external_customer_interoperability` reads `NOT_TESTED`. No workflow runs its tests; its README
+says how to run them. The count clause above is unchanged by this landing: inside `packages/cdm/`
+it moves this file only, which the clause already counts. Its release evidence is
+`packages/hla/docs/evidence/`.
 
 ### 3.9.0 — 2026-10-25 — the STANAG 4559 translators: three ingest-only adapter modules land, `stanag4559_catalog` as #35, `stanag4559_stream` as #36 and `stanag4559_workflow` as #37, on the record module `isr_record`, the roster moves thirty-three to thirty-six, and no wire contract moves
 

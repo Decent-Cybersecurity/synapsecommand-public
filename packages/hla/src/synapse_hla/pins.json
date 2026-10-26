@@ -1,0 +1,54 @@
+{
+  "profile": "SC-HLA-RPR2-OBS-1",
+  "retrieved_on": "2026-10-04",
+  "rpr_mirror_commit": "9627bab695779a659800c7921af5d65c0f5d0e00",
+  "openrti_commit": "814a210978b7faafd65affbe70a2e25679921b23",
+  "cdm_commit": "c4bba1b6ebfdfe956f6efc2b3a81a04db2b4bb5b",
+  "files": [
+    {
+      "path": "CDM-LICENSE.txt",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357
+    },
+    {
+      "path": "NOTICES.txt",
+      "sha256": "eb1b3d07d2d69485631f4e3989508765794f3db1356b7ca3dfe2ec3a9401800b",
+      "bytes": 471
+    },
+    {
+      "path": "RPR-Base_v2.0.xml",
+      "sha256": "3a7e63e318c0d449302e6b0e2b847d0bde0076957bc6f1b2c97bbe101ad181ac",
+      "bytes": 86779
+    },
+    {
+      "path": "RPR-Enumerations_v2.0.xml",
+      "sha256": "763527abc78cb2e2d68df6948f4790305b119be8215f91cde4d7261ce9b78c53",
+      "bytes": 611694
+    },
+    {
+      "path": "RPR-Foundation_v2.0.xml",
+      "sha256": "80fd32ea041c2841287c2901e82e3b24dd291d7e8c1ea99904110ca837dddb8a",
+      "bytes": 8624
+    },
+    {
+      "path": "RPR-Physical_v2.0.xml",
+      "sha256": "15a2a855403ae4919ac7c30ba865eecb40710d501820d59f1273ad650fcc01bc",
+      "bytes": 65318
+    },
+    {
+      "path": "RPR-Switches_v2.0.xml",
+      "sha256": "e0328c08c74141914453b87fe980bbeb21921b8886125f25402f1f26984e42f5",
+      "bytes": 5921
+    },
+    {
+      "path": "openrti-814a210.tar.gz",
+      "sha256": "16de11df983c8074feed252a7de1fc7c05c4e9520c050df6bcff8b3a899adb80",
+      "bytes": 677523
+    },
+    {
+      "path": "reference-encoding-results.txt",
+      "sha256": "b0ad9cc7a93952bf89545f9a1bd363b3ce43ec2e2bca274817fc58132b2dc6c3",
+      "bytes": 1275
+    }
+  ]
+}

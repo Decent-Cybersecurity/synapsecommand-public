@@ -1,0 +1,16 @@
+{
+  "profile": "SC-HLA-RPR2-OBS-1",
+  "session_id": "local-observation",
+  "source_system": "synthetic-reference",
+  "synthetic": true,
+  "mode": "existing",
+  "endpoint": "rti://127.0.0.1:14321",
+  "allow_remote": false,
+  "federation_name": "SC_DEMO_0123456789abcdef",
+  "federate_name": "SC_OBSERVER",
+  "profile_declaration": "external-fom-unverified",
+  "time_policy": {
+    "mode": "none"
+  },
+  "force_map": {}
+}
