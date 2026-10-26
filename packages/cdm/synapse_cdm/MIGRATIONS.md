@@ -491,6 +491,34 @@ eleven records, and committed it as `releases/witness/3.8.0.json` — the same b
 `e9acaf1f…`, held by digest in `tests/test_cdm_witness.py`; `PUBLICATION.md` entry 30 is the
 ledger's account. The directory holds eleven records: three built by hand and eight the pipeline's.
 
+**And on 2026-10-25 the job did not execute at all: the `v3.9.0` push, run 40231960322, was
+refused at its Release step.** Four of the run's six jobs read `success` — gate, build, attest and
+publish, so the index took the wheel at 22:59:53Z and the sdist at 22:59:55Z — and the `release`
+job reads `failure`: its step running `gh release create … --notes-file release-notes-3.9.0.md` was
+answered `HTTP 422: Validation Failed` with *body is too long (maximum is 125000 characters)*,
+because the notes the renderer wrote from this tree ran to 133,865 characters, the Known
+limitations section alone 99,631 of them. The `witness` job needs `release`, so it reads
+`skipped`, which is the reading the sentence above says stops a witness round from committing the
+pipeline's record; there was none to commit. The run's one approval had followed the rule this
+procedure states for it — given at 22:59:30Z by `decentcybersecurity` with the comment *Approved on
+the readiness report at the release commit:* and the readiness report's URL at `d870288a`, the
+release commit and the commit the tag names — the ninth time, after `v3.0.1`'s, `v3.2.0`'s,
+`v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s, `v3.7.0`'s and `v3.8.0`'s. The Release was created
+by hand from the run's own `dist` and `assets` artifacts, each digest equal to `SHA256SUMS` and to
+the index's, with the complete notes as an asset and a body that fits: the same notes with a
+one-line pointer to the asset under the title and their Known limitations section replaced by a
+notice saying so. `releases/witness/3.9.0.json` was then
+built with the same builder over the run's own inputs, re-fetched from the APIs — the Release
+payload, the approvals payload, the `pypi` deployment's four statuses, the attestation store's
+bundle for the wheel and the run's `assets` artifact — with the job's own arguments and no
+`--review-file`, so `review_file` is derived from the approval's comment as on the pipeline's
+records; the verifier read it `VERIFIED` with `--download --assets` before it was attached to the
+Release as its ninth asset, and the witness round rebuilt it from the same inputs to the same bytes
+and verified it again offline against the Release download, online with `--download` and over all
+twelve records before it was committed — sha256 `a8fe3ca9…`, named among the hand-built records in
+`tests/test_cdm_witness.py`. `PUBLICATION.md` entry 31 is the ledger's account. The directory holds
+twelve records: four built by hand and eight the pipeline's.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -765,6 +793,39 @@ wire contract moved: `SCHEMA_VERSION` stays 3.2.0 and no contract was frozen, so
 leaves no `SELF` provenance to resolve. The bridge distribution, `synapse-link16-bridge` 1.1.0, is
 in the tag and not on the index. `PUBLICATION.md` entry 30 is the measurement.
 
+**Also 2026-10-25: the twelfth record is hand-built, because the job that would have built it never
+started.** The `v3.9.0` push, run 40231960322, published to the index and was then refused at its
+Release step on GitHub's 125,000-character limit on a Release body, so its `witness` job was
+skipped. The Release was created by hand from the run's own artifacts, and
+`releases/witness/3.9.0.json` was built outside the pipeline with the same builder over that run's
+inputs and the job's own arguments, its `review_file` derived from an approval comment naming the
+readiness report at the commit the tag names, and attached to the Release. The directory holds
+twelve records: four built by hand and eight by the pipeline. `PUBLICATION.md` entry 31 is the
+measurement.
+
+**Also 2026-10-25: the 3.9.0 release's account, here because no implementation record carries it.**
+The three STANAG 4559 translator adapter modules, `stanag4559_catalog`, `stanag4559_stream` and
+`stanag4559_workflow`, and the record module `isr_record` they share have no
+`docs/*-implementation.md` page, so the release's dated account is this paragraph, as the 3.5.0,
+3.6.0, 3.7.0 and 3.8.0 releases' are the ones above. The release commit
+`d870288a00d2354ffe5c8bbb86312321e3228921`, on the landing `e8752809` and the 3.8.0 docs commit
+`10af73f` under it, is the commit `main` points at on GitHub; on its `main` push `CI` run
+40231817893 read the four suite, gates and manifests jobs red on the nine tag-conditional tests
+only, nine failed in each and each of the nine named in every leg's log, and every other job
+`success`, and `CodeQL` run 40231817840 and `Gateway bridge package` run 40231817883 read
+`success`. The annotated tag `v3.9.0` (tag object `145b8b118a2a1b82186f342924137e80839980f7`) names
+that commit, and the Release run 40231960322 on its push, at 20:41:36Z, read the gate, build, attest
+and publish jobs `success` — the gate job's condition 1 `14696 passed, 225 skipped` with none failed
+and its conformance sweep `36 of 36 CONFORMANT` — the `release` job `failure`, refused at 23:00:25Z
+on the length of the Release body, and the `witness` job skipped. The `pypi` hold began at 22:59:04Z
+and was released at 22:59:30Z; the index took the wheel at 22:59:53Z and the sdist at 22:59:55Z, and
+Release 423717635 was created by hand from the run's artifacts and published at 23:06:44Z, the
+witness record attached as its ninth asset at 23:08:37Z, its evidence bundle carrying an
+`evidence.json` for each of the three new adapter modules among its thirty-six. No wire contract
+moved: `SCHEMA_VERSION` stays 3.2.0 and no contract was frozen, so this release leaves no `SELF`
+provenance to resolve. The bridge distribution, `synapse-link16-bridge` 1.1.0, is in the tag and
+not on the index. `PUBLICATION.md` entry 31 is the measurement.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -777,6 +838,36 @@ now true of it.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v3.9.0`, and `3.9.0` is what the index serves — `PUBLICATION.md` entry 31 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated witness paragraphs in the release procedure and the pipeline section, the release's dated
+account in the pipeline section, and the index note in the 3.9.0 section being what moved in it.
+Everything else the round touched ships in nothing: the ledger, the witness record and its README,
+the release-pipeline and changelog pages, and two test modules.
+
+**THE 3.9.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is hand-built, for the fourth time, and
+for the first time because the job never started.** Run 40231960322 published 3.9.0 to the index
+and was then refused at its Release step — `HTTP 422`, *body is too long (maximum is 125000
+characters)*, for notes of 133,865 characters — so its `witness` job was skipped. The Release was
+created by hand from the run's own `dist` and `assets` artifacts, and `releases/witness/3.9.0.json`
+was built with the pipeline's builder over the run's own inputs, re-fetched from the APIs, with the
+job's own arguments, its `review_file` derived from the approval's comment, which named the
+readiness report at the commit the tag names; it was verified with `--download --assets` and
+attached to the Release, and this round rebuilt it from the same inputs to the same bytes and
+verified it with `gates/witness_verify.py` offline against the Release download, online with
+`--download`, and over all twelve records, before it was committed. Ledger entry 31 records the
+upload, the refusal, the Release created by hand and the readings behind them; the dated witness
+paragraphs say what this run did; `tests/test_cdm_witness.py` names the record among the hand-built
+ones. This round resolves no `SELF` provenance: 3.9.0 froze no contract — the CDM schema stays
+3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the 3.2.0 row still names
+`da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names. Nothing in the distribution
+moved except this file, and `PACKAGE_VERSION` still reads `3.9.0`.
+
 ### 3.9.0 — 2026-10-25 — the STANAG 4559 translators: three ingest-only adapter modules land, `stanag4559_catalog` as #35, `stanag4559_stream` as #36 and `stanag4559_workflow` as #37, on the record module `isr_record`, the roster moves thirty-three to thirty-six, and no wire contract moves
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells the heading is read by the citation sweep as a pointer to a section this roll removed.
@@ -788,7 +879,8 @@ upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledg
 watched the upload and is not asserted here before it has happened. The paragraph this replaces
 said that nothing in the section was in a release, that the newest release tag was `v3.8.0` and
 that `3.8.0` was what the index served (`PUBLICATION.md` entry 30) — the first clause stops being
-true at this commit and the other two stay true until an upload changes them.
+true at this commit and the other two stay true until an upload changes them. **Measured after the upload, 2026-10-25:** `3.9.0` is what the
+index serves since 22:59:55Z, and `PUBLICATION.md` entry 31 is the measurement.
 
 **THE PACKAGE VERSION MOVED 3.8.0 -> 3.9.0 ON 2026-10-25, AND THE NUMBER IS THE DERIVED FLOOR.**
 `gates/bump_derivation.py` reads the arc from `v3.8.0` and derives MINOR with nothing unruled: on

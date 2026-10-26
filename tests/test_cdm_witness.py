@@ -721,6 +721,22 @@ def test_every_witness_path_the_documents_quote_exists():
 # beside `3.0.1.json`, `3.2.0.json`, `3.3.0.json`, `3.4.0.json`, `3.5.0.json`, `3.6.0.json` and
 # `3.7.0.json`. The hand-built roster does not move, and the three paragraphs each also say what
 # run 40178105604 did.
+#
+# 2026-10-25: THE TWELFTH RECORD LANDED, AND IT IS HAND-BUILT, FOR THE FOURTH TIME — AND THE FIRST
+# TIME THE JOB DID NOT RUN AT ALL. Run 40231960322 (`v3.9.0`) published the wheel and sdist to the
+# index and then failed in its `release` job: `gh release create … --notes-file
+# release-notes-3.9.0.md` was refused with HTTP 422, *body is too long (maximum is 125000
+# characters)*, because the notes the renderer wrote ran to 133,865 characters. The `witness` job
+# needs `release`, so it was skipped and never started; its executions on a tag push stay eleven.
+# The Release was then created by hand from the run's own `dist` and `assets` artifacts, and
+# `3.9.0.json` was built outside the pipeline with the same builder over the run's own inputs,
+# re-fetched from the APIs, with the job's own arguments and no `--review-file` — the `pypi`
+# approval's comment named the readiness report at the tagged commit, so `review_file` is derived
+# from it, as for the pipeline's records — verified with `--download --assets` and attached to the
+# Release. The witness round rebuilt it from the same inputs, byte for byte, verified it again
+# offline and online, and committed it; `PUBLICATION.md` entry 31 says so. The roster below grows
+# by that name and nothing else in this section moves: `PIPELINE_BUILT` stays eight, the three
+# paragraphs still say what run 35514833652 did, and each now also says what run 40231960322 did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does. Since 2026-09-20 each says what run
@@ -749,7 +765,7 @@ EXERCISED_ON_V2_2_0 = (
 ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bundles`")
 
 #: The records the three paragraphs describe as hand-built, and the reading each rests on.
-HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json"]
+HAND_BUILT = ["2.1.2.json", "2.2.0.json", "3.1.1.json", "3.9.0.json"]
 
 #: The records the paragraphs describe as the pipeline's own, by the digest of the Release asset
 #: each run attached — run 35514833652 for 3.0.1, run 37459980438 for 3.2.0, run 37618296352 for 3.3.0, run 38840201037 for 3.4.0, run 38993508970 for 3.5.0, run 39190348178 for 3.6.0, run 40119805634 for 3.7.0, run 40178105604 for 3.8.0 — so a re-built or edited file under this name is refused, and the

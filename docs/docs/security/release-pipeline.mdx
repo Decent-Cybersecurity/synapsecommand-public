@@ -335,3 +335,17 @@ symptom, and it is the one this refusal exists for.
   the pipeline's; the rule about the approval comment was followed at the approval, the eighth
   time, after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s and
   `v3.7.0`'s.
+  On `v3.9.0` — run 40231960322, 2026-10-25 — the `witness` job did not run: the run published to
+  the index and then its `release` job was refused by the Release API, `gh release create`
+  answering `HTTP 422` with *body is too long (maximum is 125000 characters)* for notes of 133,865
+  characters, and a job that needs `release` is skipped when `release` fails. The Release was
+  created by hand from the run's own `dist` and `assets` artifacts, its body the notes with a
+  one-line pointer to the asset under the title and their Known limitations section replaced by a
+  notice, and the complete notes attached as an asset;
+  `releases/witness/3.9.0.json` is the twelfth committed record, built outside the pipeline with the
+  same builder over that run's inputs and the job's own arguments, its `review_file` derived from
+  an approval comment naming the readiness report at the tagged commit, verified with `--download
+  --assets` and attached to the Release as its ninth asset, and `PUBLICATION.md` entry 31 says so.
+  Twelve records, four of them hand-built and eight the pipeline's; the rule about the approval
+  comment was followed at the approval, the ninth time, after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s,
+  `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s, `v3.7.0`'s and `v3.8.0`'s.

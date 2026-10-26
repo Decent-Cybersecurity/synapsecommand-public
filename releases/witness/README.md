@@ -15,7 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json releases/witness/3.2.0.json releases/witness/3.3.0.json releases/witness/3.4.0.json releases/witness/3.5.0.json releases/witness/3.6.0.json releases/witness/3.7.0.json releases/witness/3.8.0.json --offline  # every record here
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json releases/witness/3.2.0.json releases/witness/3.3.0.json releases/witness/3.4.0.json releases/witness/3.5.0.json releases/witness/3.6.0.json releases/witness/3.7.0.json releases/witness/3.8.0.json releases/witness/3.9.0.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -241,6 +241,36 @@ follow the rule about the approval comment the release procedure has carried sin
 after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s and `v3.7.0`'s. The
 directory holds eleven records: three built by hand and eight the pipeline's.
 
+**`3.9.0.json` is hand-built, 2026-10-25 — the `witness` job never started, because the Release
+step was refused.** On the `v3.9.0` run
+([40231960322](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/40231960322))
+four of the six jobs succeeded — gate, build, attest and publish, so the wheel and sdist reached the
+index at 22:59:53Z and 22:59:55Z — and the `release` job failed: the step running `gh release
+create … --notes-file release-notes-3.9.0.md` was refused with `HTTP 422: Validation Failed` and
+*body is too long (maximum is 125000 characters)*, the notes the renderer wrote being 133,865
+characters. The `witness` job needs `release`, so it was skipped, and there was no Release for it
+to read. The Release (id 423717635) was then created by hand from the run's own `dist` and
+`assets` artifacts and published at 23:06:44Z; its body is the notes with a one-line pointer to the
+asset under the title and their Known limitations section replaced by a notice, and the complete
+notes are its `release-notes-3.9.0.md` asset — `PUBLICATION.md` entry 31 measures the difference.
+`3.9.0.json` here was built by hand with the same
+builder over that run's own inputs, re-fetched from the APIs — the Release payload, the run's one
+approval, the `pypi` deployment's status history (`waiting` 22:59:04Z, `queued` 22:59:30Z,
+`in_progress` 22:59:33Z, `success` 22:59:59Z), the attestation store's bundle for the wheel and the
+run's `assets` artifact — with the job's own arguments, `--attestation-verified-at` being
+`2026-10-25T22:59:01Z`, the end of the attest job's verify step; it wrote `witness-3.9.0.json for
+v3.9.0 (2 files, 1 approval(s))`, read `VERIFIED` with `--download --assets`, and was attached to
+the Release as its ninth asset, 2 188 bytes, sha256
+`a8fe3ca981f5a7c4ff8c79313c271c3507817be45adb700db6c5bd66496d8e7a`. `3.9.0.json` here is that asset
+byte for byte; the witness round rebuilt it from the same inputs with the same command to the same
+bytes, and verified it again offline against a `gh release download`, online with `--download`,
+with `--download --assets` and a token, and offline over all twelve records before it was
+committed. No `--review-file` was passed: the approval's comment named the readiness report at the
+tagged commit, the ninth approval to follow the rule about the approval comment, after `v3.0.1`'s,
+`v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s, `v3.7.0`'s and `v3.8.0`'s.
+`PUBLICATION.md` entry 31 is the ledger's account. The directory holds twelve records: four built
+by hand and eight the pipeline's.
+
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
 The two are the same facts for two different readers and neither replaces the other: the ledger
@@ -374,6 +404,16 @@ commit and the commit the tag names, so the builder lifted that URL into `review
 approval's own words; `--review-file` was not passed, and the record's `comment` and `review_file`
 name the same document. It is the eighth record in this directory whose `review_file` was derived
 rather than designated.
+
+**What `review_file` means for 3.9.0 — derived, as for 3.0.1, 3.2.0, 3.3.0, 3.4.0, 3.5.0, 3.6.0,
+3.7.0 and 3.8.0, although the record is hand-built (2026-10-25).** The `pypi` approval of the
+`v3.9.0` run carried the comment *Approved on the readiness report at the release commit:* followed
+by the report's URL at `d870288a`, the release commit and the commit the tag names, so the builder
+— run by hand over the run's own inputs, because the `witness` job never started — lifted that URL
+into `review_file` from the approval's own words; `--review-file` was not passed, and the record's
+`comment` and `review_file` name the same document. It is the ninth record in this directory whose
+`review_file` was derived rather than designated, and the first hand-built one: `2.1.2.json` names
+a private document, and `2.2.0.json` and `3.1.1.json` a designation made after empty comments.
 
 ## What the verifier does not do
 
