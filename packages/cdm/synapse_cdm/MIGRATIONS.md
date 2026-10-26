@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `3.9.0` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `3.9.1` and `SCHEMA_VERSION` is `3.2.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red. Level at the
 3.0.0 release of 2026-09-20 by two majors argued apart, and apart again the same day by the 3.0.1
@@ -30,10 +30,12 @@ part in it; five MINORs apart at the 3.7.0 release of 2026-10-24, the fifth for 
 reason once more — the package took a MINOR for two adapter modules and the wire contract had no
 part in it; six MINORs apart at the 3.8.0 release of 2026-10-25, the sixth for the ordinary
 reason again — the package took a MINOR for one adapter module, three `synapse-decode` rows and
-a conformance-check scope correction, and the wire contract had no part in it; and seven MINORs
+a conformance-check scope correction, and the wire contract had no part in it; seven MINORs
 apart at the 3.9.0 release of the same day, the seventh for the ordinary reason once more — the
 package took a MINOR for three adapter modules, the record module they share and its packaged
-contract, and the wire contract had no part in it.)
+contract, and the wire contract had no part in it; and seven MINORs and a PATCH apart at the 3.9.1
+release of 2026-10-26 — the package took a PATCH for one shipped document while the sibling
+distribution `synapse-hla` landed beside it, and the wire contract had no part in it.)
 
 ## What each bump means
 
@@ -225,7 +227,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v3.9.0 -m "..."                           # annotated, never lightweight
+git tag -a v3.9.1 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -626,7 +628,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v3.9.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v3.9.1 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -838,22 +840,92 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 3.9.1 — 2026-10-26 — the HLA observer ships as the sibling distribution `synapse-hla` 1.0.0, in the tag and not on the index, and no wire contract moves
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v3.9.0`, and `3.9.0` is what the index serves — `PUBLICATION.md` entry 31 is the
-measurement.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells the heading is read by the citation sweep as a pointer to a section this roll removed.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated witness paragraphs in the release procedure and the pipeline section, the release's dated
-account in the pipeline section, and the index note in the 3.9.0 section being what moved in it;
-and, from 2026-10-25, the `synapse-hla` landing paragraph (below). Everything else the round
-touched ships in nothing: the ledger, the witness record and its README, the release-pipeline and
-changelog pages, and two test modules; and so does everything else the landing touched: the
-sibling distribution under `packages/hla/`, the two roots it adds to
-`tests/test_cdm_version_floor.py` and the two rows it adds to `tests/test_cdm_prose_counts.py`, a
-paragraph of `ARCHITECTURE.md`, a scope note in `SECURITY.md` and one sentence of the boundary
-page.
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `3.9.1` and
+`SCHEMA_VERSION` is `3.2.0` at this commit, in `version.py`, and the tag `v3.9.1` is to name the
+commit that carries this release state. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round that
+watched the upload and is not asserted here before it has happened. The paragraph this replaces
+said that nothing in the section was in a release, that the newest release tag was `v3.9.0` and
+that `3.9.0` was what the index served (`PUBLICATION.md` entry 31) — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**THE PACKAGE VERSION MOVED 3.9.0 -> 3.9.1 ON 2026-10-26, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v3.9.0` and derives PATCH with nothing unruled: on
+the landing commit, before any number was typed, it read "the arc since 3.9.0 derives PATCH with 0
+unruled, so the next release is at least 3.9.1", its `--json` reporting `pending` as `{"kind":
+"PATCH", "number": "3.9.1", "unruled": []}`, and on this tree, before its tag exists, it reads
+"declared 3.9.1 — a PATCH over v3.9.0" and `--mutation-check` reads `1 check, 0 failed`, because
+the arc carries no ruling for the roll to move out of the pending section's reach. The floor comes
+from one shipped document and from nothing importable: this file, on the shipped-document row,
+moved by the 3.9.0 witness round's record and by the `synapse-hla` landing paragraph below. Over the
+arc the gate's table decides one signal, that PATCH, and no unit is one it cannot decide, so this
+section carries no `**Bump ruling.**` paragraph and none is needed; the floor and the number are
+one number and no Version ruling is needed or present. `SCHEMA_VERSION` does not move and stays at `3.2.0`: no model, no
+enum, no published CDM schema and no golden moved (`python -m synapse_cdm.schemas --check` reads
+CURRENT at 3.2.0, `git diff v3.9.0 -- schemas/` is empty, and `harness --update-golden` over the
+thirty-six adapters moved no golden), and the two axes are seven MINORs and a PATCH apart.
+`ADAPTER_API_VERSION` stays at `3.1.0`, and `MANIFEST_SCHEMA_VERSION` 2.1.0 and
+`EVIDENCE_SCHEMA_VERSION` 2.0.0 stay where the 3.0.0 release put them. The sibling distribution
+`synapse-link16-bridge` stays at 1.1.0 with its floor at `synapse-cdm>=3.5.0,<4`: nothing under
+`packages/link16_bridge/` moved since `v3.9.0`. The sibling distribution `synapse-hla` is 1.0.0
+with its floor at `synapse-cdm>=3.8.0,<4`, and nothing under `packages/hla/` moves with this
+release. Neither is read by this gate.
+
+**THE RELEASE TRANSITION ITSELF, 2026-10-26 — the release-state set and nothing else.**
+`version.py`'s constant, its dated comment and the live readings in its docstring; this section's
+heading and its opening paragraphs, a dated clause on the 3.9.0 witness round's paragraph, the
+transition's clause in the count paragraph, the introduction's two-number sentence and its parting
+clause, and the two tag-command examples in the procedure and in the pipeline section;
+`RELEASE_NOTES.md`, rewritten for this release with every count derived; `README.md`'s tag
+example; `VERSIONING.md`'s package-version figure, its tag-command example and a dated note under
+§4; `docs/docs/changelog.mdx`'s live pair of numbers in a dated paragraph;
+`docs/docs/current-contracts.mdx`, regenerated; the readiness report's re-qualification; the two
+version literals `tests/test_cdm_packaging.py` pins; and the dated note in
+`tests/test_cdm_bump_derivation.py` that the arc `("v3.9.0", "v3.9.1")` has no
+`UNRULED_HISTORICAL_ARCS` row, because the raw derivation from `v3.9.0` to this tree, written
+before the tag exists, reports no ambiguity. No declaration moves with the release: no adapter
+landed in the arc, so no `evidence.available` flips, and the manifests and the support matrix,
+regenerated, are byte for byte what they were. Inside the distribution the transition touches
+`MIGRATIONS.md` and `version.py`, and the count paragraph below counts both.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened. Three things the
+release notes say and this section repeats because they are the honest boundary of the arc:
+`synapse-hla` is in the tag and in the Release's source archives and is **not** uploaded to the
+package index — the workflow builds and uploads `synapse-cdm` only, and creating a second project
+there is the maintainer's act, as it has been for `synapse-link16-bridge` since 3.4.0; OpenRTI is
+its tested reference, and no customer simulator and no second RTI implementation was tested, so no
+compatibility with any named simulator, RTI product or installation is claimed; and its evidence
+report reads `BLOCKED` overall, every release gate that needs the reference platform (Linux
+x86_64, Ubuntu 24.04, GCC 13) reading `BLOCKED`, the performance run among them, its evidence of
+the classes `DEV-macOS-arm64` and `DEV-linux-aarch64` only, and
+`external_customer_interoperability` `NOT_TESTED`.
+
+**What moved inside the distribution: two files** — `MIGRATIONS.md`, this section, the dated
+witness paragraphs in the release procedure and the pipeline section, the release's dated account
+in the pipeline section, and the index note in the 3.9.0 section being what moved in it; and, from
+2026-10-25, the `synapse-hla` landing paragraph (below); and `version.py`, which only the release
+transition of 2026-10-26 moved. Everything else the round touched ships in nothing: the ledger, the
+witness record and its README, the release-pipeline and changelog pages, and two test modules; and
+so does everything else the landing touched: the sibling distribution under `packages/hla/`, the
+two roots it adds to `tests/test_cdm_version_floor.py` and the two rows it adds to
+`tests/test_cdm_prose_counts.py`, a paragraph of `ARCHITECTURE.md`, a scope note in `SECURITY.md`
+and one sentence of the boundary page. For the release transition of 2026-10-26, one file the arc
+had not moved before it, `version.py` (the constant, its dated comment and the live readings in its
+docstring), and again, within the file already counted, this file (this section's roll, the dated
+witness clause, the introduction's two-number sentence and parting clause, and the two tag-command
+examples). Everything else the transition touched ships in nothing: the current-contracts page
+regenerated, `RELEASE_NOTES.md`, the repository's `README.md` and `VERSIONING.md`, the
+documentation site's changelog page, the readiness report, and the test modules named in the
+paragraph that begins THE RELEASE TRANSITION ITSELF.
 
 **THE 3.9.0 WITNESS ROUND's RECORD, 2026-10-25 — the record is hand-built, for the fourth time, and
 for the first time because the job never started.** Run 40231960322 published 3.9.0 to the index
@@ -872,6 +944,10 @@ ones. This round resolves no `SELF` provenance: 3.9.0 froze no contract — the 
 3.2.0 — so `tests/frozen/cdm/MANIFEST.json` does not move, and the 3.2.0 row still names
 `da2e197d9c0612322ed9763e29f3ea4e2fa70132`, the commit `v3.5.0` names. Nothing in the distribution
 moved except this file, and `PACKAGE_VERSION` still reads `3.9.0`.
+(Dated 2026-10-26, at the 3.9.1 roll: those two clauses covered the witness round alone — the
+landing recorded below moved this file again and the sibling distribution beside it, the count
+clause above accounts for every file, and `PACKAGE_VERSION` reads `3.9.1` from the release commit
+on.)
 
 **THE `synapse-hla` LANDING, 2026-10-25 — the HLA observer and replay pipeline, as a sibling
 distribution.** `packages/hla/` holds a third distribution, `synapse-hla` 1.0.0 (import

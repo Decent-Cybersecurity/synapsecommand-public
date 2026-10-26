@@ -1,231 +1,93 @@
-# synapse-cdm 3.9.0
+# synapse-cdm 3.9.1
 
-**The STANAG 4559 translators release.** Between the 3.8.0 release of 2026-10-25 and this one, the
-tree gained three adapter modules — `stanag4559_catalog`, `stanag4559_stream` and
-`stanag4559_workflow` — on a record module they share, `isr_record`, and the registry moved from
-thirty-three to thirty-six. They are the pure translation layer of the SynapseCommand STANAG 4559
-engineering specification (SC ISR 4559 001, revision 1.0 of 4 October 2026): each reads one
-internal ISR gateway record of its family — `urn:synapsecommand:isr:record:1`, this project's own
-record contract, whose JSON Schema ships byte for byte as package data at
-`registry/isr/isr-record.schema.json` — as its octets or its parsed dict, and writes exactly one
-`STATUS_CHANGE` `Event` carrying the record verbatim. They are **not** STANAG 4559 wire
-interoperability: the stateful gateway of the specification is not in this repository, its wire
-profiles C17, S18 and W19 are unimplemented, no NATO binding package is held and no peer was
-exercised. Nothing on the wire moved: `SCHEMA_VERSION` stays `3.2.0`, no model, enum or published
-CDM schema changed, and no golden of an adapter that predates the arc moved by a byte.
-`MIGRATIONS.md`'s 3.9.0 section is the record of what the distribution carries.
+**The HLA sibling release.** Between the 3.9.0 release of 2026-10-25 and this one the tree gained a
+third distribution beside the package: `synapse-hla` 1.0.0 under `packages/hla/`, the receive-only
+HLA Evolved observer of profile `SC-HLA-RPR2-OBS-1`. It is not an adapter of this package — it
+has no manifest and no registry entry, and nothing of it is in the `synapse-cdm` wheel. Inside
+this distribution one shipped document moved, `MIGRATIONS.md`, and nothing importable: no
+adapter, no flag, no model, no enum, no published CDM schema and no golden. `MIGRATIONS.md`'s
+3.9.1 section is the record.
 
-**If you are upgrading from 3.8.0, nothing you read or write changes.** A 3.8.0 reader reads a
-3.9.0 object unchanged, and `version.compatible("3.2.0", "3.2.0")` is the same answer it was. No
-member of the `Adapter` contract moved, so an adapter subclass written against 3.8.0 keeps working.
-The three adapters, the module `synapse_cdm.isr_record` and the packaged record contract are
-additions; no other adapter's output, verdict or declaration moved, and no `synapse-decode`
-invocation, conformance reading or harness flag changed.
+**If you are upgrading from 3.9.0, nothing you read or write changes.** A 3.9.0 reader reads a
+3.9.1 object unchanged, no member of the `Adapter` contract moved, and no adapter's output,
+verdict or declaration moved.
 
-## Why the number is 3.9.0
+## Why the number is 3.9.1
 
-**The number is the derived floor: a MINOR from `v3.8.0`.** `gates/bump_derivation.py`, run on the
-landing commit before any number was typed, reported the pending arc as `{"kind": "MINOR",
-"number": "3.9.0", "unruled": []}`. The floor comes from the public names the arc added and from
-nothing removed — the `Adapter` subclasses `Stanag4559CatalogAdapter`, `Stanag4559StreamAdapter`
-and `Stanag4559WorkflowAdapter` with their shared module and their fixture sets, and the record
-module `isr_record`. The one unit the table cannot decide on its own is ruled in `MIGRATIONS.md`'s
-3.9.0 section: the packaged record contract `registry/isr/isr-record.schema.json`, a shipped file
-kind the table has no class for, ruled MINOR — one ruling over one unit, which the gate reads and
-reports nothing unruled. Over the arc the gate's table decides 114 signals, 36 MINOR and 78
-PATCH, and the one ruling decides the rest.
+**The number is the derived floor: a PATCH from `v3.9.0`.** `gates/bump_derivation.py`, run on the
+landing commit before any number was typed, reported the pending arc as `{"kind": "PATCH",
+"number": "3.9.1", "unruled": []}`. Over the arc its table decides one signal — `MIGRATIONS.md`
+on the shipped-document row, PATCH — and there is no unit it cannot decide, so no ruling is
+needed or recorded.
 
-**Package version 3.9.0 · CDM `schema_version` 3.2.0 · Adapter API 3.1.0 · manifest schema 2.1.0
-· evidence schema 2.0.0.** The first two are seven MINORs apart, the seventh for the ordinary
-reason: the surface grew and the contract did not. `python -m synapse_cdm.schemas --check --out
-schemas` reads `CURRENT: schemas vs models at 3.2.0` and `python -m synapse_cdm.manifests --check`
-reads `CURRENT: manifests vs 36 shipped adapters at manifest schema 2.1.0`.
-`ADAPTER_API_VERSION`, `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` did not move in this
-arc. SC-OES, the Operational Ontology and the profile versions did not move: `SC_OES_VERSION` is
-still `0.1.0` and still a Draft. `synapse_cdm/version.py` states the nine version axes and their
-independence.
+**Package version 3.9.1 · CDM `schema_version` 3.2.0 · Adapter API 3.1.0 · manifest schema 2.1.0
+· evidence schema 2.0.0.** The first two are seven MINORs and a PATCH apart. `python -m
+synapse_cdm.schemas --check --out schemas` reads `CURRENT: schemas vs models at 3.2.0` and
+`python -m synapse_cdm.manifests --check` reads `CURRENT: manifests vs 36 shipped adapters at
+manifest schema 2.1.0`. SC-OES is still `0.1.0` and still a Draft.
 
-## What the STANAG 4559 translators are measured to do
+## What `synapse-hla` is measured to do
 
-In `FORMAT_COVERAGE.md`'s ordinal table `stanag4559_catalog` is #35, `stanag4559_stream` #36 and
-`stanag4559_workflow` #37. They were registered thirty-fourth, thirty-fifth and thirty-sixth and
-carry ordinals one higher because ordinal 9 was issued to a specification that has no adapter: the
-ordinal is not the roster count. Each is ingest-only and declares a path-bound preservation ledger,
-and each declares `residual: legacy` by the dated ruling `ARCHITECTURE.md` §5 records: the
-specification's expected Events carry the whole record under `payload.record` and `residual` null,
-so a structured container would hold a second copy of the record and change the oracle's bytes. The
-legacy census is seventeen — the fourteen of Part 1 and these three — and the exception is theirs
-and no other adapter's.
-
-| Adapter | Specification / profile | Direction | What ships |
-|---|---|---|---|
-| `stanag4559_catalog` | SC ISR gateway record `urn:synapsecommand:isr:record:1`, catalogue family — the internal record contract of SC ISR 4559 001 (revision 1.0, 4 October 2026), cited by title and date; binding `provisional-internal-profile` | ingest | one catalogue record → one `STATUS_CHANGE` `Event`, its footprint the Event's geometry; the `stanag4559_catalog` fixture set |
-| `stanag4559_stream` | the same contract, stream family | ingest | one stream record → one `STATUS_CHANGE` `Event`, its footprint the Event's geometry; the `stanag4559_stream` fixture set |
-| `stanag4559_workflow` | the same contract, workflow family | ingest | one workflow record → one `STATUS_CHANGE` `Event`, a geometry only for the `gaoi` service; the `stanag4559_workflow` fixture set |
-
-Beside them ship the record module `isr_record` — the contract, section 6's transport rules,
-section 28's second validation pass and section 7's identity, which the three share — and its
-contract `registry/isr/isr-record.schema.json`, the bundle's `contracts/isr-record.schema.json` byte
-for byte, read through `importlib.resources` and never from a checkout.
-
-**What they read.** One record per call, as its UTF-8 octets or its parsed dict: a catalogue entry,
-a stream description or a workflow entity as a SynapseCommand ISR gateway normalises it, with its
-tenant, security domain, connector, origin, revision, change kind, two clocks, a reference to the
-raw capture, two security labels and a family body. The Event's `payload` is `kind`, `record_id`,
-`revision_key`, `time_basis` and the record verbatim; `observed_at` is the record's `source_time`
-(`time_basis` `SOURCE`) or, where it states none, the gateway's `captured_at` (`GATEWAY_RECEIPT`),
-and no body time is promoted. The geometry is the catalogue or stream coverage, or a workflow
-record's geometry when its service is `gaoi`, each validated by section 28's polygon rules; there is
-no Entity and no point at a box's centre. The identity is `ISR-ID-001`, the one transformation an
-Event names: `object_key` is the unpadded base64url of the RFC 8785 array `[tenant_id,
-security_domain, origin.authority, family, origin.object_id]`, `revision_key` the same over
-`[object_key, revision.token, revision.semantic_sha256]`, and the record and event ids are
-`ids.derive` over the two — written with `json.dumps(..., ensure_ascii=False, separators=(",",
-":"))`, which the catalogue module measures against a serialiser written from the RFC's sentences;
-a lone surrogate is refused by field before a key is built, and no digest is recomputed, because
-the specification gives digest validation to the gateway. The preservation ledger reads 45 mapped,
-124 residual and 0 lost leaves over the catalogue fixtures, the same over the stream fixtures, and
-12 mapped, 142 residual and 0 lost over the workflow fixtures. The bundle's nine expected Events
-are reproduced byte for byte by the three test modules, with the object keys, record ids and event
-ids of the bundle's fixture manifest and the revision keys section 7 derives asserted as literals,
-once projected with `projection.dump_for` to the CDM 3.0.0 contract the bundle was written
-against; the adapters themselves write 3.2.0.
-
-**What they refuse, by name.** Every refusal is an `isr_record.IsrRecordRefused`, a `ValueError`
-whose `code` names one rule — section 6's transport rules, the record's values on either path, the
-contract, section 28's timestamps, interval, identity scope, polygon topology and typed graph, and
-`wrong-family` for a record handed to another family's translator — and whose message names a path
-and never a value, because a record carries security labels. Every refusal comes before any output.
-The two declared bounds are a `LimitBasis` each and a project default, never a normative maximum:
-16,777,216 input octets (section 20's `max_metadata_bytes` of the gateway) and JSON nested 96 deep
-(`isr_record.MAX_DEPTH`, eight times the deepest shipped JSON); and a geometry of more than 2,048
-positions is refused `geometry-over-cap` before the quadratic polygon pass runs, a cap the
-manifests state. Strict
-JSON is judged on octets (a byte-order mark, invalid UTF-8, a duplicate key, NaN or Infinity, a
-trailing document, an integer past 2^53 - 1); a parsed dict has passed through its caller's decoder
-first, and the manifests say so. The adapters' tests assert each of the 47 refused records under
-the three `malformed/` directories — 15 `.isr` octet payloads and 32 JSON cases, 16 for the
-catalogue, 16 for the stream and 15 for the workflow family — by its code, as the harness's
-loader hands it over, the in-memory record one octet past the input bound by `InputTooLarge`, and
-the contract's other refusals by code on inputs the tests build.
-
-**Where their behaviour comes from.** The specification, cited by title and date and not carried;
-its JSON Schema, carried byte for byte as package data; its bundle's nine synthetic records and
-nine expected Events, carried verbatim as test data under `tests/stanag4559_bundle/` — in the
-repository and not in the wheel — and pinned by SHA-256 in each fixture set's
-`spec/stanag4559_pin.json`; and the bundle's fixture manifest, pinned there by its digest and not
-carried, because the repository's secret scanner reads its `object_key` lines as key assignments
-and admits no allowlist — its clock and identities are the tests' literals. Every fixture is
-synthetic: the bundle's records, a
-catalogue or stream footprint moved whole degrees into the Baltic fixture rectangle and the semantic
-digest recomputed by the bundle's own rule, the workflow records byte for byte, written by each
-fixture directory's `spec/build_fixtures.py`, whose `--check` rebuilds the payloads and the refused
-set byte for byte. Of the bundle's twenty-two internal acceptance cases, each named in the
-docstring of the test that discharges it, fifteen are discharged in full — PARSE-009 against the
-record contract's own cardinality — and seven in part, because their other half is the gateway's:
-CDM-005 (one event id for a replica's capture; folding replicas into one record is the gateway's
-deduplication), PARSE-003 and PARSE-004 (no XML is parsed here; the gateway's decoder is not built),
-PARSE-006 and PARSE-007 (the record's own depth and node bounds; the XML limits are the gateway's),
-PARSE-008 (the one super-linear pass is capped; the worker timeout is the gateway's) and PARSE-010
-(no versioned NATO metadata dictionary is held, so a conflicting duplicate of a scalar attribute is
-refused only as far as the contract can see).
-
-**The deviations from the specification, stated.** The claim is `PROVISIONAL` from the start,
-because this repository admits no DOCUMENTED or IMPLEMENTED claim beside a
-`provisional-internal-profile` binding; the capture representation section 9 asks to record beside
-`source.source_hash` survives at `payload.record.raw_ref.representation`, because `SourceHash` is
-closed; the `time_basis` value `SOURCE` is taken from the bundle's expected Events, the text naming
-only `GATEWAY_RECEIPT`; the bundle's expected Events are CDM 3.0.0 documents, so the byte comparison
-projects to 3.0.0 and states the 3.0.0 stamp while the adapters write 3.2.0; and there is no
-gateway, no wire profile and no peer exercise.
+The native worker `sc-hla-federate` (C++14, built from the tree against the pinned OpenRTI)
+joins an existing federation through OpenRTI's rti1516e API, subscribes to four RPR FOM 2.0
+physical-entity attributes and copies every callback, bytes unchanged, to its host; the host
+writes a durable, hash-chained capture and reduces each frame as it is written; the projector
+writes CDM 3.0.0 `Entity` objects, each validated against the packaged contract; the offline
+replay writes the same records from the same capture byte for byte; `synapse-hla` is the command
+line, and `sc-hla-publisher`, the synthetic publisher of its demo, is not part of the
+receive-only runtime. Its evidence report (`packages/hla/docs/evidence/`), written by the
+package's own tool from the runs of one session, reads the offline group `3181 passed` on Python
+3.11, 3.12 and 3.14 each, the `rti` group `213 passed`, and the 147 acceptance cases PASS 140,
+FAIL 0, BLOCKED 7; the handoff's capture, packaged as a fixture, replays to its 7 expected
+observation records byte for byte. Its one allowed claim, verbatim: "Receives and replays the
+tested RPR FOM 2.0 physical-entity attribute subset through the pinned OpenRTI baseline and
+projects externally timed state into CDM."
 
 ## External interoperability is a separate conclusion, and it is NOT claimed
 
-Local implementation completion and external interoperability completion are two conclusions. The
-first is reached for the three translators and this release claims it. The second is not claimed
-anywhere in the tree. The capability report, verbatim from `stanag4559_common`'s module docstring
-(each translator's docstring, its manifest's `provisional-internal-profile` and `no-gateway`
-limitations, `FORMAT_COVERAGE.md`'s section and `INTEROPERABILITY.md` say the same):
+OpenRTI is the tested reference. The evidence report's own terms:
 
-> What is implemented: the PURE TRANSLATION LAYER of the specification — `synapse_cdm/isr_record.py`
-> (the record contract `urn:synapsecommand:isr:record:1`, section 6's transport rules, section 28's
-> second pass, section 7's identity) and the three ingest-only translators, each turning one record
-> of its family into exactly one `STATUS_CHANGE` `Event` (section 9).
->
-> What is NOT implemented, and is not part of this distribution: the stateful ISR gateway of
-> sections 5 to 7 and 10 to 19 (`packages/isr-gateway`: authentication, authorisation, the policy
-> service, persistence, product transfer, CORBA and SOAP sessions, subscriptions, stream replay
-> control, workflow mutation). Every wire profile of section 3 — C17 (AEDP-17 library access), S18
-> (AEDP-18 streams) and W19 (AEDP-19 workflow) — is UNIMPLEMENTED. No STANAG 4559 or AEDP-17/18/19
-> wire message is read or written here, no NATO binding package (IDL, WSDL, XSD, metadata
-> dictionary) is held, no peer was exercised, and no NATO wire interoperability is claimed: the
-> bundle's own `nato_wire_compatibility_verified: false` stands. The input is this project's
-> internal record, which section 6 says "is not a representation to send to a NATO peer"; that is
-> why the binding is `provisional-internal-profile` and the claim `PROVISIONAL` (section 9: "do not
-> relabel local JSON as standard NATO wire encoding").
+* **Overall status: BLOCKED.**
+* **external_customer_interoperability: NOT_TESTED** — no customer simulator and no second RTI
+  implementation was tested, and no compatibility with any named simulator, RTI product or
+  installation is claimed.
+* Every release gate that needs the reference platform (Linux x86_64, Ubuntu 24.04, GCC 13) reads
+  BLOCKED: reference encoding and geodesy, the local OpenRTI lifecycle exercise, the reproducible
+  build and licence review.
+* The performance gate (R42) reads BLOCKED on "R42's recorded 4-vCPU x86_64 machine with 8 GiB on
+  the reference platform": R42 was not measured there.
+* The evidence is of the classes `DEV-macOS-arm64` and `DEV-linux-aarch64` only, development
+  evidence; no run was made on `REFERENCE-linux-x86_64`.
+* The gate "no unresolved severity-high defects" reads BLOCKED: the reviews of the tree are kept
+  outside it.
 
-* **The five evidence categories**, as generated by `python -m synapse_cdm.evidence generate
-  --adapter <name>` on this tree for each of the three — the records themselves are generated,
-  gitignored, and attached by a Release rather than committed: `internal_fixture` PRESENT;
-  `self_round_trip` NOT_APPLICABLE, each being ingest-only; `independent_expected` ABSENT;
-  `normative_schema` ABSENT; **`independent_endpoint` ABSENT**.
-* **Declared maturity is L3 and claim status PROVISIONAL** for each, read from
-  `manifests/<name>.json`. The claim is `PROVISIONAL` because the binding is
-  `provisional-internal-profile`: the input is the internal record contract
-  `urn:synapsecommand:isr:record:1`, which the specification itself says is not a representation to
-  send to a NATO peer, so a green gate proves agreement with a contract this project defines and
-  nothing about a NATO wire encoding. L4 is not declared: an ingest-only adapter has no round trip,
-  and a rung passed vacuously is not a rung declared.
-* **The strict readings have met the specification and not a gateway**: the contract's transport
-  rules, its schema and section 28's second pass have met the specification and its bundle's
-  synthetic records, and no record written by a gateway is in the repository.
-* **`evidence.available` is `true` on the three from this release.** Each landed declaring
-  `false` — "it becomes true at the first release that attaches them" — and
-  `tests/test_cdm_evidence.py` holds the field to the newest release tag's tree. The release commit
-  flipped their shared declaration, with a limitation sentence that names no version, the form the
-  two of 3.7.0 and the one of 3.8.0 took: `.github/workflows/publish.yml` generates the records for
-  every shipped adapter and attaches them to the Release of the version it publishes.
+## The sibling distributions, on GitHub only
 
-## The bridge, `synapse-link16-bridge` 1.1.0, on GitHub only
+`synapse-hla` 1.0.0 (import `synapse_hla`, command `synapse-hla`, runtime dependency
+`synapse-cdm>=3.8.0,<4`) and `synapse-link16-bridge`, still 1.1.0 (`synapse-cdm>=3.5.0,<4`;
+nothing under `packages/link16_bridge/` moved since `v3.9.0`), are part of the tag `v3.9.1` and of
+the GitHub Release's source archives, and not part of this wheel or of the package index: no
+second project is created there in this release, which is an act for the account owner. Each
+installs from the tag with `pip install` of a `git+` URL naming its `#subdirectory=packages/…`,
+after `synapse-cdm` from the index; `synapse-hla`'s native worker is built from the tree as its
+README says, and no workflow runs its tests.
 
-`packages/link16_bridge/` holds the second distribution, `synapse-link16-bridge`, still 1.1.0
-(import `synapse_link16_bridge`, command `synapse-link16-bridge`): nothing under it moved since
-`v3.8.0`, and its runtime dependencies are still `synapse-cdm` 3.5.0 or later and below 4, and the
-standard library.
+## What changed for a 3.9.0 consumer
 
-It is part of the tag `v3.9.0` and of the GitHub Release's source archives, and it is not part of
-this wheel or of the package index: no second project is created there in this release, which is an
-act for the account owner. It installs from the tag, after `synapse-cdm` from the index:
-
-```bash
-pip install synapse-cdm==3.9.0
-pip install "synapse-link16-bridge @ git+https://github.com/Decent-Cybersecurity/synapsecommand-public@v3.9.0#subdirectory=packages/link16_bridge"
-```
-
-Its workflow `.github/workflows/gateway-bridge.yml` runs its offline tests on every push to `main`
-and to the release and arc branches.
-
-## What changed for a 3.8.0 consumer
-
-* **Three new adapter modules** and three new fixture directories; `--list-adapters` reports
-  thirty-six and the harness replays each new adapter with `--adapter <name>` and no `--fixtures`.
-  No other adapter's verdict moved.
-* **One new module, `synapse_cdm.isr_record`**, with the record contract's reader, its refusal
-  `IsrRecordRefused` and the identity functions `object_key`, `revision_key`, `record_id` and
-  `event_id`, and one new package data file, `registry/isr/isr-record.schema.json`.
-* **`synapse-decode`** still has thirteen hosted rows; the three translators are not among them,
-  and they are reached through the `Adapter` API and the harness.
+* **Nothing importable.** No adapter, module, flag or exit code was added or removed;
+  `--list-adapters` still reports thirty-six.
+* **One shipped document,** `MIGRATIONS.md`: the 3.9.0 witness record and the `synapse-hla`
+  landing paragraph, now this release's section.
 * **The wire contract is still 3.2.0.** Every object this package writes is stamped `3.2.0`, as at
-  3.8.0, except what the compatibility projections of `link16_gateway` and `cesmo_internal`
+  3.9.0, except what the compatibility projections of `link16_gateway` and `cesmo_internal`
   (`cdm_schema="3.0.0"`) write.
 
-## Thirty-six adapters at 3.9.0, all harness-verified
+## Thirty-six adapters at 3.9.1, all harness-verified
 
 `python -m synapse_cdm.harness --adapter <name> --schemas schemas`, run over the roster with no
-`--fixtures` on this tree, and every verdict read from the run. The table is the live registry,
-and `tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` requires both
-directions to agree. At `v3.9.0` `python -m synapse_cdm.harness --list-adapters` prints `36 adapters
-registered`. Declared maturity and claim status are read from `manifests/<name>.json`.
+`--fixtures` on this tree, every verdict read from the run; declared maturity and claim status
+are read from `manifests/<name>.json`. `python -m synapse_cdm.harness --list-adapters` prints `36
+adapters registered`.
 
 | Adapter | Direction | Fixture verdicts | Declared maturity | Claim |
 |---|---|---|---|---|
@@ -262,62 +124,35 @@ registered`. Declared maturity and claim status are read from `manifests/<name>.
 | `barentswatch_hais` | ingest | 10 | L3 | VERIFIED |
 | `frost_observations` | ingest | 10 | L3 | VERIFIED |
 | `cesmo_internal` | ingest | 12 | L3 | PROVISIONAL |
-| `stanag4559_catalog` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
-| `stanag4559_stream` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
-| `stanag4559_workflow` | ingest | 3 | L3 | PROVISIONAL (new in the 3.9.0 arc) |
+| `stanag4559_catalog` | ingest | 3 | L3 | PROVISIONAL |
+| `stanag4559_stream` | ingest | 3 | L3 | PROVISIONAL |
+| `stanag4559_workflow` | ingest | 3 | L3 | PROVISIONAL |
 
-**765 fixture verdicts, 0 failed** across the thirty-six, against the published 3.2.0 schemas —
-the 756 that 3.8.0 shipped, every golden byte for byte as it was, plus 9 from the three new sets.
-The two readings the wheel gate takes, its `resources` and `harness` checks, run on this tree from a
-directory outside the repository, read `36 adapters, 801 fixture files` and `36 adapters x 2 schema modes, 1530 fixture verdicts, 0 failed`; `gates/wheel_install.py`
-takes the same readings off the installed wheel in the release workflow. The `lossless` column
-reads PASS on every JSON fixture and a stated SKIP on every non-JSON one, and FAIL on none, on a
-declared ledger for `pntmap`, the five of the 3.1.0 arc, `dis7`, `tacticalapi`, `link16_gateway`,
-the five of the 3.5.0 arc, the three of the 3.6.0 arc, the two of the 3.7.0 arc, the one of the
-3.8.0 arc and the three of this one, and on the value-presence heuristic, said so, for the other
-thirteen. The four L4 declarations (`geojson`, `c2sim`, `dis7`, `link16_gateway`) rest on a ledger
-that reports no loss over a self round trip under the adapter's declared tolerance; every other
-declaration is L3.
+**765 fixture verdicts, 0 failed** across the thirty-six, against the published 3.2.0
+schemas, every golden byte for byte as 3.9.0 shipped it. The wheel gate's `resources` and
+`harness` readings, taken on this tree, are `36 adapters, 801 fixture files` and `36 adapters x 2 schema modes, 1530 fixture verdicts, 0 failed`. The evidence
+generator (`python -m synapse_cdm.evidence generate --all`) reads `internal_fixture` PRESENT for
+all thirty-six, `self_round_trip` PRESENT for 15 and NOT_APPLICABLE for 21, and
+`independent_expected`, `normative_schema` and `independent_endpoint` ABSENT for all thirty-six.
+The nine schema files did not move: `git diff v3.9.0 -- schemas/` is empty.
 
-**Nine schema files**, regenerated from the models by `python -m synapse_cdm.schemas` and
-byte-identical to the committed ones: `entity`, `event`, `track`, `plan_object`,
-`payload_gnss_interference` and `cdm_object` under `schemas/`, `manifests/adapter-manifest` and
-`evidence/evidence` and `evidence/exercise` beside them. None of the nine moved in this release:
-the first six carry `x-cdm-schema-version: 3.2.0`, as at 3.8.0. The four observation contract
-schemas under `schemas/observation/`, generated by `python -m synapse_cdm.observation_contracts`,
-the three gateway schemas under `schemas/link16_gateway/`, the handoff's, and the CESMO contract
-under `schemas/cesmo_internal/` did not move either: `git diff v3.8.0 -- schemas/` is empty. The
-ISR record contract is package data under `registry/isr/`, the adapters' input contract and not a
-CDM schema.
-
-## Published by CI over OIDC, as 1.1.0 through 3.8.0 were
+## Published by CI over OIDC, as 1.1.0 through 3.9.0 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
 the tree's `PACKAGE_VERSION`, and uploads those same files through PyPI Trusted Publishing after a
 required reviewer approves the `pypi` environment. `PUBLICATION.md` ledger entry 6 records the
-configuration, and entry 30 records the 3.8.0 upload. The workflow builds and uploads
-`synapse-cdm` only; the bridge reaches the Release as source in the tag.
+configuration and entry 31 the 3.9.0 upload. The workflow builds and uploads `synapse-cdm` only.
 
 ## Artefacts
 
 An sdist and a wheel, built once by the workflow, gated as that build, and uploaded as those same
-files. Their **SHA-256 digests are recorded in `PUBLICATION.md`'s ledger** together with the
-workflow run that produced them. The GitHub Release additionally carries both SBOMs, the evidence
-set, the conformance report, the witness record and these notes — so the evidence a claim rests
-on is retrievable with the release rather than only as a workflow artefact with a retention
-window.
-
-They are deliberately not committed here, for the reason this file has given since 1.1.0. A digest
-is a property of one build rather than of the tree: two builds of one tree have identical payloads
-but differ in their generated metadata, so a digest written here before the tag would not be the
-digest of the file PyPI serves, and one written after the tag could never be inside the tree the tag
-names. **1.3.0 measured that the hard way** — a local build and the published wheel came out at the
-same byte count and were different files — so the digests to compare a download against are the
-workflow's, never a rebuild's. Everything else in this document is readable off that tree, which is
-what condition 4 of the release procedure asks for.
+files. Their **SHA-256 digests are recorded in `PUBLICATION.md`'s ledger** with the workflow run
+that produced them, not here: a digest is a property of one build rather than of the tree. The
+GitHub Release also carries both SBOMs, the evidence set, the conformance report, the witness
+record and these notes.
 
 ```bash
-pip install synapse-cdm==3.9.0
+pip install synapse-cdm==3.9.1
 python -m synapse_cdm.harness --list-adapters
 ```

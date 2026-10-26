@@ -1019,6 +1019,44 @@ to be placed on it after `main` is fast-forwarded to it, and contains every comm
 paragraph but `c8487c1` and `e01b9e1`, the two earlier forms of the landing, which are named by
 their short hashes only.
 
+**Re-qualification, 2026-10-26, the 3.9.1 release commit.** `v3.9.0` was placed on **`d870288`** and
+published (`PUBLICATION.md` entry 31). `main` then moved once by fast-forward, through the 3.9.0
+witness round **`9c0f1d7`**, which is the tip of `main` and of `origin/main` at the time of writing.
+This report also describes the HLA observer's landing, landed on that tip as two commits and none on
+`main`: **`36086bb5db88e6679812c6548bdbcc503b6e854f`** (the sibling distribution `synapse-hla` 1.0.0
+under `packages/hla/`, outside the adapter registry and outside the `synapse-cdm` wheel, the two
+roots and two rows it adds to the root tests, a paragraph of `ARCHITECTURE.md`, a scope note in
+`SECURITY.md`, one sentence of the boundary page and the migration notes' landing paragraph) and the
+landing fix on top of it, **`173f5a6257bc5a30ae902b957d608c1d99961c42`**, the tip of the remote
+branch `soif/hla-1.0-main` at the time of writing. On `36086bb` `CI` run 40284480830 (a `push`
+event) read `success` on all 11 of its jobs — the suite, gates and manifests on Python 3.11, 3.12,
+3.13 and 3.14; lint; the conformance sweep; evidence records, provenance and badges; gitleaks;
+pip-audit; `npm audit` over `docs/`; and the wheel gate; `Gateway bridge package` run 40284480913
+read `success` on Python 3.11, 3.12, 3.13 and 3.14; and `CodeQL` run 40284481088 read `success` on
+`javascript-typescript` and `failure` on `python`, whose gate step, `gates/codeql_gate.py`, read 4
+results, 4 blocking at security-severity 7.5 — `py/redos`, two at each of
+`packages/hla/tests/test_hla_native_sources.py` lines 190 and 193, where two `re.findall` patterns
+of that test module repeated the alternation `(?:[^()]|\n)*`, whose two branches both match a
+newline. The landing fix writes the four of them `[^()]*`, which matches the same text (10
+declarations and 141 bodies of the file the test reads, before and after), and regenerates the
+sibling's evidence pair under `packages/hla/docs/evidence/` for that tree, because the evidence
+report's source digest covers the test files; nothing outside `packages/hla/` moves in it. On
+`173f5a6` `CI` run 40298966274 (a `push` event) read `success` on all 11 of its jobs, `CodeQL` run
+40298966402 read `success` on both languages, its gate step reading 0 results, 0 blocking, and the
+bridge run 40298966195 read `success` on Python 3.11, 3.12, 3.13 and 3.14 — so no job is red on the
+landing's tip, the tag-conditional set included, which reads green on a tree whose
+`PACKAGE_VERSION`, 3.9.0 there, a tag already names. On the release tree without its tag that set is
+two tests, the readiness report's empty-blocked-list test
+(`tests/test_cdm_readiness.py::test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_was_released`)
+and the rehearsal plan's own
+(`tests/test_cdm_release_ref_rehearsal.py::test_every_check_in_the_plan_is_reachable_and_named_once`),
+the bump tests and the availability test being green there. `git merge-base --is-ancestor 9c0f1d7
+173f5a6` exits 0, so `main` can be fast-forwarded to it. The release commit itself sits on
+`soif/release-3.9.1`, on that tip; its subject begins `Release 3.9.1` and its hash is deliberately
+not written here, for the reason the section's first paragraph gives. The tag that names 3.9.1 is to
+be placed on it after `main` is fast-forwarded to it, and contains every commit named in this
+paragraph.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -1555,6 +1593,39 @@ CDM-005, PARSE-003, PARSE-004, PARSE-006, PARSE-007, PARSE-008 and PARSE-010, ea
 case; and the bridge on the package index — it reaches the Release as source in the tag. No §58
 line and no blocker.
 
+**Re-qualification, 2026-10-26, the 3.9.1 release: the verdict is `ready for PR` (3.9.1), read on
+the arc section 18's paragraph of this date names.** The release commit types `PACKAGE_VERSION`
+**3.9.1** (PATCH, derived: `gates/bump_derivation.py --json` reported the arc since `v3.9.0` as
+`{"kind": "PATCH", "number": "3.9.1", "unruled": []}` on the landing commit before the number was
+typed), and the wire contract does not move: `SCHEMA_VERSION` stays **3.2.0**, because no model,
+enum or published CDM schema changed (`schemas --check` CURRENT at 3.2.0; `git diff v3.9.0 --
+schemas/` is empty). `KNOWN_CONTRACTS`, the frozen contracts and the version matrix do not move.
+`ADAPTER_API_VERSION` 3.1.0, the manifest schema 2.1.0 and the evidence schema 2.0.0 stay where they
+were; the bridge `synapse-link16-bridge` stays at 1.1.0, nothing under it having moved, and the
+sibling `synapse-hla` is 1.0.0, nothing under `packages/hla/` moving with the release. The arc
+carries no Bump ruling, so on the release commit without its tag the gate reads `declared 3.9.1 — a
+PATCH over v3.9.0`, derives PATCH from the one signal and reads `1 check, 0 failed`, and the bump
+tests are not in the tag-conditional set. What was verified on the release tree before it was
+committed: the full suite on Python 3.11, 3.12 and 3.14, read by subtracting the tag-conditional set
+test by test; `schemas --check` CURRENT at 3.2.0, `manifests --check` CURRENT for the thirty-six
+shipped adapters, the support-matrix, current-contracts and schema-page checks CURRENT; the pin-path
+and parks-table gates; ruff 0.16.9, the pin, on the package, the gates and the tests; `harness
+--update-golden` over all thirty-six adapters and the Digital NOTAM set moving no golden; the
+harness over all thirty-six and the conformance sweep from a wheel built from the staged tree; the
+wheel gate without `--mutation-check`, `13 checks, 0 failed`, whose `resources` and `harness`
+readings are `36 adapters, 801 fixture files` and `36 adapters x 2 schema modes, 1530 fixture
+verdicts, 0 failed`; and the sibling's own check on the release tree, with the editable
+`synapse-cdm` reading 3.9.1 — its offline group on Python 3.11, 3.12 and 3.14, its native build,
+`ctest` and its `rti` group. Read by the release round and not here: the same tree committed in a
+throwaway clone at a local annotated `v3.9.1`, the wheel gate's `--mutation-check`, the build job's
+package test, the docs build, CI and CodeQL on the pushed release commit, and everything about the
+upload. **What is NOT claimed:** for `synapse-hla`, compatibility with any customer simulator,
+second RTI implementation or named installation — OpenRTI is its tested reference, its evidence
+report reads `BLOCKED` with every release gate that needs the reference platform `BLOCKED`, its
+evidence is `DEV-macOS-arm64` and `DEV-linux-aarch64` only, and `external_customer_interoperability`
+reads `NOT_TESTED`; and either sibling on the package index — both reach the Release as source in
+the tag. No §58 line and no blocker.
+
 ## 20. Blockers
 
 ```text
@@ -1721,6 +1792,25 @@ be designed without; an independent S18 or W19 peer, which nothing in this repos
 exercised; the wire profiles C17, S18 and W19 themselves; the `synapse-decode` rows for the three
 translators, which the hosted table does not carry; and a record written by a real gateway, which
 nothing in this repository has read. The machine-readable statement below is unchanged.
+
+**Re-qualification, 2026-10-26, the 3.9.1 release: none.** On the arc section 18's paragraph of this
+date names and on the release tree, the pre-step's `pending.unruled` is the empty list, every check
+read on the release tree is green outside the tag-conditional set, which a tag on the tree resolves,
+the one job red on the landing — `CodeQL`'s `python` analysis, on four `py/redos` findings in a test
+module of the sibling — reads `success` on the landing fix section 18's paragraph of this date
+names, its gate at 0 results, and nothing in section 15 or in the arc's own open items rises to a
+blocker. What the release carries for `synapse-hla`, for the licence review: OpenRTI's licence texts
+under `packages/hla/licences/openrti/`, byte for byte the archive's, of which the two LGPL texts are
+the distribution's `license-files` beside `LICENSE` and `NOTICE`; the five RPR FOM 2.0 modules and
+the OpenRTI archive are NOT tracked — each is pinned by SHA-256 in `pins.json` and read where it is;
+and the handoff bundle, its specification and its acceptance-case file are NOT in the tree. The open
+items are listed for the maintainer and not argued here: the reference-platform run (Linux x86_64,
+Ubuntu 24.04, GCC 13, CMake 3.28 to 3.31) that every `BLOCKED` gate of the evidence report names,
+R42's performance measurement among them; a customer simulator or a second RTI implementation, which
+nothing in this repository has exercised; the index project for `synapse-hla`, which needs a pending
+publisher registered on pypi.org by the account owner and an upload job in `publish.yml`, beside the
+bridge's, which has waited for the same act since 3.4.0; and the owner points the evidence report
+records. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 

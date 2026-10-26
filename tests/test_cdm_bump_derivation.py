@@ -729,6 +729,14 @@ UNRULED_HISTORICAL_ARCS = {
     # derive the MINOR the number types; the schema did not move.
     ("v3.8.0", "v3.9.0"): {
         "synapse_cdm/registry/isr/isr-record.schema.json"},
+    # The arc ("v3.9.0", "v3.9.1") has no row, and that is the reading: in the 3.9.1 release
+    # commit (2026-10-26) `derive(snapshot_at("v3.9.0"), snapshot_at(None))` reported no
+    # ambiguity — the arc moved one shipped document, `MIGRATIONS.md`, which the table decides as
+    # PATCH on its own, and `version.py` by its assignment, which the gate excludes, and by comment
+    # and docstring lines; the sibling distribution `synapse-hla` that landed under `packages/hla/`
+    # is outside the distribution the gate reads — so `.get(..., set())` below is the empty set
+    # this table would otherwise have to spell. The arc's one signal (PATCH) derives the PATCH the
+    # number types; the schema did not move.
 }
 
 

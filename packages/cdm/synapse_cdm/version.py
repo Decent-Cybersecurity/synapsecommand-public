@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        3.9.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        3.9.1   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            3.2.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -135,7 +135,13 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   ``stanag4559_workflow`` adapters with their fixture sets, the
                                   record module ``isr_record`` and its packaged contract, and
                                   moved no model, enum or published CDM schema, so the package
-                                  took a MINOR the wire contract had no part in.)
+                                  took a MINOR the wire contract had no part in.
+                                  And on 2026-10-26, at 3.9.1 against 3.2.0, a PATCH: the
+                                  arc since 3.9.0 landed the sibling distribution
+                                  ``synapse-hla`` outside this one and moved one shipped
+                                  document here, ``MIGRATIONS.md``, and no model, enum or
+                                  published CDM schema, so the package took a PATCH the wire
+                                  contract had no part in.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -188,8 +194,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``3.9.0`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
-twentieth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``3.9.1`` and ``SCHEMA_VERSION`` is ``3.2.0``, and this paragraph is the
+twenty-first version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -322,7 +328,16 @@ packaged contract ``registry/isr/isr-record.schema.json``, and removed nothing;
 ``gates/bump_derivation.py`` derived MINOR over the arc with nothing unruled once MIGRATIONS.md's
 ruling in the 3.9.0 section is read. The schema moved by nothing: no model, no enum, no published
 CDM schema and no golden of the thirty-three that predate the arc changed, and the two numbers
-read 3.9.0 and 3.2.0. MIGRATIONS.md's 3.9.0 section is the record.)
+read 3.9.0 and 3.2.0. MIGRATIONS.md's 3.9.0 section is the record.
+**Corrected an eighteenth time 2026-10-26, the 3.9.1 release, and the parting is seven MINORs
+and a PATCH wide, the PATCH for a sibling distribution and not for this one**: the arc since
+``v3.9.0`` landed ``synapse-hla`` 1.0.0, the HLA observer, under ``packages/hla/`` as a
+distribution of its own, outside this one and outside the adapter registry, and moved inside this
+distribution one shipped document, MIGRATIONS.md, and no importable name;
+``gates/bump_derivation.py`` derived PATCH over the arc with nothing unruled and no ruling to
+read. The schema moved by nothing: no model, no enum, no published CDM schema and no golden of the
+thirty-six changed, and the two numbers read 3.9.1 and 3.2.0. MIGRATIONS.md's 3.9.1 section is
+the record.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -678,7 +693,18 @@ SCHEMA_VERSION = "3.2.0"
 #: distribution `synapse-link16-bridge` stays at 1.1.0 and outside this one. `ADAPTER_API_VERSION`
 #: stays at 3.1.0, and `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the
 #: 3.0.0 release put them.
-PACKAGE_VERSION = "3.9.0"
+#: Moved 3.9.0 -> 3.9.1 on 2026-10-26, a PATCH, and this one IS the derived floor: the arc since
+#: `v3.9.0` lands the sibling distribution `synapse-hla` 1.0.0 under `packages/hla/`, outside
+#: this one and outside the adapter registry, and moves inside this distribution MIGRATIONS.md
+#: (the 3.9.0 witness round's record, the landing paragraph and this release's section) and this
+#: file's readings and nothing importable. `gates/bump_derivation.py` read the arc as PATCH with nothing unruled and the next
+#: release at least 3.9.1 before this number was typed, and derives PATCH over it with nothing
+#: unruled and no ruling to read, so the gate's floor and this number are one number and no
+#: Version ruling is needed. `SCHEMA_VERSION` stays at 3.2.0: no model, enum, published CDM schema
+#: or golden of the thirty-six moved. The sibling distributions `synapse-link16-bridge` (1.1.0)
+#: and `synapse-hla` (1.0.0) stay outside this one. `ADAPTER_API_VERSION` stays at 3.1.0, and
+#: `MANIFEST_SCHEMA_VERSION` and `EVIDENCE_SCHEMA_VERSION` stay where the 3.0.0 release put them.
+PACKAGE_VERSION = "3.9.1"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
