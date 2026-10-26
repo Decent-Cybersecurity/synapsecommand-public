@@ -55,9 +55,9 @@ OUT_DIR = PACKAGE_ROOT / "docs" / "evidence"
 JSON_NAME = "evidence-report.json"
 MARKDOWN_NAME = "README.md"
 
-#: The commit the release tree is staged on when its evidence is generated: main's tip at the
-#: landing, synapse-cdm 3.9.0 (the tree is identified by source_sha256, CR-R9-03).
-BASE_COMMIT = "9c0f1d7e35fbe1d0d93926dd6726f0274c7a3e9d"
+#: The commit the release tree is staged on when its evidence is generated: the landing commit
+#: on main's 3.9.0 tip, synapse-cdm 3.9.0 (the tree is identified by source_sha256, CR-R9-03).
+BASE_COMMIT = "36086bb5db88e6679812c6548bdbcc503b6e854f"
 #: The commit of synapse-cdm 3.8.0 (schema 3.2.0), the floor the package declares (D-28).
 FLOOR_COMMIT = "0d4cf0e00f9636752c87fe47b50726aa0015b460"
 HANDOFF_CDM_COMMIT = "c4bba1b6ebfdfe956f6efc2b3a81a04db2b4bb5b"

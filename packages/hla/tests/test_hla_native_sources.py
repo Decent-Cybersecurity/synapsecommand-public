@@ -187,10 +187,10 @@ def test_the_decorator_overrides_every_service_and_allows_exactly_nat_07s_ten():
     them one overload of two: the named join and the object-instance request); the 141 others each
     call `forbidden` with their own name."""
     calls = text(NATIVE / "tests" / "recording_ambassador_calls.h")
-    declared = re.findall(r"\b(\w+)\((?:[^()]|\n)*\)(?:\s+const)?\s+RTI_THROW\(\((?:[^()]|\n)*\)\) "
+    declared = re.findall(r"\b(\w+)\([^()]*\)(?:\s+const)?\s+RTI_THROW\(\([^()]*\)\) "
                           r"override;", calls)
     assert sorted(declared) == sorted(ALLOWED)
-    bodies = re.findall(r"\b(\w+)\((?:[^()]|\n)*\)(?:\s+const)?\s+RTI_THROW\(\((?:[^()]|\n)*\)\) "
+    bodies = re.findall(r"\b(\w+)\([^()]*\)(?:\s+const)?\s+RTI_THROW\(\([^()]*\)\) "
                         r"override \{\n    forbidden\(\"(\w+)\"\);\n  \}", calls)
     assert len(bodies) == 141 and all(name == called for name, called in bodies)
     assert len(declared) + len(bodies) == 151

@@ -1,7 +1,7 @@
 {
  "about": "The release evidence report of synapse-hla, written by tests/release_evidence.py from the runs of one release session; nothing in it is typed by hand. Results are PASS, FAIL or BLOCKED per acceptance case (R46), each with its evidence class (CR-L04).",
  "build": {
-  "base_commit": "9c0f1d7e35fbe1d0d93926dd6726f0274c7a3e9d",
+  "base_commit": "36086bb5db88e6679812c6548bdbcc503b6e854f",
   "commands": {
    "evidence": "python tests/release_evidence.py <runs directory> [<reference run output>]",
    "install": "cmake --install <work>/native --prefix <the installed synapse_hla package directory>",
@@ -24,7 +24,7 @@
   "source_commit": null,
   "source_commit_note": "the release commit does not exist when its evidence is generated and is never invented (OPS-10); the tree is identified by source_sha256 over its files",
   "source_files": 147,
-  "source_sha256": "b5da8afcb312d143a7e0aa9ac23187d8326fefff5adffaca30e2c8ffe7d96624"
+  "source_sha256": "ab68ae7e7f640bfcd731a50a25d8bafa576daf27f6c2fc72c6d10f248f0d980a"
  },
  "case_counts": {
   "BLOCKED": 7,
@@ -42,7 +42,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_positive_vector_decodes_to_its_twin_exactly tests/test_hla_contract.py::test_every_vendored_file_matches_its_pin tests/test_hla_release.py::test_every_requirement_has_a_gate_and_every_case_a_concrete_test tests/test_hla_release.py::test_the_owner_list_is_complete_and_each_ruling_is_bound",
-   "duration_s": 4.928,
+   "duration_s": 4.23,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -51,7 +51,7 @@
    "input_digests": {
     "tests/test_hla_codec.py": "3ef4097a5738783fab5194c9d138b243e5e9486af2a429f9995a29e05e99f1b0",
     "tests/test_hla_contract.py": "213224a69f2363b5e1069c429e66bb11bbe4c78989c3cc55e19949db6b360fb8",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -121,7 +121,7 @@
    },
    "blocked_resource": "the reference platform (Linux x86_64, Ubuntu 24.04, GCC 13 (C++14), CMake 3.28 to 3.31) for SPEC:20's native build and rti group: no run there; the development runs are DEV evidence",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind tests/test_hla_demo.py::test_the_publisher_uses_none_of_the_constructs_r40_bars tests/test_hla_native.py::test_an_unsubscribed_attribute_is_captured_under_its_name_and_rejects_the_reflection tests/test_hla_native.py::test_the_decorator_aborts_on_a_call_the_observer_must_never_make tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may tests/test_hla_native_sources.py::test_the_cmake_project_is_cxx14_with_warnings_as_errors_and_a_relative_loader_path tests/test_hla_native_sources.py::test_the_openrti_wrapper_refuses_before_it_touches_anything tests/test_hla_native_sources.py::test_the_openrti_wrapper_runs_the_bundles_commands_with_only_the_ruled_additions tests/test_hla_native_sources.py::test_the_worker_names_no_service_a_receive_only_observer_must_not_call tests/test_hla_native_sources.py::test_the_worker_source_uses_none_of_the_forbidden_constructs tests/test_hla_native_sources.py::test_the_worker_uses_the_rti1516e_api_and_links_its_libraries tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it tests/test_hla_release.py::test_the_deliverables_of_r05_are_in_the_release tests/test_hla_release.py::test_the_evidence_report_identifies_its_build_and_lists_every_case tests/test_hla_release.py::test_the_profile_declaration_enumerates_the_four_attributes_and_the_unsupported_services tests/test_hla_rti.py::test_the_publisher_answers_version_and_refuses_any_other_argument_vector",
-   "duration_s": 12.677,
+   "duration_s": 12.711,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -130,8 +130,8 @@
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -215,7 +215,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_packaging.py::test_one_version_and_one_profile_wherever_the_release_states_them tests/test_hla_packaging.py::test_the_package_directory_is_what_the_wheel_carries_and_nothing_else tests/test_hla_purity.py::test_no_module_uses_a_socket_evaluates_code_runs_a_shell_or_unpickles tests/test_hla_release.py::test_a_separate_distribution_that_is_no_cdm_adapter_and_changes_no_cdm_schema tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it",
-   "duration_s": 0.439,
+   "duration_s": 0.378,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -224,7 +224,7 @@
    "input_digests": {
     "tests/test_hla_packaging.py": "ce77192c44648ba6ba6f74f962ffc600a45f4a9395a73806c5d24500cc53c56b",
     "tests/test_hla_purity.py": "6aa8097e449eaf94dec152042bd2c63379fe7af59c89a88b6757e975bb527384",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -280,14 +280,14 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_release.py::test_the_five_modules_their_order_pins_source_and_attribution tests/test_hla_replay.py::test_replay_requires_the_packaged_pins",
-   "duration_s": 0.051,
+   "duration_s": 0.046,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case G-R04 of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "G-R04",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_replay.py": "63f54b9cf15c8c8ee54cbeb6528b05edabc232a9ba184aed04e6c879885c6abb"
    },
    "layer": "release",
@@ -321,7 +321,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_packaging.py::test_the_locks_hold_the_tested_set_with_exact_versions_and_hashes tests/test_hla_packaging.py::test_the_openrti_licence_texts_are_the_archives_own_bytes_and_the_election_is_stated tests/test_hla_packaging.py::test_the_package_directory_is_what_the_wheel_carries_and_nothing_else tests/test_hla_packaging.py::test_the_sbom_is_what_the_locks_give_and_enumerates_what_r43_names tests/test_hla_packaging.py::test_the_sbom_tool_admits_a_later_synapse_cdm_only_inside_the_declared_range tests/test_hla_packaging.py::test_the_sbom_tool_refuses_a_later_sibling_that_declares_another_licence tests/test_hla_packaging.py::test_the_wheel_and_the_native_install_form_the_installed_product tests/test_hla_release.py::test_the_deliverables_of_r05_are_in_the_release tests/test_hla_release.py::test_the_evidence_report_identifies_its_build_and_lists_every_case",
-   "duration_s": 3.555,
+   "duration_s": 3.736,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -329,7 +329,7 @@
    "id": "G-R05",
    "input_digests": {
     "tests/test_hla_packaging.py": "ce77192c44648ba6ba6f74f962ffc600a45f4a9395a73806c5d24500cc53c56b",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -378,7 +378,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_native.py::test_a_host_that_stops_reading_fills_the_queue_and_never_blocks_a_callback tests/test_hla_native.py::test_a_reader_that_closes_fd_3_ends_the_worker_with_status_71 tests/test_hla_native.py::test_a_reader_that_closes_stdout_ends_the_worker_with_status_71 tests/test_hla_native.py::test_a_refused_connection_is_retried_after_1_2_4_seconds_and_ends_failed tests/test_hla_native.py::test_a_terminal_condition_ends_the_hosts_session_with_its_code tests/test_hla_native.py::test_a_terminal_condition_is_one_failure_record_then_resign_and_disconnect tests/test_hla_native.py::test_a_worker_whose_parent_has_gone_resigns_disconnects_and_exits tests/test_hla_native.py::test_each_rti_exception_maps_to_its_code_and_the_worker_ends_in_order tests/test_hla_native.py::test_every_byte_the_callbacks_supply_reaches_the_capture_unchanged tests/test_hla_native.py::test_sigterm_during_connect_is_honoured_once_connect_returns tests/test_hla_native.py::test_sigterm_in_the_middle_of_a_batch_finishes_the_batch_then_resigns tests/test_hla_native.py::test_sigterm_while_connect_blocks_only_sets_the_flag_and_the_host_kills_at_its_deadline tests/test_hla_native.py::test_the_openrti_debug_variables_never_reach_the_frame_channel tests/test_hla_native.py::test_the_parent_rule_sees_any_other_parent_not_only_init tests/test_hla_native.py::test_the_worker_prints_its_version_line_without_a_status_channel tests/test_hla_native.py::test_the_worker_refuses_any_other_argument_vector_before_anything_else tests/test_hla_native.py::test_without_a_pipe_on_fd_3_the_worker_exits_70_before_any_rti_call",
-   "duration_s": 10.778,
+   "duration_s": 11.547,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -531,7 +531,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_cli.py::test_observe_refuses_a_demo_configuration_before_it_starts_anything tests/test_hla_cli.py::test_validate_config_accepts_both_example_configurations tests/test_hla_config.py::test_a_hostile_member_name_reaches_every_refusal_path_only_as_safe_text tests/test_hla_config.py::test_a_nonloopback_endpoint_without_allow_remote_is_refused_before_any_socket tests/test_hla_config.py::test_a_repeated_member_is_refused_before_any_schema_or_semantic_rule tests/test_hla_config.py::test_an_integer_beyond_2_53_is_refused_at_its_member_by_the_mapping_entry_point tests/test_hla_config.py::test_invalid_utf8_is_refused_and_never_replacement_decoded tests/test_hla_config.py::test_the_file_rules_of_r07 tests/test_hla_config.py::test_the_first_error_is_chosen_by_stage_then_document_order tests/test_hla_config.py::test_the_integer_bound_is_the_readers_and_comes_before_the_schema tests/test_hla_config.py::test_the_probe_table tests/test_hla_config.py::test_the_result_is_a_deep_copy_with_no_default_added tests/test_hla_config.py::test_validated_config_refuses_what_validate_config_refuses tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind tests/test_hla_host.py::test_the_run_directory_is_created_exclusively tests/test_hla_native.py::test_a_federation_that_does_not_exist_is_e_rti_connect_at_generation_0 tests/test_hla_native.py::test_a_wide_string_no_utf8_can_carry_ends_the_session_with_e_capture_schema tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may tests/test_hla_native_sources.py::test_the_worker_names_no_service_a_receive_only_observer_must_not_call tests/test_hla_rti.py::test_a_federation_that_does_not_exist_is_refused_and_still_does_not_exist_afterwards",
-   "duration_s": 7.375,
+   "duration_s": 8.008,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -543,7 +543,7 @@
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_host.py": "be8159e668524671a2f884afa33ac65cf7ef5c0b3416de27e3e3ac2fe1a2503e",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -945,7 +945,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_canonical.py::test_a_timestamp_is_parsed_to_integer_microseconds tests/test_hla_canonical.py::test_a_timestamp_that_is_not_a_real_instant_of_the_profile_is_refused tests/test_hla_capture.py::test_effective_time_never_passes_year_9998 tests/test_hla_capture.py::test_lifecycle_framing tests/test_hla_capture.py::test_the_headers_configuration_is_validated_in_full tests/test_hla_capture.py::test_without_an_epoch_there_is_no_effective_time_to_overflow tests/test_hla_config.py::test_no_date_format_keyword_is_the_only_guard_of_the_epoch tests/test_hla_config.py::test_the_probe_table tests/test_hla_config.py::test_the_result_is_a_deep_copy_with_no_default_added tests/test_hla_host.py::test_a_live_effective_time_past_year_9998_ends_the_session_with_e_config tests/test_hla_host.py::test_a_reconnect_after_three_delays_is_a_new_generation_with_a_new_uuid tests/test_hla_host.py::test_the_origin_is_the_first_generation_start_across_workers tests/test_hla_projector.py::test_effective_time_is_epoch_plus_elapsed_truncated tests/test_hla_reducer.py::test_a_capture_recorded_under_time_policy_none tests/test_hla_replay.py::test_a_capture_recorded_under_none_with_pauses_and_bursts_replays tests/test_hla_replay.py::test_replay_takes_time_from_the_stored_elapsed_values_and_reads_no_clock",
-   "duration_s": 2.485,
+   "duration_s": 2.442,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1284,7 +1284,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_host.py::test_the_header_records_the_validated_configuration_and_the_pins_before_the_worker tests/test_hla_reducer.py::test_a_complete_state_without_force_projects_unknown_without_a_warning tests/test_hla_reducer.py::test_affiliation_follows_only_the_recorded_force_map tests/test_hla_reducer.py::test_an_explicit_entry_is_mapped_whatever_its_value tests/test_hla_reducer.py::test_an_unmapped_force_warns_once_per_object_per_new_value tests/test_hla_reducer.py::test_the_header_configuration_is_validated_semantically",
-   "duration_s": 0.713,
+   "duration_s": 0.848,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1333,7 +1333,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_the_demo_object_is_reported_at_physical_entity_though_registered_at_ground_vehicle tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_native.py::test_a_federation_that_does_not_exist_is_e_rti_connect_at_generation_0 tests/test_hla_native.py::test_a_handle_keeps_its_token_after_removal_and_a_new_discovery_is_a_new_object tests/test_hla_native.py::test_a_listener_that_never_answers_is_the_host_deadline tests/test_hla_native.py::test_a_refused_connection_is_retried_after_1_2_4_seconds_and_ends_failed tests/test_hla_native.py::test_each_rti_exception_maps_to_its_code_and_the_worker_ends_in_order tests/test_hla_native.py::test_observe_through_the_native_worker_exits_5_when_the_rti_refuses tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may tests/test_hla_native.py::test_the_rti_itself_delivers_into_the_observer_inside_the_harness tests/test_hla_native_sources.py::test_the_worker_names_no_service_a_receive_only_observer_must_not_call tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_rti.py::test_a_federate_name_already_joined_is_e_federate_name_never_renamed_never_retried tests/test_hla_rti.py::test_a_federation_without_spatial_is_e_fom_profile_without_fallback_or_retry tests/test_hla_rti.py::test_an_existing_mode_session_reports_physical_entity_for_a_ground_vehicle",
-   "duration_s": 18.23,
+   "duration_s": 18.557,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1342,8 +1342,8 @@
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -1425,7 +1425,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_the_demo_report_keeps_its_evidence_apart_from_an_existing_federation tests/test_hla_demo.py::test_the_publisher_creates_from_the_hashed_bytes_with_hlafloat64time_on_both_classes tests/test_hla_reducer.py::test_a_capture_recorded_under_time_policy_none tests/test_hla_reducer.py::test_the_header_configuration_is_validated_semantically tests/test_hla_reducer.py::test_w_fom_unverified_once_per_generation_in_existing_mode_only tests/test_hla_replay.py::test_replay_never_reads_or_contacts_the_recorded_endpoint_or_the_fom tests/test_hla_rti.py::test_the_publisher_alone_keeps_its_barrier_bound_and_destroys_only_its_own_federation",
-   "duration_s": 5.309,
+   "duration_s": 5.322,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1481,7 +1481,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (perf) or (rti)\" tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_native.py::test_a_changed_rediscovery_keeps_its_token_and_is_the_reducers_fatal_fault tests/test_hla_native.py::test_a_handle_keeps_its_token_after_removal_and_a_new_discovery_is_a_new_object tests/test_hla_native.py::test_a_host_that_stops_reading_fills_the_queue_and_never_blocks_a_callback tests/test_hla_native.py::test_a_terminal_condition_ends_the_hosts_session_with_its_code tests/test_hla_native.py::test_an_attribute_name_of_128_utf8_bytes_is_kept tests/test_hla_native.py::test_an_empty_map_is_a_captured_empty_reflection_with_no_state_output tests/test_hla_native.py::test_an_idle_worker_does_not_keep_a_processor_busy tests/test_hla_native.py::test_an_unsubscribed_attribute_is_captured_under_its_name_and_rejects_the_reflection tests/test_hla_native.py::test_at_the_token_bound_the_enumerations_come_before_it_and_the_queue_after tests/test_hla_native.py::test_each_new_object_is_asked_for_its_values_once_after_the_callbacks tests/test_hla_native.py::test_every_byte_the_callbacks_supply_reaches_the_capture_unchanged tests/test_hla_native.py::test_more_than_four_supplied_attributes_end_the_session_with_nothing_copied tests/test_hla_native.py::test_object_names_are_data_and_reach_the_capture_exactly tests/test_hla_native.py::test_the_rti_itself_delivers_into_the_observer_inside_the_harness tests/test_hla_native.py::test_the_worker_allocates_100000_tokens_and_refuses_the_next tests/test_hla_native_sources.py::test_the_worker_limits_are_the_specification_table_at_their_real_values tests/test_hla_rti.py::test_a_request_between_scripted_updates_is_answered_with_the_publishers_current_values tests/test_hla_rti.py::test_a_tcp_reset_is_connection_lost_then_a_rejoin_under_the_same_name tests/test_hla_rti.py::test_an_existing_mode_session_reports_physical_entity_for_a_ground_vehicle tests/test_hla_rti.py::test_the_perf_load_shape_runs_under_the_host_without_loss",
-   "duration_s": 52.33,
+   "duration_s": 52.368,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1490,7 +1490,7 @@
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -1593,7 +1593,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_native.py::test_a_callback_refused_on_a_full_queue_reports_its_own_fault_first tests/test_hla_native.py::test_both_retraction_handle_overloads_are_captured_retractable_and_quarantine tests/test_hla_native.py::test_every_byte_the_callbacks_supply_reaches_the_capture_unchanged tests/test_hla_native.py::test_request_retraction_ends_the_generation_with_reason_retraction tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may tests/test_hla_native.py::test_the_rti_itself_delivers_into_the_observer_inside_the_harness tests/test_hla_native_sources.py::test_the_worker_names_no_service_a_receive_only_observer_must_not_call tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_rti.py::test_an_existing_mode_session_reports_physical_entity_for_a_ground_vehicle",
-   "duration_s": 4.097,
+   "duration_s": 4.192,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1602,8 +1602,8 @@
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -1662,7 +1662,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_a_demo_stopped_at_its_observer_hosts_fork_stops_the_observer_in_order tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_host.py::test_a_call_that_never_returns_is_killed_and_recorded_as_e_rti_timeout tests/test_hla_host.py::test_a_capture_fault_or_a_limit_the_worker_reports tests/test_hla_host.py::test_a_failed_final_reconnect_is_failed tests/test_hla_host.py::test_a_federate_name_in_use_is_never_retried tests/test_hla_host.py::test_a_federation_that_does_not_exist_at_join_is_retried tests/test_hla_host.py::test_a_frame_the_host_must_not_capture_ends_the_session tests/test_hla_host.py::test_a_full_stdout_pipe_never_stalls_the_status_channel_nor_the_reverse tests/test_hla_host.py::test_a_never_retried_failure_on_the_other_channel_wins_in_either_order tests/test_hla_host.py::test_a_never_retried_failure_that_competes_with_a_lost_connection_ends_the_session tests/test_hla_host.py::test_a_partial_line_is_never_accepted tests/test_hla_host.py::test_a_pipe_held_open_after_the_worker_exited_does_not_hold_the_host tests/test_hla_host.py::test_a_profile_error_after_the_join_ends_its_generation_and_is_never_retried tests/test_hla_host.py::test_a_queue_overflow_reported_on_the_status_channel_alone tests/test_hla_host.py::test_a_reconnect_after_three_delays_is_a_new_generation_with_a_new_uuid tests/test_hla_host.py::test_a_retraction_whose_worker_must_be_killed_is_not_complete tests/test_hla_host.py::test_a_second_signal_does_not_shorten_the_orderly_stop tests/test_hla_host.py::test_a_signal_to_a_real_host_process_stops_it_in_order tests/test_hla_host.py::test_a_status_record_outside_the_protocol_ends_the_session tests/test_hla_host.py::test_a_stop_before_any_join_is_failed tests/test_hla_host.py::test_a_stop_during_a_reconnect_attempt_is_failed_with_the_last_code tests/test_hla_host.py::test_a_stop_that_needs_force_is_failed_with_e_rti_timeout tests/test_hla_host.py::test_a_successful_join_resets_the_retry_budget tests/test_hla_host.py::test_a_worker_alive_without_its_channels_is_an_exit_nobody_asked_for tests/test_hla_host.py::test_a_worker_frame_earlier_than_the_frame_before_it_is_refused tests/test_hla_host.py::test_a_worker_frame_earlier_than_the_origin_is_refused tests/test_hla_host.py::test_a_worker_over_its_rss_limit_is_killed_with_e_limit tests/test_hla_host.py::test_a_worker_over_its_rss_limit_while_it_drains_ends_the_session_with_e_limit tests/test_hla_host.py::test_a_worker_that_cannot_be_started_again_is_a_dependency_failure tests/test_hla_host.py::test_a_worker_without_its_channels_that_was_asked_to_stop_is_bounded_by_the_stop tests/test_hla_host.py::test_after_a_reported_failure_frames_are_drained_for_one_window_then_the_worker_is_killed tests/test_hla_host.py::test_an_exit_nobody_asked_for_is_a_lost_connection tests/test_hla_host.py::test_an_inconsistent_rediscovery_ends_the_session tests/test_hla_host.py::test_an_rti_that_never_answers_gives_the_unreachable_capture tests/test_hla_host.py::test_an_unclean_exit_during_the_orderly_stop tests/test_hla_host.py::test_connection_failed_before_the_join_is_retried tests/test_hla_host.py::test_connection_lost_ends_the_generation_and_is_retried tests/test_hla_host.py::test_hostile_worker_bytes_never_escape_the_host tests/test_hla_host.py::test_low_numbered_descriptors_never_reach_the_worker_wrongly tests/test_hla_host.py::test_nothing_behind_a_faulty_frame_is_captured tests/test_hla_host.py::test_nothing_of_a_previous_worker_is_carried_into_the_next tests/test_hla_host.py::test_nothing_waits_unsynced_through_a_reconnect_backoff tests/test_hla_host.py::test_request_retraction_ends_the_generation_and_the_session_complete tests/test_hla_host.py::test_text_on_the_workers_stderr_is_never_read_as_protocol tests/test_hla_host.py::test_the_caller_is_told_every_worker_as_it_starts_and_as_it_is_reaped tests/test_hla_host.py::test_the_default_seam_holds_the_specifications_values tests/test_hla_host.py::test_the_duration_bound_performs_the_orderly_stop tests/test_hla_host.py::test_the_duration_ending_during_a_backoff_is_failed_with_the_last_code tests/test_hla_host.py::test_the_orderly_stop_in_process tests/test_hla_host.py::test_the_origin_is_the_first_generation_start_across_workers tests/test_hla_host.py::test_the_worker_gets_its_arguments_environment_and_descriptors tests/test_hla_native.py::test_a_federation_that_does_not_exist_is_e_rti_connect_at_generation_0 tests/test_hla_native.py::test_a_listener_that_never_answers_is_the_host_deadline tests/test_hla_native.py::test_a_reader_that_closes_fd_3_ends_the_worker_with_status_71 tests/test_hla_native.py::test_a_reader_that_closes_stdout_ends_the_worker_with_status_71 tests/test_hla_native.py::test_a_refused_connection_is_retried_after_1_2_4_seconds_and_ends_failed tests/test_hla_native.py::test_a_worker_whose_parent_has_gone_resigns_disconnects_and_exits tests/test_hla_native.py::test_each_rti_exception_maps_to_its_code_and_the_worker_ends_in_order tests/test_hla_native.py::test_sigterm_during_connect_is_honoured_once_connect_returns tests/test_hla_native.py::test_sigterm_in_the_middle_of_a_batch_finishes_the_batch_then_resigns tests/test_hla_native.py::test_sigterm_while_connect_blocks_only_sets_the_flag_and_the_host_kills_at_its_deadline tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may tests/test_hla_native.py::test_the_parent_rule_sees_any_other_parent_not_only_init tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_rti.py::test_a_federate_name_already_joined_is_e_federate_name_never_renamed_never_retried tests/test_hla_rti.py::test_a_tcp_reset_is_connection_lost_then_a_rejoin_under_the_same_name tests/test_hla_rti.py::test_an_orderly_close_is_no_connection_lost_but_one_removal_per_known_object tests/test_hla_rti.py::test_observe_joined_to_a_real_federation_stops_in_order_and_exits_0",
-   "duration_s": 173.087,
+   "duration_s": 173.826,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -1672,7 +1672,7 @@
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_host.py": "be8159e668524671a2f884afa33ac65cf7ef5c0b3416de27e3e3ac2fe1a2503e",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -1869,7 +1869,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_canonical.py::test_a_capture_value_holds_no_float_and_no_integer_beyond_2_to_the_53 tests/test_hla_canonical.py::test_canonical_bytes_are_the_one_spelling_spec_68_describes tests/test_hla_canonical.py::test_canonical_json_rejects_lone_surrogates_in_strings_and_keys tests/test_hla_canonical.py::test_the_record_digest_is_over_the_record_without_its_sha256 tests/test_hla_capture.py::test_a_captured_diagnostic_carries_a_catalogue_code_and_its_severity tests/test_hla_capture.py::test_a_frame_as_the_first_line_or_a_header_later_is_refused tests/test_hla_capture.py::test_a_generation_of_another_federation_is_refused_by_verify_and_the_reader tests/test_hla_capture.py::test_a_hex_byte_changed_without_its_hash tests/test_hla_capture.py::test_a_hostile_member_name_reaches_the_path_only_as_safe_text tests/test_hla_capture.py::test_a_validly_rehashed_capture_with_a_skipped_seq tests/test_hla_capture.py::test_an_escape_spelled_another_way_is_noncanonical tests/test_hla_capture.py::test_every_frame_and_the_footer_carry_seq_and_both_digests tests/test_hla_capture.py::test_every_truncation_inside_the_last_three_lines tests/test_hla_capture.py::test_of_two_faulty_lines_the_first_decides tests/test_hla_capture.py::test_one_flipped_bit_is_never_accepted tests/test_hla_capture.py::test_seq_1_is_chained_to_the_exact_header_bytes tests/test_hla_capture.py::test_seq_starts_at_1_and_increments_by_one tests/test_hla_capture.py::test_spaces_or_another_order_in_an_otherwise_valid_line tests/test_hla_capture.py::test_the_capture_limits_through_the_seam tests/test_hla_capture.py::test_the_chain_refuses_a_line_the_reader_would_refuse_and_stays_as_it_was tests/test_hla_capture.py::test_the_chain_reproduces_the_bundled_capture_byte_for_byte tests/test_hla_capture.py::test_the_header_record_holds_the_contract_constants_the_config_and_the_pin_map tests/test_hla_capture.py::test_the_headers_configuration_is_validated_in_full tests/test_hla_capture.py::test_the_line_bound_at_its_real_value tests/test_hla_capture.py::test_two_faults_on_one_line_follow_the_check_order tests/test_hla_capture.py::test_utf8_jsonl_one_strict_object_per_lf_terminated_line tests/test_hla_capture.py::test_verify_accepts_the_bundled_capture_with_the_report_of_red_06 tests/test_hla_capture.py::test_verify_needs_no_endpoint_and_contacts_none tests/test_hla_capture.py::test_what_schema_canonical_form_and_hash_would_accept_but_red_04_refuses tests/test_hla_fom.py::test_the_five_pinned_modules_pass_in_r04_order tests/test_hla_fom.py::test_the_header_pin_map_is_the_packaged_pin_list tests/test_hla_host.py::test_a_file_size_limit_on_the_host_process_is_e_io tests/test_hla_host.py::test_a_full_disk_is_e_io_and_never_a_complete_capture tests/test_hla_host.py::test_the_capture_keeps_its_reserve_and_never_passes_the_file_limit tests/test_hla_host.py::test_the_header_records_the_validated_configuration_and_the_pins_before_the_worker tests/test_hla_host.py::test_the_pre_flight_refuses_before_the_run_directory_exists tests/test_hla_native.py::test_a_wide_string_no_utf8_can_carry_ends_the_session_with_e_capture_schema tests/test_hla_replay.py::test_an_invalid_capture_is_refused_with_or_without_allow_prefix tests/test_hla_replay.py::test_the_audit_time_of_the_header_reaches_the_output_only_through_the_cited_digests",
-   "duration_s": 15.612,
+   "duration_s": 15.661,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2096,7 +2096,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_capture.py::test_a_generation_of_another_federation_is_refused_by_verify_and_the_reader tests/test_hla_capture.py::test_attributes_strictly_ascending_by_ascii_name_are_accepted tests/test_hla_capture.py::test_event_fields_are_fully_defined_by_the_schema tests/test_hla_capture.py::test_lifecycle_framing tests/test_hla_capture.py::test_name_and_class_are_bounded_in_utf8_bytes tests/test_hla_capture.py::test_raw_bytes_and_order_metadata_are_kept_exactly tests/test_hla_capture.py::test_the_chain_refuses_a_generation_of_another_federation_and_stays_as_it_was tests/test_hla_capture.py::test_the_chain_refuses_a_line_the_reader_would_refuse_and_stays_as_it_was tests/test_hla_capture.py::test_the_chain_reproduces_the_bundled_capture_byte_for_byte tests/test_hla_capture.py::test_the_reducer_refuses_a_generation_of_another_federation tests/test_hla_capture.py::test_token_numbering_and_discover_metadata_are_not_verified tests/test_hla_capture.py::test_verify_accepts_the_bundled_capture_with_the_report_of_red_06 tests/test_hla_capture.py::test_what_schema_canonical_form_and_hash_would_accept_but_red_04_refuses tests/test_hla_native.py::test_a_host_that_stops_reading_fills_the_queue_and_never_blocks_a_callback tests/test_hla_native.py::test_a_terminal_condition_is_one_failure_record_then_resign_and_disconnect tests/test_hla_native.py::test_every_byte_the_callbacks_supply_reaches_the_capture_unchanged tests/test_hla_native.py::test_the_observer_calls_only_what_a_receive_only_federate_may",
-   "duration_s": 1.657,
+   "duration_s": 1.648,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2293,7 +2293,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_capture.py::test_a_failed_footer_verifies_as_failed_and_not_complete tests/test_hla_capture.py::test_every_frame_and_the_footer_carry_seq_and_both_digests tests/test_hla_capture.py::test_every_truncation_inside_the_last_three_lines tests/test_hla_capture.py::test_footer_removed_and_last_frame_truncated tests/test_hla_capture.py::test_incomplete_captures_report_the_verified_prefix tests/test_hla_capture.py::test_lifecycle_framing tests/test_hla_capture.py::test_nothing_may_follow_the_footer tests/test_hla_capture.py::test_one_flipped_bit_is_never_accepted tests/test_hla_capture.py::test_the_chain_detects_accidental_change_and_is_not_authentication tests/test_hla_capture.py::test_verify_accepts_the_bundled_capture_with_the_report_of_red_06 tests/test_hla_capture.py::test_verify_needs_no_endpoint_and_contacts_none tests/test_hla_cli.py::test_a_failed_capture_replays_only_as_a_prefix tests/test_hla_cli.py::test_a_prefix_replay_exits_3_and_its_evidence_is_prefix_only_never_pass tests/test_hla_cli.py::test_inspect_summarizes_a_prefix_only_with_allow_prefix tests/test_hla_cli.py::test_verify_of_any_other_capture_exits_3_with_the_fault_on_stderr tests/test_hla_host.py::test_a_failed_final_reconnect_is_failed tests/test_hla_host.py::test_a_host_killed_mid_write_leaves_a_verifiable_prefix tests/test_hla_host.py::test_a_reconnect_after_three_delays_is_a_new_generation_with_a_new_uuid tests/test_hla_host.py::test_a_second_signal_does_not_shorten_the_orderly_stop tests/test_hla_host.py::test_a_signal_to_a_real_host_process_stops_it_in_order tests/test_hla_host.py::test_a_stop_before_any_join_is_failed tests/test_hla_host.py::test_a_stop_during_a_reconnect_attempt_is_failed_with_the_last_code tests/test_hla_host.py::test_a_stop_that_needs_force_is_failed_with_e_rti_timeout tests/test_hla_host.py::test_a_successful_join_resets_the_retry_budget tests/test_hla_host.py::test_a_worker_without_its_channels_that_was_asked_to_stop_is_bounded_by_the_stop tests/test_hla_host.py::test_an_unclean_exit_during_the_orderly_stop tests/test_hla_host.py::test_connection_lost_ends_the_generation_and_is_retried tests/test_hla_host.py::test_the_duration_bound_performs_the_orderly_stop tests/test_hla_host.py::test_the_orderly_stop_in_process tests/test_hla_replay.py::test_a_capture_without_its_footer_replays_whole_as_a_prefix tests/test_hla_replay.py::test_a_failed_capture_is_refused_unless_replayed_as_a_prefix tests/test_hla_replay.py::test_a_prefix_without_its_header_is_refused_even_with_allow_prefix tests/test_hla_replay.py::test_a_truncated_capture_is_refused_and_replays_as_a_prefix_on_request tests/test_hla_replay.py::test_allow_prefix_on_a_complete_capture_changes_nothing tests/test_hla_replay.py::test_an_invalid_capture_is_refused_with_or_without_allow_prefix tests/test_hla_replay.py::test_damaged_captures_refuse_or_replay_and_never_leave_a_partial_directory tests/test_hla_replay.py::test_replay_never_reads_or_contacts_the_recorded_endpoint_or_the_fom tests/test_hla_replay.py::test_replay_requires_the_packaged_pins",
-   "duration_s": 56.622,
+   "duration_s": 57.146,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2441,7 +2441,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_codec.py::test_a_dis_entity_state_pdu_is_not_an_attribute_value tests/test_hla_codec.py::test_a_fixed_size_attribute_must_have_its_exact_length tests/test_hla_codec.py::test_a_non_finite_value_is_refused_in_every_interpreted_float tests/test_hla_codec.py::test_a_variant_must_have_its_exact_length_and_no_end_padding tests/test_hla_codec.py::test_an_empty_or_short_spatial_follows_cod07 tests/test_hla_codec.py::test_binary32_fields_widen_exactly_in_every_slot tests/test_hla_codec.py::test_binary64_position_is_read_bit_for_bit tests/test_hla_codec.py::test_cod14_multi_defect_vectors tests/test_hla_codec.py::test_deterministic_fuzz_gives_a_valid_shape_or_one_catalogue_error tests/test_hla_codec.py::test_entity_identifier_is_three_big_endian_unsigned_16_bit_fields tests/test_hla_codec.py::test_entity_type_is_seven_fields_with_a_big_endian_country tests/test_hla_codec.py::test_every_slot_of_every_variant_lands_where_the_table_puts_it tests/test_hla_codec.py::test_every_struct_format_in_the_codec_is_explicitly_big_endian tests/test_hla_codec.py::test_explicit_big_endian_readers_differ_from_little_endian_ones tests/test_hla_codec.py::test_force_identifier_preserves_every_octet_value tests/test_hla_codec.py::test_frozen_is_exactly_0_or_1 tests/test_hla_codec.py::test_negative_zero_is_kept_by_the_decoder_in_every_float tests/test_hla_codec.py::test_of_two_non_finite_floats_the_lower_offset_is_reported tests/test_hla_codec.py::test_padding_is_preserved_in_wire_order_and_never_interpreted tests/test_hla_codec.py::test_the_codec_casts_nothing_and_borrows_no_dis_layout tests/test_hla_codec.py::test_the_discriminator_is_octet_0_and_the_body_starts_at_8 tests/test_hla_codec.py::test_the_four_decoders_and_only_they_decode tests/test_hla_codec.py::test_the_name_comes_before_the_discriminator tests/test_hla_codec.py::test_the_precedence_ladder_reports_one_error_and_the_highest tests/test_hla_codec.py::test_the_size_bound_comes_first_and_is_e_limit tests/test_hla_demo.py::test_nonzero_padding_survives_capture_export_and_replay_unchanged tests/test_hla_geodesy.py::test_negative_zero_is_kept_in_decoded_values_and_normalised_only_in_projected_output tests/test_hla_native.py::test_a_4096_byte_value_is_captured_and_a_4097_byte_value_is_never_copied tests/test_hla_native.py::test_every_byte_the_callbacks_supply_reaches_the_capture_unchanged tests/test_hla_native_sources.py::test_the_worker_source_uses_none_of_the_forbidden_constructs tests/test_hla_rti.py::test_the_reference_encoder_matches_the_nine_packaged_spatial_vectors_and_the_results",
-   "duration_s": 2.061,
+   "duration_s": 2.022,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2452,7 +2452,7 @@
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_geodesy.py": "45e744fa6a545d67566c2bd04d163a9381a05acd4c7483df2920bf5a82c011f8",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -2747,7 +2747,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_a_triple_with_zero_members_is_an_identity tests/test_hla_projector.py::test_an_unknown_entity_type_is_preserved_and_projects_as_unknown tests/test_hla_projector.py::test_decoder_precedence_reports_one_error tests/test_hla_projector.py::test_force_identifier_is_preserved_data_and_never_an_identity tests/test_hla_projector.py::test_the_decode_shapes_of_the_fixed_size_attributes tests/test_hla_projector.py::test_the_null_identifier_never_produces_an_entity tests/test_hla_projector.py::test_the_spatial_layout_table tests/test_hla_projector.py::test_the_spatial_variant_table",
-   "duration_s": 0.081,
+   "duration_s": 0.075,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2828,7 +2828,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_variant_must_have_its_exact_length_and_no_end_padding tests/test_hla_codec.py::test_algorithm_0_and_10_to_255_are_e_spatial_variant_at_any_length tests/test_hla_codec.py::test_every_slot_of_every_variant_lands_where_the_table_puts_it tests/test_hla_codec.py::test_the_fom_alternatives_and_field_order_give_the_decoders_layout tests/test_hla_codec.py::test_the_spatial_shape_has_exactly_the_r20_keys_in_order tests/test_hla_geodesy.py::test_the_position_depends_on_the_position_alone tests/test_hla_reducer.py::test_a_force_only_update_keeps_the_spatial_effective_time tests/test_hla_reducer.py::test_the_captured_hex_is_kept_beside_the_decoded_value",
-   "duration_s": 0.235,
+   "duration_s": 0.211,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2898,7 +2898,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_deterministic_state_machine_fuzz tests/test_hla_reducer.py::test_a_discover_refused_for_a_limit_allocates_no_token tests/test_hla_reducer.py::test_a_removal_that_first_names_a_token_counts_it_once_and_meets_the_token_limit tests/test_hla_reducer.py::test_a_retractable_reflection_is_judged_before_the_cache_budget tests/test_hla_reducer.py::test_active_objects_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_cached_bytes_of_a_generation_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_distinct_tokens_of_a_session_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_every_order_of_the_four_attributes tests/test_hla_reducer.py::test_supplied_attributes_per_reflection_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_the_attribute_count_is_judged_before_the_token tests/test_hla_reducer.py::test_the_bundled_capture_reduces_to_the_bundled_records_line_for_line tests/test_hla_reducer.py::test_the_generation_state_holds_r21s_members tests/test_hla_reducer.py::test_unknown_attribute_names_are_not_cached_bytes",
-   "duration_s": 5.961,
+   "duration_s": 5.27,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -2981,7 +2981,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_deterministic_state_machine_fuzz tests/test_hla_reducer.py::test_a_reflection_or_removal_for_an_undiscovered_token_creates_nothing tests/test_hla_reducer.py::test_a_repair_after_an_atomic_rejection_restores_the_identity_and_the_next_revision tests/test_hla_reducer.py::test_a_retractable_reflection_is_judged_before_the_cache_budget tests/test_hla_reducer.py::test_a_valid_changed_force_and_a_malformed_spatial_together_apply_nothing tests/test_hla_reducer.py::test_an_empty_reflection_changes_nothing_and_emits_nothing tests/test_hla_reducer.py::test_an_empty_retractable_reflection_quarantines_and_invalidates_an_eligible_object tests/test_hla_reducer.py::test_an_unknown_attribute_rejects_its_reflection_atomically tests/test_hla_reducer.py::test_every_order_of_the_four_attributes tests/test_hla_reducer.py::test_hostile_frames_give_a_catalogue_refusal_or_a_type_error_and_nothing_else tests/test_hla_reducer.py::test_one_diagnostic_per_failure_sorted_by_code_then_attribute tests/test_hla_reducer.py::test_reduce_frame_admits_what_a_capture_holds_at_its_position tests/test_hla_reducer.py::test_retractable_callbacks_are_diagnosed_quarantined_and_never_applied tests/test_hla_reducer.py::test_retractable_callbacks_for_a_token_that_is_not_an_object_quarantine_nothing tests/test_hla_reducer.py::test_supplied_attributes_per_reflection_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_the_attribute_count_is_judged_before_the_token tests/test_hla_reducer.py::test_the_same_spatial_bytes_twice_give_two_snapshots_and_two_revisions tests/test_hla_reducer.py::test_unknown_attribute_names_are_not_cached_bytes",
-   "duration_s": 6.644,
+   "duration_s": 5.866,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3070,7 +3070,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_body_frame_spatial_projects_its_position_and_no_kinematics tests/test_hla_reducer.py::test_a_capture_recorded_under_time_policy_none tests/test_hla_reducer.py::test_a_complete_state_without_force_projects_unknown_without_a_warning tests/test_hla_reducer.py::test_a_malformed_force_after_an_entity_invalidates_it_until_repaired tests/test_hla_reducer.py::test_an_unmapped_force_warns_once_per_object_per_new_value tests/test_hla_reducer.py::test_e_ecef_range_suppresses_with_its_diagnostic_once_the_state_is_otherwise_complete tests/test_hla_reducer.py::test_e_geodesy_through_the_geodesy_seam tests/test_hla_reducer.py::test_every_order_of_the_four_attributes tests/test_hla_reducer.py::test_the_null_identifier_allocates_nothing_until_a_real_one_claims",
-   "duration_s": 0.621,
+   "duration_s": 0.554,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3137,7 +3137,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_changed_identifier_quarantines_the_token_for_its_incarnation tests/test_hla_reducer.py::test_a_deterministic_state_machine_fuzz tests/test_hla_reducer.py::test_a_null_identifier_on_an_established_identity_is_a_change tests/test_hla_reducer.py::test_a_repair_after_an_atomic_rejection_restores_the_identity_and_the_next_revision tests/test_hla_reducer.py::test_a_retractable_reflection_is_judged_before_the_cache_budget tests/test_hla_reducer.py::test_a_retractable_remove_quarantines_and_keeps_the_cache tests/test_hla_reducer.py::test_an_empty_retractable_reflection_quarantines_and_invalidates_an_eligible_object tests/test_hla_reducer.py::test_an_identifier_that_decodes_invalidly_keeps_its_reservation tests/test_hla_reducer.py::test_an_invalid_identifier_holder_still_holds_against_a_claimant tests/test_hla_reducer.py::test_e_identity_collision_names_each_newly_quarantined_token tests/test_hla_reducer.py::test_removal_releases_the_triple_but_never_unquarantines_a_survivor tests/test_hla_reducer.py::test_retractable_callbacks_are_diagnosed_quarantined_and_never_applied tests/test_hla_reducer.py::test_the_null_identifier_allocates_nothing_until_a_real_one_claims tests/test_hla_reducer.py::test_two_active_tokens_asserting_one_triple_quarantine_both",
-   "duration_s": 5.579,
+   "duration_s": 4.935,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3197,7 +3197,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_native.py::test_a_handle_keeps_its_token_after_removal_and_a_new_discovery_is_a_new_object tests/test_hla_reducer.py::test_a_deterministic_state_machine_fuzz tests/test_hla_reducer.py::test_a_discover_refused_for_a_limit_allocates_no_token tests/test_hla_reducer.py::test_a_malformed_force_after_an_entity_invalidates_it_until_repaired tests/test_hla_reducer.py::test_a_new_generation_resets_incarnations_and_changes_the_identity tests/test_hla_reducer.py::test_a_quarantined_object_rediscovered_alike_is_a_duplicate_and_warns_its_new_force tests/test_hla_reducer.py::test_a_reflection_or_removal_for_an_undiscovered_token_creates_nothing tests/test_hla_reducer.py::test_a_removal_that_first_names_a_token_counts_it_once_and_meets_the_token_limit tests/test_hla_reducer.py::test_a_retractable_remove_quarantines_and_keeps_the_cache tests/test_hla_reducer.py::test_active_objects_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_cached_bytes_of_a_generation_at_the_limit_and_one_past_it tests/test_hla_reducer.py::test_discovering_a_removed_token_is_a_terminal_capture_fault tests/test_hla_reducer.py::test_generation_end_invalidates_every_identified_object_in_token_number_order tests/test_hla_reducer.py::test_remove_an_eligible_entity_then_repeat tests/test_hla_reducer.py::test_remove_then_rediscover_gives_the_next_incarnation_and_a_new_uuid tests/test_hla_reducer.py::test_retractable_callbacks_for_a_token_that_is_not_an_object_quarantine_nothing tests/test_hla_reducer.py::test_w_duplicate_discovery_and_the_red_07_rediscovery tests/test_hla_rti.py::test_an_orderly_close_is_no_connection_lost_but_one_removal_per_known_object",
-   "duration_s": 6.576,
+   "duration_s": 6.047,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3271,7 +3271,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_identity.py::test_an_hla_identity_is_never_another_protocols tests/test_hla_identity.py::test_external_id_and_entity_id_by_r26 tests/test_hla_identity.py::test_hostile_values_give_an_identity_or_a_caller_bug_only tests/test_hla_identity.py::test_nothing_but_the_six_values_can_enter_identity tests/test_hla_identity.py::test_sessions_generations_and_incarnations_do_not_merge tests/test_hla_identity.py::test_the_identity_fixture_vector tests/test_hla_identity.py::test_the_namespace_is_the_public_cdm_namespace tests/test_hla_identity.py::test_values_outside_r26_are_caller_bugs tests/test_hla_projector.py::test_a_triple_with_zero_members_is_an_identity tests/test_hla_projector.py::test_handles_names_class_position_and_force_do_not_enter_identity tests/test_hla_projector.py::test_sessions_generations_and_incarnations_give_other_entities",
-   "duration_s": 0.437,
+   "duration_s": 0.403,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3365,7 +3365,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_each_cached_attribute_keeps_the_seq_of_its_own_frame tests/test_hla_projector.py::test_each_fixture_snapshot_projects_to_its_record tests/test_hla_projector.py::test_the_first_upsert_fixture_is_reproduced_byte_for_byte tests/test_hla_projector.py::test_the_provenance_block_is_spec_134 tests/test_hla_projector.py::test_the_source_block_is_r27",
-   "duration_s": 0.041,
+   "duration_s": 0.036,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3411,7 +3411,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_affiliation_follows_the_force_map_alone tests/test_hla_projector.py::test_force_identifier_is_preserved_data_and_never_an_identity tests/test_hla_projector.py::test_ids_and_digests_are_correlation_aids_and_integrity_is_never_set tests/test_hla_projector.py::test_names_and_classes_carry_no_trust_identity_or_affiliation",
-   "duration_s": 0.088,
+   "duration_s": 0.084,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3466,7 +3466,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (reference)\" tests/test_hla_geodesy.py::test_a_non_finite_component_is_e_ecef_range tests/test_hla_geodesy.py::test_a_non_finite_result_is_e_geodesy tests/test_hla_geodesy.py::test_a_pole_position_with_velocity_has_longitude_0_and_no_motion tests/test_hla_geodesy.py::test_a_tiny_negative_or_negative_zero_is_emitted_as_positive_zero tests/test_hla_geodesy.py::test_altitude_is_ellipsoidal_with_no_geoid_or_terrain tests/test_hla_geodesy.py::test_convergence_on_the_last_allowed_step_counts_and_one_fewer_is_e_geodesy tests/test_hla_geodesy.py::test_every_geodesy_fixture_entry_exactly tests/test_hla_geodesy.py::test_just_outside_the_norm_bounds_is_e_ecef_range tests/test_hla_geodesy.py::test_longitude_is_atan2_and_plus_180_is_written_minus_180 tests/test_hla_geodesy.py::test_p_equal_to_1e_8_is_not_the_pole_case tests/test_hla_geodesy.py::test_the_175_point_grid_round_trips_within_tolerance_and_exactly_after_rounding tests/test_hla_geodesy.py::test_the_bound_is_the_profiles_not_hlas tests/test_hla_geodesy.py::test_the_geodesy_module_uses_arithmetic_only tests/test_hla_geodesy.py::test_the_iteration_branches_and_kept_latitude_match_spec_142_bit_for_bit tests/test_hla_geodesy.py::test_the_latitude_clamp_takes_roundoff_only tests/test_hla_geodesy.py::test_the_norm_bounds_are_inclusive tests/test_hla_geodesy.py::test_the_unrounded_longitude_is_already_wrapped_and_its_radians_are_not tests/test_hla_geodesy.py::test_the_wgs84_constants_are_the_specifications tests/test_hla_rti.py::test_the_product_inverse_agrees_with_proj_forward_on_the_175_point_grid",
-   "duration_s": 0.289,
+   "duration_s": 0.269,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3561,7 +3561,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_a_pole_with_velocity_projects_at_longitude_0_with_no_motion tests/test_hla_projector.py::test_a_static_spatial_has_null_kinematics_never_an_inferred_zero tests/test_hla_projector.py::test_course_is_degrees_of_atan2_plus_360_modulo_360 tests/test_hla_projector.py::test_course_threshold_rounding_and_360 tests/test_hla_projector.py::test_each_fixture_snapshot_projects_to_its_record tests/test_hla_projector.py::test_enu_at_plus_180_uses_the_unnormalised_atan2 tests/test_hla_projector.py::test_enu_uses_the_unrounded_latitude_and_longitude tests/test_hla_projector.py::test_negative_zero_is_kept_in_the_provenance_and_normalised_in_position_and_motion tests/test_hla_projector.py::test_positions_meet_the_tolerances_against_an_independent_transform tests/test_hla_projector.py::test_rounding_is_half_even_and_a_rounded_plus_180_is_written_minus_180 tests/test_hla_projector.py::test_section_9_is_implemented_once_in_geodesy tests/test_hla_projector.py::test_the_geodesy_fixture_and_its_pole_convention tests/test_hla_projector.py::test_the_position_is_wgs84_degrees_and_hae_metres_estimated tests/test_hla_projector.py::test_world_velocity_turns_into_east_north_up",
-   "duration_s": 0.837,
+   "duration_s": 0.746,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3637,7 +3637,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_a_body_frame_spatial_maps_its_position_and_keeps_its_body_values tests/test_hla_projector.py::test_course_follows_world_velocity_and_psi_is_kept tests/test_hla_projector.py::test_enu_at_plus_180_uses_the_unnormalised_atan2 tests/test_hla_projector.py::test_finite_speeds_and_angles_are_not_clipped tests/test_hla_projector.py::test_frozen_is_kept_and_stops_neither_motion_nor_the_clock tests/test_hla_projector.py::test_negative_zero_is_kept_in_the_provenance_and_normalised_in_position_and_motion tests/test_hla_projector.py::test_orientation_is_kept_in_radians_unwrapped",
-   "duration_s": 0.046,
+   "duration_s": 0.04,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3682,7 +3682,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_capture_recorded_under_time_policy_none tests/test_hla_reducer.py::test_a_force_only_update_keeps_the_spatial_effective_time tests/test_hla_reducer.py::test_a_rejected_spatial_never_lowers_the_regression_bar tests/test_hla_reducer.py::test_an_effective_time_past_year_9998_is_refused_with_e_config tests/test_hla_reducer.py::test_e_ecef_range_suppresses_with_its_diagnostic_once_the_state_is_otherwise_complete tests/test_hla_reducer.py::test_e_geodesy_through_the_geodesy_seam tests/test_hla_reducer.py::test_e_time_regression_through_a_direct_reduce_frame_call tests/test_hla_reducer.py::test_effective_time_truncates_nanoseconds_and_valid_from_truncates_microseconds tests/test_hla_reducer.py::test_the_same_spatial_bytes_twice_give_two_snapshots_and_two_revisions tests/test_hla_reducer.py::test_the_upsert_is_r32s_entity",
-   "duration_s": 0.242,
+   "duration_s": 0.214,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3732,7 +3732,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_captured_diagnostic_names_the_entity_its_token_holds_after_the_frame tests/test_hla_reducer.py::test_a_deterministic_state_machine_fuzz tests/test_hla_reducer.py::test_a_record_delivered_twice_is_applied_once tests/test_hla_reducer.py::test_decoded_numbers_live_in_the_output_and_never_in_a_frame tests/test_hla_reducer.py::test_decoded_values_reach_the_output_exactly_and_only_position_is_normalised tests/test_hla_reducer.py::test_header_and_footer_produce_no_observations tests/test_hla_reducer.py::test_live_records_equal_replay_records_but_for_the_completion_fields tests/test_hla_reducer.py::test_the_bundled_capture_reduces_to_the_bundled_records_line_for_line tests/test_hla_reducer.py::test_the_output_path_holds_no_delivery_database_or_broker tests/test_hla_reducer.py::test_the_reducer_holds_its_own_records_to_red_16_and_r33",
-   "duration_s": 5.784,
+   "duration_s": 5.115,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3809,7 +3809,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_host.py::test_a_file_size_limit_on_the_host_process_is_e_io tests/test_hla_host.py::test_a_frame_the_host_must_not_capture_ends_the_session tests/test_hla_host.py::test_a_full_disk_at_the_footer_claims_no_footer tests/test_hla_host.py::test_a_full_disk_is_e_io_and_never_a_complete_capture tests/test_hla_host.py::test_a_full_stdout_pipe_never_stalls_the_status_channel_nor_the_reverse tests/test_hla_host.py::test_a_host_killed_mid_write_leaves_a_verifiable_prefix tests/test_hla_host.py::test_a_retry_whose_frames_would_enter_the_reserve_ends_the_session tests/test_hla_host.py::test_a_timed_fsync_that_fails_ends_the_session_with_e_io tests/test_hla_host.py::test_a_worker_over_its_rss_limit_is_killed_with_e_limit tests/test_hla_host.py::test_a_worker_over_its_rss_limit_while_it_drains_ends_the_session_with_e_limit tests/test_hla_host.py::test_an_end_that_does_not_fit_is_not_claimed tests/test_hla_host.py::test_an_fsync_that_fails_before_a_backoff_ends_the_session_with_e_io tests/test_hla_host.py::test_an_fsync_that_fails_is_e_io tests/test_hla_host.py::test_every_frame_is_on_disk_before_the_reducer_sees_it tests/test_hla_host.py::test_fsync_after_the_interval_without_new_data tests/test_hla_host.py::test_fsync_follows_the_hundred_frame_rule_and_every_boundary tests/test_hla_host.py::test_nothing_behind_a_faulty_frame_is_captured tests/test_hla_host.py::test_nothing_waits_unsynced_through_a_reconnect_backoff tests/test_hla_host.py::test_outputs_that_fail_while_the_session_ends_make_it_failed tests/test_hla_host.py::test_ten_thousand_objects_then_one_more tests/test_hla_host.py::test_the_capture_keeps_its_reserve_and_never_passes_the_file_limit tests/test_hla_host.py::test_the_default_seam_holds_the_specifications_values tests/test_hla_host.py::test_the_frame_limit_keeps_room_for_the_end_of_the_session tests/test_hla_host.py::test_the_header_and_the_files_themselves_can_fail tests/test_hla_host.py::test_the_header_records_the_validated_configuration_and_the_pins_before_the_worker tests/test_hla_host.py::test_the_pre_flight_refuses_before_the_run_directory_exists tests/test_hla_host.py::test_the_run_directory_is_created_exclusively tests/test_hla_host.py::test_the_worker_gets_its_arguments_environment_and_descriptors tests/test_hla_host.py::test_the_writer_refuses_an_end_frame_past_the_frame_limit tests/test_hla_host.py::test_the_writer_serves_the_timer_whenever_it_writes tests/test_hla_host.py::test_the_writer_syncs_on_the_timer_the_count_and_every_boundary tests/test_hla_host.py::test_untrusted_strings_from_the_worker_are_kept_as_data",
-   "duration_s": 68.402,
+   "duration_s": 66.928,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3916,7 +3916,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_a_refused_replay_exits_with_the_class_of_its_code tests/test_hla_cli.py::test_every_command_answers_help_and_version tests/test_hla_cli.py::test_export_capture_copies_a_verified_capture_byte_for_byte_and_prints_nothing tests/test_hla_cli.py::test_export_capture_refuses_an_invalid_or_incomplete_capture_without_creating_out tests/test_hla_cli.py::test_replay_of_the_bundled_capture_writes_four_files_and_exits_0 tests/test_hla_cli.py::test_two_replays_give_byte_identical_directories_run_json_included tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_replay.py::test_a_capture_replaced_between_the_two_readings_is_e_io tests/test_hla_replay.py::test_a_capture_that_changes_between_the_two_readings_is_e_io tests/test_hla_replay.py::test_a_fault_after_the_directory_exists_leaves_nothing_behind tests/test_hla_replay.py::test_a_tail_that_is_not_the_verified_one_is_e_io tests/test_hla_replay.py::test_a_truncated_capture_is_refused_and_replays_as_a_prefix_on_request tests/test_hla_replay.py::test_a_write_that_fails_is_e_io_and_leaves_nothing_behind tests/test_hla_replay.py::test_an_existing_output_is_refused_and_left_alone tests/test_hla_replay.py::test_an_invalid_capture_is_refused_with_or_without_allow_prefix tests/test_hla_replay.py::test_damaged_captures_refuse_or_replay_and_never_leave_a_partial_directory tests/test_hla_replay.py::test_hostile_names_reach_the_output_as_escaped_data tests/test_hla_replay.py::test_output_and_capture_paths_that_name_nothing_are_e_io tests/test_hla_replay.py::test_replay_never_reads_or_contacts_the_recorded_endpoint_or_the_fom tests/test_hla_replay.py::test_replay_output_equals_the_reducer_records_of_the_same_frames tests/test_hla_replay.py::test_replay_requires_the_packaged_pins tests/test_hla_replay.py::test_replay_takes_time_from_the_stored_elapsed_values_and_reads_no_clock tests/test_hla_replay.py::test_the_bundled_capture_replays_to_the_bundled_records tests/test_hla_replay.py::test_the_checkpoints_of_the_bundle tests/test_hla_replay.py::test_the_run_directory_holds_the_three_files_and_diagnostics_is_their_subsequence tests/test_hla_replay.py::test_two_faults_at_once_are_refused_in_the_stated_order tests/test_hla_replay.py::test_two_replays_write_identical_directories",
-   "duration_s": 20.093,
+   "duration_s": 20.603,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -3924,7 +3924,7 @@
    "id": "G-R35",
    "input_digests": {
     "tests/test_hla_cli.py": "6b94e1b2fe043c08ea869b0013a637394cfad11c77ced418b5a9f37821ee2e42",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_replay.py": "63f54b9cf15c8c8ee54cbeb6528b05edabc232a9ba184aed04e6c879885c6abb"
    },
    "layer": "release",
@@ -4030,7 +4030,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_cli.py::test_a_capture_that_cannot_be_written_is_e_io_and_exit_6 tests/test_hla_cli.py::test_a_command_killed_from_outside_leaves_a_session_stopped_in_order_without_run_json tests/test_hla_cli.py::test_a_complete_capture_whose_records_hold_an_e_code_replays_with_exit_3 tests/test_hla_cli.py::test_a_complete_session_with_an_e_diagnostic_exits_3 tests/test_hla_cli.py::test_a_defect_in_the_host_reaches_the_command_line_as_a_traceback tests/test_hla_cli.py::test_a_defect_is_python_s_traceback_and_status_1_whatever_debug_says tests/test_hla_cli.py::test_a_duration_outside_one_to_86400_ascii_digits_is_refused tests/test_hla_cli.py::test_a_failed_capture_replays_only_as_a_prefix tests/test_hla_cli.py::test_a_failing_self_test_case_is_exit_3_with_its_id tests/test_hla_cli.py::test_a_host_killed_from_outside_is_a_defect_of_the_command_and_its_worker_is_killed tests/test_hla_cli.py::test_a_host_without_a_result_makes_the_parent_kill_its_workers_and_raise tests/test_hla_cli.py::test_a_hostile_argument_reaches_stderr_as_escaped_data tests/test_hla_cli.py::test_a_prefix_replay_exits_3_and_its_evidence_is_prefix_only_never_pass tests/test_hla_cli.py::test_a_refused_replay_exits_with_the_class_of_its_code tests/test_hla_cli.py::test_a_resource_failure_is_exit_6 tests/test_hla_cli.py::test_a_run_json_that_cannot_be_written_is_e_io_and_exit_6 tests/test_hla_cli.py::test_a_signal_to_the_command_stops_the_session_in_order_and_exits_0 tests/test_hla_cli.py::test_a_stop_during_a_reconnect_backoff_is_failed_with_the_connection_code tests/test_hla_cli.py::test_a_stop_signal_after_the_exit_code_is_decided_changes_nothing tests/test_hla_cli.py::test_a_stop_that_needs_force_is_e_rti_timeout_and_exit_5 tests/test_hla_cli.py::test_a_usage_error_is_a_structured_e_config_with_exit_2 tests/test_hla_cli.py::test_a_worker_that_cannot_be_started_again_is_exit_4 tests/test_hla_cli.py::test_an_interrupted_command_takes_back_what_it_made tests/test_hla_cli.py::test_an_interrupted_replay_takes_back_what_it_made tests/test_hla_cli.py::test_an_rti_failure_that_is_never_retried_is_exit_5 tests/test_hla_cli.py::test_debug_adds_the_traceback_of_a_refusal_and_nothing_else_does tests/test_hla_cli.py::test_demo_checks_the_fom_pins_before_its_directory_exists tests/test_hla_cli.py::test_demo_with_a_worker_and_rtinode_is_still_blocked_on_the_publisher tests/test_hla_cli.py::test_demo_without_its_dependencies_is_blocked_with_exit_4 tests/test_hla_cli.py::test_environment_variables_that_look_like_limits_change_nothing tests/test_hla_cli.py::test_every_command_answers_help_and_version tests/test_hla_cli.py::test_every_e_code_has_the_exit_class_ops_02_gives_it tests/test_hla_cli.py::test_export_capture_copies_a_verified_capture_byte_for_byte_and_prints_nothing tests/test_hla_cli.py::test_export_capture_io_failures_are_exit_6 tests/test_hla_cli.py::test_export_capture_refuses_an_existing_out tests/test_hla_cli.py::test_export_capture_refuses_an_invalid_or_incomplete_capture_without_creating_out tests/test_hla_cli.py::test_help_and_version_come_before_anything_else_on_their_line tests/test_hla_cli.py::test_inspect_of_generations_and_captured_diagnostics tests/test_hla_cli.py::test_inspect_summarizes_a_prefix_only_with_allow_prefix tests/test_hla_cli.py::test_inspect_summarizes_counts_profile_time_coverage_and_classes tests/test_hla_cli.py::test_no_limit_or_timing_value_is_reachable_from_an_option_a_key_or_a_variable tests/test_hla_cli.py::test_observe_records_until_its_duration_and_exits_0 tests/test_hla_cli.py::test_observe_refusals_before_the_session tests/test_hla_cli.py::test_observe_refuses_a_demo_configuration_before_it_starts_anything tests/test_hla_cli.py::test_observe_runs_validate_config_s_two_checks_and_exits_by_the_higher_class tests/test_hla_cli.py::test_observe_s_preflight_meets_hostile_configurations_and_fom_directories tests/test_hla_cli.py::test_observe_without_its_dependencies_is_exit_4_before_the_run_directory tests/test_hla_cli.py::test_replay_of_a_missing_capture_or_into_a_missing_parent_is_e_io tests/test_hla_cli.py::test_replay_of_the_bundled_capture_writes_four_files_and_exits_0 tests/test_hla_cli.py::test_replay_refuses_an_existing_or_symlinked_out tests/test_hla_cli.py::test_self_test_passes_on_the_packaged_fixtures tests/test_hla_cli.py::test_self_test_refuses_an_existing_out_and_a_missing_parent tests/test_hla_cli.py::test_self_test_with_a_changed_fom_module_fails_its_pin_check_with_exit_4 tests/test_hla_cli.py::test_self_test_without_the_fom_directory_reports_the_pin_check_blocked_with_exit_4 tests/test_hla_cli.py::test_stop_signals_through_the_end_of_an_observe_session_leave_its_exit_0 tests/test_hla_cli.py::test_the_duration_bounds_and_the_default_are_read_as_the_specification_gives_them tests/test_hla_cli.py::test_the_parent_holds_a_stop_until_the_session_runs_then_passes_it_on tests/test_hla_cli.py::test_the_rss_parent_kills_the_host_and_its_workers_above_the_limit tests/test_hla_cli.py::test_two_replays_give_byte_identical_directories_run_json_included tests/test_hla_cli.py::test_validate_config_accepts_both_example_configurations tests/test_hla_cli.py::test_validate_config_of_a_file_that_cannot_be_read_is_e_io tests/test_hla_cli.py::test_validate_config_refuses_a_configuration_with_exit_2 tests/test_hla_cli.py::test_validate_config_with_a_changed_or_absent_fom_module_is_exit_4 tests/test_hla_cli.py::test_verify_of_a_complete_capture_exits_0_and_lists_its_captured_codes tests/test_hla_cli.py::test_verify_of_a_file_that_cannot_be_read_is_e_io tests/test_hla_cli.py::test_verify_of_any_other_capture_exits_3_with_the_fault_on_stderr tests/test_hla_cli.py::test_w_codes_alone_allow_exit_0 tests/test_hla_demo.py::test_a_demo_stopped_at_its_observer_hosts_fork_stops_the_observer_in_order tests/test_hla_demo.py::test_a_demo_stopped_by_a_signal_stops_everything_it_started_and_removes_its_directory tests/test_hla_demo.py::test_a_demo_stopped_while_its_rtinode_starts_stops_it_and_removes_its_directory tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind tests/test_hla_native.py::test_observe_through_the_native_worker_exits_5_when_the_rti_refuses tests/test_hla_release.py::test_the_readme_states_what_a_stop_before_observes_session_self_test_and_an_overflow_do tests/test_hla_rti.py::test_observe_joined_to_a_real_federation_stops_in_order_and_exits_0",
-   "duration_s": 227.149,
+   "duration_s": 233.356,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -4040,7 +4040,7 @@
     "tests/test_hla_cli.py": "6b94e1b2fe043c08ea869b0013a637394cfad11c77ced418b5a9f37821ee2e42",
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -4274,7 +4274,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_config.py::test_the_probe_table tests/test_hla_errors.py::test_every_code_has_the_behaviour_of_its_table_row tests/test_hla_errors.py::test_the_catalogue_is_the_table_in_the_tables_order tests/test_hla_projector.py::test_an_unknown_entity_type_is_preserved_and_projects_as_unknown tests/test_hla_reducer.py::test_an_unmapped_force_warns_once_per_object_per_new_value tests/test_hla_release.py::test_a_diagnostic_carries_r37s_fields_a_bounded_message_and_never_the_source_text tests/test_hla_replay.py::test_hostile_names_reach_the_output_as_escaped_data",
-   "duration_s": 0.132,
+   "duration_s": 0.107,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -4285,7 +4285,7 @@
     "tests/test_hla_errors.py": "217fa25eae0a647e869048b92b4cbc29bba4afee19de226b1cba675695ade6e3",
     "tests/test_hla_projector.py": "a02bc7de805cdef63d531ed8b5c8968b0218ddaedd979a8169522c3a5dcbe725",
     "tests/test_hla_reducer.py": "9a30f8d5c1357de5a0279d68a81d5d82a8a298d7c6b08fe10912fdf1ca876c19",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_replay.py": "63f54b9cf15c8c8ee54cbeb6528b05edabc232a9ba184aed04e6c879885c6abb"
    },
    "layer": "release",
@@ -4515,7 +4515,7 @@
    },
    "blocked_resource": "the demo built and run on the reference platform (Linux x86_64, Ubuntu 24.04, GCC 13 (C++14), CMake 3.28 to 3.31)",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_a_busy_port_is_tried_again_on_another_at_most_five_starts_in_all tests/test_hla_demo.py::test_a_publisher_writing_hostile_events_fails_the_demo_cleanly tests/test_hla_demo.py::test_a_stop_while_rtinode_starts_ends_it_by_its_pid_and_its_port_refuses tests/test_hla_demo.py::test_any_other_early_end_of_rtinode_is_a_failure_without_retry tests/test_hla_demo.py::test_each_federation_name_is_sc_demo_and_16_random_lowercase_hex_digits tests/test_hla_demo.py::test_hostile_publisher_events_end_the_run_cleanly_and_never_reach_the_record tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind tests/test_hla_demo.py::test_the_demo_report_keeps_its_evidence_apart_from_an_existing_federation tests/test_hla_demo.py::test_the_publisher_creates_from_the_hashed_bytes_with_hlafloat64time_on_both_classes tests/test_hla_demo.py::test_the_publisher_sends_the_packaged_vectors_byte_for_byte tests/test_hla_demo.py::test_the_runs_use_config_demo_with_only_the_endpoint_and_federation_replaced tests/test_hla_demo.py::test_two_demos_agree_on_every_checkpoint_and_differ_only_in_their_names tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it tests/test_hla_rti.py::test_a_request_between_scripted_updates_is_answered_with_the_publishers_current_values tests/test_hla_rti.py::test_the_bundles_fom_check_passes_against_an_rtinode_of_the_demos_kind tests/test_hla_rti.py::test_the_publisher_alone_keeps_its_barrier_bound_and_destroys_only_its_own_federation tests/test_hla_rti.py::test_the_publisher_answers_version_and_refuses_any_other_argument_vector",
-   "duration_s": 24.837,
+   "duration_s": 26.168,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -4523,7 +4523,7 @@
    "id": "G-R38",
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -4587,7 +4587,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_a_demo_stopped_at_its_observer_hosts_fork_stops_the_observer_in_order tests/test_hla_demo.py::test_a_demo_stopped_by_a_signal_stops_everything_it_started_and_removes_its_directory tests/test_hla_demo.py::test_a_demo_stopped_while_its_rtinode_starts_stops_it_and_removes_its_directory tests/test_hla_demo.py::test_a_publisher_writing_hostile_events_fails_the_demo_cleanly tests/test_hla_demo.py::test_a_stop_while_rtinode_starts_ends_it_by_its_pid_and_its_port_refuses tests/test_hla_demo.py::test_run_demo_stopped_while_rtinode_starts_leaves_no_process_and_no_listener tests/test_hla_demo.py::test_the_checkpoints_judge_the_bundled_run_and_fail_exactly_where_it_is_wrong tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind tests/test_hla_demo.py::test_the_demo_report_keeps_its_evidence_apart_from_an_existing_federation tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_demo.py::test_the_publisher_sends_the_packaged_vectors_byte_for_byte tests/test_hla_demo.py::test_the_publisher_uses_none_of_the_constructs_r40_bars tests/test_hla_demo.py::test_the_runs_use_config_demo_with_only_the_endpoint_and_federation_replaced tests/test_hla_demo.py::test_two_demos_agree_on_every_checkpoint_and_differ_only_in_their_names tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_rti.py::test_the_publisher_alone_keeps_its_barrier_bound_and_destroys_only_its_own_federation",
-   "duration_s": 24.456,
+   "duration_s": 26.223,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -4595,7 +4595,7 @@
    "id": "G-R39",
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -4683,7 +4683,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_a_hostile_argument_reaches_stderr_as_escaped_data tests/test_hla_config.py::test_the_probe_table tests/test_hla_fom.py::test_a_fom_with_a_dtd_an_external_reference_or_a_forbidden_construct_is_refused tests/test_hla_host.py::test_the_capture_keeps_its_reserve_and_never_passes_the_file_limit tests/test_hla_limits.py::test_each_v1_value_is_the_specifications tests/test_hla_purity.py::test_no_module_uses_a_socket_evaluates_code_runs_a_shell_or_unpickles tests/test_hla_reducer.py::test_w_duplicate_discovery_and_the_red_07_rediscovery tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_replay.py::test_hostile_names_reach_the_output_as_escaped_data",
-   "duration_s": 2.309,
+   "duration_s": 2.285,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -4697,7 +4697,7 @@
     "tests/test_hla_limits.py": "2516285af473c0b3a40325493de11eced72cbaf7c54f3d2889b0db44832ba49d",
     "tests/test_hla_purity.py": "6aa8097e449eaf94dec152042bd2c63379fe7af59c89a88b6757e975bb527384",
     "tests/test_hla_reducer.py": "9a30f8d5c1357de5a0279d68a81d5d82a8a298d7c6b08fe10912fdf1ca876c19",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_replay.py": "63f54b9cf15c8c8ee54cbeb6528b05edabc232a9ba184aed04e6c879885c6abb"
    },
    "layer": "release",
@@ -5007,7 +5007,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (perf) or (rti)\" tests/test_hla_cli.py::test_the_rss_parent_kills_the_host_and_its_workers_above_the_limit tests/test_hla_host.py::test_a_worker_over_its_rss_limit_is_killed_with_e_limit tests/test_hla_host.py::test_the_capture_keeps_its_reserve_and_never_passes_the_file_limit tests/test_hla_native.py::test_a_4096_byte_tag_is_captured_and_a_4097_byte_tag_ends_the_session tests/test_hla_native.py::test_a_4096_byte_value_is_captured_and_a_4097_byte_value_is_never_copied tests/test_hla_native.py::test_a_batch_beyond_the_queue_bound_overflows_keeping_everything_accepted tests/test_hla_native.py::test_a_callback_refused_on_a_full_queue_reports_its_own_fault_first tests/test_hla_native.py::test_a_host_that_stops_reading_fills_the_queue_and_never_blocks_a_callback tests/test_hla_native.py::test_a_logical_time_and_a_removals_tag_count_toward_the_byte_bound tests/test_hla_native.py::test_a_terminal_condition_ends_the_hosts_session_with_its_code tests/test_hla_native.py::test_a_terminal_condition_is_one_failure_record_then_resign_and_disconnect tests/test_hla_native.py::test_an_overflow_under_the_host_ends_failed_with_the_failure_from_fd_3 tests/test_hla_native.py::test_an_unsubscribed_attribute_is_captured_under_its_name_and_rejects_the_reflection tests/test_hla_native.py::test_at_the_token_bound_the_enumerations_come_before_it_and_the_queue_after tests/test_hla_native.py::test_more_than_four_supplied_attributes_end_the_session_with_nothing_copied tests/test_hla_native.py::test_nothing_after_a_refusal_by_frames_is_captured_once_the_queue_has_room_again tests/test_hla_native.py::test_nothing_after_the_refused_callback_of_a_batch_is_captured tests/test_hla_native.py::test_the_byte_bound_admits_a_record_that_fills_it_exactly_and_refuses_one_byte_more tests/test_hla_native.py::test_the_worker_allocates_100000_tokens_and_refuses_the_next tests/test_hla_native_sources.py::test_the_worker_limits_are_the_specification_table_at_their_real_values tests/test_hla_rti.py::test_the_perf_load_shape_runs_under_the_host_without_loss",
-   "duration_s": 62.2,
+   "duration_s": 60.477,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5017,7 +5017,7 @@
     "tests/test_hla_cli.py": "6b94e1b2fe043c08ea869b0013a637394cfad11c77ced418b5a9f37821ee2e42",
     "tests/test_hla_host.py": "be8159e668524671a2f884afa33ac65cf7ef5c0b3416de27e3e3ac2fe1a2503e",
     "tests/test_hla_native.py": "612353182c9d506e912e15b9d1db0e0ad4ba719aaaaf32ab70b277ac001dbebe",
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -5165,32 +5165,32 @@
    },
    "blocked_resource": "R42's recorded 4-vCPU x86_64 machine with 8 GiB on the reference platform",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (perf)\" tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it tests/test_hla_release.py::test_the_performance_assessment_states_what_the_runs_recorded tests/test_hla_rti.py::test_a_load_beyond_the_queue_fails_visibly tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target",
-   "duration_s": 75.191,
+   "duration_s": 73.42,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case G-R42 of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "G-R42",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
    "observations": [
     {
      "observation": {
-      "frames": 4213,
-      "load_captured": 1877,
+      "frames": 4324,
+      "load_captured": 1668,
       "load_expected": 100000,
-      "load_with_output": 1877,
+      "load_with_output": 1668,
       "machine": "DEV-macOS-arm64",
       "overflow": true,
-      "p50_ms": 956,
-      "p95_ms": 1775,
-      "p95_ns": 1775485000,
-      "p99_ms": 1847,
+      "p50_ms": 753,
+      "p95_ms": 1669,
+      "p95_ns": 1669977000,
+      "p99_ms": 1727,
       "shape": "perf:1000:5:20",
-      "throughput_per_s": 902
+      "throughput_per_s": 859
      },
      "run": "perf-py312",
      "test": "tests/test_hla_rti.py::test_a_load_beyond_the_queue_fails_visibly"
@@ -5211,7 +5211,7 @@
         "mount_point": "/System/Volumes/Data",
         "type": "apfs"
        },
-       "load_average_1m": "4.41",
+       "load_average_1m": "1.08",
        "machine": "arm64",
        "memory_bytes": 137438953472,
        "python": "3.12.13",
@@ -5220,14 +5220,14 @@
        "worker_sha256": "377c145fc3f73ed10376449a560129610aface8e034df88340c2d28a9d6e7234"
       },
       "overflow": false,
-      "p50_ms": 1042,
-      "p95_ms": 1522,
-      "p95_ns": 1522491000,
-      "p99_ms": 1621,
+      "p50_ms": 480,
+      "p95_ms": 875,
+      "p95_ns": 875982000,
+      "p99_ms": 1120,
       "session_status": "COMPLETE",
       "shape": "perf:1000:1:60",
       "terminal_codes": [],
-      "throughput_per_s": 994
+      "throughput_per_s": 1001
      },
      "run": "perf-py312",
      "test": "tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target"
@@ -5275,16 +5275,16 @@
    },
    "blocked_resource": "the reference build (Linux x86_64, Ubuntu 24.04, GCC 13 (C++14), CMake 3.28 to 3.31) and the SHA-256 of the distribution packages of its toolchain",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_native_sources.py::test_memory_is_included_before_the_rti_ambassador_header tests/test_hla_native_sources.py::test_the_openrti_wrapper_runs_the_bundles_commands_with_only_the_ruled_additions tests/test_hla_packaging.py::test_the_locks_hold_the_tested_set_with_exact_versions_and_hashes tests/test_hla_packaging.py::test_the_openrti_licence_texts_are_the_archives_own_bytes_and_the_election_is_stated tests/test_hla_packaging.py::test_the_sbom_is_what_the_locks_give_and_enumerates_what_r43_names tests/test_hla_packaging.py::test_the_sbom_tool_admits_a_later_synapse_cdm_only_inside_the_declared_range tests/test_hla_packaging.py::test_the_sbom_tool_refuses_a_later_sibling_that_declares_another_licence tests/test_hla_packaging.py::test_the_wheel_and_the_native_install_form_the_installed_product tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it",
-   "duration_s": 13.448,
+   "duration_s": 13.472,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case G-R43 of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "G-R43",
    "input_digests": {
-    "tests/test_hla_native_sources.py": "946f69a42a431f9afac9c64b30263e623e2607e01ff5feb150784d267c58318a",
+    "tests/test_hla_native_sources.py": "08c1631277810da50b604ba9edfbda73e0fe5a658500b294cf529840aa149d06",
     "tests/test_hla_packaging.py": "ce77192c44648ba6ba6f74f962ffc600a45f4a9395a73806c5d24500cc53c56b",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5359,7 +5359,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_projector.py::test_an_omitted_member_is_refused_though_the_schema_admits_it tests/test_hla_projector.py::test_both_fixture_upserts_construct_as_entities_and_round_trip tests/test_hla_projector.py::test_dates_are_judged_by_explicit_code_not_by_the_schema tests/test_hla_projector.py::test_each_fixture_snapshot_projects_to_its_record tests/test_hla_projector.py::test_every_rule_of_the_entity_check_refuses_its_breach tests/test_hla_projector.py::test_no_dis_or_kml_code_is_imported_and_the_sdk_is_used_only_for_the_entity tests/test_hla_projector.py::test_project_state_checks_every_entity_before_returning_it tests/test_hla_projector.py::test_the_cdm_baseline_and_its_complete_entity_schema tests/test_hla_projector.py::test_the_entity_check_meets_hostile_values_with_a_defect_only tests/test_hla_projector.py::test_the_entity_validators_check_formats_and_read_anchors_as_ecma_262 tests/test_hla_projector.py::test_the_first_upsert_fixture_is_reproduced_byte_for_byte tests/test_hla_projector.py::test_the_fixture_upserts_pass_the_entity_check tests/test_hla_release.py::test_the_cdm_history_and_the_upgrade_rule_are_recorded",
-   "duration_s": 1.401,
+   "duration_s": 1.244,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5367,7 +5367,7 @@
    "id": "G-R44",
    "input_digests": {
     "tests/test_hla_projector.py": "a02bc7de805cdef63d531ed8b5c8968b0218ddaedd979a8169522c3a5dcbe725",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5480,7 +5480,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_positive_vector_decodes_to_its_twin_exactly tests/test_hla_contract.py::test_every_vendored_file_matches_its_pin tests/test_hla_replay.py::test_the_bundled_capture_replays_to_the_bundled_records",
-   "duration_s": 0.082,
+   "duration_s": 0.075,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5558,7 +5558,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_contract.py::test_every_vendored_file_matches_its_pin tests/test_hla_release.py::test_every_requirement_has_a_gate_and_every_case_a_concrete_test tests/test_hla_release.py::test_the_evidence_report_identifies_its_build_and_lists_every_case tests/test_hla_release.py::test_the_evidence_report_never_hides_not_tested_or_blocked_behind_a_pass tests/test_hla_release.py::test_the_geodesy_entry_states_cr_l20s_observation_and_where_each_pin_came_from tests/test_hla_release.py::test_the_mandatory_topics_of_r46_are_held_by_bound_cases_that_pass tests/test_hla_release.py::test_the_reference_runs_figures_are_its_results_and_carry_no_duration",
-   "duration_s": 4.547,
+   "duration_s": 3.933,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5566,7 +5566,7 @@
    "id": "G-R46",
    "input_digests": {
     "tests/test_hla_contract.py": "213224a69f2363b5e1069c429e66bb11bbe4c78989c3cc55e19949db6b360fb8",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5626,7 +5626,7 @@
    },
    "blocked_resource": "the reference tools built and run on the reference platform (GCC 13)",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (reference) or (rti)\" tests/test_hla_demo.py::test_nonzero_padding_survives_capture_export_and_replay_unchanged tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it tests/test_hla_release.py::test_the_documents_state_the_baseline_limitations tests/test_hla_release.py::test_the_report_carries_the_proj_version_cs2cs_stated_in_each_run_of_the_reference_group tests/test_hla_rti.py::test_the_bundles_fom_check_passes_against_an_rtinode_of_the_demos_kind tests/test_hla_rti.py::test_the_product_inverse_agrees_with_proj_forward_on_the_175_point_grid tests/test_hla_rti.py::test_the_reference_encoder_matches_the_nine_packaged_spatial_vectors_and_the_results",
-   "duration_s": 1.27,
+   "duration_s": 1.312,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5634,7 +5634,7 @@
    "id": "G-R47",
    "input_digests": {
     "tests/test_hla_demo.py": "9ac18343eb09182d5a0be859c3c04a16b1b9053e7d66f32c718cdb7178b5d85d",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "release",
@@ -5693,14 +5693,14 @@
    },
    "blocked_resource": "the release gates 'local OpenRTI lifecycle exercise' and 'performance test' on the reference platform",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_release.py::test_every_gate_that_needs_the_reference_platform_reads_blocked_naming_it tests/test_hla_release.py::test_the_evidence_report_never_hides_not_tested_or_blocked_behind_a_pass tests/test_hla_release.py::test_the_owner_list_is_complete_and_each_ruling_is_bound",
-   "duration_s": 0.475,
+   "duration_s": 0.375,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case G-R48 of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "G-R48",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5731,7 +5731,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_packaging.py::test_one_version_and_one_profile_wherever_the_release_states_them tests/test_hla_packaging.py::test_the_wheel_and_the_native_install_form_the_installed_product tests/test_hla_release.py::test_the_documents_hold_no_machine_path_credential_or_earlier_chat tests/test_hla_release.py::test_the_profile_declaration_enumerates_the_four_attributes_and_the_unsupported_services tests/test_hla_release.py::test_the_readme_lists_the_workers_exit_statuses_as_process_h_defines_them tests/test_hla_release.py::test_the_readme_shows_the_commands_of_a_clean_checkout_their_exits_and_their_files tests/test_hla_release.py::test_the_readme_states_what_a_stop_before_observes_session_self_test_and_an_overflow_do",
-   "duration_s": 3.41,
+   "duration_s": 3.607,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -5739,7 +5739,7 @@
    "id": "G-R49",
    "input_digests": {
     "tests/test_hla_packaging.py": "ce77192c44648ba6ba6f74f962ffc600a45f4a9395a73806c5d24500cc53c56b",
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5792,7 +5792,7 @@
    "expected": "the outcome case G-R50 of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "G-R50",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "release",
    "observations": [],
@@ -5929,7 +5929,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_positive_vector_decodes_to_its_twin_exactly",
-   "duration_s": 0.001,
+   "duration_s": 0.002,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -6037,7 +6037,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_positive_vector_decodes_to_its_twin_exactly",
-   "duration_s": 0.001,
+   "duration_s": 0.0,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -6217,7 +6217,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_codec.py::test_a_positive_vector_decodes_to_its_twin_exactly",
-   "duration_s": 0.002,
+   "duration_s": 0.001,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7405,7 +7405,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_every_order_of_the_four_attributes",
-   "duration_s": 0.464,
+   "duration_s": 0.416,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7464,7 +7464,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_valid_changed_force_and_a_malformed_spatial_together_apply_nothing",
-   "duration_s": 0.015,
+   "duration_s": 0.012,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7500,7 +7500,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_repair_after_an_atomic_rejection_restores_the_identity_and_the_next_revision",
-   "duration_s": 0.021,
+   "duration_s": 0.018,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7572,7 +7572,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_malformed_force_after_an_entity_invalidates_it_until_repaired",
-   "duration_s": 0.024,
+   "duration_s": 0.021,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7608,7 +7608,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_an_unmapped_force_warns_once_per_object_per_new_value",
-   "duration_s": 0.042,
+   "duration_s": 0.036,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7644,7 +7644,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_the_null_identifier_allocates_nothing_until_a_real_one_claims",
-   "duration_s": 0.019,
+   "duration_s": 0.018,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7680,7 +7680,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_two_active_tokens_asserting_one_triple_quarantine_both",
-   "duration_s": 0.035,
+   "duration_s": 0.03,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7716,7 +7716,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_changed_identifier_quarantines_the_token_for_its_incarnation",
-   "duration_s": 0.028,
+   "duration_s": 0.024,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7752,7 +7752,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_remove_then_rediscover_gives_the_next_incarnation_and_a_new_uuid",
-   "duration_s": 0.029,
+   "duration_s": 0.026,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7788,7 +7788,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_a_stop_during_a_reconnect_backoff_is_failed_with_the_connection_code tests/test_hla_host.py::test_a_failed_final_reconnect_is_failed tests/test_hla_host.py::test_a_reconnect_after_three_delays_is_a_new_generation_with_a_new_uuid tests/test_hla_host.py::test_a_successful_join_resets_the_retry_budget tests/test_hla_host.py::test_an_rti_that_never_answers_gives_the_unreachable_capture",
-   "duration_s": 7.456,
+   "duration_s": 7.565,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7829,7 +7829,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_capture_recorded_under_time_policy_none tests/test_hla_replay.py::test_a_capture_recorded_under_none_with_pauses_and_bursts_replays",
-   "duration_s": 0.048,
+   "duration_s": 0.042,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7867,7 +7867,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_force_only_update_keeps_the_spatial_effective_time",
-   "duration_s": 0.016,
+   "duration_s": 0.014,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7903,7 +7903,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_geodesy.py::test_a_body_frame_spatial_has_a_position_no_motion_and_keeps_its_body_values tests/test_hla_projector.py::test_a_body_frame_spatial_maps_its_position_and_keeps_its_body_values",
-   "duration_s": 0.014,
+   "duration_s": 0.012,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -7985,7 +7985,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_geodesy.py::test_course_follows_world_velocity_not_psi tests/test_hla_projector.py::test_course_follows_world_velocity_and_psi_is_kept",
-   "duration_s": 0.012,
+   "duration_s": 0.01,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8061,7 +8061,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_native.py::test_an_empty_map_is_a_captured_empty_reflection_with_no_state_output tests/test_hla_reducer.py::test_an_empty_reflection_changes_nothing_and_emits_nothing",
-   "duration_s": 0.184,
+   "duration_s": 0.199,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8142,7 +8142,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_reflection_or_removal_for_an_undiscovered_token_creates_nothing tests/test_hla_reducer.py::test_retractable_callbacks_for_a_token_that_is_not_an_object_quarantine_nothing",
-   "duration_s": 0.027,
+   "duration_s": 0.024,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8179,7 +8179,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_native.py::test_an_attribute_name_of_128_utf8_bytes_is_kept tests/test_hla_native.py::test_an_unsubscribed_attribute_is_captured_under_its_name_and_rejects_the_reflection tests/test_hla_native.py::test_more_than_four_supplied_attributes_end_the_session_with_nothing_copied tests/test_hla_reducer.py::test_an_unknown_attribute_rejects_its_reflection_atomically",
-   "duration_s": 0.528,
+   "duration_s": 0.642,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8226,7 +8226,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_remove_an_eligible_entity_then_repeat",
-   "duration_s": 0.015,
+   "duration_s": 0.012,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8262,7 +8262,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_generation_end_invalidates_every_identified_object_in_token_number_order",
-   "duration_s": 0.046,
+   "duration_s": 0.04,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8298,7 +8298,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_native.py::test_both_retraction_handle_overloads_are_captured_retractable_and_quarantine tests/test_hla_native.py::test_request_retraction_ends_the_generation_with_reason_retraction tests/test_hla_reducer.py::test_a_retractable_remove_quarantines_and_keeps_the_cache tests/test_hla_reducer.py::test_an_empty_retractable_reflection_quarantines_and_invalidates_an_eligible_object tests/test_hla_reducer.py::test_retractable_callbacks_are_diagnosed_quarantined_and_never_applied tests/test_hla_reducer.py::test_retractable_callbacks_for_a_token_that_is_not_an_object_quarantine_nothing",
-   "duration_s": 0.448,
+   "duration_s": 0.439,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8427,7 +8427,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_capture.py::test_a_hex_byte_changed_without_its_hash tests/test_hla_replay.py::test_an_invalid_capture_is_refused_with_or_without_allow_prefix",
-   "duration_s": 0.1,
+   "duration_s": 0.079,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8479,7 +8479,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_capture.py::test_footer_removed_and_last_frame_truncated tests/test_hla_replay.py::test_a_truncated_capture_is_refused_and_replays_as_a_prefix_on_request",
-   "duration_s": 0.058,
+   "duration_s": 0.051,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8519,7 +8519,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_capture.py::test_a_validly_rehashed_capture_with_a_skipped_seq",
-   "duration_s": 0.004,
+   "duration_s": 0.003,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8555,7 +8555,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_capture.py::test_an_escape_spelled_another_way_is_noncanonical tests/test_hla_capture.py::test_spaces_or_another_order_in_an_otherwise_valid_line",
-   "duration_s": 0.058,
+   "duration_s": 0.055,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8603,7 +8603,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_replay.py::test_the_bundled_capture_replays_to_the_bundled_records tests/test_hla_replay.py::test_the_checkpoints_of_the_bundle tests/test_hla_replay.py::test_two_replays_write_identical_directories",
-   "duration_s": 0.104,
+   "duration_s": 0.091,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8641,7 +8641,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_a_prefix_replay_exits_3_and_its_evidence_is_prefix_only_never_pass tests/test_hla_replay.py::test_a_capture_without_its_footer_replays_whole_as_a_prefix tests/test_hla_replay.py::test_a_failed_capture_is_refused_unless_replayed_as_a_prefix tests/test_hla_replay.py::test_a_truncated_capture_is_refused_and_replays_as_a_prefix_on_request",
-   "duration_s": 1.387,
+   "duration_s": 1.4,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8681,7 +8681,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_reducer.py::test_a_record_delivered_twice_is_applied_once",
-   "duration_s": 0.024,
+   "duration_s": 0.021,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8717,7 +8717,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service",
-   "duration_s": 1.158,
+   "duration_s": 1.233,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8751,7 +8751,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_demo.py::test_the_observer_of_a_real_demo_session_calls_no_publication_or_control_service tests/test_hla_rti.py::test_a_federation_that_does_not_exist_is_refused_and_still_does_not_exist_afterwards",
-   "duration_s": 1.233,
+   "duration_s": 1.304,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8787,7 +8787,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_rti.py::test_a_federation_without_spatial_is_e_fom_profile_without_fallback_or_retry",
-   "duration_s": 0.066,
+   "duration_s": 0.067,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8821,7 +8821,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_demo.py::test_the_demo_object_is_reported_at_physical_entity_though_registered_at_ground_vehicle tests/test_hla_rti.py::test_an_existing_mode_session_reports_physical_entity_for_a_ground_vehicle",
-   "duration_s": 0.812,
+   "duration_s": 0.879,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8857,7 +8857,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_rti.py::test_a_federate_name_already_joined_is_e_federate_name_never_renamed_never_retried",
-   "duration_s": 0.06,
+   "duration_s": 0.053,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8891,7 +8891,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_cli.py::test_a_stop_that_needs_force_is_e_rti_timeout_and_exit_5 tests/test_hla_host.py::test_a_call_that_never_returns_is_killed_and_recorded_as_e_rti_timeout tests/test_hla_host.py::test_the_default_seam_holds_the_specifications_values tests/test_hla_native.py::test_a_listener_that_never_answers_is_the_host_deadline",
-   "duration_s": 79.168,
+   "duration_s": 79.869,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8943,7 +8943,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_native.py::test_a_batch_beyond_the_queue_bound_overflows_keeping_everything_accepted tests/test_hla_native.py::test_a_host_that_stops_reading_fills_the_queue_and_never_blocks_a_callback tests/test_hla_native.py::test_a_logical_time_and_a_removals_tag_count_toward_the_byte_bound tests/test_hla_native.py::test_an_overflow_under_the_host_ends_failed_with_the_failure_from_fd_3 tests/test_hla_native.py::test_nothing_after_a_refusal_by_frames_is_captured_once_the_queue_has_room_again tests/test_hla_native.py::test_nothing_after_the_refused_callback_of_a_batch_is_captured tests/test_hla_native.py::test_the_byte_bound_admits_a_record_that_fills_it_exactly_and_refuses_one_byte_more",
-   "duration_s": 13.983,
+   "duration_s": 12.862,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -8991,7 +8991,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_host.py::test_ten_thousand_objects_then_one_more",
-   "duration_s": 17.677,
+   "duration_s": 16.013,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9027,7 +9027,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_native.py::test_a_4096_byte_value_is_captured_and_a_4097_byte_value_is_never_copied",
-   "duration_s": 0.181,
+   "duration_s": 0.197,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9061,7 +9061,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_native.py::test_a_4096_byte_tag_is_captured_and_a_4097_byte_tag_ends_the_session",
-   "duration_s": 0.349,
+   "duration_s": 0.392,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9096,7 +9096,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_host.py::test_a_retry_whose_frames_would_enter_the_reserve_ends_the_session tests/test_hla_host.py::test_the_capture_keeps_its_reserve_and_never_passes_the_file_limit",
-   "duration_s": 1.929,
+   "duration_s": 1.874,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9134,7 +9134,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_a_capture_that_cannot_be_written_is_e_io_and_exit_6 tests/test_hla_host.py::test_a_file_size_limit_on_the_host_process_is_e_io tests/test_hla_host.py::test_a_full_disk_at_the_footer_claims_no_footer tests/test_hla_host.py::test_a_full_disk_is_e_io_and_never_a_complete_capture tests/test_hla_host.py::test_a_timed_fsync_that_fails_ends_the_session_with_e_io tests/test_hla_host.py::test_an_fsync_that_fails_before_a_backoff_ends_the_session_with_e_io tests/test_hla_host.py::test_an_fsync_that_fails_is_e_io tests/test_hla_host.py::test_the_header_and_the_files_themselves_can_fail",
-   "duration_s": 8.753,
+   "duration_s": 8.798,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9180,7 +9180,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_cli.py::test_a_signal_to_the_command_stops_the_session_in_order_and_exits_0 tests/test_hla_cli.py::test_stop_signals_through_the_end_of_an_observe_session_leave_its_exit_0 tests/test_hla_host.py::test_a_second_signal_does_not_shorten_the_orderly_stop tests/test_hla_host.py::test_a_signal_to_a_real_host_process_stops_it_in_order tests/test_hla_host.py::test_a_stop_that_needs_force_is_failed_with_e_rti_timeout tests/test_hla_host.py::test_a_worker_without_its_channels_that_was_asked_to_stop_is_bounded_by_the_stop tests/test_hla_host.py::test_the_duration_bound_performs_the_orderly_stop tests/test_hla_host.py::test_the_orderly_stop_in_process tests/test_hla_rti.py::test_observe_joined_to_a_real_federation_stops_in_order_and_exits_0",
-   "duration_s": 42.028,
+   "duration_s": 42.776,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9240,7 +9240,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_config.py::test_a_nonloopback_endpoint_without_allow_remote_is_refused_before_any_socket",
-   "duration_s": 0.0,
+   "duration_s": 0.001,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9281,7 +9281,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_cli.py::test_demo_checks_the_fom_pins_before_its_directory_exists tests/test_hla_cli.py::test_observe_without_its_dependencies_is_exit_4_before_the_run_directory tests/test_hla_cli.py::test_self_test_with_a_changed_fom_module_fails_its_pin_check_with_exit_4 tests/test_hla_cli.py::test_validate_config_with_a_changed_or_absent_fom_module_is_exit_4 tests/test_hla_fom.py::test_a_module_of_another_size_is_refused_without_being_read tests/test_hla_fom.py::test_every_way_a_module_can_be_wrong_is_e_dependency_pin tests/test_hla_fom.py::test_one_changed_byte_in_a_local_fom_module",
-   "duration_s": 7.5,
+   "duration_s": 7.977,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9331,7 +9331,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_fom.py::test_a_fom_with_a_dtd_an_external_reference_or_a_forbidden_construct_is_refused tests/test_hla_fom.py::test_any_bytes_give_acceptance_or_e_dependency_pin_and_nothing_else tests/test_hla_fom.py::test_each_pinned_module_passes_at_its_own_depth_and_size_and_not_one_below tests/test_hla_fom.py::test_no_encoding_name_but_utf_8_is_read_whatever_the_codec_registry_knows tests/test_hla_fom.py::test_the_size_bound_is_2_mib_inclusive tests/test_hla_fom.py::test_what_a_pinned_module_may_hold_is_accepted",
-   "duration_s": 0.38,
+   "duration_s": 0.344,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9426,7 +9426,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (rti)\" tests/test_hla_demo.py::test_the_checkpoints_judge_the_bundled_run_and_fail_exactly_where_it_is_wrong tests/test_hla_demo.py::test_the_demo_passes_every_checkpoint_and_leaves_nothing_behind",
-   "duration_s": 2.547,
+   "duration_s": 2.686,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9491,7 +9491,7 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(rti)\" tests/test_hla_rti.py::test_the_reference_encoder_matches_the_nine_packaged_spatial_vectors_and_the_results",
-   "duration_s": 0.007,
+   "duration_s": 0.012,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
@@ -9525,14 +9525,14 @@
    },
    "blocked_resource": "R42's recorded 4-vCPU x86_64 machine with 8 GiB on the reference platform",
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference) or (perf)\" tests/test_hla_release.py::test_the_performance_assessment_states_what_the_runs_recorded tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target",
-   "duration_s": 71.075,
+   "duration_s": 69.48,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case A-PERFORMANCE of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "A-PERFORMANCE",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165",
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e",
     "tests/test_hla_rti.py": "8459940475811c7282258257b6ecc2b8f32a336475a5523b80be9d2e818d3e1c"
    },
    "layer": "integration",
@@ -9553,7 +9553,7 @@
         "mount_point": "/System/Volumes/Data",
         "type": "apfs"
        },
-       "load_average_1m": "4.41",
+       "load_average_1m": "1.08",
        "machine": "arm64",
        "memory_bytes": 137438953472,
        "python": "3.12.13",
@@ -9562,14 +9562,14 @@
        "worker_sha256": "377c145fc3f73ed10376449a560129610aface8e034df88340c2d28a9d6e7234"
       },
       "overflow": false,
-      "p50_ms": 1042,
-      "p95_ms": 1522,
-      "p95_ns": 1522491000,
-      "p99_ms": 1621,
+      "p50_ms": 480,
+      "p95_ms": 875,
+      "p95_ns": 875982000,
+      "p99_ms": 1120,
       "session_status": "COMPLETE",
       "shape": "perf:1000:1:60",
       "terminal_codes": [],
-      "throughput_per_s": 994
+      "throughput_per_s": 1001
      },
      "run": "perf-py312",
      "test": "tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target"
@@ -9608,14 +9608,14 @@
    },
    "blocked_resource": null,
    "command": "python -m pytest -p no:cacheprovider -m \"(not rti and not perf and not reference)\" tests/test_hla_release.py::test_the_evidence_report_identifies_its_build_and_lists_every_case tests/test_hla_release.py::test_the_evidence_report_never_hides_not_tested_or_blocked_behind_a_pass tests/test_hla_release.py::test_the_geodesy_entry_states_cr_l20s_observation_and_where_each_pin_came_from tests/test_hla_release.py::test_the_report_carries_the_proj_version_cs2cs_stated_in_each_run_of_the_reference_group",
-   "duration_s": 0.062,
+   "duration_s": 0.055,
    "evidence_class": [
     "DEV-macOS-arm64"
    ],
    "expected": "the outcome case A-EVIDENCE of the handoff's acceptance-cases.json prescribes, as the binding tests assert it",
    "id": "A-EVIDENCE",
    "input_digests": {
-    "tests/test_hla_release.py": "34688ddfb686492f8cdb2f81b2fe6d0227f41cfa271d82060c3ecdcee0b47165"
+    "tests/test_hla_release.py": "f56be34b96e12903630548c82824de90c9792b14a13f340e75906df949a3146e"
    },
    "layer": "behavior",
    "observations": [],
@@ -10422,7 +10422,7 @@
   }
  ],
  "performance": {
-  "assessment": "R42's 1000 reflections per second with every reflection projected and validated as a CDM Entity (R44) is AT RISK on a 4-vCPU machine: in R42's shape with that configuration the worker's queue overflowed in 2 of the 3 Linux aarch64 runs (reference_run); this session's development run lost no load reflection (60000 of 60000 output), with a p95 callback-to-output delay of 1522 ms against R42's 250 ms (observation below) (CR-L17, CR-R8-12)",
+  "assessment": "R42's 1000 reflections per second with every reflection projected and validated as a CDM Entity (R44) is AT RISK on a 4-vCPU machine: in R42's shape with that configuration the worker's queue overflowed in 2 of the 3 Linux aarch64 runs (reference_run); this session's development run lost no load reflection (60000 of 60000 output), with a p95 callback-to-output delay of 875 ms against R42's 250 ms (observation below) (CR-L17, CR-R8-12)",
   "blocked_resource": "R42's recorded 4-vCPU x86_64 machine with 8 GiB on the reference platform",
   "observations": [
    {
@@ -10441,7 +10441,7 @@
        "mount_point": "/System/Volumes/Data",
        "type": "apfs"
       },
-      "load_average_1m": "4.41",
+      "load_average_1m": "1.08",
       "machine": "arm64",
       "memory_bytes": 137438953472,
       "python": "3.12.13",
@@ -10450,14 +10450,14 @@
       "worker_sha256": "377c145fc3f73ed10376449a560129610aface8e034df88340c2d28a9d6e7234"
      },
      "overflow": false,
-     "p50_ms": 1042,
-     "p95_ms": 1522,
-     "p95_ns": 1522491000,
-     "p99_ms": 1621,
+     "p50_ms": 480,
+     "p95_ms": 875,
+     "p95_ns": 875982000,
+     "p99_ms": 1120,
      "session_status": "COMPLETE",
      "shape": "perf:1000:1:60",
      "terminal_codes": [],
-     "throughput_per_s": 994
+     "throughput_per_s": 1001
     },
     "run": "perf-py312",
     "test": "tests/test_hla_rti.py::test_r42_load_on_the_reference_machine_without_loss_within_the_p95_target"
@@ -11006,19 +11006,19 @@
      "exit": 0,
      "expected": "0",
      "line": "venv/bin/synapse-hla inspect --capture demo/main/capture.jsonl",
-     "tail": "{\"cli_summary_version\":1,\"command\":\"inspect\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"b3ccb7a77a6374ac163f1dad11c58e06ae6dc557224ca7efcac2361140f78833\",\"last_sha256\":\"5d4ab65989657f44220d8f8f54cdee64905c0a6de40ec5889a065999b24ab89d\",\"capt"
+     "tail": "{\"cli_summary_version\":1,\"command\":\"inspect\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"088b3005d32c8d3d79b4a4e7e57fd9a1c3b696dcc9158420d374800bc01f152e\",\"last_sha256\":\"677d08d18fcf684595317ec24cfa48c294ee4c7ddcd55970c56e94d5362207a0\",\"capt"
     },
     {
      "exit": 0,
      "expected": "0",
      "line": "venv/bin/synapse-hla verify --capture demo/main/capture.jsonl",
-     "tail": "{\"cli_summary_version\":1,\"command\":\"verify\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"b3ccb7a77a6374ac163f1dad11c58e06ae6dc557224ca7efcac2361140f78833\",\"last_sha256\":\"5d4ab65989657f44220d8f8f54cdee64905c0a6de40ec5889a065999b24ab89d\",\"captu"
+     "tail": "{\"cli_summary_version\":1,\"command\":\"verify\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"088b3005d32c8d3d79b4a4e7e57fd9a1c3b696dcc9158420d374800bc01f152e\",\"last_sha256\":\"677d08d18fcf684595317ec24cfa48c294ee4c7ddcd55970c56e94d5362207a0\",\"captu"
     },
     {
      "exit": 0,
      "expected": "0",
      "line": "venv/bin/synapse-hla replay --capture demo/main/capture.jsonl --out replay",
-     "tail": "{\"cli_summary_version\":1,\"command\":\"replay\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"b3ccb7a77a6374ac163f1dad11c58e06ae6dc557224ca7efcac2361140f78833\",\"last_sha256\":\"5d4ab65989657f44220d8f8f54cdee64905c0a6de40ec5889a065999b24ab89d\",\"captu"
+     "tail": "{\"cli_summary_version\":1,\"command\":\"replay\",\"exit_code\":0,\"codes\":[],\"result\":{\"verification\":{\"verify_report_version\":1,\"status\":\"COMPLETE\",\"code\":null,\"path\":null,\"message\":null,\"verified_seq\":9,\"verified_bytes\":5097,\"frames\":8,\"header_sha256\":\"088b3005d32c8d3d79b4a4e7e57fd9a1c3b696dcc9158420d374800bc01f152e\",\"last_sha256\":\"677d08d18fcf684595317ec24cfa48c294ee4c7ddcd55970c56e94d5362207a0\",\"captu"
     },
     {
      "exit": 0,
@@ -11076,7 +11076,7 @@
     "stdout": "{\"name\":\"synapse-hla\",\"version\":\"1.0.0\",\"profile\":\"SC-HLA-RPR2-OBS-1\"}"
    },
    "wheel": "synapse_hla-1.0.0-py3-none-any.whl",
-   "wheel_sha256": "f06b0109d3c341b81e439f5bdfbe98233c9b13c535e8490fdf7e2c64daf72a47"
+   "wheel_sha256": "6fc6db0012f2b4e334394c29c21c8beda4f60ff608ef4cc213a32f12c6382eb8"
   }
  },
  "status": "BLOCKED"

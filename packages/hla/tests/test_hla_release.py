@@ -170,7 +170,7 @@ def test_the_evidence_report_identifies_its_build_and_lists_every_case(bindings,
     digest, files = release_evidence.source_digest()
     assert (build["source_sha256"], build["source_files"]) == (digest, files), (
         "the evidence report describes another tree: regenerate it after the last change")
-    assert build["base_commit"] == "9c0f1d7e35fbe1d0d93926dd6726f0274c7a3e9d"
+    assert build["base_commit"] == "36086bb5db88e6679812c6548bdbcc503b6e854f"
     assert build["source_commit"] is None and "never invented" in build["source_commit_note"]
     assert build["native"]["worker_sha256"] and build["native"]["cmake"]
     assert build["commands"]["openrti"].startswith("bash tools/build_openrti.sh")
