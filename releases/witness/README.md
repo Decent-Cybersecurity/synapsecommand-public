@@ -15,7 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
-python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json releases/witness/3.2.0.json releases/witness/3.3.0.json releases/witness/3.4.0.json releases/witness/3.5.0.json releases/witness/3.6.0.json releases/witness/3.7.0.json releases/witness/3.8.0.json releases/witness/3.9.0.json --offline  # every record here
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json releases/witness/3.0.1.json releases/witness/3.1.1.json releases/witness/3.2.0.json releases/witness/3.3.0.json releases/witness/3.4.0.json releases/witness/3.5.0.json releases/witness/3.6.0.json releases/witness/3.7.0.json releases/witness/3.8.0.json releases/witness/3.9.0.json releases/witness/3.9.1.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -271,6 +271,28 @@ tagged commit, the ninth approval to follow the rule about the approval comment,
 `PUBLICATION.md` entry 31 is the ledger's account. The directory holds twelve records: four built
 by hand and eight the pipeline's.
 
+**`3.9.1.json` is the pipeline's own record for the ninth time, 2026-10-26 — the twelfth
+execution, and the rule followed again.** On the `v3.9.1` run
+([40338462124](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/40338462124))
+all six jobs succeeded, the `witness` job included. Its build step read the run's one approval —
+given at 16:21:38Z on 2026-10-26, the day the tag was pushed, by `decentcybersecurity` with a
+comment naming the readiness report at the tagged commit, so `review_file` is derived from the
+comment and designated by nobody — and the `pypi` deployment's status history (`waiting` 16:21:20Z,
+`queued` 16:21:38Z, `in_progress` 16:21:41Z, `success` 16:22:27Z), fetched the attestation store by
+the wheel's digest, and wrote `witness-3.9.1.json for v3.9.1 (2 files, 1 approval(s))`. Its verify
+step, `--download --assets assets` with a token, read `VERIFIED witness-3.9.1.json (3.9.1, against
+the index and Release and the assets under assets)`. Its attach step uploaded the file to the
+Release, where it is the ninth asset, 2 188 bytes, sha256
+`b8985f6d0caac271858055eaf3061dace4324e382ec910a709c12c0390e246d5`. `3.9.1.json` here is that
+asset byte for byte — the same digest, which `tests/test_cdm_witness.py` holds — downloaded by the
+witness round and verified again in every mode before it was committed: offline against the Release
+download, online with `--download`, with `--download --assets` and a token, and offline over all
+thirteen records. `PUBLICATION.md` entry 32 is the ledger's account. Its approval is the tenth to
+follow the rule about the approval comment the release procedure has carried since 2026-09-17,
+after `v3.0.1`'s, `v3.2.0`'s, `v3.3.0`'s, `v3.4.0`'s, `v3.5.0`'s, `v3.6.0`'s, `v3.7.0`'s,
+`v3.8.0`'s and `v3.9.0`'s. The directory holds thirteen records: four built by hand and nine the
+pipeline's.
+
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
 The two are the same facts for two different readers and neither replaces the other: the ledger
@@ -414,6 +436,14 @@ into `review_file` from the approval's own words; `--review-file` was not passed
 `comment` and `review_file` name the same document. It is the ninth record in this directory whose
 `review_file` was derived rather than designated, and the first hand-built one: `2.1.2.json` names
 a private document, and `2.2.0.json` and `3.1.1.json` a designation made after empty comments.
+
+**What `review_file` means for 3.9.1 — derived, as for 3.0.1, 3.2.0, 3.3.0, 3.4.0, 3.5.0, 3.6.0,
+3.7.0, 3.8.0 and 3.9.0 (2026-10-26).** The `pypi` approval of the `v3.9.1` run carried the comment
+*Approved on the readiness report at the release commit:* followed by the report's URL at
+`551afa66`, the release commit and the commit the tag names, so the builder lifted that URL into
+`review_file` from the approval's own words; `--review-file` was not passed, and the record's
+`comment` and `review_file` name the same document. It is the tenth record in this directory whose
+`review_file` was derived rather than designated.
 
 ## What the verifier does not do
 
