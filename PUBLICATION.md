@@ -919,6 +919,7 @@ Every recorded source commit resolves in this repository's history; none is from
 | `5a8657ec` | 2026-10-24 21:39:17 | `823c409e` | **did not exist** — deployed by the docs act after ledger entry 29, from `main`'s tip after the witness commit, on that entry |
 | `91a32135` | 2026-10-25 13:13:22 | `58571db0` | **did not exist** — uploaded by the maintainer after ledger entry 30 from a sibling checkout still at the tree before the 3.8.0 landing, so it served 3.7.0's pages for fourteen minutes until the next row, on that entry |
 | `f57ae357` | 2026-10-25 13:27:23 | `0d4cf0e0` | **did not exist** — deployed by the docs act after ledger entry 30, from `main`'s tip after the witness commit, on that entry |
+| `2d2c0015` | 2026-10-28 09:01:57 | `6df35861` | **did not exist** — deployed by the one docs act after ledger entries 31 and 32, from `main`'s tip after the 3.9.1 witness commit, on entry 32 with a dated pointer on entry 31 |
 | `aea2e9d4` | 2026-10-16 04:21:48 | `75868e56` | **did not exist** — deployed by the docs act after ledger entry 26, from `main`'s tip after the witness commit, on that entry |
 | `c6718d44` | 2026-10-08 10:43:16 | `a476f74f` | **did not exist** — deployed by the docs act after ledger entry 25, from `main`'s tip after the witness commit, on that entry |
 | `bd0c1d8b` | 2026-09-22 09:55:20 | `184a1e34` | **did not exist** — deployed by the docs act of the 3.1.1 witness round, from the release commit's tree with the round's uncommitted edits (`commit_dirty: true`), on ledger entry 23 |
@@ -948,7 +949,7 @@ were **true when written** by commit `7544880`, whose table carried five rows ab
 below them, and whose second sentence balanced its pair over that same set. What falsified them is this
 repository's own later act rather than any error in the reading: commit `1fc35e8` appended the
 `222a55be` row when the 1.2.1 release deployed at `12:37:06Z`, and **the enumeration grew while the
-prose count did not**. The list this entry accounts for is **thirty-five deployments — twenty-four carrying a
+prose count did not**. The list this entry accounts for is **thirty-six deployments — twenty-five carrying a
 row and eleven covered by the naming paragraph below**, derived at writing time from
 [`gates/deploy_record.py`](gates/deploy_record.py)'s own reconciliation rather than counted by hand.
 **Only the total is restated, and the split it is restated by is the gate's.** The second sentence's
@@ -981,11 +982,12 @@ hides.** `ccfa7476` went up at `07:01:45` — ninety-two seconds *after* the `e4
 Nothing rested on the ordering; it is recorded because the phrase was doing work it could not do.
 
 **The alias, and which deployment serves it.** `docs.synapsecommand.com` is served by deployment
-`f57ae357`. Witnessed **2026-10-25 at 13:27:59Z** by bytes and not read off a settings field: the
-changelog page fetched from the domain was byte-identical to the local build and to `f57ae357`'s own
-`pages.dev` URL, thirty-six seconds after the deploy stage ended, and the gate's own
+`2d2c0015`. Witnessed **2026-10-28 at 09:51:41Z** by bytes and not read off a settings field: the
+changelog page fetched from the domain was byte-identical to the local build and to `2d2c0015`'s own
+`pages.dev` URL, forty-nine minutes after the deploy stage ended, and the gate's own
 five-page reading after the record was rewritten is in the paragraph below. **The pin moved in the
-commit that follows the deploy**, which is what this paragraph is for; it named `5a8657ec` for fifteen hours and thirty-four minutes
+commit that follows the deploy**, which is what this paragraph is for; it named `f57ae357` for two days, nineteen hours and thirty-four minutes
+until the docs act after entries 31 and 32 superseded it at `09:01:57Z` on 2026-10-28, before that `5a8657ec` for fifteen hours and thirty-four minutes
 until the maintainer's upload `91a32135` superseded it at `13:13:22Z` on 2026-10-25 — a sibling checkout's build of
 the tree before the 3.8.0 landing, which served for fourteen minutes until the 3.8.0 docs act superseded it at
 `13:27:23Z` the same day — before that `588c4628` for five days, nine hours and sixteen minutes
@@ -1018,12 +1020,14 @@ at `11:08:42Z`, before that
 `08:03:16Z`, and before that `5ed34cd8` until the 1.2.1 release superseded it at `12:37:06Z` — every
 superseded reading is ledger entry 8's table rather than a struck sentence here, because the id is
 the claim and a paragraph carrying two live ones is a paragraph a parser has to guess at.
-**`gates/deploy_record.py` refused this record before it was rewritten**, at `13:19:43Z` on
-2026-10-25, naming `91a32135` as the one deployment of thirty-four that the table could not name —
-the nineteenth time the gate has caught its own round's upload, and the time its naming of the source
-commit, `58571db`, is what showed the upload was of the wrong tree — and again at `13:28:01Z`, after
-the second upload, naming `91a32135` and `f57ae357` as the two of thirty-five it could not name; that
-is the reason the id here is never edited from memory (the eighteenth, at `21:39:48Z` on 2026-10-24,
+**`gates/deploy_record.py` refused this record before it was rewritten**, at `09:52:13Z` on
+2026-10-28, naming `2d2c0015` (`50 minutes ago`, `source 6df3586`) as the one deployment of
+thirty-six that the table could not name — the twentieth time the gate has caught its own round's
+upload; that is the reason the id here is never edited from memory (the nineteenth, at `13:19:43Z`
+on 2026-10-25, named `91a32135` as the one of thirty-four it could not name, its naming of the source
+commit, `58571db`, being what showed that upload was of the wrong tree, and again at `13:28:01Z`,
+after the second upload, named `91a32135` and `f57ae357` as the two of thirty-five; the eighteenth,
+at `21:39:48Z` on 2026-10-24,
 named `5a8657ec` the same way; the seventeenth, at `12:22:57Z` on 2026-10-19, named
 `588c4628`; the sixteenth, at `04:38:25Z` on 2026-10-17, named `7d482617`; the
 fifteenth, at `04:24:08Z` on 2026-10-16, named
@@ -1032,10 +1036,10 @@ thirteenth, at `09:55:46Z` on 2026-09-22, named `bd0c1d8b`; the
 twelfth, at `15:59:36Z` on 2026-09-20, named `6a78d173`; the eleventh, at `20:04:31Z` on 2026-09-17,
 named `880bf67c`; the tenth, at `17:40:20Z` the same day, named `9f0e9022`; the ninth, on 2026-09-12,
 named `7031ab1f` against bytes that said `87f0989f`).
-After the two rows, the count and the alias paragraph moved in one edit, the gate read **25 listed; 24 with a row, 11 covered retrospectively; 0 unaccounted for; 10
-recorded beyond the window: `039866b1`, `090a5edb`, `10d0dc94`, `1ba36baf`, `323dff1f`, `33e0e1ba`, `7489e528`, `bbfad083`, `c9494c05`, `fc7bc5db`**,
-and the alias at `f57ae357` — identical on all five probe pages and differing from `91a32135` on all
-five — at `13:30:08Z` on 2026-10-25, which is the five-page reading the paragraph above defers to. **And since 2026-09-17 the list it reconciles is a
+After the row, the count, the alias paragraph and the refusal sentence moved in one edit, the gate read **25 listed; 25 with a row, 11 covered retrospectively; 0 unaccounted for; 11
+recorded beyond the window: `039866b1`, `090a5edb`, `10d0dc94`, `1ba36baf`, `323dff1f`, `33e0e1ba`, `7489e528`, `bbfad083`, `c9494c05`, `e4a1c33d`, `fc7bc5db`**,
+and the alias at `2d2c0015` — identical on all five probe pages and differing from `f57ae357` on all
+five — at `10:01:38Z` on 2026-10-28, which is the five-page reading the paragraph above defers to. **And since 2026-09-17 the list it reconciles is a
 window**: `wrangler` returns the newest twenty-five deployments and no page, so from the twenty-sixth
 on the oldest ids this entry names sit beyond the list — `039866b1` first — and the gate names them as
 beyond it rather than refusing them; entry 20's second deploy carries the finding and the repair. Identical to one deployment and
@@ -5631,6 +5635,20 @@ unimplemented and that no peer was exercised, and every fixture of theirs is syn
 release notes say. And it does not claim PyPI's `provenance` key is absent on any release but those
 this ledger has read.
 
+**THE DEPLOY, 2026-10-28 — THE LATER ACT THE PARAGRAPH ABOVE NAMED, WRITTEN IN THE COMMIT AFTER
+ENTRY 32'S.** One docs act carried this release's pages and 3.9.1's to the site together: deployment
+`2d2c0015`, source `6df3586` — `main`'s tip after the 3.9.1 witness commit, which is entry 32's — the
+deploy stage ended at 09:01:57Z on 2026-10-28, uploaded by the maintainer in their own terminal. So
+through the 3.9.0 and 3.9.1 releases and until that act the site served 3.8.0's pages, whose support
+matrix names none of `stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` (0
+occurrences of each at `f57ae357`'s own `pages.dev` URL, read at 10:03:52Z on 2026-10-28) and whose
+changelog ends at `package is at <code>3.8.0</code>` — 99 319 bytes,
+`2628aecf93f3a7b94921e262562bf4cbd190634ef3c143c94c14201a43457929`, the bytes entry 30 recorded. The
+record of that act — the readings that give the second, the bytes the alias served, the gate's
+refusal and reconciliation — is written once, at the end of entry 32, and its row is entry 8's; this
+paragraph is the pointer, so that the "does not claim the documentation site is deployed" sentence
+above reads as what it was when written.
+
 ### 32. `synapse-cdm` 3.9.1 is on the index — CLOSED, and it is the release that carries the HLA observer, the sibling distribution `synapse-hla` 1.0.0, in the tag (CDM schema 3.2.0 unchanged), whose tag names its release commit, and the ninth whose witness record the pipeline built, verified and attached
 
 **Published 2026-10-26** by
@@ -5810,6 +5828,87 @@ overall with every release gate that needs the reference platform BLOCKED, and i
 the development classes `DEV-macOS-arm64` and `DEV-linux-aarch64` only, as the release notes say.
 And it does not claim PyPI's `provenance` key is absent on any release but those this ledger has
 read.
+
+**THE DEPLOY, 2026-10-28 — THE LATER ACT THE PARAGRAPH ABOVE NAMED, AND THIS IS ITS RECORD, WRITTEN
+IN THE COMMIT AFTER THIS ENTRY'S. ONE UPLOAD CARRIED 3.9.0'S PAGES AND THIS RELEASE'S TOGETHER.** No
+docs act followed entry 30's: Cloudflare's list holds nothing between `f57ae357`, entry 30's
+deployment, and this one, and at 17:21:37Z on 2026-10-26 the domain was byte-identical to `f57ae357`
+on all eight pages this record probes, its changelog the 99 319 bytes entry 30 recorded,
+`2628aecf93f3a7b94921e262562bf4cbd190634ef3c143c94c14201a43457929`, its sentences of the form
+`package is at <code>N.N.N</code>` ending at `3.8.0` — so through the 3.9.0 and 3.9.1 releases and
+until this act the site served 3.8.0's pages, whose support matrix names none of the three STANAG 4559
+translator adapter modules (0 occurrences of each at `f57ae357`'s own `pages.dev` URL, read at
+10:03:52Z on 2026-10-28). The site was built from the clean tree at `main`'s tip, `6df35861` — the 3.9.1
+witness commit, this entry's — at 17:16:51–17:17:01Z on 2026-10-26, with `npm --prefix docs ci` and
+`npm --prefix docs run ci`, whose schema check, typecheck, build and built-admonition check passed
+(21 directives, 21 admonitions, 33 built pages, 80 files) and left the tree clean, and it was uploaded
+with `docs/README.md`'s second documented command from the root of that checkout **by the maintainer
+in their own terminal**, as at
+3.7.0 and 3.8.0, where the round's harness had refused to run the upload itself; this round did not try
+it and asked the maintainer from the start. The 3.9.0 arc's build earlier that day, at 02:07:11–02:07:20Z
+on the 3.9.0 witness commit `9c0f1d7e`, was discarded unuploaded when 3.9.1 moved `main`, so that the
+site would serve `main`'s tip and not a tree behind it; the one build that went up is this one.
+
+**Deployment `2d2c0015`, source `6df3586`, the deploy stage ended at 09:01:57Z** — environment
+Production, branch `main`, preview `https://2d2c0015.synapsecommand-docs.pages.dev`. **A clock read
+brackets the command**: the maintainer's `python3 -c` read 09:01:43.208932Z before `npx wrangler`
+started and 09:01:58.269930Z after `Deployment complete!`, so the stage end lies inside those fifteen
+seconds by this machine's clock, which agreed with Cloudflare's `Date` header to the second, or the
+next, when probed (09:53:13–14Z against `09:53:14 GMT`). Inside that command npx installed wrangler
+4.154.0 — the npx cache copy's files are dated 09:01:48Z, five seconds into the bracket and before the
+upload — and it reported 48 files uploaded and 32 already held, the 80 files the local build holds, in
+3.30 seconds by its own clock. Wrangler's list, read continuously from 09:51:23Z, forty-nine minutes
+after, gave the second the way entries 29 and 30 read theirs: five hundred and eighty-four readings in
+whole minutes, from `49 minutes ago` to `57 minutes ago` across eight minute flips, each with
+wrangler's whole run between two clock reads. At the first flip, `49 minutes ago` in [09:51:56.053Z,
+09:51:56.847Z] puts the stage end's whole second after 09:01:56.053Z, and `50 minutes ago` in
+[09:51:56.849Z, 09:51:57.679Z] puts it at or before 09:01:57.679Z; the bundled age renderer,
+timeago.js 4.0.2 in the same wrangler 4.154.0 copy that deployed — its `toDate` strips the fraction of
+`ended_on` before subtracting, `diffSec` divides, `formatDiff` floors — reproduces all five hundred and
+eighty-four readings against 09:01:57.000000Z and 09:01:57.999999Z, five hundred and eighty against
+09:01:56 and five hundred and seventy-five against 09:01:58. **The deploy stage ended at or after
+09:01:57.000Z and before 09:01:58.000Z by Cloudflare's clock**, inside the maintainer's bracket, and
+this record states no finer instant.
+**The alias served the new pages when it was read**: at **09:51:41Z**, forty-nine minutes after the
+stage end — the readings and probes began when the maintainer's pasted output reached the round, not
+when the stage ended, so this record says that the alias had moved and not how soon —
+`https://docs.synapsecommand.com/changelog/` was byte-identical to the local build and to the
+deployment's own `pages.dev` URL — 102 868 bytes,
+`b9a14f37033f819aec0448c2e187b22eca65da0d3a03c1c49a85c52bfffdbdef`, on all three — and differed from
+`f57ae357`'s; at the same read the gate's five probe pages, the release-pipeline page (57 747 bytes)
+and the current-contracts page (46 936 bytes) were byte-identical across the domain, `2d2c0015` and
+the local build, and each differed from `f57ae357`'s, which had differed from the local build on all
+eight pages at 17:21:37Z on 2026-10-26. The support matrix, `/cdm/support-matrix/`, was
+byte-identical between `2d2c0015` and the local build (216 123 bytes) and the domain served it 3
+bytes longer, its one `http://` link, `href=http://www.aixm.aero/schema/5.1.1/event`, arriving as
+`href="https://www.aixm.aero/schema/5.1.1/event"` — the rewrite on the domain's side that entries 28
+to 30 recorded, and the only difference between the bytes. The changelog page carries nineteen
+sentences of the form `package is at <code>N.N.N</code>` in append order `2.0.0, 2.0.0, 2.1.0, 2.1.1,
+2.1.2, 2.2.0, 3.0.0, 3.0.1, 3.1.0, 3.1.1, 3.2.0, 3.3.0, 3.4.0, 3.5.0, 3.6.0, 3.7.0, 3.8.0, 3.9.0,
+3.9.1`, and its dated measurements *Measured 2026-10-25 after the upload: the index serves `3.9.0`*
+and *Measured 2026-10-26 after the upload: the index serves `3.9.1`*; the current-contracts page
+states `PACKAGE_VERSION` 3.9.1 and `SCHEMA_VERSION` 3.2.0; the support matrix names
+`stanag4559_catalog`, `stanag4559_stream` and `stanag4559_workflow` nine times each, where
+`f57ae357`'s names them not at all, and names no HLA adapter, `synapse-hla` being a sibling
+distribution outside the registry the matrix is rendered from.
+**The gate refused and then reconciled**, which is the record working: at 09:52:13Z it named
+`2d2c0015` (`50 minutes ago`, `source 6df3586`) as the one deployment of thirty-six the table could
+not name — the twentieth time it has caught its own round's upload — and after the row, the count
+sentence, the alias paragraph and the refusal sentence of ledger entry 8 moved in one edit it read
+**25 listed; 25 with a row, 11 covered retrospectively; 0 unaccounted for; 11 recorded beyond the
+window: `039866b1`, `090a5edb`, `10d0dc94`, `1ba36baf`, `323dff1f`, `33e0e1ba`, `7489e528`,
+`bbfad083`, `c9494c05`, `e4a1c33d`, `fc7bc5db`**, alias `2d2c0015` (identical on 5 of five pages,
+differing from `f57ae357` on 5), and the served-version witness `agree`, `3.9.1` served against
+`3.9.1` declared, at 10:01:38Z; after this record followed it read the same figures, `states 3.9.1 and
+version.py declares 3.9.1 — AGREE` at 10:03:56Z and **2 checks, 0 failed**, and its mutation check
+refuses a fabricated deployment, then passes. The window now hides eleven recorded deployments rather than ten —
+`e4a1c33d`, the 2026-08-25 07:00:13 row, is the one that left it — which is the bound the gate's docstring
+states doing what it says. This act writes one file, `PUBLICATION.md`: entry 8's row, count sentence,
+alias paragraph, refusal sentence and gate-reading sentence, this record, and the pointer paragraph at the
+end of entry 31; the live count
+thirty-six asks the mutation guard in `tests/test_cdm_deploy_record.py` for thirty-seven, which its
+number table has carried since the 3.8.0 act, so that module does not move. It is not a page the site
+renders, nothing under `packages/cdm/` moves, and `PACKAGE_VERSION` still reads `3.9.1`.
 
 ## The deployment was not affected
 
